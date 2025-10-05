@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions QuizSession[]
+
+  @@map("users")
+}
+
+model QuizSession {
+  id          String    @id @default(cuid())
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id])
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  status      String    @default("in_progress") // "in_progress" | "completed"
+  durationMs  Int?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  answers QuizAnswer[]
+  result  Result?
+
+  @@map("quiz_sessions")
+}
+
+model QuizQuestion {
+  id       String @id @default(cuid())
+  order    Int
+  prompt   String
+  type     String // "single" | "multi" | "likert"
+  options  Json   // [{label, value, weightCategory, weightValue}]
+  active   Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  answers QuizAnswer[]
+
+  @@map("quiz_questions")
+}
+
+model QuizAnswer {
+  id         String @id @default(cuid())
+  sessionId  String
+  questionId String
+  session    QuizSession @relation(fields: [sessionId], references: [id])
+  question   QuizQuestion @relation(fields: [questionId], references: [id])
+  value      Json
+  dwellMs    Int?
+  createdAt  DateTime @default(now())
+
+  @@map("quiz_answers")
+}
+
+model Result {
+  id        String @id @default(cuid())
+  sessionId String @unique
+  session   QuizSession @relation(fields: [sessionId], references: [id])
+  archetype String
+  scores    Json
+  createdAt DateTime @default(now())
+
+  @@map("results")
+}
