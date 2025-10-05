@@ -1,0 +1,8 @@
+{
+  "env": {
+    "DATABASE_URL": "postgresql://postgres:0740610212sS.@db.muotyvhquvcawwyjvjob.supabase.co:5432/postgres",
+    "NEXTAUTH_URL": "https://birghtnest-ey8gsoex5-stefantudos-projects.vercel.app",
+    "NEXTAUTH_SECRET": "your-production-secret-key-here"
+  },
+  "buildCommand": "npx prisma generate && npm run build"
+}
