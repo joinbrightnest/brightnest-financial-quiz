@@ -176,11 +176,36 @@ export async function GET(request: Request) {
         groupedData[key] = (groupedData[key] || 0) + 1;
       });
 
-      // Convert to array format
-      return Object.entries(groupedData).map(([createdAt, count]) => ({
-        createdAt,
-        _count: { id: count }
-      }));
+      // Convert to array format with properly formatted dates
+      return Object.entries(groupedData).map(([key, count]) => {
+        let formattedDate: string;
+        
+        switch (timeframe) {
+          case 'hourly':
+            // Convert YYYY-MM-DDTHH to a proper date string
+            formattedDate = new Date(key + ':00:00.000Z').toISOString();
+            break;
+          case 'daily':
+            // Convert YYYY-MM-DD to a proper date string
+            formattedDate = new Date(key + 'T00:00:00.000Z').toISOString();
+            break;
+          case 'weekly':
+            // Convert YYYY-MM-DD to a proper date string
+            formattedDate = new Date(key + 'T00:00:00.000Z').toISOString();
+            break;
+          case 'monthly':
+            // Convert YYYY-MM to a proper date string
+            formattedDate = new Date(key + '-01T00:00:00.000Z').toISOString();
+            break;
+          default:
+            formattedDate = new Date(key + 'T00:00:00.000Z').toISOString();
+        }
+        
+        return {
+          createdAt: formattedDate,
+          _count: { id: count }
+        };
+      });
     };
 
     const dailyActivity = await getActivityData(activityTimeframe);
