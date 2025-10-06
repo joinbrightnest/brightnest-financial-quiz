@@ -672,9 +672,13 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                 </div>
               </div>
 
-              {/* Answer → Article Mapping - Compact with Dropdown */}
+              {/* Answer → Article Mapping - Only show if articles exist */}
               {question.type === "single" && (() => {
                 const articlesForQuestion = articles.filter(a => a.triggerQuestionId === question.id);
+                
+                // Only show if there's at least one article for this question
+                if (articlesForQuestion.length === 0) return null;
+                
                 const isExpanded = expandedMappings[question.id] || false;
                 
                 return (
