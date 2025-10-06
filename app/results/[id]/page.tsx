@@ -112,24 +112,6 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             </div>
           </div>
 
-          {/* Score Breakdown */}
-          <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-            <h3 className="text-2xl font-semibold text-gray-900 mb-6">
-              Your Score Breakdown
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {Object.entries(result.scores).map(([category, score]) => (
-                <div key={category} className="text-center">
-                  <div className="text-2xl font-bold text-blue-600 mb-1">
-                    {score}
-                  </div>
-                  <div className="text-sm text-gray-600 capitalize">
-                    {category}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
 
           {/* CTA */}
           <div className="text-center">

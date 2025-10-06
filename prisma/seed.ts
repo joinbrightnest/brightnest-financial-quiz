@@ -157,6 +157,161 @@ const questions = [
         weightValue: 3
       }
     ]
+  },
+  {
+    order: 6,
+    prompt: "How often do you check your bank account?",
+    type: "single",
+    options: [
+      {
+        label: "Daily - I'm very hands-on",
+        value: "daily_check",
+        weightCategory: "spending",
+        weightValue: 2
+      },
+      {
+        label: "Weekly - I like to stay informed",
+        value: "weekly_check",
+        weightCategory: "savings",
+        weightValue: 2
+      },
+      {
+        label: "Monthly - I review my statements",
+        value: "monthly_check",
+        weightCategory: "investing",
+        weightValue: 2
+      },
+      {
+        label: "Rarely - I trust my automatic systems",
+        value: "rarely_check",
+        weightCategory: "debt",
+        weightValue: 1
+      }
+    ]
+  },
+  {
+    order: 7,
+    prompt: "What's your biggest financial worry?",
+    type: "single",
+    options: [
+      {
+        label: "Not having enough for retirement",
+        value: "retirement_worry",
+        weightCategory: "investing",
+        weightValue: 3
+      },
+      {
+        label: "Unexpected medical expenses",
+        value: "medical_worry",
+        weightCategory: "savings",
+        weightValue: 3
+      },
+      {
+        label: "Losing my job or income",
+        value: "job_worry",
+        weightCategory: "spending",
+        weightValue: 2
+      },
+      {
+        label: "Never paying off my debt",
+        value: "debt_worry",
+        weightCategory: "debt",
+        weightValue: 3
+      }
+    ]
+  },
+  {
+    order: 8,
+    prompt: "How do you prefer to learn about finances?",
+    type: "single",
+    options: [
+      {
+        label: "Reading books and articles",
+        value: "reading",
+        weightCategory: "investing",
+        weightValue: 2
+      },
+      {
+        label: "Watching videos and courses",
+        value: "videos",
+        weightCategory: "savings",
+        weightValue: 2
+      },
+      {
+        label: "Working with a financial advisor",
+        value: "advisor",
+        weightCategory: "spending",
+        weightValue: 2
+      },
+      {
+        label: "Learning through trial and error",
+        value: "trial_error",
+        weightCategory: "debt",
+        weightValue: 1
+      }
+    ]
+  },
+  {
+    order: 9,
+    prompt: "What's your ideal financial future?",
+    type: "single",
+    options: [
+      {
+        label: "Complete financial freedom and early retirement",
+        value: "early_retirement",
+        weightCategory: "investing",
+        weightValue: 3
+      },
+      {
+        label: "A comfortable, secure lifestyle",
+        value: "comfortable_lifestyle",
+        weightCategory: "savings",
+        weightValue: 3
+      },
+      {
+        label: "Being able to help family and friends",
+        value: "help_others",
+        weightCategory: "spending",
+        weightValue: 2
+      },
+      {
+        label: "Just getting out of debt and staying there",
+        value: "debt_free_life",
+        weightCategory: "debt",
+        weightValue: 3
+      }
+    ]
+  },
+  {
+    order: 10,
+    prompt: "How do you handle financial stress?",
+    type: "single",
+    options: [
+      {
+        label: "I create a detailed plan and stick to it",
+        value: "detailed_plan",
+        weightCategory: "spending",
+        weightValue: 2
+      },
+      {
+        label: "I focus on increasing my income",
+        value: "increase_income",
+        weightCategory: "investing",
+        weightValue: 2
+      },
+      {
+        label: "I cut expenses and save more",
+        value: "cut_expenses_save",
+        weightCategory: "savings",
+        weightValue: 3
+      },
+      {
+        label: "I try to ignore it and hope it gets better",
+        value: "ignore_stress",
+        weightCategory: "debt",
+        weightValue: 1
+      }
+    ]
   }
 ];
 

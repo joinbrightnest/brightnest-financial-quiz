@@ -18,6 +18,8 @@ interface QuestionCardProps {
   selectedValue: string | null;
   onAnswer: (value: string) => void;
   onNext: () => void;
+  onBack?: () => void;
+  canGoBack?: boolean;
 }
 
 export default function QuestionCard({
@@ -27,43 +29,41 @@ export default function QuestionCard({
   selectedValue,
   onAnswer,
   onNext,
+  onBack,
+  canGoBack = false,
 }: QuestionCardProps) {
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <ProgressBar current={currentQuestion} total={totalQuestions} />
-      
-      <div className="bg-white rounded-lg shadow-lg p-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          {question.prompt}
-        </h2>
-        
-        <div className="space-y-3 mb-8">
-          {question.options.map((option) => (
-            <OptionButton
-              key={option.value}
-              option={option}
-              isSelected={selectedValue === option.value}
-              onClick={() => onAnswer(option.value)}
-            />
-          ))}
+    <div className="min-h-screen bg-white">
+      <div className="max-w-lg mx-auto px-6 py-12">
+        <div className="text-center mb-8">
+          <h1 className="text-lg font-semibold text-gray-900 mb-4 tracking-wide">
+            FINANCIAL PROFILE
+          </h1>
+          <ProgressBar 
+            current={currentQuestion} 
+            total={totalQuestions} 
+            onBack={onBack}
+            canGoBack={canGoBack}
+          />
         </div>
         
-        <div className="flex justify-between items-center">
-          <span className="text-sm text-gray-500">
-            Question {currentQuestion} of {totalQuestions}
-          </span>
+        <div className="text-center">
+          <h2 className="text-2xl font-medium text-gray-900 mb-12 leading-relaxed">
+            {question.prompt}
+          </h2>
           
-          <button
-            onClick={onNext}
-            disabled={!selectedValue}
-            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-              selectedValue
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
-          >
-            {currentQuestion === totalQuestions ? "Finish Quiz" : "Next Question"}
-          </button>
+          <div className="space-y-4">
+            {question.options.map((option) => (
+              <OptionButton
+                key={option.value}
+                option={option}
+                isSelected={selectedValue === option.value}
+                onClick={() => {
+                  onAnswer(option.value);
+                }}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </div>

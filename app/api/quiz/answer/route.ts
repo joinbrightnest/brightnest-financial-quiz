@@ -5,15 +5,34 @@ export async function POST(request: NextRequest) {
   try {
     const { sessionId, questionId, value, dwellMs } = await request.json();
 
-    // Save the answer
-    await prisma.quizAnswer.create({
-      data: {
+    // Check if answer already exists
+    const existingAnswer = await prisma.quizAnswer.findFirst({
+      where: {
         sessionId,
         questionId,
-        value,
-        dwellMs,
       },
     });
+
+    if (existingAnswer) {
+      // Update existing answer
+      await prisma.quizAnswer.update({
+        where: { id: existingAnswer.id },
+        data: {
+          value,
+          dwellMs,
+        },
+      });
+    } else {
+      // Create new answer
+      await prisma.quizAnswer.create({
+        data: {
+          sessionId,
+          questionId,
+          value,
+          dwellMs,
+        },
+      });
+    }
 
     // Get the next question
     const currentQuestion = await prisma.quizQuestion.findUnique({

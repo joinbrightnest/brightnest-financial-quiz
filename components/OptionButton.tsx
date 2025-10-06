@@ -13,13 +13,13 @@ export default function OptionButton({ option, isSelected, onClick }: OptionButt
   return (
     <button
       onClick={onClick}
-      className={`w-full p-4 text-left rounded-lg border-2 transition-all duration-200 ${
+      className={`w-full p-5 text-center rounded-lg transition-all duration-200 ${
         isSelected
-          ? "border-blue-500 bg-blue-50 text-blue-900"
-          : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50"
+          ? "bg-teal-600 text-white"
+          : "bg-amber-50 text-gray-900 hover:bg-amber-100 border border-amber-100"
       }`}
     >
-      <span className="font-medium">{option.label}</span>
+      <span className="text-lg font-medium">{option.label}</span>
     </button>
   );
 }

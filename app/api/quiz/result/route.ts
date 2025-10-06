@@ -39,6 +39,33 @@ export async function POST(request: NextRequest) {
     // Calculate archetype
     const archetype = calculateArchetype(scores);
 
+    // Get the session to calculate duration
+    const session = await prisma.quizSession.findUnique({
+      where: { id: sessionId }
+    });
+
+    if (!session) {
+      return NextResponse.json(
+        { error: "Session not found" },
+        { status: 404 }
+      );
+    }
+
+    // Calculate duration in milliseconds
+    const completedAt = new Date();
+    const startedAt = session.startedAt;
+    const durationMs = completedAt.getTime() - startedAt.getTime();
+
+    // Update session with completion data and duration
+    await prisma.quizSession.update({
+      where: { id: sessionId },
+      data: {
+        status: "completed",
+        completedAt,
+        durationMs,
+      },
+    });
+
     // Save result
     const result = await prisma.result.create({
       data: {
