@@ -32,9 +32,10 @@ interface FlowBuilderProps {
   }>;
   onSave: (nodes: FlowNode[], connections: FlowConnection[]) => void;
   onCreateArticle: () => void;
+  onRefresh?: () => void;
 }
 
-export default function FlowBuilder({ questions, articles, onSave, onCreateArticle }: FlowBuilderProps) {
+export default function FlowBuilder({ questions, articles, onSave, onCreateArticle, onRefresh }: FlowBuilderProps) {
   const [nodes, setNodes] = useState<FlowNode[]>([]);
   const [connections, setConnections] = useState<FlowConnection[]>([]);
   const [draggedNode, setDraggedNode] = useState<string | null>(null);
@@ -145,12 +146,23 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-medium text-gray-700">Articles</h3>
-            <button
-              onClick={onCreateArticle}
-              className="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700"
-            >
-              + Create
-            </button>
+            <div className="flex space-x-1">
+              {onRefresh && (
+                <button
+                  onClick={onRefresh}
+                  className="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700"
+                  title="Refresh articles"
+                >
+                  ↻
+                </button>
+              )}
+              <button
+                onClick={onCreateArticle}
+                className="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700"
+              >
+                + Create
+              </button>
+            </div>
           </div>
           <div className="space-y-2">
             {articles.map((article) => (

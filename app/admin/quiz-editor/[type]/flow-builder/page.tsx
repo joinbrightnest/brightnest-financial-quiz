@@ -46,11 +46,17 @@ export default function FlowBuilderPage({ params }: { params: Promise<{ type: st
         setQuestions(questionsData.questions || []);
       }
 
-      // Fetch articles (from simple article system)
-      const articlesResponse = await fetch('/api/admin/articles');
-      if (articlesResponse.ok) {
-        const articlesData = await articlesResponse.json();
-        setArticles(articlesData.articles || []);
+      // Load articles from simple article system (localStorage)
+      const storedArticles = localStorage.getItem('brightnest_articles');
+      if (storedArticles) {
+        const articlesData = JSON.parse(storedArticles);
+        const articlesList = Object.values(articlesData).map((article: any) => ({
+          id: article.id,
+          title: article.title,
+          content: article.content,
+          category: article.category
+        }));
+        setArticles(articlesList);
       }
     } catch (error) {
       console.error('Failed to fetch data:', error);
@@ -83,7 +89,16 @@ export default function FlowBuilderPage({ params }: { params: Promise<{ type: st
 
   const handleCreateArticle = () => {
     // Open article creation in a new tab/window
-    window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank');
+    const newWindow = window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank');
+    
+    // Listen for when the new window closes to refresh articles
+    const checkClosed = setInterval(() => {
+      if (newWindow?.closed) {
+        clearInterval(checkClosed);
+        // Refresh articles when the article creation window closes
+        fetchData();
+      }
+    }, 1000);
   };
 
   if (isLoading) {
@@ -126,6 +141,7 @@ export default function FlowBuilderPage({ params }: { params: Promise<{ type: st
         articles={articles}
         onSave={handleSaveFlow}
         onCreateArticle={handleCreateArticle}
+        onRefresh={fetchData}
       />
     </div>
   );
