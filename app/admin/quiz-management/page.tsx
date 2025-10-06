@@ -30,23 +30,12 @@ export default function QuizManagement() {
   const [selectedQuizType, setSelectedQuizType] = useState<string>("financial-profile");
   const [isLoading, setIsLoading] = useState(true);
 
-  const quizTypeConfig = [
-    {
-      name: "financial-profile",
-      displayName: "Financial Profile",
-      description: "General financial personality assessment"
-    },
-    {
-      name: "health-finance",
-      displayName: "Health Finance",
-      description: "Healthcare and medical expense management"
-    },
-    {
-      name: "marriage-finance",
-      displayName: "Marriage Finance",
-      description: "Couples financial planning and management"
-    }
-  ];
+  const [allQuizTypes, setAllQuizTypes] = useState<Array<{
+    name: string;
+    displayName: string;
+    description: string;
+    questionCount: number;
+  }>>([]);
 
   useEffect(() => {
     fetchQuizData();
@@ -68,22 +57,22 @@ export default function QuizManagement() {
     try {
       setIsLoading(true);
       
-      // Get question counts for each quiz type
-      const quizTypeData = await Promise.all(
-        quizTypeConfig.map(async (config) => {
-          const response = await fetch(`/api/quiz/questions/count?quizType=${config.name}`);
-          const data = await response.json();
-          return {
-            ...config,
-            questionCount: data.count || 0
-          };
-        })
-      );
+      // Get all unique quiz types from the database
+      const response = await fetch('/api/admin/all-quiz-types');
+      const data = await response.json();
       
-      setQuizTypes(quizTypeData);
-      
-      // Get questions for selected quiz type
-      await fetchQuestions(selectedQuizType);
+      if (data.success) {
+        setAllQuizTypes(data.quizTypes);
+        setQuizTypes(data.quizTypes);
+        
+        // Set selected quiz type to first available if current selection doesn't exist
+        if (data.quizTypes.length > 0 && !data.quizTypes.find(qt => qt.name === selectedQuizType)) {
+          setSelectedQuizType(data.quizTypes[0].name);
+        }
+        
+        // Get questions for selected quiz type
+        await fetchQuestions(selectedQuizType);
+      }
     } catch (error) {
       console.error("Error fetching quiz data:", error);
     } finally {
@@ -241,7 +230,7 @@ export default function QuizManagement() {
             </div>
           </div>
 
-          {quizTypes.map((quizType, index) => (
+          {allQuizTypes.map((quizType, index) => (
             <div key={quizType.name} className="group relative">
               <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8">
                 {/* Icon */}

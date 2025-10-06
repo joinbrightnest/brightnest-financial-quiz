@@ -248,6 +248,44 @@ export async function GET(request: Request) {
       .sort((a, b) => b.dropFromPrevious - a.dropFromPrevious)
       .slice(0, 3); // Top 3 questions responsible for drops
 
+    // Get all quiz types for dashboard integration
+    const quizTypes = await prisma.quizQuestion.groupBy({
+      by: ['quizType'],
+      _count: {
+        id: true,
+      },
+      where: {
+        active: true,
+      },
+    });
+
+    const formattedQuizTypes = quizTypes.map(quizType => {
+      const displayName = quizType.quizType
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+
+      const getDescription = (type: string) => {
+        switch (type) {
+          case 'financial-profile':
+            return 'General financial personality assessment';
+          case 'health-finance':
+            return 'Healthcare and medical expense management';
+          case 'marriage-finance':
+            return 'Couples financial planning and management';
+          default:
+            return 'Custom quiz created by user';
+        }
+      };
+
+      return {
+        name: quizType.quizType,
+        displayName: displayName,
+        description: getDescription(quizType.quizType),
+        questionCount: quizType._count.id,
+      };
+    });
+
     return NextResponse.json({
       totalSessions,
       completedSessions,
@@ -262,6 +300,7 @@ export async function GET(request: Request) {
       partialSubmissions,
       leadsCollected,
       topDropOffQuestions: questionsWithDrops,
+      quizTypes: formattedQuizTypes,
     });
   } catch (error) {
     console.error("Error fetching admin stats:", error);

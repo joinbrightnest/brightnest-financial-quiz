@@ -504,74 +504,60 @@ export default function AdminDashboard() {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Financial Profile */}
-                  <div className="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition-colors">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-medium text-gray-900">Financial Profile</h4>
-                      <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">10 questions</span>
+                  {stats?.quizTypes?.map((quizType: any, index: number) => (
+                    <div key={quizType.name} className="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition-colors">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="font-medium text-gray-900">{quizType.displayName}</h4>
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          index === 0 ? 'bg-blue-100 text-blue-800' :
+                          index === 1 ? 'bg-green-100 text-green-800' :
+                          'bg-pink-100 text-pink-800'
+                        }`}>
+                          {quizType.questionCount} questions
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3">{quizType.description}</p>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => window.open(`/admin/quiz-editor/${quizType.name}`, '_self')}
+                          className="flex-1 bg-purple-600 text-white py-2 px-3 rounded-md hover:bg-purple-700 transition-colors text-sm font-medium"
+                        >
+                          Customize
+                        </button>
+                        <button
+                          onClick={() => window.open(`/quiz/${quizType.name}`, '_blank')}
+                          className="flex-1 bg-gray-100 text-gray-700 py-2 px-3 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium"
+                        >
+                          Preview
+                        </button>
+                      </div>
                     </div>
-                    <p className="text-sm text-gray-600 mb-3">General financial personality assessment</p>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => window.open('/admin/quiz-editor/financial-profile', '_self')}
-                        className="flex-1 bg-purple-600 text-white py-2 px-3 rounded-md hover:bg-purple-700 transition-colors text-sm font-medium"
-                      >
-                        Customize
-                      </button>
-                      <button
-                        onClick={() => window.open('/quiz/financial-profile', '_blank')}
-                        className="flex-1 bg-gray-100 text-gray-700 py-2 px-3 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium"
-                      >
-                        Preview
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Health Finance */}
-                  <div className="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition-colors">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-medium text-gray-900">Health Finance</h4>
-                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">10 questions</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-3">Healthcare and medical expense management</p>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => window.open('/admin/quiz-editor/health-finance', '_self')}
-                        className="flex-1 bg-purple-600 text-white py-2 px-3 rounded-md hover:bg-purple-700 transition-colors text-sm font-medium"
-                      >
-                        Customize
-                      </button>
-                      <button
-                        onClick={() => window.open('/quiz/health-finance', '_blank')}
-                        className="flex-1 bg-gray-100 text-gray-700 py-2 px-3 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium"
-                      >
-                        Preview
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Marriage Finance */}
-                  <div className="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition-colors">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-medium text-gray-900">Marriage Finance</h4>
-                      <span className="text-xs bg-pink-100 text-pink-800 px-2 py-1 rounded-full">10 questions</span>
-                    </div>
-                    <p className="text-sm text-gray-600 mb-3">Couples financial planning and management</p>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => window.open('/admin/quiz-editor/marriage-finance', '_self')}
-                        className="flex-1 bg-purple-600 text-white py-2 px-3 rounded-md hover:bg-purple-700 transition-colors text-sm font-medium"
-                      >
-                        Customize
-                      </button>
-                      <button
-                        onClick={() => window.open('/quiz/marriage-finance', '_blank')}
-                        className="flex-1 bg-gray-100 text-gray-700 py-2 px-3 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium"
-                      >
-                        Preview
-                      </button>
-                    </div>
-                  </div>
+                  )) || (
+                    // Fallback to static quiz types if API fails
+                    <>
+                      <div className="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition-colors">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-medium text-gray-900">Financial Profile</h4>
+                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">10 questions</span>
+                        </div>
+                        <p className="text-sm text-gray-600 mb-3">General financial personality assessment</p>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => window.open('/admin/quiz-editor/financial-profile', '_self')}
+                            className="flex-1 bg-purple-600 text-white py-2 px-3 rounded-md hover:bg-purple-700 transition-colors text-sm font-medium"
+                          >
+                            Customize
+                          </button>
+                          <button
+                            onClick={() => window.open('/quiz/financial-profile', '_blank')}
+                            className="flex-1 bg-gray-100 text-gray-700 py-2 px-3 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium"
+                          >
+                            Preview
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 
