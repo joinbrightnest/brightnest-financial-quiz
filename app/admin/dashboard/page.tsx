@@ -256,7 +256,7 @@ export default function AdminDashboard() {
                 <select
                   value={dateRange}
                   onChange={(e) => setDateRange(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="border border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="7d">Last 7 days</option>
                   <option value="30d">Last 30 days</option>
@@ -274,7 +274,7 @@ export default function AdminDashboard() {
                   className={`px-3 py-1 rounded-lg text-sm transition-colors ${
                     showComparison 
                       ? 'bg-blue-600 text-white' 
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
                   }`}
                 >
                   {showComparison ? 'Hide' : 'Show'} Previous Period
@@ -593,7 +593,7 @@ export default function AdminDashboard() {
                       <select
                         value={activityTimeframe}
                         onChange={(e) => setActivityTimeframe(e.target.value)}
-                        className="border border-gray-300 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="border border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       >
                         <option value="hourly">Last 24 Hours</option>
                         <option value="daily">Last 7 Days</option>
