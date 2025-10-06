@@ -155,6 +155,47 @@ export default function QuizManagement() {
     }
   };
 
+  const deleteQuizType = async (quizType: string) => {
+    const quizDisplayName = allQuizTypes.find(qt => qt.name === quizType)?.displayName || quizType;
+    
+    if (!confirm(`⚠️ DANGER: Are you sure you want to PERMANENTLY DELETE the "${quizDisplayName}" quiz?\n\nThis will:\n• Delete ALL questions for this quiz\n• Delete ALL quiz sessions and answers\n• Delete ALL results for this quiz\n• Remove the quiz from the system completely\n\nThis action CANNOT be undone!`)) {
+      return;
+    }
+
+    // Double confirmation for safety
+    if (!confirm(`🚨 FINAL WARNING: You are about to PERMANENTLY DELETE "${quizDisplayName}"\n\nType "DELETE" to confirm (case sensitive):`)) {
+      return;
+    }
+
+    const confirmation = prompt(`Please type "DELETE" to confirm permanent deletion of "${quizDisplayName}":`);
+    if (confirmation !== "DELETE") {
+      alert("Deletion cancelled. You must type 'DELETE' exactly to confirm.");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/admin/delete-quiz-type", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ quizType }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        await fetchQuizData();
+        alert(`✅ Quiz "${quizDisplayName}" has been permanently deleted from the system.`);
+      } else {
+        alert(`❌ Failed to delete quiz: ${result.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error("Error deleting quiz type:", error);
+      alert("❌ Error deleting quiz. Please try again.");
+    }
+  };
+
   if (isLoading && !hasInitiallyLoaded.current) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -282,10 +323,10 @@ export default function QuizManagement() {
                       <div className="text-sm text-gray-600 max-w-xs truncate">{quizType.description}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-1">
                         <button
                           onClick={() => window.open(`/admin/quiz-editor/${quizType.name}`, '_self')}
-                          className="flex items-center space-x-1 px-3 py-1.5 bg-blue-600 text-white rounded-md text-xs font-semibold"
+                          className="flex items-center space-x-1 px-2 py-1.5 bg-blue-600 text-white rounded-md text-xs font-semibold"
                         >
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -296,7 +337,7 @@ export default function QuizManagement() {
                           onClick={() => {
                             handleQuizTypeChange(quizType.name);
                           }}
-                          className={`flex items-center space-x-1 px-3 py-1.5 rounded-md text-xs font-semibold ${
+                          className={`flex items-center space-x-1 px-2 py-1.5 rounded-md text-xs font-semibold ${
                             selectedQuizType === quizType.name
                               ? "bg-gray-900 text-white"
                               : "bg-gray-100 text-gray-700"
@@ -310,12 +351,21 @@ export default function QuizManagement() {
                         </button>
                         <button
                           onClick={() => resetQuizType(quizType.name)}
-                          className="flex items-center space-x-1 px-3 py-1.5 bg-red-50 text-red-700 rounded-md text-xs font-semibold"
+                          className="flex items-center space-x-1 px-2 py-1.5 bg-orange-50 text-orange-700 rounded-md text-xs font-semibold"
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                          </svg>
+                          <span>Reset</span>
+                        </button>
+                        <button
+                          onClick={() => deleteQuizType(quizType.name)}
+                          className="flex items-center space-x-1 px-2 py-1.5 bg-red-600 text-white rounded-md text-xs font-semibold hover:bg-red-700 transition-colors"
                         >
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
-                          <span>Reset</span>
+                          <span>Delete</span>
                         </button>
                       </div>
                     </td>
