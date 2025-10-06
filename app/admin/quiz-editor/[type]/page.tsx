@@ -104,8 +104,12 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     try {
       // Load articles from localStorage (simple article system)
       const storedArticles = localStorage.getItem('brightnest_articles');
+      console.log('Loading articles from localStorage:', storedArticles);
+      
       if (storedArticles) {
         const articlesData = JSON.parse(storedArticles);
+        console.log('Parsed articles data:', articlesData);
+        
         const articlesList = Object.values(articlesData).map((article: any, index: number) => ({
           id: article.id,
           title: article.title,
@@ -115,10 +119,16 @@ export default function QuizEditor({ params }: QuizEditorProps) {
           triggerQuestionId: article.triggerQuestionId,
           triggerAnswerValue: article.triggerAnswerValue
         }));
+        
+        console.log('Setting articles list:', articlesList);
         setArticles(articlesList);
+      } else {
+        console.log('No articles found in localStorage');
+        setArticles([]);
       }
     } catch (error) {
       console.error("Error fetching articles:", error);
+      setArticles([]);
     }
   };
 
@@ -268,12 +278,18 @@ export default function QuizEditor({ params }: QuizEditorProps) {
       if (response.ok) {
         // Also save articles to localStorage to ensure they persist
         const storedArticles = localStorage.getItem('brightnest_articles');
+        console.log("Articles before refresh:", storedArticles);
         if (storedArticles) {
           console.log("Articles preserved in localStorage:", Object.keys(JSON.parse(storedArticles)).length);
         }
         
         alert("Questions and articles saved successfully!");
         await fetchQuestions(); // Refresh to get updated data
+        
+        // Check articles after refresh
+        const articlesAfterRefresh = localStorage.getItem('brightnest_articles');
+        console.log("Articles after refresh:", articlesAfterRefresh);
+        
         await fetchArticles(); // Refresh articles
       } else {
         console.error("Save failed:", responseData);
@@ -694,7 +710,13 @@ export default function QuizEditor({ params }: QuizEditorProps) {
 
               {/* Answer → Article Mapping - Only show if articles exist */}
               {question.type === "single" && (() => {
-                const articlesForQuestion = articles.filter(a => a.triggerQuestionId === question.id);
+                // Find articles for this question by matching answer values
+                const articlesForQuestion = articles.filter(a => {
+                  // Check if any of this question's options match the article's trigger
+                  return question.options.some(option => option.value === a.triggerAnswerValue);
+                });
+                
+                console.log('Articles for question:', question.id, 'found:', articlesForQuestion);
                 
                 // Only show if there's at least one article for this question
                 if (articlesForQuestion.length === 0) return null;
@@ -735,7 +757,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                         {question.options.map((option, optIndex) => {
                           // Find article for this answer
                           const articleForAnswer = articles.find(a => 
-                            a.triggerQuestionId === question.id && a.triggerAnswerValue === option.value
+                            a.triggerAnswerValue === option.value
                           );
                           
                           return (

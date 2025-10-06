@@ -38,20 +38,26 @@ export default function ArticleDisplayNoom({
   const loadRelevantArticles = async () => {
     setIsLoading(true);
     try {
+      console.log('Loading articles for:', { questionId, answerValue, answerLabel });
+      
       // First, check localStorage for articles with if/then logic
       const storedArticles = localStorage.getItem('brightnest_articles');
+      console.log('Stored articles in localStorage:', storedArticles);
+      
       if (storedArticles) {
         const articlesData = JSON.parse(storedArticles);
+        console.log('Parsed articles data:', articlesData);
         const matchingArticles = [];
 
         // Find articles that match the if/then logic
         for (const [articleId, article] of Object.entries(articlesData)) {
           const articleData = article as any;
+          console.log('Checking article:', articleData, 'against answerValue:', answerValue);
           
           // Check if this article is triggered by this answer value
           // We match by answer value since question IDs might be different between localStorage and database
           if (articleData.triggerAnswerValue === answerValue) {
-            
+            console.log('Found matching article:', articleData);
             matchingArticles.push({
               id: articleData.id,
               title: articleData.title,
@@ -63,6 +69,8 @@ export default function ArticleDisplayNoom({
             });
           }
         }
+
+        console.log('Matching articles found:', matchingArticles);
 
         if (matchingArticles.length > 0) {
           setArticles(matchingArticles);
