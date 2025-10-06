@@ -27,6 +27,18 @@ export default function NewQuizEditor() {
   const [draggedQuestion, setDraggedQuestion] = useState<string | null>(null);
   const [quizName, setQuizName] = useState("");
   const [quizDescription, setQuizDescription] = useState("");
+  const [quizLink, setQuizLink] = useState<string>('');
+  const [isEditingLink, setIsEditingLink] = useState(false);
+
+  // Generate quiz link based on quiz name
+  useEffect(() => {
+    if (quizName.trim()) {
+      const quizType = quizName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-*|-*$/g, '');
+      setQuizLink(`https://joinbrightnest.com/quiz/${quizType}`);
+    } else {
+      setQuizLink('https://joinbrightnest.com/quiz/your-quiz-name');
+    }
+  }, [quizName]);
 
   const handleDragStart = (e: React.DragEvent, questionId: string) => {
     setDraggedQuestion(questionId);
@@ -150,6 +162,30 @@ export default function NewQuizEditor() {
     }
   };
 
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(quizLink);
+      alert('Quiz link copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to copy link:', err);
+      alert('Failed to copy link. Please copy manually.');
+    }
+  };
+
+  const handleOpenQuiz = () => {
+    if (quizName.trim()) {
+      window.open(quizLink, '_blank');
+    } else {
+      alert('Please enter a quiz name first to generate the link.');
+    }
+  };
+
+  const handleSaveLink = () => {
+    setIsEditingLink(false);
+    // Here you could save the custom link to the database if needed
+    // For now, we'll just update the local state
+  };
+
   const saveChanges = async () => {
     if (!quizName.trim()) {
       alert("Please enter a quiz name");
@@ -269,6 +305,93 @@ export default function NewQuizEditor() {
                 placeholder="Enter quiz description"
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
               />
+            </div>
+          </div>
+        </div>
+
+        {/* Quiz Link Section */}
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">Quiz Link Preview</h3>
+                <p className="text-sm text-gray-600">This link will be available after you create the quiz</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={handleOpenQuiz}
+                disabled={!quizName.trim()}
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg shadow-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                <span className="font-semibold">Preview Quiz</span>
+              </button>
+              <button
+                onClick={handleCopyLink}
+                disabled={!quizName.trim()}
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg shadow-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span className="font-semibold">Copy Link</span>
+              </button>
+            </div>
+          </div>
+          
+          <div className="bg-gray-50/50 rounded-xl p-4 border border-gray-200/50">
+            <div className="flex items-center space-x-3">
+              <div className="flex-1">
+                {isEditingLink ? (
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={quizLink}
+                      onChange={(e) => setQuizLink(e.target.value)}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
+                      placeholder="Enter custom quiz link..."
+                    />
+                    <button
+                      onClick={handleSaveLink}
+                      className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsEditingLink(false);
+                        const quizType = quizName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-*|-*$/g, '');
+                        setQuizLink(`https://joinbrightnest.com/quiz/${quizType}`);
+                      }}
+                      className="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-semibold"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-1 bg-white rounded-lg p-3 border border-gray-200">
+                      <p className="text-sm font-mono text-gray-900 break-all">{quizLink}</p>
+                    </div>
+                    <button
+                      onClick={() => setIsEditingLink(true)}
+                      className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-semibold"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
