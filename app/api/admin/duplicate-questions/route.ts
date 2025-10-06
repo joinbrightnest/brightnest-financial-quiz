@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
             order: question.order,
             prompt: question.prompt,
             type: question.type,
-            options: question.options as any,
+            options: question.options as object,
             active: true,
           },
         })
