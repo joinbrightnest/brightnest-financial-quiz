@@ -119,17 +119,17 @@ Category: ${request.category}
 
     prompt += `Requirements:
 - Create an engaging title (max 60 characters)
-- Write 200-300 words of informative content
-- Include 2-3 key points as bullet points
-- Add relevant statistics or research findings
+- Write 150-200 words of informative content
+- Include 1-2 key points with specific statistics (e.g., "70% of divorces are caused by financial stress")
+- Add relevant research findings with percentages
 - Make it personal and relatable
-- End with actionable advice
+- Focus on actionable insights
 
 Format your response as JSON:
 {
   "title": "Article Title",
   "content": "Article content here...",
-  "keyPoints": ["Point 1", "Point 2", "Point 3"],
+  "keyPoints": ["70% of divorces are caused by financial stress", "Couples who discuss money weekly are happier"],
   "sources": ["Source 1", "Source 2"],
   "confidence": 0.85
 }`;

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import QuestionCard from "@/components/QuestionCard";
 import TextInput from "@/components/TextInput";
-import ArticleDisplay from "@/components/ArticleDisplay";
+import ArticleDisplayNoom from "@/components/ArticleDisplayNoom";
 
 interface Question {
   id: string;
@@ -256,7 +256,7 @@ export default function QuizPage() {
 
       {/* Article Display Modal */}
       {showArticle && pendingAnswer && currentQuestion && sessionId && (
-        <ArticleDisplay
+        <ArticleDisplayNoom
           sessionId={sessionId}
           questionId={currentQuestion.id}
           answerValue={pendingAnswer.value}
