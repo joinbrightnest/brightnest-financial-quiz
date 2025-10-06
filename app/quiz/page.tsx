@@ -254,8 +254,8 @@ export default function QuizPage() {
         />
       )}
 
-      {/* Article Display Modal */}
-      {showArticle && pendingAnswer && currentQuestion && sessionId && (
+      {/* Article Display Modal - Show for all questions with options */}
+      {showArticle && pendingAnswer && currentQuestion && sessionId && currentQuestion.options && currentQuestion.options.length > 0 && (
         <ArticleDisplayNoom
           sessionId={sessionId}
           questionId={currentQuestion.id}

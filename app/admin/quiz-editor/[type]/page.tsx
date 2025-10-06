@@ -579,8 +579,8 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                       </div>
                     )}
 
-                    {/* Article Manager */}
-                    {question.type === "single" && (
+                    {/* Article Manager - Show for all questions with options */}
+                    {question.options && question.options.length > 0 && (
                       <div className="mt-6">
                         <ArticleManager
                           questionId={question.id}
