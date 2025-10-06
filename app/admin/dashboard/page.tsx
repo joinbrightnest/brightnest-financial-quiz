@@ -504,7 +504,7 @@ export default function AdminDashboard() {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {stats?.quizTypes?.map((quizType: any, index: number) => (
+                  {stats?.quizTypes?.map((quizType: {name: string, displayName: string, description: string, questionCount: number}, index: number) => (
                     <div key={quizType.name} className="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition-colors">
                       <div className="flex items-center justify-between mb-3">
                         <h4 className="font-medium text-gray-900">{quizType.displayName}</h4>
