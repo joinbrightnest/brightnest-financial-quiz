@@ -969,7 +969,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
 
       {/* Article Edit Popup */}
       {editingArticle && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-white bg-opacity-95 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto">
             {/* Header */}
             <div className="flex items-center justify-between p-6 pb-4 border-b">
@@ -1012,22 +1012,25 @@ export default function QuizEditor({ params }: QuizEditorProps) {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Category
+                  Article Type (Optional)
                 </label>
                 <select
                   value={editingArticle.category}
                   onChange={(e) => setEditingArticle({...editingArticle, category: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                 >
-                  <option value="general">General</option>
-                  <option value="debt">Debt</option>
-                  <option value="savings">Savings</option>
-                  <option value="investing">Investing</option>
-                  <option value="spending">Spending</option>
-                  <option value="marriage">Marriage</option>
-                  <option value="health">Health</option>
-                  <option value="career">Career</option>
+                  <option value="general">General Financial Advice</option>
+                  <option value="debt">Debt Management</option>
+                  <option value="savings">Savings & Emergency Funds</option>
+                  <option value="investing">Investing & Growth</option>
+                  <option value="spending">Spending & Budgeting</option>
+                  <option value="marriage">Marriage & Relationships</option>
+                  <option value="health">Health & Wellness</option>
+                  <option value="career">Career & Income</option>
                 </select>
+                <p className="text-xs text-gray-500 mt-1">
+                  This helps organize your articles by topic. It doesn't affect how articles appear in the quiz.
+                </p>
               </div>
 
               {/* Action Buttons */}
