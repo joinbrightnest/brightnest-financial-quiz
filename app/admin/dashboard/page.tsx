@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   Chart as ChartJS,
@@ -78,21 +78,14 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isTimeframeLoading, setIsTimeframeLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState('7d');
   const [activityTimeframe, setActivityTimeframe] = useState('daily');
   // const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [showComparison, setShowComparison] = useState(false);
 
-  useEffect(() => {
-    fetchStats(true); // Pass true to indicate this is a timeframe change
-  }, [activityTimeframe]);
-
-  const fetchStats = async (isTimeframeChange = false) => {
-    if (isTimeframeChange) {
-      setIsTimeframeLoading(true);
-    } else {
+  const fetchStats = useCallback(async (isTimeframeChange = false) => {
+    if (!isTimeframeChange) {
       setIsLoading(true);
     }
     setError(null);
@@ -113,13 +106,15 @@ export default function AdminDashboard() {
         } catch {
           setError("Failed to load admin stats");
         } finally {
-      if (isTimeframeChange) {
-        setIsTimeframeLoading(false);
-      } else {
+      if (!isTimeframeChange) {
         setIsLoading(false);
       }
     }
-  };
+  }, [activityTimeframe]);
+
+  useEffect(() => {
+    fetchStats(true); // Pass true to indicate this is a timeframe change
+  }, [fetchStats]);
 
 
   const exportLeads = () => {
@@ -331,7 +326,7 @@ export default function AdminDashboard() {
               <h3 className="text-lg font-semibold text-red-800 mb-2">Error</h3>
               <p className="text-red-600 mb-4">{error}</p>
               <button
-                onClick={fetchStats}
+                onClick={() => fetchStats()}
                 className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
               >
                 Retry
