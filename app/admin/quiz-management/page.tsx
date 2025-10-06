@@ -362,7 +362,7 @@ export default function QuizManagement() {
                   </svg>
                 </div>
                 <p className="text-gray-500 text-lg font-medium">No questions found for this quiz type.</p>
-                <p className="text-gray-400 text-sm mt-1">Use the "Customize Quiz" button above to add questions.</p>
+                <p className="text-gray-400 text-sm mt-1">Use the &quot;Customize Quiz&quot; button above to add questions.</p>
               </div>
             ) : (
               <div className="space-y-4">
