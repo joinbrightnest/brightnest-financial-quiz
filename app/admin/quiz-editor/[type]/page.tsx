@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import ArticleManager from "@/components/ArticleManager";
 
 interface Question {
   id: string;
@@ -306,6 +305,15 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                 <span className="font-semibold">Add Question</span>
               </button>
               <button
+                onClick={() => window.open(`/admin/quiz-editor/${quizType}/create-article`, '_self')}
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-orange-600 to-orange-700 text-white rounded-lg hover:from-orange-700 hover:to-orange-800 transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span className="font-semibold">Add Article/Statistic</span>
+              </button>
+              <button
                 onClick={saveChanges}
                 disabled={isSaving}
                 className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
@@ -579,19 +587,6 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                       </div>
                     )}
 
-                    {/* Article Manager - Show for all questions with options */}
-                    {question.options && question.options.length > 0 && (
-                      <div className="mt-6">
-                        <ArticleManager
-                          questionId={question.id}
-                          questionPrompt={question.prompt}
-                          questionOptions={question.options}
-                          onArticleAdded={(article) => {
-                            console.log('Article added:', article);
-                          }}
-                        />
-                      </div>
-                    )}
                   </div>
                 ) : (
                   <div>
