@@ -294,6 +294,8 @@ export default function QuizManagement() {
           </div>
         </div>
 
+        {/* Spacing between sections */}
+        <div className="mb-8"></div>
 
         {/* Questions List */}
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden">
