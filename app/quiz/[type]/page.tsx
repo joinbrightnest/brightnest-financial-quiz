@@ -119,39 +119,40 @@ export default function QuizPage({ params }: QuizPageProps) {
     // Find the answer label for the article
     const answerLabel = currentQuestion?.options.find(opt => opt.value === value)?.label || value;
     
-    // Check if there's an article for this answer
-    try {
-      const response = await fetch('/api/quiz/articles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sessionId,
-          questionId: currentQuestion?.id || '',
-          answerValue: value,
-          answerLabel: answerLabel
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        
-        // If there are articles, show them immediately
-        if (data.articles && data.articles.length > 0) {
-          setLastAnswer({
-            questionId: currentQuestion?.id || '',
-            answerValue: value,
-            answerLabel: answerLabel
-          });
-          setShowArticle(true);
-          return;
-        }
-      }
-    } catch (error) {
-      console.error('Error checking for articles:', error);
-    }
+    // Immediately set up the answer for potential article display
+    const answerData = {
+      questionId: currentQuestion?.id || '',
+      answerValue: value,
+      answerLabel: answerLabel
+    };
     
-    // No articles found, go straight to next question
-    await handleNext(value);
+    // Check if there's an article for this answer (non-blocking)
+    fetch('/api/quiz/articles', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId,
+        questionId: answerData.questionId,
+        answerValue: value,
+        answerLabel: answerLabel
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      // If there are articles, show them
+      if (data.articles && data.articles.length > 0) {
+        setLastAnswer(answerData);
+        setShowArticle(true);
+      } else {
+        // No articles found, go straight to next question
+        handleNext(value);
+      }
+    })
+    .catch(error => {
+      console.error('Error checking for articles:', error);
+      // On error, go to next question
+      handleNext(value);
+    });
   };
 
   const handleBack = async () => {
@@ -237,16 +238,16 @@ export default function QuizPage({ params }: QuizPageProps) {
           router.push(`/results/${resultData.resultId}`);
         }
       } else {
-        // Move to next question - clear all states first
+        // Move to next question - set new question first, then clear states
+        setCurrentQuestion(data.nextQuestion);
+        setQuestionNumber(questionNumber + 1);
+        setCanGoBack(true); // Can go back from any question after the first
+        
+        // Clear states after setting new question
         setShowArticle(false);
         setLastAnswer(null);
         setSelectedValue(null);
         setTextValue("");
-        
-        // Then set new question
-        setCurrentQuestion(data.nextQuestion);
-        setQuestionNumber(questionNumber + 1);
-        setCanGoBack(true); // Can go back from any question after the first
       }
     } catch (err) {
       setError("Failed to save answer. Please try again.");
@@ -256,9 +257,7 @@ export default function QuizPage({ params }: QuizPageProps) {
   const handleArticleClose = async () => {
     if (isTransitioning) return; // Prevent multiple clicks
     
-    setShowArticle(false);
-    
-    // After closing article, advance to next question
+    // Advance to next question first, then hide article
     if (lastAnswer) {
       await handleNext(lastAnswer.answerValue);
     }
