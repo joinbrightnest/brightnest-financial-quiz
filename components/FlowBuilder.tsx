@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 interface FlowNode {
   id: string;
@@ -8,13 +8,15 @@ interface FlowNode {
   title: string;
   content: string;
   position: { x: number; y: number };
-  connections: string[];
+  options?: Array<{ label: string; value: string }>;
+  connections: { [key: string]: string }; // answer value -> target node id
 }
 
 interface FlowConnection {
   id: string;
   from: string;
   to: string;
+  fromAnswer?: string; // For answer-specific connections
   label?: string;
 }
 
@@ -39,8 +41,9 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
   const [nodes, setNodes] = useState<FlowNode[]>([]);
   const [connections, setConnections] = useState<FlowConnection[]>([]);
   const [draggedNode, setDraggedNode] = useState<string | null>(null);
-  const [connectingFrom, setConnectingFrom] = useState<string | null>(null);
+  const [connectingFrom, setConnectingFrom] = useState<{ nodeId: string; answerValue?: string } | null>(null);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [hoveredConnectionPoint, setHoveredConnectionPoint] = useState<string | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
 
   const addQuestionNode = (question: any) => {
@@ -49,8 +52,9 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
       type: 'question',
       title: question.prompt,
       content: question.prompt,
-      position: { x: 100, y: 100 + nodes.length * 150 },
-      connections: []
+      position: { x: 100, y: 100 + nodes.length * 200 },
+      options: question.options,
+      connections: {}
     };
     setNodes([...nodes, newNode]);
   };
@@ -61,8 +65,8 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
       type: 'article',
       title: article.title,
       content: article.content,
-      position: { x: 400, y: 100 + nodes.length * 150 },
-      connections: []
+      position: { x: 400, y: 100 + nodes.length * 200 },
+      connections: {}
     };
     setNodes([...nodes, newNode]);
   };
@@ -92,12 +96,14 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
   };
 
   const handleNodeClick = (nodeId: string) => {
-    if (connectingFrom && connectingFrom !== nodeId) {
+    if (connectingFrom && connectingFrom.nodeId !== nodeId) {
       // Create connection
       const newConnection: FlowConnection = {
-        id: `conn-${connectingFrom}-${nodeId}`,
-        from: connectingFrom,
-        to: nodeId
+        id: `conn-${connectingFrom.nodeId}-${nodeId}-${Date.now()}`,
+        from: connectingFrom.nodeId,
+        to: nodeId,
+        fromAnswer: connectingFrom.answerValue,
+        label: connectingFrom.answerValue
       };
       setConnections([...connections, newConnection]);
       setConnectingFrom(null);
@@ -106,8 +112,8 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
     }
   };
 
-  const startConnection = (nodeId: string) => {
-    setConnectingFrom(nodeId);
+  const startConnection = (nodeId: string, answerValue?: string) => {
+    setConnectingFrom({ nodeId, answerValue });
   };
 
   const deleteNode = (nodeId: string) => {
@@ -117,6 +123,25 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
 
   const deleteConnection = (connectionId: string) => {
     setConnections(connections.filter(c => c.id !== connectionId));
+  };
+
+  const getConnectionPoint = (nodeId: string, answerValue?: string) => {
+    const node = nodes.find(n => n.id === nodeId);
+    if (!node) return { x: 0, y: 0 };
+
+    const baseX = node.position.x + 200; // Right side of node
+    const baseY = node.position.y + 30; // Top of node
+
+    if (answerValue && node.options) {
+      // Find the index of this answer to position the connection point
+      const answerIndex = node.options.findIndex(opt => opt.value === answerValue);
+      return {
+        x: baseX,
+        y: baseY + (answerIndex * 25) + 12 // Space out connection points for each answer
+      };
+    }
+
+    return { x: baseX, y: baseY + 50 }; // Default connection point
   };
 
   return (
@@ -201,6 +226,18 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
             Clear All
           </button>
         </div>
+
+        {/* Instructions */}
+        <div className="mt-6 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <h4 className="text-sm font-medium text-yellow-800 mb-2">How to Connect:</h4>
+          <ul className="text-xs text-yellow-700 space-y-1">
+            <li>• Drag questions/articles to canvas</li>
+            <li>• Click arrow on right side to start connection</li>
+            <li>• For questions: click specific answer arrows</li>
+            <li>• Click target node to complete connection</li>
+            <li>• Each answer can lead to different outcomes</li>
+          </ul>
+        </div>
       </div>
 
       {/* Canvas */}
@@ -217,15 +254,8 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
         >
           {/* Connections */}
           {connections.map((connection) => {
-            const fromNode = nodes.find(n => n.id === connection.from);
-            const toNode = nodes.find(n => n.id === connection.to);
-            
-            if (!fromNode || !toNode) return null;
-
-            const fromX = fromNode.position.x + 100; // Center of node
-            const fromY = fromNode.position.y + 50;
-            const toX = toNode.position.x + 100;
-            const toY = toNode.position.y + 50;
+            const fromPoint = getConnectionPoint(connection.from, connection.fromAnswer);
+            const toPoint = getConnectionPoint(connection.to);
 
             return (
               <svg
@@ -235,7 +265,7 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
               >
                 <defs>
                   <marker
-                    id="arrowhead"
+                    id={`arrowhead-${connection.id}`}
                     markerWidth="10"
                     markerHeight="7"
                     refX="9"
@@ -244,20 +274,29 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
                   >
                     <polygon
                       points="0 0, 10 3.5, 0 7"
-                      fill="#6B7280"
+                      fill="#3B82F6"
                     />
                   </marker>
                 </defs>
                 <path
-                  d={`M ${fromX} ${fromY} Q ${(fromX + toX) / 2} ${fromY - 50} ${toX} ${toY}`}
-                  stroke="#6B7280"
+                  d={`M ${fromPoint.x} ${fromPoint.y} Q ${fromPoint.x + 100} ${fromPoint.y} ${toPoint.x - 50} ${toPoint.y} L ${toPoint.x} ${toPoint.y}`}
+                  stroke="#3B82F6"
                   strokeWidth="2"
-                  strokeDasharray="5,5"
                   fill="none"
-                  markerEnd="url(#arrowhead)"
-                  className="cursor-pointer hover:stroke-blue-500"
+                  markerEnd={`url(#arrowhead-${connection.id})`}
+                  className="cursor-pointer hover:stroke-blue-600"
                   onClick={() => deleteConnection(connection.id)}
                 />
+                {connection.label && (
+                  <text
+                    x={(fromPoint.x + toPoint.x) / 2}
+                    y={fromPoint.y - 10}
+                    textAnchor="middle"
+                    className="text-xs fill-blue-600 font-medium pointer-events-none"
+                  >
+                    {connection.label}
+                  </text>
+                )}
               </svg>
             );
           })}
@@ -266,12 +305,14 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
           {nodes.map((node) => (
             <div
               key={node.id}
-              className={`absolute w-48 p-4 rounded-lg border-2 cursor-move ${
+              className={`absolute w-64 p-4 rounded-lg border-2 cursor-move ${
                 node.type === 'question'
-                  ? 'bg-blue-100 border-blue-300'
-                  : 'bg-green-100 border-green-300'
+                  ? 'bg-blue-50 border-blue-300'
+                  : 'bg-green-50 border-green-300'
               } ${
                 selectedNode === node.id ? 'ring-2 ring-blue-500' : ''
+              } ${
+                connectingFrom?.nodeId === node.id ? 'ring-2 ring-green-500' : ''
               }`}
               style={{
                 left: node.position.x,
@@ -294,29 +335,60 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
                     e.stopPropagation();
                     deleteNode(node.id);
                   }}
-                  className="text-red-500 hover:text-red-700"
+                  className="text-red-500 hover:text-red-700 text-lg"
                 >
                   ×
                 </button>
               </div>
               
-              <div className="text-sm font-medium text-gray-900 mb-1">
-                {node.title.length > 30 ? `${node.title.substring(0, 30)}...` : node.title}
-              </div>
-              
-              <div className="text-xs text-gray-600 mb-2">
-                {node.content.length > 50 ? `${node.content.substring(0, 50)}...` : node.content}
+              <div className="text-sm font-medium text-gray-900 mb-2">
+                {node.title.length > 40 ? `${node.title.substring(0, 40)}...` : node.title}
               </div>
 
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  startConnection(node.id);
-                }}
-                className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded hover:bg-gray-300"
-              >
-                Connect
-              </button>
+              {/* Question Options */}
+              {node.type === 'question' && node.options && (
+                <div className="space-y-1 mb-3">
+                  {node.options.map((option, index) => (
+                    <div key={option.value} className="flex items-center justify-between">
+                      <span className="text-xs text-gray-600">{option.label}</span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startConnection(node.id, option.value);
+                        }}
+                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center text-xs ${
+                          connectingFrom?.nodeId === node.id && connectingFrom?.answerValue === option.value
+                            ? 'bg-green-500 border-green-500 text-white'
+                            : 'bg-white border-gray-300 hover:border-blue-500'
+                        }`}
+                        title={`Connect "${option.label}" to another element`}
+                      >
+                        →
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Article Connection Point */}
+              {node.type === 'article' && (
+                <div className="flex justify-end">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      startConnection(node.id);
+                    }}
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs ${
+                      connectingFrom?.nodeId === node.id
+                        ? 'bg-green-500 border-green-500 text-white'
+                        : 'bg-white border-gray-300 hover:border-blue-500'
+                    }`}
+                    title="Connect this article to another element"
+                  >
+                    →
+                  </button>
+                </div>
+              )}
             </div>
           ))}
 
@@ -331,7 +403,19 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Build Your Quiz Flow</h3>
                 <p className="text-gray-600 mb-4">Drag questions and articles from the sidebar to create your flow</p>
-                <p className="text-sm text-gray-500">Click "Connect" to link elements with dotted lines</p>
+                <p className="text-sm text-gray-500">Click arrows to connect elements with answer-specific routing</p>
+              </div>
+            </div>
+          )}
+
+          {/* Connection Mode Indicator */}
+          {connectingFrom && (
+            <div className="absolute top-4 right-4 bg-green-100 border border-green-300 rounded-lg p-3">
+              <div className="text-sm font-medium text-green-800">
+                Connecting from: {connectingFrom.answerValue || 'General'}
+              </div>
+              <div className="text-xs text-green-600">
+                Click a target node to complete the connection
               </div>
             </div>
           )}
