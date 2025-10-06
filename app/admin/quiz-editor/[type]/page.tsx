@@ -1010,28 +1010,6 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Article Type (Optional)
-                </label>
-                <select
-                  value={editingArticle.category}
-                  onChange={(e) => setEditingArticle({...editingArticle, category: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                >
-                  <option value="general">General Financial Advice</option>
-                  <option value="debt">Debt Management</option>
-                  <option value="savings">Savings & Emergency Funds</option>
-                  <option value="investing">Investing & Growth</option>
-                  <option value="spending">Spending & Budgeting</option>
-                  <option value="marriage">Marriage & Relationships</option>
-                  <option value="health">Health & Wellness</option>
-                  <option value="career">Career & Income</option>
-                </select>
-                <p className="text-xs text-gray-500 mt-1">
-                  This helps organize your articles by topic. It doesn't affect how articles appear in the quiz.
-                </p>
-              </div>
 
               {/* Action Buttons */}
               <div className="flex space-x-3 pt-4">
@@ -1043,8 +1021,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                           title: editingArticle.title,
-                          content: editingArticle.content,
-                          category: editingArticle.category
+                          content: editingArticle.content
                         })
                       });
 
