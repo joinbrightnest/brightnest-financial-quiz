@@ -102,28 +102,28 @@ export default function QuizEditor({ params }: QuizEditorProps) {
 
   const fetchArticles = async () => {
     try {
-      // Load articles from localStorage (simple article system)
-      const storedArticles = localStorage.getItem('brightnest_articles');
-      console.log('Loading articles from localStorage:', storedArticles);
+      console.log('Loading articles from database for quiz type:', quizType);
       
-      if (storedArticles) {
-        const articlesData = JSON.parse(storedArticles);
-        console.log('Parsed articles data:', articlesData);
+      // Load articles from database
+      const response = await fetch(`/api/admin/articles?quizType=${quizType}`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Articles from database:', data.articles);
         
-        const articlesList = Object.values(articlesData).map((article: any, index: number) => ({
+        const articlesList = data.articles.map((article: any, index: number) => ({
           id: article.id,
           title: article.title,
           content: article.content,
           category: article.category,
           order: questions.length + index + 1, // Place after questions
-          triggerQuestionId: article.triggerQuestionId,
-          triggerAnswerValue: article.triggerAnswerValue
+          triggerQuestionId: article.triggers?.[0]?.questionId,
+          triggerAnswerValue: article.triggers?.[0]?.optionValue
         }));
         
         console.log('Setting articles list:', articlesList);
         setArticles(articlesList);
       } else {
-        console.log('No articles found in localStorage');
+        console.log('Failed to load articles from database');
         setArticles([]);
       }
     } catch (error) {
@@ -276,21 +276,9 @@ export default function QuizEditor({ params }: QuizEditorProps) {
       console.log("Save response:", responseData);
 
       if (response.ok) {
-        // Also save articles to localStorage to ensure they persist
-        const storedArticles = localStorage.getItem('brightnest_articles');
-        console.log("Articles before refresh:", storedArticles);
-        if (storedArticles) {
-          console.log("Articles preserved in localStorage:", Object.keys(JSON.parse(storedArticles)).length);
-        }
-        
         alert("Questions and articles saved successfully!");
         await fetchQuestions(); // Refresh to get updated data
-        
-        // Check articles after refresh
-        const articlesAfterRefresh = localStorage.getItem('brightnest_articles');
-        console.log("Articles after refresh:", articlesAfterRefresh);
-        
-        await fetchArticles(); // Refresh articles
+        await fetchArticles(); // Refresh articles from database
       } else {
         console.error("Save failed:", responseData);
         alert(`Failed to save questions: ${responseData.error || 'Unknown error'}`);

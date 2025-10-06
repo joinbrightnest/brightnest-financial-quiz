@@ -52,26 +52,40 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { title, content, type, category, tags, triggers } = body;
 
-    // For now, just return success without saving to database
-    // This allows the system to work while we set up the database
     console.log('Article creation request:', { title, content, type, category, tags, triggers });
 
-    // Simulate successful creation
-    const mockArticle = {
-      id: `article-${Date.now()}`,
-      title,
-      content,
-      type,
-      category,
-      tags: tags || [],
-      triggers: triggers || [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
+    // Create article in database
+    const article = await prisma.article.create({
+      data: {
+        title,
+        content,
+        type: type || 'ai_generated',
+        category: category || 'general',
+        tags: tags || [],
+        triggers: {
+          create: triggers?.map((trigger: any) => ({
+            questionId: trigger.questionId,
+            optionValue: trigger.optionValue,
+            condition: trigger.condition || {},
+            priority: trigger.priority || 0,
+            isActive: trigger.isActive !== false
+          })) || []
+        }
+      },
+      include: {
+        triggers: {
+          include: {
+            question: {
+              select: { prompt: true }
+            }
+          }
+        }
+      }
+    });
 
     return NextResponse.json({ 
-      article: mockArticle,
-      message: 'Article saved successfully (mock save - database not yet configured)'
+      article,
+      message: 'Article saved successfully to database'
     });
   } catch (error) {
     console.error('Error creating article:', error);

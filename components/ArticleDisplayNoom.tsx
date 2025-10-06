@@ -40,47 +40,7 @@ export default function ArticleDisplayNoom({
     try {
       console.log('Loading articles for:', { questionId, answerValue, answerLabel });
       
-      // First, check localStorage for articles with if/then logic
-      const storedArticles = localStorage.getItem('brightnest_articles');
-      console.log('Stored articles in localStorage:', storedArticles);
-      
-      if (storedArticles) {
-        const articlesData = JSON.parse(storedArticles);
-        console.log('Parsed articles data:', articlesData);
-        const matchingArticles = [];
-
-        // Find articles that match the if/then logic
-        for (const [articleId, article] of Object.entries(articlesData)) {
-          const articleData = article as any;
-          console.log('Checking article:', articleData, 'against answerValue:', answerValue);
-          
-          // Check if this article is triggered by this answer value
-          // We match by answer value since question IDs might be different between localStorage and database
-          if (articleData.triggerAnswerValue === answerValue) {
-            console.log('Found matching article:', articleData);
-            matchingArticles.push({
-              id: articleData.id,
-              title: articleData.title,
-              content: articleData.content,
-              type: 'editor',
-              category: articleData.category,
-              keyPoints: [],
-              sources: []
-            });
-          }
-        }
-
-        console.log('Matching articles found:', matchingArticles);
-
-        if (matchingArticles.length > 0) {
-          setArticles(matchingArticles);
-          setSelectedArticle(matchingArticles[0]);
-          setIsLoading(false);
-          return;
-        }
-      }
-
-      // Fallback to API if no localStorage articles match
+      // Load articles from database via API
       const response = await fetch('/api/quiz/articles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -94,15 +54,20 @@ export default function ArticleDisplayNoom({
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Articles from API:', data.articles);
         setArticles(data.articles || []);
         
         // Auto-select the first article if available
         if (data.articles && data.articles.length > 0) {
           setSelectedArticle(data.articles[0]);
         }
+      } else {
+        console.error('Failed to load articles from API');
+        setArticles([]);
       }
     } catch (error) {
       console.error('Failed to load articles:', error);
+      setArticles([]);
     } finally {
       setIsLoading(false);
     }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 import { simpleArticleSystem } from "@/lib/simple-articles";
 
 export async function POST(request: NextRequest) {
@@ -13,11 +14,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // First, try to get articles from the quiz editor system (if/then logic)
-    const articlesFromEditor = await getArticlesFromEditor(questionId, answerValue);
+    // First, try to get articles from the database (if/then logic)
+    const articlesFromDatabase = await getArticlesFromDatabase(questionId, answerValue);
     
-    if (articlesFromEditor.length > 0) {
-      return NextResponse.json({ articles: articlesFromEditor });
+    if (articlesFromDatabase.length > 0) {
+      return NextResponse.json({ articles: articlesFromDatabase });
     }
 
     // Fallback to simple article system
@@ -51,15 +52,65 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function getArticlesFromEditor(questionId: string, answerValue: string) {
+async function getArticlesFromDatabase(questionId: string, answerValue: string) {
   try {
-    // Since we can't access localStorage on server-side, we'll use a different approach
-    // For now, we'll return empty and let the client-side handle it
-    // This will be properly implemented when we have a database
     console.log(`Looking for articles triggered by question ${questionId} with answer ${answerValue}`);
-    return [];
+    
+    // Find articles that are triggered by this question and answer
+    const articles = await prisma.article.findMany({
+      where: {
+        isActive: true,
+        triggers: {
+          some: {
+            OR: [
+              {
+                questionId: questionId,
+                optionValue: answerValue,
+                isActive: true
+              },
+              {
+                optionValue: answerValue,
+                isActive: true
+              }
+            ]
+          }
+        }
+      },
+      include: {
+        triggers: {
+          where: {
+            isActive: true,
+            OR: [
+              {
+                questionId: questionId,
+                optionValue: answerValue
+              },
+              {
+                optionValue: answerValue
+              }
+            ]
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    console.log(`Found ${articles.length} articles for question ${questionId} with answer ${answerValue}`);
+
+    // Format articles for the frontend
+    return articles.map(article => ({
+      id: article.id,
+      title: article.title,
+      content: article.content,
+      type: article.type,
+      category: article.category,
+      keyPoints: Array.isArray(article.tags) ? article.tags : [],
+      sources: []
+    }));
   } catch (error) {
-    console.error('Error getting articles from editor:', error);
+    console.error('Error getting articles from database:', error);
     return [];
   }
 }

@@ -136,34 +136,37 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
 
     setIsSaving(true);
     try {
-      console.log('Saving generated article:', generatedArticle);
+      console.log('Saving generated article to database:', generatedArticle);
       
-      // Save to localStorage (quiz editor system)
-      const articleId = `article-${Date.now()}`;
-      const newArticle = {
-        id: articleId,
-        title: generatedArticle.title,
-        content: generatedArticle.content,
-        category: 'general', // Default category, not used for if/then logic
-        triggerQuestionId: useManualInput ? undefined : selectedQuestion,
-        triggerAnswerValue: useManualInput ? undefined : selectedOption,
-        order: 999, // Will be set by quiz editor
-        createdAt: new Date().toISOString()
-      };
+      // Save to database
+      const response = await fetch('/api/admin/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: generatedArticle.title,
+          content: generatedArticle.content,
+          type: 'ai_generated',
+          category: 'general',
+          tags: generatedArticle.keyPoints || [],
+          triggers: useManualInput ? [] : [{
+            questionId: selectedQuestion,
+            optionValue: selectedOption,
+            priority: 5,
+            isActive: true
+          }]
+        })
+      });
 
-      // Get existing articles from localStorage
-      const existingArticles = localStorage.getItem('brightnest_articles');
-      const articles = existingArticles ? JSON.parse(existingArticles) : {};
-      
-      // Add new article
-      articles[articleId] = newArticle;
-      
-      // Save back to localStorage
-      localStorage.setItem('brightnest_articles', JSON.stringify(articles));
-      
-      console.log('Article saved to localStorage:', newArticle);
-      alert('Article saved successfully! It will appear in the quiz editor.');
-      router.push(`/admin/quiz-editor/${quizType}`);
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Article saved to database:', result);
+        alert('Article saved successfully to database! It will appear in the quiz editor.');
+        router.push(`/admin/quiz-editor/${quizType}`);
+      } else {
+        const error = await response.text();
+        console.error('Save error:', error);
+        alert('Failed to save article. Please try again.');
+      }
       
     } catch (error) {
       console.error('Failed to save article:', error);
@@ -181,34 +184,32 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
 
     setIsSaving(true);
     try {
-      console.log('Saving manual article:', editableArticle);
+      console.log('Saving manual article to database:', editableArticle);
       
-      // Save to localStorage (quiz editor system)
-      const articleId = `article-${Date.now()}`;
-      const newArticle = {
-        id: articleId,
-        title: editableArticle.title,
-        content: editableArticle.content,
-        category: 'general', // Default category, not used for if/then logic
-        triggerQuestionId: undefined, // Manual articles don't have triggers
-        triggerAnswerValue: undefined,
-        order: 999, // Will be set by quiz editor
-        createdAt: new Date().toISOString()
-      };
+      // Save to database
+      const response = await fetch('/api/admin/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: editableArticle.title,
+          content: editableArticle.content,
+          type: 'manual',
+          category: 'general',
+          tags: editableArticle.keyPoints.filter(point => point.trim() !== ''),
+          triggers: [] // Manual articles don't have triggers
+        })
+      });
 
-      // Get existing articles from localStorage
-      const existingArticles = localStorage.getItem('brightnest_articles');
-      const articles = existingArticles ? JSON.parse(existingArticles) : {};
-      
-      // Add new article
-      articles[articleId] = newArticle;
-      
-      // Save back to localStorage
-      localStorage.setItem('brightnest_articles', JSON.stringify(articles));
-      
-      console.log('Manual article saved to localStorage:', newArticle);
-      alert('Article saved successfully! It will appear in the quiz editor.');
-      router.push(`/admin/quiz-editor/${quizType}`);
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Manual article saved to database:', result);
+        alert('Article saved successfully to database! It will appear in the quiz editor.');
+        router.push(`/admin/quiz-editor/${quizType}`);
+      } else {
+        const error = await response.text();
+        console.error('Save error:', error);
+        alert('Failed to save article. Please try again.');
+      }
     } catch (error) {
       console.error('Failed to save manual article:', error);
       alert('Failed to save article. Please check your connection and try again.');
