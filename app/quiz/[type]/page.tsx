@@ -116,15 +116,39 @@ export default function QuizPage({ params }: QuizPageProps) {
     // Find the answer label for the article
     const answerLabel = currentQuestion?.options.find(opt => opt.value === value)?.label || value;
     
-    // Set the last answer for article display
-    setLastAnswer({
-      questionId: currentQuestion?.id || '',
-      answerValue: value,
-      answerLabel: answerLabel
-    });
+    // Check if there's an article for this answer
+    try {
+      const response = await fetch('/api/quiz/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId,
+          questionId: currentQuestion?.id || '',
+          answerValue: value,
+          answerLabel: answerLabel
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        // If there are articles, show them
+        if (data.articles && data.articles.length > 0) {
+          setLastAnswer({
+            questionId: currentQuestion?.id || '',
+            answerValue: value,
+            answerLabel: answerLabel
+          });
+          setShowArticle(true);
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('Error checking for articles:', error);
+    }
     
-    // Show article first, then advance to next question
-    setShowArticle(true);
+    // No articles found, go straight to next question
+    await handleNext(value);
   };
 
   const handleBack = async () => {
