@@ -186,6 +186,9 @@ export default function QuizEditor({ params }: QuizEditorProps) {
   const saveChanges = async () => {
     try {
       setIsSaving(true);
+      
+      console.log("Saving questions:", { quizType, questionsCount: questions.length });
+      
       const response = await fetch("/api/admin/save-quiz-questions", {
         method: "POST",
         headers: {
@@ -197,15 +200,19 @@ export default function QuizEditor({ params }: QuizEditorProps) {
         }),
       });
 
+      const responseData = await response.json();
+      console.log("Save response:", responseData);
+
       if (response.ok) {
         alert("Questions saved successfully!");
         await fetchQuestions(); // Refresh to get updated data
       } else {
-        alert("Failed to save questions");
+        console.error("Save failed:", responseData);
+        alert(`Failed to save questions: ${responseData.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error("Error saving questions:", error);
-      alert("Error saving questions");
+      alert(`Error saving questions: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsSaving(false);
     }
