@@ -271,9 +271,11 @@ export default function AdminDashboard() {
                   className="border border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="all">All Quizzes</option>
-                  <option value="financial-profile">Financial Profile</option>
-                  <option value="health-finance">Health Finance</option>
-                  <option value="marriage-finance">Marriage Finance</option>
+                  {stats?.quizTypes?.map((quizType: {name: string, displayName: string, description: string, questionCount: number}) => (
+                    <option key={quizType.name} value={quizType.name}>
+                      {quizType.displayName}
+                    </option>
+                  ))}
                 </select>
               </div>
 

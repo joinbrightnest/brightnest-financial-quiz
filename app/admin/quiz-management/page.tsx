@@ -172,135 +172,126 @@ export default function QuizManagement() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-        {/* Quiz Types Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
-          {/* Create New Quiz Card */}
-          <div className="group relative">
-            <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 border-dashed border-gray-300">
-              {/* Icon */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-500 rounded-xl flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                </div>
-                <div className="px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">
-                  New
-                </div>
+        {/* Create New Quiz Section */}
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-gradient-to-br from-gray-400 to-gray-500 rounded-xl flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
               </div>
-
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Create New Quiz</h3>
-              <p className="text-gray-600 mb-6 leading-relaxed">Design a custom quiz from scratch with your own questions and branding</p>
-
-              {/* Action Buttons */}
-              <div className="space-y-3">
-                <button
-                  onClick={() => window.open('/admin/quiz-editor/new-quiz', '_self')}
-                  className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl shadow-lg"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  <span className="font-semibold">Create Quiz</span>
-                </button>
-                
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    disabled
-                    className="flex items-center justify-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium bg-gray-50 text-gray-400 cursor-not-allowed"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                    <span>View</span>
-                  </button>
-                  
-                  <button
-                    disabled
-                    className="flex items-center justify-center space-x-2 px-3 py-2 bg-gray-50 text-gray-400 rounded-lg text-sm font-medium cursor-not-allowed"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                    <span>Reset</span>
-                  </button>
-                </div>
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">Create New Quiz</h3>
+                <p className="text-sm text-gray-600">Design a custom quiz from scratch</p>
               </div>
             </div>
+            <button
+              onClick={() => window.open('/admin/quiz-editor/new-quiz', '_self')}
+              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-lg shadow-lg"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              <span className="font-semibold">Create Quiz</span>
+            </button>
           </div>
+        </div>
 
-          {allQuizTypes.map((quizType, index) => (
-            <div key={quizType.name} className="group relative">
-              <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8">
-                {/* Icon */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                    index === 0 ? 'bg-gradient-to-br from-blue-500 to-blue-600' :
-                    index === 1 ? 'bg-gradient-to-br from-emerald-500 to-emerald-600' :
-                    'bg-gradient-to-br from-purple-500 to-purple-600'
-                  }`}>
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                  </div>
-                  <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    index === 0 ? 'bg-blue-100 text-blue-800' :
-                    index === 1 ? 'bg-emerald-100 text-emerald-800' :
-                    'bg-purple-100 text-purple-800'
-                  }`}>
-                    {quizType.questionCount} questions
-                  </div>
-                </div>
-
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{quizType.displayName}</h3>
-                <p className="text-gray-600 mb-6 leading-relaxed">{quizType.description}</p>
-
-                {/* Action Buttons */}
-                <div className="space-y-3">
-                  <button
-                    onClick={() => window.open(`/admin/quiz-editor/${quizType.name}`, '_self')}
-                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl shadow-lg"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                    <span className="font-semibold">Customize Quiz</span>
-                  </button>
-                  
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      onClick={() => {
-                        handleQuizTypeChange(quizType.name);
-                        fetchQuizData();
-                      }}
-                      className={`flex items-center justify-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium ${
-                        selectedQuizType === quizType.name
-                          ? "bg-gray-900 text-white shadow-lg"
-                          : "bg-gray-100 text-gray-700"
-                      }`}
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                      </svg>
-                      <span>View</span>
-                    </button>
-                    
-                    <button
-                      onClick={() => resetQuizType(quizType.name)}
-                      className="flex items-center justify-center space-x-2 px-3 py-2 bg-red-50 text-red-700 rounded-lg text-sm font-medium"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                      <span>Reset</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+        {/* Quiz Types Table */}
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden">
+          <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200/50">
+            <h3 className="text-lg font-bold text-gray-900">All Quizzes ({allQuizTypes.length})</h3>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50/50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quiz</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Questions</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Description</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200/50">
+                {allQuizTypes.map((quizType, index) => (
+                  <tr key={quizType.name} className={`${selectedQuizType === quizType.name ? 'bg-blue-50/50' : 'hover:bg-gray-50/50'}`}>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                          index % 4 === 0 ? 'bg-gradient-to-br from-blue-500 to-blue-600' :
+                          index % 4 === 1 ? 'bg-gradient-to-br from-emerald-500 to-emerald-600' :
+                          index % 4 === 2 ? 'bg-gradient-to-br from-purple-500 to-purple-600' :
+                          'bg-gradient-to-br from-orange-500 to-orange-600'
+                        }`}>
+                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <div className="text-sm font-semibold text-gray-900">{quizType.displayName}</div>
+                          <div className="text-xs text-gray-500">{quizType.name}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                        index % 4 === 0 ? 'bg-blue-100 text-blue-800' :
+                        index % 4 === 1 ? 'bg-emerald-100 text-emerald-800' :
+                        index % 4 === 2 ? 'bg-purple-100 text-purple-800' :
+                        'bg-orange-100 text-orange-800'
+                      }`}>
+                        {quizType.questionCount} questions
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm text-gray-600 max-w-xs truncate">{quizType.description}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => window.open(`/admin/quiz-editor/${quizType.name}`, '_self')}
+                          className="flex items-center space-x-1 px-3 py-1.5 bg-blue-600 text-white rounded-md text-xs font-semibold"
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            handleQuizTypeChange(quizType.name);
+                            fetchQuizData();
+                          }}
+                          className={`flex items-center space-x-1 px-3 py-1.5 rounded-md text-xs font-semibold ${
+                            selectedQuizType === quizType.name
+                              ? "bg-gray-900 text-white"
+                              : "bg-gray-100 text-gray-700"
+                          }`}
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          <span>View</span>
+                        </button>
+                        <button
+                          onClick={() => resetQuizType(quizType.name)}
+                          className="flex items-center space-x-1 px-3 py-1.5 bg-red-50 text-red-700 rounded-md text-xs font-semibold"
+                        >
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          <span>Reset</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
 
