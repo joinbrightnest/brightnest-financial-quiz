@@ -46,6 +46,8 @@ export default function QuizEditor({ params }: QuizEditorProps) {
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [quizLink, setQuizLink] = useState<string>('');
   const [isEditingLink, setIsEditingLink] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  const [showArticlePopup, setShowArticlePopup] = useState(false);
 
   // Handle async params
   useEffect(() => {
@@ -669,72 +671,70 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                 </div>
               </div>
 
-              {/* Answer → Article Mapping */}
-              {question.type === "single" && (
-                <div className="bg-green-50/50 rounded-xl p-6 border border-green-200/50">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-2">
-                      <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      <span className="text-sm font-semibold text-green-700">Answer → Article Mapping</span>
+              {/* Answer → Article Mapping - Only show if articles exist */}
+              {question.type === "single" && (() => {
+                const articlesForQuestion = articles.filter(a => a.triggerQuestionId === question.id);
+                if (articlesForQuestion.length === 0) return null;
+                
+                return (
+                  <div className="bg-green-50/50 rounded-xl p-4 border border-green-200/50">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center space-x-2">
+                        <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span className="text-sm font-semibold text-green-700">Answer → Article Mapping</span>
+                        <span className="text-xs text-gray-500">({articlesForQuestion.length} articles)</span>
+                      </div>
+                      <button
+                        onClick={() => window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank')}
+                        className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                      >
+                        + Add
+                      </button>
                     </div>
-                    <button
-                      onClick={() => window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank')}
-                      className="px-3 py-1 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 transition-colors"
-                    >
-                      + Add Article
-                    </button>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    {question.options.map((option, optIndex) => {
-                      // Find article for this answer
-                      const articleForAnswer = articles.find(a => 
-                        a.triggerQuestionId === question.id && a.triggerAnswerValue === option.value
-                      );
-                      
-                      return (
-                        <div key={optIndex} className="flex items-center justify-between bg-white rounded-lg p-3 border border-green-200">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                              <span className="text-sm font-semibold text-blue-800">{optIndex + 1}</span>
+                    
+                    <div className="space-y-1">
+                      {question.options.map((option, optIndex) => {
+                        // Find article for this answer
+                        const articleForAnswer = articles.find(a => 
+                          a.triggerQuestionId === question.id && a.triggerAnswerValue === option.value
+                        );
+                        
+                        if (!articleForAnswer) return null;
+                        
+                        return (
+                          <div key={optIndex} className="flex items-center justify-between bg-white rounded p-2 border border-green-200">
+                            <div className="flex items-center space-x-2">
+                              <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                                <span className="text-xs font-semibold text-blue-800">{optIndex + 1}</span>
+                              </div>
+                              <div>
+                                <p className="text-xs font-medium text-gray-900">
+                                  {option.label}
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                  → {articleForAnswer.title}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-sm font-medium text-gray-900">
-                                {option.label}
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                {articleForAnswer ? articleForAnswer.title : 'No article assigned'}
-                              </p>
-                            </div>
+                            <button
+                              onClick={() => {
+                                // Open article popup
+                                setSelectedArticle(articleForAnswer);
+                                setShowArticlePopup(true);
+                              }}
+                              className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                            >
+                              View
+                            </button>
                           </div>
-                          <div className="flex items-center space-x-2">
-                            {articleForAnswer ? (
-                              <button
-                                onClick={() => {
-                                  // Open full article in modal
-                                  alert(`Full Article: ${articleForAnswer.title}\n\n${articleForAnswer.content}`);
-                                }}
-                                className="px-3 py-1 bg-green-600 text-white text-xs rounded-lg hover:bg-green-700 transition-colors"
-                              >
-                                Quick View
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank')}
-                                className="px-3 py-1 bg-gray-500 text-white text-xs rounded-lg hover:bg-gray-600 transition-colors"
-                              >
-                                Add Article
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
           ))}
         </div>
@@ -760,6 +760,56 @@ export default function QuizEditor({ params }: QuizEditorProps) {
           </div>
         )}
       </div>
+
+      {/* Article Popup */}
+      {showArticlePopup && selectedArticle && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full mx-4 max-h-[80vh] overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold">{selectedArticle.title}</h2>
+                  <p className="text-green-100 text-sm mt-1">Article Preview</p>
+                </div>
+                <button
+                  onClick={() => setShowArticlePopup(false)}
+                  className="text-white hover:text-green-200 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 overflow-y-auto max-h-[60vh]">
+              <div className="prose prose-lg max-w-none">
+                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {selectedArticle.content}
+                </p>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="bg-gray-50 px-6 py-4 border-t">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm text-gray-600">This is how the article will appear to users</span>
+                </div>
+                <button
+                  onClick={() => setShowArticlePopup(false)}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
