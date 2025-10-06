@@ -20,6 +20,9 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedQuestion, setSelectedQuestion] = useState<string>('');
   const [selectedOption, setSelectedOption] = useState<string>('');
+  const [manualQuestion, setManualQuestion] = useState<string>('');
+  const [manualAnswer, setManualAnswer] = useState<string>('');
+  const [useManualInput, setUseManualInput] = useState<boolean>(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedArticle, setGeneratedArticle] = useState<{
     title: string;
@@ -89,8 +92,35 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
     }
   };
 
+  const handleGenerateManualArticle = async () => {
+    if (!manualQuestion || !manualAnswer) return;
+
+    setIsGenerating(true);
+    try {
+      const response = await fetch('/api/admin/generate-article', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          questionPrompt: manualQuestion,
+          answerValue: manualAnswer,
+          answerLabel: manualAnswer,
+          category: 'general'
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setGeneratedArticle(data.article);
+      }
+    } catch (error) {
+      console.error('Failed to generate article:', error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   const handleSaveArticle = async () => {
-    if (!generatedArticle || !selectedQuestion || !selectedOption) return;
+    if (!generatedArticle) return;
 
     setIsSaving(true);
     try {
@@ -103,7 +133,7 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
           type: 'ai_generated',
           category: generatedArticle.category,
           tags: generatedArticle.tags || [],
-          triggers: [{
+          triggers: useManualInput ? [] : [{
             questionId: selectedQuestion,
             optionValue: selectedOption,
             priority: 5,
@@ -148,7 +178,38 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">Article Configuration</h2>
               
-              {/* Question Selection */}
+              {/* Input Mode Toggle */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Input Mode
+                </label>
+                <div className="flex space-x-4">
+                  <button
+                    onClick={() => setUseManualInput(false)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      !useManualInput
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Select from Quiz
+                  </button>
+                  <button
+                    onClick={() => setUseManualInput(true)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      useManualInput
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    Write Manually
+                  </button>
+                </div>
+              </div>
+
+              {!useManualInput ? (
+                <>
+                  {/* Question Selection */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Select Question
@@ -160,11 +221,11 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
                     setSelectedOption('');
                     setGeneratedArticle(null);
                   }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                 >
                   <option value="">Choose a question...</option>
                   {questions.map((question) => (
-                    <option key={question.id} value={question.id}>
+                    <option key={question.id} value={question.id} className="text-gray-900">
                       {question.prompt}
                     </option>
                   ))}
@@ -183,11 +244,11 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
                       setSelectedOption(e.target.value);
                       setGeneratedArticle(null);
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                   >
                     <option value="">Choose an answer option...</option>
                     {selectedQuestionData.options.map((option) => (
-                      <option key={option.value} value={option.value}>
+                      <option key={option.value} value={option.value} className="text-gray-900">
                         {option.label}
                       </option>
                     ))}
@@ -195,15 +256,57 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
                 </div>
               )}
 
-              {/* Generate Button */}
-              {selectedQuestion && selectedOption && (
-                <button
-                  onClick={handleGenerateArticle}
-                  disabled={isGenerating}
-                  className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-                >
-                  {isGenerating ? "Generating Article..." : "Generate AI Article"}
-                </button>
+                  {/* Generate Button */}
+                  {selectedQuestion && selectedOption && (
+                    <button
+                      onClick={handleGenerateArticle}
+                      disabled={isGenerating}
+                      className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                    >
+                      {isGenerating ? "Generating Article..." : "Generate AI Article"}
+                    </button>
+                  )}
+                </>
+              ) : (
+                <>
+                  {/* Manual Input Fields */}
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Question Text
+                    </label>
+                    <input
+                      type="text"
+                      value={manualQuestion}
+                      onChange={(e) => setManualQuestion(e.target.value)}
+                      placeholder="Enter your question here..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                    />
+                  </div>
+
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Answer Text
+                    </label>
+                    <input
+                      type="text"
+                      value={manualAnswer}
+                      onChange={(e) => setManualAnswer(e.target.value)}
+                      placeholder="Enter the answer here..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                    />
+                  </div>
+
+                  {/* Generate Button for Manual Input */}
+                  {manualQuestion && manualAnswer && (
+                    <button
+                      onClick={() => handleGenerateManualArticle()}
+                      disabled={isGenerating}
+                      className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                    >
+                      {isGenerating ? "Generating Article..." : "Generate AI Article"}
+                    </button>
+                  )}
+                </>
               )}
             </div>
 
