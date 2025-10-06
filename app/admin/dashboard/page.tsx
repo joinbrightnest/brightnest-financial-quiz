@@ -14,7 +14,6 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import ArticleTestingPanel from '@/components/ArticleTestingPanel';
 
 ChartJS.register(
   CategoryScale,
@@ -871,10 +870,6 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Article Testing Panel */}
-              <div className="mb-6">
-                <ArticleTestingPanel />
-              </div>
 
               {/* Lead List */}
               <div className="bg-white rounded-lg shadow-lg p-6">
