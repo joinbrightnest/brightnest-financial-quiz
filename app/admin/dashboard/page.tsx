@@ -92,7 +92,8 @@ export default function AdminDashboard() {
   const [showComparison, setShowComparison] = useState(false);
 
   const fetchStats = useCallback(async (isTimeframeChange = false) => {
-    if (!isTimeframeChange) {
+    // Only show loading state on initial load, not on tab switches or timeframe changes
+    if (!isTimeframeChange && !stats) {
       setIsLoading(true);
     }
     setError(null);
@@ -114,7 +115,8 @@ export default function AdminDashboard() {
         } catch {
           setError("Failed to load admin stats");
         } finally {
-      if (!isTimeframeChange) {
+      // Only hide loading state if we were actually showing it
+      if (!isTimeframeChange && !stats) {
         setIsLoading(false);
       }
     }
@@ -123,6 +125,19 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchStats(true); // Pass true to indicate this is a timeframe change
   }, [fetchStats]);
+
+  // Handle page visibility changes to prevent unnecessary re-fetching
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      // Only refetch if the page becomes visible and we don't have stats yet
+      if (!document.hidden && !stats) {
+        fetchStats(true);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [stats, fetchStats]);
 
 
   const exportLeads = () => {
@@ -342,9 +357,9 @@ export default function AdminDashboard() {
 
           {/* Stats Cards */}
           {isLoading && !stats ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading stats...</p>
+            <div className="text-center py-8 opacity-50 transition-opacity duration-300">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
+              <p className="text-sm text-gray-500">Loading stats...</p>
             </div>
           ) : error ? (
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
