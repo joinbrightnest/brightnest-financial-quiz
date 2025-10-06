@@ -173,10 +173,16 @@ export default function QuizManagement() {
               <p className="text-2xl font-bold text-blue-600 mt-2">{quizType.questionCount} questions</p>
               <div className="mt-4 space-y-2">
                 <button
+                  onClick={() => window.open(`/admin/quiz-editor/${quizType.name}`, '_blank')}
+                  className="w-full px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  Edit Questions
+                </button>
+                <button
                   onClick={() => handleQuizTypeChange(quizType.name)}
                   className={`w-full px-3 py-2 text-sm rounded-md ${
                     selectedQuizType === quizType.name
-                      ? "bg-blue-600 text-white"
+                      ? "bg-gray-600 text-white"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                   }`}
                 >
