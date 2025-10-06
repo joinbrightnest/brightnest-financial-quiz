@@ -8,14 +8,27 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Simple code protection - you can change this code
     if (code === "brightnest2025") {
-      // Store admin session in localStorage
-      localStorage.setItem("admin_authenticated", "true");
-      router.push("/admin/dashboard");
+      try {
+        // Create admin session via API
+        const response = await fetch("/api/admin/auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code })
+        });
+        
+        if (response.ok) {
+          router.push("/admin/dashboard");
+        } else {
+          setError("Authentication failed");
+        }
+      } catch (error) {
+        setError("Authentication failed");
+      }
     } else {
       setError("Invalid access code");
     }

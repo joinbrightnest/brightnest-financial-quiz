@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { simpleArticleSystem } from "@/lib/simple-articles";
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,28 +20,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ articles: articlesFromDatabase });
     }
 
-    // Fallback to simple article system
-    await simpleArticleSystem.loadArticles();
-    
-    // Get article for this answer
-    const article = await simpleArticleSystem.getArticleForAnswer(
-      'Financial question', // We don't have the question prompt here, but it's not needed
-      answerValue,
-      answerLabel
-    );
-
-    const articles = article ? [{
-      id: article.id,
-      title: article.title,
-      content: article.content,
-      type: 'simple',
-      category: article.category,
-      keyPoints: article.keyPoints,
-      stat: article.stat,
-      description: article.description
-    }] : [];
-
-    return NextResponse.json({ articles });
+    // No articles found in database - return empty array
+    // This ensures clean if/then logic - only show articles that are explicitly created
+    return NextResponse.json({ articles: [] });
   } catch (error) {
     console.error('Error getting articles:', error);
     return NextResponse.json(

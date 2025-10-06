@@ -75,7 +75,7 @@ export default function ArticleDisplayInline({
 
   // Generate a quick stat from the article content
   const getQuickStat = (article: Article) => {
-    // Check if article has stat and description (new simple format)
+    // Check if article has stat and description (from AI generation)
     if ((article as any).stat && (article as any).description) {
       return {
         stat: (article as any).stat,
@@ -83,7 +83,7 @@ export default function ArticleDisplayInline({
       };
     }
     
-    // Fallback to old format
+    // Extract stat from keyPoints if available
     if (article.keyPoints && article.keyPoints.length > 0) {
       const firstPoint = article.keyPoints[0];
       const percentageMatch = firstPoint.match(/(\d+)%/);
@@ -95,18 +95,8 @@ export default function ArticleDisplayInline({
       }
     }
     
-    // Fallback stats based on category
-    const fallbackStats = {
-      marriage: { stat: "70%", description: "of divorces are caused by financial stress" },
-      health: { stat: "65%", description: "of people report financial stress affects their health" },
-      career: { stat: "80%", description: "of people say money impacts career decisions" },
-      savings: { stat: "40%", description: "of Americans can't cover a $400 emergency" },
-      debt: { stat: "77%", description: "of Americans have some form of debt" },
-      investing: { stat: "55%", description: "of Americans don't invest in the stock market" }
-    };
-    
-    return fallbackStats[article.category as keyof typeof fallbackStats] || 
-           { stat: "75%", description: "of people face similar financial challenges" };
+    // No stat available - return null to hide stat section
+    return null;
   };
 
   if (isLoading) {
@@ -212,7 +202,7 @@ export default function ArticleDisplayInline({
             {selectedArticle?.content || "Thanks for sharing your answer! We've prepared a personalized insight based on your response."}
           </p>
 
-          {/* Quick Stat */}
+          {/* Quick Stat - Only show if available from article */}
           {quickStat && (
             <div className="bg-gray-50 rounded-lg p-4 mb-6">
               <div className="text-3xl font-bold text-red-600 mb-1">
