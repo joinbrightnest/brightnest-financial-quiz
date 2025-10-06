@@ -31,9 +31,10 @@ interface FlowBuilderProps {
     category: string;
   }>;
   onSave: (nodes: FlowNode[], connections: FlowConnection[]) => void;
+  onCreateArticle: () => void;
 }
 
-export default function FlowBuilder({ questions, articles, onSave }: FlowBuilderProps) {
+export default function FlowBuilder({ questions, articles, onSave, onCreateArticle }: FlowBuilderProps) {
   const [nodes, setNodes] = useState<FlowNode[]>([]);
   const [connections, setConnections] = useState<FlowConnection[]>([]);
   const [draggedNode, setDraggedNode] = useState<string | null>(null);
@@ -142,7 +143,15 @@ export default function FlowBuilder({ questions, articles, onSave }: FlowBuilder
 
         {/* Articles */}
         <div className="mb-6">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Articles</h3>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-gray-700">Articles</h3>
+            <button
+              onClick={onCreateArticle}
+              className="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700"
+            >
+              + Create
+            </button>
+          </div>
           <div className="space-y-2">
             {articles.map((article) => (
               <div
@@ -154,6 +163,11 @@ export default function FlowBuilder({ questions, articles, onSave }: FlowBuilder
                 <div className="text-xs text-green-600">{article.category}</div>
               </div>
             ))}
+            {articles.length === 0 && (
+              <div className="text-center py-4 text-gray-500 text-sm">
+                No articles yet. Click "+ Create" to add one.
+              </div>
+            )}
           </div>
         </div>
 

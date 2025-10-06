@@ -81,6 +81,11 @@ export default function FlowBuilderPage({ params }: { params: Promise<{ type: st
     }
   };
 
+  const handleCreateArticle = () => {
+    // Open article creation in a new tab/window
+    window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank');
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -120,6 +125,7 @@ export default function FlowBuilderPage({ params }: { params: Promise<{ type: st
         questions={questions}
         articles={articles}
         onSave={handleSaveFlow}
+        onCreateArticle={handleCreateArticle}
       />
     </div>
   );
