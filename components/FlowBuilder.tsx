@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 
 interface FlowNode {
   id: string;
@@ -18,8 +18,6 @@ interface FlowConnection {
   to: string;
   fromAnswer?: string;
   label?: string;
-  startPoint: { x: number; y: number };
-  endPoint: { x: number; y: number };
 }
 
 interface FlowBuilderProps {
@@ -52,41 +50,33 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Initialize with all questions in a flow layout
-  useEffect(() => {
-    if (!isInitialized && questions.length > 0) {
-      const initialNodes: FlowNode[] = questions.map((question, index) => ({
-        id: `question-${question.id}`,
-        type: 'question',
-        title: question.prompt,
-        content: question.prompt,
-        position: { 
-          x: 50 + (index % 3) * 350, 
-          y: 100 + Math.floor(index / 3) * 200 
-        },
-        options: question.options,
-        connections: {}
-      }));
+  // Add question to canvas
+  const addQuestionToCanvas = (question: any) => {
+    const newNode: FlowNode = {
+      id: `question-${question.id}-${Date.now()}`,
+      type: 'question',
+      title: question.prompt,
+      content: question.prompt,
+      position: { x: 100 + (nodes.length % 3) * 300, y: 100 + Math.floor(nodes.length / 3) * 200 },
+      options: question.options,
+      connections: {}
+    };
+    setNodes([...nodes, newNode]);
+  };
 
-      // Add articles
-      const articleNodes: FlowNode[] = articles.map((article, index) => ({
-        id: `article-${article.id}`,
-        type: 'article',
-        title: article.title,
-        content: article.content,
-        position: { 
-          x: 50 + (questions.length % 3) * 350 + 200, 
-          y: 100 + Math.floor(questions.length / 3) * 200 + index * 150 
-        },
-        connections: {}
-      }));
-
-      setNodes([...initialNodes, ...articleNodes]);
-      setIsInitialized(true);
-    }
-  }, [questions, articles, isInitialized]);
+  // Add article to canvas
+  const addArticleToCanvas = (article: any) => {
+    const newNode: FlowNode = {
+      id: `article-${article.id}-${Date.now()}`,
+      type: 'article',
+      title: article.title,
+      content: article.content,
+      position: { x: 100 + (nodes.length % 3) * 300, y: 100 + Math.floor(nodes.length / 3) * 200 },
+      connections: {}
+    };
+    setNodes([...nodes, newNode]);
+  };
 
   const handleNodeDrag = useCallback((nodeId: string, e: React.MouseEvent) => {
     if (draggedNode !== nodeId) return;
@@ -175,9 +165,7 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
         from: draggedConnection.from,
         to: targetNode.id,
         fromAnswer: draggedConnection.fromAnswer,
-        label: draggedConnection.fromAnswer,
-        startPoint: draggedConnection.startPoint,
-        endPoint: getConnectionPoint(targetNode.id)
+        label: draggedConnection.fromAnswer
       };
       setConnections([...connections, newConnection]);
     }
@@ -212,36 +200,23 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
     setConnections(connections.filter(c => c.id !== connectionId));
   };
 
-  const addQuestionNode = (question: any) => {
-    const newNode: FlowNode = {
-      id: `question-${question.id}-${Date.now()}`,
-      type: 'question',
-      title: question.prompt,
-      content: question.prompt,
-      position: { x: 100, y: 100 + nodes.length * 200 },
-      options: question.options,
-      connections: {}
-    };
-    setNodes([...nodes, newNode]);
-  };
-
-  const addArticleNode = (article: any) => {
-    const newNode: FlowNode = {
-      id: `article-${article.id}-${Date.now()}`,
-      type: 'article',
-      title: article.title,
-      content: article.content,
-      position: { x: 400, y: 100 + nodes.length * 200 },
-      connections: {}
-    };
-    setNodes([...nodes, newNode]);
-  };
-
   return (
     <div className="h-screen bg-gray-100 flex">
-      {/* Sidebar */}
+      {/* Sidebar - Palette */}
       <div className="w-80 bg-white border-r border-gray-200 p-4 overflow-y-auto">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Flow Builder</h2>
+        
+        {/* Instructions */}
+        <div className="mb-6 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <h4 className="text-sm font-medium text-blue-800 mb-2">How to Build Your Flow:</h4>
+          <ol className="text-xs text-blue-700 space-y-1">
+            <li>1. Click questions/articles to add to canvas</li>
+            <li>2. Drag elements to position them</li>
+            <li>3. Click arrows to connect elements</li>
+            <li>4. Each answer can lead to different outcomes</li>
+            <li>5. Save when your flow is complete</li>
+          </ol>
+        </div>
         
         {/* Questions */}
         <div className="mb-6">
@@ -250,11 +225,12 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
             {questions.map((question) => (
               <div
                 key={question.id}
-                className="p-3 bg-blue-50 border border-blue-200 rounded-lg cursor-pointer hover:bg-blue-100"
-                onClick={() => addQuestionNode(question)}
+                className="p-3 bg-blue-50 border border-blue-200 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors"
+                onClick={() => addQuestionToCanvas(question)}
               >
                 <div className="text-sm font-medium text-blue-900">{question.prompt}</div>
                 <div className="text-xs text-blue-600">{question.options.length} options</div>
+                <div className="text-xs text-gray-500 mt-1">Click to add to canvas</div>
               </div>
             ))}
           </div>
@@ -286,11 +262,12 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
             {articles.map((article) => (
               <div
                 key={article.id}
-                className="p-3 bg-green-50 border border-green-200 rounded-lg cursor-pointer hover:bg-green-100"
-                onClick={() => addArticleNode(article)}
+                className="p-3 bg-green-50 border border-green-200 rounded-lg cursor-pointer hover:bg-green-100 transition-colors"
+                onClick={() => addArticleToCanvas(article)}
               >
                 <div className="text-sm font-medium text-green-900">{article.title}</div>
                 <div className="text-xs text-green-600">{article.category}</div>
+                <div className="text-xs text-gray-500 mt-1">Click to add to canvas</div>
               </div>
             ))}
             {articles.length === 0 && (
@@ -313,28 +290,15 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
             onClick={() => {
               setNodes([]);
               setConnections([]);
-              setIsInitialized(false);
             }}
             className="w-full bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium"
           >
             Clear All
           </button>
         </div>
-
-        {/* Instructions */}
-        <div className="mt-6 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h4 className="text-sm font-medium text-yellow-800 mb-2">Miro-Style Connections:</h4>
-          <ul className="text-xs text-yellow-700 space-y-1">
-            <li>• Drag nodes to reposition</li>
-            <li>• Pull arrows to connect elements</li>
-            <li>• Each answer has its own connection point</li>
-            <li>• Drag connection to target node</li>
-            <li>• Create personalized routing paths</li>
-          </ul>
-        </div>
       </div>
 
-      {/* Canvas */}
+      {/* Canvas - Workspace */}
       <div className="flex-1 relative overflow-hidden">
         <div
           ref={canvasRef}
@@ -478,36 +442,40 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
                 {node.title.length > 50 ? `${node.title.substring(0, 50)}...` : node.title}
               </div>
 
-              {/* Question Options with Connection Points */}
+              {/* Question Options with Connection Arrows */}
               {node.type === 'question' && node.options && (
                 <div className="space-y-1">
                   {node.options.map((option, index) => (
                     <div key={option.value} className="flex items-center justify-between">
                       <span className="text-xs text-gray-600 flex-1">{option.label}</span>
-                      <div
-                        className="w-3 h-3 bg-blue-500 rounded-full cursor-pointer hover:bg-blue-600 hover:scale-110 transition-all"
+                      <button
+                        className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-blue-600 transition-colors"
                         onMouseDown={(e) => handleConnectionDragStart(node.id, option.value, e)}
                         title={`Connect "${option.label}" to another element`}
-                      />
+                      >
+                        →
+                      </button>
                     </div>
                   ))}
                 </div>
               )}
 
-              {/* Article Connection Point */}
+              {/* Article Connection Arrow */}
               {node.type === 'article' && (
                 <div className="flex justify-end mt-2">
-                  <div
-                    className="w-3 h-3 bg-green-500 rounded-full cursor-pointer hover:bg-green-600 hover:scale-110 transition-all"
+                  <button
+                    className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-green-600 transition-colors"
                     onMouseDown={(e) => handleConnectionDragStart(node.id, undefined, e)}
                     title="Connect this article to another element"
-                  />
+                  >
+                    →
+                  </button>
                 </div>
               )}
             </div>
           ))}
 
-          {/* Instructions */}
+          {/* Empty State */}
           {nodes.length === 0 && (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="text-center">
@@ -517,8 +485,8 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
                   </svg>
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Build Your Quiz Flow</h3>
-                <p className="text-gray-600 mb-4">All questions are automatically loaded for complete flow visualization</p>
-                <p className="text-sm text-gray-500">Drag blue dots to connect answers to different outcomes</p>
+                <p className="text-gray-600 mb-4">Click questions and articles from the sidebar to add them to your flow</p>
+                <p className="text-sm text-gray-500">Then use the arrows to connect them and create your routing logic</p>
               </div>
             </div>
           )}
