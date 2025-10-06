@@ -212,7 +212,7 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
           <ol className="text-xs text-blue-700 space-y-1">
             <li>1. Click questions/articles to add to canvas</li>
             <li>2. Drag elements to position them</li>
-            <li>3. Click arrows to connect elements</li>
+            <li>3. Hold and drag arrows to connect elements</li>
             <li>4. Each answer can lead to different outcomes</li>
             <li>5. Save when your flow is complete</li>
           </ol>
@@ -448,13 +448,13 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
                   {node.options.map((option, index) => (
                     <div key={option.value} className="flex items-center justify-between">
                       <span className="text-xs text-gray-600 flex-1">{option.label}</span>
-                      <button
-                        className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-blue-600 transition-colors"
+                      <div
+                        className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-blue-600 transition-colors cursor-grab active:cursor-grabbing"
                         onMouseDown={(e) => handleConnectionDragStart(node.id, option.value, e)}
-                        title={`Connect "${option.label}" to another element`}
+                        title={`Drag to connect "${option.label}" to another element`}
                       >
                         →
-                      </button>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -463,13 +463,13 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
               {/* Article Connection Arrow */}
               {node.type === 'article' && (
                 <div className="flex justify-end mt-2">
-                  <button
-                    className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-green-600 transition-colors"
+                  <div
+                    className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-green-600 transition-colors cursor-grab active:cursor-grabbing"
                     onMouseDown={(e) => handleConnectionDragStart(node.id, undefined, e)}
-                    title="Connect this article to another element"
+                    title="Drag to connect this article to another element"
                   >
                     →
-                  </button>
+                  </div>
                 </div>
               )}
             </div>
