@@ -49,6 +49,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [showArticlePopup, setShowArticlePopup] = useState(false);
   const [expandedMappings, setExpandedMappings] = useState<{ [key: string]: boolean }>({});
+  const [editingArticle, setEditingArticle] = useState<Article | null>(null);
 
   // Handle async params
   useEffect(() => {
@@ -318,6 +319,64 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     setIsEditingLink(false);
     // Here you could save the custom link to the database if needed
     // For now, we'll just update the local state
+  };
+
+  const handleEditArticle = (article: Article) => {
+    setEditingArticle(article);
+    setShowArticlePopup(false);
+  };
+
+  const handleDeleteArticle = async (articleId: string) => {
+    if (confirm("Are you sure you want to delete this article?")) {
+      try {
+        const response = await fetch(`/api/admin/articles/${articleId}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          // Remove article from local state
+          setArticles(prev => prev.filter(a => a.id !== articleId));
+          alert('Article deleted successfully!');
+        } else {
+          alert('Failed to delete article. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error deleting article:', error);
+        alert('Failed to delete article. Please try again.');
+      }
+    }
+  };
+
+  const handleDeleteAllArticlesForQuestion = async (questionId: string) => {
+    const articlesForQuestion = articles.filter(a => a.triggerQuestionId === questionId);
+    
+    if (articlesForQuestion.length === 0) {
+      alert('No articles to delete for this question.');
+      return;
+    }
+
+    if (confirm(`Are you sure you want to delete all ${articlesForQuestion.length} articles for this question?`)) {
+      try {
+        // Delete all articles for this question
+        const deletePromises = articlesForQuestion.map(article => 
+          fetch(`/api/admin/articles/${article.id}`, { method: 'DELETE' })
+        );
+
+        const results = await Promise.all(deletePromises);
+        const allSuccessful = results.every(response => response.ok);
+
+        if (allSuccessful) {
+          // Remove articles from local state
+          setArticles(prev => prev.filter(a => a.triggerQuestionId !== questionId));
+          alert(`Successfully deleted ${articlesForQuestion.length} articles!`);
+        } else {
+          alert('Some articles could not be deleted. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error deleting articles:', error);
+        alert('Failed to delete articles. Please try again.');
+      }
+    }
   };
 
   if (isLoading && !hasInitiallyLoaded.current) {
@@ -729,6 +788,13 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                           + Add
                         </button>
                         <button
+                          onClick={() => handleDeleteAllArticlesForQuestion(question.id)}
+                          className="px-2 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
+                          title="Delete all articles for this question"
+                        >
+                          🗑️ Delete All
+                        </button>
+                        <button
                           onClick={() => setExpandedMappings(prev => ({
                             ...prev,
                             [question.id]: !isExpanded
@@ -765,16 +831,32 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                               </div>
                               <div className="flex items-center space-x-2">
                                 {articleForAnswer ? (
-                                  <button
-                                    onClick={() => {
-                                      // Open article popup
-                                      setSelectedArticle(articleForAnswer);
-                                      setShowArticlePopup(true);
-                                    }}
-                                    className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
-                                  >
-                                    View
-                                  </button>
+                                  <>
+                                    <button
+                                      onClick={() => {
+                                        // Open article popup
+                                        setSelectedArticle(articleForAnswer);
+                                        setShowArticlePopup(true);
+                                      }}
+                                      className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                                    >
+                                      View
+                                    </button>
+                                    <button
+                                      onClick={() => handleEditArticle(articleForAnswer)}
+                                      className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                                      title="Edit article"
+                                    >
+                                      ✏️ Edit
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteArticle(articleForAnswer.id)}
+                                      className="px-2 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
+                                      title="Delete article"
+                                    >
+                                      🗑️
+                                    </button>
+                                  </>
                                 ) : (
                                   <button
                                     onClick={() => window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank')}
@@ -880,6 +962,115 @@ export default function QuizEditor({ params }: QuizEditorProps) {
               >
                 CONTINUE
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Article Edit Popup */}
+      {editingArticle && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full shadow-2xl max-h-[90vh] overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 pb-4 border-b">
+              <h2 className="text-xl font-bold text-gray-900">Edit Article</h2>
+              <button
+                onClick={() => setEditingArticle(null)}
+                className="text-gray-600 hover:text-gray-800"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Edit Form */}
+            <div className="p-6 space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Article Title
+                </label>
+                <input
+                  type="text"
+                  value={editingArticle.title}
+                  onChange={(e) => setEditingArticle({...editingArticle, title: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Article Content
+                </label>
+                <textarea
+                  value={editingArticle.content}
+                  onChange={(e) => setEditingArticle({...editingArticle, content: e.target.value})}
+                  rows={8}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Category
+                </label>
+                <select
+                  value={editingArticle.category}
+                  onChange={(e) => setEditingArticle({...editingArticle, category: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                >
+                  <option value="general">General</option>
+                  <option value="debt">Debt</option>
+                  <option value="savings">Savings</option>
+                  <option value="investing">Investing</option>
+                  <option value="spending">Spending</option>
+                  <option value="marriage">Marriage</option>
+                  <option value="health">Health</option>
+                  <option value="career">Career</option>
+                </select>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex space-x-3 pt-4">
+                <button
+                  onClick={async () => {
+                    try {
+                      const response = await fetch(`/api/admin/articles/${editingArticle.id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          title: editingArticle.title,
+                          content: editingArticle.content,
+                          category: editingArticle.category
+                        })
+                      });
+
+                      if (response.ok) {
+                        // Update local state
+                        setArticles(prev => prev.map(a => 
+                          a.id === editingArticle.id ? editingArticle : a
+                        ));
+                        setEditingArticle(null);
+                        alert('Article updated successfully!');
+                      } else {
+                        alert('Failed to update article. Please try again.');
+                      }
+                    } catch (error) {
+                      console.error('Error updating article:', error);
+                      alert('Failed to update article. Please try again.');
+                    }
+                  }}
+                  className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+                >
+                  Save Changes
+                </button>
+                <button
+                  onClick={() => setEditingArticle(null)}
+                  className="flex-1 bg-gray-600 text-white py-3 rounded-lg hover:bg-gray-700 transition-colors font-semibold"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>
