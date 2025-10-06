@@ -343,7 +343,7 @@ export async function POST() {
   } catch (error) {
     console.error("Error seeding database:", error);
     return NextResponse.json(
-      { error: `Failed to seed database: ${error.message}` },
+      { error: `Failed to seed database: ${error instanceof Error ? error.message : 'Unknown error'}` },
       { status: 500 }
     );
   }
