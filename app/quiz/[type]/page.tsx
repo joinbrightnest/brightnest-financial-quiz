@@ -114,7 +114,6 @@ export default function QuizPage({ params }: QuizPageProps) {
   const handleAnswer = async (value: string) => {
     if (isTransitioning) return; // Prevent multiple clicks
     
-    setIsTransitioning(true);
     setSelectedValue(value);
     
     // Find the answer label for the article
@@ -136,7 +135,7 @@ export default function QuizPage({ params }: QuizPageProps) {
       if (response.ok) {
         const data = await response.json();
         
-        // If there are articles, show them
+        // If there are articles, show them immediately
         if (data.articles && data.articles.length > 0) {
           setLastAnswer({
             questionId: currentQuestion?.id || '',
@@ -144,7 +143,6 @@ export default function QuizPage({ params }: QuizPageProps) {
             answerLabel: answerLabel
           });
           setShowArticle(true);
-          setIsTransitioning(false);
           return;
         }
       }
@@ -154,7 +152,6 @@ export default function QuizPage({ params }: QuizPageProps) {
     
     // No articles found, go straight to next question
     await handleNext(value);
-    setIsTransitioning(false);
   };
 
   const handleBack = async () => {
@@ -259,15 +256,12 @@ export default function QuizPage({ params }: QuizPageProps) {
   const handleArticleClose = async () => {
     if (isTransitioning) return; // Prevent multiple clicks
     
-    setIsTransitioning(true);
     setShowArticle(false);
     
     // After closing article, advance to next question
     if (lastAnswer) {
       await handleNext(lastAnswer.answerValue);
     }
-    
-    setIsTransitioning(false);
   };
 
   if (isLoading && !hasInitiallyLoaded.current) {
@@ -347,7 +341,6 @@ export default function QuizPage({ params }: QuizPageProps) {
           onNext={handleNext}
           onBack={handleBack}
           canGoBack={canGoBack}
-          isTransitioning={isTransitioning}
         />
       )}
     </div>
