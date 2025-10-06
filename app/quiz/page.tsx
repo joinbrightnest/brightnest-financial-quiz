@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import QuestionCard from "@/components/QuestionCard";
 import TextInput from "@/components/TextInput";
+import ArticleDisplay from "@/components/ArticleDisplay";
 
 interface Question {
   id: string;
@@ -28,6 +29,11 @@ export default function QuizPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [canGoBack, setCanGoBack] = useState(false);
+  const [showArticle, setShowArticle] = useState(false);
+  const [pendingAnswer, setPendingAnswer] = useState<{
+    value: string;
+    label: string;
+  } | null>(null);
 
   useEffect(() => {
     const initializeQuiz = async () => {
@@ -68,8 +74,23 @@ export default function QuizPage() {
   const handleAnswer = async (value: string) => {
     setSelectedValue(value);
     
-    // Auto-advance immediately to next question
-    await handleNext(value);
+    // Find the answer label
+    const option = currentQuestion?.options.find(opt => opt.value === value);
+    const answerLabel = option?.label || value;
+    
+    // Set pending answer and show article
+    setPendingAnswer({ value, label: answerLabel });
+    setShowArticle(true);
+  };
+
+  const handleArticleClose = async () => {
+    setShowArticle(false);
+    
+    // Now advance to next question
+    if (pendingAnswer) {
+      await handleNext(pendingAnswer.value);
+      setPendingAnswer(null);
+    }
   };
 
   const handleBack = async () => {
@@ -230,6 +251,17 @@ export default function QuizPage() {
           onNext={handleNext}
           onBack={handleBack}
           canGoBack={canGoBack}
+        />
+      )}
+
+      {/* Article Display Modal */}
+      {showArticle && pendingAnswer && currentQuestion && sessionId && (
+        <ArticleDisplay
+          sessionId={sessionId}
+          questionId={currentQuestion.id}
+          answerValue={pendingAnswer.value}
+          answerLabel={pendingAnswer.label}
+          onClose={handleArticleClose}
         />
       )}
     </div>

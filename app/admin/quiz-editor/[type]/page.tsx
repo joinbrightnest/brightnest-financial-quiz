@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import ArticleManager from "@/components/ArticleManager";
 
 interface Question {
   id: string;
@@ -575,6 +576,20 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                             </div>
                           ))}
                         </div>
+                      </div>
+                    )}
+
+                    {/* Article Manager */}
+                    {question.type === "single" && (
+                      <div className="mt-6">
+                        <ArticleManager
+                          questionId={question.id}
+                          questionPrompt={question.prompt}
+                          questionOptions={question.options}
+                          onArticleAdded={(article) => {
+                            console.log('Article added:', article);
+                          }}
+                        />
                       </div>
                     )}
                   </div>

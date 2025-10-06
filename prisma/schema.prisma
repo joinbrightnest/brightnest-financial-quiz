@@ -31,6 +31,7 @@ model QuizSession {
   answers     QuizAnswer[]
   user        User?        @relation(fields: [userId], references: [id])
   result      Result?
+  articleViews ArticleView[]
 
   @@map("quiz_sessions")
 }
@@ -46,6 +47,7 @@ model QuizQuestion {
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   answers   QuizAnswer[]
+  triggers  ArticleTrigger[]
 
   @@map("quiz_questions")
 }
@@ -73,4 +75,61 @@ model Result {
   session   QuizSession @relation(fields: [sessionId], references: [id])
 
   @@map("results")
+}
+
+model Article {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  type        String   // "static", "ai_generated", "template"
+  category    String   // "marriage", "health", "career", etc.
+  tags        Json     // Array of tags for better matching
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  triggers    ArticleTrigger[]
+  views       ArticleView[]
+
+  @@map("articles")
+}
+
+model ArticleTrigger {
+  id         String   @id @default(cuid())
+  articleId  String
+  questionId String?
+  optionValue String? // Specific option value that triggers this article
+  condition  Json     // Complex conditions (e.g., score ranges, multiple answers)
+  priority   Int      @default(0) // Higher priority = shown first
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  article    Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  question   QuizQuestion? @relation(fields: [questionId], references: [id])
+
+  @@map("article_triggers")
+}
+
+model ArticleTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  template    String   // Template with variables like {{answer}}, {{score}}, etc.
+  variables   Json     // Available variables for this template
+  category    String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("article_templates")
+}
+
+model ArticleView {
+  id        String   @id @default(cuid())
+  sessionId String
+  articleId String
+  viewedAt  DateTime @default(now())
+  session   QuizSession @relation(fields: [sessionId], references: [id])
+  article   Article  @relation(fields: [articleId], references: [id])
+
+  @@unique([sessionId, articleId])
+  @@map("article_views")
 }
