@@ -283,14 +283,12 @@ export async function POST() {
   try {
     console.log('Starting database seed...');
 
-    // Check if questions already exist
-    const existingQuestions = await prisma.quizQuestion.count();
-    if (existingQuestions > 0) {
-      return NextResponse.json({ 
-        success: true, 
-        message: `Database already has ${existingQuestions} questions` 
-      });
-    }
+    // Always recreate questions to ensure consistency
+    console.log("Clearing existing questions...");
+    await prisma.quizAnswer.deleteMany();
+    await prisma.result.deleteMany();
+    await prisma.quizSession.deleteMany();
+    await prisma.quizQuestion.deleteMany();
 
     // Create Financial Profile questions
     for (const question of financialProfileQuestions) {
