@@ -13,7 +13,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Load the simple article system
+    // First, try to get articles from the quiz editor system (if/then logic)
+    const articlesFromEditor = await getArticlesFromEditor(questionId, answerValue);
+    
+    if (articlesFromEditor.length > 0) {
+      return NextResponse.json({ articles: articlesFromEditor });
+    }
+
+    // Fallback to simple article system
     await simpleArticleSystem.loadArticles();
     
     // Get article for this answer
@@ -41,5 +48,17 @@ export async function POST(request: NextRequest) {
       { error: 'Failed to get articles' },
       { status: 500 }
     );
+  }
+}
+
+async function getArticlesFromEditor(questionId: string, answerValue: string) {
+  try {
+    // For now, return empty array since we can't access localStorage on server-side
+    // This will be implemented when we have a proper database
+    // The if/then logic will work once articles are stored in the database
+    return [];
+  } catch (error) {
+    console.error('Error getting articles from editor:', error);
+    return [];
   }
 }

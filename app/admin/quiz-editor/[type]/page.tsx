@@ -807,20 +807,46 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                         </select>
                       </div>
 
-                      {/* Auto-trigger Info */}
-                      {article!.triggerQuestionId && (
-                        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span className="text-sm font-semibold text-blue-800">Auto-triggered</span>
-                          </div>
-                          <p className="text-sm text-blue-700">
-                            This article will automatically appear after the question above based on the user's answer.
-                          </p>
+                      {/* If/Then Logic */}
+                      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                        <div className="flex items-center space-x-2 mb-3">
+                          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span className="text-sm font-semibold text-blue-800">If/Then Logic</span>
                         </div>
-                      )}
+                        
+                        {article!.triggerQuestionId ? (
+                          <div className="space-y-2">
+                            {(() => {
+                              const triggerQuestion = questions.find(q => q.id === article!.triggerQuestionId);
+                              const triggerAnswer = triggerQuestion?.options.find(opt => opt.value === article!.triggerAnswerValue);
+                              return (
+                                <div className="bg-white rounded-lg p-3 border border-blue-200">
+                                  <p className="text-sm text-blue-800">
+                                    <span className="font-semibold">IF</span> answer is "{triggerAnswer?.label || article!.triggerAnswerValue}" 
+                                    <span className="font-semibold"> THEN</span> show this article
+                                  </p>
+                                  {triggerQuestion && (
+                                    <p className="text-xs text-blue-600 mt-1">
+                                      From question: "{triggerQuestion.prompt}"
+                                    </p>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                          </div>
+                        ) : (
+                          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                            <p className="text-sm text-yellow-800">
+                              <span className="font-semibold">No trigger set</span> - This article won't appear automatically
+                            </p>
+                            <p className="text-xs text-yellow-600 mt-1">
+                              Articles need to be placed after questions to auto-trigger
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ) : (
                     // Article Display Mode
@@ -837,10 +863,20 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                           {article!.content.length > 200 ? `${article!.content.substring(0, 200)}...` : article!.content}
                         </p>
                         {article!.triggerQuestionId && (
-                          <div className="mt-3 p-2 bg-blue-100 rounded-lg">
-                            <p className="text-xs text-blue-700">
-                              <strong>Auto-triggered:</strong> Shows after question above
-                            </p>
+                          <div className="mt-3 p-3 bg-blue-100 rounded-lg">
+                            {(() => {
+                              const triggerQuestion = questions.find(q => q.id === article!.triggerQuestionId);
+                              const triggerAnswer = triggerQuestion?.options.find(opt => opt.value === article!.triggerAnswerValue);
+                              return (
+                                <div>
+                                  <p className="text-xs text-blue-800 font-semibold mb-1">If/Then Logic:</p>
+                                  <p className="text-xs text-blue-700">
+                                    <span className="font-semibold">IF</span> answer is "{triggerAnswer?.label || article!.triggerAnswerValue}" 
+                                    <span className="font-semibold"> THEN</span> show this article
+                                  </p>
+                                </div>
+                              );
+                            })()}
                           </div>
                         )}
                       </div>
