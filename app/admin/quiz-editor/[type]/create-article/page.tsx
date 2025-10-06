@@ -31,6 +31,17 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
     tags: string[];
     keyPoints?: string[];
   } | null>(null);
+  const [editableArticle, setEditableArticle] = useState<{
+    title: string;
+    content: string;
+    category: string;
+    keyPoints: string[];
+  }>({
+    title: '',
+    content: '',
+    category: 'general',
+    keyPoints: ['']
+  });
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -148,6 +159,35 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
       }
     } catch (error) {
       console.error('Failed to save article:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSaveManualArticle = async () => {
+    if (!editableArticle.title || !editableArticle.content) return;
+
+    setIsSaving(true);
+    try {
+      const response = await fetch('/api/admin/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: editableArticle.title,
+          content: editableArticle.content,
+          type: 'static',
+          category: editableArticle.category,
+          tags: editableArticle.keyPoints.filter(point => point.trim() !== ''),
+          triggers: []
+        })
+      });
+
+      if (response.ok) {
+        alert('Manual article saved successfully!');
+        router.push(`/admin/quiz-editor/${quizType}`);
+      }
+    } catch (error) {
+      console.error('Failed to save manual article:', error);
     } finally {
       setIsSaving(false);
     }
@@ -301,11 +341,12 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
                     <button
                       onClick={() => handleGenerateManualArticle()}
                       disabled={isGenerating}
-                      className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                      className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium mb-4"
                     >
                       {isGenerating ? "Generating Article..." : "Generate AI Article"}
                     </button>
                   )}
+
                 </>
               )}
             </div>
@@ -314,62 +355,125 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">Article Preview</h2>
               
-              {!generatedArticle ? (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                  </div>
-                  <p className="text-gray-500">Select a question and answer option to generate an article</p>
-                </div>
-              ) : (
+              {useManualInput ? (
+                /* Manual Mode - Show Editable Article */
                 <div className="space-y-6">
-                  {/* Article Content */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {generatedArticle.title}
-                    </h3>
-                    <p className="text-gray-700 leading-relaxed">
-                      {generatedArticle.content}
-                    </p>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Article Title
+                    </label>
+                    <input
+                      type="text"
+                      value={editableArticle.title}
+                      onChange={(e) => setEditableArticle({...editableArticle, title: e.target.value})}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white font-semibold"
+                    />
                   </div>
 
-                  {/* Key Points */}
-                  {generatedArticle.keyPoints && generatedArticle.keyPoints.length > 0 && (
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Key Points:</h4>
-                      <ul className="space-y-1">
-                        {generatedArticle.keyPoints.map((point: string, index: number) => (
-                          <li key={index} className="text-sm text-gray-600 flex items-start">
-                            <span className="text-blue-500 mr-2">•</span>
-                            {point}
-                          </li>
-                        ))}
-                      </ul>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Article Content
+                    </label>
+                    <textarea
+                      value={editableArticle.content}
+                      onChange={(e) => setEditableArticle({...editableArticle, content: e.target.value})}
+                      rows={8}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Key Points
+                    </label>
+                    <textarea
+                      value={editableArticle.keyPoints.join('\n')}
+                      onChange={(e) => setEditableArticle({...editableArticle, keyPoints: e.target.value.split('\n')})}
+                      rows={4}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                    />
+                  </div>
+
+                  {/* Quick Stat Preview */}
+                  {editableArticle.keyPoints.some(point => point.includes('%')) && (
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="font-semibold text-gray-900 mb-2">Quick Stat Preview:</h4>
+                      <div className="text-2xl font-bold text-red-600 mb-1">
+                        {editableArticle.keyPoints.find(point => point.includes('%'))?.match(/\d+%/) || "70%"}
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        {editableArticle.keyPoints.find(point => point.includes('%'))?.replace(/\d+%/, "").trim() || "of people face similar challenges"}
+                      </p>
                     </div>
                   )}
 
-                  {/* Quick Stat Preview */}
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h4 className="font-semibold text-gray-900 mb-2">Quick Stat Preview:</h4>
-                    <div className="text-2xl font-bold text-red-600 mb-1">
-                      {generatedArticle.keyPoints?.[0]?.match(/\d+%/) || "70%"}
-                    </div>
-                    <p className="text-sm text-gray-600">
-                      {generatedArticle.keyPoints?.[0]?.replace(/\d+%/, "").trim() || "of people face similar challenges"}
-                    </p>
-                  </div>
-
-                  {/* Save Button */}
                   <button
-                    onClick={handleSaveArticle}
-                    disabled={isSaving}
+                    onClick={() => handleSaveManualArticle()}
+                    disabled={!editableArticle.title || !editableArticle.content}
                     className="w-full bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                   >
-                    {isSaving ? "Saving Article..." : "Save Article"}
+                    Save Manual Article
                   </button>
                 </div>
+              ) : (
+                /* AI Generated Mode */
+                !generatedArticle ? (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <p className="text-gray-500">Select a question and answer option to generate an article</p>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {/* Article Content */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        {generatedArticle.title}
+                      </h3>
+                      <p className="text-gray-700 leading-relaxed">
+                        {generatedArticle.content}
+                      </p>
+                    </div>
+
+                    {/* Key Points */}
+                    {generatedArticle.keyPoints && generatedArticle.keyPoints.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-2">Key Points:</h4>
+                        <ul className="space-y-1">
+                          {generatedArticle.keyPoints.map((point: string, index: number) => (
+                            <li key={index} className="text-sm text-gray-600 flex items-start">
+                              <span className="text-blue-500 mr-2">•</span>
+                              {point}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Quick Stat Preview */}
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="font-semibold text-gray-900 mb-2">Quick Stat Preview:</h4>
+                      <div className="text-2xl font-bold text-red-600 mb-1">
+                        {generatedArticle.keyPoints?.[0]?.match(/\d+%/) || "70%"}
+                      </div>
+                      <p className="text-sm text-gray-600">
+                        {generatedArticle.keyPoints?.[0]?.replace(/\d+%/, "").trim() || "of people face similar challenges"}
+                      </p>
+                    </div>
+
+                    {/* Save Button */}
+                    <button
+                      onClick={handleSaveArticle}
+                      disabled={isSaving}
+                      className="w-full bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                    >
+                      {isSaving ? "Saving Article..." : "Save Article"}
+                    </button>
+                  </div>
+                )
               )}
             </div>
           </div>
