@@ -78,6 +78,7 @@ export default function AdminDashboard() {
   const router = useRouter();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isTimeframeLoading, setIsTimeframeLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState('7d');
   const [activityTimeframe, setActivityTimeframe] = useState('daily');
@@ -85,11 +86,15 @@ export default function AdminDashboard() {
   const [showComparison, setShowComparison] = useState(false);
 
   useEffect(() => {
-    fetchStats();
+    fetchStats(true); // Pass true to indicate this is a timeframe change
   }, [activityTimeframe]);
 
-  const fetchStats = async () => {
-    setIsLoading(true);
+  const fetchStats = async (isTimeframeChange = false) => {
+    if (isTimeframeChange) {
+      setIsTimeframeLoading(true);
+    } else {
+      setIsLoading(true);
+    }
     setError(null);
     
     try {
@@ -108,7 +113,11 @@ export default function AdminDashboard() {
         } catch {
           setError("Failed to load admin stats");
         } finally {
-      setIsLoading(false);
+      if (isTimeframeChange) {
+        setIsTimeframeLoading(false);
+      } else {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -312,7 +321,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Stats Cards */}
-          {isLoading ? (
+          {isLoading && !stats ? (
             <div className="text-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
               <p className="text-gray-600">Loading stats...</p>
