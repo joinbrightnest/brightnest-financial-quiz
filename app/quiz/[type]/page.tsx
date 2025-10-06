@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import QuestionCard from "@/components/QuestionCard";
 import TextInput from "@/components/TextInput";
-import ArticleDisplayNoom from "@/components/ArticleDisplayNoom";
+import ArticleDisplayInline from "@/components/ArticleDisplayInline";
 
 interface Question {
   id: string;
@@ -270,6 +270,19 @@ export default function QuizPage({ params }: QuizPageProps) {
     );
   }
 
+  // Show article display if we have an article to show
+  if (showArticle && lastAnswer && sessionId) {
+    return (
+      <ArticleDisplayInline
+        sessionId={sessionId}
+        questionId={lastAnswer.questionId}
+        answerValue={lastAnswer.answerValue}
+        answerLabel={lastAnswer.answerLabel}
+        onContinue={handleArticleClose}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {currentQuestion.type === "text" || currentQuestion.type === "email" ? (
@@ -293,17 +306,6 @@ export default function QuizPage({ params }: QuizPageProps) {
           onNext={handleNext}
           onBack={handleBack}
           canGoBack={canGoBack}
-        />
-      )}
-      
-      {/* Article Display */}
-      {showArticle && lastAnswer && sessionId && (
-        <ArticleDisplayNoom
-          sessionId={sessionId}
-          questionId={lastAnswer.questionId}
-          answerValue={lastAnswer.answerValue}
-          answerLabel={lastAnswer.answerLabel}
-          onClose={handleArticleClose}
         />
       )}
     </div>
