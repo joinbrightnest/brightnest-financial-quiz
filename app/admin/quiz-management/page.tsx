@@ -87,12 +87,14 @@ export default function QuizManagement() {
         setQuizTypes(data.quizTypes);
         
         // Set selected quiz type to first available if current selection doesn't exist
+        let quizTypeToUse = selectedQuizType;
         if (data.quizTypes.length > 0 && !data.quizTypes.find((qt: {name: string}) => qt.name === selectedQuizType)) {
-          setSelectedQuizType(data.quizTypes[0].name);
+          quizTypeToUse = data.quizTypes[0].name;
+          setSelectedQuizType(quizTypeToUse);
         }
         
         // Get questions for selected quiz type
-        await fetchQuestions(selectedQuizType);
+        await fetchQuestions(quizTypeToUse);
         hasInitiallyLoaded.current = true;
       }
     } catch (error) {
@@ -107,11 +109,14 @@ export default function QuizManagement() {
 
   const fetchQuestions = async (quizType: string) => {
     try {
+      // Clear questions first to prevent showing stale data
+      setQuestions([]);
       const response = await fetch(`/api/admin/quiz-questions?quizType=${quizType}`);
       const data = await response.json();
       setQuestions(data.questions || []);
     } catch (error) {
       console.error("Error fetching questions:", error);
+      setQuestions([]); // Clear questions on error
     }
   };
 
