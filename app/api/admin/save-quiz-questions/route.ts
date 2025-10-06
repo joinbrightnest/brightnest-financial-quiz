@@ -22,6 +22,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Delete existing questions for this quiz type
+    // First delete all answers that reference these questions
+    console.log("Deleting existing answers for quiz type:", quizType);
+    await prisma.quizAnswer.deleteMany({
+      where: {
+        question: {
+          quizType: quizType,
+        },
+      },
+    });
+
+    // Then delete the questions
     console.log("Deleting existing questions for quiz type:", quizType);
     await prisma.quizQuestion.deleteMany({
       where: {
