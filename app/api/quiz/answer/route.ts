@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
     const nextQuestion = await prisma.quizQuestion.findFirst({
       where: {
         active: true,
+        quizType: currentQuestion.quizType,
         order: { gt: currentQuestion.order },
       },
       orderBy: { order: "asc" },

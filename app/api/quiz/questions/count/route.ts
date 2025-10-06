@@ -1,10 +1,16 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const quizType = searchParams.get('type') || 'financial-profile';
+
     const count = await prisma.quizQuestion.count({
-      where: { active: true },
+      where: { 
+        active: true,
+        quizType: quizType
+      },
     });
 
     return NextResponse.json({ count });

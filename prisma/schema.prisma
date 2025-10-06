@@ -21,6 +21,7 @@ model User {
 model QuizSession {
   id          String       @id @default(cuid())
   userId      String?
+  quizType    String       @default("financial-profile") // Type of quiz (financial-profile, health-finance, marriage-finance)
   startedAt   DateTime     @default(now())
   completedAt DateTime?
   status      String       @default("in_progress")
@@ -36,6 +37,7 @@ model QuizSession {
 
 model QuizQuestion {
   id        String       @id @default(cuid())
+  quizType  String       @default("financial-profile") // Type of quiz this question belongs to
   order     Int
   prompt    String
   type      String

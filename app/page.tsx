@@ -17,6 +17,35 @@ export default function Home() {
           
           <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+              Choose Your Quiz
+            </h2>
+            <div className="grid md:grid-cols-3 gap-6 text-left mb-8">
+              <div className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Financial Profile</h3>
+                <p className="text-gray-600 mb-4">Discover your overall financial personality and get personalized insights.</p>
+                <Link href="/quiz/financial-profile" className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                  Take Quiz
+                </Link>
+              </div>
+              
+              <div className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Health Finance</h3>
+                <p className="text-gray-600 mb-4">Learn how to manage healthcare costs and plan for medical expenses.</p>
+                <Link href="/quiz/health-finance" className="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">
+                  Take Quiz
+                </Link>
+              </div>
+              
+              <div className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Marriage Finance</h3>
+                <p className="text-gray-600 mb-4">Navigate financial decisions as a couple and build shared goals.</p>
+                <Link href="/quiz/marriage-finance" className="inline-block bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors">
+                  Take Quiz
+                </Link>
+              </div>
+            </div>
+            
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               What You&apos;ll Discover
             </h2>
             <div className="grid md:grid-cols-2 gap-6 text-left">

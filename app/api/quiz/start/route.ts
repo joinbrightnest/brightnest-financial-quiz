@@ -1,24 +1,30 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
+    const { quizType = "financial-profile" } = await request.json();
+
     // Create a new quiz session
     const session = await prisma.quizSession.create({
       data: {
+        quizType,
         status: "in_progress",
       },
     });
 
-    // Get the first question
+    // Get the first question for this quiz type
     const firstQuestion = await prisma.quizQuestion.findFirst({
-      where: { active: true },
+      where: { 
+        active: true,
+        quizType: quizType
+      },
       orderBy: { order: "asc" },
     });
 
     if (!firstQuestion) {
       return NextResponse.json(
-        { error: "No questions available" },
+        { error: "No questions available for this quiz type" },
         { status: 404 }
       );
     }

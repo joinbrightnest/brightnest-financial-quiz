@@ -21,13 +21,20 @@ export async function DELETE() {
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const activityTimeframe = searchParams.get('activity') || 'daily';
+  const quizType = searchParams.get('quizType') || null;
+  
   try {
     // Get total sessions (all quiz attempts)
-    const totalSessions = await prisma.quizSession.count();
+    const totalSessions = await prisma.quizSession.count({
+      where: quizType ? { quizType } : {}
+    });
     
     // Get completed sessions (where all questions were answered)
     const completedSessions = await prisma.quizSession.count({
-      where: { status: "completed" },
+      where: { 
+        status: "completed",
+        ...(quizType ? { quizType } : {})
+      },
     });
 
     // Calculate average duration for completed sessions
@@ -35,13 +42,15 @@ export async function GET(request: Request) {
       _avg: { durationMs: true },
       where: { 
         status: "completed",
-        durationMs: { not: null }
+        durationMs: { not: null },
+        ...(quizType ? { quizType } : {})
       },
     });
 
     // Get all leads (sessions with name and email, completed or not)
     const allLeads = await prisma.quizSession.findMany({
       where: {
+        ...(quizType ? { quizType } : {}),
         answers: {
           some: {
             question: {
@@ -73,7 +82,10 @@ export async function GET(request: Request) {
 
     // Get behavior analytics - drop-off rates per question
     const totalQuestions = await prisma.quizQuestion.count({
-      where: { active: true }
+      where: { 
+        active: true,
+        ...(quizType ? { quizType } : {})
+      }
     });
 
     const questionAnalytics = await Promise.all(
@@ -82,7 +94,8 @@ export async function GET(request: Request) {
         const question = await prisma.quizQuestion.findFirst({
           where: { 
             active: true,
-            order: questionNumber 
+            order: questionNumber,
+            ...(quizType ? { quizType } : {})
           }
         });
 
@@ -136,7 +149,8 @@ export async function GET(request: Request) {
         where: {
           createdAt: {
             gte: startDate
-          }
+          },
+          ...(quizType ? { quizType } : {})
         },
         select: {
           createdAt: true

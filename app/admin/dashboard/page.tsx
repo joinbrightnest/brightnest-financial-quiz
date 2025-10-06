@@ -81,6 +81,7 @@ export default function AdminDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState('7d');
   const [activityTimeframe, setActivityTimeframe] = useState('daily');
+  const [selectedQuizType, setSelectedQuizType] = useState<string>('all');
   // const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [showComparison, setShowComparison] = useState(false);
 
@@ -91,7 +92,8 @@ export default function AdminDashboard() {
     setError(null);
     
     try {
-      const response = await fetch(`/api/admin/basic-stats?activity=${activityTimeframe}`, {
+      const quizTypeParam = selectedQuizType === 'all' ? '' : `&quizType=${selectedQuizType}`;
+      const response = await fetch(`/api/admin/basic-stats?activity=${activityTimeframe}${quizTypeParam}`, {
         headers: {
           "x-admin-code": "brightnest2025"
         }
@@ -110,7 +112,7 @@ export default function AdminDashboard() {
         setIsLoading(false);
       }
     }
-  }, [activityTimeframe]);
+  }, [activityTimeframe, selectedQuizType]);
 
   useEffect(() => {
     fetchStats(true); // Pass true to indicate this is a timeframe change
@@ -254,6 +256,21 @@ export default function AdminDashboard() {
             
             {/* Filters and Controls */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+              {/* Quiz Type Filter */}
+              <div className="flex items-center space-x-2">
+                <label className="text-sm font-medium text-gray-700">Quiz Type:</label>
+                <select
+                  value={selectedQuizType}
+                  onChange={(e) => setSelectedQuizType(e.target.value)}
+                  className="border border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="all">All Quizzes</option>
+                  <option value="financial-profile">Financial Profile</option>
+                  <option value="health-finance">Health Finance</option>
+                  <option value="marriage-finance">Marriage Finance</option>
+                </select>
+              </div>
+
               {/* Date Range Filter */}
               <div className="flex items-center space-x-2">
                 <label className="text-sm font-medium text-gray-700">Period:</label>
