@@ -16,13 +16,18 @@ interface Question {
 
 export default function CreateArticlePage({ params }: { params: Promise<{ type: string }> }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [quizType, setQuizType] = useState<string>('');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedQuestion, setSelectedQuestion] = useState<string>('');
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedArticle, setGeneratedArticle] = useState<any>(null);
+  const [generatedArticle, setGeneratedArticle] = useState<{
+    title: string;
+    content: string;
+    category: string;
+    tags: string[];
+    keyPoints?: string[];
+  } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -119,7 +124,6 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
   };
 
   const selectedQuestionData = questions.find(q => q.id === selectedQuestion);
-  const selectedOptionData = selectedQuestionData?.options.find(opt => opt.value === selectedOption);
 
   return (
     <div className="min-h-screen bg-gray-50 py-6">

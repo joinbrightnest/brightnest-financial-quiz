@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { articleService } from "@/lib/article-service";
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,7 +7,7 @@ export async function GET(request: NextRequest) {
     const questionId = searchParams.get('questionId');
     const category = searchParams.get('category');
 
-    let whereClause: any = { isActive: true };
+    const whereClause: { isActive: boolean; triggers?: any; category?: string } = { isActive: true };
     
     if (questionId) {
       whereClause.triggers = {

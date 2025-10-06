@@ -4,7 +4,7 @@ import { aiContentService } from "@/lib/ai-content";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { questionId, questionPrompt, answerValue, answerLabel, category } = body;
+    const { questionPrompt, answerValue, answerLabel, category } = body;
 
     if (!questionPrompt || !answerValue || !answerLabel) {
       return NextResponse.json(
