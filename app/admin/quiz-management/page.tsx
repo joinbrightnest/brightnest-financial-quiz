@@ -106,30 +106,6 @@ export default function QuizManagement() {
     fetchQuestions(quizType);
   };
 
-  const duplicateQuestions = async (fromQuizType: string, toQuizType: string) => {
-    try {
-      const response = await fetch("/api/admin/duplicate-questions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fromQuizType,
-          toQuizType
-        }),
-      });
-
-      if (response.ok) {
-        await fetchQuizData();
-        alert(`Questions duplicated from ${fromQuizType} to ${toQuizType} successfully!`);
-      } else {
-        alert("Failed to duplicate questions");
-      }
-    } catch (error) {
-      console.error("Error duplicating questions:", error);
-      alert("Error duplicating questions");
-    }
-  };
 
   const resetQuizType = async (quizType: string) => {
     if (!confirm(`Are you sure you want to reset all questions for ${quizType}? This will delete all existing questions.`)) {
@@ -282,56 +258,6 @@ export default function QuizManagement() {
           ))}
         </div>
 
-        {/* Duplicate Questions */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 mb-8">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">Duplicate Questions</h2>
-              <p className="text-sm text-gray-600">Copy all questions from one quiz type to another</p>
-            </div>
-          </div>
-          
-          <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-6 border border-orange-200/50">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Source Quiz Type</label>
-                <select
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white shadow-sm"
-                  onChange={(e) => {
-                    const fromQuizType = e.target.value;
-                    const toQuizType = selectedQuizType;
-                    if (fromQuizType && toQuizType && fromQuizType !== toQuizType) {
-                      duplicateQuestions(fromQuizType, toQuizType);
-                    }
-                  }}
-                >
-                  <option value="">Select source quiz type...</option>
-                  {quizTypes.map((quizType) => (
-                    <option key={quizType.name} value={quizType.name}>
-                      {quizType.displayName} ({quizType.questionCount} questions)
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-full">
-                  <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-700">Will copy to:</p>
-                  <p className="text-lg font-bold text-orange-600">{quizTypes.find(qt => qt.name === selectedQuizType)?.displayName}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Questions List */}
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden">
