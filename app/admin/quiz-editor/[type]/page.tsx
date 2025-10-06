@@ -102,13 +102,13 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     setDraggedQuestion(null);
   };
 
-  const handleQuestionEdit = (questionId: string, field: string, value: any) => {
+  const handleQuestionEdit = (questionId: string, field: string, value: string | number) => {
     setQuestions(prev => prev.map(q => 
       q.id === questionId ? { ...q, [field]: value } : q
     ));
   };
 
-  const handleOptionEdit = (questionId: string, optionIndex: number, field: string, value: any) => {
+  const handleOptionEdit = (questionId: string, optionIndex: number, field: string, value: string | number) => {
     setQuestions(prev => prev.map(q => 
       q.id === questionId 
         ? {

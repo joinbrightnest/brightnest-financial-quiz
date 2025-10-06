@@ -21,10 +21,15 @@ export async function POST(request: NextRequest) {
 
     // Create new questions
     const newQuestions = await Promise.all(
-      questions.map((question: any) => {
-        // Handle new questions (those with IDs starting with "new-")
-        const isNewQuestion = question.id.startsWith("new-");
-        
+      questions.map((question: {
+        id: string;
+        quizType: string;
+        order: number;
+        prompt: string;
+        type: string;
+        options: object;
+        active: boolean;
+      }) => {
         return prisma.quizQuestion.create({
           data: {
             quizType: question.quizType,
