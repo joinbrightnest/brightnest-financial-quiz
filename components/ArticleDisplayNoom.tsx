@@ -88,6 +88,15 @@ export default function ArticleDisplayNoom({
 
   // Generate a quick stat from the article content
   const getQuickStat = (article: Article) => {
+    // Check if article has stat and description (new simple format)
+    if ((article as any).stat && (article as any).description) {
+      return {
+        stat: (article as any).stat,
+        description: (article as any).description
+      };
+    }
+    
+    // Fallback to old format
     if (article.keyPoints && article.keyPoints.length > 0) {
       const firstPoint = article.keyPoints[0];
       const percentageMatch = firstPoint.match(/(\d+)%/);

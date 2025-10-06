@@ -323,6 +323,15 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                 <span className="font-semibold">Test Articles</span>
               </button>
               <button
+                onClick={() => window.open(`/admin/quiz-editor/${quizType}/manage-articles`, '_self')}
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                </svg>
+                <span className="font-semibold">Manage Articles</span>
+              </button>
+              <button
                 onClick={saveChanges}
                 disabled={isSaving}
                 className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"

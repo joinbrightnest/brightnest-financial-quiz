@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { articleService } from "@/lib/article-service";
+import { simpleArticleSystem } from "@/lib/simple-articles";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,21 +13,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // For now, always generate a dynamic article since database tables might not exist yet
-    const dynamicArticle = await articleService.generateDynamicArticle(
-      sessionId,
-      questionId,
+    // Load the simple article system
+    await simpleArticleSystem.loadArticles();
+    
+    // Get article for this answer
+    const article = await simpleArticleSystem.getArticleForAnswer(
+      'Financial question', // We don't have the question prompt here, but it's not needed
       answerValue,
       answerLabel
     );
 
-    const articles = dynamicArticle ? [{
-      id: dynamicArticle.article.id,
-      title: dynamicArticle.article.title,
-      content: dynamicArticle.article.content,
-      type: dynamicArticle.article.type,
-      category: dynamicArticle.article.category,
-      confidence: dynamicArticle.confidence
+    const articles = article ? [{
+      id: article.id,
+      title: article.title,
+      content: article.content,
+      type: 'simple',
+      category: article.category,
+      keyPoints: article.keyPoints,
+      stat: article.stat,
+      description: article.description
     }] : [];
 
     return NextResponse.json({ articles });
