@@ -161,7 +161,7 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
       if (response.ok) {
         const result = await response.json();
         console.log('Save result:', result);
-        alert('Article saved successfully!');
+        alert(result.message || 'Article saved successfully!');
         router.push(`/admin/quiz-editor/${quizType}`);
       } else {
         const error = await response.text();
@@ -204,7 +204,7 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
       if (response.ok) {
         const result = await response.json();
         console.log('Save result:', result);
-        alert('Manual article saved successfully!');
+        alert(result.message || 'Manual article saved successfully!');
         router.push(`/admin/quiz-editor/${quizType}`);
       } else {
         const error = await response.text();
@@ -266,7 +266,7 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
       if (response.ok) {
         const result = await response.json();
         console.log('Save result:', result);
-        alert('Edited article saved successfully!');
+        alert(result.message || 'Edited article saved successfully!');
         router.push(`/admin/quiz-editor/${quizType}`);
       } else {
         const error = await response.text();
