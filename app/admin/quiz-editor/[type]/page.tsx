@@ -18,6 +18,16 @@ interface Question {
   active: boolean;
 }
 
+interface Article {
+  id: string;
+  title: string;
+  content: string;
+  category: string;
+  order: number;
+  triggerQuestionId?: string;
+  triggerAnswerValue?: string;
+}
+
 interface QuizEditorProps {
   params: Promise<{
     type: string;
@@ -28,11 +38,13 @@ export default function QuizEditor({ params }: QuizEditorProps) {
   const router = useRouter();
   const [quizType, setQuizType] = useState<string>('');
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const hasInitiallyLoaded = useRef(false);
   const [editingQuestion, setEditingQuestion] = useState<string | null>(null);
-  const [draggedQuestion, setDraggedQuestion] = useState<string | null>(null);
+  const [editingArticle, setEditingArticle] = useState<string | null>(null);
+  const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const [quizLink, setQuizLink] = useState<string>('');
   const [isEditingLink, setIsEditingLink] = useState(false);
 
@@ -48,6 +60,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
   useEffect(() => {
     if (quizType) {
       fetchQuestions();
+      fetchArticles();
       // Generate the quiz link
       setQuizLink(`https://joinbrightnest.com/quiz/${quizType}`);
     }
@@ -73,8 +86,35 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     }
   };
 
-  const handleDragStart = (e: React.DragEvent, questionId: string) => {
-    setDraggedQuestion(questionId);
+  const fetchArticles = async () => {
+    try {
+      // Load articles from localStorage (simple article system)
+      const storedArticles = localStorage.getItem('brightnest_articles');
+      if (storedArticles) {
+        const articlesData = JSON.parse(storedArticles);
+        const articlesList = Object.values(articlesData).map((article: any, index: number) => ({
+          id: article.id,
+          title: article.title,
+          content: article.content,
+          category: article.category,
+          order: questions.length + index + 1, // Place after questions
+          triggerQuestionId: undefined,
+          triggerAnswerValue: undefined
+        }));
+        setArticles(articlesList);
+      }
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+    }
+  };
+
+  // Combine questions and articles for unified drag and drop
+  const getAllItems = () => {
+    return [...questions, ...articles].sort((a, b) => a.order - b.order);
+  };
+
+  const handleDragStart = (e: React.DragEvent, itemId: string) => {
+    setDraggedItem(itemId);
     e.dataTransfer.effectAllowed = "move";
   };
 
@@ -83,35 +123,63 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     e.dataTransfer.dropEffect = "move";
   };
 
-  const handleDrop = (e: React.DragEvent, targetQuestionId: string) => {
+  const handleDrop = (e: React.DragEvent, targetItemId: string) => {
     e.preventDefault();
     
-    if (!draggedQuestion || draggedQuestion === targetQuestionId) {
-      setDraggedQuestion(null);
+    if (!draggedItem || draggedItem === targetItemId) {
+      setDraggedItem(null);
       return;
     }
 
-    const draggedIndex = questions.findIndex(q => q.id === draggedQuestion);
-    const targetIndex = questions.findIndex(q => q.id === targetQuestionId);
+    const allItems = getAllItems();
+    const draggedIndex = allItems.findIndex(item => item.id === draggedItem);
+    const targetIndex = allItems.findIndex(item => item.id === targetItemId);
 
     if (draggedIndex === -1 || targetIndex === -1) {
-      setDraggedQuestion(null);
+      setDraggedItem(null);
       return;
     }
 
-    // Reorder questions
-    const newQuestions = [...questions];
-    const [draggedQuestionObj] = newQuestions.splice(draggedIndex, 1);
-    newQuestions.splice(targetIndex, 0, draggedQuestionObj);
+    // Reorder items
+    const newItems = [...allItems];
+    const [draggedItemObj] = newItems.splice(draggedIndex, 1);
+    newItems.splice(targetIndex, 0, draggedItemObj);
 
-    // Update order numbers
-    const updatedQuestions = newQuestions.map((question, index) => ({
-      ...question,
+    // Update order numbers and separate back into questions and articles
+    const updatedItems = newItems.map((item, index) => ({
+      ...item,
       order: index + 1
     }));
 
+    // Auto-detect context for articles
+    const updatedQuestions: Question[] = [];
+    const updatedArticles: Article[] = [];
+
+    updatedItems.forEach((item, index) => {
+      if ('prompt' in item) {
+        // It's a question
+        updatedQuestions.push(item as Question);
+      } else {
+        // It's an article - auto-detect context
+        const article = item as Article;
+        const previousQuestion = updatedQuestions[updatedQuestions.length - 1];
+        
+        if (previousQuestion && previousQuestion.options && previousQuestion.options.length > 0) {
+          // Auto-assign to the last question's first option
+          updatedArticles.push({
+            ...article,
+            triggerQuestionId: previousQuestion.id,
+            triggerAnswerValue: previousQuestion.options[0].value
+          });
+        } else {
+          updatedArticles.push(article);
+        }
+      }
+    });
+
     setQuestions(updatedQuestions);
-    setDraggedQuestion(null);
+    setArticles(updatedArticles);
+    setDraggedItem(null);
   };
 
   const handleQuestionEdit = (questionId: string, field: string, value: string | number) => {
@@ -193,6 +261,31 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     if (confirm("Are you sure you want to remove this question?")) {
       setQuestions(prev => prev.filter(q => q.id !== questionId));
     }
+  };
+
+  const addNewArticle = () => {
+    const newArticle: Article = {
+      id: `article-${Date.now()}`,
+      title: "New Article",
+      content: "Article content here...",
+      category: "general",
+      order: getAllItems().length + 1,
+      triggerQuestionId: undefined,
+      triggerAnswerValue: undefined
+    };
+    setArticles(prev => [...prev, newArticle]);
+  };
+
+  const removeArticle = (articleId: string) => {
+    if (confirm("Are you sure you want to remove this article?")) {
+      setArticles(prev => prev.filter(a => a.id !== articleId));
+    }
+  };
+
+  const handleArticleEdit = (articleId: string, field: string, value: string) => {
+    setArticles(prev => prev.map(a => 
+      a.id === articleId ? { ...a, [field]: value } : a
+    ));
   };
 
   const saveChanges = async () => {
@@ -305,6 +398,15 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                 <span className="font-semibold">Add Question</span>
               </button>
               <button
+                onClick={addNewArticle}
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span className="font-semibold">Add Article</span>
+              </button>
+              <button
                 onClick={() => window.open(`/admin/quiz-editor/${quizType}/flow-builder`, '_self')}
                 className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
@@ -414,51 +516,84 @@ export default function QuizEditor({ params }: QuizEditorProps) {
           </div>
         </div>
 
-        {/* Questions List */}
+        {/* Questions and Articles List */}
         <div className="space-y-6">
-          {questions.map((question, index) => (
+          {getAllItems().map((item, index) => {
+            const isQuestion = 'prompt' in item;
+            const question = isQuestion ? item as Question : null;
+            const article = !isQuestion ? item as Article : null;
+            
+            return (
             <div
-              key={question.id}
+              key={item.id}
               draggable
-              onDragStart={(e) => handleDragStart(e, question.id)}
+              onDragStart={(e) => handleDragStart(e, item.id)}
               onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, question.id)}
+              onDrop={(e) => handleDrop(e, item.id)}
               className={`group relative bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border-2 transition-all duration-300 hover:shadow-xl ${
-                draggedQuestion === question.id
+                draggedItem === item.id
                   ? "border-blue-500 opacity-50 scale-95"
                   : "border-white/20 hover:border-blue-200/50 hover:scale-[1.02]"
               }`}
             >
-              {/* Question Header */}
+              {/* Item Header */}
               <div className="p-6 border-b border-gray-200/50">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl text-lg font-bold shadow-lg">
-                      {question.order}
+                    <div className={`flex items-center justify-center w-12 h-12 rounded-xl text-lg font-bold shadow-lg ${
+                      isQuestion 
+                        ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                        : 'bg-gradient-to-br from-green-500 to-green-600 text-white'
+                    }`}>
+                      {item.order}
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Question {question.order}</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {isQuestion ? `Question ${item.order}` : `Article ${item.order}`}
+                      </h3>
                       <p className="text-sm text-gray-500 flex items-center space-x-2">
-                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          question.type === 'single' ? 'bg-blue-100 text-blue-800' :
-                          question.type === 'text' ? 'bg-emerald-100 text-emerald-800' :
-                          'bg-purple-100 text-purple-800'
-                        }`}>
-                          {question.type === 'single' ? 'Multiple Choice' : 
-                           question.type === 'text' ? 'Text Input' : 'Email Input'}
-                        </span>
-                        <span>•</span>
-                        <span>{question.options.length} options</span>
+                        {isQuestion ? (
+                          <>
+                            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                              question!.type === 'single' ? 'bg-blue-100 text-blue-800' :
+                              question!.type === 'text' ? 'bg-emerald-100 text-emerald-800' :
+                              'bg-purple-100 text-purple-800'
+                            }`}>
+                              {question!.type === 'single' ? 'Multiple Choice' : 
+                               question!.type === 'text' ? 'Text Input' : 'Email Input'}
+                            </span>
+                            <span>•</span>
+                            <span>{question!.options.length} options</span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                              Article
+                            </span>
+                            <span>•</span>
+                            <span>{article!.category}</span>
+                            {article!.triggerQuestionId && (
+                              <>
+                                <span>•</span>
+                                <span className="text-xs text-blue-600">Auto-triggered</span>
+                              </>
+                            )}
+                          </>
+                        )}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
                     <button
-                      onClick={() => setEditingQuestion(
-                        editingQuestion === question.id ? null : question.id
-                      )}
+                      onClick={() => {
+                        if (isQuestion) {
+                          setEditingQuestion(editingQuestion === item.id ? null : item.id);
+                        } else {
+                          setEditingArticle(editingArticle === item.id ? null : item.id);
+                        }
+                      }}
                       className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
-                        editingQuestion === question.id
+                        (isQuestion && editingQuestion === item.id) || (!isQuestion && editingArticle === item.id)
                           ? "bg-blue-600 text-white shadow-lg"
                           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                       }`}
@@ -466,10 +601,16 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                       </svg>
-                      <span>{editingQuestion === question.id ? "Done Editing" : "Edit"}</span>
+                      <span>{(isQuestion && editingQuestion === item.id) || (!isQuestion && editingArticle === item.id) ? "Done Editing" : "Edit"}</span>
                     </button>
                     <button
-                      onClick={() => removeQuestion(question.id)}
+                      onClick={() => {
+                        if (isQuestion) {
+                          removeQuestion(item.id);
+                        } else {
+                          removeArticle(item.id);
+                        }
+                      }}
                       className="flex items-center space-x-2 px-4 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-all duration-200 text-sm font-semibold"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -481,9 +622,11 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                 </div>
               </div>
 
-              {/* Question Content */}
+              {/* Item Content */}
               <div className="p-6">
-                {editingQuestion === question.id ? (
+                {isQuestion ? (
+                  // Question Content
+                  editingQuestion === item.id ? (
                   <div className="space-y-6">
                     {/* Question Prompt */}
                     <div>
@@ -491,8 +634,8 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                         Question Prompt
                       </label>
                       <textarea
-                        value={question.prompt}
-                        onChange={(e) => handleQuestionEdit(question.id, "prompt", e.target.value)}
+                        value={question!.prompt}
+                        onChange={(e) => handleQuestionEdit(item.id, "prompt", e.target.value)}
                         className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
                         rows={3}
                       />
@@ -504,8 +647,8 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                         Question Type
                       </label>
                       <select
-                        value={question.type}
-                        onChange={(e) => handleQuestionEdit(question.id, "type", e.target.value)}
+                        value={question!.type}
+                        onChange={(e) => handleQuestionEdit(item.id, "type", e.target.value)}
                         className="px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
                       >
                         <option value="single">Multiple Choice</option>
@@ -515,14 +658,14 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                     </div>
 
                     {/* Options (only for single type) */}
-                    {question.type === "single" && (
+                    {question!.type === "single" && (
                       <div>
                         <div className="flex items-center justify-between mb-4">
                           <label className="block text-sm font-semibold text-gray-700">
                             Answer Options
                           </label>
                           <button
-                            onClick={() => addNewOption(question.id)}
+                            onClick={() => addNewOption(item.id)}
                             className="flex items-center space-x-2 px-3 py-2 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-all duration-200 text-sm font-semibold"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -532,26 +675,26 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                           </button>
                         </div>
                         <div className="space-y-3">
-                          {question.options.map((option, optIndex) => (
+                          {question!.options.map((option, optIndex) => (
                             <div key={optIndex} className="bg-gray-50/50 rounded-xl p-4 border border-gray-200/50">
                               <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-center">
                                 <input
                                   type="text"
                                   value={option.label}
-                                  onChange={(e) => handleOptionEdit(question.id, optIndex, "label", e.target.value)}
+                                  onChange={(e) => handleOptionEdit(item.id, optIndex, "label", e.target.value)}
                                   placeholder="Option label"
                                   className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
                                 />
                                 <input
                                   type="text"
                                   value={option.value}
-                                  onChange={(e) => handleOptionEdit(question.id, optIndex, "value", e.target.value)}
+                                  onChange={(e) => handleOptionEdit(item.id, optIndex, "value", e.target.value)}
                                   placeholder="Option value"
                                   className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
                                 />
                                 <select
                                   value={option.weightCategory}
-                                  onChange={(e) => handleOptionEdit(question.id, optIndex, "weightCategory", e.target.value)}
+                                  onChange={(e) => handleOptionEdit(item.id, optIndex, "weightCategory", e.target.value)}
                                   className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
                                 >
                                   <option value="debt">Debt</option>
@@ -564,14 +707,14 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                                   <input
                                     type="number"
                                     value={option.weightValue}
-                                    onChange={(e) => handleOptionEdit(question.id, optIndex, "weightValue", parseInt(e.target.value))}
+                                    onChange={(e) => handleOptionEdit(item.id, optIndex, "weightValue", parseInt(e.target.value))}
                                     className="w-16 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
                                     min="0"
                                     max="5"
                                   />
-                                  {question.options.length > 1 && (
+                                  {question!.options.length > 1 && (
                                     <button
-                                      onClick={() => removeOption(question.id, optIndex)}
+                                      onClick={() => removeOption(item.id, optIndex)}
                                       className="px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-all duration-200"
                                     >
                                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -588,19 +731,20 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                     )}
 
                   </div>
-                ) : (
-                  <div>
-                    <p className="text-gray-900 font-semibold text-lg mb-4 leading-relaxed">{question.prompt}</p>
-                    {question.type === "single" && (
+                  ) : (
+                    // Question Display Mode
+                    <div>
+                      <p className="text-gray-900 font-semibold text-lg mb-4 leading-relaxed">{question!.prompt}</p>
+                      {question!.type === "single" && (
                       <div className="bg-gray-50/50 rounded-xl p-4 border border-gray-200/50">
                         <p className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
                           <svg className="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                           </svg>
-                          Answer Options ({question.options.length})
+                          Answer Options ({question!.options.length})
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {question.options.map((option, optIndex) => (
+                          {question!.options.map((option, optIndex) => (
                             <div key={optIndex} className="flex items-center space-x-3 bg-white/70 rounded-lg p-3 border border-gray-200/50">
                               <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
                               <span className="text-sm text-gray-700 font-medium">{option.label}</span>
@@ -612,7 +756,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                         </div>
                       </div>
                     )}
-                    {question.type === "text" && (
+                      {question!.type === "text" && (
                       <div className="bg-emerald-50/50 rounded-xl p-4 border border-emerald-200/50">
                         <div className="flex items-center space-x-2">
                           <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -622,7 +766,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                         </div>
                       </div>
                     )}
-                    {question.type === "email" && (
+                      {question!.type === "email" && (
                       <div className="bg-purple-50/50 rounded-xl p-4 border border-purple-200/50">
                         <div className="flex items-center space-x-2">
                           <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -632,22 +776,113 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                         </div>
                       </div>
                     )}
-                  </div>
+                    </div>
+                  )
+                ) : (
+                  // Article Content
+                  editingArticle === item.id ? (
+                    <div className="space-y-6">
+                      {/* Article Title */}
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">
+                          Article Title
+                        </label>
+                        <input
+                          type="text"
+                          value={article!.title}
+                          onChange={(e) => handleArticleEdit(item.id, "title", e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 bg-white shadow-sm"
+                        />
+                      </div>
+
+                      {/* Article Content */}
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">
+                          Article Content
+                        </label>
+                        <textarea
+                          value={article!.content}
+                          onChange={(e) => handleArticleEdit(item.id, "content", e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 bg-white shadow-sm"
+                          rows={6}
+                        />
+                      </div>
+
+                      {/* Article Category */}
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">
+                          Category
+                        </label>
+                        <select
+                          value={article!.category}
+                          onChange={(e) => handleArticleEdit(item.id, "category", e.target.value)}
+                          className="px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 bg-white shadow-sm"
+                        >
+                          <option value="marriage">Marriage</option>
+                          <option value="health">Health</option>
+                          <option value="career">Career</option>
+                          <option value="savings">Savings</option>
+                          <option value="debt">Debt</option>
+                          <option value="investing">Investing</option>
+                          <option value="general">General</option>
+                        </select>
+                      </div>
+
+                      {/* Auto-trigger Info */}
+                      {article!.triggerQuestionId && (
+                        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="text-sm font-semibold text-blue-800">Auto-triggered</span>
+                          </div>
+                          <p className="text-sm text-blue-700">
+                            This article will automatically appear after the question above based on the user's answer.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    // Article Display Mode
+                    <div>
+                      <h3 className="text-gray-900 font-semibold text-lg mb-4 leading-relaxed">{article!.title}</h3>
+                      <div className="bg-green-50/50 rounded-xl p-4 border border-green-200/50">
+                        <div className="flex items-center space-x-2 mb-3">
+                          <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          <span className="text-sm font-semibold text-green-700">Article Content</span>
+                        </div>
+                        <p className="text-sm text-gray-700 leading-relaxed">
+                          {article!.content.length > 200 ? `${article!.content.substring(0, 200)}...` : article!.content}
+                        </p>
+                        {article!.triggerQuestionId && (
+                          <div className="mt-3 p-2 bg-blue-100 rounded-lg">
+                            <p className="text-xs text-blue-700">
+                              <strong>Auto-triggered:</strong> Shows after question above
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )
                 )}
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
-        {questions.length === 0 && (
+        {getAllItems().length === 0 && (
           <div className="text-center py-16">
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
               <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No questions yet</h3>
-            <p className="text-gray-500 mb-6">Get started by adding your first question to this quiz.</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">No questions or articles yet</h3>
+            <p className="text-gray-500 mb-6">Get started by adding your first question or article to this quiz.</p>
             <button
               onClick={addNewQuestion}
               className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl mx-auto"
@@ -656,6 +891,15 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
               <span className="font-semibold">Add Your First Question</span>
+            </button>
+            <button
+              onClick={addNewArticle}
+              className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-lg hover:shadow-xl mx-auto mt-3"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span className="font-semibold">Add Your First Article</span>
             </button>
           </div>
         )}
