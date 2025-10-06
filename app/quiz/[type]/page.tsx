@@ -51,6 +51,7 @@ export default function QuizPage({ params }: QuizPageProps) {
     
     const initializeQuiz = async () => {
       try {
+        console.log('Starting quiz for type:', quizType);
         const response = await fetch("/api/quiz/start", {
           method: "POST",
           headers: {
@@ -59,11 +60,16 @@ export default function QuizPage({ params }: QuizPageProps) {
           body: JSON.stringify({ quizType }),
         });
         
+        console.log('Quiz start response status:', response.status);
+        
         if (!response.ok) {
-          throw new Error("Failed to start quiz");
+          const errorData = await response.json().catch(() => ({}));
+          console.error('Quiz start failed:', response.status, errorData);
+          throw new Error(`Failed to start quiz: ${response.status} ${errorData.error || 'Unknown error'}`);
         }
         
         const data = await response.json();
+        console.log('Quiz started successfully:', data);
         setSessionId(data.sessionId);
         setCurrentQuestion(data.question);
         setTotalQuestions(await getTotalQuestions());
@@ -71,7 +77,8 @@ export default function QuizPage({ params }: QuizPageProps) {
         hasInitiallyLoaded.current = true;
         setIsLoading(false);
       } catch (err) {
-        setError("Failed to start quiz. Please try again.");
+        console.error('Quiz initialization error:', err);
+        setError(`Failed to start quiz. Please try again. Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
         hasInitiallyLoaded.current = true;
         setIsLoading(false);
       }
@@ -82,10 +89,20 @@ export default function QuizPage({ params }: QuizPageProps) {
 
   const getTotalQuestions = async (): Promise<number> => {
     try {
+      console.log('Getting total questions for quiz type:', quizType);
       const response = await fetch(`/api/quiz/questions/count?quizType=${quizType}`);
+      console.log('Questions count response status:', response.status);
+      
+      if (!response.ok) {
+        console.error('Failed to get question count:', response.status);
+        return 10; // fallback
+      }
+      
       const data = await response.json();
+      console.log('Total questions:', data.count);
       return data.count;
-    } catch {
+    } catch (err) {
+      console.error('Error getting total questions:', err);
       return 10; // fallback
     }
   };
