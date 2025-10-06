@@ -48,6 +48,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
   const [isEditingLink, setIsEditingLink] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [showArticlePopup, setShowArticlePopup] = useState(false);
+  const [expandedMappings, setExpandedMappings] = useState<{ [key: string]: boolean }>({});
 
   // Handle async params
   useEffect(() => {
@@ -671,74 +672,92 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                 </div>
               </div>
 
-              {/* Answer → Article Mapping - Show all answers */}
-              {question.type === "single" && (
-                <div className="bg-green-50/50 rounded-xl p-4 border border-green-200/50">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center space-x-2">
-                      <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      <span className="text-sm font-semibold text-green-700">Answer → Article Mapping</span>
-                      <span className="text-xs text-gray-500">({question.options.length} answers)</span>
+              {/* Answer → Article Mapping - Compact with Dropdown */}
+              {question.type === "single" && (() => {
+                const articlesForQuestion = articles.filter(a => a.triggerQuestionId === question.id);
+                const isExpanded = expandedMappings[question.id] || false;
+                
+                return (
+                  <div className="bg-green-50/50 rounded-xl p-3 border border-green-200/50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span className="text-sm font-semibold text-green-700">Answer → Article Mapping</span>
+                        <span className="text-xs text-gray-500">({articlesForQuestion.length}/{question.options.length})</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank')}
+                          className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                        >
+                          + Add
+                        </button>
+                        <button
+                          onClick={() => setExpandedMappings(prev => ({
+                            ...prev,
+                            [question.id]: !isExpanded
+                          }))}
+                          className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded hover:bg-gray-200 transition-colors"
+                        >
+                          {isExpanded ? '▼' : '▶'}
+                        </button>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank')}
-                      className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
-                    >
-                      + Add
-                    </button>
-                  </div>
-                  
-                  <div className="space-y-1">
-                    {question.options.map((option, optIndex) => {
-                      // Find article for this answer
-                      const articleForAnswer = articles.find(a => 
-                        a.triggerQuestionId === question.id && a.triggerAnswerValue === option.value
-                      );
-                      
-                      return (
-                        <div key={optIndex} className="flex items-center justify-between bg-white rounded p-2 border border-green-200">
-                          <div className="flex items-center space-x-2">
-                            <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
-                              <span className="text-xs font-semibold text-blue-800">{optIndex + 1}</span>
+                    
+                    {isExpanded && (
+                      <div className="mt-3 space-y-1">
+                        {question.options.map((option, optIndex) => {
+                          // Find article for this answer
+                          const articleForAnswer = articles.find(a => 
+                            a.triggerQuestionId === question.id && a.triggerAnswerValue === option.value
+                          );
+                          
+                          return (
+                            <div key={optIndex} className="flex items-center justify-between bg-white rounded p-2 border border-green-200">
+                              <div className="flex items-center space-x-2">
+                                <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                                  <span className="text-xs font-semibold text-blue-800">{optIndex + 1}</span>
+                                </div>
+                                <div>
+                                  <p className="text-xs font-medium text-gray-900">
+                                    {option.label}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {articleForAnswer ? `→ ${articleForAnswer.title}` : 'No article assigned'}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                {articleForAnswer ? (
+                                  <button
+                                    onClick={() => {
+                                      // Open article popup
+                                      setSelectedArticle(articleForAnswer);
+                                      setShowArticlePopup(true);
+                                    }}
+                                    className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                                  >
+                                    View
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank')}
+                                    className="px-2 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600 transition-colors"
+                                  >
+                                    Add Article
+                                  </button>
+                                )}
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-xs font-medium text-gray-900">
-                                {option.label}
-                              </p>
-                              <p className="text-xs text-gray-500">
-                                {articleForAnswer ? `→ ${articleForAnswer.title}` : 'No article assigned'}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            {articleForAnswer ? (
-                              <button
-                                onClick={() => {
-                                  // Open article popup
-                                  setSelectedArticle(articleForAnswer);
-                                  setShowArticlePopup(true);
-                                }}
-                                className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
-                              >
-                                View
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank')}
-                                className="px-2 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600 transition-colors"
-                              >
-                                Add Article
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
           ))}
         </div>
