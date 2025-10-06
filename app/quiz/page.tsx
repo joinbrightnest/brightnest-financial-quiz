@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import QuestionCard from "@/components/QuestionCard";
 import TextInput from "@/components/TextInput";
-import ArticleDisplayNoom from "@/components/ArticleDisplayNoom";
 
 interface Question {
   id: string;
