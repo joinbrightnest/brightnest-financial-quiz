@@ -284,31 +284,119 @@ const financialProfileQuestions = [
     ]
   },
   {
-    order: 10,
-    prompt: "How do you handle financial stress?",
+    order: 6,
+    prompt: "What's your first name?",
+    type: "text",
+    options: [
+      {
+        label: "Enter your name",
+        value: "name_input",
+        weightCategory: "contact",
+        weightValue: 0
+      }
+    ]
+  },
+  {
+    order: 7,
+    prompt: "What's your email address?",
+    type: "email",
+    options: [
+      {
+        label: "Enter your email",
+        value: "email_input",
+        weightCategory: "contact",
+        weightValue: 0
+      }
+    ]
+  },
+  {
+    order: 8,
+    prompt: "How often do you check your bank account?",
     type: "single",
     options: [
       {
-        label: "I create a detailed plan and stick to it",
-        value: "detailed_plan",
+        label: "Daily - I'm very hands-on",
+        value: "daily_check",
         weightCategory: "spending",
         weightValue: 2
       },
       {
-        label: "I focus on increasing my income",
-        value: "increase_income",
+        label: "Weekly - I like to stay informed",
+        value: "weekly_check",
+        weightCategory: "savings",
+        weightValue: 2
+      },
+      {
+        label: "Monthly - I review my statements",
+        value: "monthly_check",
         weightCategory: "investing",
         weightValue: 2
       },
       {
-        label: "I cut expenses and save more",
-        value: "cut_expenses_save",
+        label: "Rarely - I trust my automatic systems",
+        value: "rarely_check",
+        weightCategory: "debt",
+        weightValue: 1
+      }
+    ]
+  },
+  {
+    order: 9,
+    prompt: "What's your biggest financial worry?",
+    type: "single",
+    options: [
+      {
+        label: "Not having enough for retirement",
+        value: "retirement_worry",
+        weightCategory: "investing",
+        weightValue: 3
+      },
+      {
+        label: "Unexpected medical expenses",
+        value: "medical_worry",
         weightCategory: "savings",
         weightValue: 3
       },
       {
-        label: "I try to ignore it and hope it gets better",
-        value: "ignore_stress",
+        label: "Losing my job or income",
+        value: "job_worry",
+        weightCategory: "spending",
+        weightValue: 2
+      },
+      {
+        label: "Never paying off my debt",
+        value: "debt_worry",
+        weightCategory: "debt",
+        weightValue: 3
+      }
+    ]
+  },
+  {
+    order: 10,
+    prompt: "How do you prefer to learn about finances?",
+    type: "single",
+    options: [
+      {
+        label: "Reading books and articles",
+        value: "reading",
+        weightCategory: "investing",
+        weightValue: 2
+      },
+      {
+        label: "Watching videos and courses",
+        value: "videos",
+        weightCategory: "savings",
+        weightValue: 2
+      },
+      {
+        label: "Working with a financial advisor",
+        value: "advisor",
+        weightCategory: "spending",
+        weightValue: 2
+      },
+      {
+        label: "Learning through trial and error",
+        value: "trial_error",
         weightCategory: "debt",
         weightValue: 1
       }
@@ -316,160 +404,160 @@ const financialProfileQuestions = [
   }
 ];
 
-// Health Finance Quiz Questions
+// Health Finance Quiz Questions (same 10 questions as financial profile)
 const healthFinanceQuestions = [
   {
     order: 1,
-    prompt: "How do you currently manage healthcare costs?",
+    prompt: "What's your primary financial goal right now?",
     type: "single",
     options: [
       {
-        label: "I have comprehensive health insurance",
-        value: "comprehensive_insurance",
+        label: "Pay off debt as quickly as possible",
+        value: "payoff_debt",
+        weightCategory: "debt",
+        weightValue: 3
+      },
+      {
+        label: "Build up my emergency savings",
+        value: "emergency_savings",
         weightCategory: "savings",
         weightValue: 3
       },
       {
-        label: "I use a high-deductible plan with HSA",
-        value: "high_deductible_hsa",
-        weightCategory: "investing",
+        label: "Create a stable monthly budget",
+        value: "stable_budget",
+        weightCategory: "spending",
         weightValue: 3
       },
       {
-        label: "I pay out-of-pocket and hope for the best",
-        value: "out_of_pocket",
-        weightCategory: "debt",
-        weightValue: 2
-      },
-      {
-        label: "I avoid medical care due to cost concerns",
-        value: "avoid_care",
-        weightCategory: "spending",
-        weightValue: 1
+        label: "Start investing for long-term growth",
+        value: "start_investing",
+        weightCategory: "investing",
+        weightValue: 3
       }
     ]
   },
   {
     order: 2,
-    prompt: "What's your biggest health-related financial worry?",
+    prompt: "How do you typically handle unexpected expenses?",
     type: "single",
     options: [
       {
-        label: "Unexpected medical emergencies",
-        value: "medical_emergencies",
-        weightCategory: "savings",
-        weightValue: 3
+        label: "Use credit cards and worry about it later",
+        value: "credit_cards",
+        weightCategory: "debt",
+        weightValue: 2
       },
       {
-        label: "Rising insurance premiums",
-        value: "rising_premiums",
+        label: "Dip into my emergency fund",
+        value: "emergency_fund",
+        weightCategory: "savings",
+        weightValue: 2
+      },
+      {
+        label: "Cut back on other expenses to cover it",
+        value: "cut_expenses",
         weightCategory: "spending",
         weightValue: 2
       },
       {
-        label: "Long-term care costs",
-        value: "long_term_care",
+        label: "Sell some investments if needed",
+        value: "sell_investments",
         weightCategory: "investing",
-        weightValue: 3
-      },
-      {
-        label: "Prescription medication costs",
-        value: "prescription_costs",
-        weightCategory: "debt",
         weightValue: 2
       }
     ]
   },
   {
     order: 3,
-    prompt: "How do you prioritize health spending?",
+    prompt: "What's your approach to budgeting?",
     type: "single",
     options: [
       {
-        label: "Prevention and wellness first",
-        value: "prevention_first",
-        weightCategory: "savings",
-        weightValue: 3
+        label: "I don't really budget - I just try to spend less",
+        value: "no_budget",
+        weightCategory: "debt",
+        weightValue: 1
       },
       {
-        label: "Only when absolutely necessary",
-        value: "only_necessary",
+        label: "I save first, then spend what's left",
+        value: "save_first",
+        weightCategory: "savings",
+        weightValue: 2
+      },
+      {
+        label: "I track every expense carefully",
+        value: "track_expenses",
         weightCategory: "spending",
         weightValue: 2
       },
       {
-        label: "I invest in health for long-term benefits",
-        value: "invest_health",
+        label: "I focus on maximizing my investment returns",
+        value: "maximize_returns",
         weightCategory: "investing",
-        weightValue: 3
-      },
-      {
-        label: "I put it on credit cards when needed",
-        value: "credit_cards",
-        weightCategory: "debt",
         weightValue: 2
       }
     ]
   },
   {
     order: 4,
-    prompt: "What's your approach to health savings?",
+    prompt: "How do you feel about taking financial risks?",
     type: "single",
     options: [
       {
-        label: "I have a dedicated health emergency fund",
-        value: "health_emergency_fund",
-        weightCategory: "savings",
-        weightValue: 3
-      },
-      {
-        label: "I contribute to an HSA regularly",
-        value: "hsa_contributions",
-        weightCategory: "investing",
-        weightValue: 3
-      },
-      {
-        label: "I save what I can when I can",
-        value: "irregular_saving",
+        label: "I avoid risks - I prefer guaranteed outcomes",
+        value: "avoid_risks",
         weightCategory: "spending",
         weightValue: 2
       },
       {
-        label: "I don't save specifically for health costs",
-        value: "no_health_saving",
+        label: "I'm comfortable with moderate risks for better returns",
+        value: "moderate_risks",
+        weightCategory: "investing",
+        weightValue: 2
+      },
+      {
+        label: "I take calculated risks to accelerate my goals",
+        value: "calculated_risks",
+        weightCategory: "investing",
+        weightValue: 3
+      },
+      {
+        label: "I prefer to eliminate debt before taking any risks",
+        value: "eliminate_debt_first",
         weightCategory: "debt",
-        weightValue: 1
+        weightValue: 2
       }
     ]
   },
   {
     order: 5,
-    prompt: "How do you handle health insurance decisions?",
+    prompt: "What motivates you most about money?",
     type: "single",
     options: [
       {
-        label: "I carefully compare plans and costs",
-        value: "compare_plans",
+        label: "Being debt-free and financially independent",
+        value: "debt_free",
+        weightCategory: "debt",
+        weightValue: 3
+      },
+      {
+        label: "Having a secure financial cushion",
+        value: "secure_cushion",
         weightCategory: "savings",
         weightValue: 3
       },
       {
-        label: "I choose the cheapest option available",
-        value: "cheapest_option",
+        label: "Living within my means and being responsible",
+        value: "live_within_means",
         weightCategory: "spending",
-        weightValue: 2
+        weightValue: 3
       },
       {
-        label: "I prioritize coverage over cost",
-        value: "coverage_over_cost",
+        label: "Building wealth and maximizing opportunities",
+        value: "build_wealth",
         weightCategory: "investing",
-        weightValue: 2
-      },
-      {
-        label: "I avoid thinking about it until open enrollment",
-        value: "avoid_decision",
-        weightCategory: "debt",
-        weightValue: 1
+        weightValue: 3
       }
     ]
   },
@@ -496,165 +584,258 @@ const healthFinanceQuestions = [
         value: "email_input",
         weightCategory: "contact",
         weightValue: 0
+      }
+    ]
+  },
+  {
+    order: 8,
+    prompt: "How often do you check your bank account?",
+    type: "single",
+    options: [
+      {
+        label: "Daily - I'm very hands-on",
+        value: "daily_check",
+        weightCategory: "spending",
+        weightValue: 2
+      },
+      {
+        label: "Weekly - I like to stay informed",
+        value: "weekly_check",
+        weightCategory: "savings",
+        weightValue: 2
+      },
+      {
+        label: "Monthly - I review my statements",
+        value: "monthly_check",
+        weightCategory: "investing",
+        weightValue: 2
+      },
+      {
+        label: "Rarely - I trust my automatic systems",
+        value: "rarely_check",
+        weightCategory: "debt",
+        weightValue: 1
+      }
+    ]
+  },
+  {
+    order: 9,
+    prompt: "What's your biggest financial worry?",
+    type: "single",
+    options: [
+      {
+        label: "Not having enough for retirement",
+        value: "retirement_worry",
+        weightCategory: "investing",
+        weightValue: 3
+      },
+      {
+        label: "Unexpected medical expenses",
+        value: "medical_worry",
+        weightCategory: "savings",
+        weightValue: 3
+      },
+      {
+        label: "Losing my job or income",
+        value: "job_worry",
+        weightCategory: "spending",
+        weightValue: 2
+      },
+      {
+        label: "Never paying off my debt",
+        value: "debt_worry",
+        weightCategory: "debt",
+        weightValue: 3
+      }
+    ]
+  },
+  {
+    order: 10,
+    prompt: "How do you prefer to learn about finances?",
+    type: "single",
+    options: [
+      {
+        label: "Reading books and articles",
+        value: "reading",
+        weightCategory: "investing",
+        weightValue: 2
+      },
+      {
+        label: "Watching videos and courses",
+        value: "videos",
+        weightCategory: "savings",
+        weightValue: 2
+      },
+      {
+        label: "Working with a financial advisor",
+        value: "advisor",
+        weightCategory: "spending",
+        weightValue: 2
+      },
+      {
+        label: "Learning through trial and error",
+        value: "trial_error",
+        weightCategory: "debt",
+        weightValue: 1
       }
     ]
   }
 ];
 
-// Marriage Finance Quiz Questions
+// Marriage Finance Quiz Questions (same 10 questions as financial profile)
 const marriageFinanceQuestions = [
   {
     order: 1,
-    prompt: "How do you and your partner handle money decisions?",
+    prompt: "What's your primary financial goal right now?",
     type: "single",
     options: [
       {
-        label: "We make all decisions together",
-        value: "decisions_together",
+        label: "Pay off debt as quickly as possible",
+        value: "payoff_debt",
+        weightCategory: "debt",
+        weightValue: 3
+      },
+      {
+        label: "Build up my emergency savings",
+        value: "emergency_savings",
         weightCategory: "savings",
         weightValue: 3
       },
       {
-        label: "One person handles most financial decisions",
-        value: "one_person_handles",
+        label: "Create a stable monthly budget",
+        value: "stable_budget",
         weightCategory: "spending",
-        weightValue: 2
+        weightValue: 3
       },
       {
-        label: "We have separate accounts and split costs",
-        value: "separate_accounts",
+        label: "Start investing for long-term growth",
+        value: "start_investing",
         weightCategory: "investing",
-        weightValue: 2
-      },
-      {
-        label: "We avoid talking about money",
-        value: "avoid_money_talks",
-        weightCategory: "debt",
-        weightValue: 1
+        weightValue: 3
       }
     ]
   },
   {
     order: 2,
-    prompt: "What's your biggest financial challenge as a couple?",
+    prompt: "How do you typically handle unexpected expenses?",
     type: "single",
     options: [
       {
-        label: "Different spending habits",
-        value: "different_spending",
-        weightCategory: "spending",
-        weightValue: 3
-      },
-      {
-        label: "Saving for shared goals",
-        value: "saving_goals",
-        weightCategory: "savings",
-        weightValue: 3
-      },
-      {
-        label: "Planning for retirement together",
-        value: "retirement_planning",
-        weightCategory: "investing",
-        weightValue: 3
-      },
-      {
-        label: "Managing existing debt",
-        value: "managing_debt",
+        label: "Use credit cards and worry about it later",
+        value: "credit_cards",
         weightCategory: "debt",
-        weightValue: 3
+        weightValue: 2
+      },
+      {
+        label: "Dip into my emergency fund",
+        value: "emergency_fund",
+        weightCategory: "savings",
+        weightValue: 2
+      },
+      {
+        label: "Cut back on other expenses to cover it",
+        value: "cut_expenses",
+        weightCategory: "spending",
+        weightValue: 2
+      },
+      {
+        label: "Sell some investments if needed",
+        value: "sell_investments",
+        weightCategory: "investing",
+        weightValue: 2
       }
     ]
   },
   {
     order: 3,
-    prompt: "How do you handle financial disagreements?",
+    prompt: "What's your approach to budgeting?",
     type: "single",
     options: [
       {
-        label: "We discuss and compromise",
-        value: "discuss_compromise",
-        weightCategory: "savings",
-        weightValue: 3
-      },
-      {
-        label: "We avoid the topic to keep peace",
-        value: "avoid_topic",
+        label: "I don't really budget - I just try to spend less",
+        value: "no_budget",
         weightCategory: "debt",
         weightValue: 1
       },
       {
-        label: "We set budgets and stick to them",
-        value: "set_budgets",
+        label: "I save first, then spend what's left",
+        value: "save_first",
+        weightCategory: "savings",
+        weightValue: 2
+      },
+      {
+        label: "I track every expense carefully",
+        value: "track_expenses",
         weightCategory: "spending",
         weightValue: 2
       },
       {
-        label: "We seek professional financial advice",
-        value: "professional_advice",
+        label: "I focus on maximizing my investment returns",
+        value: "maximize_returns",
         weightCategory: "investing",
-        weightValue: 3
+        weightValue: 2
       }
     ]
   },
   {
     order: 4,
-    prompt: "What's your approach to joint financial goals?",
+    prompt: "How do you feel about taking financial risks?",
     type: "single",
     options: [
       {
-        label: "We have a detailed financial plan",
-        value: "detailed_plan",
-        weightCategory: "savings",
-        weightValue: 3
-      },
-      {
-        label: "We save what we can when we can",
-        value: "irregular_saving",
+        label: "I avoid risks - I prefer guaranteed outcomes",
+        value: "avoid_risks",
         weightCategory: "spending",
         weightValue: 2
       },
       {
-        label: "We invest for long-term growth",
-        value: "invest_growth",
+        label: "I'm comfortable with moderate risks for better returns",
+        value: "moderate_risks",
+        weightCategory: "investing",
+        weightValue: 2
+      },
+      {
+        label: "I take calculated risks to accelerate my goals",
+        value: "calculated_risks",
         weightCategory: "investing",
         weightValue: 3
       },
       {
-        label: "We focus on paying off debt first",
-        value: "payoff_debt_first",
+        label: "I prefer to eliminate debt before taking any risks",
+        value: "eliminate_debt_first",
         weightCategory: "debt",
-        weightValue: 3
+        weightValue: 2
       }
     ]
   },
   {
     order: 5,
-    prompt: "How do you handle financial transparency?",
+    prompt: "What motivates you most about money?",
     type: "single",
     options: [
       {
-        label: "We share all financial information openly",
-        value: "full_transparency",
+        label: "Being debt-free and financially independent",
+        value: "debt_free",
+        weightCategory: "debt",
+        weightValue: 3
+      },
+      {
+        label: "Having a secure financial cushion",
+        value: "secure_cushion",
         weightCategory: "savings",
         weightValue: 3
       },
       {
-        label: "We keep some financial privacy",
-        value: "some_privacy",
+        label: "Living within my means and being responsible",
+        value: "live_within_means",
         weightCategory: "spending",
-        weightValue: 2
+        weightValue: 3
       },
       {
-        label: "We have separate financial lives",
-        value: "separate_finances",
+        label: "Building wealth and maximizing opportunities",
+        value: "build_wealth",
         weightCategory: "investing",
-        weightValue: 2
-      },
-      {
-        label: "We don't discuss finances much",
-        value: "avoid_finances",
-        weightCategory: "debt",
-        weightValue: 1
+        weightValue: 3
       }
     ]
   },
@@ -681,6 +862,99 @@ const marriageFinanceQuestions = [
         value: "email_input",
         weightCategory: "contact",
         weightValue: 0
+      }
+    ]
+  },
+  {
+    order: 8,
+    prompt: "How often do you check your bank account?",
+    type: "single",
+    options: [
+      {
+        label: "Daily - I'm very hands-on",
+        value: "daily_check",
+        weightCategory: "spending",
+        weightValue: 2
+      },
+      {
+        label: "Weekly - I like to stay informed",
+        value: "weekly_check",
+        weightCategory: "savings",
+        weightValue: 2
+      },
+      {
+        label: "Monthly - I review my statements",
+        value: "monthly_check",
+        weightCategory: "investing",
+        weightValue: 2
+      },
+      {
+        label: "Rarely - I trust my automatic systems",
+        value: "rarely_check",
+        weightCategory: "debt",
+        weightValue: 1
+      }
+    ]
+  },
+  {
+    order: 9,
+    prompt: "What's your biggest financial worry?",
+    type: "single",
+    options: [
+      {
+        label: "Not having enough for retirement",
+        value: "retirement_worry",
+        weightCategory: "investing",
+        weightValue: 3
+      },
+      {
+        label: "Unexpected medical expenses",
+        value: "medical_worry",
+        weightCategory: "savings",
+        weightValue: 3
+      },
+      {
+        label: "Losing my job or income",
+        value: "job_worry",
+        weightCategory: "spending",
+        weightValue: 2
+      },
+      {
+        label: "Never paying off my debt",
+        value: "debt_worry",
+        weightCategory: "debt",
+        weightValue: 3
+      }
+    ]
+  },
+  {
+    order: 10,
+    prompt: "How do you prefer to learn about finances?",
+    type: "single",
+    options: [
+      {
+        label: "Reading books and articles",
+        value: "reading",
+        weightCategory: "investing",
+        weightValue: 2
+      },
+      {
+        label: "Watching videos and courses",
+        value: "videos",
+        weightCategory: "savings",
+        weightValue: 2
+      },
+      {
+        label: "Working with a financial advisor",
+        value: "advisor",
+        weightCategory: "spending",
+        weightValue: 2
+      },
+      {
+        label: "Learning through trial and error",
+        value: "trial_error",
+        weightCategory: "debt",
+        weightValue: 1
       }
     ]
   }
