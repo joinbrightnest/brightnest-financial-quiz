@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     console.log("Deleting results...");
     const deletedResults = await prisma.result.deleteMany({
       where: {
-        quizSession: {
+        session: {
           quizType: quizType,
         },
       },
