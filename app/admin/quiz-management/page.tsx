@@ -187,7 +187,7 @@ export default function QuizManagement() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           {quizTypes.map((quizType, index) => (
             <div key={quizType.name} className="group relative">
-              <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 p-8 hover:scale-105">
+              <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8">
                 {/* Icon */}
                 <div className="flex items-center justify-between mb-6">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
@@ -215,7 +215,7 @@ export default function QuizManagement() {
                 <div className="space-y-3">
                   <button
                     onClick={() => window.open(`/admin/quiz-editor/${quizType.name}`, '_self')}
-                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl shadow-lg"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -229,10 +229,10 @@ export default function QuizManagement() {
                         handleQuizTypeChange(quizType.name);
                         fetchQuizData();
                       }}
-                      className={`flex items-center justify-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      className={`flex items-center justify-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium ${
                         selectedQuizType === quizType.name
                           ? "bg-gray-900 text-white shadow-lg"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          : "bg-gray-100 text-gray-700"
                       }`}
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -244,7 +244,7 @@ export default function QuizManagement() {
                     
                     <button
                       onClick={() => resetQuizType(quizType.name)}
-                      className="flex items-center justify-center space-x-2 px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-all duration-200 text-sm font-medium"
+                      className="flex items-center justify-center space-x-2 px-3 py-2 bg-red-50 text-red-700 rounded-lg text-sm font-medium"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -293,7 +293,7 @@ export default function QuizManagement() {
             ) : (
               <div className="space-y-4">
                 {questions.map((question, index) => (
-                  <div key={question.id} className="group bg-white/50 backdrop-blur-sm border border-gray-200/50 rounded-xl p-6 hover:bg-white/70 hover:shadow-md transition-all duration-200">
+                  <div key={question.id} className="group bg-white/50 backdrop-blur-sm border border-gray-200/50 rounded-xl p-6">
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
