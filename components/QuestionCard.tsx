@@ -34,11 +34,18 @@ export default function QuestionCard({
 }: QuestionCardProps) {
   return (
     <div className="min-h-screen bg-white">
+      {/* Top Header Bar */}
+      <div className="bg-gray-800 w-full py-4">
+        <div className="max-w-lg mx-auto px-6">
+          <h1 className="text-white text-xl font-bold text-center tracking-wide">
+            BrightNest
+          </h1>
+        </div>
+      </div>
+      
+      {/* Main Content */}
       <div className="max-w-lg mx-auto px-6 py-12">
         <div className="text-center mb-8">
-          <h1 className="text-lg font-semibold text-gray-900 mb-4 tracking-wide">
-            FINANCIAL PROFILE
-          </h1>
           <ProgressBar 
             current={currentQuestion} 
             total={totalQuestions} 
