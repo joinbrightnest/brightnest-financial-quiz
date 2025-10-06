@@ -136,6 +136,8 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
 
     setIsSaving(true);
     try {
+      console.log('Saving generated article:', generatedArticle);
+      
       const response = await fetch('/api/admin/articles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -154,22 +156,36 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
         })
       });
 
+      console.log('Save response status:', response.status);
+      
       if (response.ok) {
+        const result = await response.json();
+        console.log('Save result:', result);
         alert('Article saved successfully!');
         router.push(`/admin/quiz-editor/${quizType}`);
+      } else {
+        const error = await response.text();
+        console.error('Save error:', error);
+        alert('Failed to save article. Please try again.');
       }
     } catch (error) {
       console.error('Failed to save article:', error);
+      alert('Failed to save article. Please check your connection and try again.');
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleSaveManualArticle = async () => {
-    if (!editableArticle.title || !editableArticle.content) return;
+    if (!editableArticle.title || !editableArticle.content) {
+      alert('Please fill in the title and content before saving.');
+      return;
+    }
 
     setIsSaving(true);
     try {
+      console.log('Saving manual article:', editableArticle);
+      
       const response = await fetch('/api/admin/articles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -183,12 +199,21 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
         })
       });
 
+      console.log('Save response status:', response.status);
+      
       if (response.ok) {
+        const result = await response.json();
+        console.log('Save result:', result);
         alert('Manual article saved successfully!');
         router.push(`/admin/quiz-editor/${quizType}`);
+      } else {
+        const error = await response.text();
+        console.error('Save error:', error);
+        alert('Failed to save article. Please try again.');
       }
     } catch (error) {
       console.error('Failed to save manual article:', error);
+      alert('Failed to save article. Please check your connection and try again.');
     } finally {
       setIsSaving(false);
     }
@@ -209,10 +234,15 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
   };
 
   const handleSaveEditedArticle = async () => {
-    if (!editableArticle.title || !editableArticle.content) return;
+    if (!editableArticle.title || !editableArticle.content) {
+      alert('Please fill in the title and content before saving.');
+      return;
+    }
 
     setIsSaving(true);
     try {
+      console.log('Saving edited article:', editableArticle);
+      
       const response = await fetch('/api/admin/articles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -231,12 +261,21 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
         })
       });
 
+      console.log('Save response status:', response.status);
+      
       if (response.ok) {
+        const result = await response.json();
+        console.log('Save result:', result);
         alert('Edited article saved successfully!');
         router.push(`/admin/quiz-editor/${quizType}`);
+      } else {
+        const error = await response.text();
+        console.error('Save error:', error);
+        alert('Failed to save article. Please try again.');
       }
     } catch (error) {
       console.error('Failed to save edited article:', error);
+      alert('Failed to save article. Please check your connection and try again.');
     } finally {
       setIsSaving(false);
     }
@@ -358,104 +397,43 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
                 </>
               ) : (
                 <>
-                  {/* Manual Input Fields with Dropdowns */}
+                  {/* Simple Manual Input Fields */}
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Question Text
                     </label>
-                    <div className="space-y-2">
-                      <select
-                        value={selectedQuestion}
-                        onChange={(e) => {
-                          if (e.target.value) {
-                            const question = questions.find(q => q.id === e.target.value);
-                            setSelectedQuestion(e.target.value);
-                            setManualQuestion(question?.prompt || '');
-                            setSelectedOption('');
-                            setManualAnswer('');
-                            setGeneratedArticle(null);
-                          }
-                        }}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                      >
-                        <option value="">Choose from existing questions...</option>
-                        {questions.map((question) => (
-                          <option key={question.id} value={question.id} className="text-gray-900">
-                            {question.prompt}
-                          </option>
-                        ))}
-                      </select>
-                      <div className="text-center text-gray-500 text-sm">OR</div>
-                      <input
-                        type="text"
-                        value={manualQuestion}
-                        onChange={(e) => {
-                          setManualQuestion(e.target.value);
-                          setSelectedQuestion('');
-                        }}
-                        placeholder="Write your own question here..."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                      />
-                    </div>
+                    <input
+                      type="text"
+                      value={manualQuestion}
+                      onChange={(e) => setManualQuestion(e.target.value)}
+                      placeholder="Enter your question here..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                    />
                   </div>
 
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Answer Text
                     </label>
-                    <div className="space-y-2">
-                      {selectedQuestion && (
-                        <select
-                          value={selectedOption}
-                          onChange={(e) => {
-                            if (e.target.value) {
-                              const question = questions.find(q => q.id === selectedQuestion);
-                              const option = question?.options.find(opt => opt.value === e.target.value);
-                              setSelectedOption(e.target.value);
-                              setManualAnswer(option?.label || '');
-                              setGeneratedArticle(null);
-                            }
-                          }}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                        >
-                          <option value="">Choose from existing answers...</option>
-                          {questions.find(q => q.id === selectedQuestion)?.options.map((option) => (
-                            <option key={option.value} value={option.value} className="text-gray-900">
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
-                      )}
-                      <div className="text-center text-gray-500 text-sm">OR</div>
-                      <input
-                        type="text"
-                        value={manualAnswer}
-                        onChange={(e) => {
-                          setManualAnswer(e.target.value);
-                          setSelectedOption('');
-                        }}
-                        placeholder="Write your own answer here..."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                      />
-                    </div>
+                    <input
+                      type="text"
+                      value={manualAnswer}
+                      onChange={(e) => setManualAnswer(e.target.value)}
+                      placeholder="Enter the answer here..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                    />
                   </div>
 
                   {/* Generate Button for Manual Input */}
-                  {(manualQuestion && manualAnswer) || (selectedQuestion && selectedOption) ? (
+                  {manualQuestion && manualAnswer && (
                     <button
-                      onClick={() => {
-                        if (selectedQuestion && selectedOption) {
-                          handleGenerateArticle();
-                        } else {
-                          handleGenerateManualArticle();
-                        }
-                      }}
+                      onClick={() => handleGenerateManualArticle()}
                       disabled={isGenerating}
                       className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium mb-4"
                     >
                       {isGenerating ? "Generating Article..." : "Generate AI Article"}
                     </button>
-                  ) : null}
+                  )}
 
                 </>
               )}
