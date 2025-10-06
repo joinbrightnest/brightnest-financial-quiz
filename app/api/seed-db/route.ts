@@ -283,11 +283,14 @@ export async function POST() {
   try {
     console.log('Starting database seed...');
 
-    // Clear existing questions
-    await prisma.quizAnswer.deleteMany();
-    await prisma.result.deleteMany();
-    await prisma.quizSession.deleteMany();
-    await prisma.quizQuestion.deleteMany();
+    // Check if questions already exist
+    const existingQuestions = await prisma.quizQuestion.count();
+    if (existingQuestions > 0) {
+      return NextResponse.json({ 
+        success: true, 
+        message: `Database already has ${existingQuestions} questions` 
+      });
+    }
 
     // Create Financial Profile questions
     for (const question of financialProfileQuestions) {
@@ -340,7 +343,7 @@ export async function POST() {
   } catch (error) {
     console.error("Error seeding database:", error);
     return NextResponse.json(
-      { error: "Failed to seed database" },
+      { error: `Failed to seed database: ${error.message}` },
       { status: 500 }
     );
   }
