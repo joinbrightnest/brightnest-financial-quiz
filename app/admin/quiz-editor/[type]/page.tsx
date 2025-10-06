@@ -787,24 +787,27 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                         />
                       </div>
 
-                      {/* Article Category */}
+                      {/* Article Category (Optional) */}
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-3">
-                          Category
+                          Category (Optional)
                         </label>
                         <select
                           value={article!.category}
                           onChange={(e) => handleArticleEdit(item.id, "category", e.target.value)}
                           className="px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-gray-900 bg-white shadow-sm"
                         >
+                          <option value="general">General</option>
                           <option value="marriage">Marriage</option>
                           <option value="health">Health</option>
                           <option value="career">Career</option>
                           <option value="savings">Savings</option>
                           <option value="debt">Debt</option>
                           <option value="investing">Investing</option>
-                          <option value="general">General</option>
                         </select>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Category is optional. Articles are triggered by if/then logic, not categories.
+                        </p>
                       </div>
 
                       {/* If/Then Logic */}

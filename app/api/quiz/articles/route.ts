@@ -53,9 +53,10 @@ export async function POST(request: NextRequest) {
 
 async function getArticlesFromEditor(questionId: string, answerValue: string) {
   try {
-    // For now, return empty array since we can't access localStorage on server-side
-    // This will be implemented when we have a proper database
-    // The if/then logic will work once articles are stored in the database
+    // Since we can't access localStorage on server-side, we'll use a different approach
+    // For now, we'll return empty and let the client-side handle it
+    // This will be properly implemented when we have a database
+    console.log(`Looking for articles triggered by question ${questionId} with answer ${answerValue}`);
     return [];
   } catch (error) {
     console.error('Error getting articles from editor:', error);

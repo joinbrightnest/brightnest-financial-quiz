@@ -38,6 +38,41 @@ export default function ArticleDisplayNoom({
   const loadRelevantArticles = async () => {
     setIsLoading(true);
     try {
+      // First, check localStorage for articles with if/then logic
+      const storedArticles = localStorage.getItem('brightnest_articles');
+      if (storedArticles) {
+        const articlesData = JSON.parse(storedArticles);
+        const matchingArticles = [];
+
+        // Find articles that match the if/then logic
+        for (const [articleId, article] of Object.entries(articlesData)) {
+          const articleData = article as any;
+          
+          // Check if this article is triggered by this question and answer
+          if (articleData.triggerQuestionId === questionId && 
+              articleData.triggerAnswerValue === answerValue) {
+            
+            matchingArticles.push({
+              id: articleData.id,
+              title: articleData.title,
+              content: articleData.content,
+              type: 'editor',
+              category: articleData.category,
+              keyPoints: [],
+              sources: []
+            });
+          }
+        }
+
+        if (matchingArticles.length > 0) {
+          setArticles(matchingArticles);
+          setSelectedArticle(matchingArticles[0]);
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // Fallback to API if no localStorage articles match
       const response = await fetch('/api/quiz/articles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
