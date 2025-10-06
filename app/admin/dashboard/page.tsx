@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Chart as ChartJS,
@@ -85,6 +85,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const hasInitiallyLoaded = useRef(false);
   const [dateRange, setDateRange] = useState('7d');
   const [activityTimeframe, setActivityTimeframe] = useState('daily');
   const [selectedQuizType, setSelectedQuizType] = useState<string>('all');
@@ -92,8 +93,8 @@ export default function AdminDashboard() {
   const [showComparison, setShowComparison] = useState(false);
 
   const fetchStats = useCallback(async (isTimeframeChange = false) => {
-    // Only show loading state on initial load, not on tab switches or timeframe changes
-    if (!isTimeframeChange && !stats) {
+    // Only show loading state on initial load, not on window switches or timeframe changes
+    if (!isTimeframeChange && !hasInitiallyLoaded.current) {
       setIsLoading(true);
     }
     setError(null);
@@ -112,11 +113,12 @@ export default function AdminDashboard() {
       
       const data = await response.json();
       setStats(data);
+      hasInitiallyLoaded.current = true;
         } catch {
           setError("Failed to load admin stats");
         } finally {
       // Only hide loading state if we were actually showing it
-      if (!isTimeframeChange && !stats) {
+      if (!isTimeframeChange && !hasInitiallyLoaded.current) {
         setIsLoading(false);
       }
     }
@@ -126,17 +128,33 @@ export default function AdminDashboard() {
     fetchStats(true); // Pass true to indicate this is a timeframe change
   }, [fetchStats]);
 
-  // Handle page visibility changes to prevent unnecessary re-fetching
+  // Handle page visibility and focus changes to prevent unnecessary re-fetching
   useEffect(() => {
     const handleVisibilityChange = () => {
-      // Only refetch if the page becomes visible and we don't have stats yet
-      if (!document.hidden && !stats) {
+      // Don't refetch when switching between windows - only on initial load
+      if (!document.hidden && !hasInitiallyLoaded.current) {
         fetchStats(true);
       }
     };
 
+    const handleWindowFocus = () => {
+      // Don't refetch when window regains focus - this prevents the loading flash
+      // The data is already there, no need to reload
+    };
+
+    const handleWindowBlur = () => {
+      // Don't do anything when window loses focus
+    };
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleWindowFocus);
+    window.addEventListener('blur', handleWindowBlur);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleWindowFocus);
+      window.removeEventListener('blur', handleWindowBlur);
+    };
   }, [stats, fetchStats]);
 
 
@@ -356,7 +374,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Stats Cards */}
-          {isLoading && !stats ? (
+          {isLoading && !hasInitiallyLoaded.current ? (
             <div className="text-center py-8 opacity-50 transition-opacity duration-300">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
               <p className="text-sm text-gray-500">Loading stats...</p>
