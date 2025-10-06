@@ -358,43 +358,104 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
                 </>
               ) : (
                 <>
-                  {/* Manual Input Fields */}
+                  {/* Manual Input Fields with Dropdowns */}
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Question Text
                     </label>
-                    <input
-                      type="text"
-                      value={manualQuestion}
-                      onChange={(e) => setManualQuestion(e.target.value)}
-                      placeholder="Enter your question here..."
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                    />
+                    <div className="space-y-2">
+                      <select
+                        value={selectedQuestion}
+                        onChange={(e) => {
+                          if (e.target.value) {
+                            const question = questions.find(q => q.id === e.target.value);
+                            setSelectedQuestion(e.target.value);
+                            setManualQuestion(question?.prompt || '');
+                            setSelectedOption('');
+                            setManualAnswer('');
+                            setGeneratedArticle(null);
+                          }
+                        }}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                      >
+                        <option value="">Choose from existing questions...</option>
+                        {questions.map((question) => (
+                          <option key={question.id} value={question.id} className="text-gray-900">
+                            {question.prompt}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="text-center text-gray-500 text-sm">OR</div>
+                      <input
+                        type="text"
+                        value={manualQuestion}
+                        onChange={(e) => {
+                          setManualQuestion(e.target.value);
+                          setSelectedQuestion('');
+                        }}
+                        placeholder="Write your own question here..."
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                      />
+                    </div>
                   </div>
 
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Answer Text
                     </label>
-                    <input
-                      type="text"
-                      value={manualAnswer}
-                      onChange={(e) => setManualAnswer(e.target.value)}
-                      placeholder="Enter the answer here..."
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                    />
+                    <div className="space-y-2">
+                      {selectedQuestion && (
+                        <select
+                          value={selectedOption}
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              const question = questions.find(q => q.id === selectedQuestion);
+                              const option = question?.options.find(opt => opt.value === e.target.value);
+                              setSelectedOption(e.target.value);
+                              setManualAnswer(option?.label || '');
+                              setGeneratedArticle(null);
+                            }
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                        >
+                          <option value="">Choose from existing answers...</option>
+                          {questions.find(q => q.id === selectedQuestion)?.options.map((option) => (
+                            <option key={option.value} value={option.value} className="text-gray-900">
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                      <div className="text-center text-gray-500 text-sm">OR</div>
+                      <input
+                        type="text"
+                        value={manualAnswer}
+                        onChange={(e) => {
+                          setManualAnswer(e.target.value);
+                          setSelectedOption('');
+                        }}
+                        placeholder="Write your own answer here..."
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                      />
+                    </div>
                   </div>
 
                   {/* Generate Button for Manual Input */}
-                  {manualQuestion && manualAnswer && (
+                  {(manualQuestion && manualAnswer) || (selectedQuestion && selectedOption) ? (
                     <button
-                      onClick={() => handleGenerateManualArticle()}
+                      onClick={() => {
+                        if (selectedQuestion && selectedOption) {
+                          handleGenerateArticle();
+                        } else {
+                          handleGenerateManualArticle();
+                        }
+                      }}
                       disabled={isGenerating}
                       className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium mb-4"
                     >
                       {isGenerating ? "Generating Article..." : "Generate AI Article"}
                     </button>
-                  )}
+                  ) : null}
 
                 </>
               )}
