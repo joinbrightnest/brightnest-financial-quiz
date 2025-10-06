@@ -8,7 +8,12 @@ interface Question {
   order: number;
   prompt: string;
   type: string;
-  options: any[];
+  options: Array<{
+    label: string;
+    value: string;
+    weightCategory: string;
+    weightValue: number;
+  }>;
   active: boolean;
 }
 
