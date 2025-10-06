@@ -13,36 +13,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get relevant articles
-    const articleMatches = await articleService.getRelevantArticles(
+    // For now, always generate a dynamic article since database tables might not exist yet
+    const dynamicArticle = await articleService.generateDynamicArticle(
       sessionId,
       questionId,
-      answerValue
+      answerValue,
+      answerLabel
     );
 
-    // Try to generate dynamic article if no matches found
-    if (articleMatches.length === 0) {
-      const dynamicArticle = await articleService.generateDynamicArticle(
-        sessionId,
-        questionId,
-        answerValue,
-        answerLabel
-      );
-
-      if (dynamicArticle) {
-        articleMatches.push(dynamicArticle);
-      }
-    }
-
-    // Convert to article format
-    const articles = articleMatches.map(match => ({
-      id: match.article.id,
-      title: match.article.title,
-      content: match.article.content,
-      type: match.article.type,
-      category: match.article.category,
-      confidence: match.confidence
-    }));
+    const articles = dynamicArticle ? [{
+      id: dynamicArticle.article.id,
+      title: dynamicArticle.article.title,
+      content: dynamicArticle.article.content,
+      type: dynamicArticle.article.type,
+      category: dynamicArticle.article.category,
+      confidence: dynamicArticle.confidence
+    }] : [];
 
     return NextResponse.json({ articles });
   } catch (error) {

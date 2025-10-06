@@ -110,38 +110,45 @@ export class ArticleService {
     answerValue: string,
     answerLabel: string
   ): Promise<ArticleMatch | null> {
-    // Get question and session context
-    const question = await prisma.quizQuestion.findUnique({
-      where: { id: questionId }
-    });
+    let question: any = null;
+    let session: any = null;
+    let context: any = {};
 
-    const session = await prisma.quizSession.findUnique({
-      where: { id: sessionId },
-      include: {
-        answers: {
-          include: { question: true }
+    try {
+      // Get question and session context
+      question = await prisma.quizQuestion.findUnique({
+        where: { id: questionId }
+      });
+
+      session = await prisma.quizSession.findUnique({
+        where: { id: sessionId },
+        include: {
+          answers: {
+            include: { question: true }
+          }
         }
-      }
-    });
+      });
 
-    if (!question || !session) {
-      return null;
+      if (question && session) {
+        // Build context for AI generation
+        context = {
+          previousAnswers: session.answers.map((answer: any) => ({
+            question: answer.question.prompt,
+            answer: typeof answer.value === 'string' ? answer.value : JSON.stringify(answer.value)
+          })),
+          currentScores: await this.calculateCurrentScores(sessionId)
+        };
+      }
+    } catch (error) {
+      console.error('Database error, proceeding with basic article generation:', error);
+      // Continue with basic generation even if database is not available
     }
 
     // Determine category from question or quiz type
-    const category = this.determineCategory(question.quizType, question.prompt);
-
-    // Build context for AI generation
-    const context = {
-      previousAnswers: session.answers.map(answer => ({
-        question: answer.question.prompt,
-        answer: typeof answer.value === 'string' ? answer.value : JSON.stringify(answer.value)
-      })),
-      currentScores: await this.calculateCurrentScores(sessionId)
-    };
+    const category = question ? this.determineCategory(question.quizType, question.prompt) : 'general';
 
     const request: ArticleGenerationRequest = {
-      questionPrompt: question.prompt,
+      questionPrompt: question?.prompt || 'Financial question',
       selectedAnswer: answerValue,
       answerLabel,
       category,
