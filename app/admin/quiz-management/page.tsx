@@ -152,7 +152,7 @@ export default function QuizManagement() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => window.history.back()}
+                onClick={() => window.open('/admin/dashboard', '_self')}
                 className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

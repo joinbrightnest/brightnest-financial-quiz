@@ -305,7 +305,7 @@ export default function AdminDashboard() {
               {/* Action Buttons */}
               <div className="flex items-center space-x-2">
                 <button
-                  onClick={() => window.open('/admin/quiz-management', '_blank')}
+                  onClick={() => window.open('/admin/quiz-management', '_self')}
                   className="bg-purple-600 text-white py-2 px-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2 text-sm shadow-sm hover:shadow-md"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
