@@ -109,10 +109,12 @@ export default function QuizManagement() {
 
   const fetchQuestions = async (quizType: string) => {
     try {
+      console.log('Fetching questions for quiz type:', quizType);
       // Clear questions first to prevent showing stale data
       setQuestions([]);
       const response = await fetch(`/api/admin/quiz-questions?quizType=${quizType}`);
       const data = await response.json();
+      console.log('Fetched questions:', data.questions?.length || 0, 'for', quizType);
       setQuestions(data.questions || []);
     } catch (error) {
       console.error("Error fetching questions:", error);
@@ -121,6 +123,7 @@ export default function QuizManagement() {
   };
 
   const handleQuizTypeChange = (quizType: string) => {
+    console.log('Changing to quiz type:', quizType);
     setSelectedQuizType(quizType);
     fetchQuestions(quizType);
   };
@@ -292,7 +295,6 @@ export default function QuizManagement() {
                         <button
                           onClick={() => {
                             handleQuizTypeChange(quizType.name);
-                            fetchQuizData();
                           }}
                           className={`flex items-center space-x-1 px-3 py-1.5 rounded-md text-xs font-semibold ${
                             selectedQuizType === quizType.name
