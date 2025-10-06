@@ -66,7 +66,7 @@ export default function QuizManagement() {
         setQuizTypes(data.quizTypes);
         
         // Set selected quiz type to first available if current selection doesn't exist
-        if (data.quizTypes.length > 0 && !data.quizTypes.find(qt => qt.name === selectedQuizType)) {
+        if (data.quizTypes.length > 0 && !data.quizTypes.find((qt: {name: string}) => qt.name === selectedQuizType)) {
           setSelectedQuizType(data.quizTypes[0].name);
         }
         
