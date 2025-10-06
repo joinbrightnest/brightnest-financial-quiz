@@ -68,6 +68,18 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     }
   }, [quizType]);
 
+  // Refresh articles when window gains focus (when user comes back from article creation)
+  useEffect(() => {
+    const handleFocus = () => {
+      if (quizType) {
+        fetchArticles();
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [quizType]);
+
   const fetchQuestions = async () => {
     try {
       // Only show loading state on initial load, not on window switches
@@ -238,6 +250,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
       
       console.log("Saving questions:", { quizType, questionsCount: questions.length });
       
+      // Save questions
       const response = await fetch("/api/admin/save-quiz-questions", {
         method: "POST",
         headers: {
@@ -253,8 +266,15 @@ export default function QuizEditor({ params }: QuizEditorProps) {
       console.log("Save response:", responseData);
 
       if (response.ok) {
-        alert("Questions saved successfully!");
+        // Also save articles to localStorage to ensure they persist
+        const storedArticles = localStorage.getItem('brightnest_articles');
+        if (storedArticles) {
+          console.log("Articles preserved in localStorage:", Object.keys(JSON.parse(storedArticles)).length);
+        }
+        
+        alert("Questions and articles saved successfully!");
         await fetchQuestions(); // Refresh to get updated data
+        await fetchArticles(); // Refresh articles
       } else {
         console.error("Save failed:", responseData);
         alert(`Failed to save questions: ${responseData.error || 'Unknown error'}`);

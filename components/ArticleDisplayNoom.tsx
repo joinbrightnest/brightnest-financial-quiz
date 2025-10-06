@@ -48,9 +48,9 @@ export default function ArticleDisplayNoom({
         for (const [articleId, article] of Object.entries(articlesData)) {
           const articleData = article as any;
           
-          // Check if this article is triggered by this question and answer
-          if (articleData.triggerQuestionId === questionId && 
-              articleData.triggerAnswerValue === answerValue) {
+          // Check if this article is triggered by this answer value
+          // We match by answer value since question IDs might be different between localStorage and database
+          if (articleData.triggerAnswerValue === answerValue) {
             
             matchingArticles.push({
               id: articleData.id,
