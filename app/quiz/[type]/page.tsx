@@ -79,11 +79,11 @@ export default function QuizPage({ params }: QuizPageProps) {
 
   const getTotalQuestions = async (): Promise<number> => {
     try {
-      const response = await fetch(`/api/quiz/questions/count?type=${quizType}`);
+      const response = await fetch(`/api/quiz/questions/count?quizType=${quizType}`);
       const data = await response.json();
       return data.count;
     } catch {
-      return 5; // fallback
+      return 10; // fallback
     }
   };
 
