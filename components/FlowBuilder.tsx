@@ -16,8 +16,10 @@ interface FlowConnection {
   id: string;
   from: string;
   to: string;
-  fromAnswer?: string; // For answer-specific connections
+  fromAnswer?: string;
   label?: string;
+  startPoint: { x: number; y: number };
+  endPoint: { x: number; y: number };
 }
 
 interface FlowBuilderProps {
@@ -41,35 +43,50 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
   const [nodes, setNodes] = useState<FlowNode[]>([]);
   const [connections, setConnections] = useState<FlowConnection[]>([]);
   const [draggedNode, setDraggedNode] = useState<string | null>(null);
-  const [connectingFrom, setConnectingFrom] = useState<{ nodeId: string; answerValue?: string } | null>(null);
+  const [draggedConnection, setDraggedConnection] = useState<{
+    from: string;
+    fromAnswer?: string;
+    startPoint: { x: number; y: number };
+    currentPoint: { x: number; y: number };
+  } | null>(null);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
-  const [hoveredConnectionPoint, setHoveredConnectionPoint] = useState<string | null>(null);
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  const addQuestionNode = (question: any) => {
-    const newNode: FlowNode = {
-      id: `question-${question.id}`,
-      type: 'question',
-      title: question.prompt,
-      content: question.prompt,
-      position: { x: 100, y: 100 + nodes.length * 200 },
-      options: question.options,
-      connections: {}
-    };
-    setNodes([...nodes, newNode]);
-  };
+  // Initialize with all questions in a flow layout
+  useEffect(() => {
+    if (!isInitialized && questions.length > 0) {
+      const initialNodes: FlowNode[] = questions.map((question, index) => ({
+        id: `question-${question.id}`,
+        type: 'question',
+        title: question.prompt,
+        content: question.prompt,
+        position: { 
+          x: 50 + (index % 3) * 350, 
+          y: 100 + Math.floor(index / 3) * 200 
+        },
+        options: question.options,
+        connections: {}
+      }));
 
-  const addArticleNode = (article: any) => {
-    const newNode: FlowNode = {
-      id: `article-${article.id}`,
-      type: 'article',
-      title: article.title,
-      content: article.content,
-      position: { x: 400, y: 100 + nodes.length * 200 },
-      connections: {}
-    };
-    setNodes([...nodes, newNode]);
-  };
+      // Add articles
+      const articleNodes: FlowNode[] = articles.map((article, index) => ({
+        id: `article-${article.id}`,
+        type: 'article',
+        title: article.title,
+        content: article.content,
+        position: { 
+          x: 50 + (questions.length % 3) * 350 + 200, 
+          y: 100 + Math.floor(questions.length / 3) * 200 + index * 150 
+        },
+        connections: {}
+      }));
+
+      setNodes([...initialNodes, ...articleNodes]);
+      setIsInitialized(true);
+    }
+  }, [questions, articles, isInitialized]);
 
   const handleNodeDrag = useCallback((nodeId: string, e: React.MouseEvent) => {
     if (draggedNode !== nodeId) return;
@@ -87,33 +104,103 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
     ));
   }, [draggedNode]);
 
-  const handleNodeMouseDown = (nodeId: string) => {
+  const handleNodeMouseDown = (nodeId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     setDraggedNode(nodeId);
+    setSelectedNode(nodeId);
   };
 
   const handleNodeMouseUp = () => {
     setDraggedNode(null);
   };
 
-  const handleNodeClick = (nodeId: string) => {
-    if (connectingFrom && connectingFrom.nodeId !== nodeId) {
-      // Create connection
-      const newConnection: FlowConnection = {
-        id: `conn-${connectingFrom.nodeId}-${nodeId}-${Date.now()}`,
-        from: connectingFrom.nodeId,
-        to: nodeId,
-        fromAnswer: connectingFrom.answerValue,
-        label: connectingFrom.answerValue
-      };
-      setConnections([...connections, newConnection]);
-      setConnectingFrom(null);
-    } else {
-      setSelectedNode(nodeId);
-    }
+  const handleConnectionDragStart = (nodeId: string, answerValue: string | undefined, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const startPoint = getConnectionPoint(nodeId, answerValue);
+    const currentPoint = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
+
+    setDraggedConnection({
+      from: nodeId,
+      fromAnswer: answerValue,
+      startPoint,
+      currentPoint
+    });
   };
 
-  const startConnection = (nodeId: string, answerValue?: string) => {
-    setConnectingFrom({ nodeId, answerValue });
+  const handleConnectionDragMove = (e: React.MouseEvent) => {
+    if (!draggedConnection) return;
+
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const currentPoint = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
+
+    setDraggedConnection(prev => prev ? { ...prev, currentPoint } : null);
+  };
+
+  const handleConnectionDragEnd = (e: React.MouseEvent) => {
+    if (!draggedConnection) return;
+
+    // Find if we're over a node
+    const rect = canvasRef.current?.getBoundingClientRect();
+    if (!rect) return;
+
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const targetNode = nodes.find(node => {
+      const nodeRect = {
+        left: node.position.x,
+        top: node.position.y,
+        right: node.position.x + 280,
+        bottom: node.position.y + 120
+      };
+      return x >= nodeRect.left && x <= nodeRect.right && y >= nodeRect.top && y <= nodeRect.bottom;
+    });
+
+    if (targetNode && targetNode.id !== draggedConnection.from) {
+      // Create connection
+      const newConnection: FlowConnection = {
+        id: `conn-${draggedConnection.from}-${targetNode.id}-${Date.now()}`,
+        from: draggedConnection.from,
+        to: targetNode.id,
+        fromAnswer: draggedConnection.fromAnswer,
+        label: draggedConnection.fromAnswer,
+        startPoint: draggedConnection.startPoint,
+        endPoint: getConnectionPoint(targetNode.id)
+      };
+      setConnections([...connections, newConnection]);
+    }
+
+    setDraggedConnection(null);
+  };
+
+  const getConnectionPoint = (nodeId: string, answerValue?: string) => {
+    const node = nodes.find(n => n.id === nodeId);
+    if (!node) return { x: 0, y: 0 };
+
+    const baseX = node.position.x + 280; // Right side of node
+    const baseY = node.position.y + 30; // Top of node
+
+    if (answerValue && node.options) {
+      const answerIndex = node.options.findIndex(opt => opt.value === answerValue);
+      return {
+        x: baseX,
+        y: baseY + (answerIndex * 20) + 15
+      };
+    }
+
+    return { x: baseX, y: baseY + 60 }; // Default connection point
   };
 
   const deleteNode = (nodeId: string) => {
@@ -125,23 +212,29 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
     setConnections(connections.filter(c => c.id !== connectionId));
   };
 
-  const getConnectionPoint = (nodeId: string, answerValue?: string) => {
-    const node = nodes.find(n => n.id === nodeId);
-    if (!node) return { x: 0, y: 0 };
+  const addQuestionNode = (question: any) => {
+    const newNode: FlowNode = {
+      id: `question-${question.id}-${Date.now()}`,
+      type: 'question',
+      title: question.prompt,
+      content: question.prompt,
+      position: { x: 100, y: 100 + nodes.length * 200 },
+      options: question.options,
+      connections: {}
+    };
+    setNodes([...nodes, newNode]);
+  };
 
-    const baseX = node.position.x + 200; // Right side of node
-    const baseY = node.position.y + 30; // Top of node
-
-    if (answerValue && node.options) {
-      // Find the index of this answer to position the connection point
-      const answerIndex = node.options.findIndex(opt => opt.value === answerValue);
-      return {
-        x: baseX,
-        y: baseY + (answerIndex * 25) + 12 // Space out connection points for each answer
-      };
-    }
-
-    return { x: baseX, y: baseY + 50 }; // Default connection point
+  const addArticleNode = (article: any) => {
+    const newNode: FlowNode = {
+      id: `article-${article.id}-${Date.now()}`,
+      type: 'article',
+      title: article.title,
+      content: article.content,
+      position: { x: 400, y: 100 + nodes.length * 200 },
+      connections: {}
+    };
+    setNodes([...nodes, newNode]);
   };
 
   return (
@@ -220,6 +313,7 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
             onClick={() => {
               setNodes([]);
               setConnections([]);
+              setIsInitialized(false);
             }}
             className="w-full bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 font-medium"
           >
@@ -229,13 +323,13 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
 
         {/* Instructions */}
         <div className="mt-6 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h4 className="text-sm font-medium text-yellow-800 mb-2">How to Connect:</h4>
+          <h4 className="text-sm font-medium text-yellow-800 mb-2">Miro-Style Connections:</h4>
           <ul className="text-xs text-yellow-700 space-y-1">
-            <li>• Drag questions/articles to canvas</li>
-            <li>• Click arrow on right side to start connection</li>
-            <li>• For questions: click specific answer arrows</li>
-            <li>• Click target node to complete connection</li>
-            <li>• Each answer can lead to different outcomes</li>
+            <li>• Drag nodes to reposition</li>
+            <li>• Pull arrows to connect elements</li>
+            <li>• Each answer has its own connection point</li>
+            <li>• Drag connection to target node</li>
+            <li>• Create personalized routing paths</li>
           </ul>
         </div>
       </div>
@@ -249,10 +343,16 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
             if (draggedNode) {
               handleNodeDrag(draggedNode, e);
             }
+            if (draggedConnection) {
+              handleConnectionDragMove(e);
+            }
           }}
-          onMouseUp={handleNodeMouseUp}
+          onMouseUp={(e) => {
+            handleNodeMouseUp();
+            handleConnectionDragEnd(e);
+          }}
         >
-          {/* Connections */}
+          {/* Static Connections */}
           {connections.map((connection) => {
             const fromPoint = getConnectionPoint(connection.from, connection.fromAnswer);
             const toPoint = getConnectionPoint(connection.to);
@@ -301,26 +401,59 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
             );
           })}
 
+          {/* Dynamic Connection Being Drawn */}
+          {draggedConnection && (
+            <svg
+              className="absolute inset-0 pointer-events-none"
+              style={{ zIndex: 10 }}
+            >
+              <defs>
+                <marker
+                  id="temp-arrowhead"
+                  markerWidth="10"
+                  markerHeight="7"
+                  refX="9"
+                  refY="3.5"
+                  orient="auto"
+                >
+                  <polygon
+                    points="0 0, 10 3.5, 0 7"
+                    fill="#10B981"
+                  />
+                </marker>
+              </defs>
+              <path
+                d={`M ${draggedConnection.startPoint.x} ${draggedConnection.startPoint.y} Q ${draggedConnection.startPoint.x + 100} ${draggedConnection.startPoint.y} ${draggedConnection.currentPoint.x} ${draggedConnection.currentPoint.y}`}
+                stroke="#10B981"
+                strokeWidth="2"
+                strokeDasharray="5,5"
+                fill="none"
+                markerEnd="url(#temp-arrowhead)"
+              />
+            </svg>
+          )}
+
           {/* Nodes */}
           {nodes.map((node) => (
             <div
               key={node.id}
-              className={`absolute w-64 p-4 rounded-lg border-2 cursor-move ${
+              className={`absolute w-72 p-4 rounded-lg border-2 cursor-move ${
                 node.type === 'question'
                   ? 'bg-blue-50 border-blue-300'
                   : 'bg-green-50 border-green-300'
               } ${
                 selectedNode === node.id ? 'ring-2 ring-blue-500' : ''
               } ${
-                connectingFrom?.nodeId === node.id ? 'ring-2 ring-green-500' : ''
+                hoveredNode === node.id ? 'shadow-lg' : ''
               }`}
               style={{
                 left: node.position.x,
                 top: node.position.y,
                 zIndex: 2
               }}
-              onMouseDown={() => handleNodeMouseDown(node.id)}
-              onClick={() => handleNodeClick(node.id)}
+              onMouseDown={(e) => handleNodeMouseDown(node.id, e)}
+              onMouseEnter={() => setHoveredNode(node.id)}
+              onMouseLeave={() => setHoveredNode(null)}
             >
               <div className="flex items-center justify-between mb-2">
                 <div className={`text-xs px-2 py-1 rounded-full ${
@@ -342,29 +475,20 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
               </div>
               
               <div className="text-sm font-medium text-gray-900 mb-2">
-                {node.title.length > 40 ? `${node.title.substring(0, 40)}...` : node.title}
+                {node.title.length > 50 ? `${node.title.substring(0, 50)}...` : node.title}
               </div>
 
-              {/* Question Options */}
+              {/* Question Options with Connection Points */}
               {node.type === 'question' && node.options && (
-                <div className="space-y-1 mb-3">
+                <div className="space-y-1">
                   {node.options.map((option, index) => (
                     <div key={option.value} className="flex items-center justify-between">
-                      <span className="text-xs text-gray-600">{option.label}</span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          startConnection(node.id, option.value);
-                        }}
-                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center text-xs ${
-                          connectingFrom?.nodeId === node.id && connectingFrom?.answerValue === option.value
-                            ? 'bg-green-500 border-green-500 text-white'
-                            : 'bg-white border-gray-300 hover:border-blue-500'
-                        }`}
+                      <span className="text-xs text-gray-600 flex-1">{option.label}</span>
+                      <div
+                        className="w-3 h-3 bg-blue-500 rounded-full cursor-pointer hover:bg-blue-600 hover:scale-110 transition-all"
+                        onMouseDown={(e) => handleConnectionDragStart(node.id, option.value, e)}
                         title={`Connect "${option.label}" to another element`}
-                      >
-                        →
-                      </button>
+                      />
                     </div>
                   ))}
                 </div>
@@ -372,21 +496,12 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
 
               {/* Article Connection Point */}
               {node.type === 'article' && (
-                <div className="flex justify-end">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      startConnection(node.id);
-                    }}
-                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs ${
-                      connectingFrom?.nodeId === node.id
-                        ? 'bg-green-500 border-green-500 text-white'
-                        : 'bg-white border-gray-300 hover:border-blue-500'
-                    }`}
+                <div className="flex justify-end mt-2">
+                  <div
+                    className="w-3 h-3 bg-green-500 rounded-full cursor-pointer hover:bg-green-600 hover:scale-110 transition-all"
+                    onMouseDown={(e) => handleConnectionDragStart(node.id, undefined, e)}
                     title="Connect this article to another element"
-                  >
-                    →
-                  </button>
+                  />
                 </div>
               )}
             </div>
@@ -402,20 +517,8 @@ export default function FlowBuilder({ questions, articles, onSave, onCreateArtic
                   </svg>
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Build Your Quiz Flow</h3>
-                <p className="text-gray-600 mb-4">Drag questions and articles from the sidebar to create your flow</p>
-                <p className="text-sm text-gray-500">Click arrows to connect elements with answer-specific routing</p>
-              </div>
-            </div>
-          )}
-
-          {/* Connection Mode Indicator */}
-          {connectingFrom && (
-            <div className="absolute top-4 right-4 bg-green-100 border border-green-300 rounded-lg p-3">
-              <div className="text-sm font-medium text-green-800">
-                Connecting from: {connectingFrom.answerValue || 'General'}
-              </div>
-              <div className="text-xs text-green-600">
-                Click a target node to complete the connection
+                <p className="text-gray-600 mb-4">All questions are automatically loaded for complete flow visualization</p>
+                <p className="text-sm text-gray-500">Drag blue dots to connect answers to different outcomes</p>
               </div>
             </div>
           )}
