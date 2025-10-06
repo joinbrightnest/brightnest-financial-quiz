@@ -20,6 +20,7 @@ interface QuestionCardProps {
   onNext: () => void;
   onBack?: () => void;
   canGoBack?: boolean;
+  isTransitioning?: boolean;
 }
 
 export default function QuestionCard({
@@ -31,6 +32,7 @@ export default function QuestionCard({
   onNext,
   onBack,
   canGoBack = false,
+  isTransitioning = false,
 }: QuestionCardProps) {
   return (
     <div className="min-h-screen bg-white">
@@ -66,8 +68,11 @@ export default function QuestionCard({
                 option={option}
                 isSelected={selectedValue === option.value}
                 onClick={() => {
-                  onAnswer(option.value);
+                  if (!isTransitioning) {
+                    onAnswer(option.value);
+                  }
                 }}
+                disabled={isTransitioning}
               />
             ))}
           </div>

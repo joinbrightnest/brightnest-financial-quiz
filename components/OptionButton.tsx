@@ -7,14 +7,18 @@ interface OptionButtonProps {
   };
   isSelected: boolean;
   onClick: () => void;
+  disabled?: boolean;
 }
 
-export default function OptionButton({ option, isSelected, onClick }: OptionButtonProps) {
+export default function OptionButton({ option, isSelected, onClick, disabled = false }: OptionButtonProps) {
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       className={`w-full p-5 text-center rounded-lg transition-all duration-200 ${
-        isSelected
+        disabled
+          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+          : isSelected
           ? "bg-teal-600 text-white"
           : "bg-amber-50 text-gray-900 hover:bg-amber-100 border border-amber-100"
       }`}

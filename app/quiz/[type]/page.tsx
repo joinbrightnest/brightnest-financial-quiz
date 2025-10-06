@@ -47,6 +47,7 @@ export default function QuizPage({ params }: QuizPageProps) {
   const [canGoBack, setCanGoBack] = useState(false);
   const [showArticle, setShowArticle] = useState(false);
   const [lastAnswer, setLastAnswer] = useState<{questionId: string, answerValue: string, answerLabel: string} | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const hasInitiallyLoaded = useRef(false);
 
   useEffect(() => {
@@ -111,6 +112,9 @@ export default function QuizPage({ params }: QuizPageProps) {
   };
 
   const handleAnswer = async (value: string) => {
+    if (isTransitioning) return; // Prevent multiple clicks
+    
+    setIsTransitioning(true);
     setSelectedValue(value);
     
     // Find the answer label for the article
@@ -140,6 +144,7 @@ export default function QuizPage({ params }: QuizPageProps) {
             answerLabel: answerLabel
           });
           setShowArticle(true);
+          setIsTransitioning(false);
           return;
         }
       }
@@ -149,6 +154,7 @@ export default function QuizPage({ params }: QuizPageProps) {
     
     // No articles found, go straight to next question
     await handleNext(value);
+    setIsTransitioning(false);
   };
 
   const handleBack = async () => {
@@ -234,12 +240,16 @@ export default function QuizPage({ params }: QuizPageProps) {
           router.push(`/results/${resultData.resultId}`);
         }
       } else {
-        // Move to next question
+        // Move to next question - clear all states first
+        setShowArticle(false);
+        setLastAnswer(null);
+        setSelectedValue(null);
+        setTextValue("");
+        
+        // Then set new question
         setCurrentQuestion(data.nextQuestion);
         setQuestionNumber(questionNumber + 1);
         setCanGoBack(true); // Can go back from any question after the first
-        setSelectedValue(null);
-        setTextValue("");
       }
     } catch (err) {
       setError("Failed to save answer. Please try again.");
@@ -247,11 +257,17 @@ export default function QuizPage({ params }: QuizPageProps) {
   };
 
   const handleArticleClose = async () => {
+    if (isTransitioning) return; // Prevent multiple clicks
+    
+    setIsTransitioning(true);
     setShowArticle(false);
+    
     // After closing article, advance to next question
     if (lastAnswer) {
       await handleNext(lastAnswer.answerValue);
     }
+    
+    setIsTransitioning(false);
   };
 
   if (isLoading && !hasInitiallyLoaded.current) {
@@ -294,6 +310,18 @@ export default function QuizPage({ params }: QuizPageProps) {
     );
   }
 
+  // Show loading state during transitions
+  if (isTransitioning) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading next question...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Show article display if we have an article to show
   if (showArticle && lastAnswer && sessionId) {
     return (
@@ -330,6 +358,7 @@ export default function QuizPage({ params }: QuizPageProps) {
           onNext={handleNext}
           onBack={handleBack}
           canGoBack={canGoBack}
+          isTransitioning={isTransitioning}
         />
       )}
     </div>
