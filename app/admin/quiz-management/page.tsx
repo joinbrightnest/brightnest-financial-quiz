@@ -52,6 +52,18 @@ export default function QuizManagement() {
     fetchQuizData();
   }, []);
 
+  // Refresh data when the page becomes visible (when returning from editor)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchQuizData();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
   const fetchQuizData = async () => {
     try {
       setIsLoading(true);
@@ -160,8 +172,18 @@ export default function QuizManagement() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Quiz Management</h1>
-          <p className="mt-2 text-gray-600">Manage quiz types and questions</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Quiz Management</h1>
+              <p className="mt-2 text-gray-600">Manage quiz types and questions</p>
+            </div>
+            <button
+              onClick={fetchQuizData}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+              Refresh Data
+            </button>
+          </div>
         </div>
 
         {/* Quiz Types Overview */}
@@ -179,7 +201,10 @@ export default function QuizManagement() {
                   Edit Questions
                 </button>
                 <button
-                  onClick={() => handleQuizTypeChange(quizType.name)}
+                  onClick={() => {
+                    handleQuizTypeChange(quizType.name);
+                    fetchQuizData(); // Refresh data when viewing questions
+                  }}
                   className={`w-full px-3 py-2 text-sm rounded-md ${
                     selectedQuizType === quizType.name
                       ? "bg-gray-600 text-white"

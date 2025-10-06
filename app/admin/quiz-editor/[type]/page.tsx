@@ -336,7 +336,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                       <textarea
                         value={question.prompt}
                         onChange={(e) => handleQuestionEdit(question.id, "prompt", e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                         rows={2}
                       />
                     </div>
@@ -349,7 +349,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                       <select
                         value={question.type}
                         onChange={(e) => handleQuestionEdit(question.id, "type", e.target.value)}
-                        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                       >
                         <option value="single">Multiple Choice</option>
                         <option value="text">Text Input</option>
@@ -380,20 +380,20 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                                   value={option.label}
                                   onChange={(e) => handleOptionEdit(question.id, optIndex, "label", e.target.value)}
                                   placeholder="Option label"
-                                  className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                  className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
                                 />
                                 <input
                                   type="text"
                                   value={option.value}
                                   onChange={(e) => handleOptionEdit(question.id, optIndex, "value", e.target.value)}
                                   placeholder="Option value"
-                                  className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                  className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
                                 />
                               </div>
                               <select
                                 value={option.weightCategory}
                                 onChange={(e) => handleOptionEdit(question.id, optIndex, "weightCategory", e.target.value)}
-                                className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
                               >
                                 <option value="debt">Debt</option>
                                 <option value="savings">Savings</option>
@@ -405,7 +405,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                                 type="number"
                                 value={option.weightValue}
                                 onChange={(e) => handleOptionEdit(question.id, optIndex, "weightValue", parseInt(e.target.value))}
-                                className="w-16 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                className="w-16 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
                                 min="0"
                                 max="5"
                               />
