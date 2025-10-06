@@ -48,6 +48,12 @@ interface AdminStats {
       };
     }>;
   }>;
+  quizTypes?: Array<{
+    name: string;
+    displayName: string;
+    description: string;
+    questionCount: number;
+  }>;
   archetypeStats: Array<{
     archetype: string;
     _count: { archetype: number };
