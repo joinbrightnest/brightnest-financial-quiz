@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import QuestionCard from "@/components/QuestionCard";
 import TextInput from "@/components/TextInput";
+import ArticleDisplayNoom from "@/components/ArticleDisplayNoom";
 
 interface Question {
   id: string;
@@ -44,6 +45,8 @@ export default function QuizPage({ params }: QuizPageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [canGoBack, setCanGoBack] = useState(false);
+  const [showArticle, setShowArticle] = useState(false);
+  const [lastAnswer, setLastAnswer] = useState<{questionId: string, answerValue: string, answerLabel: string} | null>(null);
   const hasInitiallyLoaded = useRef(false);
 
   useEffect(() => {
@@ -110,8 +113,18 @@ export default function QuizPage({ params }: QuizPageProps) {
   const handleAnswer = async (value: string) => {
     setSelectedValue(value);
     
-    // Auto-advance immediately to next question
-    await handleNext(value);
+    // Find the answer label for the article
+    const answerLabel = currentQuestion?.options.find(opt => opt.value === value)?.label || value;
+    
+    // Set the last answer for article display
+    setLastAnswer({
+      questionId: currentQuestion?.id || '',
+      answerValue: value,
+      answerLabel: answerLabel
+    });
+    
+    // Show article first, then advance to next question
+    setShowArticle(true);
   };
 
   const handleBack = async () => {
@@ -209,6 +222,14 @@ export default function QuizPage({ params }: QuizPageProps) {
     }
   };
 
+  const handleArticleClose = async () => {
+    setShowArticle(false);
+    // After closing article, advance to next question
+    if (lastAnswer) {
+      await handleNext(lastAnswer.answerValue);
+    }
+  };
+
   if (isLoading && !hasInitiallyLoaded.current) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -272,6 +293,17 @@ export default function QuizPage({ params }: QuizPageProps) {
           onNext={handleNext}
           onBack={handleBack}
           canGoBack={canGoBack}
+        />
+      )}
+      
+      {/* Article Display */}
+      {showArticle && lastAnswer && sessionId && (
+        <ArticleDisplayNoom
+          sessionId={sessionId}
+          questionId={lastAnswer.questionId}
+          answerValue={lastAnswer.answerValue}
+          answerLabel={lastAnswer.answerLabel}
+          onClose={handleArticleClose}
         />
       )}
     </div>
