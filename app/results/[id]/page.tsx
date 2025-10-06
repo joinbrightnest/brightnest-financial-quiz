@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { getArchetypeInsights } from "@/lib/scoring";
 
@@ -19,6 +19,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
   const [result, setResult] = useState<Result | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const hasInitiallyLoaded = useRef(false);
 
   useEffect(() => {
     const fetchResult = async () => {
@@ -32,9 +33,11 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         
         const data = await response.json();
         setResult(data);
+        hasInitiallyLoaded.current = true;
         setIsLoading(false);
       } catch (_err) {
         setError("Failed to load results. Please try again.");
+        hasInitiallyLoaded.current = true;
         setIsLoading(false);
       }
     };
@@ -42,7 +45,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
     fetchResult();
   }, [params]);
 
-  if (isLoading) {
+  if (isLoading && !hasInitiallyLoaded.current) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">

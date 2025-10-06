@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import QuestionCard from "@/components/QuestionCard";
 import TextInput from "@/components/TextInput";
@@ -44,6 +44,7 @@ export default function QuizPage({ params }: QuizPageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [canGoBack, setCanGoBack] = useState(false);
+  const hasInitiallyLoaded = useRef(false);
 
   useEffect(() => {
     if (!quizType) return; // Wait for quizType to be set
@@ -67,9 +68,11 @@ export default function QuizPage({ params }: QuizPageProps) {
         setCurrentQuestion(data.question);
         setTotalQuestions(await getTotalQuestions());
         setCanGoBack(false); // Can't go back from first question
+        hasInitiallyLoaded.current = true;
         setIsLoading(false);
       } catch (err) {
         setError("Failed to start quiz. Please try again.");
+        hasInitiallyLoaded.current = true;
         setIsLoading(false);
       }
     };
@@ -189,7 +192,7 @@ export default function QuizPage({ params }: QuizPageProps) {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !hasInitiallyLoaded.current) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">

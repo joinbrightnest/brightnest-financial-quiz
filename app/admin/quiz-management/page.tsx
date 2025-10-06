@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface Question {
   id: string;
@@ -29,6 +29,7 @@ export default function QuizManagement() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedQuizType, setSelectedQuizType] = useState<string>("financial-profile");
   const [isLoading, setIsLoading] = useState(true);
+  const hasInitiallyLoaded = useRef(false);
 
   const [allQuizTypes, setAllQuizTypes] = useState<Array<{
     name: string;
@@ -41,21 +42,41 @@ export default function QuizManagement() {
     fetchQuizData();
   }, []);
 
-  // Refresh data when the page becomes visible (when returning from editor)
+  // Handle page visibility and focus changes to prevent unnecessary re-fetching
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (!document.hidden) {
+      // Only refetch if we haven't loaded data yet (initial load)
+      if (!document.hidden && !hasInitiallyLoaded.current) {
         fetchQuizData();
       }
     };
 
+    const handleWindowFocus = () => {
+      // Don't refetch when window regains focus - this prevents the loading flash
+      // The data is already there, no need to reload
+    };
+
+    const handleWindowBlur = () => {
+      // Don't do anything when window loses focus
+    };
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleWindowFocus);
+    window.addEventListener('blur', handleWindowBlur);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleWindowFocus);
+      window.removeEventListener('blur', handleWindowBlur);
+    };
   }, []);
 
   const fetchQuizData = async () => {
     try {
-      setIsLoading(true);
+      // Only show loading state on initial load, not on window switches
+      if (!hasInitiallyLoaded.current) {
+        setIsLoading(true);
+      }
       
       // Get all unique quiz types from the database
       const response = await fetch('/api/admin/all-quiz-types');
@@ -72,11 +93,15 @@ export default function QuizManagement() {
         
         // Get questions for selected quiz type
         await fetchQuestions(selectedQuizType);
+        hasInitiallyLoaded.current = true;
       }
     } catch (error) {
       console.error("Error fetching quiz data:", error);
     } finally {
-      setIsLoading(false);
+      // Only hide loading state if we were actually showing it
+      if (!hasInitiallyLoaded.current) {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -122,7 +147,7 @@ export default function QuizManagement() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !hasInitiallyLoaded.current) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">

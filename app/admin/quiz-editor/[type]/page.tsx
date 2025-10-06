@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 interface Question {
@@ -30,6 +30,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const hasInitiallyLoaded = useRef(false);
   const [editingQuestion, setEditingQuestion] = useState<string | null>(null);
   const [draggedQuestion, setDraggedQuestion] = useState<string | null>(null);
 
@@ -50,14 +51,21 @@ export default function QuizEditor({ params }: QuizEditorProps) {
 
   const fetchQuestions = async () => {
     try {
-      setIsLoading(true);
+      // Only show loading state on initial load, not on window switches
+      if (!hasInitiallyLoaded.current) {
+        setIsLoading(true);
+      }
       const response = await fetch(`/api/admin/quiz-questions?quizType=${quizType}`);
       const data = await response.json();
       setQuestions(data.questions || []);
+      hasInitiallyLoaded.current = true;
     } catch (error) {
       console.error("Error fetching questions:", error);
     } finally {
-      setIsLoading(false);
+      // Only hide loading state if we were actually showing it
+      if (!hasInitiallyLoaded.current) {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -227,7 +235,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     return displayNames[type] || type;
   };
 
-  if (isLoading) {
+  if (isLoading && !hasInitiallyLoaded.current) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
