@@ -214,7 +214,7 @@ export default function QuizManagement() {
                 {/* Action Buttons */}
                 <div className="space-y-3">
                   <button
-                    onClick={() => window.open(`/admin/quiz-editor/${quizType.name}`, '_blank')}
+                    onClick={() => window.open(`/admin/quiz-editor/${quizType.name}`, '_self')}
                     className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

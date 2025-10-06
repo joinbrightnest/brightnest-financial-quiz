@@ -513,7 +513,7 @@ export default function AdminDashboard() {
                     <p className="text-sm text-gray-600 mb-3">General financial personality assessment</p>
                     <div className="flex space-x-2">
                       <button
-                        onClick={() => window.open('/admin/quiz-editor/financial-profile', '_blank')}
+                        onClick={() => window.open('/admin/quiz-editor/financial-profile', '_self')}
                         className="flex-1 bg-purple-600 text-white py-2 px-3 rounded-md hover:bg-purple-700 transition-colors text-sm font-medium"
                       >
                         Customize
@@ -536,7 +536,7 @@ export default function AdminDashboard() {
                     <p className="text-sm text-gray-600 mb-3">Healthcare and medical expense management</p>
                     <div className="flex space-x-2">
                       <button
-                        onClick={() => window.open('/admin/quiz-editor/health-finance', '_blank')}
+                        onClick={() => window.open('/admin/quiz-editor/health-finance', '_self')}
                         className="flex-1 bg-purple-600 text-white py-2 px-3 rounded-md hover:bg-purple-700 transition-colors text-sm font-medium"
                       >
                         Customize
@@ -559,7 +559,7 @@ export default function AdminDashboard() {
                     <p className="text-sm text-gray-600 mb-3">Couples financial planning and management</p>
                     <div className="flex space-x-2">
                       <button
-                        onClick={() => window.open('/admin/quiz-editor/marriage-finance', '_blank')}
+                        onClick={() => window.open('/admin/quiz-editor/marriage-finance', '_self')}
                         className="flex-1 bg-purple-600 text-white py-2 px-3 rounded-md hover:bg-purple-700 transition-colors text-sm font-medium"
                       >
                         Customize
