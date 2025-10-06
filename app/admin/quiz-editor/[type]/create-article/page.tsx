@@ -42,6 +42,7 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
     category: 'general',
     keyPoints: ['']
   });
+  const [isEditingGenerated, setIsEditingGenerated] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -188,6 +189,54 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
       }
     } catch (error) {
       console.error('Failed to save manual article:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleEditGeneratedArticle = () => {
+    if (!generatedArticle) return;
+    
+    // Copy generated article to editable fields
+    setEditableArticle({
+      title: generatedArticle.title,
+      content: generatedArticle.content,
+      category: generatedArticle.category,
+      keyPoints: generatedArticle.keyPoints || ['']
+    });
+    
+    setIsEditingGenerated(true);
+  };
+
+  const handleSaveEditedArticle = async () => {
+    if (!editableArticle.title || !editableArticle.content) return;
+
+    setIsSaving(true);
+    try {
+      const response = await fetch('/api/admin/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: editableArticle.title,
+          content: editableArticle.content,
+          type: 'ai_generated',
+          category: editableArticle.category,
+          tags: editableArticle.keyPoints.filter(point => point.trim() !== ''),
+          triggers: useManualInput ? [] : [{
+            questionId: selectedQuestion,
+            optionValue: selectedOption,
+            priority: 5,
+            isActive: true
+          }]
+        })
+      });
+
+      if (response.ok) {
+        alert('Edited article saved successfully!');
+        router.push(`/admin/quiz-editor/${quizType}`);
+      }
+    } catch (error) {
+      console.error('Failed to save edited article:', error);
     } finally {
       setIsSaving(false);
     }
@@ -426,7 +475,78 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
                     </div>
                     <p className="text-gray-500">Select a question and answer option to generate an article</p>
                   </div>
+                ) : isEditingGenerated ? (
+                  /* Editing Generated Article */
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-semibold text-gray-900">Editing Generated Article</h3>
+                      <button
+                        onClick={() => setIsEditingGenerated(false)}
+                        className="text-gray-500 hover:text-gray-700"
+                      >
+                        Cancel Edit
+                      </button>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Article Title
+                      </label>
+                      <input
+                        type="text"
+                        value={editableArticle.title}
+                        onChange={(e) => setEditableArticle({...editableArticle, title: e.target.value})}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white font-semibold"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Article Content
+                      </label>
+                      <textarea
+                        value={editableArticle.content}
+                        onChange={(e) => setEditableArticle({...editableArticle, content: e.target.value})}
+                        rows={8}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Key Points
+                      </label>
+                      <textarea
+                        value={editableArticle.keyPoints.join('\n')}
+                        onChange={(e) => setEditableArticle({...editableArticle, keyPoints: e.target.value.split('\n')})}
+                        rows={4}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                      />
+                    </div>
+
+                    {/* Quick Stat Preview */}
+                    {editableArticle.keyPoints.some(point => point.includes('%')) && (
+                      <div className="bg-gray-50 rounded-lg p-4">
+                        <h4 className="font-semibold text-gray-900 mb-2">Quick Stat Preview:</h4>
+                        <div className="text-2xl font-bold text-red-600 mb-1">
+                          {editableArticle.keyPoints.find(point => point.includes('%'))?.match(/\d+%/) || "70%"}
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          {editableArticle.keyPoints.find(point => point.includes('%'))?.replace(/\d+%/, "").trim() || "of people face similar challenges"}
+                        </p>
+                      </div>
+                    )}
+
+                    <button
+                      onClick={handleSaveEditedArticle}
+                      disabled={!editableArticle.title || !editableArticle.content}
+                      className="w-full bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                    >
+                      Save Edited Article
+                    </button>
+                  </div>
                 ) : (
+                  /* Viewing Generated Article */
                   <div className="space-y-6">
                     {/* Article Content */}
                     <div>
@@ -464,14 +584,22 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
                       </p>
                     </div>
 
-                    {/* Save Button */}
-                    <button
-                      onClick={handleSaveArticle}
-                      disabled={isSaving}
-                      className="w-full bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-                    >
-                      {isSaving ? "Saving Article..." : "Save Article"}
-                    </button>
+                    {/* Action Buttons */}
+                    <div className="flex space-x-3">
+                      <button
+                        onClick={handleEditGeneratedArticle}
+                        className="flex-1 bg-orange-600 text-white px-4 py-3 rounded-lg hover:bg-orange-700 font-medium"
+                      >
+                        Edit Article
+                      </button>
+                      <button
+                        onClick={handleSaveArticle}
+                        disabled={isSaving}
+                        className="flex-1 bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                      >
+                        {isSaving ? "Saving..." : "Save As-Is"}
+                      </button>
+                    </div>
                   </div>
                 )
               )}
