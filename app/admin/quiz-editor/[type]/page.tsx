@@ -434,84 +434,87 @@ export default function QuizEditor({ params }: QuizEditorProps) {
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden">
       {/* Left Sidebar - Fixed Position */}
-      <div className="w-80 bg-white border-r border-gray-200 flex flex-col shadow-sm fixed left-0 top-0 h-full z-10">
+      <div className="w-80 bg-white border-r border-gray-200 flex flex-col fixed left-0 top-0 h-full z-10">
         {/* Sidebar Header */}
-        <div className="p-6 border-b border-gray-200 bg-gray-50">
+        <div className="p-6 border-b border-gray-200">
           <button
             onClick={() => window.open('/admin/quiz-management', '_self')}
-            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors mb-4"
+            className="flex items-center space-x-2 text-gray-500 hover:text-gray-900 transition-colors mb-4"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            <span className="text-sm font-medium">Back to Quiz Management</span>
+            <span className="text-xs font-medium">Back</span>
           </button>
           <div>
-            <h1 className="text-lg font-bold text-gray-900">
-              Quiz Editor: {getQuizTypeDisplayName(quizType)}
+            <h1 className="text-base font-bold text-gray-900">
+              {getQuizTypeDisplayName(quizType)}
             </h1>
-            <p className="text-sm text-gray-500 mt-1">Drag and drop to reorder questions. Click to edit content.</p>
+            <p className="text-xs text-gray-500 mt-1">Quiz Editor</p>
           </div>
         </div>
 
         {/* Sidebar Actions */}
-        <div className="p-6 space-y-4">
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Actions</h3>
+        <div className="p-6 space-y-6">
+          <div className="space-y-2">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3">Actions</h3>
             <button
               onClick={addNewQuestion}
-              className="w-full flex items-center space-x-3 px-4 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors shadow-sm"
+              className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors group"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
-              <span className="font-medium">Add Question</span>
+              <span className="text-sm font-medium">Add Question</span>
             </button>
             <button
               onClick={() => window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank')}
-              className="w-full flex items-center space-x-3 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+              className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors group"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <span className="font-medium">Add Article</span>
+              <span className="text-sm font-medium">Add Article</span>
             </button>
             <button
               onClick={() => window.open(`/admin/quiz-editor/${quizType}/loading-screens`, '_blank')}
-              className="w-full flex items-center space-x-3 px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors shadow-sm"
+              className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors group"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span className="font-medium">Loading Screens</span>
+              <span className="text-sm font-medium">Loading Screens</span>
             </button>
+          </div>
+          
+          <div className="pt-4 border-t border-gray-200">
             <button
               onClick={saveChanges}
               disabled={isSaving}
-              className="w-full flex items-center space-x-3 px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
             >
-              <svg className={`w-5 h-5 ${isSaving ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`w-4 h-4 ${isSaving ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
-              <span className="font-medium">{isSaving ? "Saving..." : "Save Changes"}</span>
+              <span className="text-sm font-semibold">{isSaving ? "Saving..." : "Save Changes"}</span>
             </button>
           </div>
 
           {/* Quick Stats */}
           <div className="pt-6 border-t border-gray-200">
-            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Quiz Stats</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Questions:</span>
-                <span className="font-medium text-gray-900">{questions.length}</span>
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider px-3 mb-3">Overview</h3>
+            <div className="space-y-3 px-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Questions</span>
+                <span className="text-sm font-semibold text-gray-900">{questions.length}</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Articles:</span>
-                <span className="font-medium text-gray-900">{articles.length}</span>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Articles</span>
+                <span className="text-sm font-semibold text-gray-900">{articles.length}</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Loading Screens:</span>
-                <span className="font-medium text-gray-900">{loadingScreens.filter(ls => ls.triggerQuestionId).length}</span>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Loading Screens</span>
+                <span className="text-sm font-semibold text-gray-900">{loadingScreens.filter(ls => ls.triggerQuestionId).length}</span>
               </div>
             </div>
           </div>
