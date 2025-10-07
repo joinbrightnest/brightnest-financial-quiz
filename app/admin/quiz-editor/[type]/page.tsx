@@ -511,7 +511,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Loading Screens:</span>
-                <span className="font-medium text-gray-900">{loadingScreens.length}</span>
+                <span className="font-medium text-gray-900">{loadingScreens.filter(ls => ls.triggerQuestionId).length}</span>
               </div>
             </div>
           </div>

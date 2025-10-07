@@ -101,6 +101,12 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
   };
 
   const handleSave = async () => {
+    // Validate that a question is selected
+    if (!triggerQuestionId) {
+      alert('Please select a question to show this loading screen after.');
+      return;
+    }
+
     setIsSaving(true);
     try {
       const response = await fetch('/api/admin/loading-screens', {
@@ -120,7 +126,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
           progressBarColor,
           showProgressBar,
           progressText,
-          triggerQuestionId: triggerQuestionId || undefined,
+          triggerQuestionId,
           isActive: true
         })
       });
@@ -448,14 +454,15 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Trigger Settings</h2>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Show After Question (Optional)
+                  Show After Question <span className="text-red-500">*</span>
                 </label>
               <select
                 value={triggerQuestionId}
                 onChange={(e) => setTriggerQuestionId(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900"
+                required
               >
-                  <option value="">No specific question</option>
+                  <option value="">Select a question...</option>
                   {questions.map((q) => (
                     <option key={q.id} value={q.id}>
                       Question {q.order}: {q.prompt.substring(0, 50)}...
