@@ -104,9 +104,9 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
     const newScreen: LoadingScreen = {
       id: `new-${Date.now()}`,
       quizType,
-      title: "CALCULATING YOUR RESULTS",
-      subtitle: "Please wait while we analyze your responses",
-      personalizedText: "Hi {{name}}, we're processing your {{answer}} response...",
+      title: "ANALYZING YOUR RESPONSES",
+      subtitle: "Please wait while we process your answers",
+      personalizedText: "Hi {{name}}, we're analyzing your {{answer}} response...",
       duration: 4000,
       iconType: "puzzle-4",
       animationStyle: "complete-rotate",
@@ -115,7 +115,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
       iconColor: "#06b6d4",
       progressBarColor: "#ef4444",
       showProgressBar: true,
-      progressText: "CALCULATING...",
+      progressText: "ANALYZING RESPONSES...",
       isActive: true
     };
     setEditingScreen(newScreen);
@@ -212,31 +212,34 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
             </div>
           </div>
         );
-      case 'puzzle-complete':
+      case 'emoji-brain':
         return (
-          <div className={`${baseClass} relative`} style={{ color }}>
-            {/* Complete puzzle with interlocking pieces */}
-            <svg className="w-full h-full" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8Z"/>
-            </svg>
+          <div className={`${baseClass} flex items-center justify-center text-4xl`} style={{ color }}>
+            🧠
+          </div>
+        );
+      case 'emoji-heart':
+        return (
+          <div className={`${baseClass} flex items-center justify-center text-4xl`} style={{ color }}>
+            ❤️
+          </div>
+        );
+      case 'emoji-star':
+        return (
+          <div className={`${baseClass} flex items-center justify-center text-4xl`} style={{ color }}>
+            ⭐
+          </div>
+        );
+      case 'emoji-rocket':
+        return (
+          <div className={`${baseClass} flex items-center justify-center text-4xl`} style={{ color }}>
+            🚀
           </div>
         );
       case 'gears':
         return (
           <svg className={baseClass} fill="currentColor" viewBox="0 0 24 24" style={{ color }}>
             <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
-          </svg>
-        );
-      case 'brain':
-        return (
-          <svg className={baseClass} fill="currentColor" viewBox="0 0 24 24" style={{ color }}>
-            <path d="M9.5,2A2.5,2.5 0 0,0 7,4.5A2.5,2.5 0 0,0 9.5,7A2.5,2.5 0 0,0 12,4.5A2.5,2.5 0 0,0 9.5,2M14.5,2A2.5,2.5 0 0,0 12,4.5A2.5,2.5 0 0,0 14.5,7A2.5,2.5 0 0,0 17,4.5A2.5,2.5 0 0,0 14.5,2M9.5,9A2.5,2.5 0 0,0 7,11.5A2.5,2.5 0 0,0 9.5,14A2.5,2.5 0 0,0 12,11.5A2.5,2.5 0 0,0 9.5,9M14.5,9A2.5,2.5 0 0,0 12,11.5A2.5,2.5 0 0,0 14.5,14A2.5,2.5 0 0,0 17,11.5A2.5,2.5 0 0,0 14.5,9M9.5,16A2.5,2.5 0 0,0 7,18.5A2.5,2.5 0 0,0 9.5,21A2.5,2.5 0 0,0 12,18.5A2.5,2.5 0 0,0 9.5,16M14.5,16A2.5,2.5 0 0,0 12,18.5A2.5,2.5 0 0,0 14.5,21A2.5,2.5 0 0,0 17,18.5A2.5,2.5 0 0,0 14.5,16Z"/>
-          </svg>
-        );
-      case 'heart':
-        return (
-          <svg className={baseClass} fill="currentColor" viewBox="0 0 24 24" style={{ color }}>
-            <path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5 2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.04L12,21.35Z"/>
           </svg>
         );
       case 'loading':
@@ -313,14 +316,14 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
             </svg>
-            <span className="font-medium">Add Loading Screen</span>
+            <span className="font-medium">+ Add Loading Screen</span>
           </button>
         </div>
       </div>
 
-      <div className="flex">
+      <div className="flex h-screen">
         {/* Left Panel - Loading Screens List */}
-        <div className="w-1/3 bg-white border-r border-gray-200 min-h-screen">
+        <div className="w-1/3 bg-white border-r border-gray-200 overflow-y-auto">
           <div className="p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Loading Screens</h2>
             {loadingScreens.length === 0 ? (
@@ -378,7 +381,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
         {/* Right Panel - Editor/Preview */}
         <div className="flex-1">
           {editingScreen ? (
-            <div className="flex h-screen">
+            <div className="flex h-full">
               {/* Settings Panel */}
               <div className="w-1/2 bg-white border-r border-gray-200 overflow-y-auto">
                 <div className="p-6">
@@ -390,14 +393,14 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                     {/* Basic Settings */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Title
+                        Headline Text
                       </label>
                       <input
                         type="text"
                         value={editingScreen.title}
                         onChange={(e) => setEditingScreen({...editingScreen, title: e.target.value})}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        placeholder="Loading..."
+                        placeholder="ANALYZING YOUR RESPONSES"
                       />
                     </div>
 
@@ -410,7 +413,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                         value={editingScreen.subtitle || ''}
                         onChange={(e) => setEditingScreen({...editingScreen, subtitle: e.target.value})}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        placeholder="Please wait while we process your answer"
+                        placeholder="Please wait while we process your answers"
                       />
                     </div>
 
@@ -439,7 +442,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                         value={editingScreen.progressText || ''}
                         onChange={(e) => setEditingScreen({...editingScreen, progressText: e.target.value})}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        placeholder="CALCULATING..."
+                        placeholder="ANALYZING RESPONSES..."
                       />
                     </div>
 
@@ -461,7 +464,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                     {/* Visual Settings */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Icon Type
+                        Animated Icon
                       </label>
                       <select
                         value={editingScreen.iconType}
@@ -470,11 +473,12 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                       >
                         <option value="puzzle-4">4-Piece Puzzle (Animated)</option>
                         <option value="puzzle-6">6-Piece Puzzle (Animated)</option>
-                        <option value="puzzle-complete">Complete Puzzle</option>
-                        <option value="gears">Gears</option>
-                        <option value="brain">Brain</option>
-                        <option value="heart">Heart</option>
-                        <option value="loading">Loading Spinner</option>
+                        <option value="emoji-brain">🧠 Brain Emoji</option>
+                        <option value="emoji-heart">❤️ Heart Emoji</option>
+                        <option value="emoji-star">⭐ Star Emoji</option>
+                        <option value="emoji-rocket">🚀 Rocket Emoji</option>
+                        <option value="gears">⚙️ Gears</option>
+                        <option value="loading">🔄 Loading Spinner</option>
                       </select>
                     </div>
 
@@ -602,23 +606,23 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
               </div>
 
               {/* Preview Panel */}
-              <div className="w-1/2 bg-gray-100 flex items-center justify-center">
+              <div className="w-1/2 bg-gray-100 flex items-center justify-center p-8">
                 <div 
-                  className="w-96 h-96 rounded-2xl shadow-2xl flex flex-col items-center justify-center p-8 text-center"
+                  className="w-80 h-96 rounded-2xl shadow-2xl flex flex-col items-center justify-center p-8 text-center"
                   style={{ backgroundColor: editingScreen.backgroundColor }}
                 >
                   <div className="mb-6">
                     {getIconComponent(editingScreen.iconType, editingScreen.iconColor, editingScreen.animationStyle)}
                   </div>
                   <h2 
-                    className="text-2xl font-bold mb-2"
+                    className="text-xl font-bold mb-2"
                     style={{ color: editingScreen.textColor }}
                   >
                     {editingScreen.title}
                   </h2>
                   {editingScreen.subtitle && (
                     <p 
-                      className="text-lg mb-4"
+                      className="text-base mb-4"
                       style={{ color: editingScreen.textColor }}
                     >
                       {editingScreen.subtitle}
