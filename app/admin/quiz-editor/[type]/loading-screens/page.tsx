@@ -214,7 +214,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                     placeholder="Hi {{name}}, we're processing your responses..."
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Use {{name}}, {{email}}, {{answer}} for personalization
+                    Use {{name}} or {{answer}} for personalization
                   </p>
                 </div>
 
@@ -405,7 +405,6 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                   >
                     {personalizedText
                       .replace(/\{\{name\}\}/g, 'John')
-                      .replace(/\{\{email\}\}/g, 'john@example.com')
                       .replace(/\{\{answer\}\}/g, 'financial planning')}
                   </p>
                 )}
