@@ -28,6 +28,22 @@ interface Article {
   triggerAnswerValue?: string;
 }
 
+interface LoadingScreen {
+  id: string;
+  quizType: string;
+  title: string;
+  subtitle?: string;
+  personalizedText?: string;
+  duration: number;
+  iconType: string;
+  animationStyle: string;
+  backgroundColor: string;
+  textColor: string;
+  iconColor: string;
+  triggerQuestionId?: string;
+  isActive: boolean;
+}
+
 interface QuizEditorProps {
   params: Promise<{
     type: string;
@@ -39,6 +55,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
   const [quizType, setQuizType] = useState<string>('');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
+  const [loadingScreens, setLoadingScreens] = useState<LoadingScreen[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const hasInitiallyLoaded = useRef(false);
@@ -64,16 +81,18 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     if (quizType) {
       fetchQuestions();
       fetchArticles();
+      fetchLoadingScreens();
       // Generate the quiz link
       setQuizLink(`https://joinbrightnest.com/quiz/${quizType}`);
     }
   }, [quizType]);
 
-  // Refresh articles when window gains focus (when user comes back from article creation)
+  // Refresh articles and loading screens when window gains focus (when user comes back from creation)
   useEffect(() => {
     const handleFocus = () => {
       if (quizType) {
         fetchArticles();
+        fetchLoadingScreens();
       }
     };
 
@@ -130,6 +149,25 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     } catch (error) {
       console.error("Error fetching articles:", error);
       setArticles([]);
+    }
+  };
+
+  const fetchLoadingScreens = async () => {
+    try {
+      console.log('Loading loading screens from database for quiz type:', quizType);
+      
+      const response = await fetch(`/api/admin/loading-screens?quizType=${quizType}`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Loading screens from database:', data.loadingScreens);
+        setLoadingScreens(data.loadingScreens || []);
+      } else {
+        console.log('Failed to load loading screens from database');
+        setLoadingScreens([]);
+      }
+    } catch (error) {
+      console.error("Error fetching loading screens:", error);
+      setLoadingScreens([]);
     }
   };
 
@@ -391,64 +429,95 @@ export default function QuizEditor({ params }: QuizEditorProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {/* Header */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => window.open('/admin/quiz-management', '_self')}
-                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                <span className="text-sm font-medium">Back to Quiz Management</span>
-              </button>
-              <div className="h-6 w-px bg-gray-300"></div>
-              <div>
-                <h1 className="text-xl font-semibold text-gray-900">
-                  Quiz Editor: {getQuizTypeDisplayName(quizType)}
-                </h1>
-                <p className="text-sm text-gray-500">Drag and drop to reorder questions. Click to edit content.</p>
+    <div className="h-screen bg-gray-50 flex overflow-hidden">
+      {/* Left Sidebar - Fixed Position */}
+      <div className="w-80 bg-white border-r border-gray-200 flex flex-col shadow-sm fixed left-0 top-0 h-full z-10">
+        {/* Sidebar Header */}
+        <div className="p-6 border-b border-gray-200 bg-gray-50">
+          <button
+            onClick={() => window.open('/admin/quiz-management', '_self')}
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors mb-4"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            <span className="text-sm font-medium">Back to Quiz Management</span>
+          </button>
+          <div>
+            <h1 className="text-lg font-bold text-gray-900">
+              Quiz Editor: {getQuizTypeDisplayName(quizType)}
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">Drag and drop to reorder questions. Click to edit content.</p>
+          </div>
+        </div>
+
+        {/* Sidebar Actions */}
+        <div className="p-6 space-y-4">
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Actions</h3>
+            <button
+              onClick={addNewQuestion}
+              className="w-full flex items-center space-x-3 px-4 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors shadow-sm"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              <span className="font-medium">Add Question</span>
+            </button>
+            <button
+              onClick={() => window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank')}
+              className="w-full flex items-center space-x-3 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span className="font-medium">Add Article</span>
+            </button>
+            <button
+              onClick={() => window.open(`/admin/quiz-editor/${quizType}/loading-screens`, '_blank')}
+              className="w-full flex items-center space-x-3 px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors shadow-sm"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="font-medium">Loading Screens</span>
+            </button>
+            <button
+              onClick={saveChanges}
+              disabled={isSaving}
+              className="w-full flex items-center space-x-3 px-4 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg className={`w-5 h-5 ${isSaving ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="font-medium">{isSaving ? "Saving..." : "Save Changes"}</span>
+            </button>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="pt-6 border-t border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Quiz Stats</h3>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Questions:</span>
+                <span className="font-medium text-gray-900">{questions.length}</span>
               </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={addNewQuestion}
-                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-lg hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200 shadow-lg hover:shadow-xl"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                <span className="font-semibold">Add Question</span>
-              </button>
-              <button
-                onClick={() => window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank')}
-                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-lg hover:shadow-xl"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span className="font-semibold">Add Article</span>
-              </button>
-              <button
-                onClick={saveChanges}
-                disabled={isSaving}
-                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span className="font-semibold">{isSaving ? "Saving..." : "Save Changes"}</span>
-              </button>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Articles:</span>
+                <span className="font-medium text-gray-900">{articles.length}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Loading Screens:</span>
+                <span className="font-medium text-gray-900">{loadingScreens.length}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Main Content Area - Scrollable */}
+      <div className="flex-1 ml-80 overflow-y-auto">
+        <div className="max-w-6xl mx-auto px-6 py-8">
         
         {/* Quiz Link Section */}
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 mb-8">
@@ -874,6 +943,63 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                   </div>
                 );
               })()}
+
+              {/* Loading Screens - Show loading screens for this question */}
+              {(() => {
+                const loadingScreensForQuestion = loadingScreens.filter(ls => ls.triggerQuestionId === question.id);
+                
+                if (loadingScreensForQuestion.length === 0) return null;
+                
+                return (
+                  <div className="bg-orange-50/50 rounded-xl p-3 border border-orange-200/50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span className="text-sm font-semibold text-orange-700">Loading Screens</span>
+                        <span className="text-xs text-gray-500">({loadingScreensForQuestion.length})</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => window.open(`/admin/quiz-editor/${quizType}/loading-screens`, '_blank')}
+                          className="px-2 py-1 bg-orange-600 text-white text-xs rounded hover:bg-orange-700 transition-colors"
+                        >
+                          + Add
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-3 space-y-2">
+                      {loadingScreensForQuestion.map((screen) => (
+                        <div key={screen.id} className="flex items-center justify-between bg-white rounded p-2 border border-orange-200">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                              <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                            </div>
+                            <div>
+                              <p className="text-xs font-medium text-gray-900">{screen.title}</p>
+                              <p className="text-xs text-gray-500">
+                                {screen.duration}ms • {screen.iconType} • {screen.animationStyle}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <button
+                              onClick={() => window.open(`/admin/quiz-editor/${quizType}/loading-screens`, '_blank')}
+                              className="px-2 py-1 bg-orange-600 text-white text-xs rounded hover:bg-orange-700 transition-colors"
+                            >
+                              Edit
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           ))}
         </div>
@@ -1055,6 +1181,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
