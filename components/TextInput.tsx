@@ -12,6 +12,10 @@ interface TextInputProps {
   canGoBack?: boolean;
   currentQuestion?: number;
   totalQuestions?: number;
+  userVariables?: {
+    name?: string;
+    email?: string;
+  };
 }
 
 export default function TextInput({ 
@@ -22,8 +26,20 @@ export default function TextInput({
   onBack, 
   canGoBack = false, 
   currentQuestion, 
-  totalQuestions 
+  totalQuestions,
+  userVariables = {}
 }: TextInputProps) {
+  // Replace variables in the question prompt
+  const replaceVariables = (text: string) => {
+    let replacedText = text;
+    if (userVariables.name) {
+      replacedText = replacedText.replace(/\{\{name\}\}/g, userVariables.name);
+    }
+    if (userVariables.email) {
+      replacedText = replacedText.replace(/\{\{email\}\}/g, userVariables.email);
+    }
+    return replacedText;
+  };
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (value.trim()) {
@@ -57,7 +73,7 @@ export default function TextInput({
         
         <div className="text-center">
           <h2 className="text-2xl font-medium text-gray-900 mb-12 leading-relaxed">
-            {question.prompt}
+            {replaceVariables(question.prompt)}
           </h2>
           
           <form onSubmit={handleSubmit} className="space-y-6">

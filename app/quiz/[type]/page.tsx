@@ -235,6 +235,16 @@ export default function QuizPage({ params }: QuizPageProps) {
       
     if (!valueToSubmit || !sessionId || !currentQuestion) return;
 
+    // Store name if this is a text input question for "name"
+    if (currentQuestion?.type === "text" && currentQuestion?.prompt.toLowerCase().includes("name")) {
+      setUserVariables(prev => ({ ...prev, name: valueToSubmit }));
+    }
+    
+    // Store email if this is an email input question
+    if (currentQuestion?.type === "email") {
+      setUserVariables(prev => ({ ...prev, email: valueToSubmit }));
+    }
+
     try {
       const response = await fetch("/api/quiz/answer", {
         method: "POST",
@@ -396,6 +406,7 @@ export default function QuizPage({ params }: QuizPageProps) {
           canGoBack={canGoBack}
           currentQuestion={questionNumber}
           totalQuestions={totalQuestions}
+          userVariables={userVariables}
         />
       ) : (
         <QuestionCard
