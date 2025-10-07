@@ -43,6 +43,9 @@ export async function POST(request: NextRequest) {
       backgroundColor,
       textColor,
       iconColor,
+      progressBarColor,
+      showProgressBar,
+      progressText,
       triggerQuestionId
     } = body;
 
@@ -57,11 +60,14 @@ export async function POST(request: NextRequest) {
         subtitle,
         personalizedText,
         duration: duration || 3000,
-        iconType: iconType || 'puzzle',
-        animationStyle: animationStyle || 'spin',
+        iconType: iconType || 'puzzle-4',
+        animationStyle: animationStyle || 'complete-rotate',
         backgroundColor: backgroundColor || '#ffffff',
         textColor: textColor || '#000000',
-        iconColor: iconColor || '#3b82f6',
+        iconColor: iconColor || '#06b6d4',
+        progressBarColor: progressBarColor || '#ef4444',
+        showProgressBar: showProgressBar !== undefined ? showProgressBar : true,
+        progressText,
         triggerQuestionId,
         isActive: true
       }

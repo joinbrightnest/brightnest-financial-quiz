@@ -140,13 +140,16 @@ model LoadingScreen {
   quizType        String   // Which quiz this loading screen belongs to
   title           String   // Main title text
   subtitle        String?  // Optional subtitle
-  personalizedText String? // Text that can include variables like {{name}}
+  personalizedText String? // Text that can include variables like {{name}}, {{answer}}, etc.
   duration        Int      @default(3000) // Duration in milliseconds
-  iconType        String   @default("puzzle") // Type of animated icon (puzzle, gears, brain, etc.)
-  animationStyle  String   @default("spin") // Animation style (spin, pulse, bounce, etc.)
+  iconType        String   @default("puzzle-4") // Type of animated icon (puzzle-4, puzzle-6, gears, brain, etc.)
+  animationStyle  String   @default("complete-rotate") // Animation style (complete-rotate, spin, pulse, bounce, etc.)
   backgroundColor String   @default("#ffffff") // Background color
   textColor       String   @default("#000000") // Text color
   iconColor       String   @default("#3b82f6") // Icon color
+  progressBarColor String  @default("#ef4444") // Progress bar color
+  showProgressBar Boolean  @default(true) // Whether to show progress bar
+  progressText    String?  // Custom progress text (e.g., "CALCULATING...")
   triggerQuestionId String? // Which question triggers this loading screen
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())

@@ -20,6 +20,9 @@ export async function PUT(
       backgroundColor,
       textColor,
       iconColor,
+      progressBarColor,
+      showProgressBar,
+      progressText,
       triggerQuestionId
     } = body;
 
@@ -35,6 +38,9 @@ export async function PUT(
         backgroundColor,
         textColor,
         iconColor,
+        progressBarColor,
+        showProgressBar,
+        progressText,
         triggerQuestionId
       }
     });

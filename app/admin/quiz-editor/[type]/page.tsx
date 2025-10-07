@@ -40,6 +40,9 @@ interface LoadingScreen {
   backgroundColor: string;
   textColor: string;
   iconColor: string;
+  progressBarColor: string;
+  showProgressBar: boolean;
+  progressText?: string;
   triggerQuestionId?: string;
   isActive: boolean;
 }
