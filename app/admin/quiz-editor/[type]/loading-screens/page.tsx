@@ -61,19 +61,31 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
     setIsTesting(true);
     setTestProgress(0);
     
-    // Animate progress bar
+    // Create realistic variable speed progress
     const startTime = Date.now();
+    let currentProgress = 0;
+    
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
-      const progress = Math.min((elapsed / duration) * 100, 100);
-      setTestProgress(progress);
+      const linearProgress = (elapsed / duration) * 100;
       
-      if (progress >= 100) {
+      // Add variable speed: sometimes faster, sometimes slower
+      // Use sine wave for smooth acceleration/deceleration
+      const variance = Math.sin(elapsed / 200) * 15; // ±15% variance
+      const targetProgress = Math.min(linearProgress + variance, 100);
+      
+      // Smooth transition to target
+      currentProgress += (targetProgress - currentProgress) * 0.1;
+      setTestProgress(Math.min(currentProgress, 100));
+      
+      // Ensure we reach 100% by the end
+      if (elapsed >= duration) {
+        setTestProgress(100);
         clearInterval(interval);
         setTimeout(() => {
           setIsTesting(false);
           setTestProgress(0);
-        }, 200);
+        }, 300);
       }
     }, 50);
   };
@@ -161,6 +173,13 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <style jsx>{`
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+      `}</style>
+      
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
@@ -480,28 +499,52 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                 )}
                 
                 {showProgressBar && (
-                  <div className="w-full max-w-md mt-6">
+                  <div className="w-full max-w-md mt-8">
                     {progressText && (
                       <p 
-                        className="text-sm font-semibold mb-3"
+                        className="text-sm font-bold mb-4 tracking-wide"
                         style={{ color: textColor }}
                       >
                         {progressText}
                       </p>
                     )}
-                    <div className="w-full bg-gray-200 rounded-full h-3 relative">
+                    <div className="w-full bg-gray-200/50 rounded-full h-2 relative overflow-hidden shadow-inner">
                       <div 
-                        className="h-3 rounded-full transition-all duration-100"
+                        className="h-2 rounded-full transition-all duration-200 ease-out relative"
                         style={{ 
                           backgroundColor: progressBarColor,
-                          width: isTesting ? `${testProgress}%` : '65%'
+                          width: isTesting ? `${testProgress}%` : '65%',
+                          boxShadow: `0 0 10px ${progressBarColor}40`
                         }}
-                      ></div>
+                      >
+                        {/* Shine effect */}
+                        <div 
+                          className="absolute inset-0 rounded-full"
+                          style={{
+                            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+                            animation: isTesting ? 'shimmer 1s infinite' : 'none'
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center mt-2">
                       <span 
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs font-semibold"
+                        className="text-xs font-medium opacity-60"
+                        style={{ color: textColor }}
+                      >
+                        0%
+                      </span>
+                      <span 
+                        className="text-sm font-bold"
                         style={{ color: textColor }}
                       >
                         {isTesting ? `${Math.round(testProgress)}%` : '65%'}
+                      </span>
+                      <span 
+                        className="text-xs font-medium opacity-60"
+                        style={{ color: textColor }}
+                      >
+                        100%
                       </span>
                     </div>
                   </div>
