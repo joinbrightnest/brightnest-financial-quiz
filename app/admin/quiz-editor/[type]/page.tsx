@@ -716,7 +716,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                           onChange={(e) => handleQuestionEdit(question.id, "prompt", e.target.value)}
                           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
                           rows={3}
-                          placeholder="Type your question here. Use {{name}} or {{email}} to personalize..."
+                          placeholder="Type your question here. Use double curly braces with name or email to personalize..."
                         />
                         <p className="mt-2 text-xs text-gray-500">
                           💡 <strong>Tip:</strong> Use <code className="px-1 py-0.5 bg-gray-100 rounded text-blue-600">{`{{name}}`}</code> or <code className="px-1 py-0.5 bg-gray-100 rounded text-purple-600">{`{{email}}`}</code> to personalize questions with user data from previous answers.
