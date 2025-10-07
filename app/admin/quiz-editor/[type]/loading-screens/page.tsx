@@ -520,7 +520,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                     )}
                     <div className="w-full bg-gray-200/50 rounded-full h-2 relative overflow-hidden shadow-inner">
                       <div 
-                        className="h-2 rounded-full transition-all duration-200 ease-out relative"
+                        className={`h-2 rounded-full relative ${!isTesting ? 'transition-all duration-200 ease-out' : ''}`}
                         style={{ 
                           backgroundColor: progressBarColor,
                           width: isTesting ? `${testProgress}%` : '65%',
