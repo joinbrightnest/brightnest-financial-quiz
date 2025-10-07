@@ -719,7 +719,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                           placeholder="Type your question here. Use {{name}} or {{email}} to personalize..."
                         />
                         <p className="mt-2 text-xs text-gray-500">
-                          💡 <strong>Tip:</strong> Use <code className="px-1 py-0.5 bg-gray-100 rounded text-blue-600">{'{{name}}'}</code> or <code className="px-1 py-0.5 bg-gray-100 rounded text-purple-600">{'{{email}}'}</code> to personalize questions with user data from previous answers.
+                          💡 <strong>Tip:</strong> Use <code className="px-1 py-0.5 bg-gray-100 rounded text-blue-600">{`{{name}}`}</code> or <code className="px-1 py-0.5 bg-gray-100 rounded text-purple-600">{`{{email}}`}</code> to personalize questions with user data from previous answers.
                         </p>
                       </div>
 
