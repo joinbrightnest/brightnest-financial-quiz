@@ -403,7 +403,10 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                     className="text-sm opacity-80 mb-6"
                     style={{ color: textColor }}
                   >
-                    {personalizedText.replace('{{name}}', 'John').replace('{{answer}}', 'financial planning')}
+                    {personalizedText
+                      .replace(/\{\{name\}\}/g, 'John')
+                      .replace(/\{\{email\}\}/g, 'john@example.com')
+                      .replace(/\{\{answer\}\}/g, 'financial planning')}
                   </p>
                 )}
                 
