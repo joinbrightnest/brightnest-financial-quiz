@@ -184,7 +184,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900"
                     placeholder="ANALYZING YOUR RESPONSES"
                   />
                 </div>
@@ -197,7 +197,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                     type="text"
                     value={subtitle}
                     onChange={(e) => setSubtitle(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900"
                     placeholder="Please wait while we analyze your answers"
                   />
                 </div>
@@ -209,7 +209,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                   <textarea
                     value={personalizedText}
                     onChange={(e) => setPersonalizedText(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900"
                     rows={3}
                     placeholder="Hi there, we're processing your responses..."
                   />
@@ -226,24 +226,28 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                     type="text"
                     value={progressText}
                     onChange={(e) => setProgressText(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900"
                     placeholder="CALCULATING YOUR RESULTS..."
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Duration (milliseconds)
+                    Duration: {(duration / 1000).toFixed(1)}s
                   </label>
                   <input
-                    type="number"
+                    type="range"
                     value={duration}
                     onChange={(e) => setDuration(parseInt(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-600"
                     min="1000"
                     max="10000"
                     step="500"
                   />
+                  <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>1s</span>
+                    <span>10s</span>
+                  </div>
                 </div>
               </div>
             </div>
