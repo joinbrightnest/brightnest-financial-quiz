@@ -101,7 +101,6 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
   };
 
   const handleCreateNew = () => {
-    console.log('handleCreateNew called');
     const newScreen: LoadingScreen = {
       id: `new-${Date.now()}`,
       quizType,
@@ -119,10 +118,8 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
       progressText: "ANALYZING RESPONSES...",
       isActive: true
     };
-    console.log('Setting editing screen:', newScreen);
-    setEditingScreen(newScreen);
     setIsCreating(true);
-    console.log('State updated');
+    setEditingScreen(newScreen);
   };
 
   const handleEdit = (screen: LoadingScreen) => {
@@ -383,7 +380,6 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
 
         {/* Right Panel - Editor/Preview */}
         <div className="flex-1">
-          {console.log('Rendering right panel, editingScreen:', editingScreen)}
           {editingScreen ? (
             <div className="flex h-full">
               {/* Settings Panel */}
