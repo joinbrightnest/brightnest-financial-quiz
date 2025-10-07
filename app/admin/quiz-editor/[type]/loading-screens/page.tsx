@@ -27,6 +27,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
   const [showProgressBar, setShowProgressBar] = useState(true);
   const [triggerQuestionId, setTriggerQuestionId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
 
   // Handle async params
   useEffect(() => {
@@ -53,6 +54,13 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
     } catch (error) {
       console.error("Error fetching questions:", error);
     }
+  };
+
+  const handleTest = () => {
+    setIsTesting(true);
+    setTimeout(() => {
+      setIsTesting(false);
+    }, duration);
   };
 
   const handleSave = async () => {
@@ -232,9 +240,18 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Duration: {(duration / 1000).toFixed(1)}s
-                  </label>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Duration: {(duration / 1000).toFixed(1)}s
+                    </label>
+                    <button
+                      onClick={handleTest}
+                      disabled={isTesting}
+                      className="px-3 py-1 text-sm bg-orange-100 text-orange-700 rounded-lg hover:bg-orange-200 transition-colors disabled:opacity-50"
+                    >
+                      {isTesting ? 'Testing...' : 'Test'}
+                    </button>
+                  </div>
                   <input
                     type="range"
                     value={duration}
@@ -263,7 +280,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                   <select
                     value={iconType}
                     onChange={(e) => setIconType(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900"
                   >
                     <option value="puzzle-4">🧩 4-Piece Puzzle</option>
                     <option value="emoji-brain">🧠 Brain</option>
@@ -281,7 +298,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                   <select
                     value={animationStyle}
                     onChange={(e) => setAnimationStyle(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900"
                   >
                     <option value="spin">Spin</option>
                     <option value="pulse">Pulse</option>
@@ -307,45 +324,77 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Background
                     </label>
-                    <input
-                      type="color"
-                      value={backgroundColor}
-                      onChange={(e) => setBackgroundColor(e.target.value)}
-                      className="w-full h-10 border border-gray-300 rounded-lg"
-                    />
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="color"
+                        value={backgroundColor}
+                        onChange={(e) => setBackgroundColor(e.target.value)}
+                        className="w-12 h-10 rounded cursor-pointer border border-gray-300"
+                      />
+                      <input
+                        type="text"
+                        value={backgroundColor}
+                        onChange={(e) => setBackgroundColor(e.target.value)}
+                        className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Text
                     </label>
-                    <input
-                      type="color"
-                      value={textColor}
-                      onChange={(e) => setTextColor(e.target.value)}
-                      className="w-full h-10 border border-gray-300 rounded-lg"
-                    />
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="color"
+                        value={textColor}
+                        onChange={(e) => setTextColor(e.target.value)}
+                        className="w-12 h-10 rounded cursor-pointer border border-gray-300"
+                      />
+                      <input
+                        type="text"
+                        value={textColor}
+                        onChange={(e) => setTextColor(e.target.value)}
+                        className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Icon
                     </label>
-                    <input
-                      type="color"
-                      value={iconColor}
-                      onChange={(e) => setIconColor(e.target.value)}
-                      className="w-full h-10 border border-gray-300 rounded-lg"
-                    />
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="color"
+                        value={iconColor}
+                        onChange={(e) => setIconColor(e.target.value)}
+                        className="w-12 h-10 rounded cursor-pointer border border-gray-300"
+                      />
+                      <input
+                        type="text"
+                        value={iconColor}
+                        onChange={(e) => setIconColor(e.target.value)}
+                        className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Progress Bar
                     </label>
-                    <input
-                      type="color"
-                      value={progressBarColor}
-                      onChange={(e) => setProgressBarColor(e.target.value)}
-                      className="w-full h-10 border border-gray-300 rounded-lg"
-                    />
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="color"
+                        value={progressBarColor}
+                        onChange={(e) => setProgressBarColor(e.target.value)}
+                        className="w-12 h-10 rounded cursor-pointer border border-gray-300"
+                      />
+                      <input
+                        type="text"
+                        value={progressBarColor}
+                        onChange={(e) => setProgressBarColor(e.target.value)}
+                        className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -357,11 +406,11 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Show After Question (Optional)
                 </label>
-                <select
-                  value={triggerQuestionId}
-                  onChange={(e) => setTriggerQuestionId(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-                >
+              <select
+                value={triggerQuestionId}
+                onChange={(e) => setTriggerQuestionId(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900"
+              >
                   <option value="">No specific question</option>
                   {questions.map((q) => (
                     <option key={q.id} value={q.id}>
@@ -379,7 +428,9 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
               <h2 className="text-lg font-semibold text-gray-900 mb-6">Live Preview</h2>
               
               <div 
-                className="rounded-2xl shadow-2xl flex flex-col items-center justify-center p-8 text-center min-h-[500px]"
+                className={`rounded-2xl shadow-2xl flex flex-col items-center justify-center p-8 text-center min-h-[500px] transition-all ${
+                  isTesting ? 'ring-4 ring-orange-500 ring-opacity-50 scale-105' : ''
+                }`}
                 style={{ backgroundColor }}
               >
                 <div className="mb-6">
