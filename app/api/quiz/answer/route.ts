@@ -46,6 +46,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check for loading screen after this question
+    const loadingScreen = await prisma.loadingScreen.findFirst({
+      where: {
+        quizType: currentQuestion.quizType,
+        triggerQuestionId: questionId,
+        isActive: true,
+      },
+    });
+
     const nextQuestion = await prisma.quizQuestion.findFirst({
       where: {
         active: true,
@@ -74,6 +83,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       isComplete: false,
       nextQuestion,
+      loadingScreen: loadingScreen || null,
     });
   } catch (error) {
     console.error("Error saving answer:", error);

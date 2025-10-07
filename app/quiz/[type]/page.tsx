@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import QuestionCard from "@/components/QuestionCard";
 import TextInput from "@/components/TextInput";
 import ArticleDisplayInline from "@/components/ArticleDisplayInline";
+import LoadingScreenDisplay from "@/components/LoadingScreenDisplay";
 
 interface Question {
   id: string;
@@ -16,6 +17,22 @@ interface Question {
     weightCategory: string;
     weightValue: number;
   }>;
+}
+
+interface LoadingScreen {
+  id: string;
+  title: string;
+  subtitle?: string;
+  personalizedText?: string;
+  duration: number;
+  iconType: string;
+  animationStyle: string;
+  backgroundColor: string;
+  textColor: string;
+  iconColor: string;
+  progressBarColor: string;
+  showProgressBar: boolean;
+  progressText?: string;
 }
 
 interface QuizPageProps {
@@ -49,6 +66,9 @@ export default function QuizPage({ params }: QuizPageProps) {
   const [lastAnswer, setLastAnswer] = useState<{questionId: string, answerValue: string, answerLabel: string} | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const hasInitiallyLoaded = useRef(false);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
+  const [currentLoadingScreen, setCurrentLoadingScreen] = useState<LoadingScreen | null>(null);
+  const [pendingNextQuestion, setPendingNextQuestion] = useState<Question | null>(null);
 
   useEffect(() => {
     if (!quizType) return; // Wait for quizType to be set
@@ -238,16 +258,23 @@ export default function QuizPage({ params }: QuizPageProps) {
           router.push(`/results/${resultData.resultId}`);
         }
       } else {
-        // Move to next question - set new question first, then clear states
-        setCurrentQuestion(data.nextQuestion);
-        setQuestionNumber(questionNumber + 1);
-        setCanGoBack(true); // Can go back from any question after the first
-        
-        // Clear states after setting new question
-        setShowArticle(false);
-        setLastAnswer(null);
-        setSelectedValue(null);
-        setTextValue("");
+        // Check if there's a loading screen to show
+        if (data.loadingScreen) {
+          setCurrentLoadingScreen(data.loadingScreen);
+          setPendingNextQuestion(data.nextQuestion);
+          setShowLoadingScreen(true);
+        } else {
+          // Move to next question directly - set new question first, then clear states
+          setCurrentQuestion(data.nextQuestion);
+          setQuestionNumber(questionNumber + 1);
+          setCanGoBack(true); // Can go back from any question after the first
+          
+          // Clear states after setting new question
+          setShowArticle(false);
+          setLastAnswer(null);
+          setSelectedValue(null);
+          setTextValue("");
+        }
       }
     } catch (err) {
       setError("Failed to save answer. Please try again.");
@@ -260,6 +287,23 @@ export default function QuizPage({ params }: QuizPageProps) {
     // Advance to next question first, then hide article
     if (lastAnswer) {
       await handleNext(lastAnswer.answerValue);
+    }
+  };
+
+  const handleLoadingScreenComplete = () => {
+    if (pendingNextQuestion) {
+      setCurrentQuestion(pendingNextQuestion);
+      setQuestionNumber(questionNumber + 1);
+      setCanGoBack(true);
+      
+      // Clear states
+      setShowLoadingScreen(false);
+      setCurrentLoadingScreen(null);
+      setPendingNextQuestion(null);
+      setShowArticle(false);
+      setLastAnswer(null);
+      setSelectedValue(null);
+      setTextValue("");
     }
   };
 
@@ -303,6 +347,18 @@ export default function QuizPage({ params }: QuizPageProps) {
     );
   }
 
+
+  // Show loading screen if we have one
+  if (showLoadingScreen && currentLoadingScreen) {
+    return (
+      <LoadingScreenDisplay
+        {...currentLoadingScreen}
+        onComplete={handleLoadingScreenComplete}
+        userName="User" // TODO: Get actual user name from session if available
+        lastAnswer={lastAnswer?.answerLabel || "your response"}
+      />
+    );
+  }
 
   // Show article display if we have an article to show
   if (showArticle && lastAnswer && sessionId) {
