@@ -681,15 +681,46 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                     <div className="space-y-6">
                       {/* Question Prompt */}
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-3">
-                          Question Prompt
-                        </label>
+                        <div className="flex items-center justify-between mb-3">
+                          <label className="block text-sm font-semibold text-gray-700">
+                            Question Prompt
+                          </label>
+                          <div className="flex items-center space-x-2">
+                            <button
+                              onClick={() => {
+                                const cursorPos = (document.getElementById(`prompt-${question.id}`) as HTMLTextAreaElement)?.selectionStart || question.prompt.length;
+                                const newPrompt = question.prompt.slice(0, cursorPos) + '{{name}}' + question.prompt.slice(cursorPos);
+                                handleQuestionEdit(question.id, "prompt", newPrompt);
+                              }}
+                              className="px-2 py-1 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+                              title="Insert {{name}} variable"
+                            >
+                              + {{name}}
+                            </button>
+                            <button
+                              onClick={() => {
+                                const cursorPos = (document.getElementById(`prompt-${question.id}`) as HTMLTextAreaElement)?.selectionStart || question.prompt.length;
+                                const newPrompt = question.prompt.slice(0, cursorPos) + '{{email}}' + question.prompt.slice(cursorPos);
+                                handleQuestionEdit(question.id, "prompt", newPrompt);
+                              }}
+                              className="px-2 py-1 text-xs font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-md transition-colors"
+                              title="Insert {{email}} variable"
+                            >
+                              + {{email}}
+                            </button>
+                          </div>
+                        </div>
                         <textarea
+                          id={`prompt-${question.id}`}
                           value={question.prompt}
                           onChange={(e) => handleQuestionEdit(question.id, "prompt", e.target.value)}
                           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
                           rows={3}
+                          placeholder="Type your question here. Use {{name}} or {{email}} to personalize..."
                         />
+                        <p className="mt-2 text-xs text-gray-500">
+                          💡 <strong>Tip:</strong> Use <code className="px-1 py-0.5 bg-gray-100 rounded text-blue-600">{'{{name}}'}</code> or <code className="px-1 py-0.5 bg-gray-100 rounded text-purple-600">{'{{email}}'}</code> to personalize questions with user data from previous answers.
+                        </p>
                       </div>
 
                       {/* Question Type */}

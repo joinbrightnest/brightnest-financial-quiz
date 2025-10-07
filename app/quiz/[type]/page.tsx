@@ -69,6 +69,7 @@ export default function QuizPage({ params }: QuizPageProps) {
   const [showLoadingScreen, setShowLoadingScreen] = useState(false);
   const [currentLoadingScreen, setCurrentLoadingScreen] = useState<LoadingScreen | null>(null);
   const [pendingNextQuestion, setPendingNextQuestion] = useState<Question | null>(null);
+  const [userVariables, setUserVariables] = useState<{name?: string; email?: string}>({});
 
   useEffect(() => {
     if (!quizType) return; // Wait for quizType to be set
@@ -135,6 +136,16 @@ export default function QuizPage({ params }: QuizPageProps) {
     if (isTransitioning) return; // Prevent multiple clicks
     
     setSelectedValue(value);
+    
+    // Store name if this is a text input question for "name"
+    if (currentQuestion?.type === "text" && currentQuestion?.prompt.toLowerCase().includes("name")) {
+      setUserVariables(prev => ({ ...prev, name: value }));
+    }
+    
+    // Store email if this is an email input question
+    if (currentQuestion?.type === "email") {
+      setUserVariables(prev => ({ ...prev, email: value }));
+    }
     
     // Find the answer label for the article
     const answerLabel = currentQuestion?.options.find(opt => opt.value === value)?.label || value;
@@ -396,6 +407,7 @@ export default function QuizPage({ params }: QuizPageProps) {
           onNext={handleNext}
           onBack={handleBack}
           canGoBack={canGoBack}
+          userVariables={userVariables}
         />
       )}
     </div>

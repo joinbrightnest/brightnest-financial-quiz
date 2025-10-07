@@ -20,6 +20,10 @@ interface QuestionCardProps {
   onNext: () => void;
   onBack?: () => void;
   canGoBack?: boolean;
+  userVariables?: {
+    name?: string;
+    email?: string;
+  };
 }
 
 export default function QuestionCard({
@@ -31,7 +35,19 @@ export default function QuestionCard({
   onNext,
   onBack,
   canGoBack = false,
+  userVariables = {},
 }: QuestionCardProps) {
+  // Replace variables in the question prompt
+  const replaceVariables = (text: string) => {
+    let replacedText = text;
+    if (userVariables.name) {
+      replacedText = replacedText.replace(/\{\{name\}\}/g, userVariables.name);
+    }
+    if (userVariables.email) {
+      replacedText = replacedText.replace(/\{\{email\}\}/g, userVariables.email);
+    }
+    return replacedText;
+  };
   return (
     <div className="min-h-screen bg-white">
       {/* Top Header Bar */}
@@ -56,7 +72,7 @@ export default function QuestionCard({
         
         <div className="text-center">
           <h2 className="text-2xl font-medium text-gray-900 mb-12 leading-relaxed">
-            {question.prompt}
+            {replaceVariables(question.prompt)}
           </h2>
           
           <div className="space-y-4">
