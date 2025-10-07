@@ -693,9 +693,9 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                                 handleQuestionEdit(question.id, "prompt", newPrompt);
                               }}
                               className="px-2 py-1 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
-                              title="Insert {{name}} variable"
+                              title="Insert name variable"
                             >
-                              + {{name}}
+                              + {`{{name}}`}
                             </button>
                             <button
                               onClick={() => {
@@ -704,9 +704,9 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                                 handleQuestionEdit(question.id, "prompt", newPrompt);
                               }}
                               className="px-2 py-1 text-xs font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-md transition-colors"
-                              title="Insert {{email}} variable"
+                              title="Insert email variable"
                             >
-                              + {{email}}
+                              + {`{{email}}`}
                             </button>
                           </div>
                         </div>
