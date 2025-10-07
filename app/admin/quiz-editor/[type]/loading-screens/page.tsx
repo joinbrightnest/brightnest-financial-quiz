@@ -16,7 +16,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
   const [title, setTitle] = useState("ANALYZING YOUR RESPONSES");
   const [subtitle, setSubtitle] = useState("Please wait while we analyze your answers");
   const [progressText, setProgressText] = useState("CALCULATING YOUR RESULTS...");
-  const [personalizedText, setPersonalizedText] = useState("Hi {{name}}, we're processing your responses...");
+  const [personalizedText, setPersonalizedText] = useState("Hi there, we're processing your responses...");
   const [duration, setDuration] = useState(4000);
   const [iconType, setIconType] = useState("puzzle-4");
   const [animationStyle, setAnimationStyle] = useState("spin");
@@ -211,10 +211,10 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                     onChange={(e) => setPersonalizedText(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                     rows={3}
-                    placeholder="Hi {{name}}, we're processing your responses..."
+                    placeholder="Hi there, we're processing your responses..."
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Use {{name}} or {{answer}} for personalization
+                    Use {`{{name}}`} or {`{{answer}}`} for personalization
                   </p>
                 </div>
 
