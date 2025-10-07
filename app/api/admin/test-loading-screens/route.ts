@@ -14,12 +14,17 @@ export async function GET(request: NextRequest) {
     // Test 2: Get count of all loading screens
     const totalCount = await prisma.loadingScreen.count();
     
-    // Test 3: Get count by quiz type
-    const countByType = await prisma.$queryRaw`
+    // Test 3: Get count by quiz type - convert BigInt to regular numbers
+    const countByTypeRaw: any[] = await prisma.$queryRaw`
       SELECT "quizType", COUNT(*) as count 
       FROM "loading_screens" 
       GROUP BY "quizType"
     `;
+    
+    const countByType = countByTypeRaw.map((item: any) => ({
+      quizType: item.quizType,
+      count: Number(item.count)
+    }));
 
     return NextResponse.json({ 
       success: true,
@@ -30,7 +35,7 @@ export async function GET(request: NextRequest) {
         title: s.title,
         quizType: s.quizType,
         triggerQuestionId: s.triggerQuestionId,
-        createdAt: s.createdAt
+        createdAt: s.createdAt.toISOString()
       })),
       countByType,
       message: 'Loading screens table is working correctly!'
