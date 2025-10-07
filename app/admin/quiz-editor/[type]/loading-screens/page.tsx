@@ -61,40 +61,30 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
     setIsTesting(true);
     setTestProgress(0);
     
-    // Create smooth, realistic data processing feel
+    // Create realistic variable-speed data processing
     const startTime = Date.now();
     let lastProgress = 0;
-    
-    // Generate random "processing checkpoints" for natural variation
-    const checkpoints: { time: number; speed: number }[] = [];
-    const numCheckpoints = 5 + Math.floor(Math.random() * 3); // 5-7 checkpoints
-    
-    for (let i = 0; i < numCheckpoints; i++) {
-      checkpoints.push({
-        time: (i / numCheckpoints) * duration,
-        speed: 0.7 + Math.random() * 0.6 // Speed multiplier between 0.7x and 1.3x
-      });
-    }
+    let currentSpeed = 1;
+    let nextSpeedChange = Math.random() * 500 + 300; // Change speed every 300-800ms
     
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
-      const progress = (elapsed / duration);
       
-      // Find current speed based on nearest checkpoint
-      let speedMultiplier = 1;
-      for (let i = 0; i < checkpoints.length - 1; i++) {
-        if (elapsed >= checkpoints[i].time && elapsed < checkpoints[i + 1].time) {
-          const segmentProgress = (elapsed - checkpoints[i].time) / (checkpoints[i + 1].time - checkpoints[i].time);
-          // Smooth interpolation between speeds
-          speedMultiplier = checkpoints[i].speed + (checkpoints[i + 1].speed - checkpoints[i].speed) * segmentProgress;
-          break;
-        }
+      // Randomly change speed at intervals
+      if (elapsed > nextSpeedChange) {
+        // More dramatic speed changes: 0.5x to 1.8x
+        currentSpeed = 0.5 + Math.random() * 1.3;
+        nextSpeedChange = elapsed + (Math.random() * 600 + 400); // Next change in 400-1000ms
       }
       
-      // Calculate smooth progress with variable speed
+      // Calculate progress increment with current speed
       const baseIncrement = (100 / duration) * 50; // Base progress per 50ms
-      const increment = baseIncrement * speedMultiplier;
-      lastProgress = Math.min(lastProgress + increment, progress * 100);
+      const increment = baseIncrement * currentSpeed;
+      lastProgress += increment;
+      
+      // Make sure we don't overshoot
+      const maxProgress = (elapsed / duration) * 100;
+      lastProgress = Math.min(lastProgress, maxProgress);
       
       // Ensure we reach 100% at the end
       if (elapsed >= duration) {
