@@ -28,6 +28,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
   const [triggerQuestionId, setTriggerQuestionId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
+  const [testProgress, setTestProgress] = useState(0);
 
   // Handle async params
   useEffect(() => {
@@ -58,9 +59,23 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
 
   const handleTest = () => {
     setIsTesting(true);
-    setTimeout(() => {
-      setIsTesting(false);
-    }, duration);
+    setTestProgress(0);
+    
+    // Animate progress bar
+    const startTime = Date.now();
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min((elapsed / duration) * 100, 100);
+      setTestProgress(progress);
+      
+      if (progress >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          setIsTesting(false);
+          setTestProgress(0);
+        }, 200);
+      }
+    }, 50);
   };
 
   const handleSave = async () => {
@@ -476,17 +491,17 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                     )}
                     <div className="w-full bg-gray-200 rounded-full h-3 relative">
                       <div 
-                        className="h-3 rounded-full transition-all duration-1000"
+                        className="h-3 rounded-full transition-all duration-100"
                         style={{ 
                           backgroundColor: progressBarColor,
-                          width: '65%'
+                          width: isTesting ? `${testProgress}%` : '65%'
                         }}
                       ></div>
                       <span 
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs font-semibold"
                         style={{ color: textColor }}
                       >
-                        65%
+                        {isTesting ? `${Math.round(testProgress)}%` : '65%'}
                       </span>
                     </div>
                   </div>
