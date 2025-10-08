@@ -1,35 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const questionId = searchParams.get('questionId');
-    const category = searchParams.get('category');
-
-    const whereClause: { isActive: boolean; triggers?: any; category?: string } = { isActive: true };
+    console.log('🔍 Articles API - Starting request');
     
-    if (questionId) {
-      whereClause.triggers = {
-        some: {
-          questionId,
-          isActive: true
-        }
-      };
-    }
-
-    if (category) {
-      whereClause.category = category;
-    }
-
+    // Get articles with their triggers
     const articles = await prisma.article.findMany({
-      where: whereClause,
+      where: {
+        isActive: true
+      },
       include: {
         triggers: {
           where: { isActive: true },
           include: {
             question: {
-              select: { prompt: true }
+              select: { prompt: true, quizType: true }
             }
           }
         }
@@ -37,9 +25,11 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' }
     });
 
+    console.log('🔍 Articles API - Found articles:', articles.length);
+    
     return NextResponse.json({ articles });
   } catch (error) {
-    console.error('Error fetching articles:', error);
+    console.error('💥 Articles API - Error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch articles' },
       { status: 500 }
@@ -73,77 +63,53 @@ export async function POST(request: NextRequest) {
       showCta
     } = body;
 
-    // Article creation request logged for debugging (remove in production)
-
-    try {
-      // Create article in database
-      const article = await prisma.article.create({
-        data: {
-          title,
-          content,
-          type: type || 'ai_generated',
-          category: category || 'general',
-          tags: tags || [],
-          // Customization fields
-          subtitle: subtitle || null,
-          personalizedText: personalizedText || null,
-          backgroundColor: backgroundColor || '#ffffff',
-          textColor: textColor || '#000000',
-          iconColor: iconColor || '#3b82f6',
-          accentColor: accentColor || '#ef4444',
-          iconType: iconType || 'document',
-          showIcon: showIcon !== undefined ? showIcon : true,
-          showStatistic: showStatistic !== undefined ? showStatistic : true,
-          statisticText: statisticText || null,
-          statisticValue: statisticValue || null,
-          ctaText: ctaText || 'CONTINUE',
-          showCta: showCta !== undefined ? showCta : true,
-          triggers: {
-            create: triggers?.map((trigger: any) => ({
-              questionId: trigger.questionId,
-              optionValue: trigger.optionValue,
-              condition: trigger.condition || {},
-              priority: trigger.priority || 0,
-              isActive: trigger.isActive !== false
-            })) || []
-          }
-        },
-        include: {
-          triggers: {
-            include: {
-              question: {
-                select: { prompt: true }
-              }
-            }
-          }
-        }
-      });
-
-      return NextResponse.json({ 
-        article,
-        message: 'Article saved successfully to database'
-      });
-    } catch (dbError) {
-      console.error('Database error:', dbError);
-      
-      // Fallback: Return success with mock data if database isn't ready
-      const mockArticle = {
-        id: `article-${Date.now()}`,
+    // Create article in database
+    const article = await prisma.article.create({
+      data: {
         title,
         content,
         type: type || 'ai_generated',
         category: category || 'general',
         tags: tags || [],
-        triggers: triggers || [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
+        // Customization fields
+        subtitle: subtitle || null,
+        personalizedText: personalizedText || null,
+        backgroundColor: backgroundColor || '#ffffff',
+        textColor: textColor || '#000000',
+        iconColor: iconColor || '#3b82f6',
+        accentColor: accentColor || '#ef4444',
+        iconType: iconType || 'document',
+        showIcon: showIcon !== undefined ? showIcon : true,
+        showStatistic: showStatistic !== undefined ? showStatistic : true,
+        statisticText: statisticText || null,
+        statisticValue: statisticValue || null,
+        ctaText: ctaText || 'CONTINUE',
+        showCta: showCta !== undefined ? showCta : true,
+        triggers: {
+          create: triggers?.map((trigger: any) => ({
+            questionId: trigger.questionId,
+            optionValue: trigger.optionValue,
+            condition: trigger.condition || {},
+            priority: trigger.priority || 0,
+            isActive: trigger.isActive !== false
+          })) || []
+        }
+      },
+      include: {
+        triggers: {
+          include: {
+            question: {
+              select: { prompt: true }
+            }
+          }
+        }
+      }
+    });
 
-      return NextResponse.json({ 
-        article: mockArticle,
-        message: 'Article saved successfully (database migration in progress)'
-      });
-    }
+    return NextResponse.json({ 
+      article,
+      message: 'Article saved successfully to database'
+    });
   } catch (error) {
     console.error('Error creating article:', error);
     return NextResponse.json(

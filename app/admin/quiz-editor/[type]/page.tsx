@@ -113,7 +113,12 @@ export default function QuizEditor({ params }: QuizEditorProps) {
         credentials: 'include'
       });
       const data = await response.json();
-      setQuestions(data.questions || []);
+      const questionsData = data.questions || [];
+      setQuestions(questionsData);
+      
+      // Store current questions in localStorage for other pages to access
+      localStorage.setItem(`quiz-questions-${quizType}`, JSON.stringify(questionsData));
+      
       hasInitiallyLoaded.current = true;
     } catch (error) {
       console.error("Error fetching questions:", error);
@@ -127,34 +132,45 @@ export default function QuizEditor({ params }: QuizEditorProps) {
 
   const fetchArticles = async () => {
     try {
-      console.log('Loading articles from database for quiz type:', quizType);
+      console.log('🔄 Loading articles from database for quiz type:', quizType);
       
       // Load articles from database
       const response = await fetch(`/api/admin/articles?quizType=${quizType}`, {
         credentials: 'include'
       });
+      
+      console.log('📡 Articles API response status:', response.status);
+      
       if (response.ok) {
         const data = await response.json();
-        console.log('Articles from database:', data.articles);
+        console.log('📄 Raw articles data from API:', data);
+        console.log('📊 Articles array:', data.articles);
+        console.log('🔢 Number of articles found:', data.articles?.length || 0);
         
-        const articlesList = data.articles.map((article: any, index: number) => ({
-          id: article.id,
-          title: article.title,
-          content: article.content,
-          category: article.category,
-          order: questions.length + index + 1, // Place after questions
-          triggerQuestionId: article.triggers?.[0]?.questionId,
-          triggerAnswerValue: article.triggers?.[0]?.optionValue
-        }));
-        
-        console.log('Setting articles list:', articlesList);
-        setArticles(articlesList);
+        if (data.articles && data.articles.length > 0) {
+          const articlesList = data.articles.map((article: any, index: number) => ({
+            id: article.id,
+            title: article.title,
+            content: article.content,
+            category: article.category,
+            order: questions.length + index + 1, // Place after questions
+            triggerQuestionId: article.triggers?.[0]?.questionId,
+            triggerAnswerValue: article.triggers?.[0]?.optionValue
+          }));
+          
+          console.log('✅ Processed articles list:', articlesList);
+          setArticles(articlesList);
+        } else {
+          console.log('⚠️ No articles found in response');
+          setArticles([]);
+        }
       } else {
-        console.log('Failed to load articles from database');
+        const errorData = await response.text();
+        console.log('❌ Failed to load articles from database:', response.status, errorData);
         setArticles([]);
       }
     } catch (error) {
-      console.error("Error fetching articles:", error);
+      console.error("💥 Error fetching articles:", error);
       setArticles([]);
     }
   };
@@ -203,6 +219,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     }
   };
 
+
   const handleDragStart = (e: React.DragEvent, questionId: string) => {
     setDraggedItem(questionId);
     e.dataTransfer.effectAllowed = "move";
@@ -241,6 +258,10 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     }));
 
     setQuestions(updatedQuestions);
+    
+    // Update localStorage with new order
+    localStorage.setItem(`quiz-questions-${quizType}`, JSON.stringify(updatedQuestions));
+    
     setDraggedItem(null);
   };
 
@@ -498,13 +519,23 @@ export default function QuizEditor({ params }: QuizEditorProps) {
               <span className="text-sm font-medium">Add Question</span>
             </button>
             <button
-              onClick={() => window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank')}
+              onClick={() => router.push(`/admin/quiz-editor/${quizType}/create-article`)}
               className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors group"
             >
               <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               <span className="text-sm font-medium">Add Article</span>
+            </button>
+            
+            <button
+              onClick={fetchArticles}
+              className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors group text-sm"
+            >
+              <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span className="text-sm font-medium">Refresh Articles</span>
             </button>
             <button
               onClick={() => window.open(`/admin/quiz-editor/${quizType}/loading-screens`, '_blank')}
@@ -894,7 +925,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
               </div>
 
               {/* Answer → Article Mapping - Only show if articles exist */}
-              {question.type === "single" && (() => {
+              {(() => {
                 // Find articles for this question by matching answer values
                 const articlesForQuestion = articles.filter(a => {
                   // Check if any of this question's options match the article's trigger
@@ -1081,6 +1112,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                   </div>
                 );
               })()}
+
             </div>
             );
           })}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface Question {
   id: string;
@@ -21,13 +22,11 @@ interface CreateArticlePageProps {
 }
 
 export default function CreateArticlePage({ params }: CreateArticlePageProps) {
+  const router = useRouter();
   const [quizType, setQuizType] = useState<string>('');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedQuestion, setSelectedQuestion] = useState<string>('');
   const [selectedOption, setSelectedOption] = useState<string>('');
-  const [manualQuestion, setManualQuestion] = useState<string>('');
-  const [manualAnswer, setManualAnswer] = useState<string>('');
-  const [useManualInput, setUseManualInput] = useState<boolean>(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -71,14 +70,65 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
     }
   }, [quizType]);
 
+  // Refresh questions when window gains focus (user comes back from quiz editor)
+  useEffect(() => {
+    const handleFocus = () => {
+      if (quizType) {
+        console.log('Window focused, refreshing questions...');
+        fetchQuestions();
+      }
+    };
+
+    // Listen for localStorage changes (when quiz editor updates questions)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === `quiz-questions-${quizType}` && e.newValue) {
+        try {
+          const newQuestions = JSON.parse(e.newValue);
+          console.log('Questions updated from localStorage:', newQuestions);
+          setQuestions(newQuestions);
+        } catch (error) {
+          console.error('Failed to parse updated questions:', error);
+        }
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [quizType]);
+
   const fetchQuestions = async () => {
     try {
+      console.log('Fetching questions for quiz type:', quizType);
+      
+      // First, try to get questions from localStorage (current state from quiz editor)
+      const cachedQuestions = localStorage.getItem(`quiz-questions-${quizType}`);
+      if (cachedQuestions) {
+        try {
+          const parsedQuestions = JSON.parse(cachedQuestions);
+          console.log('Using cached questions from localStorage:', parsedQuestions);
+          setQuestions(parsedQuestions);
+          setIsLoading(false);
+          return;
+        } catch (e) {
+          console.log('Failed to parse cached questions, falling back to API');
+        }
+      }
+      
+      // Fallback to API if no cached data
       const response = await fetch(`/api/admin/quiz-questions?quizType=${quizType}`, {
         credentials: 'include'
       });
       if (response.ok) {
         const data = await response.json();
+        console.log('Fetched questions from API:', data.questions);
         setQuestions(data.questions || []);
+      } else {
+        console.error('Failed to fetch questions:', response.status);
       }
     } catch (error) {
       console.error('Failed to fetch questions:', error);
@@ -125,41 +175,15 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
     }
   };
 
-  const handleGenerateManualArticle = async () => {
-    if (!manualQuestion || !manualAnswer) return;
-
-    setIsGenerating(true);
-    try {
-      const response = await fetch('/api/admin/generate-article', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          questionPrompt: manualQuestion,
-          answerValue: manualAnswer,
-          answerLabel: manualAnswer,
-          category: 'general'
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setGeneratedArticle(data.article);
-        // Pre-populate title with generated title
-        setTitle(data.article.title);
-        // Pre-populate content with generated content for easy editing
-        setPersonalizedText(data.article.content);
-      }
-    } catch (error) {
-      console.error('Failed to generate article:', error);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
 
   const handleSaveArticle = async () => {
-    if (!generatedArticle) {
-      alert('Please generate an article first');
+    if (!personalizedText.trim()) {
+      alert('Please write some content in the Article Content field');
+      return;
+    }
+
+    if (!selectedQuestion || !selectedOption) {
+      alert('Please select a question and answer option. Articles need to be connected to specific quiz answers to be shown to users.');
       return;
     }
 
@@ -170,11 +194,11 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          title: title || generatedArticle.title,
-          content: personalizedText || generatedArticle.content,
-          type: 'ai_generated',
-          category: generatedArticle.category,
-          tags: generatedArticle.tags,
+          title: title || generatedArticle?.title || 'Custom Article',
+          content: personalizedText,
+          type: generatedArticle ? 'ai_generated' : 'static',
+          category: generatedArticle?.category || 'general',
+          tags: generatedArticle?.tags || [],
           // Customization fields
           subtitle,
           backgroundColor,
@@ -197,10 +221,10 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
           }] : []
         })
       });
-
+      
       if (response.ok) {
         alert('Article saved successfully!');
-        window.close();
+        router.push(`/admin/quiz-editor/${quizType}`);
       } else {
         const error = await response.json();
         alert(`Failed to save: ${error.error || 'Unknown error'}`);
@@ -289,7 +313,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center space-x-4">
             <button
-              onClick={() => window.close()}
+              onClick={() => router.push(`/admin/quiz-editor/${quizType}`)}
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -308,7 +332,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
           </div>
               <button
             onClick={handleSaveArticle}
-            disabled={isSaving || !generatedArticle}
+            disabled={isSaving || !personalizedText.trim() || !selectedQuestion || !selectedOption}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50"
               >
             {isSaving ? 'Saving...' : 'Save Article'}
@@ -322,106 +346,61 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
           <div className="space-y-6">
             {/* Article Generation */}
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Article Generation</h2>
-              
-              <div className="space-y-4">
-                <div className="flex space-x-4 mb-4">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-lg font-semibold text-gray-900">Article Generation</h2>
                   <button
-                    onClick={() => setUseManualInput(false)}
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                      !useManualInput
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    }`}
-                  >
-                    Select from Quiz
-                  </button>
-                  <button
-                    onClick={() => setUseManualInput(true)}
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                      useManualInput
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    }`}
-                  >
-                    Write Manually
+                  onClick={fetchQuestions}
+                  className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                  title="Refresh questions from quiz editor"
+                >
+                  🔄 Refresh
                   </button>
               </div>
 
-              {!useManualInput ? (
-                <>
-                    <div>
+              <div className="space-y-4">
+                <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select Question
+                    Select Question <span className="text-red-500">*</span>
+                    <span className="text-xs text-gray-500 ml-2">({questions.length} questions loaded)</span>
                 </label>
                 <select
                   value={selectedQuestion}
-                        onChange={(e) => setSelectedQuestion(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                      >
-                        <option value="">Select a question...</option>
-                        {questions.map((q) => (
-                          <option key={q.id} value={q.id}>
-                            Question {q.order}: {q.prompt.substring(0, 50)}...
-                    </option>
-                  ))}
+                    onChange={(e) => setSelectedQuestion(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                  >
+                    <option value="">Select a question...</option>
+                    {questions.map((q, index) => (
+                      <option key={q.id} value={q.id}>
+                        Question {index + 1}: {q.prompt.substring(0, 50)}...
+                      </option>
+                    ))}
                 </select>
               </div>
 
-                    <div>
+                <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Select Answer Option
+                    Select Answer Option <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={selectedOption}
-                        onChange={(e) => setSelectedOption(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        disabled={!selectedQuestion}
-                      >
-                        <option value="">Select an answer...</option>
-                        {selectedQuestion && questions.find(q => q.id === selectedQuestion)?.options.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
+                    onChange={(e) => setSelectedOption(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    disabled={!selectedQuestion}
+                  >
+                    <option value="">Select an answer...</option>
+                    {selectedQuestion && questions.find(q => q.id === selectedQuestion)?.options.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
                       </option>
                     ))}
                   </select>
                 </div>
-                </>
-              ) : (
-                <>
-                    <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Question
-                    </label>
-                      <textarea
-                      value={manualQuestion}
-                      onChange={(e) => setManualQuestion(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        rows={3}
-                      placeholder="Enter your question here..."
-                    />
-                  </div>
-
-                    <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Answer
-                    </label>
-                      <textarea
-                      value={manualAnswer}
-                      onChange={(e) => setManualAnswer(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                        rows={2}
-                      placeholder="Enter the answer here..."
-                    />
-                  </div>
-                  </>
-                )}
 
                     <button
-                  onClick={useManualInput ? handleGenerateManualArticle : handleGenerateArticle}
-                  disabled={isGenerating || (!useManualInput && (!selectedQuestion || !selectedOption)) || (useManualInput && (!manualQuestion || !manualAnswer))}
+                      onClick={handleGenerateArticle}
+                  disabled={isGenerating || (!selectedQuestion || !selectedOption)}
                   className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50"
-                >
+                    >
                   {isGenerating ? 'Generating...' : 'Generate AI Article'}
                     </button>
               </div>
@@ -442,34 +421,37 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                     onChange={(e) => setTitle(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     placeholder="Article title will be generated..."
-                  />
-                </div>
+                    />
+                  </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                     Subtitle
-                  </label>
-                  <input
-                    type="text"
+                    </label>
+                    <input
+                      type="text"
                     value={subtitle}
                     onChange={(e) => setSubtitle(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     placeholder="Financial Guidance"
-                  />
-                </div>
+                    />
+                  </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Personalized Text
+                    Article Content
                   </label>
                   <textarea
                     value={personalizedText}
                     onChange={(e) => setPersonalizedText(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                    rows={3}
-                    placeholder="Use {{name}} or {{answer}} for personalization"
-                    />
-                  </div>
+                    rows={8}
+                    placeholder="Write your article content here, or generate AI content first. Use {{name}} or {{answer}} for personalization."
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Write your own content here, or generate AI content first. Articles must be connected to specific quiz answers to be shown to users.
+                  </p>
+            </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -498,18 +480,18 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                   </div>
                   </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                     Call-to-Action Text
-                  </label>
+                    </label>
                   <input
                     type="text"
                     value={ctaText}
                     onChange={(e) => setCtaText(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     placeholder="CONTINUE"
-                  />
-                </div>
+                    />
+                  </div>
                       </div>
                     </div>
 
@@ -706,19 +688,17 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
 
                 {/* Content */}
                 <div className="flex-1 flex items-center justify-center">
-                  {generatedArticle ? (
+                  {personalizedText ? (
                     <div className="text-left max-w-md">
                       <p 
                         className="text-sm leading-relaxed mb-4"
                         style={{ color: textColor }}
                       >
-                        {personalizedText ? 
-                          personalizedText
-                            .replace(/\{\{name\}\}/g, 'John')
-                            .replace(/\{\{email\}\}/g, 'john@example.com')
-                            .replace(/\{\{answer\}\}/g, 'financial planning')
-                            .substring(0, 200) + '...' :
-                          generatedArticle.content.substring(0, 200) + '...'
+                        {personalizedText
+                          .replace(/\{\{name\}\}/g, 'John')
+                          .replace(/\{\{email\}\}/g, 'john@example.com')
+                          .replace(/\{\{answer\}\}/g, 'financial planning')
+                          .substring(0, 200) + (personalizedText.length > 200 ? '...' : '')
                         }
                       </p>
                     </div>
@@ -730,7 +710,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                         </svg>
                       </div>
                       <p className="text-sm opacity-60" style={{ color: textColor }}>
-                        Select a question and answer option to generate an article
+                        Write your content in the Article Content field above
                       </p>
                     </div>
                   )}
