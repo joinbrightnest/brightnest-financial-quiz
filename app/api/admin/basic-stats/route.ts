@@ -220,14 +220,25 @@ export async function GET(request: Request) {
       .filter((q): q is NonNullable<typeof q> => q !== null)
       .map((q, index) => {
         const previousQuestion = index > 0 ? questionAnalytics[index - 1] : null;
-        const dropFromPrevious = previousQuestion ? previousQuestion.retentionRate - q.retentionRate : 0;
+        
+        // Calculate drop from previous question
+        let dropFromPrevious = 0;
+        let previousRetentionRate = 100; // Default to 100% for first question
+        
+        if (previousQuestion) {
+          previousRetentionRate = previousQuestion.retentionRate;
+          dropFromPrevious = previousRetentionRate - q.retentionRate;
+        } else {
+          // For the first question, calculate drop from 100% (all users who started)
+          dropFromPrevious = 100 - q.retentionRate;
+        }
         
         return {
           questionNumber: q.questionNumber,
           questionText: q.questionText,
           dropFromPrevious: Math.round(dropFromPrevious * 100) / 100,
           retentionRate: q.retentionRate,
-          previousRetentionRate: previousQuestion?.retentionRate || 100
+          previousRetentionRate: previousRetentionRate
         };
       })
       .filter(q => q.dropFromPrevious > 0) // Only questions that caused a drop
