@@ -101,6 +101,22 @@ model Article {
   ctaText            String   @default("CONTINUE") // Call-to-action button text
   showCta            Boolean  @default(true) // Whether to show CTA button
   
+  // Layout and positioning fields
+  textAlignment      String   @default("center") // Text alignment (left, center, right)
+  contentPosition    String   @default("center") // Content position (top, center, bottom)
+  backgroundStyle    String   @default("solid") // Background style (solid, gradient)
+  backgroundGradient String?  // Gradient CSS string
+  contentPadding     String   @default("normal") // Content padding (compact, normal, spacious)
+  showTopBar         Boolean  @default(true) // Whether to show top bar
+  topBarColor        String   @default("#1f2937") // Top bar background color
+  
+  // Text formatting fields
+  titleFontSize      String   @default("large") // Title font size (small, normal, large, xlarge)
+  titleFontWeight    String   @default("bold") // Title font weight (normal, medium, semibold, bold, extrabold)
+  contentFontSize    String   @default("normal") // Content font size (small, normal, large)
+  contentFontWeight  String   @default("normal") // Content font weight (light, normal, medium, semibold)
+  lineHeight         String   @default("normal") // Line height (tight, normal, relaxed, loose)
+  
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

@@ -194,7 +194,7 @@ export default function ArticleDisplayInline({
 
           {/* Subtitle */}
           <p className="text-gray-600 mb-4">
-            {selectedArticle?.category || "Financial Guidance"}
+            {(selectedArticle as any)?.subtitle || selectedArticle?.category || "Financial Guidance"}
           </p>
 
           {/* Main Message */}
@@ -202,25 +202,34 @@ export default function ArticleDisplayInline({
             {selectedArticle?.content || "Thanks for sharing your answer! We've prepared a personalized insight based on your response."}
           </p>
 
-          {/* Quick Stat - Only show if available from article */}
-          {quickStat && (
+          {/* Personalized Text */}
+          {(selectedArticle as any)?.personalizedText && (
+            <p className="text-gray-600 mb-6 leading-relaxed text-sm">
+              {(selectedArticle as any).personalizedText}
+            </p>
+          )}
+
+          {/* Quick Stat - Use custom statistic or fallback to generated stat */}
+          {((selectedArticle as any)?.showStatistic !== false && ((selectedArticle as any)?.statisticValue || quickStat)) && (
             <div className="bg-gray-50 rounded-lg p-4 mb-6">
               <div className="text-3xl font-bold text-red-600 mb-1">
-                {quickStat.stat}
+                {(selectedArticle as any)?.statisticValue || quickStat?.stat}
               </div>
               <p className="text-sm text-gray-600">
-                {quickStat.description}
+                {(selectedArticle as any)?.statisticText || quickStat?.description}
               </p>
             </div>
           )}
 
           {/* Continue Button */}
-          <button
-            onClick={onContinue}
-            className="w-full bg-red-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-red-700 transition-colors"
-          >
-            CONTINUE
-          </button>
+          {((selectedArticle as any)?.showCta !== false) && (
+            <button
+              onClick={onContinue}
+              className="w-full bg-red-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-red-700 transition-colors"
+            >
+              {(selectedArticle as any)?.ctaText || "CONTINUE"}
+            </button>
+          )}
         </div>
       </div>
     </div>

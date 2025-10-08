@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 
 async function getArticlesFromDatabase(questionId: string, answerValue: string) {
   try {
-    console.log(`Looking for articles triggered by question ${questionId} with answer ${answerValue}`);
+    // Looking for articles triggered by question and answer
     
     // Find articles that are triggered by this question and answer
     const articles = await prisma.article.findMany({
@@ -77,9 +77,11 @@ async function getArticlesFromDatabase(questionId: string, answerValue: string) 
       }
     });
 
-    console.log(`Found ${articles.length} articles for question ${questionId} with answer ${answerValue}`);
+    // Raw articles from database
 
-    // Format articles for the frontend
+    // Found articles for question and answer
+
+    // Format articles for the frontend with all customization fields
     return articles.map(article => ({
       id: article.id,
       title: article.title,
@@ -87,7 +89,35 @@ async function getArticlesFromDatabase(questionId: string, answerValue: string) 
       type: article.type,
       category: article.category,
       keyPoints: Array.isArray(article.tags) ? article.tags : [],
-      sources: []
+      sources: [],
+      // Customization fields
+      subtitle: (article as any).subtitle,
+      personalizedText: (article as any).personalizedText,
+      backgroundColor: (article as any).personalizedBackgroundCol || (article as any).backgroundColor,
+      textColor: (article as any).textColor,
+      iconColor: (article as any).iconColor,
+      accentColor: (article as any).accentColor,
+      iconType: (article as any).iconType,
+      showIcon: (article as any).showIcon,
+      showStatistic: (article as any).showStatistic,
+      statisticText: (article as any).statisticText,
+      statisticValue: (article as any).statisticValue,
+      ctaText: (article as any).ctaText,
+      showCta: (article as any).showCta,
+      // Layout and positioning fields
+      textAlignment: (article as any).textAlignment,
+      contentPosition: (article as any).contentPosition,
+      backgroundStyle: (article as any).backgroundStyle,
+      backgroundGradient: (article as any).backgroundGradient,
+      contentPadding: (article as any).contentPadding,
+      showTopBar: (article as any).showTopBar,
+      topBarColor: (article as any).topBarColor,
+      // Text formatting fields
+      titleFontSize: (article as any).titleFontSize,
+      titleFontWeight: (article as any).titleFontWeight,
+      contentFontSize: (article as any).contentFontSize,
+      contentFontWeight: (article as any).contentFontWeight,
+      lineHeight: (article as any).lineHeight
     }));
   } catch (error) {
     console.error('Error getting articles from database:', error);

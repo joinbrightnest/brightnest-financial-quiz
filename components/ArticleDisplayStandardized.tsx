@@ -21,6 +21,20 @@ interface Article {
   statisticValue?: string;
   ctaText?: string;
   showCta?: boolean;
+  // Layout and positioning fields
+  textAlignment?: string;
+  contentPosition?: string;
+  backgroundStyle?: string;
+  backgroundGradient?: string;
+  contentPadding?: string;
+  showTopBar?: boolean;
+  topBarColor?: string;
+  // Text formatting fields
+  titleFontSize?: string;
+  titleFontWeight?: string;
+  contentFontSize?: string;
+  contentFontWeight?: string;
+  lineHeight?: string;
 }
 
 interface ArticleDisplayStandardizedProps {
@@ -99,116 +113,239 @@ export default function ArticleDisplayStandardized({
       .replace(/\{\{answer\}\}/g, userVariables.answer || 'your response');
   };
 
+  // Helper functions for text formatting
+  const getTitleSizeClass = (size: string) => {
+    switch (size) {
+      case 'small': return 'text-lg';
+      case 'normal': return 'text-xl';
+      case 'large': return 'text-2xl';
+      case 'xlarge': return 'text-3xl';
+      default: return 'text-2xl';
+    }
+  };
+
+  const getTitleWeightClass = (weight: string) => {
+    switch (weight) {
+      case 'normal': return 'font-normal';
+      case 'medium': return 'font-medium';
+      case 'semibold': return 'font-semibold';
+      case 'bold': return 'font-bold';
+      case 'extrabold': return 'font-extrabold';
+      default: return 'font-bold';
+    }
+  };
+
+  const getContentSizeClass = (size: string) => {
+    switch (size) {
+      case 'small': return 'text-xs';
+      case 'normal': return 'text-sm';
+      case 'large': return 'text-base';
+      default: return 'text-sm';
+    }
+  };
+
+  const getContentWeightClass = (weight: string) => {
+    switch (weight) {
+      case 'light': return 'font-light';
+      case 'normal': return 'font-normal';
+      case 'medium': return 'font-medium';
+      case 'semibold': return 'font-semibold';
+      default: return 'font-normal';
+    }
+  };
+
+  const getLineHeightClass = (height: string) => {
+    switch (height) {
+      case 'tight': return 'leading-tight';
+      case 'normal': return 'leading-normal';
+      case 'relaxed': return 'leading-relaxed';
+      case 'loose': return 'leading-loose';
+      default: return 'leading-normal';
+    }
+  };
+
+  // Layout and positioning options
   const backgroundColor = article.backgroundColor || '#ffffff';
   const textColor = article.textColor || '#000000';
   const accentColor = article.accentColor || '#ef4444';
   const showIcon = article.showIcon !== false;
   const showStatistic = article.showStatistic !== false;
   const showCta = article.showCta !== false;
+  const showTopBar = article.showTopBar !== false;
+  const topBarColor = article.topBarColor || '#1f2937';
+  
+  // Layout options with better defaults
+  const textAlignment = article.textAlignment || 'left';
+  const contentPosition = article.contentPosition || 'center';
+  const backgroundStyle = article.backgroundStyle || 'solid';
+  const backgroundGradient = article.backgroundGradient;
+  const contentPadding = article.contentPadding || 'normal';
+  
+  // Get background style
+  const getBackgroundStyle = () => {
+    if (backgroundStyle === 'gradient' && backgroundGradient) {
+      return { background: backgroundGradient };
+    }
+    return { backgroundColor };
+  };
+  
+  // Get content positioning classes
+  const getContentPositionClasses = () => {
+    const baseClasses = "flex-1 flex flex-col p-6";
+    // Always center the content block, but text alignment is handled by individual elements
+    const alignmentClasses = {
+      left: 'items-center',
+      center: 'items-center', 
+      right: 'items-center'
+    };
+    const positionClasses = {
+      top: 'justify-start',
+      center: 'justify-center',
+      bottom: 'justify-end'
+    };
+    const paddingClasses = {
+      compact: 'p-4',
+      normal: 'p-6',
+      spacious: 'p-8'
+    };
+    
+    return `${baseClasses} ${alignmentClasses[textAlignment as keyof typeof alignmentClasses] || alignmentClasses.center} ${positionClasses[contentPosition as keyof typeof positionClasses] || positionClasses.center} ${paddingClasses[contentPadding as keyof typeof paddingClasses] || paddingClasses.normal}`;
+  };
 
   return (
     <div 
       className="min-h-screen flex flex-col"
-      style={{ backgroundColor }}
+      style={getBackgroundStyle()}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4">
-        <button 
-          onClick={() => setIsVisible(false)}
-          className="flex items-center space-x-2"
-          style={{ color: textColor }}
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-        <div className="text-lg font-bold" style={{ color: textColor }}>
-          BRIGHTNEST
+      {showTopBar && (
+        <div className="flex items-center justify-center p-4" style={{ backgroundColor: topBarColor }}>
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={onContinue}
+              className="flex items-center space-x-2"
+              style={{ color: '#ffffff' }}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <div className="text-lg font-bold" style={{ color: '#ffffff' }}>
+              BRIGHTNEST
+            </div>
+            <div 
+              className="px-3 py-1 rounded-full text-xs font-medium text-white"
+              style={{ backgroundColor: accentColor }}
+            >
+              {article.category?.toUpperCase() || 'FINANCIAL'}
+            </div>
+          </div>
         </div>
-        <div 
-          className="px-3 py-1 rounded-full text-xs font-medium text-white"
-          style={{ backgroundColor: accentColor }}
-        >
-          {article.category?.toUpperCase() || 'FINANCIAL'}
-        </div>
-      </div>
+      )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-        {/* Icon */}
-        {showIcon && (
-          <div className="mb-6">
-            {getIconComponent()}
-          </div>
-        )}
+      <div className={getContentPositionClasses()}>
+        {/* Content Block - All elements aligned together */}
+        <div className="w-full max-w-md">
+          {/* Icon */}
+          {showIcon && (
+            <div className={`mb-6 ${
+              textAlignment === 'left' ? 'flex justify-start' :
+              textAlignment === 'right' ? 'flex justify-end' :
+              'flex justify-center'
+            }`}>
+              {getIconComponent()}
+            </div>
+          )}
 
-        {/* Title */}
-        <h1 
-          className="text-2xl font-bold mb-3 leading-tight max-w-md"
-          style={{ color: textColor }}
-        >
-          {article.title}
-        </h1>
-
-        {/* Subtitle */}
-        {article.subtitle && (
-          <p 
-            className="text-sm mb-6 opacity-80"
+          {/* Title */}
+          <h1 
+            className={`${getTitleSizeClass(article.titleFontSize || 'large')} ${getTitleWeightClass(article.titleFontWeight || 'bold')} mb-3 ${getLineHeightClass(article.lineHeight || 'normal')} w-full ${
+              textAlignment === 'left' ? 'text-left' :
+              textAlignment === 'right' ? 'text-right' :
+              'text-center'
+            }`}
             style={{ color: textColor }}
           >
-            {article.subtitle}
-          </p>
-        )}
+            {article.title}
+          </h1>
 
-        {/* Content */}
-        <div className="max-w-md mb-6">
-          <p 
-            className="text-sm leading-relaxed mb-4"
-            style={{ color: textColor }}
-          >
-            {article.content}
-          </p>
-          
-          {article.personalizedText && (
+          {/* Subtitle */}
+          {article.subtitle && (
             <p 
-              className="text-sm opacity-80"
+              className={`${getContentSizeClass(article.contentFontSize || 'normal')} ${getContentWeightClass(article.contentFontWeight || 'normal')} mb-6 opacity-80 w-full ${getLineHeightClass(article.lineHeight || 'normal')} ${
+                textAlignment === 'left' ? 'text-left' :
+                textAlignment === 'right' ? 'text-right' :
+                'text-center'
+              }`}
               style={{ color: textColor }}
             >
-              {replaceVariables(article.personalizedText)}
+              {article.subtitle}
             </p>
           )}
-        </div>
 
-        {/* Statistic */}
-        {showStatistic && article.statisticValue && (
-          <div className="mb-6">
-            <div 
-              className="text-4xl font-bold mb-2"
-              style={{ color: accentColor }}
+          {/* Content */}
+          <div className="w-full mb-6">
+            <p 
+              className={`${getContentSizeClass(article.contentFontSize || 'normal')} ${getContentWeightClass(article.contentFontWeight || 'normal')} ${getLineHeightClass(article.lineHeight || 'normal')} mb-4 w-full ${
+                textAlignment === 'left' ? 'text-left' :
+                textAlignment === 'right' ? 'text-right' :
+                'text-center'
+              }`}
+              style={{ color: textColor }}
             >
-              {article.statisticValue}
-            </div>
-            {article.statisticText && (
-              <div 
-                className="text-sm"
+              {article.content}
+            </p>
+            
+            {article.personalizedText && (
+              <p 
+                className={`${getContentSizeClass(article.contentFontSize || 'normal')} ${getContentWeightClass(article.contentFontWeight || 'normal')} opacity-80 w-full ${getLineHeightClass(article.lineHeight || 'normal')} ${
+                  textAlignment === 'left' ? 'text-left' :
+                  textAlignment === 'right' ? 'text-right' :
+                  'text-center'
+                }`}
                 style={{ color: textColor }}
               >
-                {article.statisticText}
-              </div>
+                {replaceVariables(article.personalizedText)}
+              </p>
             )}
           </div>
-        )}
 
-        {/* CTA Button */}
-        {showCta && (
-          <button 
-            onClick={onContinue}
-            className="w-full max-w-sm py-4 rounded-lg font-bold text-white transition-colors hover:opacity-90"
-            style={{ backgroundColor: accentColor }}
-          >
-            {article.ctaText || 'CONTINUE'}
-          </button>
-        )}
+          {/* Statistic */}
+          {showStatistic && article.statisticValue && (
+            <div className={`w-full mb-6 ${
+              textAlignment === 'left' ? 'text-left' :
+              textAlignment === 'right' ? 'text-right' :
+              'text-center'
+            }`}>
+              <div 
+                className="text-4xl font-bold mb-2 w-full"
+                style={{ color: accentColor }}
+              >
+                {article.statisticValue}
+              </div>
+              {article.statisticText && (
+                <div 
+                  className="text-sm w-full"
+                  style={{ color: textColor }}
+                >
+                  {article.statisticText}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* CTA Button */}
+          {showCta && (
+            <button 
+              onClick={onContinue}
+              className="w-full py-4 rounded-lg font-bold text-white transition-colors hover:opacity-90"
+              style={{ backgroundColor: accentColor }}
+            >
+              {article.ctaText || 'CONTINUE'}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

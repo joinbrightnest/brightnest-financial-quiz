@@ -59,7 +59,21 @@ export async function PUT(
       statisticText,
       statisticValue,
       ctaText,
-      showCta
+      showCta,
+      // Layout and positioning fields
+      textAlignment,
+      contentPosition,
+      backgroundStyle,
+      backgroundGradient,
+      contentPadding,
+      showTopBar,
+      topBarColor,
+      // Text formatting fields
+      titleFontSize,
+      titleFontWeight,
+      contentFontSize,
+      contentFontWeight,
+      lineHeight
     } = body;
 
     const article = await prisma.article.update({
@@ -83,7 +97,21 @@ export async function PUT(
         statisticText: statisticText !== undefined ? statisticText : null,
         statisticValue: statisticValue !== undefined ? statisticValue : null,
         ctaText: ctaText || 'CONTINUE',
-        showCta: showCta !== undefined ? showCta : true
+        showCta: showCta !== undefined ? showCta : true,
+        // Layout and positioning fields
+        textAlignment: textAlignment || 'left',
+        contentPosition: contentPosition || 'center',
+        backgroundStyle: backgroundStyle || 'solid',
+        backgroundGradient: backgroundGradient !== undefined ? backgroundGradient : null,
+        contentPadding: contentPadding || 'normal',
+        showTopBar: showTopBar !== undefined ? showTopBar : true,
+        topBarColor: topBarColor || '#1f2937',
+        // Text formatting fields
+        titleFontSize: titleFontSize || 'large',
+        titleFontWeight: titleFontWeight || 'bold',
+        contentFontSize: contentFontSize || 'normal',
+        contentFontWeight: contentFontWeight || 'normal',
+        lineHeight: lineHeight || 'normal'
       }
     });
 

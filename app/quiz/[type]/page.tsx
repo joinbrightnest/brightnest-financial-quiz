@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import QuestionCard from "@/components/QuestionCard";
 import TextInput from "@/components/TextInput";
-import ArticleDisplayInline from "@/components/ArticleDisplayInline";
+import ArticleDisplayWrapper from "@/components/ArticleDisplayWrapper";
 import LoadingScreenDisplay from "@/components/LoadingScreenDisplay";
 
 interface Question {
@@ -384,7 +384,7 @@ export default function QuizPage({ params }: QuizPageProps) {
   // Show article display if we have an article to show
   if (showArticle && lastAnswer && sessionId) {
     return (
-      <ArticleDisplayInline
+      <ArticleDisplayWrapper
         sessionId={sessionId}
         questionId={lastAnswer.questionId}
         answerValue={lastAnswer.answerValue}

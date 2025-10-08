@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import ArticleDisplayStandardized from "../../../../components/ArticleDisplayStandardized";
 
 interface Question {
   id: string;
@@ -26,6 +27,34 @@ interface Article {
   order: number;
   triggerQuestionId?: string;
   triggerAnswerValue?: string;
+  // Customization fields
+  subtitle?: string;
+  personalizedText?: string;
+  backgroundColor?: string;
+  textColor?: string;
+  iconColor?: string;
+  accentColor?: string;
+  iconType?: string;
+  showIcon?: boolean;
+  showStatistic?: boolean;
+  statisticText?: string;
+  statisticValue?: string;
+  ctaText?: string;
+  showCta?: boolean;
+  // Layout and positioning fields
+  textAlignment?: string;
+  contentPosition?: string;
+  backgroundStyle?: string;
+  backgroundGradient?: string;
+  contentPadding?: string;
+  showTopBar?: boolean;
+  topBarColor?: string;
+  // Text formatting fields
+  titleFontSize?: string;
+  titleFontWeight?: string;
+  contentFontSize?: string;
+  contentFontWeight?: string;
+  lineHeight?: string;
 }
 
 interface LoadingScreen {
@@ -155,7 +184,35 @@ export default function QuizEditor({ params }: QuizEditorProps) {
             category: article.category,
             order: questions.length + index + 1, // Place after questions
             triggerQuestionId: article.triggers?.[0]?.questionId,
-            triggerAnswerValue: article.triggers?.[0]?.optionValue
+            triggerAnswerValue: article.triggers?.[0]?.optionValue,
+            // Customization fields
+            subtitle: article.subtitle,
+            personalizedText: article.personalizedText,
+            backgroundColor: article.backgroundColor,
+            textColor: article.textColor,
+            iconColor: article.iconColor,
+            accentColor: article.accentColor,
+            iconType: article.iconType,
+            showIcon: article.showIcon,
+            showStatistic: article.showStatistic,
+            statisticText: article.statisticText,
+            statisticValue: article.statisticValue,
+            ctaText: article.ctaText,
+            showCta: article.showCta,
+            // Layout and positioning fields
+            textAlignment: article.textAlignment,
+            contentPosition: article.contentPosition,
+            backgroundStyle: article.backgroundStyle,
+            backgroundGradient: article.backgroundGradient,
+            contentPadding: article.contentPadding,
+            showTopBar: article.showTopBar,
+            topBarColor: article.topBarColor,
+            // Text formatting fields
+            titleFontSize: article.titleFontSize,
+            titleFontWeight: article.titleFontWeight,
+            contentFontSize: article.contentFontSize,
+            contentFontWeight: article.contentFontWeight,
+            lineHeight: article.lineHeight
           }));
           
           console.log('✅ Processed articles list:', articlesList);
@@ -411,8 +468,10 @@ export default function QuizEditor({ params }: QuizEditorProps) {
   };
 
   const handleEditArticle = (article: Article) => {
-    setEditingArticle(article);
-    setShowArticlePopup(false);
+    // Store article data in localStorage for the create-article page to load
+    localStorage.setItem('editingArticle', JSON.stringify(article));
+    // Navigate to create-article page
+    router.push(`/admin/quiz-editor/${quizType}/create-article`);
   };
 
   const handleDeleteArticle = async (articleId: string) => {
@@ -526,16 +585,6 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               <span className="text-sm font-medium">Add Article</span>
-            </button>
-            
-            <button
-              onClick={fetchArticles}
-              className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors group text-sm"
-            >
-              <svg className="w-4 h-4 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              <span className="text-sm font-medium">Refresh Articles</span>
             </button>
             <button
               onClick={() => window.open(`/admin/quiz-editor/${quizType}/loading-screens`, '_blank')}
@@ -1140,68 +1189,33 @@ export default function QuizEditor({ params }: QuizEditorProps) {
         )}
       </div>
 
-      {/* Article Popup - Noom Style */}
+      {/* Article Popup - Customized Version */}
       {showArticlePopup && selectedArticle && (
-        <div className="fixed inset-0 bg-teal-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl">
-            {/* Header */}
-            <div className="flex items-center justify-between p-6 pb-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-hidden shadow-2xl">
+            {/* Close Button */}
+            <div className="absolute top-4 right-4 z-10">
               <button
                 onClick={() => setShowArticlePopup(false)}
-                className="text-gray-600 hover:text-gray-800"
+                className="bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
-              <div className="text-center">
-                <h1 className="text-lg font-bold text-gray-900">BRIGHTNEST</h1>
-                <span className="text-xs bg-gray-800 text-white px-2 py-1 rounded-full">FINANCIAL</span>
-              </div>
-              <div className="w-6"></div> {/* Spacer for centering */}
             </div>
-
-            {/* Main Content */}
-            <div className="px-6 pb-6 text-center">
-              {/* Icon */}
-              <div className="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-
-              {/* Title */}
-              <h2 className="text-xl font-bold text-gray-900 mb-2 uppercase tracking-wide">
-                {selectedArticle.title}
-              </h2>
-
-              {/* Subtitle */}
-              <p className="text-gray-600 mb-4">
-                Financial Guidance
-              </p>
-
-              {/* Main Message */}
-              <p className="text-gray-700 mb-6 leading-relaxed">
-                {selectedArticle.content}
-              </p>
-
-              {/* Quick Stat */}
-              <div className="bg-gray-50 rounded-lg p-4 mb-6">
-                <div className="text-3xl font-bold text-red-600 mb-1">
-                  75%
-                </div>
-                <p className="text-sm text-gray-600">
-                  of people face similar financial challenges
-                </p>
-              </div>
-
-              {/* Continue Button */}
-              <button
-                onClick={() => setShowArticlePopup(false)}
-                className="w-full bg-red-600 text-white py-4 rounded-lg font-semibold text-lg hover:bg-red-700 transition-colors"
-              >
-                CONTINUE
-              </button>
+            
+            {/* Article Display */}
+            <div className="h-[600px] overflow-y-auto">
+              <ArticleDisplayStandardized
+                article={selectedArticle}
+                userVariables={{
+                  name: 'John',
+                  email: 'john@example.com',
+                  answer: 'Sample Answer'
+                }}
+                onContinue={() => setShowArticlePopup(false)}
+              />
             </div>
           </div>
         </div>

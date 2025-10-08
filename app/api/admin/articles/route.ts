@@ -60,7 +60,21 @@ export async function POST(request: NextRequest) {
       statisticText,
       statisticValue,
       ctaText,
-      showCta
+      showCta,
+      // Layout and positioning fields
+      textAlignment,
+      contentPosition,
+      backgroundStyle,
+      backgroundGradient,
+      contentPadding,
+      showTopBar,
+      topBarColor,
+      // Text formatting fields
+      titleFontSize,
+      titleFontWeight,
+      contentFontSize,
+      contentFontWeight,
+      lineHeight
     } = body;
 
     // Create article in database
@@ -85,6 +99,20 @@ export async function POST(request: NextRequest) {
         statisticValue: statisticValue || null,
         ctaText: ctaText || 'CONTINUE',
         showCta: showCta !== undefined ? showCta : true,
+        // Layout and positioning fields
+        textAlignment: textAlignment || 'left',
+        contentPosition: contentPosition || 'center',
+        backgroundStyle: backgroundStyle || 'solid',
+        backgroundGradient: backgroundGradient !== undefined ? backgroundGradient : null,
+        contentPadding: contentPadding || 'normal',
+        showTopBar: showTopBar !== undefined ? showTopBar : true,
+        topBarColor: topBarColor || '#1f2937',
+        // Text formatting fields
+        titleFontSize: titleFontSize || 'large',
+        titleFontWeight: titleFontWeight || 'bold',
+        contentFontSize: contentFontSize || 'normal',
+        contentFontWeight: contentFontWeight || 'normal',
+        lineHeight: lineHeight || 'normal',
         triggers: {
           create: triggers?.map((trigger: any) => ({
             questionId: trigger.questionId,

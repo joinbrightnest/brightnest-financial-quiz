@@ -55,6 +55,76 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
   const [statisticValue, setStatisticValue] = useState<string>('75%');
   const [ctaText, setCtaText] = useState<string>('CONTINUE');
   const [showCta, setShowCta] = useState<boolean>(true);
+  
+  // Layout and positioning options
+  const [textAlignment, setTextAlignment] = useState<string>('left');
+  const [contentPosition, setContentPosition] = useState<string>('center');
+  const [backgroundStyle, setBackgroundStyle] = useState<string>('solid');
+  const [backgroundGradient, setBackgroundGradient] = useState<string>('linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
+  const [contentPadding, setContentPadding] = useState<string>('normal');
+  const [showTopBar, setShowTopBar] = useState<boolean>(true);
+  const [topBarColor, setTopBarColor] = useState<string>('#1f2937');
+  
+  // Text formatting options
+  const [titleFontSize, setTitleFontSize] = useState<string>('large');
+  const [titleFontWeight, setTitleFontWeight] = useState<string>('bold');
+  const [contentFontSize, setContentFontSize] = useState<string>('normal');
+  const [contentFontWeight, setContentFontWeight] = useState<string>('normal');
+  const [lineHeight, setLineHeight] = useState<string>('normal');
+  
+  // Editing state
+  const [editingArticleId, setEditingArticleId] = useState<string | null>(null);
+
+  // Helper functions for text formatting
+  const getTitleSizeClass = (size: string) => {
+    switch (size) {
+      case 'small': return 'text-lg';
+      case 'normal': return 'text-xl';
+      case 'large': return 'text-2xl';
+      case 'xlarge': return 'text-3xl';
+      default: return 'text-2xl';
+    }
+  };
+
+  const getTitleWeightClass = (weight: string) => {
+    switch (weight) {
+      case 'normal': return 'font-normal';
+      case 'medium': return 'font-medium';
+      case 'semibold': return 'font-semibold';
+      case 'bold': return 'font-bold';
+      case 'extrabold': return 'font-extrabold';
+      default: return 'font-bold';
+    }
+  };
+
+  const getContentSizeClass = (size: string) => {
+    switch (size) {
+      case 'small': return 'text-xs';
+      case 'normal': return 'text-sm';
+      case 'large': return 'text-base';
+      default: return 'text-sm';
+    }
+  };
+
+  const getContentWeightClass = (weight: string) => {
+    switch (weight) {
+      case 'light': return 'font-light';
+      case 'normal': return 'font-normal';
+      case 'medium': return 'font-medium';
+      case 'semibold': return 'font-semibold';
+      default: return 'font-normal';
+    }
+  };
+
+  const getLineHeightClass = (height: string) => {
+    switch (height) {
+      case 'tight': return 'leading-tight';
+      case 'normal': return 'leading-normal';
+      case 'relaxed': return 'leading-relaxed';
+      case 'loose': return 'leading-loose';
+      default: return 'leading-normal';
+    }
+  };
 
   useEffect(() => {
     const getParams = async () => {
@@ -67,14 +137,89 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
   useEffect(() => {
     if (quizType) {
       fetchQuestions();
+      loadEditingArticle();
     }
   }, [quizType]);
+
+  // Load editing article data from localStorage
+  const loadEditingArticle = () => {
+    const editingArticleData = localStorage.getItem('editingArticle');
+    if (editingArticleData) {
+      try {
+        const article: any = JSON.parse(editingArticleData);
+        
+        // Set editing state
+        setEditingArticleId(article.id);
+        
+        // Pre-fill all form fields with article data
+        setTitle(article.title || '');
+        setSubtitle(article.subtitle || 'Financial Guidance');
+        setPersonalizedText(article.content || '');
+        setBackgroundColor(article.backgroundColor || '#ffffff');
+        setTextColor(article.textColor || '#000000');
+        setIconColor(article.iconColor || '#3b82f6');
+        setAccentColor(article.accentColor || '#ef4444');
+        setIconType(article.iconType || 'document');
+        setShowIcon(article.showIcon !== false);
+        setShowStatistic(article.showStatistic !== false);
+        setStatisticText(article.statisticText || 'of people face similar financial challenges');
+        setStatisticValue(article.statisticValue || '75%');
+        setCtaText(article.ctaText || 'CONTINUE');
+        setShowCta(article.showCta !== false);
+        
+        // Layout and positioning fields
+        setTextAlignment(article.textAlignment || 'left');
+        setContentPosition(article.contentPosition || 'center');
+        setBackgroundStyle(article.backgroundStyle || 'solid');
+        setBackgroundGradient(article.backgroundGradient || 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)');
+        setContentPadding(article.contentPadding || 'normal');
+        setShowTopBar(article.showTopBar !== false);
+        setTopBarColor(article.topBarColor || '#1f2937');
+        
+        // Text formatting fields
+        setTitleFontSize(article.titleFontSize || 'large');
+        setTitleFontWeight(article.titleFontWeight || 'bold');
+        setContentFontSize(article.contentFontSize || 'normal');
+        setContentFontWeight(article.contentFontWeight || 'normal');
+        setLineHeight(article.lineHeight || 'normal');
+        
+        // Find and set the question and answer
+        // Check if article has triggers array (from API) or separate fields (from quiz editor)
+        if (article.triggers && article.triggers.length > 0) {
+          const trigger = article.triggers[0];
+          setSelectedQuestion(trigger.questionId || '');
+          setSelectedOption(trigger.optionValue || '');
+        } else if (article.triggerQuestionId && article.triggerAnswerValue) {
+          // Handle the case where article comes from quiz editor with separate fields
+          setSelectedQuestion(article.triggerQuestionId);
+          setSelectedOption(article.triggerAnswerValue);
+        }
+        
+        // Clear the localStorage after loading
+        localStorage.removeItem('editingArticle');
+        
+        console.log('Loaded editing article:', article);
+        console.log('Article triggers:', article.triggers);
+        console.log('Article triggerQuestionId:', article.triggerQuestionId);
+        console.log('Article triggerAnswerValue:', article.triggerAnswerValue);
+        console.log('Selected question will be:', article.triggerQuestionId || (article.triggers?.[0]?.questionId));
+        console.log('Selected option will be:', article.triggerAnswerValue || (article.triggers?.[0]?.optionValue));
+        console.log('Article textAlignment:', article.textAlignment);
+        console.log('Article titleFontSize:', article.titleFontSize);
+        console.log('Article backgroundColor:', article.backgroundColor);
+        console.log('Article showIcon:', article.showIcon);
+      } catch (error) {
+        console.error('Failed to parse editing article data:', error);
+        localStorage.removeItem('editingArticle');
+      }
+    }
+  };
 
   // Refresh questions when window gains focus (user comes back from quiz editor)
   useEffect(() => {
     const handleFocus = () => {
       if (quizType) {
-        console.log('Window focused, refreshing questions...');
+        // Window focused, refreshing questions
         fetchQuestions();
       }
     };
@@ -84,7 +229,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
       if (e.key === `quiz-questions-${quizType}` && e.newValue) {
         try {
           const newQuestions = JSON.parse(e.newValue);
-          console.log('Questions updated from localStorage:', newQuestions);
+          // Questions updated from localStorage
           setQuestions(newQuestions);
         } catch (error) {
           console.error('Failed to parse updated questions:', error);
@@ -103,19 +248,19 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
 
   const fetchQuestions = async () => {
     try {
-      console.log('Fetching questions for quiz type:', quizType);
+      // Fetching questions for quiz type
       
       // First, try to get questions from localStorage (current state from quiz editor)
       const cachedQuestions = localStorage.getItem(`quiz-questions-${quizType}`);
       if (cachedQuestions) {
         try {
           const parsedQuestions = JSON.parse(cachedQuestions);
-          console.log('Using cached questions from localStorage:', parsedQuestions);
+          // Using cached questions from localStorage
           setQuestions(parsedQuestions);
           setIsLoading(false);
           return;
         } catch (e) {
-          console.log('Failed to parse cached questions, falling back to API');
+          // Failed to parse cached questions, falling back to API
         }
       }
       
@@ -125,7 +270,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log('Fetched questions from API:', data.questions);
+        // Fetched questions from API
         setQuestions(data.questions || []);
       } else {
         console.error('Failed to fetch questions:', response.status);
@@ -189,8 +334,12 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
 
     setIsSaving(true);
     try {
-      const response = await fetch('/api/admin/articles', {
-        method: 'POST',
+      const isEditing = editingArticleId !== null;
+      const url = isEditing ? `/api/admin/articles/${editingArticleId}` : '/api/admin/articles';
+      const method = isEditing ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
@@ -212,6 +361,20 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
           statisticValue,
           ctaText,
           showCta,
+          // Layout and positioning fields
+          textAlignment,
+          contentPosition,
+          backgroundStyle,
+          backgroundGradient,
+          contentPadding,
+          showTopBar,
+          topBarColor,
+          // Text formatting fields
+          titleFontSize,
+          titleFontWeight,
+          contentFontSize,
+          contentFontWeight,
+          lineHeight,
           triggers: selectedQuestion ? [{
             questionId: selectedQuestion,
             optionValue: selectedOption,
@@ -221,13 +384,13 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
           }] : []
         })
       });
-      
+
       if (response.ok) {
-        alert('Article saved successfully!');
+        alert(isEditing ? 'Article updated successfully!' : 'Article saved successfully!');
         router.push(`/admin/quiz-editor/${quizType}`);
       } else {
         const error = await response.json();
-        alert(`Failed to save: ${error.error || 'Unknown error'}`);
+        alert(`Failed to ${isEditing ? 'update' : 'save'}: ${error.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Error saving article:', error);
@@ -308,206 +471,159 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-          {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+          {/* Compact Header */}
+      <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => router.push(`/admin/quiz-editor/${quizType}`)}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center space-x-3">
+              <button
+                onClick={() => router.push(`/admin/quiz-editor/${quizType}`)}
+              className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition-colors"
+              >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              <span className="text-sm font-medium">Back to Quiz Editor</span>
-            </button>
+              <span className="text-sm font-medium">Back</span>
+              </button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Create AI Article - {getQuizTypeDisplayName(quizType)}
+              <h1 className="text-lg font-bold text-gray-900">
+                Create Article - {getQuizTypeDisplayName(quizType)}
               </h1>
-              <p className="text-sm text-gray-500">
-                Generate and customize personalized insights for quiz answers
-              </p>
             </div>
           </div>
-              <button
+                  <button
             onClick={handleSaveArticle}
             disabled={isSaving || !personalizedText.trim() || !selectedQuestion || !selectedOption}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
               >
-            {isSaving ? 'Saving...' : 'Save Article'}
-              </button>
+            {isSaving ? (editingArticleId ? 'Updating...' : 'Saving...') : (editingArticleId ? 'Update Article' : 'Save Article')}
+                  </button>
             </div>
           </div>
 
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="grid grid-cols-2 gap-8">
-            {/* Left Panel - Configuration */}
-          <div className="space-y-6">
-            {/* Article Generation */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-gray-900">Article Generation</h2>
+      <div className="max-w-7xl mx-auto p-4">
+        <div className="grid grid-cols-3 gap-4">
+            {/* Left Panel - Article Setup */}
+          <div className="space-y-4">
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-base font-semibold text-gray-900">Article Setup</h2>
                   <button
                   onClick={fetchQuestions}
-                  className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                  className="px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition-colors"
                   title="Refresh questions from quiz editor"
                 >
-                  🔄 Refresh
+                  🔄
                   </button>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Select Question <span className="text-red-500">*</span>
-                    <span className="text-xs text-gray-500 ml-2">({questions.length} questions loaded)</span>
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Question <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={selectedQuestion}
-                    onChange={(e) => setSelectedQuestion(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                  >
-                    <option value="">Select a question...</option>
-                    {questions.map((q, index) => (
-                      <option key={q.id} value={q.id}>
-                        Question {index + 1}: {q.prompt.substring(0, 50)}...
-                      </option>
-                    ))}
+                      onChange={(e) => setSelectedQuestion(e.target.value)}
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                    >
+                      <option value="">Select...</option>
+                      {questions.map((q, index) => (
+                        <option key={q.id} value={q.id}>
+                          Q{index + 1}: {q.prompt.substring(0, 30)}...
+                    </option>
+                  ))}
                 </select>
               </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Select Answer Option <span className="text-red-500">*</span>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Answer <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={selectedOption}
-                    onChange={(e) => setSelectedOption(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                    disabled={!selectedQuestion}
-                  >
-                    <option value="">Select an answer...</option>
-                    {selectedQuestion && questions.find(q => q.id === selectedQuestion)?.options.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
+                      onChange={(e) => setSelectedOption(e.target.value)}
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                      disabled={!selectedQuestion}
+                    >
+                      <option value="">Select...</option>
+                      {selectedQuestion && questions.find(q => q.id === selectedQuestion)?.options.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
                       </option>
                     ))}
                   </select>
+                </div>
                 </div>
 
                     <button
                       onClick={handleGenerateArticle}
                   disabled={isGenerating || (!selectedQuestion || !selectedOption)}
-                  className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50"
+                  className="w-full px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
                     >
                   {isGenerating ? 'Generating...' : 'Generate AI Article'}
                     </button>
+
+                {/* Content Fields */}
+                <div className="space-y-3 pt-3 border-t border-gray-200">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        Title
+                    </label>
+                    <input
+                      type="text"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                        placeholder="Article title..."
+                    />
+                  </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        Subtitle
+                    </label>
+                    <input
+                      type="text"
+                        value={subtitle}
+                        onChange={(e) => setSubtitle(e.target.value)}
+                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                        placeholder="Financial Guidance"
+                    />
+                  </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Content
+                    </label>
+                    <textarea
+                      value={personalizedText}
+                      onChange={(e) => setPersonalizedText(e.target.value)}
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                      rows={4}
+                      placeholder="Write content here or generate AI content first..."
+                    />
+                  </div>
+                </div>
               </div>
             </div>
+          </div>
 
-            {/* Content Customization */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Content Settings</h2>
+          {/* Middle Panel - Visual Settings */}
+          <div className="space-y-4">
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <h2 className="text-base font-semibold text-gray-900 mb-4">Visual Settings</h2>
               
-              <div className="space-y-4">
+              <div className="space-y-3">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Article Title
-                    </label>
-                    <input
-                      type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                    placeholder="Article title will be generated..."
-                    />
-                  </div>
-
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Subtitle
-                    </label>
-                    <input
-                      type="text"
-                    value={subtitle}
-                    onChange={(e) => setSubtitle(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                    placeholder="Financial Guidance"
-                    />
-                  </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Article Content
-                  </label>
-                  <textarea
-                    value={personalizedText}
-                    onChange={(e) => setPersonalizedText(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                    rows={8}
-                    placeholder="Write your article content here, or generate AI content first. Use {{name}} or {{answer}} for personalization."
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Write your own content here, or generate AI content first. Articles must be connected to specific quiz answers to be shown to users.
-                  </p>
-            </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Statistic Value
-                    </label>
-                    <input
-                      type="text"
-                      value={statisticValue}
-                      onChange={(e) => setStatisticValue(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                      placeholder="75%"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Statistic Text
-                    </label>
-                    <input
-                      type="text"
-                      value={statisticText}
-                      onChange={(e) => setStatisticText(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                      placeholder="of people face similar challenges"
-                    />
-                  </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Call-to-Action Text
-                    </label>
-                  <input
-                    type="text"
-                    value={ctaText}
-                    onChange={(e) => setCtaText(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                    placeholder="CONTINUE"
-                    />
-                  </div>
-                      </div>
-                    </div>
-
-            {/* Visual Settings */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Visual Settings</h2>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Icon Type
                   </label>
                   <select
                     value={iconType}
                     onChange={(e) => setIconType(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
                   >
                     <option value="document">📄 Document</option>
                     <option value="chart">📊 Chart</option>
@@ -518,225 +634,486 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                   </select>
                 </div>
 
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    id="showIcon"
-                    checked={showIcon}
-                    onChange={(e) => setShowIcon(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label htmlFor="showIcon" className="text-sm font-medium text-gray-700">
-                    Show Icon
-                  </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="showIcon"
+                      checked={showIcon}
+                      onChange={(e) => setShowIcon(e.target.checked)}
+                      className="w-3 h-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="showIcon" className="text-xs text-gray-700">
+                      Show Icon
+                    </label>
+            </div>
+
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="showStatistic"
+                      checked={showStatistic}
+                      onChange={(e) => setShowStatistic(e.target.checked)}
+                      className="w-3 h-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label htmlFor="showStatistic" className="text-xs text-gray-700">
+                      Show Statistic
+                    </label>
+                  </div>
                 </div>
 
-                <div className="flex items-center space-x-3">
-                  <input
-                    type="checkbox"
-                    id="showStatistic"
-                    checked={showStatistic}
-                    onChange={(e) => setShowStatistic(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                  <label htmlFor="showStatistic" className="text-sm font-medium text-gray-700">
-                    Show Statistic
-                  </label>
-                </div>
-
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
                   <input
                     type="checkbox"
                     id="showCta"
                     checked={showCta}
                     onChange={(e) => setShowCta(e.target.checked)}
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    className="w-3 h-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
-                  <label htmlFor="showCta" className="text-sm font-medium text-gray-700">
-                    Show Call-to-Action Button
+                  <label htmlFor="showCta" className="text-xs text-gray-700">
+                    Show CTA
                   </label>
+                  </div>
+
+                <div className="space-y-2">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Colors
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="flex items-center space-x-1">
+                    <input
+                          type="color"
+                          value={backgroundColor}
+                          onChange={(e) => setBackgroundColor(e.target.value)}
+                          className="w-6 h-6 rounded cursor-pointer border border-gray-300"
+                        />
+                        <span className="text-xs text-gray-600">BG</span>
+                  </div>
+                      <div className="flex items-center space-x-1">
+                        <input
+                          type="color"
+                          value={textColor}
+                          onChange={(e) => setTextColor(e.target.value)}
+                          className="w-6 h-6 rounded cursor-pointer border border-gray-300"
+                        />
+                        <span className="text-xs text-gray-600">Text</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <input
+                          type="color"
+                          value={iconColor}
+                          onChange={(e) => setIconColor(e.target.value)}
+                          className="w-6 h-6 rounded cursor-pointer border border-gray-300"
+                        />
+                        <span className="text-xs text-gray-600">Icon</span>
+                    </div>
+                      <div className="flex items-center space-x-1">
+                        <input
+                          type="color"
+                          value={accentColor}
+                          onChange={(e) => setAccentColor(e.target.value)}
+                          className="w-6 h-6 rounded cursor-pointer border border-gray-300"
+                        />
+                        <span className="text-xs text-gray-600">Accent</span>
+                </div>
+                    </div>
+                  </div>
+                  </div>
+
+                <div className="space-y-2">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Statistics
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="text"
+                        value={statisticValue}
+                        onChange={(e) => setStatisticValue(e.target.value)}
+                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                        placeholder="75%"
+                      />
+                      <input
+                        type="text"
+                        value={statisticText}
+                        onChange={(e) => setStatisticText(e.target.value)}
+                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                        placeholder="of people..."
+                    />
+                  </div>
+                  </div>
+                  </div>
+
+                  <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
+                    CTA Text
+                    </label>
+                  <input
+                    type="text"
+                    value={ctaText}
+                    onChange={(e) => setCtaText(e.target.value)}
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                    placeholder="CONTINUE"
+                    />
+                  </div>
+                      </div>
+                    </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-4">
+            {/* Layout & Positioning Settings */}
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <h2 className="text-base font-semibold text-gray-900 mb-4">Layout & Positioning</h2>
+              
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Text Align
+                    </label>
+                    <select
+                      value={textAlignment}
+                      onChange={(e) => setTextAlignment(e.target.value)}
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                    >
+                      <option value="left">Left</option>
+                      <option value="center">Center</option>
+                      <option value="right">Right</option>
+                    </select>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Background
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Position
                     </label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="color"
-                        value={backgroundColor}
-                        onChange={(e) => setBackgroundColor(e.target.value)}
-                        className="w-12 h-10 rounded cursor-pointer border border-gray-300"
-                      />
-                      <input
-                        type="text"
-                        value={backgroundColor}
-                        onChange={(e) => setBackgroundColor(e.target.value)}
-                        className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
-                      />
+                    <select
+                      value={contentPosition}
+                      onChange={(e) => setContentPosition(e.target.value)}
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                    >
+                      <option value="top">Top</option>
+                      <option value="center">Center</option>
+                      <option value="bottom">Bottom</option>
+                    </select>
                     </div>
                   </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
+                    Background
+                  </label>
+                  <select
+                    value={backgroundStyle}
+                    onChange={(e) => setBackgroundStyle(e.target.value)}
+                    className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                  >
+                    <option value="solid">Solid</option>
+                    <option value="gradient">Gradient</option>
+                  </select>
+                    </div>
+
+                {backgroundStyle === 'gradient' && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Text
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Gradient CSS
+                      </label>
+                      <input
+                        type="text"
+                      value={backgroundGradient}
+                      onChange={(e) => setBackgroundGradient(e.target.value)}
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                      placeholder="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                      />
+                    </div>
+                    )}
+
+                <div className="grid grid-cols-2 gap-2">
+                    <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Padding
+                      </label>
+                    <select
+                      value={contentPadding}
+                      onChange={(e) => setContentPadding(e.target.value)}
+                      className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                    >
+                      <option value="compact">Compact</option>
+                      <option value="normal">Normal</option>
+                      <option value="spacious">Spacious</option>
+                    </select>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="showTopBar"
+                      checked={showTopBar}
+                      onChange={(e) => setShowTopBar(e.target.checked)}
+                      className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="showTopBar" className="ml-2 block text-xs text-gray-700">
+                      Top Bar
+                    </label>
+                  </div>
+                    </div>
+
+                {showTopBar && (
+                    <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Top Bar Color
                       </label>
                     <div className="flex items-center space-x-2">
                       <input
                         type="color"
-                        value={textColor}
-                        onChange={(e) => setTextColor(e.target.value)}
-                        className="w-12 h-10 rounded cursor-pointer border border-gray-300"
+                        value={topBarColor}
+                        onChange={(e) => setTopBarColor(e.target.value)}
+                        className="w-8 h-8 rounded cursor-pointer border border-gray-300"
                       />
                       <input
                         type="text"
-                        value={textColor}
-                        onChange={(e) => setTextColor(e.target.value)}
-                        className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                        value={topBarColor}
+                        onChange={(e) => setTopBarColor(e.target.value)}
+                        className="flex-1 px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                        placeholder="#1f2937"
                       />
                     </div>
                   </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Icon
-                      </label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="color"
-                        value={iconColor}
-                        onChange={(e) => setIconColor(e.target.value)}
-                        className="w-12 h-10 rounded cursor-pointer border border-gray-300"
-                      />
-                      <input
-                        type="text"
-                        value={iconColor}
-                        onChange={(e) => setIconColor(e.target.value)}
-                        className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
-                      />
+                )}
+
+                {/* Text Formatting Options */}
+                <div className="border-t pt-3 mt-3">
+                  <h3 className="text-sm font-medium text-gray-800 mb-3">Text Formatting</h3>
+                  
+                  <div className="space-y-3">
+                    {/* Title Formatting */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Title Size
+                        </label>
+                        <select
+                          value={titleFontSize}
+                          onChange={(e) => setTitleFontSize(e.target.value)}
+                          className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                        >
+                          <option value="small">Small</option>
+                          <option value="normal">Normal</option>
+                          <option value="large">Large</option>
+                          <option value="xlarge">Extra Large</option>
+                        </select>
+                        </div>
+                      
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Title Weight
+                        </label>
+                        <select
+                          value={titleFontWeight}
+                          onChange={(e) => setTitleFontWeight(e.target.value)}
+                          className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                        >
+                          <option value="normal">Normal</option>
+                          <option value="medium">Medium</option>
+                          <option value="semibold">Semi Bold</option>
+                          <option value="bold">Bold</option>
+                          <option value="extrabold">Extra Bold</option>
+                        </select>
+                      </div>
                     </div>
+
+                    {/* Content Formatting */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Content Size
+                        </label>
+                        <select
+                          value={contentFontSize}
+                          onChange={(e) => setContentFontSize(e.target.value)}
+                          className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                        >
+                          <option value="small">Small</option>
+                          <option value="normal">Normal</option>
+                          <option value="large">Large</option>
+                        </select>
                   </div>
+                      
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Accent/Button
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Content Weight
+                        </label>
+                        <select
+                          value={contentFontWeight}
+                          onChange={(e) => setContentFontWeight(e.target.value)}
+                          className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                        >
+                          <option value="light">Light</option>
+                          <option value="normal">Normal</option>
+                          <option value="medium">Medium</option>
+                          <option value="semibold">Semi Bold</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Line Height */}
+                      <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        Line Height
                       </label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="color"
-                        value={accentColor}
-                        onChange={(e) => setAccentColor(e.target.value)}
-                        className="w-12 h-10 rounded cursor-pointer border border-gray-300"
-                      />
-                      <input
-                        type="text"
-                        value={accentColor}
-                        onChange={(e) => setAccentColor(e.target.value)}
-                        className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
-                      />
+                      <select
+                        value={lineHeight}
+                        onChange={(e) => setLineHeight(e.target.value)}
+                        className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                      >
+                        <option value="tight">Tight</option>
+                        <option value="normal">Normal</option>
+                        <option value="relaxed">Relaxed</option>
+                        <option value="loose">Loose</option>
+                      </select>
                     </div>
                   </div>
                 </div>
               </div>
-                        </div>
-                      </div>
+            </div>
 
-          {/* Right Panel - Live Preview */}
-          <div className="sticky top-6">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Live Preview</h2>
+            {/* Live Preview */}
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <h2 className="text-base font-semibold text-gray-900 mb-4">Live Preview</h2>
               
               <div 
-                className="rounded-2xl shadow-2xl p-8 text-center min-h-[600px] flex flex-col"
-                style={{ backgroundColor }}
+                className="rounded-lg shadow-lg min-h-[400px] flex flex-col"
+                style={backgroundStyle === 'gradient' && backgroundGradient ? { background: backgroundGradient } : { backgroundColor }}
               >
                 {/* Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <button className="flex items-center space-x-2 text-gray-600">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
+                {showTopBar && (
+                  <div className="flex items-center justify-center p-4" style={{ backgroundColor: topBarColor }}>
+                    <div className="flex items-center space-x-3">
+                      <button className="flex items-center space-x-2" style={{ color: '#ffffff' }}>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
                     </button>
-                  <div className="text-lg font-bold" style={{ color: textColor }}>BRIGHTNEST</div>
-                  <div className="px-3 py-1 rounded-full text-xs font-medium text-white" style={{ backgroundColor: accentColor }}>
-                    FINANCIAL
-                  </div>
-                </div>
+                      <div className="text-lg font-bold" style={{ color: '#ffffff' }}>BRIGHTNEST</div>
+                      <div className="px-3 py-1 rounded-full text-xs font-medium text-white" style={{ backgroundColor: accentColor }}>
+                        FINANCIAL
+                      </div>
+                    </div>
+                      </div>
+                    )}
 
-                {/* Icon */}
-                {showIcon && (
-                  <div className="mb-6 flex justify-center">
-                    {getIconComponent()}
-                  </div>
-                )}
+                {/* Main Content */}
+                <div className={`flex-1 flex flex-col ${
+                  contentPadding === 'compact' ? 'p-4' : 
+                  contentPadding === 'spacious' ? 'p-8' : 'p-6'
+                } items-center ${
+                  contentPosition === 'top' ? 'justify-start' :
+                  contentPosition === 'bottom' ? 'justify-end' :
+                  'justify-center'
+                }`}>
+                  {/* Content Block - All elements aligned together */}
+                  <div className="w-full max-w-md">
+                    {/* Icon */}
+                    {showIcon && (
+                      <div className={`mb-6 ${
+                        textAlignment === 'left' ? 'flex justify-start' :
+                        textAlignment === 'right' ? 'flex justify-end' :
+                        'flex justify-center'
+                      }`}>
+                        {getIconComponent()}
+                      </div>
+                    )}
 
-                {/* Title */}
-                <h1 
-                  className="text-2xl font-bold mb-3 leading-tight"
-                  style={{ color: textColor }}
-                >
-                  {title || 'ARTICLE TITLE'}
-                </h1>
+                    {/* Title */}
+                    <h1 
+                      className={`${getTitleSizeClass(titleFontSize)} ${getTitleWeightClass(titleFontWeight)} mb-3 ${getLineHeightClass(lineHeight)} w-full ${
+                        textAlignment === 'left' ? 'text-left' :
+                        textAlignment === 'right' ? 'text-right' :
+                        'text-center'
+                      }`}
+                      style={{ color: textColor }}
+                    >
+                      {title || 'ARTICLE TITLE'}
+                    </h1>
 
-                {/* Subtitle */}
-                {subtitle && (
-                  <p 
-                    className="text-sm mb-6 opacity-80"
-                    style={{ color: textColor }}
-                  >
-                    {subtitle}
-                  </p>
-                )}
-
-                {/* Content */}
-                <div className="flex-1 flex items-center justify-center">
-                  {personalizedText ? (
-                    <div className="text-left max-w-md">
+                    {/* Subtitle */}
+                    {subtitle && (
                       <p 
-                        className="text-sm leading-relaxed mb-4"
+                        className={`${getContentSizeClass(contentFontSize)} ${getContentWeightClass(contentFontWeight)} mb-6 opacity-80 w-full ${getLineHeightClass(lineHeight)} ${
+                          textAlignment === 'left' ? 'text-left' :
+                          textAlignment === 'right' ? 'text-right' :
+                          'text-center'
+                        }`}
                         style={{ color: textColor }}
                       >
-                        {personalizedText
-                          .replace(/\{\{name\}\}/g, 'John')
-                          .replace(/\{\{email\}\}/g, 'john@example.com')
-                          .replace(/\{\{answer\}\}/g, 'financial planning')
-                          .substring(0, 200) + (personalizedText.length > 200 ? '...' : '')
-                        }
+                        {subtitle}
                       </p>
-                    </div>
-                  ) : (
-                    <div className="text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 opacity-50" style={{ color: iconColor }}>
-                        <svg fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-                        </svg>
-                      </div>
-                      <p className="text-sm opacity-60" style={{ color: textColor }}>
-                        Write your content in the Article Content field above
-                      </p>
-                    </div>
-                  )}
+                    )}
+
+                    {/* Content */}
+                    <div className="w-full mb-6">
+                      {personalizedText ? (
+                        <p 
+                          className={`${getContentSizeClass(contentFontSize)} ${getContentWeightClass(contentFontWeight)} ${getLineHeightClass(lineHeight)} mb-4 w-full ${
+                            textAlignment === 'left' ? 'text-left' :
+                            textAlignment === 'right' ? 'text-right' :
+                            'text-center'
+                          }`}
+                          style={{ color: textColor }}
+                        >
+                          {personalizedText
+                            .replace(/\{\{name\}\}/g, '{{name}}')
+                            .replace(/\{\{email\}\}/g, '{{email}}')
+                            .replace(/\{\{answer\}\}/g, '{{answer}}')
+                            .substring(0, 200) + (personalizedText.length > 200 ? '...' : '')
+                          }
+                        </p>
+                      ) : (
+                        <div className={`${
+                          textAlignment === 'left' ? 'text-left' :
+                          textAlignment === 'right' ? 'text-right' :
+                          'text-center'
+                        }`}>
+                          <div className="w-16 h-16 mx-auto mb-4 opacity-50" style={{ color: iconColor }}>
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                            </svg>
+                          </div>
+                          <p className="text-sm opacity-60" style={{ color: textColor }}>
+                            Write your content in the Article Content field above
+                          </p>
+                        </div>
+                      )}
                     </div>
 
-                {/* Statistic */}
-                {showStatistic && (
-                  <div className="mb-6">
-                    <div className="text-4xl font-bold mb-2" style={{ color: accentColor }}>
-                      {statisticValue}
-                    </div>
-                    <div className="text-sm" style={{ color: textColor }}>
-                      {statisticText}
+                    {/* Statistic */}
+                    {showStatistic && (
+                      <div className={`w-full mb-6 ${
+                        textAlignment === 'left' ? 'text-left' :
+                        textAlignment === 'right' ? 'text-right' :
+                        'text-center'
+                      }`}>
+                        <div className="text-4xl font-bold mb-2 w-full" style={{ color: accentColor }}>
+                          {statisticValue}
+                        </div>
+                        <div className="text-sm w-full" style={{ color: textColor }}>
+                          {statisticText}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* CTA Button */}
+                    {showCta && (
+                      <button
+                        className="w-full py-4 rounded-lg font-bold text-white transition-colors"
+                        style={{ backgroundColor: accentColor }}
+                      >
+                        {ctaText}
+                      </button>
+                    )}
                     </div>
                   </div>
-                )}
-
-                {/* CTA Button */}
-                {showCta && (
-                  <button 
-                    className="w-full py-4 rounded-lg font-bold text-white transition-colors"
-                    style={{ backgroundColor: accentColor }}
-                  >
-                    {ctaText}
-                  </button>
-                )}
               </div>
             </div>
           </div>
