@@ -115,6 +115,8 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         setGeneratedArticle(data.article);
         // Pre-populate title with generated title
         setTitle(data.article.title);
+        // Pre-populate personalized text with generated content for easy editing
+        setPersonalizedText(data.article.content);
       }
     } catch (error) {
       console.error('Failed to generate article:', error);
@@ -145,6 +147,8 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         setGeneratedArticle(data.article);
         // Pre-populate title with generated title
         setTitle(data.article.title);
+        // Pre-populate personalized text with generated content for easy editing
+        setPersonalizedText(data.article.content);
       }
     } catch (error) {
       console.error('Failed to generate article:', error);
@@ -167,7 +171,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         credentials: 'include',
         body: JSON.stringify({
           title: title || generatedArticle.title,
-          content: generatedArticle.content,
+          content: personalizedText || generatedArticle.content,
           type: 'ai_generated',
           category: generatedArticle.category,
           tags: generatedArticle.tags,
@@ -303,13 +307,13 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
               </p>
             </div>
           </div>
-          <button
+              <button
             onClick={handleSaveArticle}
             disabled={isSaving || !generatedArticle}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50"
-          >
+              >
             {isSaving ? 'Saving...' : 'Save Article'}
-          </button>
+              </button>
             </div>
           </div>
 
@@ -452,21 +456,24 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                     onChange={(e) => setSubtitle(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                     placeholder="Financial Guidance"
-                  />
-                </div>
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Personalized Text
-                  </label>
-                  <textarea
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Article Content
+                    </label>
+                    <textarea
                     value={personalizedText}
                     onChange={(e) => setPersonalizedText(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-                    rows={3}
-                    placeholder="Use {{name}} or {{answer}} for personalization"
-                    />
-                  </div>
+                    rows={6}
+                    placeholder="Generated article content will appear here for editing. Use {{name}} or {{answer}} for personalization."
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    This is the main article content. You can edit it and add personalization variables like {{name}} or {{answer}}.
+                  </p>
+                </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -709,19 +716,11 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                         className="text-sm leading-relaxed mb-4"
                         style={{ color: textColor }}
                       >
-                        {generatedArticle.content.substring(0, 200)}...
+                        {personalizedText ? 
+                          personalizedText.substring(0, 200) + (personalizedText.length > 200 ? '...' : '') :
+                          generatedArticle.content.substring(0, 200) + '...'
+                        }
                       </p>
-                      
-                      {personalizedText && (
-                        <p 
-                          className="text-sm opacity-80 mb-4"
-                          style={{ color: textColor }}
-                        >
-                          {personalizedText
-                            .replace(/\{\{name\}\}/g, 'John')
-                            .replace(/\{\{answer\}\}/g, 'financial planning')}
-                        </p>
-                      )}
                     </div>
                   ) : (
                     <div className="text-center">
