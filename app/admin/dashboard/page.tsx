@@ -71,6 +71,7 @@ interface AdminStats {
   visitors: number;
   partialSubmissions: number;
   leadsCollected: number;
+  averageTimeMs: number;
   topDropOffQuestions: Array<{
     questionNumber: number;
     questionText: string;
@@ -91,6 +92,14 @@ export default function AdminDashboard() {
   const [selectedQuizType, setSelectedQuizType] = useState<string>('all');
   // const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [showComparison, setShowComparison] = useState(false);
+
+  // Format duration from milliseconds to human readable format
+  const formatDuration = (ms: number): string => {
+    if (ms < 1000) return `${ms}ms`;
+    if (ms < 60000) return `${Math.round(ms / 1000)}s`;
+    if (ms < 3600000) return `${Math.round(ms / 60000)}m ${Math.round((ms % 60000) / 1000)}s`;
+    return `${Math.round(ms / 3600000)}h ${Math.round((ms % 3600000) / 60000)}m`;
+  };
 
   const fetchStats = useCallback(async (isTimeframeChange = false) => {
     // Only show loading state on initial load, not on window switches or timeframe changes
@@ -449,21 +458,21 @@ export default function AdminDashboard() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-3">
-                        <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
-                          <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                         </div>
-                        <h3 className="text-sm font-semibold text-gray-700">Completed Submissions</h3>
+                        <h3 className="text-sm font-semibold text-gray-700">Average Time</h3>
                       </div>
                       <p className="text-3xl font-bold text-gray-900 mb-1">
-                        {stats.completedSessions}
+                        {stats.averageTimeMs > 0 ? formatDuration(stats.averageTimeMs) : '0s'}
                       </p>
-                      <p className="text-xs text-gray-500">Finished the full quiz</p>
+                      <p className="text-xs text-gray-500">Time to complete quiz</p>
                       {showComparison && (
                         <div className="flex items-center mt-2">
-                          <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full font-medium">
-                            ▲ +5%
+                          <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full font-medium">
+                            ▲ +12%
                           </span>
                         </div>
                       )}
@@ -485,7 +494,7 @@ export default function AdminDashboard() {
                       <p className="text-3xl font-bold text-gray-900 mb-1">
                         {stats.leadsCollected}
                       </p>
-                      <p className="text-xs text-gray-500">Name & email provided</p>
+                      <p className="text-xs text-gray-500">Completed the full quiz</p>
                       {showComparison && (
                         <div className="flex items-center mt-2">
                           <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full font-medium">

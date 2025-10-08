@@ -29,14 +29,6 @@ export async function GET(request: Request) {
       where: quizType ? { quizType } : {}
     });
     
-    // Get completed sessions (where all questions were answered)
-    const completedSessions = await prisma.quizSession.count({
-      where: { 
-        status: "completed",
-        ...(quizType ? { quizType } : {})
-      },
-    });
-
     // Calculate average duration for completed sessions
     const avgDurationResult = await prisma.quizSession.aggregate({
       _avg: { durationMs: true },
@@ -47,17 +39,11 @@ export async function GET(request: Request) {
       },
     });
 
-    // Get all leads (sessions with name and email, completed or not)
+    // Get all leads (completed sessions - anyone who completed the quiz is a lead)
     const allLeads = await prisma.quizSession.findMany({
       where: {
-        ...(quizType ? { quizType } : {}),
-        answers: {
-          some: {
-            question: {
-              type: "email"
-            }
-          }
-        }
+        status: "completed",
+        ...(quizType ? { quizType } : {})
       },
       include: { 
         result: true,
@@ -77,7 +63,8 @@ export async function GET(request: Request) {
       _count: { archetype: true },
     });
 
-    // Calculate completion rate
+    // Calculate completion rate (using leads as completed sessions)
+    const completedSessions = allLeads.length;
     const completionRate = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;
 
     // Get behavior analytics - drop-off rates per question
@@ -227,7 +214,8 @@ export async function GET(request: Request) {
     // Calculate new metrics
     const visitors = totalSessions; // Total unique visitors who started the quiz
     const partialSubmissions = totalSessions - completedSessions; // Started but didn't complete
-    const leadsCollected = allLeads.length; // Count unique sessions with email answers (consistent with allLeads)
+    const leadsCollected = allLeads.length; // Count completed sessions (all completed quizzes are leads)
+    const averageTimeMs = avgDurationResult._avg.durationMs || 0; // Average time in milliseconds
 
     // Get top 3 questions responsible for biggest drop-offs (questions that CAUSE the drop)
     const questionsWithDrops = questionAnalytics
@@ -299,6 +287,7 @@ export async function GET(request: Request) {
       visitors,
       partialSubmissions,
       leadsCollected,
+      averageTimeMs,
       topDropOffQuestions: questionsWithDrops,
       quizTypes: formattedQuizTypes,
     });
@@ -316,6 +305,7 @@ export async function GET(request: Request) {
       visitors: 0,
       partialSubmissions: 0,
       leadsCollected: 0,
+      averageTimeMs: 0,
       topDropOffQuestions: [],
     });
   }
