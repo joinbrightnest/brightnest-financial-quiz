@@ -185,7 +185,6 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
           tags: generatedArticle?.tags || [],
           // Customization fields
           subtitle,
-          personalizedText,
           backgroundColor,
           textColor,
           iconColor,
@@ -197,7 +196,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
           statisticValue,
           ctaText,
           showCta,
-          triggers: selectedQuestion ? [{
+          triggers: (selectedQuestion && selectedOption) ? [{
             questionId: selectedQuestion,
             optionValue: selectedOption,
             condition: {},
