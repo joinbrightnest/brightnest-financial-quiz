@@ -61,7 +61,9 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
 
   const fetchQuestions = async () => {
     try {
-      const response = await fetch(`/api/admin/quiz-questions?quizType=${quizType}`);
+      const response = await fetch(`/api/admin/quiz-questions?quizType=${quizType}`, {
+        credentials: 'include'
+      });
       if (response.ok) {
         const data = await response.json();
         setQuestions(data.questions || []);
@@ -84,6 +86,7 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
       const response = await fetch('/api/admin/generate-article', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           questionId: selectedQuestion,
           questionPrompt: question.prompt,
@@ -112,6 +115,7 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
       const response = await fetch('/api/admin/generate-article', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           questionPrompt: manualQuestion,
           answerValue: manualAnswer,
@@ -142,6 +146,7 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
       const response = await fetch('/api/admin/articles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           title: generatedArticle.title,
           content: generatedArticle.content,
@@ -190,6 +195,7 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
       const response = await fetch('/api/admin/articles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           title: editableArticle.title,
           content: editableArticle.content,
@@ -245,6 +251,7 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
       const response = await fetch('/api/admin/articles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           title: editableArticle.title,
           content: editableArticle.content,

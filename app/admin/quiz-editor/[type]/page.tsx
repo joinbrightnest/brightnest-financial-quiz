@@ -109,7 +109,9 @@ export default function QuizEditor({ params }: QuizEditorProps) {
       if (!hasInitiallyLoaded.current) {
         setIsLoading(true);
       }
-      const response = await fetch(`/api/admin/quiz-questions?quizType=${quizType}`);
+      const response = await fetch(`/api/admin/quiz-questions?quizType=${quizType}`, {
+        credentials: 'include'
+      });
       const data = await response.json();
       setQuestions(data.questions || []);
       hasInitiallyLoaded.current = true;
@@ -128,7 +130,9 @@ export default function QuizEditor({ params }: QuizEditorProps) {
       console.log('Loading articles from database for quiz type:', quizType);
       
       // Load articles from database
-      const response = await fetch(`/api/admin/articles?quizType=${quizType}`);
+      const response = await fetch(`/api/admin/articles?quizType=${quizType}`, {
+        credentials: 'include'
+      });
       if (response.ok) {
         const data = await response.json();
         console.log('Articles from database:', data.articles);
@@ -159,7 +163,9 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     try {
       console.log('Loading loading screens from database for quiz type:', quizType);
       
-      const response = await fetch(`/api/admin/loading-screens?quizType=${quizType}`);
+      const response = await fetch(`/api/admin/loading-screens?quizType=${quizType}`, {
+        credentials: 'include'
+      });
       if (response.ok) {
         const data = await response.json();
         console.log('Loading screens from database:', data.loadingScreens);
@@ -180,6 +186,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     try {
       const response = await fetch(`/api/admin/loading-screens/${loadingScreenId}`, {
         method: 'DELETE',
+        credentials: 'include'
       });
       
       if (response.ok) {
@@ -328,6 +335,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: 'include',
         body: JSON.stringify({
           quizType,
           questions
@@ -419,7 +427,10 @@ export default function QuizEditor({ params }: QuizEditorProps) {
       try {
         // Delete all articles for this question
         const deletePromises = articlesForQuestion.map(article => 
-          fetch(`/api/admin/articles/${article.id}`, { method: 'DELETE' })
+          fetch(`/api/admin/articles/${article.id}`, { 
+            method: 'DELETE',
+            credentials: 'include'
+          })
         );
 
         const results = await Promise.all(deletePromises);
@@ -1216,6 +1227,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                       const response = await fetch(`/api/admin/articles/${editingArticle.id}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
                         body: JSON.stringify({
                           title: editingArticle.title,
                           content: editingArticle.content
