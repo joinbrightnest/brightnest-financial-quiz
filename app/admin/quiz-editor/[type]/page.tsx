@@ -322,8 +322,6 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     try {
       setIsSaving(true);
       
-      console.log("Saving questions:", { quizType, questionsCount: questions.length });
-      
       // Save questions
       const response = await fetch("/api/admin/save-quiz-questions", {
         method: "POST",
@@ -337,7 +335,6 @@ export default function QuizEditor({ params }: QuizEditorProps) {
       });
 
       const responseData = await response.json();
-      console.log("Save response:", responseData);
 
       if (response.ok) {
         alert("Questions and articles saved successfully!");

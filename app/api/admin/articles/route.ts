@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { title, content, type, category, tags, triggers } = body;
 
-    console.log('Article creation request:', { title, content, type, category, tags, triggers });
+    // Article creation request logged for debugging (remove in production)
 
     try {
       // Create article in database

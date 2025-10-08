@@ -112,7 +112,7 @@ export default function AdminDashboard() {
       const quizTypeParam = selectedQuizType === 'all' ? '' : `&quizType=${selectedQuizType}`;
       const response = await fetch(`/api/admin/basic-stats?activity=${activityTimeframe}${quizTypeParam}`, {
         headers: {
-          "x-admin-code": "brightnest2025"
+          "Content-Type": "application/json"
         }
       });
       

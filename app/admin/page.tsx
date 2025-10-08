@@ -11,8 +11,8 @@ export default function AdminLogin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Simple code protection - you can change this code
-    if (code === "brightnest2025") {
+    // Admin code validation - will be handled by server
+    if (code.trim()) {
       try {
         // Create admin session via API
         const response = await fetch("/api/admin/auth", {

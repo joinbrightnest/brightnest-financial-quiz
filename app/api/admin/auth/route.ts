@@ -5,8 +5,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { code } = body;
 
-    // Simple code protection - you can change this code
-    if (code === "brightnest2025") {
+    // Admin code from environment variable
+    const adminCode = process.env.ADMIN_ACCESS_CODE || "brightnest2025";
+    if (code === adminCode) {
       // Set a simple session cookie (you can make this more secure later)
       const response = NextResponse.json({ success: true });
       response.cookies.set("admin_authenticated", "true", {
