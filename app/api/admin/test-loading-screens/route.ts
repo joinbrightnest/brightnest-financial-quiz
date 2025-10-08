@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     });
     
     // Test 2: Get count of all loading screens
-    const totalCount = await prisma.loadingScreen.count();
+    const totalCount = Number(await prisma.loadingScreen.count());
     
     // Test 3: Get count by quiz type - convert BigInt to regular numbers
     const countByTypeRaw: any[] = await prisma.$queryRaw`
@@ -30,11 +30,14 @@ export async function GET(request: NextRequest) {
       success: true,
       tableExists: true,
       totalScreens: totalCount,
+      assignedScreens: screens.filter(s => s.triggerQuestionId).length,
+      unassignedScreens: screens.filter(s => !s.triggerQuestionId).length,
       recentScreens: screens.map(s => ({
         id: s.id,
         title: s.title,
         quizType: s.quizType,
         triggerQuestionId: s.triggerQuestionId,
+        isAssigned: !!s.triggerQuestionId,
         createdAt: s.createdAt.toISOString()
       })),
       countByType,
