@@ -633,7 +633,9 @@ export default function QuizEditor({ params }: QuizEditorProps) {
 
         {/* Questions List */}
         <div className="space-y-6">
-          {questions.map((question, index) => (
+          {questions.map((question, index) => {
+            const displayQuestionNumber = index + 1; // Sequential display number (1, 2, 3, 4...)
+            return (
             <div key={question.id} className="space-y-4">
               {/* Question */}
               <div
@@ -652,10 +654,10 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl text-lg font-bold shadow-lg">
-                        {question.order}
+                        {displayQuestionNumber}
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">Question {question.order}</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">Question {displayQuestionNumber}</h3>
                         <p className="text-sm text-gray-500 flex items-center space-x-2">
                           <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                             question.type === 'single' ? 'bg-blue-100 text-blue-800' :
@@ -1072,7 +1074,8 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                 );
               })()}
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {questions.length === 0 && (
