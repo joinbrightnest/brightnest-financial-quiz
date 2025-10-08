@@ -174,6 +174,28 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     }
   };
 
+  const handleDeleteLoadingScreen = async (loadingScreenId: string) => {
+    if (!confirm('Are you sure you want to delete this loading screen?')) return;
+    
+    try {
+      const response = await fetch(`/api/admin/loading-screens/${loadingScreenId}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        alert('Loading screen deleted successfully!');
+        // Refresh the loading screens list
+        fetchLoadingScreens();
+      } else {
+        const error = await response.json();
+        alert(`Failed to delete: ${error.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error("Error deleting loading screen:", error);
+      alert('Failed to delete loading screen. Please try again.');
+    }
+  };
+
   const handleDragStart = (e: React.DragEvent, questionId: string) => {
     setDraggedItem(questionId);
     e.dataTransfer.effectAllowed = "move";
@@ -1035,6 +1057,12 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                               className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white hover:bg-gray-100 rounded-md border border-gray-200 transition-colors"
                             >
                               Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteLoadingScreen(screen.id)}
+                              className="px-3 py-1.5 text-xs font-medium text-red-700 bg-red-50 hover:bg-red-100 rounded-md border border-red-200 transition-colors"
+                            >
+                              Delete
                             </button>
                           </div>
                         </div>
