@@ -115,8 +115,6 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         setGeneratedArticle(data.article);
         // Pre-populate title with generated title
         setTitle(data.article.title);
-        // Pre-populate content with generated content for easy editing
-        setPersonalizedText(data.article.content);
       }
     } catch (error) {
       console.error('Failed to generate article:', error);
@@ -147,8 +145,6 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         setGeneratedArticle(data.article);
         // Pre-populate title with generated title
         setTitle(data.article.title);
-        // Pre-populate content with generated content for easy editing
-        setPersonalizedText(data.article.content);
       }
     } catch (error) {
       console.error('Failed to generate article:', error);
@@ -171,12 +167,13 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         credentials: 'include',
         body: JSON.stringify({
           title: title || generatedArticle.title,
-          content: personalizedText || generatedArticle.content,
+          content: generatedArticle.content,
           type: 'ai_generated',
           category: generatedArticle.category,
           tags: generatedArticle.tags,
           // Customization fields
           subtitle,
+          personalizedText,
           backgroundColor,
           textColor,
           iconColor,
@@ -306,13 +303,13 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
               </p>
             </div>
           </div>
-              <button
+          <button
             onClick={handleSaveArticle}
             disabled={isSaving || !generatedArticle}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50"
-              >
+          >
             {isSaving ? 'Saving...' : 'Save Article'}
-              </button>
+          </button>
             </div>
           </div>
 
@@ -712,15 +709,19 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                         className="text-sm leading-relaxed mb-4"
                         style={{ color: textColor }}
                       >
-                        {personalizedText ? 
-                          personalizedText
-                            .replace(/\{\{name\}\}/g, 'John')
-                            .replace(/\{\{email\}\}/g, 'john@example.com')
-                            .replace(/\{\{answer\}\}/g, 'financial planning')
-                            .substring(0, 200) + '...' :
-                          generatedArticle.content.substring(0, 200) + '...'
-                        }
+                        {generatedArticle.content.substring(0, 200)}...
                       </p>
+                      
+                      {personalizedText && (
+                        <p 
+                          className="text-sm opacity-80 mb-4"
+                          style={{ color: textColor }}
+                        >
+                          {personalizedText
+                            .replace(/\{\{name\}\}/g, 'John')
+                            .replace(/\{\{answer\}\}/g, 'financial planning')}
+                        </p>
+                      )}
                     </div>
                   ) : (
                     <div className="text-center">
