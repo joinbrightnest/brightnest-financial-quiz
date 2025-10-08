@@ -376,7 +376,7 @@ export default function QuizPage({ params }: QuizPageProps) {
         {...currentLoadingScreen}
         onComplete={handleLoadingScreenComplete}
         userName="User" // TODO: Get actual user name from session if available
-        lastAnswer={lastAnswer?.answerLabel || "your response"}
+        lastAnswer={lastAnswer?.answerLabel || "your response" || "your response"}
       />
     );
   }

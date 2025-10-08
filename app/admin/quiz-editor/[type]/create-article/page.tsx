@@ -114,9 +114,10 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         const data = await response.json();
         setGeneratedArticle(data.article);
         // Pre-populate title with generated title
-        setTitle(data.article.title);
+        setTitle(data.article.title || '');
         // Pre-populate personalized text with generated content for easy editing
-        setPersonalizedText(data.article.content);
+        // Ensure it's a string and escape any problematic characters
+        setPersonalizedText(String(data.article.content || ''));
       }
     } catch (error) {
       console.error('Failed to generate article:', error);
@@ -146,9 +147,10 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         const data = await response.json();
         setGeneratedArticle(data.article);
         // Pre-populate title with generated title
-        setTitle(data.article.title);
+        setTitle(data.article.title || '');
         // Pre-populate personalized text with generated content for easy editing
-        setPersonalizedText(data.article.content);
+        // Ensure it's a string and escape any problematic characters
+        setPersonalizedText(String(data.article.content || ''));
       }
     } catch (error) {
       console.error('Failed to generate article:', error);

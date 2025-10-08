@@ -153,8 +153,8 @@ export default function LoadingScreenDisplay({
 
   const replaceVariables = (text: string) => {
     return text
-      .replace(/\{\{name\}\}/g, userName)
-      .replace(/\{\{answer\}\}/g, lastAnswer);
+      .replace(/\{\{name\}\}/g, userName || 'User')
+      .replace(/\{\{answer\}\}/g, lastAnswer || 'your response');
   };
 
   return (

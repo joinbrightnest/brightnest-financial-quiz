@@ -898,7 +898,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                 // Find articles for this question by matching answer values
                 const articlesForQuestion = articles.filter(a => {
                   // Check if any of this question's options match the article's trigger
-                  return question.options.some(option => option.value === a.triggerAnswerValue);
+                  return question.options?.some(option => option.value === a.triggerAnswerValue) || false;
                 });
                 
                 console.log('Articles for question:', question.id, 'found:', articlesForQuestion);
