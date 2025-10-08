@@ -837,23 +837,35 @@ export default function AdminDashboard() {
                   Top Funnel Drop-offs
                 </h3>
                 <div className="space-y-3">
-                  {stats.topDropOffQuestions.map((question, index) => (
-                    <div key={question.questionNumber} className="flex items-center justify-between p-4 bg-red-50 rounded-lg border border-red-100">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-bold text-red-600">#{index + 1}</span>
+                  {stats.topDropOffQuestions.length > 0 ? (
+                    stats.topDropOffQuestions.map((question, index) => (
+                      <div key={question.questionNumber} className="flex items-center justify-between p-4 bg-red-50 rounded-lg border border-red-100">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-bold text-red-600">#{index + 1}</span>
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">Q{question.questionNumber}</p>
+                            <p className="text-sm text-gray-600 truncate max-w-md">{question.questionText}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium text-gray-900">Q{question.questionNumber}</p>
-                          <p className="text-sm text-gray-600 truncate max-w-md">{question.questionText}</p>
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-red-600">{question.dropFromPrevious}%</p>
+                          <p className="text-xs text-gray-500">drop-off</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-red-600">{question.dropFromPrevious}%</p>
-                        <p className="text-xs text-gray-500">drop-off</p>
+                    ))
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                       </div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-2">Great Retention!</h4>
+                      <p className="text-sm text-gray-500">No significant drop-offs detected. Users are completing the quiz successfully.</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
 

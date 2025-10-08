@@ -75,19 +75,17 @@ export async function GET(request: Request) {
       }
     });
 
+    // Get all questions ordered by their order field
+    const allQuestions = await prisma.quizQuestion.findMany({
+      where: { 
+        active: true,
+        ...(quizType ? { quizType } : {})
+      },
+      orderBy: { order: 'asc' }
+    });
+
     const questionAnalytics = await Promise.all(
-      Array.from({ length: totalQuestions }, async (_, index) => {
-        const questionNumber = index + 1;
-        const question = await prisma.quizQuestion.findFirst({
-          where: { 
-            active: true,
-            order: questionNumber,
-            ...(quizType ? { quizType } : {})
-          }
-        });
-
-        if (!question) return null;
-
+      allQuestions.map(async (question) => {
         // Count unique sessions that answered this question
         const uniqueSessionsAnswered = await prisma.quizAnswer.findMany({
           where: { questionId: question.id },
@@ -101,7 +99,7 @@ export async function GET(request: Request) {
         const retentionRate = totalSessions > 0 ? (answeredCount / totalSessions) * 100 : 0;
 
         return {
-          questionNumber,
+          questionNumber: question.order,
           questionText: question.prompt,
           answeredCount,
           retentionRate: Math.round(retentionRate * 100) / 100,
