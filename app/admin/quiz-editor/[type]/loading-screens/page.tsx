@@ -11,6 +11,9 @@ interface LoadingScreenEditorProps {
 export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps) {
   const [quizType, setQuizType] = useState<string>('');
   const [questions, setQuestions] = useState<any[]>([]);
+  const [loadingScreenId, setLoadingScreenId] = useState<string>('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Form fields
   const [title, setTitle] = useState("ANALYZING YOUR RESPONSES");
@@ -30,11 +33,19 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
   const [isTesting, setIsTesting] = useState(false);
   const [testProgress, setTestProgress] = useState(0);
 
-  // Handle async params
+  // Handle async params and URL parameters
   useEffect(() => {
     const getParams = async () => {
       const resolvedParams = await params;
       setQuizType(resolvedParams.type);
+      
+      // Check for loading screen ID in URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+      if (id) {
+        setLoadingScreenId(id);
+        setIsEditing(true);
+      }
     };
     getParams();
   }, [params]);
@@ -42,8 +53,13 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
   useEffect(() => {
     if (quizType) {
       fetchQuestions();
+      if (isEditing && loadingScreenId) {
+        fetchLoadingScreen();
+      } else {
+        setIsLoading(false);
+      }
     }
-  }, [quizType]);
+  }, [quizType, isEditing, loadingScreenId]);
 
   const fetchQuestions = async () => {
     try {
@@ -54,6 +70,37 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
       }
     } catch (error) {
       console.error("Error fetching questions:", error);
+    }
+  };
+
+  const fetchLoadingScreen = async () => {
+    try {
+      const response = await fetch(`/api/admin/loading-screens/${loadingScreenId}`);
+      if (response.ok) {
+        const data = await response.json();
+        const screen = data.loadingScreen;
+        
+        // Pre-populate form with existing data
+        setTitle(screen.title || "ANALYZING YOUR RESPONSES");
+        setSubtitle(screen.subtitle || "Please wait while we analyze your answers");
+        setProgressText(screen.progressText || "CALCULATING YOUR RESULTS...");
+        setPersonalizedText(screen.personalizedText || "Hi there, we're processing your responses...");
+        setDuration(screen.duration || 4000);
+        setIconType(screen.iconType || "puzzle-4");
+        setAnimationStyle(screen.animationStyle || "spin");
+        setBackgroundColor(screen.backgroundColor || "#f0f9ff");
+        setTextColor(screen.textColor || "#1e293b");
+        setIconColor(screen.iconColor || "#06b6d4");
+        setProgressBarColor(screen.progressBarColor || "#ef4444");
+        setShowProgressBar(screen.showProgressBar !== undefined ? screen.showProgressBar : true);
+        setTriggerQuestionId(screen.triggerQuestionId || "");
+      } else {
+        console.error("Failed to fetch loading screen");
+      }
+    } catch (error) {
+      console.error("Error fetching loading screen:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -109,8 +156,14 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
 
     setIsSaving(true);
     try {
-      const response = await fetch('/api/admin/loading-screens', {
-        method: 'POST',
+      const url = isEditing 
+        ? `/api/admin/loading-screens/${loadingScreenId}`
+        : '/api/admin/loading-screens';
+      
+      const method = isEditing ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           quizType,
@@ -132,7 +185,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
       });
 
       if (response.ok) {
-        alert('Loading screen created successfully!');
+        alert(`Loading screen ${isEditing ? 'updated' : 'created'} successfully!`);
         window.close();
       } else {
         const error = await response.json();
@@ -211,9 +264,11 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
             </button>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Create Loading Screen - {getQuizTypeDisplayName(quizType)}
+                {isEditing ? 'Edit' : 'Create'} Loading Screen - {getQuizTypeDisplayName(quizType)}
               </h1>
-              <p className="text-sm text-gray-500">Customize your loading screen with live preview</p>
+              <p className="text-sm text-gray-500">
+                {isLoading ? 'Loading...' : 'Customize your loading screen with live preview'}
+              </p>
             </div>
           </div>
           <button
@@ -226,7 +281,15 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-6 relative">
+        {isLoading && (
+          <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-2"></div>
+              <p className="text-sm text-gray-600">Loading loading screen data...</p>
+            </div>
+          </div>
+        )}
         <div className="grid grid-cols-2 gap-8">
           {/* Left Panel - Settings */}
           <div className="space-y-6">

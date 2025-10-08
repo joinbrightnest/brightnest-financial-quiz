@@ -3,6 +3,28 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    const loadingScreen = await prisma.loadingScreen.findUnique({
+      where: { id }
+    });
+
+    if (!loadingScreen) {
+      return NextResponse.json({ error: 'Loading screen not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ loadingScreen });
+  } catch (error) {
+    console.error('Error fetching loading screen:', error);
+    return NextResponse.json({ error: 'Failed to fetch loading screen' }, { status: 500 });
+  }
+}
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

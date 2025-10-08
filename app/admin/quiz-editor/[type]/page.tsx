@@ -1031,7 +1031,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                           </div>
                           <div className="flex items-center space-x-2">
                             <button
-                              onClick={() => window.open(`/admin/quiz-editor/${quizType}/loading-screens`, '_blank')}
+                              onClick={() => window.open(`/admin/quiz-editor/${quizType}/loading-screens?id=${screen.id}`, '_blank')}
                               className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white hover:bg-gray-100 rounded-md border border-gray-200 transition-colors"
                             >
                               Edit
