@@ -52,7 +52,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
   const [iconType, setIconType] = useState<string>('document');
   const [showIcon, setShowIcon] = useState<boolean>(true);
   const [showStatistic, setShowStatistic] = useState<boolean>(true);
-  const [statisticText, setStatisticText] = useState<string>('of people face similar financial challenges');
+  const [statisticText, setStatisticText] = useState<string>('of people face similar challenges');
   const [statisticValue, setStatisticValue] = useState<string>('75%');
   const [ctaText, setCtaText] = useState<string>('CONTINUE');
   const [showCta, setShowCta] = useState<boolean>(true);
@@ -117,7 +117,10 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         setTitle(data.article.title || '');
         // Pre-populate personalized text with generated content for easy editing
         // Ensure it's a string and escape any problematic characters
-        setPersonalizedText(String(data.article.content || ''));
+        const content = String(data.article.content || '');
+        // Escape any template literals that might cause JavaScript evaluation
+        const escapedContent = content.replace(/\$\{/g, '\\${');
+        setPersonalizedText(escapedContent);
       }
     } catch (error) {
       console.error('Failed to generate article:', error);
@@ -150,7 +153,10 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         setTitle(data.article.title || '');
         // Pre-populate personalized text with generated content for easy editing
         // Ensure it's a string and escape any problematic characters
-        setPersonalizedText(String(data.article.content || ''));
+        const content = String(data.article.content || '');
+        // Escape any template literals that might cause JavaScript evaluation
+        const escapedContent = content.replace(/\$\{/g, '\\${');
+        setPersonalizedText(escapedContent);
       }
     } catch (error) {
       console.error('Failed to generate article:', error);
