@@ -50,7 +50,28 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { title, content, type, category, tags, triggers } = body;
+    const { 
+      title, 
+      content, 
+      type, 
+      category, 
+      tags, 
+      triggers,
+      // Customization fields
+      subtitle,
+      personalizedText,
+      backgroundColor,
+      textColor,
+      iconColor,
+      accentColor,
+      iconType,
+      showIcon,
+      showStatistic,
+      statisticText,
+      statisticValue,
+      ctaText,
+      showCta
+    } = body;
 
     // Article creation request logged for debugging (remove in production)
 
@@ -63,6 +84,20 @@ export async function POST(request: NextRequest) {
           type: type || 'ai_generated',
           category: category || 'general',
           tags: tags || [],
+          // Customization fields
+          subtitle: subtitle || null,
+          personalizedText: personalizedText || null,
+          backgroundColor: backgroundColor || '#ffffff',
+          textColor: textColor || '#000000',
+          iconColor: iconColor || '#3b82f6',
+          accentColor: accentColor || '#ef4444',
+          iconType: iconType || 'document',
+          showIcon: showIcon !== undefined ? showIcon : true,
+          showStatistic: showStatistic !== undefined ? showStatistic : true,
+          statisticText: statisticText || null,
+          statisticValue: statisticValue || null,
+          ctaText: ctaText || 'CONTINUE',
+          showCta: showCta !== undefined ? showCta : true,
           triggers: {
             create: triggers?.map((trigger: any) => ({
               questionId: trigger.questionId,

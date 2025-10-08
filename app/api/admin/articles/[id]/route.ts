@@ -40,7 +40,27 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { title, content, category, tags, isActive } = body;
+    const { 
+      title, 
+      content, 
+      category, 
+      tags, 
+      isActive,
+      // Customization fields
+      subtitle,
+      personalizedText,
+      backgroundColor,
+      textColor,
+      iconColor,
+      accentColor,
+      iconType,
+      showIcon,
+      showStatistic,
+      statisticText,
+      statisticValue,
+      ctaText,
+      showCta
+    } = body;
 
     const article = await prisma.article.update({
       where: { id },
@@ -49,7 +69,21 @@ export async function PUT(
         content,
         category,
         tags,
-        isActive
+        isActive,
+        // Customization fields
+        subtitle: subtitle !== undefined ? subtitle : null,
+        personalizedText: personalizedText !== undefined ? personalizedText : null,
+        backgroundColor: backgroundColor || '#ffffff',
+        textColor: textColor || '#000000',
+        iconColor: iconColor || '#3b82f6',
+        accentColor: accentColor || '#ef4444',
+        iconType: iconType || 'document',
+        showIcon: showIcon !== undefined ? showIcon : true,
+        showStatistic: showStatistic !== undefined ? showStatistic : true,
+        statisticText: statisticText !== undefined ? statisticText : null,
+        statisticValue: statisticValue !== undefined ? statisticValue : null,
+        ctaText: ctaText || 'CONTINUE',
+        showCta: showCta !== undefined ? showCta : true
       }
     });
 

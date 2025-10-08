@@ -1,21 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 
 interface Question {
   id: string;
+  order: number;
   prompt: string;
+  type: string;
   options: Array<{
     label: string;
     value: string;
-    weightCategory: string;
     weightValue: number;
   }>;
 }
 
-export default function CreateArticlePage({ params }: { params: Promise<{ type: string }> }) {
-  const router = useRouter();
+interface CreateArticlePageProps {
+  params: Promise<{
+    type: string;
+  }>;
+}
+
+export default function CreateArticlePage({ params }: CreateArticlePageProps) {
   const [quizType, setQuizType] = useState<string>('');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedQuestion, setSelectedQuestion] = useState<string>('');
@@ -24,6 +29,10 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
   const [manualAnswer, setManualAnswer] = useState<string>('');
   const [useManualInput, setUseManualInput] = useState<boolean>(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // Generated article data
   const [generatedArticle, setGeneratedArticle] = useState<{
     title: string;
     content: string;
@@ -31,19 +40,22 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
     tags: string[];
     keyPoints?: string[];
   } | null>(null);
-  const [editableArticle, setEditableArticle] = useState<{
-    title: string;
-    content: string;
-    category: string;
-    keyPoints: string[];
-  }>({
-    title: '',
-    content: '',
-    category: 'general',
-    keyPoints: ['']
-  });
-  const [isEditingGenerated, setIsEditingGenerated] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+
+  // Customization fields
+  const [title, setTitle] = useState<string>('');
+  const [subtitle, setSubtitle] = useState<string>('Financial Guidance');
+  const [personalizedText, setPersonalizedText] = useState<string>('');
+  const [backgroundColor, setBackgroundColor] = useState<string>('#ffffff');
+  const [textColor, setTextColor] = useState<string>('#000000');
+  const [iconColor, setIconColor] = useState<string>('#3b82f6');
+  const [accentColor, setAccentColor] = useState<string>('#ef4444');
+  const [iconType, setIconType] = useState<string>('document');
+  const [showIcon, setShowIcon] = useState<boolean>(true);
+  const [showStatistic, setShowStatistic] = useState<boolean>(true);
+  const [statisticText, setStatisticText] = useState<string>('of people face similar financial challenges');
+  const [statisticValue, setStatisticValue] = useState<string>('75%');
+  const [ctaText, setCtaText] = useState<string>('CONTINUE');
+  const [showCta, setShowCta] = useState<boolean>(true);
 
   useEffect(() => {
     const getParams = async () => {
@@ -70,6 +82,8 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
       }
     } catch (error) {
       console.error('Failed to fetch questions:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -99,6 +113,8 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
       if (response.ok) {
         const data = await response.json();
         setGeneratedArticle(data.article);
+        // Pre-populate title with generated title
+        setTitle(data.article.title);
       }
     } catch (error) {
       console.error('Failed to generate article:', error);
@@ -127,6 +143,8 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
       if (response.ok) {
         const data = await response.json();
         setGeneratedArticle(data.article);
+        // Pre-populate title with generated title
+        setTitle(data.article.title);
       }
     } catch (error) {
       console.error('Failed to generate article:', error);
@@ -136,518 +154,611 @@ export default function CreateArticlePage({ params }: { params: Promise<{ type: 
   };
 
   const handleSaveArticle = async () => {
-    if (!generatedArticle) return;
+    if (!generatedArticle) {
+      alert('Please generate an article first');
+      return;
+    }
 
     setIsSaving(true);
     try {
-      console.log('Saving generated article to database:', generatedArticle);
-      
-      // Save to database
       const response = await fetch('/api/admin/articles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          title: generatedArticle.title,
+          title: title || generatedArticle.title,
           content: generatedArticle.content,
           type: 'ai_generated',
-          category: 'general',
-          tags: generatedArticle.keyPoints || [],
-          triggers: useManualInput ? [] : [{
+          category: generatedArticle.category,
+          tags: generatedArticle.tags,
+          // Customization fields
+          subtitle,
+          personalizedText,
+          backgroundColor,
+          textColor,
+          iconColor,
+          accentColor,
+          iconType,
+          showIcon,
+          showStatistic,
+          statisticText,
+          statisticValue,
+          ctaText,
+          showCta,
+          triggers: selectedQuestion ? [{
             questionId: selectedQuestion,
             optionValue: selectedOption,
-            priority: 5,
+            condition: {},
+            priority: 0,
             isActive: true
-          }]
+          }] : []
         })
       });
 
       if (response.ok) {
-        const result = await response.json();
-        console.log('Article saved to database:', result);
-        alert('Article saved successfully to database! It will appear in the quiz editor.');
-        router.push(`/admin/quiz-editor/${quizType}`);
+        alert('Article saved successfully!');
+        window.close();
       } else {
-        const error = await response.text();
-        console.error('Save error:', error);
-        alert('Failed to save article. Please try again.');
+        const error = await response.json();
+        alert(`Failed to save: ${error.error || 'Unknown error'}`);
       }
-      
     } catch (error) {
-      console.error('Failed to save article:', error);
-      alert('Failed to save article. Please check your connection and try again.');
+      console.error('Error saving article:', error);
+      alert('Failed to save article. Please try again.');
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleSaveManualArticle = async () => {
-    if (!editableArticle.title || !editableArticle.content) {
-      alert('Please fill in the title and content before saving.');
-      return;
-    }
-
-    setIsSaving(true);
-    try {
-      console.log('Saving manual article to database:', editableArticle);
-      
-      // Save to database
-      const response = await fetch('/api/admin/articles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          title: editableArticle.title,
-          content: editableArticle.content,
-          type: 'manual',
-          category: 'general',
-          tags: editableArticle.keyPoints.filter(point => point.trim() !== ''),
-          triggers: [] // Manual articles don't have triggers
-        })
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Manual article saved to database:', result);
-        alert('Article saved successfully to database! It will appear in the quiz editor.');
-        router.push(`/admin/quiz-editor/${quizType}`);
-      } else {
-        const error = await response.text();
-        console.error('Save error:', error);
-        alert('Failed to save article. Please try again.');
-      }
-    } catch (error) {
-      console.error('Failed to save manual article:', error);
-      alert('Failed to save article. Please check your connection and try again.');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleEditGeneratedArticle = () => {
-    if (!generatedArticle) return;
+  const getIconComponent = () => {
+    const baseClass = "w-16 h-16";
     
-    // Copy generated article to editable fields
-    setEditableArticle({
-      title: generatedArticle.title,
-      content: generatedArticle.content,
-      category: generatedArticle.category,
-      keyPoints: generatedArticle.keyPoints || ['']
-    });
-    
-    setIsEditingGenerated(true);
-  };
-
-  const handleSaveEditedArticle = async () => {
-    if (!editableArticle.title || !editableArticle.content) {
-      alert('Please fill in the title and content before saving.');
-      return;
-    }
-
-    setIsSaving(true);
-    try {
-      console.log('Saving edited article:', editableArticle);
-      
-      const response = await fetch('/api/admin/articles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          title: editableArticle.title,
-          content: editableArticle.content,
-          type: 'ai_generated',
-          category: editableArticle.category,
-          tags: editableArticle.keyPoints.filter(point => point.trim() !== ''),
-          triggers: useManualInput ? [] : [{
-            questionId: selectedQuestion,
-            optionValue: selectedOption,
-            priority: 5,
-            isActive: true
-          }]
-        })
-      });
-
-      console.log('Save response status:', response.status);
-      
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Save result:', result);
-        alert(result.message || 'Edited article saved successfully!');
-        router.push(`/admin/quiz-editor/${quizType}`);
-      } else {
-        const error = await response.text();
-        console.error('Save error:', error);
-        alert('Failed to save article. Please try again.');
-      }
-    } catch (error) {
-      console.error('Failed to save edited article:', error);
-      alert('Failed to save article. Please check your connection and try again.');
-    } finally {
-      setIsSaving(false);
+    switch (iconType) {
+      case 'document':
+        return (
+          <svg className={baseClass} fill="currentColor" viewBox="0 0 24 24" style={{ color: iconColor }}>
+            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+          </svg>
+        );
+      case 'chart':
+        return (
+          <svg className={baseClass} fill="currentColor" viewBox="0 0 24 24" style={{ color: iconColor }}>
+            <path d="M22,21H2V3H4V19H6V17H10V19H12V16H16V19H18V17H22V21M16,8H18V15H16V8M12,10H14V15H12V10M8,5H10V15H8V5M4,12H6V15H4V12Z" />
+          </svg>
+        );
+      case 'heart':
+        return (
+          <svg className={baseClass} fill="currentColor" viewBox="0 0 24 24" style={{ color: iconColor }}>
+            <path d="M12,21.35L10.55,20.03C5.4,15.36 2,12.27 2,8.5C2,5.41 4.42,3 7.5,3C9.24,3 10.91,3.81 12,5.08C13.09,3.81 14.76,3 16.5,3C19.58,3 22,5.41 22,8.5C22,12.27 18.6,15.36 13.45,20.03L12,21.35Z" />
+          </svg>
+        );
+      case 'star':
+        return (
+          <svg className={baseClass} fill="currentColor" viewBox="0 0 24 24" style={{ color: iconColor }}>
+            <path d="M12,17.27L18.18,21L16.54,13.97L22,9.24L14.81,8.62L12,2L9.19,8.62L2,9.24L7.45,13.97L5.82,21L12,17.27Z" />
+          </svg>
+        );
+      case 'lightbulb':
+        return (
+          <svg className={baseClass} fill="currentColor" viewBox="0 0 24 24" style={{ color: iconColor }}>
+            <path d="M12,2A7,7 0 0,1 19,9C19,11.38 17.81,13.47 16,14.74V17A1,1 0 0,1 15,18H9A1,1 0 0,1 8,17V14.74C6.19,13.47 5,11.38 5,9A7,7 0 0,1 12,2M9,21V20H15V21A1,1 0 0,1 14,22H10A1,1 0 0,1 9,21Z" />
+          </svg>
+        );
+      case 'target':
+        return (
+          <svg className={baseClass} fill="currentColor" viewBox="0 0 24 24" style={{ color: iconColor }}>
+            <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M12,10A2,2 0 0,0 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12A2,2 0 0,0 12,10Z" />
+          </svg>
+        );
+      default:
+        return (
+          <svg className={baseClass} fill="currentColor" viewBox="0 0 24 24" style={{ color: iconColor }}>
+            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+          </svg>
+        );
     }
   };
 
-  const selectedQuestionData = questions.find(q => q.id === selectedQuestion);
+  const getQuizTypeDisplayName = (type: string) => {
+    const displayNames: { [key: string]: string } = {
+      "financial-profile": "Financial Profile",
+      "health-finance": "Health Finance",
+      "marriage-finance": "Marriage Finance"
+    };
+    return displayNames[type] || type;
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gray-50">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="flex items-center justify-between max-w-7xl mx-auto">
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => window.close()}
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              <span className="text-sm font-medium">Back to Quiz Editor</span>
+            </button>
             <div>
-              <button
-                onClick={() => router.push(`/admin/quiz-editor/${quizType}`)}
-                className="text-blue-600 hover:text-blue-800 mb-2"
-              >
-                ← Back to Quiz Editor
-              </button>
-              <h1 className="text-3xl font-bold text-gray-900">Create AI Article</h1>
-              <p className="text-gray-600">Generate personalized insights for quiz answers</p>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Create AI Article - {getQuizTypeDisplayName(quizType)}
+              </h1>
+              <p className="text-sm text-gray-500">
+                Generate and customize personalized insights for quiz answers
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={handleSaveArticle}
+            disabled={isSaving || !generatedArticle}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50"
+          >
+            {isSaving ? 'Saving...' : 'Save Article'}
+          </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="grid grid-cols-2 gap-8">
             {/* Left Panel - Configuration */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Article Configuration</h2>
+          <div className="space-y-6">
+            {/* Article Generation */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">Article Generation</h2>
               
-              {/* Input Mode Toggle */}
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Input Mode
-                </label>
-                <div className="flex space-x-4">
+              <div className="space-y-4">
+                <div className="flex space-x-4 mb-4">
                   <button
                     onClick={() => setUseManualInput(false)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       !useManualInput
                         ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
                   >
                     Select from Quiz
                   </button>
                   <button
                     onClick={() => setUseManualInput(true)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       useManualInput
                         ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                     }`}
                   >
                     Write Manually
                   </button>
-                </div>
               </div>
 
               {!useManualInput ? (
                 <>
-                  {/* Question Selection */}
-              <div className="mb-6">
+                    <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Select Question
                 </label>
                 <select
                   value={selectedQuestion}
-                  onChange={(e) => {
-                    setSelectedQuestion(e.target.value);
-                    setSelectedOption('');
-                    setGeneratedArticle(null);
-                  }}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                >
-                  <option value="">Choose a question...</option>
-                  {questions.map((question) => (
-                    <option key={question.id} value={question.id} className="text-gray-900">
-                      {question.prompt}
+                        onChange={(e) => setSelectedQuestion(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                      >
+                        <option value="">Select a question...</option>
+                        {questions.map((q) => (
+                          <option key={q.id} value={q.id}>
+                            Question {q.order}: {q.prompt.substring(0, 50)}...
                     </option>
                   ))}
                 </select>
               </div>
 
-              {/* Option Selection */}
-              {selectedQuestionData && (
-                <div className="mb-6">
+                    <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Select Answer Option
                   </label>
                   <select
                     value={selectedOption}
-                    onChange={(e) => {
-                      setSelectedOption(e.target.value);
-                      setGeneratedArticle(null);
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                  >
-                    <option value="">Choose an answer option...</option>
-                    {selectedQuestionData.options.map((option) => (
-                      <option key={option.value} value={option.value} className="text-gray-900">
-                        {option.label}
+                        onChange={(e) => setSelectedOption(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        disabled={!selectedQuestion}
+                      >
+                        <option value="">Select an answer...</option>
+                        {selectedQuestion && questions.find(q => q.id === selectedQuestion)?.options.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
                       </option>
                     ))}
                   </select>
                 </div>
-              )}
-
-                  {/* Generate Button */}
-                  {selectedQuestion && selectedOption && (
-                    <button
-                      onClick={handleGenerateArticle}
-                      disabled={isGenerating}
-                      className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-                    >
-                      {isGenerating ? "Generating Article..." : "Generate AI Article"}
-                    </button>
-                  )}
                 </>
               ) : (
                 <>
-                  {/* Simple Manual Input Fields */}
-                  <div className="mb-6">
+                    <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Question Text
+                        Question
                     </label>
-                    <input
-                      type="text"
+                      <textarea
                       value={manualQuestion}
                       onChange={(e) => setManualQuestion(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        rows={3}
                       placeholder="Enter your question here..."
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     />
                   </div>
 
-                  <div className="mb-6">
+                    <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Answer Text
+                        Answer
                     </label>
-                    <input
-                      type="text"
+                      <textarea
                       value={manualAnswer}
                       onChange={(e) => setManualAnswer(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                        rows={2}
                       placeholder="Enter the answer here..."
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
                     />
                   </div>
+                  </>
+                )}
 
-                  {/* Generate Button for Manual Input */}
-                  {manualQuestion && manualAnswer && (
                     <button
-                      onClick={() => handleGenerateManualArticle()}
-                      disabled={isGenerating}
-                      className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium mb-4"
-                    >
-                      {isGenerating ? "Generating Article..." : "Generate AI Article"}
+                  onClick={useManualInput ? handleGenerateManualArticle : handleGenerateArticle}
+                  disabled={isGenerating || (!useManualInput && (!selectedQuestion || !selectedOption)) || (useManualInput && (!manualQuestion || !manualAnswer))}
+                  className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold disabled:opacity-50"
+                >
+                  {isGenerating ? 'Generating...' : 'Generate AI Article'}
                     </button>
-                  )}
-
-                </>
-              )}
+              </div>
             </div>
 
-            {/* Right Panel - Preview */}
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6">Article Preview</h2>
+            {/* Content Customization */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">Content Settings</h2>
               
-              {useManualInput ? (
-                /* Manual Mode - Show Editable Article */
-                <div className="space-y-6">
+              <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Article Title
                     </label>
                     <input
                       type="text"
-                      value={editableArticle.title}
-                      onChange={(e) => setEditableArticle({...editableArticle, title: e.target.value})}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white font-semibold"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    placeholder="Article title will be generated..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Subtitle
+                  </label>
+                  <input
+                    type="text"
+                    value={subtitle}
+                    onChange={(e) => setSubtitle(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    placeholder="Financial Guidance"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Personalized Text
+                  </label>
+                  <textarea
+                    value={personalizedText}
+                    onChange={(e) => setPersonalizedText(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    rows={3}
+                    placeholder="Use {{name}} or {{answer}} for personalization"
                     />
                   </div>
 
+                <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Article Content
+                      Statistic Value
                     </label>
-                    <textarea
-                      value={editableArticle.content}
-                      onChange={(e) => setEditableArticle({...editableArticle, content: e.target.value})}
-                      rows={8}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                    <input
+                      type="text"
+                      value={statisticValue}
+                      onChange={(e) => setStatisticValue(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                      placeholder="75%"
                     />
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Key Points
+                      Statistic Text
                     </label>
-                    <textarea
-                      value={editableArticle.keyPoints.join('\n')}
-                      onChange={(e) => setEditableArticle({...editableArticle, keyPoints: e.target.value.split('\n')})}
-                      rows={4}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+                    <input
+                      type="text"
+                      value={statisticText}
+                      onChange={(e) => setStatisticText(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                      placeholder="of people face similar challenges"
                     />
                   </div>
+                  </div>
 
-                  {/* Quick Stat Preview */}
-                  {editableArticle.keyPoints.some(point => point.includes('%')) && (
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="font-semibold text-gray-900 mb-2">Quick Stat Preview:</h4>
-                      <div className="text-2xl font-bold text-red-600 mb-1">
-                        {editableArticle.keyPoints.find(point => point.includes('%'))?.match(/\d+%/) || "70%"}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Call-to-Action Text
+                  </label>
+                  <input
+                    type="text"
+                    value={ctaText}
+                    onChange={(e) => setCtaText(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                    placeholder="CONTINUE"
+                  />
+                </div>
                       </div>
-                      <p className="text-sm text-gray-600">
-                        {editableArticle.keyPoints.find(point => point.includes('%'))?.replace(/\d+%/, "").trim() || "of people face similar challenges"}
+                    </div>
+
+            {/* Visual Settings */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">Visual Settings</h2>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Icon Type
+                  </label>
+                  <select
+                    value={iconType}
+                    onChange={(e) => setIconType(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                  >
+                    <option value="document">📄 Document</option>
+                    <option value="chart">📊 Chart</option>
+                    <option value="heart">❤️ Heart</option>
+                    <option value="star">⭐ Star</option>
+                    <option value="lightbulb">💡 Lightbulb</option>
+                    <option value="target">🎯 Target</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="showIcon"
+                    checked={showIcon}
+                    onChange={(e) => setShowIcon(e.target.checked)}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="showIcon" className="text-sm font-medium text-gray-700">
+                    Show Icon
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="showStatistic"
+                    checked={showStatistic}
+                    onChange={(e) => setShowStatistic(e.target.checked)}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="showStatistic" className="text-sm font-medium text-gray-700">
+                    Show Statistic
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="showCta"
+                    checked={showCta}
+                    onChange={(e) => setShowCta(e.target.checked)}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label htmlFor="showCta" className="text-sm font-medium text-gray-700">
+                    Show Call-to-Action Button
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Background
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="color"
+                        value={backgroundColor}
+                        onChange={(e) => setBackgroundColor(e.target.value)}
+                        className="w-12 h-10 rounded cursor-pointer border border-gray-300"
+                      />
+                      <input
+                        type="text"
+                        value={backgroundColor}
+                        onChange={(e) => setBackgroundColor(e.target.value)}
+                        className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                      />
+                    </div>
+                  </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Text
+                      </label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="color"
+                        value={textColor}
+                        onChange={(e) => setTextColor(e.target.value)}
+                        className="w-12 h-10 rounded cursor-pointer border border-gray-300"
+                      />
+                      <input
+                        type="text"
+                        value={textColor}
+                        onChange={(e) => setTextColor(e.target.value)}
+                        className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                      />
+                    </div>
+                  </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Icon
+                      </label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="color"
+                        value={iconColor}
+                        onChange={(e) => setIconColor(e.target.value)}
+                        className="w-12 h-10 rounded cursor-pointer border border-gray-300"
+                      />
+                      <input
+                        type="text"
+                        value={iconColor}
+                        onChange={(e) => setIconColor(e.target.value)}
+                        className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                      />
+                    </div>
+                  </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Accent/Button
+                      </label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="color"
+                        value={accentColor}
+                        onChange={(e) => setAccentColor(e.target.value)}
+                        className="w-12 h-10 rounded cursor-pointer border border-gray-300"
+                      />
+                      <input
+                        type="text"
+                        value={accentColor}
+                        onChange={(e) => setAccentColor(e.target.value)}
+                        className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+                        </div>
+                      </div>
+
+          {/* Right Panel - Live Preview */}
+          <div className="sticky top-6">
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-6">Live Preview</h2>
+              
+              <div 
+                className="rounded-2xl shadow-2xl p-8 text-center min-h-[600px] flex flex-col"
+                style={{ backgroundColor }}
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <button className="flex items-center space-x-2 text-gray-600">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    </button>
+                  <div className="text-lg font-bold" style={{ color: textColor }}>BRIGHTNEST</div>
+                  <div className="px-3 py-1 rounded-full text-xs font-medium text-white" style={{ backgroundColor: accentColor }}>
+                    FINANCIAL
+                  </div>
+                </div>
+
+                {/* Icon */}
+                {showIcon && (
+                  <div className="mb-6 flex justify-center">
+                    {getIconComponent()}
+                  </div>
+                )}
+
+                {/* Title */}
+                <h1 
+                  className="text-2xl font-bold mb-3 leading-tight"
+                  style={{ color: textColor }}
+                >
+                  {title || 'ARTICLE TITLE'}
+                </h1>
+
+                {/* Subtitle */}
+                {subtitle && (
+                  <p 
+                    className="text-sm mb-6 opacity-80"
+                    style={{ color: textColor }}
+                  >
+                    {subtitle}
+                  </p>
+                )}
+
+                {/* Content */}
+                <div className="flex-1 flex items-center justify-center">
+                  {generatedArticle ? (
+                    <div className="text-left max-w-md">
+                      <p 
+                        className="text-sm leading-relaxed mb-4"
+                        style={{ color: textColor }}
+                      >
+                        {generatedArticle.content.substring(0, 200)}...
+                      </p>
+                      
+                      {personalizedText && (
+                        <p 
+                          className="text-sm opacity-80 mb-4"
+                          style={{ color: textColor }}
+                        >
+                          {personalizedText
+                            .replace(/\{\{name\}\}/g, 'John')
+                            .replace(/\{\{answer\}\}/g, 'financial planning')}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <div className="w-16 h-16 mx-auto mb-4 opacity-50" style={{ color: iconColor }}>
+                        <svg fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                        </svg>
+                      </div>
+                      <p className="text-sm opacity-60" style={{ color: textColor }}>
+                        Select a question and answer option to generate an article
                       </p>
                     </div>
                   )}
+                    </div>
 
-                  <button
-                    onClick={() => handleSaveManualArticle()}
-                    disabled={!editableArticle.title || !editableArticle.content}
-                    className="w-full bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                {/* Statistic */}
+                {showStatistic && (
+                  <div className="mb-6">
+                    <div className="text-4xl font-bold mb-2" style={{ color: accentColor }}>
+                      {statisticValue}
+                    </div>
+                    <div className="text-sm" style={{ color: textColor }}>
+                      {statisticText}
+                    </div>
+                  </div>
+                )}
+
+                {/* CTA Button */}
+                {showCta && (
+                  <button 
+                    className="w-full py-4 rounded-lg font-bold text-white transition-colors"
+                    style={{ backgroundColor: accentColor }}
                   >
-                    Save Manual Article
+                    {ctaText}
                   </button>
-                </div>
-              ) : (
-                /* AI Generated Mode */
-                !generatedArticle ? (
-                  <div className="text-center py-12">
-                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                    </div>
-                    <p className="text-gray-500">Select a question and answer option to generate an article</p>
-                  </div>
-                ) : isEditingGenerated ? (
-                  /* Editing Generated Article */
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold text-gray-900">Editing Generated Article</h3>
-                      <button
-                        onClick={() => setIsEditingGenerated(false)}
-                        className="text-gray-500 hover:text-gray-700"
-                      >
-                        Cancel Edit
-                      </button>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Article Title
-                      </label>
-                      <input
-                        type="text"
-                        value={editableArticle.title}
-                        onChange={(e) => setEditableArticle({...editableArticle, title: e.target.value})}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white font-semibold"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Article Content
-                      </label>
-                      <textarea
-                        value={editableArticle.content}
-                        onChange={(e) => setEditableArticle({...editableArticle, content: e.target.value})}
-                        rows={8}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Key Points
-                      </label>
-                      <textarea
-                        value={editableArticle.keyPoints.join('\n')}
-                        onChange={(e) => setEditableArticle({...editableArticle, keyPoints: e.target.value.split('\n')})}
-                        rows={4}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
-                      />
-                    </div>
-
-                    {/* Quick Stat Preview */}
-                    {editableArticle.keyPoints.some(point => point.includes('%')) && (
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <h4 className="font-semibold text-gray-900 mb-2">Quick Stat Preview:</h4>
-                        <div className="text-2xl font-bold text-red-600 mb-1">
-                          {editableArticle.keyPoints.find(point => point.includes('%'))?.match(/\d+%/) || "70%"}
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          {editableArticle.keyPoints.find(point => point.includes('%'))?.replace(/\d+%/, "").trim() || "of people face similar challenges"}
-                        </p>
-                      </div>
-                    )}
-
-                    <button
-                      onClick={handleSaveEditedArticle}
-                      disabled={!editableArticle.title || !editableArticle.content}
-                      className="w-full bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-                    >
-                      Save Edited Article
-                    </button>
-                  </div>
-                ) : (
-                  /* Viewing Generated Article */
-                  <div className="space-y-6">
-                    {/* Article Content */}
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        {generatedArticle.title}
-                      </h3>
-                      <p className="text-gray-700 leading-relaxed">
-                        {generatedArticle.content}
-                      </p>
-                    </div>
-
-                    {/* Key Points */}
-                    {generatedArticle.keyPoints && generatedArticle.keyPoints.length > 0 && (
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Key Points:</h4>
-                        <ul className="space-y-1">
-                          {generatedArticle.keyPoints.map((point: string, index: number) => (
-                            <li key={index} className="text-sm text-gray-600 flex items-start">
-                              <span className="text-blue-500 mr-2">•</span>
-                              {point}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {/* Quick Stat Preview */}
-                    <div className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="font-semibold text-gray-900 mb-2">Quick Stat Preview:</h4>
-                      <div className="text-2xl font-bold text-red-600 mb-1">
-                        {generatedArticle.keyPoints?.[0]?.match(/\d+%/) || "70%"}
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        {generatedArticle.keyPoints?.[0]?.replace(/\d+%/, "").trim() || "of people face similar challenges"}
-                      </p>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex space-x-3">
-                      <button
-                        onClick={handleEditGeneratedArticle}
-                        className="flex-1 bg-orange-600 text-white px-4 py-3 rounded-lg hover:bg-orange-700 font-medium"
-                      >
-                        Edit Article
-                      </button>
-                      <button
-                        onClick={handleSaveArticle}
-                        disabled={isSaving}
-                        className="flex-1 bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-                      >
-                        {isSaving ? "Saving..." : "Save As-Is"}
-                      </button>
-                    </div>
-                  </div>
-                )
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>

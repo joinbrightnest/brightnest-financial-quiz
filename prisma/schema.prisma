@@ -85,6 +85,22 @@ model Article {
   type        String   // "static", "ai_generated", "template"
   category    String   // "marriage", "health", "career", etc.
   tags        Json     // Array of tags for better matching
+  
+  // Customization fields similar to LoadingScreen
+  subtitle           String?  // Optional subtitle
+  personalizedText   String?  // Text that can include variables like {{name}}, {{answer}}, etc.
+  backgroundColor    String   @default("#ffffff") // Background color
+  textColor          String   @default("#000000") // Text color
+  iconColor          String   @default("#3b82f6") // Icon color
+  accentColor        String   @default("#ef4444") // Accent/CTA button color
+  iconType           String   @default("document") // Type of icon (document, chart, heart, etc.)
+  showIcon           Boolean  @default(true) // Whether to show icon
+  showStatistic      Boolean  @default(true) // Whether to show statistic callout
+  statisticText      String?  // Custom statistic text (e.g., "75% of people...")
+  statisticValue     String?  // Custom statistic value (e.g., "75%")
+  ctaText            String   @default("CONTINUE") // Call-to-action button text
+  showCta            Boolean  @default(true) // Whether to show CTA button
+  
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
