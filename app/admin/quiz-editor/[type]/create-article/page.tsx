@@ -170,11 +170,11 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          title: title || generatedArticle.title,
-          content: personalizedText || generatedArticle.content,
+          title: title || generatedArticle?.title || 'Untitled Article',
+          content: personalizedText || generatedArticle?.content || '',
           type: 'ai_generated',
-          category: generatedArticle.category,
-          tags: generatedArticle.tags,
+          category: generatedArticle?.category || 'general',
+          tags: generatedArticle?.tags || [],
           // Customization fields
           subtitle,
           personalizedText,
@@ -718,7 +718,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                       >
                         {personalizedText ? 
                           personalizedText.substring(0, 200) + (personalizedText.length > 200 ? '...' : '') :
-                          generatedArticle.content.substring(0, 200) + '...'
+                          generatedArticle?.content?.substring(0, 200) + '...' || 'No content generated yet'
                         }
                       </p>
                     </div>
