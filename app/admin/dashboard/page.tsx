@@ -292,25 +292,55 @@ export default function AdminDashboard() {
   const dailyActivityData = getActivityChartData();
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6">
-      <div className="container mx-auto px-4">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-8 space-y-4 lg:space-y-0">
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <div className="w-64 bg-white border-r border-gray-200 shadow-sm">
+        <div className="p-6">
+          <div className="flex items-center space-x-3 mb-8">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-              <p className="text-gray-600">BrightNest Quiz Analytics</p>
+              <h1 className="text-lg font-bold text-gray-900">BrightNest</h1>
+              <p className="text-xs text-gray-500">Admin Panel</p>
+            </div>
+          </div>
+
+          <nav className="space-y-2">
+            <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Analytics
+            </div>
+            <button className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 bg-blue-50 border-r-2 border-blue-600 rounded-l-lg">
+              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <span className="text-sm font-medium">Dashboard</span>
+            </button>
+            <button
+              onClick={() => window.open('/admin/quiz-management', '_self')}
+              className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors group"
+            >
+              <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              <span className="text-sm font-medium">Quiz Management</span>
+            </button>
+          </nav>
+
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Filters
             </div>
             
-            {/* Filters and Controls */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
-              {/* Quiz Type Filter */}
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium text-gray-700">Quiz Type:</label>
+            <div className="space-y-4 px-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-2">Quiz Type</label>
                 <select
                   value={selectedQuizType}
                   onChange={(e) => setSelectedQuizType(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="all">All Quizzes</option>
                   {stats?.quizTypes?.map((quizType: {name: string, displayName: string, description: string, questionCount: number}) => (
@@ -321,13 +351,12 @@ export default function AdminDashboard() {
                 </select>
               </div>
 
-              {/* Date Range Filter */}
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium text-gray-700">Period:</label>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-2">Period</label>
                 <select
                   value={dateRange}
                   onChange={(e) => setDateRange(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="7d">Last 7 days</option>
                   <option value="30d">Last 30 days</option>
@@ -336,13 +365,11 @@ export default function AdminDashboard() {
                 </select>
               </div>
 
-
-              {/* Comparison Toggle */}
-              <div className="flex items-center space-x-2">
-                <label className="text-sm font-medium text-gray-700">Compare:</label>
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-2">Comparison</label>
                 <button
                   onClick={() => setShowComparison(!showComparison)}
-                  className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                  className={`w-full px-3 py-2 rounded-lg text-sm transition-colors ${
                     showComparison 
                       ? 'bg-blue-600 text-white' 
                       : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
@@ -351,35 +378,45 @@ export default function AdminDashboard() {
                   {showComparison ? 'Hide' : 'Show'} Previous Period
                 </button>
               </div>
-
-              {/* Action Buttons */}
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => window.open('/admin/quiz-management', '_self')}
-                  className="bg-purple-600 text-white py-2 px-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2 text-sm shadow-sm hover:shadow-md"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                  <span>Quiz Management</span>
-                </button>
-                <button
-                  onClick={resetAllData}
-                  className="bg-red-600 text-white py-2 px-3 rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-2 text-sm shadow-sm hover:shadow-md"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                  <span>Reset All</span>
-                </button>
-                <button
-                  onClick={logout}
-                  className="bg-gray-600 text-white py-2 px-3 rounded-lg hover:bg-gray-700 transition-colors text-sm shadow-sm hover:shadow-md"
-                >
-                  Logout
-                </button>
-              </div>
             </div>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Actions
+            </div>
+            
+            <div className="space-y-2 px-3">
+              <button
+                onClick={resetAllData}
+                className="w-full flex items-center space-x-3 px-3 py-2.5 text-red-700 hover:bg-red-50 rounded-lg transition-colors group"
+              >
+                <svg className="w-5 h-5 text-red-400 group-hover:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                <span className="text-sm font-medium">Reset All</span>
+              </button>
+              <button
+                onClick={logout}
+                className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors group"
+              >
+                <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span className="text-sm font-medium">Logout</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-8">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <p className="text-gray-600 mt-1">BrightNest Quiz Analytics</p>
           </div>
 
           {/* Stats Cards */}
@@ -542,79 +579,11 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Quiz Management Section */}
-              <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <svg className="w-5 h-5 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                    Quiz Management
-                  </h3>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {stats?.quizTypes?.map((quizType: {name: string, displayName: string, description: string, questionCount: number}, index: number) => (
-                    <div key={quizType.name} className="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition-colors">
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="font-medium text-gray-900">{quizType.displayName}</h4>
-                        <span className={`text-xs px-2 py-1 rounded-full ${
-                          index === 0 ? 'bg-blue-100 text-blue-800' :
-                          index === 1 ? 'bg-green-100 text-green-800' :
-                          'bg-pink-100 text-pink-800'
-                        }`}>
-                          {quizType.questionCount} questions
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600 mb-3">{quizType.description}</p>
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => window.open(`/admin/quiz-editor/${quizType.name}`, '_self')}
-                          className="flex-1 bg-purple-600 text-white py-2 px-3 rounded-md hover:bg-purple-700 transition-colors text-sm font-medium"
-                        >
-                          Customize
-                        </button>
-                        <button
-                          onClick={() => window.open(`/quiz/${quizType.name}`, '_blank')}
-                          className="flex-1 bg-gray-100 text-gray-700 py-2 px-3 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium"
-                        >
-                          Preview
-                        </button>
-                      </div>
-                    </div>
-                  )) || (
-                    // Fallback to static quiz types if API fails
-                    <>
-                      <div className="border border-gray-200 rounded-lg p-4 hover:border-purple-300 transition-colors">
-                        <div className="flex items-center justify-between mb-3">
-                          <h4 className="font-medium text-gray-900">Financial Profile</h4>
-                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">10 questions</span>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-3">General financial personality assessment</p>
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => window.open('/admin/quiz-editor/financial-profile', '_self')}
-                            className="flex-1 bg-purple-600 text-white py-2 px-3 rounded-md hover:bg-purple-700 transition-colors text-sm font-medium"
-                          >
-                            Customize
-                          </button>
-                          <button
-                            onClick={() => window.open('/quiz/financial-profile', '_blank')}
-                            className="flex-1 bg-gray-100 text-gray-700 py-2 px-3 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium"
-                          >
-                            Preview
-                          </button>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
 
-              {/* Charts Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                {/* Quiz Retention Chart */}
-                <div className="bg-white rounded-lg shadow-lg p-6">
+          {/* Charts Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Quiz Retention Chart */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                     <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -719,8 +688,8 @@ export default function AdminDashboard() {
                   )}
                 </div>
 
-                {/* Activity Chart */}
-                <div className="bg-white rounded-lg shadow-lg p-6">
+            {/* Activity Chart */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                   <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                       <svg className="w-5 h-5 text-blue-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -828,14 +797,14 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Top Drop-off Questions */}
-              <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <svg className="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-                  </svg>
-                  Top Funnel Drop-offs
-                </h3>
+          {/* Top Funnel Drop-offs */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <svg className="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+              </svg>
+              Top Funnel Drop-offs
+            </h3>
                 <div className="space-y-3">
                   {stats.topDropOffQuestions.length > 0 ? (
                     stats.topDropOffQuestions.map((question, index) => (
