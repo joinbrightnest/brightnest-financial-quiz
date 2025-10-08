@@ -798,45 +798,102 @@ export default function AdminDashboard() {
               </div>
 
           {/* Top Funnel Drop-offs */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-              <svg className="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
-              </svg>
-              Top Funnel Drop-offs
-            </h3>
-                <div className="space-y-3">
-                  {stats.topDropOffQuestions.length > 0 ? (
-                    stats.topDropOffQuestions.map((question, index) => (
-                      <div key={question.questionNumber} className="flex items-center justify-between p-4 bg-red-50 rounded-lg border border-red-100">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-bold text-red-600">#{index + 1}</span>
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-900">Q{question.questionNumber}</p>
-                            <p className="text-sm text-gray-600 truncate max-w-md">{question.questionText}</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-lg font-bold text-red-600">{question.dropFromPrevious}%</p>
-                          <p className="text-xs text-gray-500">drop-off</p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-8">
-                      <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                      <h4 className="text-lg font-medium text-gray-900 mb-2">Great Retention!</h4>
-                      <p className="text-sm text-gray-500">No significant drop-offs detected. Users are completing the quiz successfully.</p>
-                    </div>
-                  )}
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900">Top Funnel Drop-offs</h3>
+                  <p className="text-sm text-gray-500">Questions causing the highest user abandonment</p>
                 </div>
               </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-red-600">{stats.topDropOffQuestions.length}</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">Critical Issues</div>
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              {stats.topDropOffQuestions.length > 0 ? (
+                stats.topDropOffQuestions.map((question, index) => (
+                  <div key={question.questionNumber} className="group relative overflow-hidden bg-gradient-to-r from-white to-gray-50 rounded-xl border border-gray-200 hover:border-red-200 transition-all duration-300 hover:shadow-lg">
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative p-6">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-start space-x-4 flex-1">
+                          <div className="relative">
+                            <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-300">
+                              <span className="text-sm font-bold text-white">#{index + 1}</span>
+                            </div>
+                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-400 rounded-full border-2 border-white"></div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                Q{question.questionNumber}
+                              </span>
+                              <span className="text-xs text-gray-500 font-medium">
+                                {question.retentionRate.toFixed(1)}% retention
+                              </span>
+                            </div>
+                            <h4 className="text-base font-semibold text-gray-900 mb-2 leading-relaxed">
+                              {question.questionText}
+                            </h4>
+                            <div className="flex items-center space-x-4 text-sm text-gray-600">
+                              <div className="flex items-center space-x-1">
+                                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>Previous: {question.previousRetentionRate.toFixed(1)}%</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right ml-6">
+                          <div className="bg-red-50 rounded-lg p-4 border border-red-100">
+                            <div className="text-2xl font-bold text-red-600 mb-1">
+                              {question.dropFromPrevious.toFixed(1)}%
+                            </div>
+                            <div className="text-xs text-red-500 font-medium uppercase tracking-wide">
+                              Drop-off Rate
+                            </div>
+                            <div className="mt-2 w-16 h-1 bg-red-200 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-gradient-to-r from-red-500 to-red-600 rounded-full transition-all duration-500"
+                                style={{ width: `${Math.min(question.dropFromPrevious, 100)}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-12">
+                  <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-3">Excellent Retention!</h4>
+                  <p className="text-gray-600 max-w-md mx-auto leading-relaxed">
+                    No significant drop-offs detected. Users are completing the quiz successfully, indicating strong engagement and clear question flow.
+                  </p>
+                  <div className="mt-6 inline-flex items-center px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Quiz Flow Optimized
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
               {/* Archetype Distribution */}
               <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
