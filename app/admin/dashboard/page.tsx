@@ -293,8 +293,8 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <div className="w-64 bg-white border-r border-gray-200 shadow-sm">
+      {/* Sidebar - Fixed */}
+      <div className="w-64 bg-white border-r border-gray-200 shadow-sm fixed h-full overflow-y-auto">
         <div className="p-6">
           <div className="flex items-center space-x-3 mb-8">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
@@ -410,8 +410,8 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Main Content - Scrollable */}
+      <div className="flex-1 ml-64 overflow-y-auto">
         <div className="p-8">
           {/* Header */}
           <div className="mb-8">
