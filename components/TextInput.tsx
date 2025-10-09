@@ -7,7 +7,7 @@ interface TextInputProps {
   };
   value: string;
   onChange: (value: string) => void;
-  onNext: () => void;
+  onSubmit: () => void;
   onBack?: () => void;
   canGoBack?: boolean;
   currentQuestion?: number;
@@ -22,12 +22,12 @@ export default function TextInput({
   question, 
   value, 
   onChange, 
-  onNext, 
+  onSubmit, 
   onBack, 
   canGoBack = false, 
   currentQuestion, 
   totalQuestions,
-  userVariables = {}
+  userVariables = {},
 }: TextInputProps) {
   // Replace variables in the question prompt
   const replaceVariables = (text: string) => {
@@ -40,10 +40,11 @@ export default function TextInput({
     }
     return replacedText;
   };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (value.trim()) {
-      onNext();
+      onSubmit();
     }
   };
 
@@ -89,10 +90,10 @@ export default function TextInput({
             <button
               type="submit"
               disabled={!value.trim()}
-              className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors ${
-                value.trim()
-                  ? "bg-teal-600 text-white hover:bg-teal-700"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+              className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 ${
+                !value.trim()
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-teal-600 text-white hover:bg-teal-700"
               }`}
             >
               Continue

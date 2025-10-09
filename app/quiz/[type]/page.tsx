@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import QuestionCard from "@/components/QuestionCard";
 import TextInput from "@/components/TextInput";
@@ -9,6 +9,7 @@ import LoadingScreenDisplay from "@/components/LoadingScreenDisplay";
 
 interface Question {
   id: string;
+  order: number;
   prompt: string;
   type: string;
   options: Array<{
@@ -41,9 +42,35 @@ interface QuizPageProps {
   }>;
 }
 
+type QuizState = 'loading' | 'question' | 'article' | 'loading-screen' | 'error' | 'completed';
+
 export default function QuizPage({ params }: QuizPageProps) {
   const router = useRouter();
+  
+  // Core quiz state
   const [quizType, setQuizType] = useState<string>('');
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+  const [totalQuestions, setTotalQuestions] = useState(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  
+  // User input state
+  const [selectedValue, setSelectedValue] = useState<string | null>(null);
+  const [textValue, setTextValue] = useState<string>("");
+  const [userVariables, setUserVariables] = useState<{name?: string; email?: string}>({});
+  
+  // UI state
+  const [quizState, setQuizState] = useState<QuizState>('loading');
+  const [error, setError] = useState<string | null>(null);
+  const [canGoBack, setCanGoBack] = useState(false);
+  
+  // Article state
+  const [articleData, setArticleData] = useState<any>(null);
+  const [lastAnswer, setLastAnswer] = useState<{questionId: string, answerValue: string, answerLabel: string} | null>(null);
+  
+  // Loading screen state
+  const [currentLoadingScreen, setCurrentLoadingScreen] = useState<LoadingScreen | null>(null);
+  const [pendingNextQuestion, setPendingNextQuestion] = useState<Question | null>(null);
 
   // Handle async params
   useEffect(() => {
@@ -53,59 +80,34 @@ export default function QuizPage({ params }: QuizPageProps) {
     };
     getParams();
   }, [params]);
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [questionNumber, setQuestionNumber] = useState(1);
-  const [totalQuestions, setTotalQuestions] = useState(0);
-  const [selectedValue, setSelectedValue] = useState<string | null>(null);
-  const [textValue, setTextValue] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [canGoBack, setCanGoBack] = useState(false);
-  const [showArticle, setShowArticle] = useState(false);
-  const [lastAnswer, setLastAnswer] = useState<{questionId: string, answerValue: string, answerLabel: string} | null>(null);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const hasInitiallyLoaded = useRef(false);
-  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
-  const [currentLoadingScreen, setCurrentLoadingScreen] = useState<LoadingScreen | null>(null);
-  const [pendingNextQuestion, setPendingNextQuestion] = useState<Question | null>(null);
-  const [userVariables, setUserVariables] = useState<{name?: string; email?: string}>({});
 
+  // Initialize quiz
   useEffect(() => {
-    if (!quizType) return; // Wait for quizType to be set
+    if (!quizType) return;
     
     const initializeQuiz = async () => {
       try {
-        console.log('Starting quiz for type:', quizType);
         const response = await fetch("/api/quiz/start", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ quizType }),
         });
         
-        console.log('Quiz start response status:', response.status);
-        
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          console.error('Quiz start failed:', response.status, errorData);
-          throw new Error(`Failed to start quiz: ${response.status} ${errorData.error || 'Unknown error'}`);
+          throw new Error("Failed to start quiz");
         }
         
         const data = await response.json();
-        console.log('Quiz started successfully:', data);
         setSessionId(data.sessionId);
         setCurrentQuestion(data.question);
+        setCurrentQuestionIndex(0);
         setTotalQuestions(await getTotalQuestions());
-        setCanGoBack(false); // Can't go back from first question
-        hasInitiallyLoaded.current = true;
-        setIsLoading(false);
+        setCanGoBack(false);
+        setQuizState('question');
       } catch (err) {
         console.error('Quiz initialization error:', err);
-        setError(`Failed to start quiz. Please try again. Error: ${err instanceof Error ? err.message : 'Unknown error'}`);
-        hasInitiallyLoaded.current = true;
-        setIsLoading(false);
+        setError("Failed to start quiz. Please try again.");
+        setQuizState('error');
       }
     };
 
@@ -114,80 +116,77 @@ export default function QuizPage({ params }: QuizPageProps) {
 
   const getTotalQuestions = async (): Promise<number> => {
     try {
-      console.log('Getting total questions for quiz type:', quizType);
       const response = await fetch(`/api/quiz/questions/count?quizType=${quizType}`);
-      console.log('Questions count response status:', response.status);
-      
-      if (!response.ok) {
-        console.error('Failed to get question count:', response.status);
-        return 10; // fallback
-      }
-      
+      if (!response.ok) return 10;
       const data = await response.json();
-      console.log('Total questions:', data.count);
       return data.count;
-    } catch (err) {
-      console.error('Error getting total questions:', err);
-      return 10; // fallback
+    } catch {
+      return 10;
     }
   };
 
-  const handleAnswer = async (value: string) => {
-    if (isTransitioning) return; // Prevent multiple clicks
-    
-    // Immediately show visual feedback
-    setIsTransitioning(true);
-    setSelectedValue(value);
-    
-    // Store name if this is a text input question for "name"
-    if (currentQuestion?.type === "text" && currentQuestion?.prompt.toLowerCase().includes("name")) {
-      setUserVariables(prev => ({ ...prev, name: value }));
-    }
-    
-    // Store email if this is an email input question
-    if (currentQuestion?.type === "email") {
-      setUserVariables(prev => ({ ...prev, email: value }));
-    }
-    
-    // Find the answer label for the article
-    const answerLabel = currentQuestion?.options.find(opt => opt.value === value)?.label || value;
-    
-    // Immediately set up the answer for potential article display
-    const answerData = {
-      questionId: currentQuestion?.id || '',
-      answerValue: value,
-      answerLabel: answerLabel
-    };
-    
-    // Start both API calls in parallel for better performance
-    const [answerResponse, articlesResponse] = await Promise.allSettled([
-      fetch("/api/quiz/answer", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId,
-          questionId: currentQuestion?.id,
-          value: value,
-        }),
-      }),
-      fetch('/api/quiz/articles', {
+  const processAnswer = async (value: string, answerLabel: string) => {
+    if (!sessionId || !currentQuestion) return;
+
+    try {
+      // Check for articles first
+      const articlesResponse = await fetch('/api/quiz/articles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           sessionId,
-          questionId: answerData.questionId,
+          questionId: currentQuestion.id,
           answerValue: value,
           answerLabel: answerLabel
         })
-      })
-    ]);
+      });
 
-    // Handle answer response
-    if (answerResponse.status === 'fulfilled' && answerResponse.value.ok) {
-      const answerData = await answerResponse.value.json();
-      
+      if (articlesResponse.ok) {
+        const articlesData = await articlesResponse.json();
+        
+        if (articlesData.articles && articlesData.articles.length > 0) {
+          setArticleData(articlesData.articles[0]);
+          setLastAnswer({
+            questionId: currentQuestion.id,
+            answerValue: value,
+            answerLabel: answerLabel
+          });
+          setQuizState('article');
+          return;
+        }
+      }
+
+      // No articles found, save answer and advance
+      await saveAnswerAndAdvance(value);
+    } catch (error) {
+      console.error('Error processing answer:', error);
+      setError("Failed to save answer. Please try again.");
+      setQuizState('error');
+    }
+  };
+
+  const saveAnswerAndAdvance = async (value: string) => {
+    if (!sessionId || !currentQuestion) return;
+
+    try {
+      const answerResponse = await fetch("/api/quiz/answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          questionId: currentQuestion.id,
+          value: value,
+        }),
+      });
+
+      if (!answerResponse.ok) {
+        throw new Error("Failed to save answer");
+      }
+
+      const answerData = await answerResponse.json();
+
       if (answerData.isComplete) {
-        // Calculate result
+        // Quiz completed
         const resultResponse = await fetch("/api/quiz/result", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -197,41 +196,65 @@ export default function QuizPage({ params }: QuizPageProps) {
         if (resultResponse.ok) {
           const resultData = await resultResponse.json();
           router.push(`/results/${resultData.resultId}`);
-          return;
         }
       } else {
-        // Handle articles response
-        if (articlesResponse.status === 'fulfilled') {
-          const articlesData = await articlesResponse.value.json();
-          
-          // If there are articles, show them
-          if (articlesData.articles && articlesData.articles.length > 0) {
-            setLastAnswer(answerData);
-            setShowArticle(true);
-            setIsTransitioning(false);
-            return;
-          }
+        // Check for loading screen
+        if (answerData.loadingScreen) {
+          setCurrentLoadingScreen(answerData.loadingScreen);
+          setPendingNextQuestion(answerData.nextQuestion);
+          setQuizState('loading-screen');
+        } else {
+          // Move to next question
+          setCurrentQuestion(answerData.nextQuestion);
+          setCurrentQuestionIndex(prev => prev + 1);
+          setCanGoBack(true);
+          clearInputs();
+          setQuizState('question');
         }
-        
-        // No articles found or error, go straight to next question
-        await handleNextQuestion(answerData);
       }
-    } else {
-      console.error('Error saving answer:', answerResponse);
-      setIsTransitioning(false);
+    } catch (error) {
+      console.error('Error saving answer:', error);
       setError("Failed to save answer. Please try again.");
+      setQuizState('error');
     }
   };
 
+  const handleAnswer = async (value: string) => {
+    if (!currentQuestion) return;
+    
+    // Store user variables
+    if (currentQuestion.type === "text" && currentQuestion.prompt.toLowerCase().includes("name")) {
+      setUserVariables(prev => ({ ...prev, name: value }));
+    }
+    if (currentQuestion.type === "email") {
+      setUserVariables(prev => ({ ...prev, email: value }));
+    }
+    
+    const answerLabel = currentQuestion.options.find(opt => opt.value === value)?.label || value;
+    await processAnswer(value, answerLabel);
+  };
+
+  const handleTextSubmit = async () => {
+    if (!textValue.trim() || !currentQuestion) return;
+    
+    // Store user variables
+    if (currentQuestion.type === "text" && currentQuestion.prompt.toLowerCase().includes("name")) {
+      setUserVariables(prev => ({ ...prev, name: textValue }));
+    }
+    if (currentQuestion.type === "email") {
+      setUserVariables(prev => ({ ...prev, email: textValue }));
+    }
+    
+    await processAnswer(textValue, textValue);
+  };
+
   const handleBack = async () => {
-    if (!sessionId || !currentQuestion || questionNumber <= 1) return;
+    if (!sessionId || !currentQuestion || currentQuestion.order <= 1) return;
 
     try {
       const response = await fetch("/api/quiz/previous", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sessionId,
           currentQuestionId: currentQuestion.id,
@@ -244,10 +267,13 @@ export default function QuizPage({ params }: QuizPageProps) {
 
       const data = await response.json();
       setCurrentQuestion(data.question);
-      setQuestionNumber(data.questionNumber);
-      setCanGoBack(data.questionNumber > 1);
+      setCurrentQuestionIndex(prev => Math.max(0, prev - 1));
+      setCanGoBack(data.question.order > 1);
       
-      // Set the existing answer if there is one
+      // Clear states
+      clearAllStates();
+      
+      // Restore existing answer
       if (data.existingAnswer) {
         if (data.question.type === "text" || data.question.type === "email") {
           setTextValue(data.existingAnswer);
@@ -257,123 +283,49 @@ export default function QuizPage({ params }: QuizPageProps) {
           setTextValue("");
         }
       } else {
-        setSelectedValue(null);
-        setTextValue("");
+        clearInputs();
       }
+      
+      setQuizState('question');
     } catch (err) {
       setError("Failed to go back to previous question. Please try again.");
-    }
-  };
-
-  const handleNextQuestion = async (answerData: any) => {
-    // Check if there's a loading screen to show
-    if (answerData.loadingScreen) {
-      setCurrentLoadingScreen(answerData.loadingScreen);
-      setPendingNextQuestion(answerData.nextQuestion);
-      setShowLoadingScreen(true);
-    } else {
-      // Move to next question directly - set new question first, then clear states
-      setCurrentQuestion(answerData.nextQuestion);
-      setQuestionNumber(questionNumber + 1);
-      setCanGoBack(true); // Can go back from any question after the first
-      
-      // Clear states after setting new question
-      setShowArticle(false);
-      setLastAnswer(null);
-      setSelectedValue(null);
-      setTextValue("");
-    }
-    setIsTransitioning(false);
-  };
-
-  const handleNext = async (providedValue?: string) => {
-    const valueToSubmit = currentQuestion?.type === "text" || currentQuestion?.type === "email" 
-      ? textValue 
-      : providedValue || selectedValue;
-      
-    if (!valueToSubmit || !sessionId || !currentQuestion) return;
-
-    setIsTransitioning(true);
-
-    // Store name if this is a text input question for "name"
-    if (currentQuestion?.type === "text" && currentQuestion?.prompt.toLowerCase().includes("name")) {
-      setUserVariables(prev => ({ ...prev, name: valueToSubmit }));
-    }
-    
-    // Store email if this is an email input question
-    if (currentQuestion?.type === "email") {
-      setUserVariables(prev => ({ ...prev, email: valueToSubmit }));
-    }
-
-    try {
-      const response = await fetch("/api/quiz/answer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          sessionId,
-          questionId: currentQuestion.id,
-          value: valueToSubmit,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to save answer");
-      }
-
-      const data = await response.json();
-
-      if (data.isComplete) {
-        // Calculate result
-        const resultResponse = await fetch("/api/quiz/result", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ sessionId }),
-        });
-
-        if (resultResponse.ok) {
-          const resultData = await resultResponse.json();
-          router.push(`/results/${resultData.resultId}`);
-        }
-      } else {
-        await handleNextQuestion(data);
-      }
-    } catch (err) {
-      setIsTransitioning(false);
-      setError("Failed to save answer. Please try again.");
+      setQuizState('error');
     }
   };
 
   const handleArticleClose = async () => {
-    if (isTransitioning) return; // Prevent multiple clicks
+    if (!lastAnswer) return;
     
-    // Advance to next question first, then hide article
-    if (lastAnswer) {
-      await handleNext(lastAnswer.answerValue);
-    }
+    clearAllStates();
+    await saveAnswerAndAdvance(lastAnswer.answerValue);
   };
 
   const handleLoadingScreenComplete = () => {
     if (pendingNextQuestion) {
       setCurrentQuestion(pendingNextQuestion);
-      setQuestionNumber(questionNumber + 1);
+      setCurrentQuestionIndex(prev => prev + 1);
       setCanGoBack(true);
       
-      // Clear states
-      setShowLoadingScreen(false);
-      setCurrentLoadingScreen(null);
-      setPendingNextQuestion(null);
-      setShowArticle(false);
-      setLastAnswer(null);
-      setSelectedValue(null);
-      setTextValue("");
+      clearAllStates();
+      setQuizState('question');
     }
   };
 
-  if (isLoading && !hasInitiallyLoaded.current) {
+  const clearInputs = () => {
+    setSelectedValue(null);
+    setTextValue("");
+  };
+
+  const clearAllStates = () => {
+    clearInputs();
+    setLastAnswer(null);
+    setArticleData(null);
+    setCurrentLoadingScreen(null);
+    setPendingNextQuestion(null);
+  };
+
+  // Render based on quiz state
+  if (quizState === 'loading') {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -384,7 +336,7 @@ export default function QuizPage({ params }: QuizPageProps) {
     );
   }
 
-  if (error) {
+  if (quizState === 'error') {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -403,31 +355,7 @@ export default function QuizPage({ params }: QuizPageProps) {
     );
   }
 
-  if (!currentQuestion) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">No questions available.</p>
-        </div>
-      </div>
-    );
-  }
-
-
-  // Show loading screen if we have one
-  if (showLoadingScreen && currentLoadingScreen) {
-    return (
-      <LoadingScreenDisplay
-        {...currentLoadingScreen}
-        onComplete={handleLoadingScreenComplete}
-        userName="User" // TODO: Get actual user name from session if available
-        lastAnswer={lastAnswer?.answerLabel || "your response" || "your response"}
-      />
-    );
-  }
-
-  // Show article display if we have an article to show
-  if (showArticle && lastAnswer && sessionId) {
+  if (quizState === 'article' && lastAnswer && sessionId && articleData) {
     return (
       <ArticleDisplayWrapper
         sessionId={sessionId}
@@ -435,40 +363,52 @@ export default function QuizPage({ params }: QuizPageProps) {
         answerValue={lastAnswer.answerValue}
         answerLabel={lastAnswer.answerLabel}
         onContinue={handleArticleClose}
+        articleData={articleData}
       />
     );
   }
 
-  return (
-    <div className="min-h-screen bg-white">
-      <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-90 scale-98' : 'opacity-100 scale-100'}`}>
+  if (quizState === 'loading-screen' && currentLoadingScreen) {
+    return (
+      <LoadingScreenDisplay
+        {...currentLoadingScreen}
+        onComplete={handleLoadingScreenComplete}
+        userName={userVariables.name || "User"}
+        lastAnswer={lastAnswer?.answerLabel || "your response"}
+      />
+    );
+  }
+
+  if (quizState === 'question' && currentQuestion) {
+    return (
+      <div className="min-h-screen bg-white">
         {currentQuestion.type === "text" || currentQuestion.type === "email" ? (
           <TextInput
             question={currentQuestion}
             value={textValue}
             onChange={setTextValue}
-            onNext={handleNext}
+            onSubmit={handleTextSubmit}
             onBack={handleBack}
             canGoBack={canGoBack}
-            currentQuestion={questionNumber}
+            currentQuestion={currentQuestionIndex + 1}
             totalQuestions={totalQuestions}
             userVariables={userVariables}
           />
         ) : (
           <QuestionCard
             question={currentQuestion}
-            currentQuestion={questionNumber}
+            currentQuestion={currentQuestionIndex + 1}
             totalQuestions={totalQuestions}
             selectedValue={selectedValue}
             onAnswer={handleAnswer}
-            onNext={handleNext}
             onBack={handleBack}
             canGoBack={canGoBack}
             userVariables={userVariables}
-            isTransitioning={isTransitioning}
           />
         )}
       </div>
-    </div>
-  );
+    );
+  }
+
+  return null;
 }

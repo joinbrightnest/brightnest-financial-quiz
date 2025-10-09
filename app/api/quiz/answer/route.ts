@@ -5,39 +5,18 @@ export async function POST(request: NextRequest) {
   try {
     const { sessionId, questionId, value, dwellMs } = await request.json();
 
-    // Check if answer already exists
-    const existingAnswer = await prisma.quizAnswer.findFirst({
-      where: {
-        sessionId,
-        questionId,
-      },
-    });
+    // Handle preload requests (don't save answer, just get next question)
+    const isPreload = value === "preload";
 
-    if (existingAnswer) {
-      // Update existing answer
-      await prisma.quizAnswer.update({
-        where: { id: existingAnswer.id },
-        data: {
-          value,
-          dwellMs,
-        },
-      });
-    } else {
-      // Create new answer
-      await prisma.quizAnswer.create({
-        data: {
-          sessionId,
-          questionId,
-          value,
-          dwellMs,
-        },
-      });
-    }
-
-    // Get the next question
-    const currentQuestion = await prisma.quizQuestion.findUnique({
-      where: { id: questionId },
-    });
+    // Run database operations in parallel for better performance
+    const [existingAnswer, currentQuestion] = await Promise.all([
+      prisma.quizAnswer.findFirst({
+        where: { sessionId, questionId },
+      }),
+      prisma.quizQuestion.findUnique({
+        where: { id: questionId },
+      }),
+    ]);
 
     if (!currentQuestion) {
       return NextResponse.json(
@@ -46,23 +25,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check for loading screen after this question
-    const loadingScreen = await prisma.loadingScreen.findFirst({
-      where: {
-        quizType: currentQuestion.quizType,
-        triggerQuestionId: questionId,
-        isActive: true,
-      },
-    });
+    // Save/update answer (skip for preload requests)
+    if (!isPreload) {
+      if (existingAnswer) {
+        await prisma.quizAnswer.update({
+          where: { id: existingAnswer.id },
+          data: { value, dwellMs },
+        });
+      } else {
+        await prisma.quizAnswer.create({
+          data: { sessionId, questionId, value, dwellMs },
+        });
+      }
+    }
 
-    const nextQuestion = await prisma.quizQuestion.findFirst({
-      where: {
-        active: true,
-        quizType: currentQuestion.quizType,
-        order: { gt: currentQuestion.order },
-      },
-      orderBy: { order: "asc" },
-    });
+    // Get next question and loading screen in parallel
+    const [nextQuestion, loadingScreen] = await Promise.all([
+      prisma.quizQuestion.findFirst({
+        where: {
+          active: true,
+          quizType: currentQuestion.quizType,
+          order: { gt: currentQuestion.order },
+        },
+        orderBy: { order: "asc" },
+      }),
+      prisma.loadingScreen.findFirst({
+        where: {
+          quizType: currentQuestion.quizType,
+          triggerQuestionId: questionId,
+          isActive: true,
+        },
+      }),
+    ]);
 
     if (!nextQuestion) {
       // No more questions, mark session as completed

@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       question: previousQuestion,
       existingAnswer: existingAnswer?.value || null,
-      questionNumber: previousQuestion.order,
+      questionNumber: currentQuestion.order - 1, // Go back to previous question number
     });
   } catch (error) {
     console.error("Error getting previous question:", error);

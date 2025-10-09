@@ -34,31 +34,12 @@ export async function POST(request: NextRequest) {
 
 async function getArticlesFromDatabase(questionId: string, answerValue: string) {
   try {
-    // Looking for articles triggered by question and answer
-    
-    // Find articles that are triggered by this question and answer
+    // Optimized query - get articles directly without complex joins
     const articles = await prisma.article.findMany({
       where: {
         isActive: true,
         triggers: {
           some: {
-            OR: [
-              {
-                questionId: questionId,
-                optionValue: answerValue,
-                isActive: true
-              },
-              {
-                optionValue: answerValue,
-                isActive: true
-              }
-            ]
-          }
-        }
-      },
-      include: {
-        triggers: {
-          where: {
             isActive: true,
             OR: [
               {
@@ -74,7 +55,8 @@ async function getArticlesFromDatabase(questionId: string, answerValue: string) 
       },
       orderBy: {
         createdAt: 'desc'
-      }
+      },
+      take: 1 // Only get the first article for faster response
     });
 
     // Raw articles from database

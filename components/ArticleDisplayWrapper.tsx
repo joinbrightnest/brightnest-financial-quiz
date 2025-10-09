@@ -9,6 +9,7 @@ interface ArticleDisplayWrapperProps {
   answerValue: string;
   answerLabel: string;
   onContinue?: () => void;
+  articleData?: any; // Pre-loaded article data to avoid loading screen
 }
 
 export default function ArticleDisplayWrapper({
@@ -16,13 +17,22 @@ export default function ArticleDisplayWrapper({
   questionId,
   answerValue,
   answerLabel,
-  onContinue
+  onContinue,
+  articleData
 }: ArticleDisplayWrapperProps) {
   const [article, setArticle] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!articleData); // Only show loading if no pre-loaded data
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // If we have pre-loaded article data, use it immediately
+    if (articleData) {
+      setArticle(articleData);
+      setLoading(false);
+      return;
+    }
+
+    // Otherwise, fetch the article
     const fetchArticle = async () => {
       try {
         setLoading(true);
@@ -60,7 +70,7 @@ export default function ArticleDisplayWrapper({
     };
 
     fetchArticle();
-  }, [sessionId, questionId, answerValue, answerLabel]);
+  }, [sessionId, questionId, answerValue, answerLabel, articleData]);
 
   if (loading) {
     return (

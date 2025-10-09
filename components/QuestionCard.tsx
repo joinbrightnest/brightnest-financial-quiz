@@ -17,14 +17,12 @@ interface QuestionCardProps {
   totalQuestions: number;
   selectedValue: string | null;
   onAnswer: (value: string) => void;
-  onNext: () => void;
   onBack?: () => void;
   canGoBack?: boolean;
   userVariables?: {
     name?: string;
     email?: string;
   };
-  isTransitioning?: boolean;
 }
 
 export default function QuestionCard({
@@ -33,11 +31,9 @@ export default function QuestionCard({
   totalQuestions,
   selectedValue,
   onAnswer,
-  onNext,
   onBack,
   canGoBack = false,
   userVariables = {},
-  isTransitioning = false,
 }: QuestionCardProps) {
   // Replace variables in the question prompt
   const replaceVariables = (text: string) => {
@@ -50,6 +46,7 @@ export default function QuestionCard({
     }
     return replacedText;
   };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Top Header Bar */}
@@ -83,10 +80,7 @@ export default function QuestionCard({
                 key={option.value}
                 option={option}
                 isSelected={selectedValue === option.value}
-                isTransitioning={isTransitioning && selectedValue === option.value}
-                onClick={() => {
-                  onAnswer(option.value);
-                }}
+                onClick={() => onAnswer(option.value)}
               />
             ))}
           </div>
