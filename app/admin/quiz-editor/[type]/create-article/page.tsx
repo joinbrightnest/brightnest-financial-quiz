@@ -501,9 +501,9 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
           </div>
 
       <div className="max-w-7xl mx-auto p-4">
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-2 gap-8 h-[calc(100vh-120px)]">
             {/* Left Panel - All Settings */}
-          <div className="space-y-4">
+          <div className="space-y-4 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             {/* Article Setup */}
             <div className="bg-white rounded-lg shadow-sm p-4">
               <div className="flex items-center justify-between mb-4">
@@ -976,7 +976,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
           </div>
 
           {/* Right Panel - Live Preview Only */}
-          <div className="space-y-4">
+          <div className="sticky top-4 h-fit">
             {/* Live Preview */}
             <div className="bg-white rounded-lg shadow-sm p-4">
               <h2 className="text-base font-semibold text-gray-900 mb-4">Live Preview</h2>
