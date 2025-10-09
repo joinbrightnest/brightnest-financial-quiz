@@ -501,7 +501,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
           </div>
 
       <div className="max-w-7xl mx-auto p-4">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-8">
             {/* Left Panel - Article Setup */}
           <div className="space-y-4">
             <div className="bg-white rounded-lg shadow-sm p-4">
@@ -610,7 +610,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
             </div>
           </div>
 
-          {/* Middle Panel - Visual Settings */}
+          {/* Right Panel - Visual Settings and Live Preview */}
           <div className="space-y-4">
             <div className="bg-white rounded-lg shadow-sm p-4">
               <h2 className="text-base font-semibold text-gray-900 mb-4">Visual Settings</h2>
@@ -759,9 +759,148 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                   </div>
                       </div>
                     </div>
+
+            {/* Live Preview */}
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <h2 className="text-base font-semibold text-gray-900 mb-4">Live Preview</h2>
+              
+              <div 
+                className="rounded-lg shadow-lg min-h-[400px] flex flex-col"
+                style={backgroundStyle === 'gradient' && backgroundGradient ? { background: backgroundGradient } : { backgroundColor }}
+              >
+                {/* Header */}
+                {showTopBar && (
+                  <div className="flex items-center justify-center p-4" style={{ backgroundColor: topBarColor }}>
+                    <div className="flex items-center space-x-3">
+                      <button className="flex items-center space-x-2" style={{ color: '#ffffff' }}>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                      <div className="text-lg font-bold" style={{ color: '#ffffff' }}>BRIGHTNEST</div>
+                      <div className="px-3 py-1 rounded-full text-xs font-medium text-white" style={{ backgroundColor: accentColor }}>
+                        FINANCIAL
+                      </div>
+                    </div>
+                      </div>
+                    )}
+
+                {/* Main Content */}
+                <div className={`flex-1 flex flex-col ${
+                  contentPadding === 'compact' ? 'p-4' : 
+                  contentPadding === 'spacious' ? 'p-8' : 'p-6'
+                } items-center ${
+                  contentPosition === 'top' ? 'justify-start' :
+                  contentPosition === 'bottom' ? 'justify-end' :
+                  'justify-center'
+                }`}>
+                  {/* Content Block - All elements aligned together */}
+                  <div className="w-full max-w-md">
+                    {/* Icon */}
+                    {showIcon && (
+                      <div className={`mb-6 ${
+                        textAlignment === 'left' ? 'flex justify-start' :
+                        textAlignment === 'right' ? 'flex justify-end' :
+                        'flex justify-center'
+                      }`}>
+                        {getIconComponent()}
+                      </div>
+                    )}
+
+                    {/* Title */}
+                    <h1 
+                      className={`${getTitleSizeClass(titleFontSize)} ${getTitleWeightClass(titleFontWeight)} mb-3 ${getLineHeightClass(lineHeight)} w-full ${
+                        textAlignment === 'left' ? 'text-left' :
+                        textAlignment === 'right' ? 'text-right' :
+                        'text-center'
+                      }`}
+                      style={{ color: textColor }}
+                    >
+                      {title || 'ARTICLE TITLE'}
+                    </h1>
+
+                    {/* Subtitle */}
+                    {subtitle && (
+                      <p 
+                        className={`${getContentSizeClass(contentFontSize)} ${getContentWeightClass(contentFontWeight)} mb-6 opacity-80 w-full ${getLineHeightClass(lineHeight)} ${
+                          textAlignment === 'left' ? 'text-left' :
+                          textAlignment === 'right' ? 'text-right' :
+                          'text-center'
+                        }`}
+                        style={{ color: textColor }}
+                      >
+                        {subtitle}
+                      </p>
+                    )}
+
+                    {/* Content */}
+                    <div className="w-full mb-6">
+                      {personalizedText ? (
+                        <p 
+                          className={`${getContentSizeClass(contentFontSize)} ${getContentWeightClass(contentFontWeight)} ${getLineHeightClass(lineHeight)} mb-4 w-full ${
+                            textAlignment === 'left' ? 'text-left' :
+                            textAlignment === 'right' ? 'text-right' :
+                            'text-center'
+                          }`}
+                          style={{ color: textColor }}
+                        >
+                          {personalizedText
+                            .replace(/\{\{name\}\}/g, '{{name}}')
+                            .replace(/\{\{email\}\}/g, '{{email}}')
+                            .replace(/\{\{answer\}\}/g, '{{answer}}')
+                            .substring(0, 200) + (personalizedText.length > 200 ? '...' : '')
+                          }
+                        </p>
+                      ) : (
+                        <div className={`${
+                          textAlignment === 'left' ? 'text-left' :
+                          textAlignment === 'right' ? 'text-right' :
+                          'text-center'
+                        }`}>
+                          <div className="w-16 h-16 mx-auto mb-4 opacity-50" style={{ color: iconColor }}>
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                            </svg>
+                          </div>
+                          <p className="text-sm opacity-60" style={{ color: textColor }}>
+                            Write your content in the Article Content field above
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Statistic */}
+                    {showStatistic && (
+                      <div className={`w-full mb-6 ${
+                        textAlignment === 'left' ? 'text-left' :
+                        textAlignment === 'right' ? 'text-right' :
+                        'text-center'
+                      }`}>
+                        <div className="text-4xl font-bold mb-2 w-full" style={{ color: accentColor }}>
+                          {statisticValue}
+                        </div>
+                        <div className="text-sm w-full" style={{ color: textColor }}>
+                          {statisticText}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* CTA Button */}
+                    {showCta && (
+                      <button
+                        className="w-full py-4 rounded-lg font-bold text-white transition-colors"
+                        style={{ backgroundColor: accentColor }}
+                      >
+                        {ctaText}
+                      </button>
+                    )}
+                    </div>
+                  </div>
+              </div>
+            </div>
           </div>
 
-          {/* Right Column */}
+          {/* Third Column - Layout & Positioning Settings */}
           <div className="space-y-4">
             {/* Layout & Positioning Settings */}
             <div className="bg-white rounded-lg shadow-sm p-4">
@@ -975,145 +1114,6 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Live Preview */}
-            <div className="bg-white rounded-lg shadow-sm p-4">
-              <h2 className="text-base font-semibold text-gray-900 mb-4">Live Preview</h2>
-              
-              <div 
-                className="rounded-lg shadow-lg min-h-[400px] flex flex-col"
-                style={backgroundStyle === 'gradient' && backgroundGradient ? { background: backgroundGradient } : { backgroundColor }}
-              >
-                {/* Header */}
-                {showTopBar && (
-                  <div className="flex items-center justify-center p-4" style={{ backgroundColor: topBarColor }}>
-                    <div className="flex items-center space-x-3">
-                      <button className="flex items-center space-x-2" style={{ color: '#ffffff' }}>
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </button>
-                      <div className="text-lg font-bold" style={{ color: '#ffffff' }}>BRIGHTNEST</div>
-                      <div className="px-3 py-1 rounded-full text-xs font-medium text-white" style={{ backgroundColor: accentColor }}>
-                        FINANCIAL
-                      </div>
-                    </div>
-                      </div>
-                    )}
-
-                {/* Main Content */}
-                <div className={`flex-1 flex flex-col ${
-                  contentPadding === 'compact' ? 'p-4' : 
-                  contentPadding === 'spacious' ? 'p-8' : 'p-6'
-                } items-center ${
-                  contentPosition === 'top' ? 'justify-start' :
-                  contentPosition === 'bottom' ? 'justify-end' :
-                  'justify-center'
-                }`}>
-                  {/* Content Block - All elements aligned together */}
-                  <div className="w-full max-w-md">
-                    {/* Icon */}
-                    {showIcon && (
-                      <div className={`mb-6 ${
-                        textAlignment === 'left' ? 'flex justify-start' :
-                        textAlignment === 'right' ? 'flex justify-end' :
-                        'flex justify-center'
-                      }`}>
-                        {getIconComponent()}
-                      </div>
-                    )}
-
-                    {/* Title */}
-                    <h1 
-                      className={`${getTitleSizeClass(titleFontSize)} ${getTitleWeightClass(titleFontWeight)} mb-3 ${getLineHeightClass(lineHeight)} w-full ${
-                        textAlignment === 'left' ? 'text-left' :
-                        textAlignment === 'right' ? 'text-right' :
-                        'text-center'
-                      }`}
-                      style={{ color: textColor }}
-                    >
-                      {title || 'ARTICLE TITLE'}
-                    </h1>
-
-                    {/* Subtitle */}
-                    {subtitle && (
-                      <p 
-                        className={`${getContentSizeClass(contentFontSize)} ${getContentWeightClass(contentFontWeight)} mb-6 opacity-80 w-full ${getLineHeightClass(lineHeight)} ${
-                          textAlignment === 'left' ? 'text-left' :
-                          textAlignment === 'right' ? 'text-right' :
-                          'text-center'
-                        }`}
-                        style={{ color: textColor }}
-                      >
-                        {subtitle}
-                      </p>
-                    )}
-
-                    {/* Content */}
-                    <div className="w-full mb-6">
-                      {personalizedText ? (
-                        <p 
-                          className={`${getContentSizeClass(contentFontSize)} ${getContentWeightClass(contentFontWeight)} ${getLineHeightClass(lineHeight)} mb-4 w-full ${
-                            textAlignment === 'left' ? 'text-left' :
-                            textAlignment === 'right' ? 'text-right' :
-                            'text-center'
-                          }`}
-                          style={{ color: textColor }}
-                        >
-                          {personalizedText
-                            .replace(/\{\{name\}\}/g, '{{name}}')
-                            .replace(/\{\{email\}\}/g, '{{email}}')
-                            .replace(/\{\{answer\}\}/g, '{{answer}}')
-                            .substring(0, 200) + (personalizedText.length > 200 ? '...' : '')
-                          }
-                        </p>
-                      ) : (
-                        <div className={`${
-                          textAlignment === 'left' ? 'text-left' :
-                          textAlignment === 'right' ? 'text-right' :
-                          'text-center'
-                        }`}>
-                          <div className="w-16 h-16 mx-auto mb-4 opacity-50" style={{ color: iconColor }}>
-                            <svg fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-                            </svg>
-                          </div>
-                          <p className="text-sm opacity-60" style={{ color: textColor }}>
-                            Write your content in the Article Content field above
-                          </p>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Statistic */}
-                    {showStatistic && (
-                      <div className={`w-full mb-6 ${
-                        textAlignment === 'left' ? 'text-left' :
-                        textAlignment === 'right' ? 'text-right' :
-                        'text-center'
-                      }`}>
-                        <div className="text-4xl font-bold mb-2 w-full" style={{ color: accentColor }}>
-                          {statisticValue}
-                        </div>
-                        <div className="text-sm w-full" style={{ color: textColor }}>
-                          {statisticText}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* CTA Button */}
-                    {showCta && (
-                      <button
-                        className="w-full py-4 rounded-lg font-bold text-white transition-colors"
-                        style={{ backgroundColor: accentColor }}
-                      >
-                        {ctaText}
-                      </button>
-                    )}
-                    </div>
-                  </div>
               </div>
             </div>
           </div>
