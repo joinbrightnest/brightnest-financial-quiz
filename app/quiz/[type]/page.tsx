@@ -135,6 +135,8 @@ export default function QuizPage({ params }: QuizPageProps) {
   const handleAnswer = async (value: string) => {
     if (isTransitioning) return; // Prevent multiple clicks
     
+    // Immediately show visual feedback
+    setIsTransitioning(true);
     setSelectedValue(value);
     
     // Store name if this is a text input question for "name"
@@ -157,33 +159,68 @@ export default function QuizPage({ params }: QuizPageProps) {
       answerLabel: answerLabel
     };
     
-    // Check if there's an article for this answer (non-blocking)
-    fetch('/api/quiz/articles', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        sessionId,
-        questionId: answerData.questionId,
-        answerValue: value,
-        answerLabel: answerLabel
+    // Start both API calls in parallel for better performance
+    const [answerResponse, articlesResponse] = await Promise.allSettled([
+      fetch("/api/quiz/answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          questionId: currentQuestion?.id,
+          value: value,
+        }),
+      }),
+      fetch('/api/quiz/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId,
+          questionId: answerData.questionId,
+          answerValue: value,
+          answerLabel: answerLabel
+        })
       })
-    })
-    .then(response => response.json())
-    .then(data => {
-      // If there are articles, show them
-      if (data.articles && data.articles.length > 0) {
-        setLastAnswer(answerData);
-        setShowArticle(true);
+    ]);
+
+    // Handle answer response
+    if (answerResponse.status === 'fulfilled' && answerResponse.value.ok) {
+      const answerData = await answerResponse.value.json();
+      
+      if (answerData.isComplete) {
+        // Calculate result
+        const resultResponse = await fetch("/api/quiz/result", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId }),
+        });
+
+        if (resultResponse.ok) {
+          const resultData = await resultResponse.json();
+          router.push(`/results/${resultData.resultId}`);
+          return;
+        }
       } else {
-        // No articles found, go straight to next question
-        handleNext(value);
+        // Handle articles response
+        if (articlesResponse.status === 'fulfilled') {
+          const articlesData = await articlesResponse.value.json();
+          
+          // If there are articles, show them
+          if (articlesData.articles && articlesData.articles.length > 0) {
+            setLastAnswer(answerData);
+            setShowArticle(true);
+            setIsTransitioning(false);
+            return;
+          }
+        }
+        
+        // No articles found or error, go straight to next question
+        await handleNextQuestion(answerData);
       }
-    })
-    .catch(error => {
-      console.error('Error checking for articles:', error);
-      // On error, go to next question
-      handleNext(value);
-    });
+    } else {
+      console.error('Error saving answer:', answerResponse);
+      setIsTransitioning(false);
+      setError("Failed to save answer. Please try again.");
+    }
   };
 
   const handleBack = async () => {
@@ -228,12 +265,35 @@ export default function QuizPage({ params }: QuizPageProps) {
     }
   };
 
+  const handleNextQuestion = async (answerData: any) => {
+    // Check if there's a loading screen to show
+    if (answerData.loadingScreen) {
+      setCurrentLoadingScreen(answerData.loadingScreen);
+      setPendingNextQuestion(answerData.nextQuestion);
+      setShowLoadingScreen(true);
+    } else {
+      // Move to next question directly - set new question first, then clear states
+      setCurrentQuestion(answerData.nextQuestion);
+      setQuestionNumber(questionNumber + 1);
+      setCanGoBack(true); // Can go back from any question after the first
+      
+      // Clear states after setting new question
+      setShowArticle(false);
+      setLastAnswer(null);
+      setSelectedValue(null);
+      setTextValue("");
+    }
+    setIsTransitioning(false);
+  };
+
   const handleNext = async (providedValue?: string) => {
     const valueToSubmit = currentQuestion?.type === "text" || currentQuestion?.type === "email" 
       ? textValue 
       : providedValue || selectedValue;
       
     if (!valueToSubmit || !sessionId || !currentQuestion) return;
+
+    setIsTransitioning(true);
 
     // Store name if this is a text input question for "name"
     if (currentQuestion?.type === "text" && currentQuestion?.prompt.toLowerCase().includes("name")) {
@@ -279,25 +339,10 @@ export default function QuizPage({ params }: QuizPageProps) {
           router.push(`/results/${resultData.resultId}`);
         }
       } else {
-        // Check if there's a loading screen to show
-        if (data.loadingScreen) {
-          setCurrentLoadingScreen(data.loadingScreen);
-          setPendingNextQuestion(data.nextQuestion);
-          setShowLoadingScreen(true);
-        } else {
-          // Move to next question directly - set new question first, then clear states
-          setCurrentQuestion(data.nextQuestion);
-          setQuestionNumber(questionNumber + 1);
-          setCanGoBack(true); // Can go back from any question after the first
-          
-          // Clear states after setting new question
-          setShowArticle(false);
-          setLastAnswer(null);
-          setSelectedValue(null);
-          setTextValue("");
-        }
+        await handleNextQuestion(data);
       }
     } catch (err) {
+      setIsTransitioning(false);
       setError("Failed to save answer. Please try again.");
     }
   };
@@ -396,31 +441,34 @@ export default function QuizPage({ params }: QuizPageProps) {
 
   return (
     <div className="min-h-screen bg-white">
-      {currentQuestion.type === "text" || currentQuestion.type === "email" ? (
-        <TextInput
-          question={currentQuestion}
-          value={textValue}
-          onChange={setTextValue}
-          onNext={handleNext}
-          onBack={handleBack}
-          canGoBack={canGoBack}
-          currentQuestion={questionNumber}
-          totalQuestions={totalQuestions}
-          userVariables={userVariables}
-        />
-      ) : (
-        <QuestionCard
-          question={currentQuestion}
-          currentQuestion={questionNumber}
-          totalQuestions={totalQuestions}
-          selectedValue={selectedValue}
-          onAnswer={handleAnswer}
-          onNext={handleNext}
-          onBack={handleBack}
-          canGoBack={canGoBack}
-          userVariables={userVariables}
-        />
-      )}
+      <div className={`transition-all duration-300 ${isTransitioning ? 'opacity-90 scale-98' : 'opacity-100 scale-100'}`}>
+        {currentQuestion.type === "text" || currentQuestion.type === "email" ? (
+          <TextInput
+            question={currentQuestion}
+            value={textValue}
+            onChange={setTextValue}
+            onNext={handleNext}
+            onBack={handleBack}
+            canGoBack={canGoBack}
+            currentQuestion={questionNumber}
+            totalQuestions={totalQuestions}
+            userVariables={userVariables}
+          />
+        ) : (
+          <QuestionCard
+            question={currentQuestion}
+            currentQuestion={questionNumber}
+            totalQuestions={totalQuestions}
+            selectedValue={selectedValue}
+            onAnswer={handleAnswer}
+            onNext={handleNext}
+            onBack={handleBack}
+            canGoBack={canGoBack}
+            userVariables={userVariables}
+            isTransitioning={isTransitioning}
+          />
+        )}
+      </div>
     </div>
   );
 }

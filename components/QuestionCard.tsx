@@ -24,6 +24,7 @@ interface QuestionCardProps {
     name?: string;
     email?: string;
   };
+  isTransitioning?: boolean;
 }
 
 export default function QuestionCard({
@@ -36,6 +37,7 @@ export default function QuestionCard({
   onBack,
   canGoBack = false,
   userVariables = {},
+  isTransitioning = false,
 }: QuestionCardProps) {
   // Replace variables in the question prompt
   const replaceVariables = (text: string) => {
@@ -81,6 +83,7 @@ export default function QuestionCard({
                 key={option.value}
                 option={option}
                 isSelected={selectedValue === option.value}
+                isTransitioning={isTransitioning && selectedValue === option.value}
                 onClick={() => {
                   onAnswer(option.value);
                 }}
