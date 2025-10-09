@@ -132,6 +132,13 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     return () => window.removeEventListener('focus', handleFocus);
   }, [quizType]);
 
+  // Update localStorage whenever questions change
+  useEffect(() => {
+    if (quizType && questions.length > 0) {
+      localStorage.setItem(`quiz-questions-${quizType}`, JSON.stringify(questions));
+    }
+  }, [questions, quizType]);
+
   const fetchQuestions = async () => {
     try {
       // Only show loading state on initial load, not on window switches
@@ -315,10 +322,6 @@ export default function QuizEditor({ params }: QuizEditorProps) {
     }));
 
     setQuestions(updatedQuestions);
-    
-    // Update localStorage with new order
-    localStorage.setItem(`quiz-questions-${quizType}`, JSON.stringify(updatedQuestions));
-    
     setDraggedItem(null);
   };
 
@@ -587,7 +590,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
               <span className="text-sm font-medium">Add Article</span>
             </button>
             <button
-              onClick={() => window.open(`/admin/quiz-editor/${quizType}/loading-screens`, '_blank')}
+              onClick={() => router.push(`/admin/quiz-editor/${quizType}/loading-screens`)}
               className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors group"
             >
               <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1002,7 +1005,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                       </div>
                       <div className="flex items-center space-x-2">
                         <button
-                          onClick={() => window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank')}
+                          onClick={() => router.push(`/admin/quiz-editor/${quizType}/create-article`)}
                           className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
                         >
                           + Add
@@ -1081,7 +1084,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                                   </>
                                 ) : (
                                   <button
-                                    onClick={() => window.open(`/admin/quiz-editor/${quizType}/create-article`, '_blank')}
+                                    onClick={() => router.push(`/admin/quiz-editor/${quizType}/create-article`)}
                                     className="px-2 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600 transition-colors"
                                   >
                                     Add Article
@@ -1117,7 +1120,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                       </div>
                       <div className="flex items-center space-x-2">
                         <button
-                          onClick={() => window.open(`/admin/quiz-editor/${quizType}/loading-screens`, '_blank')}
+                          onClick={() => router.push(`/admin/quiz-editor/${quizType}/loading-screens`)}
                           className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
                         >
                           + Add
@@ -1143,7 +1146,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                           </div>
                           <div className="flex items-center space-x-2">
                             <button
-                              onClick={() => window.open(`/admin/quiz-editor/${quizType}/loading-screens?id=${screen.id}`, '_blank')}
+                              onClick={() => router.push(`/admin/quiz-editor/${quizType}/loading-screens?id=${screen.id}`)}
                               className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white hover:bg-gray-100 rounded-md border border-gray-200 transition-colors"
                             >
                               Edit

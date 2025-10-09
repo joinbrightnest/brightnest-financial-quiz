@@ -51,7 +51,7 @@ export default function QuizPage({ params }: QuizPageProps) {
   const [quizType, setQuizType] = useState<string>('');
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
-  const [totalQuestions, setTotalQuestions] = useState(0);
+  const [totalQuestions, setTotalQuestions] = useState(10); // Default fallback
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   
   // User input state
@@ -60,9 +60,10 @@ export default function QuizPage({ params }: QuizPageProps) {
   const [userVariables, setUserVariables] = useState<{name?: string; email?: string}>({});
   
   // UI state
-  const [quizState, setQuizState] = useState<QuizState>('loading');
+  const [quizState, setQuizState] = useState<QuizState>('question'); // Start with question state
   const [error, setError] = useState<string | null>(null);
   const [canGoBack, setCanGoBack] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Article state
   const [articleData, setArticleData] = useState<any>(null);
@@ -87,60 +88,69 @@ export default function QuizPage({ params }: QuizPageProps) {
     
     const initializeQuiz = async () => {
       try {
-        const response = await fetch("/api/quiz/start", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ quizType }),
-        });
+        // Run initialization in parallel for faster loading
+        const [sessionResponse, countResponse] = await Promise.all([
+          fetch("/api/quiz/start", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ quizType }),
+          }),
+          fetch(`/api/quiz/questions/count?quizType=${quizType}`)
+        ]);
         
-        if (!response.ok) {
+        if (!sessionResponse.ok) {
           throw new Error("Failed to start quiz");
         }
         
-        const data = await response.json();
-        setSessionId(data.sessionId);
-        setCurrentQuestion(data.question);
+        const sessionData = await sessionResponse.json();
+        const countData = countResponse.ok ? await countResponse.json() : { count: 10 };
+        
+        setSessionId(sessionData.sessionId);
+        setCurrentQuestion(sessionData.question);
         setCurrentQuestionIndex(0);
-        setTotalQuestions(await getTotalQuestions());
+        setTotalQuestions(countData.count);
         setCanGoBack(false);
-        setQuizState('question');
+        setIsLoading(false);
       } catch (err) {
         console.error('Quiz initialization error:', err);
         setError("Failed to start quiz. Please try again.");
         setQuizState('error');
+        setIsLoading(false);
       }
     };
 
     initializeQuiz();
   }, [quizType]);
 
-  const getTotalQuestions = async (): Promise<number> => {
-    try {
-      const response = await fetch(`/api/quiz/questions/count?quizType=${quizType}`);
-      if (!response.ok) return 10;
-      const data = await response.json();
-      return data.count;
-    } catch {
-      return 10;
-    }
-  };
 
   const processAnswer = async (value: string, answerLabel: string) => {
     if (!sessionId || !currentQuestion) return;
 
     try {
-      // Check for articles first
-      const articlesResponse = await fetch('/api/quiz/articles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sessionId,
-          questionId: currentQuestion.id,
-          answerValue: value,
-          answerLabel: answerLabel
+      // Run articles check and answer save in parallel for maximum speed
+      const [articlesResponse, answerResponse] = await Promise.all([
+        fetch('/api/quiz/articles', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sessionId,
+            questionId: currentQuestion.id,
+            answerValue: value,
+            answerLabel: answerLabel
+          })
+        }),
+        fetch("/api/quiz/answer", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId,
+            questionId: currentQuestion.id,
+            value: value,
+          }),
         })
-      });
+      ]);
 
+      // Check articles first (this determines if we show article or advance)
       if (articlesResponse.ok) {
         const articlesData = await articlesResponse.json();
         
@@ -156,29 +166,7 @@ export default function QuizPage({ params }: QuizPageProps) {
         }
       }
 
-      // No articles found, save answer and advance
-      await saveAnswerAndAdvance(value);
-    } catch (error) {
-      console.error('Error processing answer:', error);
-      setError("Failed to save answer. Please try again.");
-      setQuizState('error');
-    }
-  };
-
-  const saveAnswerAndAdvance = async (value: string) => {
-    if (!sessionId || !currentQuestion) return;
-
-    try {
-      const answerResponse = await fetch("/api/quiz/answer", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId,
-          questionId: currentQuestion.id,
-          value: value,
-        }),
-      });
-
+      // No articles found, process the answer response
       if (!answerResponse.ok) {
         throw new Error("Failed to save answer");
       }
@@ -204,7 +192,7 @@ export default function QuizPage({ params }: QuizPageProps) {
           setPendingNextQuestion(answerData.nextQuestion);
           setQuizState('loading-screen');
         } else {
-          // Move to next question
+          // Move to next question immediately
           setCurrentQuestion(answerData.nextQuestion);
           setCurrentQuestionIndex(prev => prev + 1);
           setCanGoBack(true);
@@ -213,11 +201,12 @@ export default function QuizPage({ params }: QuizPageProps) {
         }
       }
     } catch (error) {
-      console.error('Error saving answer:', error);
+      console.error('Error processing answer:', error);
       setError("Failed to save answer. Please try again.");
       setQuizState('error');
     }
   };
+
 
   const handleAnswer = async (value: string) => {
     if (!currentQuestion) return;
@@ -231,6 +220,10 @@ export default function QuizPage({ params }: QuizPageProps) {
     }
     
     const answerLabel = currentQuestion.options.find(opt => opt.value === value)?.label || value;
+    
+    // Immediate visual feedback - set selected value before processing
+    setSelectedValue(value);
+    
     await processAnswer(value, answerLabel);
   };
 
@@ -244,6 +237,9 @@ export default function QuizPage({ params }: QuizPageProps) {
     if (currentQuestion.type === "email") {
       setUserVariables(prev => ({ ...prev, email: textValue }));
     }
+    
+    // Optimistic UI update - clear inputs immediately for better UX
+    clearInputs();
     
     await processAnswer(textValue, textValue);
   };
@@ -294,10 +290,58 @@ export default function QuizPage({ params }: QuizPageProps) {
   };
 
   const handleArticleClose = async () => {
-    if (!lastAnswer) return;
+    if (!lastAnswer || !sessionId) return;
     
-    clearAllStates();
-    await saveAnswerAndAdvance(lastAnswer.answerValue);
+    try {
+      // Save answer and get next question
+      const answerResponse = await fetch("/api/quiz/answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          questionId: lastAnswer.questionId,
+          value: lastAnswer.answerValue,
+        }),
+      });
+
+      if (!answerResponse.ok) {
+        throw new Error("Failed to save answer");
+      }
+
+      const answerData = await answerResponse.json();
+
+      if (answerData.isComplete) {
+        // Quiz completed
+        const resultResponse = await fetch("/api/quiz/result", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId }),
+        });
+
+        if (resultResponse.ok) {
+          const resultData = await resultResponse.json();
+          router.push(`/results/${resultData.resultId}`);
+        }
+      } else {
+        // Check for loading screen
+        if (answerData.loadingScreen) {
+          setCurrentLoadingScreen(answerData.loadingScreen);
+          setPendingNextQuestion(answerData.nextQuestion);
+          setQuizState('loading-screen');
+        } else {
+          // Move to next question immediately
+          setCurrentQuestion(answerData.nextQuestion);
+          setCurrentQuestionIndex(prev => prev + 1);
+          setCanGoBack(true);
+          clearAllStates();
+          setQuizState('question');
+        }
+      }
+    } catch (error) {
+      console.error('Error processing answer after article:', error);
+      setError("Failed to save answer. Please try again.");
+      setQuizState('error');
+    }
   };
 
   const handleLoadingScreenComplete = () => {
@@ -379,32 +423,67 @@ export default function QuizPage({ params }: QuizPageProps) {
     );
   }
 
-  if (quizState === 'question' && currentQuestion) {
+  if (quizState === 'question') {
+    // Show loading state only if we're still loading and don't have a question yet
+    if (isLoading && !currentQuestion) {
+      return (
+        <div className="min-h-screen bg-white">
+          <div className="bg-gray-800 w-full py-4">
+            <div className="max-w-lg mx-auto px-6">
+              <h1 className="text-white text-xl font-bold text-center tracking-wide">
+                BrightNest
+              </h1>
+            </div>
+          </div>
+          <div className="max-w-lg mx-auto px-6 py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading...</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
-      <div className="min-h-screen bg-white">
-        {currentQuestion.type === "text" || currentQuestion.type === "email" ? (
-          <TextInput
-            question={currentQuestion}
-            value={textValue}
-            onChange={setTextValue}
-            onSubmit={handleTextSubmit}
-            onBack={handleBack}
-            canGoBack={canGoBack}
-            currentQuestion={currentQuestionIndex + 1}
-            totalQuestions={totalQuestions}
-            userVariables={userVariables}
-          />
-        ) : (
-          <QuestionCard
-            question={currentQuestion}
-            currentQuestion={currentQuestionIndex + 1}
-            totalQuestions={totalQuestions}
-            selectedValue={selectedValue}
-            onAnswer={handleAnswer}
-            onBack={handleBack}
-            canGoBack={canGoBack}
-            userVariables={userVariables}
-          />
+      <div className="min-h-screen bg-white relative">
+        {currentQuestion && (
+          <>
+            {currentQuestion.type === "text" || currentQuestion.type === "email" ? (
+              <TextInput
+                question={currentQuestion}
+                value={textValue}
+                onChange={setTextValue}
+                onSubmit={handleTextSubmit}
+                onBack={handleBack}
+                canGoBack={canGoBack}
+                currentQuestion={currentQuestionIndex + 1}
+                totalQuestions={totalQuestions}
+                userVariables={userVariables}
+              />
+            ) : (
+              <QuestionCard
+                question={currentQuestion}
+                currentQuestion={currentQuestionIndex + 1}
+                totalQuestions={totalQuestions}
+                selectedValue={selectedValue}
+                onAnswer={handleAnswer}
+                onBack={handleBack}
+                canGoBack={canGoBack}
+                userVariables={userVariables}
+              />
+            )}
+          </>
+        )}
+        
+        {/* Loading overlay while initializing */}
+        {isLoading && (
+          <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto mb-2"></div>
+              <p className="text-gray-600 text-sm">Preparing quiz...</p>
+            </div>
+          </div>
         )}
       </div>
     );

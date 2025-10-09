@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface LoadingScreenEditorProps {
   params: Promise<{
@@ -9,6 +10,7 @@ interface LoadingScreenEditorProps {
 }
 
 export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps) {
+  const router = useRouter();
   const [quizType, setQuizType] = useState<string>('');
   const [questions, setQuestions] = useState<any[]>([]);
   const [loadingScreenId, setLoadingScreenId] = useState<string>('');
@@ -28,10 +30,14 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
   const [iconColor, setIconColor] = useState("#06b6d4");
   const [progressBarColor, setProgressBarColor] = useState("#ef4444");
   const [showProgressBar, setShowProgressBar] = useState(true);
+  const [showTopBar, setShowTopBar] = useState<boolean>(true);
+  const [topBarColor, setTopBarColor] = useState<string>('#1f2937');
   const [triggerQuestionId, setTriggerQuestionId] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [testProgress, setTestProgress] = useState(0);
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+  const [dots, setDots] = useState("");
 
   // Handle async params and URL parameters
   useEffect(() => {
@@ -61,12 +67,83 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
     }
   }, [quizType, isEditing, loadingScreenId]);
 
+  // Animate dots
+  useEffect(() => {
+    const dotsInterval = setInterval(() => {
+      setDots(prev => {
+        if (prev === "...") return "";
+        return prev + ".";
+      });
+    }, 500);
+
+    return () => clearInterval(dotsInterval);
+  }, []);
+
+  // Update text based on progress
+  useEffect(() => {
+    if (testProgress <= 33) {
+      setCurrentTextIndex(0);
+    } else if (testProgress <= 66) {
+      setCurrentTextIndex(1);
+    } else {
+      setCurrentTextIndex(2);
+    }
+  }, [testProgress]);
+
+  // Listen for localStorage changes to refresh questions when quiz editor updates them
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === `quiz-questions-${quizType}` && e.newValue) {
+        try {
+          const updatedQuestions = JSON.parse(e.newValue);
+          setQuestions(updatedQuestions);
+        } catch (error) {
+          console.error('Failed to parse updated questions:', error);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [quizType]);
+
+  // Refresh questions when window gains focus (when user comes back from quiz editor)
+  useEffect(() => {
+    const handleFocus = () => {
+      if (quizType) {
+        fetchQuestions();
+      }
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
+  }, [quizType]);
+
   const fetchQuestions = async () => {
     try {
-      const response = await fetch(`/api/admin/quiz-questions?quizType=${quizType}`);
+      // First, try to get questions from localStorage (current state from quiz editor)
+      const cachedQuestions = localStorage.getItem(`quiz-questions-${quizType}`);
+      if (cachedQuestions) {
+        try {
+          const parsedQuestions = JSON.parse(cachedQuestions);
+          // Using cached questions from localStorage
+          setQuestions(parsedQuestions);
+          return;
+        } catch (e) {
+          // Failed to parse cached questions, falling back to API
+        }
+      }
+      
+      // Fallback to API if no cached data
+      const response = await fetch(`/api/admin/quiz-questions?quizType=${quizType}`, {
+        credentials: 'include'
+      });
       if (response.ok) {
         const data = await response.json();
+        // Fetched questions from API
         setQuestions(data.questions || []);
+      } else {
+        console.error('Failed to fetch questions:', response.status);
       }
     } catch (error) {
       console.error("Error fetching questions:", error);
@@ -93,6 +170,8 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
         setIconColor(screen.iconColor || "#06b6d4");
         setProgressBarColor(screen.progressBarColor || "#ef4444");
         setShowProgressBar(screen.showProgressBar !== undefined ? screen.showProgressBar : true);
+        setShowTopBar(screen.showTopBar !== false);
+        setTopBarColor(screen.topBarColor || '#1f2937');
         setTriggerQuestionId(screen.triggerQuestionId || "");
       } else {
         console.error("Failed to fetch loading screen");
@@ -179,6 +258,8 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
           progressBarColor,
           showProgressBar,
           progressText,
+          showTopBar,
+          topBarColor,
           triggerQuestionId,
           isActive: true
         })
@@ -186,7 +267,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
 
       if (response.ok) {
         alert(`Loading screen ${isEditing ? 'updated' : 'created'} successfully!`);
-        window.close();
+        router.back();
       } else {
         const error = await response.json();
         alert(`Failed to save: ${error.error || 'Unknown error'}`);
@@ -240,6 +321,12 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
     return displayNames[type] || type;
   };
 
+  const loadingTexts = [
+    "Analyzing responses",
+    "Processing your unique profile",
+    "Preparing results"
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
       <style jsx>{`
@@ -254,13 +341,13 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center space-x-4">
             <button
-              onClick={() => window.close()}
+              onClick={() => router.back()}
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              <span className="text-sm font-medium">Back to Quiz Editor</span>
+              <span className="text-sm font-medium">Back</span>
             </button>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
@@ -281,7 +368,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-6 relative">
+      <div className="max-w-7xl mx-auto p-4 relative">
         {isLoading && (
           <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
             <div className="text-center">
@@ -290,11 +377,11 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
             </div>
           </div>
         )}
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-2 gap-8 h-[calc(100vh-120px)]">
           {/* Left Panel - Settings */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Content Settings</h2>
+          <div className="space-y-4 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <h2 className="text-base font-semibold text-gray-900 mb-4">Content Settings</h2>
               
               <div className="space-y-4">
                 <div>
@@ -382,8 +469,8 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Visual Settings</h2>
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <h2 className="text-base font-semibold text-gray-900 mb-4">Visual Settings</h2>
               
               <div className="space-y-4">
                 <div>
@@ -431,6 +518,41 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                     Show Progress Bar
                   </label>
                 </div>
+
+                <div className="flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    id="showTopBar"
+                    checked={showTopBar}
+                    onChange={(e) => setShowTopBar(e.target.checked)}
+                    className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                  />
+                  <label htmlFor="showTopBar" className="text-sm font-medium text-gray-700">
+                    Show Top Bar
+                  </label>
+                </div>
+
+                {showTopBar && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Top Bar Color
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="color"
+                        value={topBarColor}
+                        onChange={(e) => setTopBarColor(e.target.value)}
+                        className="w-12 h-10 rounded cursor-pointer border border-gray-300"
+                      />
+                      <input
+                        type="text"
+                        value={topBarColor}
+                        onChange={(e) => setTopBarColor(e.target.value)}
+                        className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -513,8 +635,8 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Trigger Settings</h2>
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <h2 className="text-base font-semibold text-gray-900 mb-4">Trigger Settings</h2>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Show After Question <span className="text-red-500">*</span>
@@ -526,9 +648,9 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                 required
               >
                   <option value="">Select a question...</option>
-                  {questions.map((q) => (
+                  {questions.map((q, index) => (
                     <option key={q.id} value={q.id}>
-                      Question {q.order}: {q.prompt.substring(0, 50)}...
+                      Question {index + 1}: {q.prompt.substring(0, 50)}...
                     </option>
                   ))}
                 </select>
@@ -537,16 +659,23 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
           </div>
 
           {/* Right Panel - Live Preview */}
-          <div className="sticky top-6">
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-6">Live Preview</h2>
+          <div className="sticky top-4 h-fit">
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <h2 className="text-base font-semibold text-gray-900 mb-4">Live Preview</h2>
               
               <div 
-                className={`rounded-2xl shadow-2xl flex flex-col items-center justify-center p-8 text-center min-h-[500px] transition-all ${
+                className={`rounded-2xl shadow-2xl flex flex-col min-h-[500px] transition-all ${
                   isTesting ? 'ring-4 ring-orange-500 ring-opacity-50 scale-105' : ''
                 }`}
                 style={{ backgroundColor }}
               >
+                {showTopBar && (
+                  <div className="flex items-center justify-center p-4" style={{ backgroundColor: topBarColor }}>
+                    <h1 className="text-white text-xl font-bold tracking-wide">BrightNest</h1>
+                  </div>
+                )}
+                
+                <div className="flex flex-col items-center justify-center p-8 text-center flex-1">
                 <div className="mb-6">
                   {getIconComponent()}
                 </div>
@@ -579,56 +708,43 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                 )}
                 
                 {showProgressBar && (
-                  <div className="w-full max-w-md mt-8">
-                    {progressText && (
-                      <p 
-                        className="text-sm font-bold mb-4 tracking-wide"
-                        style={{ color: textColor }}
-                      >
-                        {progressText}
-                      </p>
-                    )}
-                    <div className="w-full bg-gray-200/50 rounded-full h-2 relative overflow-hidden shadow-inner">
-                      <div 
-                        className={`h-2 rounded-full relative ${!isTesting ? 'transition-all duration-200 ease-out' : ''}`}
-                        style={{ 
-                          backgroundColor: progressBarColor,
-                          width: isTesting ? `${testProgress}%` : '65%',
-                          boxShadow: `0 0 10px ${progressBarColor}40`
-                        }}
-                      >
-                        {/* Shine effect */}
-                        <div 
-                          className="absolute inset-0 rounded-full"
+                  <div className="mt-8">
+                    {/* Loading Text */}
+                    <p
+                      className="text-lg font-medium mb-6 tracking-wide text-center"
+                      style={{ color: textColor }}
+                    >
+                      {loadingTexts[currentTextIndex]}{dots}
+                    </p>
+                    
+                    {/* Progress Bar */}
+                    <div className="flex justify-center">
+                      <div className="bg-gray-300 h-6 relative overflow-hidden" style={{ width: '300px' }}>
+                        <div
+                          className="h-6 transition-all duration-300 ease-out"
                           style={{
-                            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
-                            animation: isTesting ? 'shimmer 1s infinite' : 'none'
+                            backgroundColor: progressBarColor,
+                            width: isTesting ? `${testProgress}%` : '65%',
                           }}
-                        ></div>
+                        />
+                        
+                        {/* Progress Percentage */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span 
+                            className="text-base font-bold"
+                            style={{ 
+                              color: '#ffffff',
+                              textShadow: '0 0 4px rgba(0,0,0,0.3)'
+                            }}
+                          >
+                            {isTesting ? `${Math.round(testProgress)}%` : '65%'}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex justify-between items-center mt-2">
-                      <span 
-                        className="text-xs font-medium opacity-60"
-                        style={{ color: textColor }}
-                      >
-                        0%
-                      </span>
-                      <span 
-                        className="text-sm font-bold"
-                        style={{ color: textColor }}
-                      >
-                        {isTesting ? `${Math.round(testProgress)}%` : '65%'}
-                      </span>
-                      <span 
-                        className="text-xs font-medium opacity-60"
-                        style={{ color: textColor }}
-                      >
-                        100%
-                      </span>
                     </div>
                   </div>
                 )}
+                </div>
               </div>
             </div>
           </div>

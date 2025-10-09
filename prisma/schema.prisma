@@ -182,6 +182,8 @@ model LoadingScreen {
   progressBarColor String  @default("#ef4444") // Progress bar color
   showProgressBar Boolean  @default(true) // Whether to show progress bar
   progressText    String?  // Custom progress text (e.g., "CALCULATING...")
+  showTopBar      Boolean  @default(true) // Whether to show top bar
+  topBarColor     String   @default("#1f2937") // Top bar background color
   triggerQuestionId String? // Which question triggers this loading screen
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())

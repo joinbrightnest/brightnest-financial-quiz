@@ -51,7 +51,7 @@ export default function QuestionCard({
     <div className="min-h-screen bg-white">
       {/* Top Header Bar */}
       <div className="bg-gray-800 w-full py-4">
-        <div className="max-w-lg mx-auto px-6">
+        <div className="max-w-md mx-auto px-6">
           <h1 className="text-white text-xl font-bold text-center tracking-wide">
             BrightNest
           </h1>
@@ -59,8 +59,8 @@ export default function QuestionCard({
       </div>
       
       {/* Main Content */}
-      <div className="max-w-lg mx-auto px-6 py-12">
-        <div className="text-center mb-8">
+      <div className="max-w-md mx-auto px-6 py-12">
+        <div className="mb-8">
           <ProgressBar 
             current={currentQuestion} 
             total={totalQuestions} 
@@ -69,8 +69,8 @@ export default function QuestionCard({
           />
         </div>
         
-        <div className="text-center">
-          <h2 className="text-2xl font-medium text-gray-900 mb-12 leading-relaxed">
+        <div>
+          <h2 className="text-xl font-medium text-gray-900 mb-12 leading-relaxed text-left">
             {replaceVariables(question.prompt)}
           </h2>
           

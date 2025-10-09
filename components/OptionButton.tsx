@@ -11,17 +11,39 @@ interface OptionButtonProps {
 }
 
 export default function OptionButton({ option, isSelected, onClick, disabled = false }: OptionButtonProps) {
+  const handleClick = () => {
+    // Immediately show selected state before processing
+    onClick();
+  };
+
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       disabled={disabled}
-      className={`w-full p-5 text-center rounded-lg transition-colors duration-150 ${
+      className={`w-full p-5 text-center rounded-lg transition-all duration-200 ${
         disabled
           ? "bg-gray-100 text-gray-400 cursor-not-allowed"
           : isSelected
-          ? "bg-teal-600 text-white"
-          : "bg-amber-50 text-gray-900 hover:bg-amber-100 border border-amber-100"
+          ? "text-white shadow-md"
+          : "text-gray-900 hover:shadow-sm border border-gray-300"
       }`}
+      style={{
+        backgroundColor: disabled 
+          ? undefined 
+          : isSelected 
+          ? '#09727c' 
+          : '#f6f4ed'
+      }}
+      onMouseEnter={(e) => {
+        if (!disabled && !isSelected) {
+          e.currentTarget.style.backgroundColor = '#e8e4d8';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!disabled && !isSelected) {
+          e.currentTarget.style.backgroundColor = '#f6f4ed';
+        }
+      }}
     >
       <span className="text-lg font-medium">{option.label}</span>
     </button>

@@ -52,7 +52,7 @@ export default function TextInput({
     <div className="min-h-screen bg-white">
       {/* Top Header Bar */}
       <div className="bg-gray-800 w-full py-4">
-        <div className="max-w-lg mx-auto px-6">
+        <div className="max-w-md mx-auto px-6">
           <h1 className="text-white text-xl font-bold text-center tracking-wide">
             BrightNest
           </h1>
@@ -60,8 +60,8 @@ export default function TextInput({
       </div>
       
       {/* Main Content */}
-      <div className="max-w-lg mx-auto px-6 py-12">
-        <div className="text-center mb-8">
+      <div className="max-w-md mx-auto px-6 py-12">
+        <div className="mb-8">
           {currentQuestion && totalQuestions && (
             <ProgressBar 
               current={currentQuestion} 
@@ -72,8 +72,8 @@ export default function TextInput({
           )}
         </div>
         
-        <div className="text-center">
-          <h2 className="text-2xl font-medium text-gray-900 mb-12 leading-relaxed">
+        <div>
+          <h2 className="text-xl font-medium text-gray-900 mb-12 leading-relaxed text-left">
             {replaceVariables(question.prompt)}
           </h2>
           
@@ -83,7 +83,8 @@ export default function TextInput({
               value={value}
               onChange={(e) => onChange(e.target.value)}
               placeholder={question.type === "email" ? "Enter your email address" : "Enter your name"}
-              className="w-full p-5 border border-amber-100 rounded-lg focus:border-teal-500 focus:outline-none text-gray-900 text-lg bg-amber-50"
+              className="w-full p-5 border border-gray-300 rounded-lg focus:border-teal-500 focus:outline-none text-gray-900 text-lg text-center"
+              style={{ backgroundColor: '#f6f4ed' }}
               required
             />
             
@@ -93,8 +94,11 @@ export default function TextInput({
               className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 ${
                 !value.trim()
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-teal-600 text-white hover:bg-teal-700"
+                  : "text-white hover:bg-teal-700"
               }`}
+              style={{
+                backgroundColor: !value.trim() ? undefined : '#09727c'
+              }}
             >
               Continue
             </button>

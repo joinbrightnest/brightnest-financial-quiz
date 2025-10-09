@@ -15,6 +15,8 @@ interface LoadingScreenProps {
   progressBarColor: string;
   showProgressBar: boolean;
   progressText?: string;
+  showTopBar?: boolean;
+  topBarColor?: string;
   onComplete: () => void;
   userName?: string;
   lastAnswer?: string;
@@ -33,12 +35,45 @@ export default function LoadingScreenDisplay({
   progressBarColor,
   showProgressBar,
   progressText,
+  showTopBar = true,
+  topBarColor = '#1f2937',
   onComplete,
   userName = "User",
   lastAnswer = "your response",
 }: LoadingScreenProps) {
   const [progress, setProgress] = useState(0);
   const [currentSpeed, setCurrentSpeed] = useState(1);
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+  const [dots, setDots] = useState("");
+  
+  const loadingTexts = [
+    "Analyzing responses",
+    "Processing your unique profile",
+    "Preparing results"
+  ];
+
+  // Animate dots
+  useEffect(() => {
+    const dotsInterval = setInterval(() => {
+      setDots(prev => {
+        if (prev === "...") return "";
+        return prev + ".";
+      });
+    }, 500);
+
+    return () => clearInterval(dotsInterval);
+  }, []);
+
+  // Update text based on progress
+  useEffect(() => {
+    if (progress <= 33) {
+      setCurrentTextIndex(0);
+    } else if (progress <= 66) {
+      setCurrentTextIndex(1);
+    } else {
+      setCurrentTextIndex(2);
+    }
+  }, [progress]);
 
   useEffect(() => {
     const startTime = Date.now();
@@ -159,9 +194,16 @@ export default function LoadingScreenDisplay({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-50 flex flex-col"
       style={{ backgroundColor }}
     >
+      {showTopBar && (
+        <div className="flex items-center justify-center p-4" style={{ backgroundColor: topBarColor }}>
+          <h1 className="text-white text-xl font-bold tracking-wide">BrightNest</h1>
+        </div>
+      )}
+      
+      <div className="flex items-center justify-center flex-1">
       <style jsx>{`
         @keyframes shimmer {
           0% {
@@ -174,14 +216,14 @@ export default function LoadingScreenDisplay({
       `}</style>
 
       <div className="max-w-2xl w-full px-8 text-center">
-        <div className="mb-6 flex justify-center">{getIconComponent()}</div>
-
+        {/* Main Title */}
         <h2 className="text-3xl font-bold mb-3" style={{ color: textColor }}>
           {title}
         </h2>
 
+        {/* Subtitle and Personalized Text */}
         {subtitle && (
-          <p className="text-lg mb-4" style={{ color: textColor }}>
+          <p className="text-lg mb-2" style={{ color: textColor }}>
             {subtitle}
           </p>
         )}
@@ -192,56 +234,47 @@ export default function LoadingScreenDisplay({
           </p>
         )}
 
+        {/* Icon/Symbol */}
+        <div className="mb-6 flex justify-center">{getIconComponent()}</div>
+
         {showProgressBar && (
-          <div className="w-full max-w-md mx-auto mt-8">
-            {progressText && (
-              <p
-                className="text-sm font-bold mb-4 tracking-wide"
-                style={{ color: textColor }}
-              >
-                {progressText}
-              </p>
-            )}
-            <div className="w-full bg-gray-200/50 rounded-full h-2 relative overflow-hidden shadow-inner">
-              <div
-                className="h-2 rounded-full relative"
-                style={{
-                  backgroundColor: progressBarColor,
-                  width: `${progress}%`,
-                  boxShadow: `0 0 10px ${progressBarColor}40`,
-                  transition: "none",
-                }}
-              >
-                {/* Shine effect */}
+          <div className="mt-8">
+            {/* Loading Text */}
+            <p
+              className="text-lg font-medium mb-6 tracking-wide text-center"
+              style={{ color: textColor }}
+            >
+              {loadingTexts[currentTextIndex]}{dots}
+            </p>
+            
+            {/* Progress Bar */}
+            <div className="flex justify-center">
+              <div className="bg-gray-300 h-6 relative overflow-hidden" style={{ width: '300px' }}>
                 <div
-                  className="absolute inset-0 rounded-full"
+                  className="h-6 transition-all duration-300 ease-out"
                   style={{
-                    background:
-                      "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
-                    animation: "shimmer 1s infinite",
+                    backgroundColor: progressBarColor,
+                    width: `${progress}%`,
                   }}
-                ></div>
+                />
+                
+                {/* Progress Percentage */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span 
+                    className="text-base font-bold"
+                    style={{ 
+                      color: '#ffffff',
+                      textShadow: '0 0 4px rgba(0,0,0,0.3)'
+                    }}
+                  >
+                    {Math.round(progress)}%
+                  </span>
+                </div>
               </div>
-            </div>
-            <div className="flex justify-between items-center mt-2">
-              <span
-                className="text-xs font-medium opacity-60"
-                style={{ color: textColor }}
-              >
-                0%
-              </span>
-              <span className="text-sm font-bold" style={{ color: textColor }}>
-                {Math.round(progress)}%
-              </span>
-              <span
-                className="text-xs font-medium opacity-60"
-                style={{ color: textColor }}
-              >
-                100%
-              </span>
             </div>
           </div>
         )}
+      </div>
       </div>
     </div>
   );
