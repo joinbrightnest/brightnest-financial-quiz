@@ -60,8 +60,8 @@ export default function Home() {
       <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8" style={{backgroundColor: '#FAF8F4'}}>
         <div className="max-w-4xl mx-auto text-center">
           {/* 1️⃣ Microline */}
-          <p className="text-sm text-gray-600 mb-6 font-medium">
-            A psychology-based system that helps you master your money habits.
+          <p className="text-sm text-gray-600 mb-2 font-medium">
+            The behavior-based system for lasting financial peace.
           </p>
           
           {/* 2️⃣ Headline */}
