@@ -74,7 +74,11 @@ export async function POST(request: NextRequest) {
       titleFontWeight,
       contentFontSize,
       contentFontWeight,
-      lineHeight
+      lineHeight,
+      // Image fields
+      imageUrl,
+      imageAlt,
+      showImage
     } = body;
 
     // Create article in database
@@ -113,6 +117,10 @@ export async function POST(request: NextRequest) {
         contentFontSize: contentFontSize || 'normal',
         contentFontWeight: contentFontWeight || 'normal',
         lineHeight: lineHeight || 'normal',
+        // Image fields
+        imageUrl: imageUrl || null,
+        imageAlt: imageAlt || null,
+        showImage: showImage !== undefined ? showImage : false,
         triggers: {
           create: triggers?.map((trigger: any) => ({
             questionId: trigger.questionId,

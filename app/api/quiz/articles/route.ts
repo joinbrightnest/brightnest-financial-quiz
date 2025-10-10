@@ -99,7 +99,11 @@ async function getArticlesFromDatabase(questionId: string, answerValue: string) 
       titleFontWeight: (article as any).titleFontWeight,
       contentFontSize: (article as any).contentFontSize,
       contentFontWeight: (article as any).contentFontWeight,
-      lineHeight: (article as any).lineHeight
+      lineHeight: (article as any).lineHeight,
+      // Image fields
+      imageUrl: (article as any).imageUrl,
+      imageAlt: (article as any).imageAlt,
+      showImage: (article as any).showImage
     }));
   } catch (error) {
     console.error('Error getting articles from database:', error);

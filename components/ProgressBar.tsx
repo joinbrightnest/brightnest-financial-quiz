@@ -7,14 +7,14 @@ interface ProgressBarProps {
 
 export default function ProgressBar({ current, total, onBack, canGoBack = false }: ProgressBarProps) {
   return (
-    <div className="mb-8">
+    <div className="mb-4">
       {canGoBack && onBack ? (
-        // Layout with back arrow
-        <div className="flex items-center gap-3">
-          {/* Back Arrow */}
+        // Layout with back arrow - centered progress bar
+        <div className="relative">
+          {/* Back Arrow - positioned absolutely */}
           <button
             onClick={onBack}
-            className="flex items-center justify-center w-8 h-8 text-teal-600 hover:text-teal-700 transition-colors flex-shrink-0"
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 flex items-center justify-center w-8 h-8 text-teal-600 hover:text-teal-700 transition-colors touch-friendly touch-feedback no-select mobile-transition"
             aria-label="Go back to previous question"
           >
             <svg
@@ -33,8 +33,8 @@ export default function ProgressBar({ current, total, onBack, canGoBack = false 
             </svg>
           </button>
           
-          {/* Container for Progress Bar and Dots */}
-          <div className="flex-1 flex flex-col">
+          {/* Centered Progress Bar and Dots */}
+          <div className="flex flex-col px-12">
             {/* Progress Bar Container */}
             <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
               <div 
@@ -43,7 +43,7 @@ export default function ProgressBar({ current, total, onBack, canGoBack = false 
               />
             </div>
             
-            {/* Progress Indicators below the progress bar only */}
+            {/* Progress Indicators below the progress bar */}
             <div className="flex justify-between items-center mt-2">
               {Array.from({ length: total }, (_, index) => (
                 <div
@@ -59,10 +59,10 @@ export default function ProgressBar({ current, total, onBack, canGoBack = false 
           </div>
         </div>
       ) : (
-        // Centered layout for first question
-        <div className="flex flex-col">
-          {/* Progress Bar Container */}
-          <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+        // Centered layout for first question - shorter progress bar
+        <div className="flex flex-col items-center">
+          {/* Progress Bar Container - shorter on mobile */}
+          <div className="w-3/4 bg-gray-100 rounded-full h-2 overflow-hidden">
             <div 
               className="h-full bg-teal-600 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${(current / total) * 100}%` }}
@@ -70,7 +70,7 @@ export default function ProgressBar({ current, total, onBack, canGoBack = false 
           </div>
           
           {/* Progress Indicators below the progress bar */}
-          <div className="flex justify-between items-center mt-2">
+          <div className="flex justify-between items-center mt-2 w-3/4">
             {Array.from({ length: total }, (_, index) => (
               <div
                 key={index}

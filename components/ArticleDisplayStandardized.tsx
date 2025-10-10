@@ -35,6 +35,10 @@ interface Article {
   contentFontSize?: string;
   contentFontWeight?: string;
   lineHeight?: string;
+  // Image fields
+  imageUrl?: string;
+  imageAlt?: string;
+  showImage?: boolean;
 }
 
 interface ArticleDisplayStandardizedProps {
@@ -247,6 +251,22 @@ export default function ArticleDisplayStandardized({
       <div className={getContentPositionClasses()}>
         {/* Content Block - All elements aligned together */}
         <div className="w-full max-w-md">
+          {/* Uploaded Image */}
+          {article.showImage && article.imageUrl && (
+            <div className={`mb-6 ${
+              textAlignment === 'left' ? 'flex justify-start' :
+              textAlignment === 'right' ? 'flex justify-end' :
+              'flex justify-center'
+            }`}>
+              <img
+                src={article.imageUrl}
+                alt={article.imageAlt || ''}
+                className="max-w-full h-auto rounded-lg shadow-sm"
+                style={{ maxHeight: '200px' }}
+              />
+            </div>
+          )}
+
           {/* Icon */}
           {showIcon && (
             <div className={`mb-6 ${

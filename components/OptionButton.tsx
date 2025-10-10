@@ -20,7 +20,7 @@ export default function OptionButton({ option, isSelected, onClick, disabled = f
     <button
       onClick={handleClick}
       disabled={disabled}
-      className={`w-full p-5 text-center rounded-lg transition-all duration-200 ${
+      className={`w-full p-5 text-center rounded-lg transition-all duration-200 touch-friendly touch-feedback no-select mobile-transition ${
         disabled
           ? "bg-gray-100 text-gray-400 cursor-not-allowed"
           : isSelected

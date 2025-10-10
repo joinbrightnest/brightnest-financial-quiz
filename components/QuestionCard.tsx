@@ -55,7 +55,7 @@ export default function QuestionCard({
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="quiz-container bg-white">
       {/* Top Header Bar */}
       <div className="bg-gray-800 w-full py-4">
         <div className="max-w-md mx-auto px-6">
@@ -66,7 +66,8 @@ export default function QuestionCard({
       </div>
       
       {/* Main Content */}
-      <div className="max-w-md mx-auto px-6 py-12">
+      <div className="quiz-content mobile-scroll">
+        <div className="max-w-md mx-auto px-6 py-8">
         <div className="mb-8">
           <ProgressBar 
             current={currentQuestion} 
@@ -77,7 +78,7 @@ export default function QuestionCard({
         </div>
         
         <div>
-          <h2 className="text-xl font-medium text-gray-900 mb-12 leading-relaxed text-left">
+          <h2 className="text-xl font-medium text-gray-900 mb-8 leading-relaxed text-left">
             {replaceVariables(question.prompt)}
           </h2>
           
@@ -97,7 +98,7 @@ export default function QuestionCard({
             <div className="mt-6 text-center">
               <button
                 onClick={onSkip}
-                className="text-gray-500 hover:text-gray-700 text-sm underline transition-colors"
+                className="text-gray-500 hover:text-gray-700 text-sm underline transition-colors touch-friendly touch-feedback no-select"
               >
                 Skip
               </button>
@@ -110,7 +111,7 @@ export default function QuestionCard({
               <button
                 onClick={selectedValue ? onContinue : undefined}
                 disabled={!selectedValue}
-                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 ${
+                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 touch-friendly touch-feedback no-select mobile-transition ${
                   selectedValue 
                     ? "text-white hover:opacity-90" 
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -125,6 +126,7 @@ export default function QuestionCard({
               </button>
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>

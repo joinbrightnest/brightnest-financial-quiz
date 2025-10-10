@@ -37,6 +37,10 @@ interface LoadingScreen {
   progressBarColor: string;
   showProgressBar: boolean;
   progressText?: string;
+  // Image fields
+  imageUrl?: string;
+  imageAlt?: string;
+  showImage?: boolean;
 }
 
 interface QuizPageProps {
@@ -471,7 +475,7 @@ export default function QuizPage({ params }: QuizPageProps) {
     }
 
     return (
-      <div className="min-h-screen bg-white relative">
+      <div className="quiz-container bg-white relative">
         {currentQuestion && (
           <>
             {currentQuestion.type === "text" || currentQuestion.type === "email" ? (

@@ -17,6 +17,10 @@ interface LoadingScreenProps {
   progressText?: string;
   showTopBar?: boolean;
   topBarColor?: string;
+  // Image fields
+  imageUrl?: string;
+  imageAlt?: string;
+  showImage?: boolean;
   onComplete: () => void;
   userName?: string;
   lastAnswer?: string;
@@ -37,6 +41,10 @@ export default function LoadingScreenDisplay({
   progressText,
   showTopBar = true,
   topBarColor = '#1f2937',
+  // Image fields
+  imageUrl,
+  imageAlt,
+  showImage = false,
   onComplete,
   userName = "User",
   lastAnswer = "your response",
@@ -236,6 +244,18 @@ export default function LoadingScreenDisplay({
 
         {showProgressBar && (
           <div className="mt-8">
+            {/* Uploaded Image */}
+            {showImage && imageUrl && (
+              <div className="mb-6 flex justify-center">
+                <img
+                  src={imageUrl}
+                  alt={imageAlt || ''}
+                  className="max-w-full h-auto rounded-lg shadow-sm"
+                  style={{ maxHeight: '200px' }}
+                />
+              </div>
+            )}
+            
             {/* Icon/Symbol */}
             <div className="mb-4 flex justify-center">{getIconComponent()}</div>
             

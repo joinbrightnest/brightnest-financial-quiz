@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import DragDropUpload from "@/components/DragDropUpload";
 
 interface LoadingScreenEditorProps {
   params: Promise<{
@@ -38,6 +39,12 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
   const [testProgress, setTestProgress] = useState(0);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [dots, setDots] = useState("");
+  
+  // Image fields
+  const [imageUrl, setImageUrl] = useState<string>('');
+  const [imageAlt, setImageAlt] = useState<string>('');
+  const [showImage, setShowImage] = useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   // Handle async params and URL parameters
   useEffect(() => {
@@ -173,6 +180,11 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
         setShowTopBar(screen.showTopBar !== false);
         setTopBarColor(screen.topBarColor || '#1f2937');
         setTriggerQuestionId(screen.triggerQuestionId || "");
+        
+        // Image fields
+        setImageUrl(screen.imageUrl || '');
+        setImageAlt(screen.imageAlt || '');
+        setShowImage(screen.showImage || false);
       } else {
         console.error("Failed to fetch loading screen");
       }
@@ -226,6 +238,40 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
     }, 50);
   };
 
+  const handleImageUpload = async (file: File) => {
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/admin/upload-image', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setImageUrl(result.imageUrl);
+        setImageAlt(file.name.split('.')[0]); // Use filename as default alt text
+        setShowImage(true);
+      } else {
+        const error = await response.json();
+        alert(`Upload failed: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload image');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImageUrl('');
+    setImageAlt('');
+    setShowImage(false);
+  };
+
   const handleSave = async () => {
     // Validate that a question is selected
     if (!triggerQuestionId) {
@@ -261,6 +307,10 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
           showTopBar,
           topBarColor,
           triggerQuestionId,
+          // Image fields
+          imageUrl,
+          imageAlt,
+          showImage,
           isActive: true
         })
       });
@@ -506,6 +556,78 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                   </select>
                 </div>
 
+                {/* Image Upload Section */}
+                <div className="border-t pt-4 mt-4">
+                  <h3 className="text-sm font-medium text-gray-800 mb-3">Image Upload</h3>
+                  
+                  <div className="space-y-3">
+                    {/* Image Upload */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Upload Image
+                      </label>
+                      <DragDropUpload
+                        onUpload={handleImageUpload}
+                        isUploading={isUploading}
+                        accept="image/*"
+                        maxSize={5}
+                      />
+                    </div>
+
+                    {/* Show Image Toggle */}
+                    <div className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        id="showImage"
+                        checked={showImage}
+                        onChange={(e) => setShowImage(e.target.checked)}
+                        className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                      />
+                      <label htmlFor="showImage" className="text-sm font-medium text-gray-700">
+                        Show Image
+                      </label>
+                    </div>
+
+                    {/* Image Alt Text */}
+                    {showImage && imageUrl && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Alt Text (for accessibility)
+                        </label>
+                        <input
+                          type="text"
+                          value={imageAlt}
+                          onChange={(e) => setImageAlt(e.target.value)}
+                          placeholder="Describe the image..."
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900"
+                        />
+                      </div>
+                    )}
+
+                    {/* Image Preview */}
+                    {showImage && imageUrl && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Preview
+                        </label>
+                        <div className="relative">
+                          <img
+                            src={imageUrl}
+                            alt={imageAlt}
+                            className="w-full h-32 object-cover rounded border"
+                          />
+                          <button
+                            onClick={handleRemoveImage}
+                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 <div className="flex items-center space-x-3">
                   <input
                     type="checkbox"
@@ -705,6 +827,18 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                 
                 {showProgressBar && (
                   <div className="mt-8">
+                    {/* Uploaded Image */}
+                    {showImage && imageUrl && (
+                      <div className="mb-6 flex justify-center">
+                        <img
+                          src={imageUrl}
+                          alt={imageAlt}
+                          className="max-w-full h-auto rounded-lg shadow-sm"
+                          style={{ maxHeight: '200px' }}
+                        />
+                      </div>
+                    )}
+                    
                     {/* Icon/Symbol */}
                     <div className="mb-4 flex justify-center">{getIconComponent()}</div>
                     

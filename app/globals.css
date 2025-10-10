@@ -29,3 +29,62 @@ body {
 html {
   overscroll-behavior: none;
 }
+
+/* Mobile optimizations for smooth scrolling - Noom-inspired */
+@media (max-width: 768px) {
+  /* Smooth scrolling with momentum - prevent blank spaces */
+  .mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overscroll-behavior: none;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  
+  /* Touch-friendly button sizing */
+  .touch-friendly {
+    min-height: 48px;
+    min-width: 48px;
+    touch-action: manipulation;
+  }
+  
+  /* Prevent zoom on input focus */
+  input[type="text"],
+  input[type="email"],
+  textarea {
+    font-size: 16px;
+  }
+  
+  /* Smooth transitions for mobile */
+  .mobile-transition {
+    transition: all 0.2s ease-out;
+  }
+  
+  /* Prevent text selection on buttons */
+  .no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Better touch feedback */
+  .touch-feedback:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease-out;
+  }
+  
+  /* Noom-style progressive disclosure */
+  .quiz-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Prevent blank spaces during fast scrolling */
+  .quiz-content {
+    flex: 1;
+    position: relative;
+    background: white;
+  }
+}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import DragDropUpload from "@/components/DragDropUpload";
 
 interface Question {
   id: string;
@@ -71,6 +72,12 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
   const [contentFontSize, setContentFontSize] = useState<string>('normal');
   const [contentFontWeight, setContentFontWeight] = useState<string>('normal');
   const [lineHeight, setLineHeight] = useState<string>('normal');
+  
+  // Image fields
+  const [imageUrl, setImageUrl] = useState<string>('');
+  const [imageAlt, setImageAlt] = useState<string>('');
+  const [showImage, setShowImage] = useState<boolean>(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   
   // Editing state
   const [editingArticleId, setEditingArticleId] = useState<string | null>(null);
@@ -182,6 +189,11 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         setContentFontSize(article.contentFontSize || 'normal');
         setContentFontWeight(article.contentFontWeight || 'normal');
         setLineHeight(article.lineHeight || 'normal');
+        
+        // Image fields
+        setImageUrl(article.imageUrl || '');
+        setImageAlt(article.imageAlt || '');
+        setShowImage(article.showImage || false);
         
         // Find and set the question and answer
         // Check if article has triggers array (from API) or separate fields (from quiz editor)
@@ -320,6 +332,39 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
     }
   };
 
+  const handleImageUpload = async (file: File) => {
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/admin/upload-image', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setImageUrl(result.imageUrl);
+        setImageAlt(file.name.split('.')[0]); // Use filename as default alt text
+        setShowImage(true);
+      } else {
+        const error = await response.json();
+        alert(`Upload failed: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload image');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImageUrl('');
+    setImageAlt('');
+    setShowImage(false);
+  };
 
   const handleSaveArticle = async () => {
     if (!personalizedText.trim()) {
@@ -375,6 +420,10 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
           contentFontSize,
           contentFontWeight,
           lineHeight,
+          // Image fields
+          imageUrl,
+          imageAlt,
+          showImage,
           triggers: selectedQuestion ? [{
             questionId: selectedQuestion,
             optionValue: selectedOption,
@@ -971,6 +1020,79 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                     </div>
                   </div>
                 </div>
+
+                {/* Image Upload Section */}
+                <div className="border-t pt-3 mt-3">
+                  <h3 className="text-sm font-medium text-gray-800 mb-3">Image Upload</h3>
+                  
+                  <div className="space-y-3">
+                    {/* Image Upload */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        Upload Image
+                      </label>
+                      <DragDropUpload
+                        onUpload={handleImageUpload}
+                        isUploading={isUploading}
+                        accept="image/*"
+                        maxSize={5}
+                        className="text-xs"
+                      />
+                    </div>
+
+                    {/* Show Image Toggle */}
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id="showImage"
+                        checked={showImage}
+                        onChange={(e) => setShowImage(e.target.checked)}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <label htmlFor="showImage" className="text-xs font-medium text-gray-700">
+                        Show Image
+                      </label>
+                    </div>
+
+                    {/* Image Alt Text */}
+                    {showImage && imageUrl && (
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Alt Text (for accessibility)
+                        </label>
+                        <input
+                          type="text"
+                          value={imageAlt}
+                          onChange={(e) => setImageAlt(e.target.value)}
+                          placeholder="Describe the image..."
+                          className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
+                        />
+                      </div>
+                    )}
+
+                    {/* Image Preview */}
+                    {showImage && imageUrl && (
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                          Preview
+                        </label>
+                        <div className="relative">
+                          <img
+                            src={imageUrl}
+                            alt={imageAlt}
+                            className="w-full h-32 object-cover rounded border"
+                          />
+                          <button
+                            onClick={handleRemoveImage}
+                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1013,6 +1135,22 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                 }`}>
                   {/* Content Block - All elements aligned together */}
                   <div className="w-full max-w-md">
+                    {/* Uploaded Image */}
+                    {showImage && imageUrl && (
+                      <div className={`mb-6 ${
+                        textAlignment === 'left' ? 'flex justify-start' :
+                        textAlignment === 'right' ? 'flex justify-end' :
+                        'flex justify-center'
+                      }`}>
+                        <img
+                          src={imageUrl}
+                          alt={imageAlt}
+                          className="max-w-full h-auto rounded-lg shadow-sm"
+                          style={{ maxHeight: '200px' }}
+                        />
+                      </div>
+                    )}
+
                     {/* Icon */}
                     {showIcon && (
                       <div className={`mb-6 ${

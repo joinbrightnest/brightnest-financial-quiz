@@ -52,7 +52,11 @@ export async function POST(request: NextRequest) {
       progressBarColor,
       showProgressBar,
       progressText,
-      triggerQuestionId
+      triggerQuestionId,
+      // Image fields
+      imageUrl,
+      imageAlt,
+      showImage
     } = body;
 
     if (!quizType || !title) {
@@ -75,6 +79,10 @@ export async function POST(request: NextRequest) {
         showProgressBar: showProgressBar !== undefined ? showProgressBar : true,
         progressText,
         triggerQuestionId,
+        // Image fields
+        imageUrl: imageUrl || null,
+        imageAlt: imageAlt || null,
+        showImage: showImage !== undefined ? showImage : false,
         isActive: true
       }
     });

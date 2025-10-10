@@ -56,7 +56,7 @@ export default function TextInput({
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="quiz-container bg-white">
       {/* Top Header Bar */}
       <div className="bg-gray-800 w-full py-4">
         <div className="max-w-md mx-auto px-6">
@@ -67,7 +67,8 @@ export default function TextInput({
       </div>
       
       {/* Main Content */}
-      <div className="max-w-md mx-auto px-6 py-12">
+      <div className="quiz-content mobile-scroll">
+        <div className="max-w-md mx-auto px-6 py-8">
         <div className="mb-8">
           {currentQuestion && totalQuestions && (
             <ProgressBar 
@@ -80,7 +81,7 @@ export default function TextInput({
         </div>
         
         <div>
-          <h2 className="text-xl font-medium text-gray-900 mb-12 leading-relaxed text-left">
+          <h2 className="text-xl font-medium text-gray-900 mb-8 leading-relaxed text-left">
             {replaceVariables(question.prompt)}
           </h2>
           
@@ -90,7 +91,7 @@ export default function TextInput({
               value={value}
               onChange={(e) => onChange(e.target.value)}
               placeholder={question.type === "email" ? "Enter your email address" : "Enter your name"}
-              className="w-full p-5 border border-gray-300 rounded-lg focus:border-teal-500 focus:outline-none text-gray-900 text-lg text-center"
+              className="w-full p-5 border border-gray-300 rounded-lg focus:border-teal-500 focus:outline-none text-gray-900 text-lg text-center touch-friendly mobile-transition"
               style={{ backgroundColor: '#f6f4ed' }}
               required
             />
@@ -100,7 +101,7 @@ export default function TextInput({
                 type="button"
                 onClick={value.trim() ? onContinue : undefined}
                 disabled={!value.trim()}
-                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 ${
+                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 touch-friendly touch-feedback no-select mobile-transition ${
                   value.trim()
                     ? "text-white hover:opacity-90"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -115,7 +116,7 @@ export default function TextInput({
               <button
                 type="submit"
                 disabled={!value.trim()}
-                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 ${
+                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 touch-friendly touch-feedback no-select mobile-transition ${
                   !value.trim()
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                     : "text-white hover:bg-teal-700"
@@ -134,12 +135,13 @@ export default function TextInput({
             <div className="mt-6 text-center">
               <button
                 onClick={onSkip}
-                className="text-gray-500 hover:text-gray-700 text-sm underline transition-colors"
+                className="text-gray-500 hover:text-gray-700 text-sm underline transition-colors touch-friendly touch-feedback no-select"
               >
                 Skip
               </button>
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>
