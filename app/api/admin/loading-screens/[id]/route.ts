@@ -43,6 +43,9 @@ export async function PUT(
       textColor,
       iconColor,
       progressBarColor,
+      progressBarFillColor,
+      progressBarBgColor,
+      progressBarTextColor,
       showProgressBar,
       progressText,
       triggerQuestionId
@@ -61,6 +64,9 @@ export async function PUT(
         textColor,
         iconColor,
         progressBarColor,
+        progressBarFillColor,
+        progressBarBgColor,
+        progressBarTextColor,
         showProgressBar,
         progressText,
         triggerQuestionId

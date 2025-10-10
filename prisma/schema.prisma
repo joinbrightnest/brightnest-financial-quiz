@@ -192,7 +192,10 @@ model LoadingScreen {
   backgroundColor String   @default("#ffffff") // Background color
   textColor       String   @default("#000000") // Text color
   iconColor       String   @default("#3b82f6") // Icon color
-  progressBarColor String  @default("#ef4444") // Progress bar color
+  progressBarColor String  @default("#ef4444") // Progress bar color (legacy field)
+  progressBarFillColor String @default("#fb513d") // Progress bar fill color
+  progressBarBgColor String @default("#e4dece") // Progress bar background color
+  progressBarTextColor String @default("#191717") // Progress bar text color
   showProgressBar Boolean  @default(true) // Whether to show progress bar
   progressText    String?  // Custom progress text (e.g., "CALCULATING...")
   showTopBar      Boolean  @default(true) // Whether to show top bar

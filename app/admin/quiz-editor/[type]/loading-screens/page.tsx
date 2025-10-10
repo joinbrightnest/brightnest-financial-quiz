@@ -30,6 +30,9 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
   const [textColor, setTextColor] = useState("#1e293b");
   const [iconColor, setIconColor] = useState("#06b6d4");
   const [progressBarColor, setProgressBarColor] = useState("#ef4444");
+  const [progressBarFillColor, setProgressBarFillColor] = useState("#fb513d");
+  const [progressBarBgColor, setProgressBarBgColor] = useState("#e4dece");
+  const [progressBarTextColor, setProgressBarTextColor] = useState("#191717");
   const [showProgressBar, setShowProgressBar] = useState(true);
   const [showTopBar, setShowTopBar] = useState<boolean>(true);
   const [topBarColor, setTopBarColor] = useState<string>('#1f2937');
@@ -176,6 +179,9 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
         setTextColor(screen.textColor || "#1e293b");
         setIconColor(screen.iconColor || "#06b6d4");
         setProgressBarColor(screen.progressBarColor || "#ef4444");
+        setProgressBarFillColor(screen.progressBarFillColor || "#fb513d");
+        setProgressBarBgColor(screen.progressBarBgColor || "#e4dece");
+        setProgressBarTextColor(screen.progressBarTextColor || "#191717");
         setShowProgressBar(screen.showProgressBar !== undefined ? screen.showProgressBar : true);
         setShowTopBar(screen.showTopBar !== false);
         setTopBarColor(screen.topBarColor || '#1f2937');
@@ -302,6 +308,9 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
           textColor,
           iconColor,
           progressBarColor,
+          progressBarFillColor,
+          progressBarBgColor,
+          progressBarTextColor,
           showProgressBar,
           progressText,
           showTopBar,
@@ -736,19 +745,57 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Progress Bar
+                      Progress Bar Fill Color
                     </label>
                     <div className="flex items-center space-x-2">
                       <input
                         type="color"
-                        value={progressBarColor}
-                        onChange={(e) => setProgressBarColor(e.target.value)}
+                        value={progressBarFillColor}
+                        onChange={(e) => setProgressBarFillColor(e.target.value)}
                         className="w-12 h-10 rounded cursor-pointer border border-gray-300"
                       />
                       <input
                         type="text"
-                        value={progressBarColor}
-                        onChange={(e) => setProgressBarColor(e.target.value)}
+                        value={progressBarFillColor}
+                        onChange={(e) => setProgressBarFillColor(e.target.value)}
+                        className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Progress Bar Background Color
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="color"
+                        value={progressBarBgColor}
+                        onChange={(e) => setProgressBarBgColor(e.target.value)}
+                        className="w-12 h-10 rounded cursor-pointer border border-gray-300"
+                      />
+                      <input
+                        type="text"
+                        value={progressBarBgColor}
+                        onChange={(e) => setProgressBarBgColor(e.target.value)}
+                        className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Progress Bar Text Color
+                    </label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="color"
+                        value={progressBarTextColor}
+                        onChange={(e) => setProgressBarTextColor(e.target.value)}
+                        className="w-12 h-10 rounded cursor-pointer border border-gray-300"
+                      />
+                      <input
+                        type="text"
+                        value={progressBarTextColor}
+                        onChange={(e) => setProgressBarTextColor(e.target.value)}
                         className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
                       />
                     </div>
@@ -862,13 +909,13 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                         style={{ 
                           width: '300px', 
                           height: '32px',
-                          backgroundColor: '#e4dece'
+                          backgroundColor: progressBarBgColor
                         }}
                       >
                         <div
                           className="h-full transition-all duration-300 ease-out rounded-lg"
                           style={{
-                            backgroundColor: '#fb513d',
+                            backgroundColor: progressBarFillColor,
                             width: isTesting ? `${testProgress}%` : '65%',
                           }}
                         />
@@ -878,7 +925,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                           <span 
                             className="text-base font-bold"
                             style={{ 
-                              color: '#191717',
+                              color: progressBarTextColor,
                               fontWeight: '600'
                             }}
                           >

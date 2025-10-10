@@ -13,6 +13,9 @@ interface LoadingScreenProps {
   textColor: string;
   iconColor: string;
   progressBarColor: string;
+  progressBarFillColor?: string;
+  progressBarBgColor?: string;
+  progressBarTextColor?: string;
   showProgressBar: boolean;
   progressText?: string;
   showTopBar?: boolean;
@@ -37,6 +40,9 @@ export default function LoadingScreenDisplay({
   textColor,
   iconColor,
   progressBarColor,
+  progressBarFillColor,
+  progressBarBgColor,
+  progressBarTextColor,
   showProgressBar,
   progressText,
   showTopBar = true,
@@ -276,29 +282,29 @@ export default function LoadingScreenDisplay({
             <div className="flex justify-center">
               <div 
                 className="relative overflow-hidden rounded-lg" 
-                style={{ 
-                  width: '300px', 
-                  height: '32px',
-                  backgroundColor: '#e4dece'
-                }}
-              >
-                <div
-                  className="h-full transition-all duration-300 ease-out rounded-lg"
-                  style={{
-                    backgroundColor: '#fb513d',
-                    width: `${progress}%`,
-                  }}
-                />
-                
-                {/* Progress Percentage */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span 
-                    className="text-base font-bold"
-                    style={{ 
-                      color: '#191717',
-                      fontWeight: '600'
-                    }}
-                  >
+                        style={{ 
+                          width: '300px', 
+                          height: '32px',
+                          backgroundColor: progressBarBgColor || '#e4dece'
+                        }}
+                      >
+                        <div
+                          className="h-full transition-all duration-300 ease-out rounded-lg"
+                          style={{
+                            backgroundColor: progressBarFillColor || '#fb513d',
+                            width: `${progress}%`,
+                          }}
+                        />
+                        
+                        {/* Progress Percentage */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span 
+                            className="text-base font-bold"
+                            style={{ 
+                              color: progressBarTextColor || '#191717',
+                              fontWeight: '600'
+                            }}
+                          >
                     {Math.round(progress)}%
                   </span>
                 </div>
