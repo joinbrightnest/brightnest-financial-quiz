@@ -8,43 +8,43 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
-              <Link href="/" className="text-2xl font-bold text-gray-900">
+              <Link href="/" className="text-xl font-bold text-gray-900">
                 BrightNest
               </Link>
-              <div className="hidden md:flex items-center space-x-8">
-                <Link href="/careers" className="text-gray-900 font-medium text-sm uppercase tracking-wide">
+              <div className="hidden md:flex items-center space-x-6">
+                <Link href="/careers" className="text-gray-900 font-medium text-xs uppercase tracking-wide">
                   Careers
                 </Link>
-                <Link href="/quiz/financial-profile" className="text-gray-900 font-medium text-sm uppercase tracking-wide">
+                <Link href="/quiz/financial-profile" className="text-gray-900 font-medium text-xs uppercase tracking-wide">
                   Financial Profile
                 </Link>
-                <Link href="/quiz/health-finance" className="text-gray-900 font-medium text-sm uppercase tracking-wide">
+                <Link href="/quiz/health-finance" className="text-gray-900 font-medium text-xs uppercase tracking-wide">
                   Health Finance
                 </Link>
-                <Link href="/quiz/marriage-finance" className="text-gray-900 font-medium text-sm uppercase tracking-wide">
+                <Link href="/quiz/marriage-finance" className="text-gray-900 font-medium text-xs uppercase tracking-wide">
                   Marriage Finance
                 </Link>
-                <Link href="/about" className="text-gray-900 font-medium text-sm uppercase tracking-wide">
+                <Link href="/about" className="text-gray-900 font-medium text-xs uppercase tracking-wide">
                   Company
                 </Link>
-                <Link href="/help" className="text-gray-900 font-medium text-sm uppercase tracking-wide">
+                <Link href="/help" className="text-gray-900 font-medium text-xs uppercase tracking-wide">
                   Support
                 </Link>
-                <Link href="/login" className="text-gray-900 font-medium text-sm uppercase tracking-wide">
+                <Link href="/login" className="text-gray-900 font-medium text-xs uppercase tracking-wide">
                   Login
                 </Link>
               </div>
             </div>
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-1">
-                <span className="text-gray-900 font-medium text-sm uppercase tracking-wide">EN</span>
+                <span className="text-gray-900 font-medium text-xs uppercase tracking-wide">EN</span>
                 <svg className="w-3 h-3 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
               <Link 
                 href="/quiz/financial-profile"
-                className="bg-teal-600 text-white px-4 py-2 text-sm font-medium hover:bg-teal-700 transition-colors rounded"
+                className="bg-teal-600 text-white px-4 py-2 text-xs font-medium hover:bg-teal-700 transition-colors rounded"
               >
                 Learn More
               </Link>
