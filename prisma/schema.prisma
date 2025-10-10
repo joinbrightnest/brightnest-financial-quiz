@@ -44,6 +44,9 @@ model QuizQuestion {
   type      String
   options   Json
   active    Boolean      @default(true)
+  skipButton Boolean     @default(false) // Show skip option for this question
+  continueButton Boolean @default(false) // Show continue button after answer selection
+  continueButtonColor String @default("#09727c") // Color for continue button
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   answers   QuizAnswer[]

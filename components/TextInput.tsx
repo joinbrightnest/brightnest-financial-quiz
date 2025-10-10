@@ -4,10 +4,15 @@ interface TextInputProps {
   question: {
     prompt: string;
     type: string;
+    skipButton?: boolean;
+    continueButton?: boolean;
+    continueButtonColor?: string;
   };
   value: string;
   onChange: (value: string) => void;
   onSubmit: () => void;
+  onSkip?: () => void;
+  onContinue?: () => void;
   onBack?: () => void;
   canGoBack?: boolean;
   currentQuestion?: number;
@@ -23,6 +28,8 @@ export default function TextInput({
   value, 
   onChange, 
   onSubmit, 
+  onSkip,
+  onContinue,
   onBack, 
   canGoBack = false, 
   currentQuestion, 
@@ -88,21 +95,51 @@ export default function TextInput({
               required
             />
             
-            <button
-              type="submit"
-              disabled={!value.trim()}
-              className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 ${
-                !value.trim()
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "text-white hover:bg-teal-700"
-              }`}
-              style={{
-                backgroundColor: !value.trim() ? undefined : '#09727c'
-              }}
-            >
-              Continue
-            </button>
+            {question.continueButton ? (
+              <button
+                type="button"
+                onClick={value.trim() ? onContinue : undefined}
+                disabled={!value.trim()}
+                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 ${
+                  value.trim()
+                    ? "text-white hover:opacity-90"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+                style={{
+                  backgroundColor: value.trim() ? (question.continueButtonColor || '#09727c') : undefined
+                }}
+              >
+                Continue
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={!value.trim()}
+                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 ${
+                  !value.trim()
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "text-white hover:bg-teal-700"
+                }`}
+                style={{
+                  backgroundColor: !value.trim() ? undefined : '#09727c'
+                }}
+              >
+                Continue
+              </button>
+            )}
           </form>
+
+          {/* Skip Option */}
+          {question.skipButton && (
+            <div className="mt-6 text-center">
+              <button
+                onClick={onSkip}
+                className="text-gray-500 hover:text-gray-700 text-sm underline transition-colors"
+              >
+                Skip
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

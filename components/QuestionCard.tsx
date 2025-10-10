@@ -12,11 +12,16 @@ interface QuestionCardProps {
       weightCategory: string;
       weightValue: number;
     }>;
+    skipButton?: boolean;
+    continueButton?: boolean;
+    continueButtonColor?: string;
   };
   currentQuestion: number;
   totalQuestions: number;
   selectedValue: string | null;
   onAnswer: (value: string) => void;
+  onSkip?: () => void;
+  onContinue?: () => void;
   onBack?: () => void;
   canGoBack?: boolean;
   userVariables?: {
@@ -31,6 +36,8 @@ export default function QuestionCard({
   totalQuestions,
   selectedValue,
   onAnswer,
+  onSkip,
+  onContinue,
   onBack,
   canGoBack = false,
   userVariables = {},
@@ -84,6 +91,40 @@ export default function QuestionCard({
               />
             ))}
           </div>
+
+          {/* Skip Option */}
+          {question.skipButton && (
+            <div className="mt-6 text-center">
+              <button
+                onClick={onSkip}
+                className="text-gray-500 hover:text-gray-700 text-sm underline transition-colors"
+              >
+                Skip
+              </button>
+            </div>
+          )}
+
+          {/* Continue Button */}
+          {question.continueButton && (
+            <div className="mt-6">
+              <button
+                onClick={selectedValue ? onContinue : undefined}
+                disabled={!selectedValue}
+                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 ${
+                  selectedValue 
+                    ? "text-white hover:opacity-90" 
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+                style={{ 
+                  backgroundColor: selectedValue 
+                    ? (question.continueButtonColor || "#09727c") 
+                    : undefined 
+                }}
+              >
+                Continue
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

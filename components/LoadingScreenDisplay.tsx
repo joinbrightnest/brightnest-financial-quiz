@@ -234,11 +234,11 @@ export default function LoadingScreenDisplay({
           </p>
         )}
 
-        {/* Icon/Symbol */}
-        <div className="mb-6 flex justify-center">{getIconComponent()}</div>
-
         {showProgressBar && (
           <div className="mt-8">
+            {/* Icon/Symbol */}
+            <div className="mb-4 flex justify-center">{getIconComponent()}</div>
+            
             {/* Loading Text */}
             <p
               className="text-lg font-medium mb-6 tracking-wide text-center"

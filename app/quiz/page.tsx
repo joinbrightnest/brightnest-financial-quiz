@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import QuestionCard from "@/components/QuestionCard";
 import TextInput from "@/components/TextInput";
+import ArticleDisplayWrapper from "@/components/ArticleDisplayWrapper";
 
 interface Question {
   id: string;
@@ -15,6 +16,9 @@ interface Question {
     weightCategory: string;
     weightValue: number;
   }>;
+  skipButton?: boolean;
+  continueButton?: boolean;
+  continueButtonColor?: string;
 }
 
 export default function QuizPage() {
@@ -234,7 +238,7 @@ export default function QuizPage() {
           question={currentQuestion}
           value={textValue}
           onChange={setTextValue}
-          onNext={handleNext}
+          onSubmit={handleNext}
           onBack={handleBack}
           canGoBack={canGoBack}
           currentQuestion={questionNumber}
@@ -247,7 +251,6 @@ export default function QuizPage() {
           totalQuestions={totalQuestions}
           selectedValue={selectedValue}
           onAnswer={handleAnswer}
-          onNext={handleNext}
           onBack={handleBack}
           canGoBack={canGoBack}
         />
@@ -255,12 +258,12 @@ export default function QuizPage() {
 
       {/* Article Display Modal - Show for all questions with options */}
       {showArticle && pendingAnswer && currentQuestion && sessionId && currentQuestion.options && currentQuestion.options.length > 0 && (
-        <ArticleDisplayNoom
+        <ArticleDisplayWrapper
           sessionId={sessionId}
           questionId={currentQuestion.id}
           answerValue={pendingAnswer.value}
           answerLabel={pendingAnswer.label}
-          onClose={handleArticleClose}
+          onContinue={handleArticleClose}
         />
       )}
     </div>

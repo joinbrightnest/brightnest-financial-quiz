@@ -16,6 +16,9 @@ interface Question {
     weightValue: number;
   }>;
   active: boolean;
+  skipButton?: boolean;
+  continueButton?: boolean;
+  continueButtonColor?: string;
 }
 
 export default function NewQuizEditor() {
@@ -151,7 +154,10 @@ export default function NewQuizEditor() {
           weightValue: 2
         }
       ],
-      active: true
+      active: true,
+      skipButton: false,
+      continueButton: false,
+      continueButtonColor: '#09727c'
     };
     setQuestions(prev => [...prev, newQuestion]);
   };
@@ -494,6 +500,61 @@ export default function NewQuizEditor() {
                         <option value="text">Text Input</option>
                         <option value="email">Email Input</option>
                       </select>
+                    </div>
+
+                    {/* Skip and Continue Options */}
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          id={`skip-${question.id}`}
+                          checked={question.skipButton || false}
+                          onChange={(e) => handleQuestionEdit(question.id, "skipButton", e.target.checked)}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                        <label htmlFor={`skip-${question.id}`} className="text-sm font-medium text-gray-700">
+                          Show Skip Option
+                        </label>
+                        <span className="text-xs text-gray-500">(Users can skip this question)</span>
+                      </div>
+
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          id={`continue-${question.id}`}
+                          checked={question.continueButton || false}
+                          onChange={(e) => handleQuestionEdit(question.id, "continueButton", e.target.checked)}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                        <label htmlFor={`continue-${question.id}`} className="text-sm font-medium text-gray-700">
+                          Show Continue Button
+                        </label>
+                        <span className="text-xs text-gray-500">(Requires answer selection before proceeding)</span>
+                      </div>
+
+                      {/* Continue Button Color (only show if continue button is enabled) */}
+                      {(question.continueButton || false) && (
+                        <div className="ml-7">
+                          <label className="block text-xs font-medium text-gray-700 mb-2">
+                            Continue Button Color
+                          </label>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="color"
+                              value={question.continueButtonColor || "#09727c"}
+                              onChange={(e) => handleQuestionEdit(question.id, "continueButtonColor", e.target.value)}
+                              className="w-12 h-10 rounded cursor-pointer border border-gray-300"
+                            />
+                            <input
+                              type="text"
+                              value={question.continueButtonColor || "#09727c"}
+                              onChange={(e) => handleQuestionEdit(question.id, "continueButtonColor", e.target.value)}
+                              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                              placeholder="#09727c"
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Options (only for single type) */}

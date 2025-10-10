@@ -47,6 +47,9 @@ export async function POST(request: NextRequest) {
         type: string;
         options: object;
         active: boolean;
+        skipButton?: boolean;
+        continueButton?: boolean;
+        continueButtonColor?: string;
       }) => {
         console.log("Creating question:", question.order, question.prompt);
         return prisma.quizQuestion.create({
@@ -57,6 +60,9 @@ export async function POST(request: NextRequest) {
             type: question.type,
             options: question.options as object,
             active: question.active,
+            skipButton: question.skipButton || false,
+            continueButton: question.continueButton || false,
+            continueButtonColor: question.continueButtonColor || '#09727c',
           },
         });
       })

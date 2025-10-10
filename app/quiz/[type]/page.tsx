@@ -18,6 +18,9 @@ interface Question {
     weightCategory: string;
     weightValue: number;
   }>;
+  skipButton?: boolean;
+  continueButton?: boolean;
+  continueButtonColor?: string;
 }
 
 interface LoadingScreen {
@@ -224,6 +227,11 @@ export default function QuizPage({ params }: QuizPageProps) {
     // Immediate visual feedback - set selected value before processing
     setSelectedValue(value);
     
+    // If continue button is enabled, don't process answer immediately
+    if (currentQuestion.continueButton) {
+      return; // Wait for continue button click
+    }
+    
     await processAnswer(value, answerLabel);
   };
 
@@ -242,6 +250,23 @@ export default function QuizPage({ params }: QuizPageProps) {
     clearInputs();
     
     await processAnswer(textValue, textValue);
+  };
+
+  const handleSkip = async () => {
+    if (!currentQuestion) return;
+    
+    // Mark as skipped by sending a special value
+    await processAnswer("__SKIPPED__", "Skipped");
+  };
+
+  const handleContinue = async () => {
+    if (!currentQuestion || !selectedValue) return;
+    
+    const answerLabel = currentQuestion.options.find(opt => opt.value === selectedValue)?.label || selectedValue;
+    
+    // Clear inputs and process the selected answer
+    clearInputs();
+    await processAnswer(selectedValue, answerLabel);
   };
 
   const handleBack = async () => {
@@ -455,6 +480,8 @@ export default function QuizPage({ params }: QuizPageProps) {
                 value={textValue}
                 onChange={setTextValue}
                 onSubmit={handleTextSubmit}
+                onSkip={handleSkip}
+                onContinue={handleContinue}
                 onBack={handleBack}
                 canGoBack={canGoBack}
                 currentQuestion={currentQuestionIndex + 1}
@@ -468,6 +495,8 @@ export default function QuizPage({ params }: QuizPageProps) {
                 totalQuestions={totalQuestions}
                 selectedValue={selectedValue}
                 onAnswer={handleAnswer}
+                onSkip={handleSkip}
+                onContinue={handleContinue}
                 onBack={handleBack}
                 canGoBack={canGoBack}
                 userVariables={userVariables}

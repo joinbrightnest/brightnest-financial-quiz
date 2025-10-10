@@ -676,10 +676,6 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                 )}
                 
                 <div className="flex flex-col items-center justify-center p-8 text-center flex-1">
-                <div className="mb-6">
-                  {getIconComponent()}
-                </div>
-                
                 <h2 
                   className="text-2xl font-bold mb-3"
                   style={{ color: textColor }}
@@ -709,6 +705,9 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                 
                 {showProgressBar && (
                   <div className="mt-8">
+                    {/* Icon/Symbol */}
+                    <div className="mb-4 flex justify-center">{getIconComponent()}</div>
+                    
                     {/* Loading Text */}
                     <p
                       className="text-lg font-medium mb-6 tracking-wide text-center"
