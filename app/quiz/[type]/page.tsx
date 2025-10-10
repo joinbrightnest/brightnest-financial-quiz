@@ -475,7 +475,7 @@ export default function QuizPage({ params }: QuizPageProps) {
     }
 
     return (
-      <div className="quiz-container bg-white relative">
+      <div className="min-h-screen bg-white relative">
         {currentQuestion && (
           <>
             {currentQuestion.type === "text" || currentQuestion.type === "email" ? (

@@ -59,10 +59,10 @@ export default function ProgressBar({ current, total, onBack, canGoBack = false 
           </div>
         </div>
       ) : (
-        // Centered layout for first question - shorter progress bar
-        <div className="flex flex-col items-center">
-          {/* Progress Bar Container - shorter on mobile */}
-          <div className="w-3/4 bg-gray-100 rounded-full h-2 overflow-hidden">
+        // Centered layout for first question
+        <div className="flex flex-col items-center lg:items-start">
+          {/* Progress Bar Container - shorter on mobile, full on desktop */}
+          <div className="w-3/4 lg:w-full bg-gray-100 rounded-full h-2 overflow-hidden">
             <div 
               className="h-full bg-teal-600 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${(current / total) * 100}%` }}
@@ -70,7 +70,7 @@ export default function ProgressBar({ current, total, onBack, canGoBack = false 
           </div>
           
           {/* Progress Indicators below the progress bar */}
-          <div className="flex justify-between items-center mt-2 w-3/4">
+          <div className="flex justify-between items-center mt-2 w-3/4 lg:w-full">
             {Array.from({ length: total }, (_, index) => (
               <div
                 key={index}

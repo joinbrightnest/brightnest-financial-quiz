@@ -56,7 +56,7 @@ export default function TextInput({
   };
 
   return (
-    <div className="quiz-container bg-white">
+    <div className="min-h-screen bg-white">
       {/* Top Header Bar */}
       <div className="bg-gray-800 w-full py-4">
         <div className="max-w-md mx-auto px-6">
@@ -67,8 +67,7 @@ export default function TextInput({
       </div>
       
       {/* Main Content */}
-      <div className="quiz-content mobile-scroll">
-        <div className="max-w-md mx-auto px-6 py-8">
+      <div className="max-w-md mx-auto px-6 py-6 md:py-8">
         <div className="mb-8">
           {currentQuestion && totalQuestions && (
             <ProgressBar 
@@ -81,7 +80,7 @@ export default function TextInput({
         </div>
         
         <div>
-          <h2 className="text-xl font-medium text-gray-900 mb-8 leading-relaxed text-left">
+          <h2 className="text-xl font-medium text-gray-900 mb-6 md:mb-8 leading-relaxed text-left">
             {replaceVariables(question.prompt)}
           </h2>
           
@@ -141,7 +140,6 @@ export default function TextInput({
               </button>
             </div>
           )}
-        </div>
         </div>
       </div>
     </div>
