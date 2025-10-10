@@ -5,8 +5,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { code } = body;
 
-    // Admin code from environment variable
-    const adminCode = process.env.ADMIN_ACCESS_CODE || "brightnest2025";
+    // Admin code from environment variable (required)
+    const adminCode = process.env.ADMIN_ACCESS_CODE;
+    if (!adminCode) {
+      return NextResponse.json(
+        { error: "Admin access not configured" },
+        { status: 500 }
+      );
+    }
     if (code === adminCode) {
       // Set a simple session cookie (you can make this more secure later)
       const response = NextResponse.json({ success: true });

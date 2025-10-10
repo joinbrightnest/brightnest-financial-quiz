@@ -74,19 +74,4 @@ html {
     transition: transform 0.1s ease-out;
   }
   
-  /* Noom-style progressive disclosure */
-  .quiz-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: white;
-  }
-  
-  /* Prevent blank spaces during fast scrolling */
-  .quiz-content {
-    flex: 1;
-    position: relative;
-    background: white;
-    min-height: calc(100vh - 80px); /* Subtract header height */
-  }
 }
