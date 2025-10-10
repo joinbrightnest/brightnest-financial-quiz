@@ -20,6 +20,7 @@ interface Question {
   skipButton?: boolean;
   continueButton?: boolean;
   continueButtonColor?: string;
+  continueButtonText?: string;
   textUnderAnswers?: string;
   textUnderButton?: string;
 }
@@ -403,7 +404,8 @@ export default function QuizEditor({ params }: QuizEditorProps) {
       active: true,
       skipButton: false,
       continueButton: false,
-      continueButtonColor: '#09727c'
+      continueButtonColor: '#09727c',
+      continueButtonText: 'Continue'
     };
     setQuestions(prev => [...prev, newQuestion]);
   };
@@ -892,26 +894,40 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                           <span className="text-xs text-gray-500">(Requires answer selection before proceeding)</span>
                         </div>
 
-                        {/* Continue Button Color (only show if continue button is enabled) */}
+                        {/* Continue Button Settings (only show if continue button is enabled) */}
                         {(question.continueButton || false) && (
-                          <div className="ml-7">
-                            <label className="block text-xs font-medium text-gray-700 mb-2">
-                              Continue Button Color
-                            </label>
-                            <div className="flex items-center space-x-2">
-                              <input
-                                type="color"
-                                value={question.continueButtonColor || "#09727c"}
-                                onChange={(e) => handleQuestionEdit(question.id, "continueButtonColor", e.target.value)}
-                                className="w-12 h-10 rounded cursor-pointer border border-gray-300"
-                              />
+                          <div className="ml-7 space-y-3">
+                            <div>
+                              <label className="block text-xs font-medium text-gray-700 mb-2">
+                                Continue Button Text
+                              </label>
                               <input
                                 type="text"
-                                value={question.continueButtonColor || "#09727c"}
-                                onChange={(e) => handleQuestionEdit(question.id, "continueButtonColor", e.target.value)}
-                                className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
-                                placeholder="#09727c"
+                                value={question.continueButtonText || ""}
+                                onChange={(e) => handleQuestionEdit(question.id, "continueButtonText", e.target.value)}
+                                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Continue"
                               />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium text-gray-700 mb-2">
+                                Continue Button Color
+                              </label>
+                              <div className="flex items-center space-x-2">
+                                <input
+                                  type="color"
+                                  value={question.continueButtonColor || "#09727c"}
+                                  onChange={(e) => handleQuestionEdit(question.id, "continueButtonColor", e.target.value)}
+                                  className="w-12 h-10 rounded cursor-pointer border border-gray-300"
+                                />
+                                <input
+                                  type="text"
+                                  value={question.continueButtonColor || "#09727c"}
+                                  onChange={(e) => handleQuestionEdit(question.id, "continueButtonColor", e.target.value)}
+                                  className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                                  placeholder="#09727c"
+                                />
+                              </div>
                             </div>
                           </div>
                         )}

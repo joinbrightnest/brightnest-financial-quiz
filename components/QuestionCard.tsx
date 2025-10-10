@@ -15,6 +15,7 @@ interface QuestionCardProps {
     skipButton?: boolean;
     continueButton?: boolean;
     continueButtonColor?: string;
+    continueButtonText?: string;
     textUnderAnswers?: string;
     textUnderButton?: string;
   };
@@ -132,7 +133,7 @@ export default function QuestionCard({
                     : undefined 
                 }}
               >
-                Continue
+                {question.continueButtonText || "Continue"}
               </button>
               
               {/* Text Under Button */}

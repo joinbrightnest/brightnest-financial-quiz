@@ -7,6 +7,7 @@ interface TextInputProps {
     skipButton?: boolean;
     continueButton?: boolean;
     continueButtonColor?: string;
+    continueButtonText?: string;
     textUnderAnswers?: string;
     textUnderButton?: string;
   };
@@ -120,7 +121,7 @@ export default function TextInput({
                   backgroundColor: value.trim() ? (question.continueButtonColor || '#09727c') : undefined
                 }}
               >
-                Continue
+                {question.continueButtonText || "Continue"}
               </button>
             ) : (
               <button
@@ -135,7 +136,7 @@ export default function TextInput({
                   backgroundColor: !value.trim() ? undefined : '#09727c'
                 }}
               >
-                Continue
+                {question.continueButtonText || "Continue"}
               </button>
             )}
             

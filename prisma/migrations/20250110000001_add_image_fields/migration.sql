@@ -7,3 +7,4 @@ ALTER TABLE "loading_screens" ADD COLUMN "imageUrl" TEXT;
 ALTER TABLE "loading_screens" ADD COLUMN "imageAlt" TEXT;
 ALTER TABLE "loading_screens" ADD COLUMN "showImage" BOOLEAN NOT NULL DEFAULT false;
 
+

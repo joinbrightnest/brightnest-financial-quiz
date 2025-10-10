@@ -21,6 +21,7 @@ interface Question {
   skipButton?: boolean;
   continueButton?: boolean;
   continueButtonColor?: string;
+  continueButtonText?: string;
 }
 
 interface LoadingScreen {

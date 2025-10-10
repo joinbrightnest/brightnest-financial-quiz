@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
         skipButton?: boolean;
         continueButton?: boolean;
         continueButtonColor?: string;
+        continueButtonText?: string;
         textUnderAnswers?: string;
         textUnderButton?: string;
       }) => {
@@ -69,6 +70,7 @@ export async function POST(request: NextRequest) {
             skipButton: question.skipButton || false,
             continueButton: question.continueButton || false,
             continueButtonColor: question.continueButtonColor || '#09727c',
+            continueButtonText: question.continueButtonText || 'Continue',
             textUnderAnswers: question.textUnderAnswers || null,
             textUnderButton: question.textUnderButton || null,
           },
