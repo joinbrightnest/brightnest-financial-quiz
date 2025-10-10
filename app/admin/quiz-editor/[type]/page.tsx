@@ -706,7 +706,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
 
       {/* Main Content Area */}
       <div className="ml-72 pt-20">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="max-w-7xl mx-auto px-6 py-2">
         
         {/* Quiz Link Section */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200/60 p-8 mb-8">
