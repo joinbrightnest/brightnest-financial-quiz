@@ -56,126 +56,121 @@ export default function Home() {
       {/* Black Separator Line */}
       <div className="h-px bg-black"></div>
 
-      {/* Main Content */}
-      <div className="flex flex-col lg:flex-row min-h-screen">
-        {/* Left Content */}
-        <div className="flex-1 flex items-center justify-center p-8 lg:p-16" style={{backgroundColor: '#faf8f0'}}>
-          <div className="max-w-xl w-full">
-            <h1 className="text-4xl lg:text-5xl xl:text-6xl font-serif text-gray-900 mb-4 leading-tight">
-              Real results, built one habit at a time.
-            </h1>
-            <p className="text-lg lg:text-xl font-serif text-gray-700 mb-8 leading-relaxed">
-              Because wealth isn't about math — it's about behavior.
-            </p>
-            <Link 
-              href="/quiz/financial-profile"
-              className="inline-block bg-[#fa513c] text-white px-16 py-4 lg:px-20 lg:py-5 text-lg font-medium hover:bg-[#e04835] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-            >
-              Continue
-                </Link>
+      {/* Hero Section */}
+      <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8" style={{backgroundColor: '#FAF8F4'}}>
+        <div className="max-w-4xl mx-auto text-center">
+          {/* 1️⃣ Microline */}
+          <p className="text-sm text-gray-600 mb-4 font-medium">
+            A science-backed coaching system that helps you take control of your money for good.
+          </p>
+          
+          {/* 2️⃣ Headline */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-gray-900 mb-6 leading-tight">
+            Real results, built one habit at a time.
+          </h1>
+          
+          {/* 3️⃣ Subheadline */}
+          <p className="text-lg sm:text-xl text-gray-700 mb-12 max-w-2xl mx-auto leading-relaxed">
+            Because wealth isn't about math — it's about behavior.
+          </p>
+          
+          {/* 4️⃣ Visual */}
+          <div className="mb-12">
+            <div className="relative inline-block">
+              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-8 lg:p-12 shadow-xl border border-gray-100 max-w-lg mx-auto">
+                {/* Dashboard Mockup */}
+                <div className="space-y-6">
+                  {/* Header */}
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-gray-800 mb-1">Financial Dashboard</div>
+                    <div className="text-sm text-gray-600">Your progress this month</div>
               </div>
+              
+                  {/* Stats Row */}
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                        </svg>
+                      </div>
+                      <div className="text-lg font-bold text-gray-800">$25,000</div>
+                      <div className="text-xs text-gray-600">Saved</div>
+              </div>
+              
+                    <div className="text-center">
+                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+              </div>
+                      <div className="text-lg font-bold text-gray-800">+85%</div>
+                      <div className="text-xs text-gray-600">Growth</div>
             </div>
             
-        {/* Right Image */}
-        <div className="flex-1 bg-white flex items-center justify-center p-8 lg:p-16">
-          <div className="relative w-full h-full max-w-2xl">
-            {/* Happy People Image */}
-            <div className="relative overflow-hidden rounded-2xl shadow-2xl">
-              <div className="bg-gradient-to-br from-blue-100 to-purple-100 h-[500px] lg:h-[600px] flex items-center justify-center">
-                {/* Happy People Illustration */}
-                <div className="relative w-full h-full">
-                  {/* Background Elements */}
-                  <div className="absolute inset-0 opacity-20">
-                    <svg className="w-full h-full" viewBox="0 0 400 600" fill="none">
-                      <circle cx="100" cy="100" r="50" fill="#3B82F6" opacity="0.3"/>
-                      <circle cx="300" cy="150" r="30" fill="#8B5CF6" opacity="0.3"/>
-                      <circle cx="350" cy="400" r="40" fill="#F59E0B" opacity="0.3"/>
-                      <circle cx="50" cy="500" r="35" fill="#10B981" opacity="0.3"/>
-                    </svg>
+                    <div className="text-center">
+                      <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                        <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                </div>
+                      <div className="text-lg font-bold text-gray-800">Dream</div>
+                      <div className="text-xs text-gray-600">Home</div>
+                </div>
+              </div>
+              
+                  {/* Progress Bar */}
+                  <div className="bg-gray-100 rounded-full h-3 overflow-hidden">
+                    <div className="bg-gradient-to-r from-green-400 to-blue-500 h-full w-3/4 rounded-full animate-pulse"></div>
                   </div>
                   
-                  {/* Main Happy People Scene */}
-                  <div className="relative z-10 flex items-center justify-center h-full">
-                    <div className="text-center">
-                      {/* Happy Family/Couple */}
-                      <div className="relative mb-8">
-                        {/* Person 1 */}
-                        <div className="absolute left-16 top-8 w-20 h-20 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
-                          <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                        </div>
-                        
-                        {/* Person 2 */}
-                        <div className="absolute right-16 top-8 w-20 h-20 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-                          <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                        </div>
-                        
-                        {/* Heart between them */}
-                        <div className="absolute left-1/2 top-12 transform -translate-x-1/2 w-8 h-8 text-pink-500">
-                          <svg className="w-full h-full" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                          </svg>
-                        </div>
-                      </div>
-                      
-                      {/* Financial Success Elements */}
-                      <div className="space-y-6">
-                        {/* Money/Savings */}
-                        <div className="flex items-center justify-center space-x-4">
-                          <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-lg">
-                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                            </svg>
-                </div>
-                          <div className="text-left">
-                            <div className="text-2xl font-bold text-gray-800">$25,000</div>
-                            <div className="text-sm text-gray-600">Saved Together</div>
-                </div>
-              </div>
-              
-                        {/* Growth Chart */}
-                        <div className="flex items-center justify-center space-x-4">
-                          <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center shadow-lg">
-                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                            </svg>
-                </div>
-                          <div className="text-left">
-                            <div className="text-2xl font-bold text-gray-800">+85%</div>
-                            <div className="text-sm text-gray-600">Financial Growth</div>
-                </div>
-              </div>
-              
-                        {/* House/Dream */}
-                        <div className="flex items-center justify-center space-x-4">
-                          <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
-                            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                            </svg>
-                          </div>
-                          <div className="text-left">
-                            <div className="text-2xl font-bold text-gray-800">Dream Home</div>
-                            <div className="text-sm text-gray-600">Achieved Together</div>
+                  {/* Bottom Message */}
+                  <div className="text-center">
+                    <div className="text-sm font-medium text-gray-700">Building wealth together</div>
                 </div>
                 </div>
               </div>
               
-                      {/* Main Message */}
-                      <div className="mt-8">
-                        <h3 className="text-3xl font-bold text-gray-800 mb-2">Financial Happiness</h3>
-                        <p className="text-gray-600 text-lg">Building wealth together, one smart decision at a time</p>
-                      </div>
-                    </div>
-                </div>
+              {/* Subtle Glow Effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-3xl blur-xl -z-10 animate-pulse"></div>
                 </div>
               </div>
+              
+          {/* 5️⃣ Mini Proof Row */}
+          <div className="flex flex-wrap justify-center items-center gap-6 lg:gap-8 mb-12 text-sm text-gray-600">
+            <div className="flex items-center gap-2">
+              <span className="text-green-600">💰</span>
+              <span className="font-medium">$25,000+ average savings</span>
                 </div>
-              </div>
+            <div className="flex items-center gap-2">
+              <span className="text-blue-600">❤️</span>
+              <span className="font-medium">85% report less money stress</span>
+                </div>
+            <div className="flex items-center gap-2">
+              <span className="text-purple-600">🧠</span>
+              <span className="font-medium">Certified money coaches</span>
             </div>
           </div>
+          
+          {/* 6️⃣ CTA */}
+          <div className="mb-8">
+          <Link
+              href="/quiz/financial-profile"
+              className="inline-block bg-[#FF5C41] text-white px-12 py-5 lg:px-16 lg:py-6 text-lg font-semibold hover:bg-[#e54a2f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 rounded-lg"
+            >
+              Start My Money Reset
+            </Link>
+            <p className="text-sm text-gray-600 mt-3">
+              Take a 2-minute quiz to discover your personalized money plan.
+            </p>
+          </div>
+          
+          {/* 7️⃣ Optional Microline */}
+          <p className="text-xs text-gray-500 max-w-md mx-auto">
+            Based on results from real BrightNest members. Your data stays 100% private and secure.
+          </p>
+        </div>
+      </div>
           
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-16">
