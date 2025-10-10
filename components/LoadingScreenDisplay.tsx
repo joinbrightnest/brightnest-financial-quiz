@@ -60,14 +60,14 @@ export default function LoadingScreenDisplay({
     "Preparing results"
   ];
 
-  // Animate dots
+  // Animate dots smoothly
   useEffect(() => {
     const dotsInterval = setInterval(() => {
       setDots(prev => {
         if (prev === "...") return "";
         return prev + ".";
       });
-    }, 500);
+    }, 300); // Faster animation for smoother feel
 
     return () => clearInterval(dotsInterval);
   }, []);
@@ -261,7 +261,7 @@ export default function LoadingScreenDisplay({
             
             {/* Loading Text */}
             <p
-              className="text-sm font-medium mb-2 tracking-wide text-center"
+              className="text-sm font-medium mb-2 tracking-wide text-center transition-opacity duration-300"
               style={{ color: textColor }}
             >
               {loadingTexts[currentTextIndex]}{dots}
