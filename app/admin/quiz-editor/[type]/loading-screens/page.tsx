@@ -844,10 +844,15 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                     
                     {/* Loading Text */}
                     <p
-                      className="text-sm font-medium mb-2 tracking-wide text-center transition-opacity duration-300"
+                      className="text-sm font-medium mb-2 tracking-wide text-center"
                       style={{ color: textColor }}
                     >
-                      {loadingTexts[currentTextIndex]}{dots}
+                      <span className="transition-opacity duration-300">
+                        {loadingTexts[currentTextIndex]}
+                      </span>
+                      <span className="inline-block w-6 text-left">
+                        {dots}
+                      </span>
                     </p>
                     
                     {/* Progress Bar */}
