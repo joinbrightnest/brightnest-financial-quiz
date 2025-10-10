@@ -60,13 +60,14 @@ export default function Home() {
       <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8" style={{backgroundColor: '#FAF8F4'}}>
         <div className="max-w-4xl mx-auto text-center">
           {/* 1️⃣ Microline */}
-          <p className="text-sm text-gray-600 mb-4 font-medium">
-            A science-backed coaching system that helps you take control of your money for good.
+          <p className="text-sm text-gray-600 mb-6 font-medium">
+            A psychology-based system that helps you master your money habits.
           </p>
           
           {/* 2️⃣ Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-gray-900 mb-6 leading-tight">
-            Real results, built one habit at a time.
+            <div>Real results.</div>
+            <div>Built one habit at a time.</div>
           </h1>
           
           {/* 3️⃣ Subheadline */}
@@ -74,85 +75,74 @@ export default function Home() {
             Because wealth isn't about math — it's about behavior.
           </p>
           
-          {/* 4️⃣ Visual */}
+          {/* 4️⃣ Visual Element */}
           <div className="mb-12">
             <div className="relative inline-block">
-              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-8 lg:p-12 shadow-xl border border-gray-100 max-w-lg mx-auto">
-                {/* Dashboard Mockup */}
+              <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-3xl p-8 lg:p-12 shadow-xl border border-gray-100 max-w-lg mx-auto">
+                {/* Behavior Progress Card */}
                 <div className="space-y-6">
                   {/* Header */}
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-800 mb-1">Financial Dashboard</div>
-                    <div className="text-sm text-gray-600">Your progress this month</div>
+                    <div className="text-2xl font-bold text-gray-800 mb-1">Behavior Progress Report</div>
+                    <div className="text-sm text-gray-600">Your habit transformation</div>
               </div>
               
-                  {/* Stats Row */}
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center">
-                      <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                        </svg>
+                  {/* Behavior Items */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-3 bg-white/60 rounded-xl">
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">💬</span>
+                        <span className="text-sm font-medium text-gray-700">I check my accounts weekly</span>
                       </div>
-                      <div className="text-lg font-bold text-gray-800">$25,000</div>
-                      <div className="text-xs text-gray-600">Saved</div>
+                      <span className="text-sm font-bold text-green-600">+80% consistency</span>
               </div>
               
-                    <div className="text-center">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                        </svg>
+                    <div className="flex items-center justify-between p-3 bg-white/60 rounded-xl">
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">💡</span>
+                        <span className="text-sm font-medium text-gray-700">I plan my spending ahead</span>
               </div>
-                      <div className="text-lg font-bold text-gray-800">+85%</div>
-                      <div className="text-xs text-gray-600">Growth</div>
+                      <span className="text-sm font-bold text-blue-600">+70% habit score</span>
             </div>
             
-                    <div className="text-center">
-                      <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                        </svg>
+                    <div className="flex items-center justify-between p-3 bg-white/60 rounded-xl">
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg">🌱</span>
+                        <span className="text-sm font-medium text-gray-700">I save automatically</span>
                 </div>
-                      <div className="text-lg font-bold text-gray-800">Dream</div>
-                      <div className="text-xs text-gray-600">Home</div>
+                      <span className="text-sm font-bold text-purple-600">+65% momentum</span>
                 </div>
               </div>
               
-                  {/* Progress Bar */}
-                  <div className="bg-gray-100 rounded-full h-3 overflow-hidden">
-                    <div className="bg-gradient-to-r from-green-400 to-blue-500 h-full w-3/4 rounded-full animate-pulse"></div>
-                  </div>
-                  
                   {/* Bottom Message */}
-                  <div className="text-center">
-                    <div className="text-sm font-medium text-gray-700">Building wealth together</div>
+                  <div className="text-center pt-2">
+                    <div className="text-sm font-medium text-gray-700">Small wins, lasting change.</div>
                 </div>
                 </div>
               </div>
               
               {/* Subtle Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-3xl blur-xl -z-10 animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-3xl blur-xl -z-10 animate-pulse"></div>
                 </div>
               </div>
               
-          {/* 5️⃣ Mini Proof Row */}
+          {/* 5️⃣ Proof Row */}
           <div className="flex flex-wrap justify-center items-center gap-6 lg:gap-8 mb-12 text-sm text-gray-600">
             <div className="flex items-center gap-2">
-              <span className="text-green-600">💰</span>
-              <span className="font-medium">$25,000+ average savings</span>
+              <span className="text-green-600">🧠</span>
+              <span className="font-medium">Psychology-based money system</span>
                 </div>
             <div className="flex items-center gap-2">
-              <span className="text-blue-600">❤️</span>
-              <span className="font-medium">85% report less money stress</span>
+              <span className="text-blue-600">⚙️</span>
+              <span className="font-medium">Accountability that sticks</span>
                 </div>
             <div className="flex items-center gap-2">
-              <span className="text-purple-600">🧠</span>
-              <span className="font-medium">Certified money coaches</span>
+              <span className="text-purple-600">🌿</span>
+              <span className="font-medium">Habits that last a lifetime</span>
             </div>
           </div>
           
-          {/* 6️⃣ CTA */}
+          {/* 6️⃣ Primary CTA */}
           <div className="mb-8">
           <Link
               href="/quiz/financial-profile"
@@ -161,11 +151,11 @@ export default function Home() {
               Start My Money Reset
             </Link>
             <p className="text-sm text-gray-600 mt-3">
-              Take a 2-minute quiz to discover your personalized money plan.
+              Discover your personalized Money Behavior Profile.
             </p>
           </div>
           
-          {/* 7️⃣ Optional Microline */}
+          {/* 7️⃣ Micro-trust Line */}
           <p className="text-xs text-gray-500 max-w-md mx-auto">
             Based on results from real BrightNest members. Your data stays 100% private and secure.
           </p>
