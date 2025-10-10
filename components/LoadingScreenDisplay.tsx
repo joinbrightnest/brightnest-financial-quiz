@@ -269,11 +269,18 @@ export default function LoadingScreenDisplay({
             
             {/* Progress Bar */}
             <div className="flex justify-center">
-              <div className="bg-gray-300 h-6 relative overflow-hidden" style={{ width: '300px' }}>
+              <div 
+                className="relative overflow-hidden rounded-lg" 
+                style={{ 
+                  width: '300px', 
+                  height: '32px',
+                  backgroundColor: '#e4dece'
+                }}
+              >
                 <div
-                  className="h-6 transition-all duration-300 ease-out"
+                  className="h-full transition-all duration-300 ease-out rounded-lg"
                   style={{
-                    backgroundColor: progressBarColor,
+                    backgroundColor: '#fb513d',
                     width: `${progress}%`,
                   }}
                 />
@@ -283,8 +290,8 @@ export default function LoadingScreenDisplay({
                   <span 
                     className="text-base font-bold"
                     style={{ 
-                      color: '#ffffff',
-                      textShadow: '0 0 4px rgba(0,0,0,0.3)'
+                      color: '#191717',
+                      fontWeight: '600'
                     }}
                   >
                     {Math.round(progress)}%
