@@ -261,7 +261,7 @@ export default function LoadingScreenDisplay({
             
             {/* Loading Text */}
             <p
-              className="text-lg font-medium mb-6 tracking-wide text-center"
+              className="text-sm font-medium mb-2 tracking-wide text-center"
               style={{ color: textColor }}
             >
               {loadingTexts[currentTextIndex]}{dots}
