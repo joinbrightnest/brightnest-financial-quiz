@@ -75,25 +75,86 @@ export default function Home() {
 
         {/* Right Image */}
         <div className="flex-1 bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-8">
-          <div className="relative w-full h-full max-w-lg">
+          <div className="relative w-full h-full max-w-2xl">
             {/* Financial Planning Image */}
-            <div className="bg-white rounded-2xl shadow-xl p-8 h-96 flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                  <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            <div className="relative overflow-hidden rounded-2xl shadow-2xl">
+              <div className="bg-gradient-to-br from-slate-800 via-blue-900 to-purple-900 h-[600px] flex items-center justify-center">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-10">
+                  <svg className="w-full h-full" viewBox="0 0 100 100" fill="none">
+                    <defs>
+                      <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                        <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5"/>
+                      </pattern>
+                    </defs>
+                    <rect width="100" height="100" fill="url(#grid)" />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">Financial Planning</h3>
-                <p className="text-gray-600 text-lg">Building wealth through mindful spending</p>
-                <div className="mt-6 flex justify-center space-x-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">85%</div>
-                    <div className="text-sm text-gray-500">Success Rate</div>
+                
+                {/* Main Content */}
+                <div className="relative z-10 text-center text-white px-8">
+                  {/* Financial Dashboard Mockup */}
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-8 border border-white/20">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                        <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                        <div className="w-3 h-3 bg-green-400 rounded-full"></div>
+                      </div>
+                      <div className="text-xs text-white/70">Financial Dashboard</div>
+                    </div>
+                    
+                    {/* Chart Area */}
+                    <div className="bg-white/5 rounded-lg p-4 mb-4">
+                      <div className="flex items-end justify-center space-x-2 h-20">
+                        <div className="bg-gradient-to-t from-blue-500 to-blue-300 w-4 h-8 rounded-t"></div>
+                        <div className="bg-gradient-to-t from-green-500 to-green-300 w-4 h-12 rounded-t"></div>
+                        <div className="bg-gradient-to-t from-purple-500 to-purple-300 w-4 h-16 rounded-t"></div>
+                        <div className="bg-gradient-to-t from-orange-500 to-orange-300 w-4 h-10 rounded-t"></div>
+                        <div className="bg-gradient-to-t from-pink-500 to-pink-300 w-4 h-14 rounded-t"></div>
+                      </div>
+                    </div>
+                    
+                    {/* Stats */}
+                    <div className="grid grid-cols-3 gap-4 text-xs">
+                      <div className="text-center">
+                        <div className="text-lg font-bold text-green-400">$12,450</div>
+                        <div className="text-white/60">Savings</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-lg font-bold text-blue-400">$2,100</div>
+                        <div className="text-white/60">Invested</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-lg font-bold text-purple-400">85%</div>
+                        <div className="text-white/60">On Track</div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-purple-600">5min</div>
-                    <div className="text-sm text-gray-500">Quick Start</div>
+                  
+                  {/* Floating Elements */}
+                  <div className="absolute top-8 left-8 w-16 h-16 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                    </svg>
+                  </div>
+                  
+                  <div className="absolute top-16 right-12 w-12 h-12 bg-gradient-to-br from-orange-400 to-pink-500 rounded-full flex items-center justify-center">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                  </div>
+                  
+                  <div className="absolute bottom-20 left-16 w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
+                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  
+                  {/* Main Text */}
+                  <div className="mt-8">
+                    <h3 className="text-2xl font-bold mb-2">Financial Wellness</h3>
+                    <p className="text-white/80 text-lg">Your path to financial freedom</p>
                   </div>
                 </div>
               </div>
