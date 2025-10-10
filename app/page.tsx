@@ -2,9 +2,9 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
       {/* Navigation */}
-      <nav className="bg-gray-50">
+      <nav style={{backgroundColor: '#faf8f0'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
@@ -59,7 +59,7 @@ export default function Home() {
       {/* Main Content */}
       <div className="flex flex-col lg:flex-row min-h-screen">
         {/* Left Content */}
-        <div className="flex-1 bg-gray-50 flex items-center justify-center p-8 lg:p-16">
+        <div className="flex-1 flex items-center justify-center p-8 lg:p-16" style={{backgroundColor: '#faf8f0'}}>
           <div className="max-w-lg w-full">
             <h1 className="text-4xl lg:text-5xl xl:text-6xl font-serif text-gray-900 mb-6 leading-tight">
               Learn to spend mindfully.
