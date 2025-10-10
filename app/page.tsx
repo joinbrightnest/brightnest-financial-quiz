@@ -2,9 +2,9 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <nav className="bg-white border-b border-gray-200">
+      <nav className="bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
@@ -52,21 +52,24 @@ export default function Home() {
           </div>
         </div>
       </nav>
+      
+      {/* Black Separator Line */}
+      <div className="h-px bg-black"></div>
 
       {/* Main Content */}
-      <div className="flex min-h-screen">
+      <div className="flex flex-col lg:flex-row min-h-screen">
         {/* Left Content */}
-        <div className="flex-1 bg-gradient-to-br from-orange-50 to-pink-50 flex items-center justify-center p-8">
-          <div className="max-w-md">
-            <h1 className="text-4xl font-serif text-gray-900 mb-4 leading-tight">
+        <div className="flex-1 bg-gray-50 flex items-center justify-center p-8 lg:p-16">
+          <div className="max-w-lg w-full">
+            <h1 className="text-4xl lg:text-5xl xl:text-6xl font-serif text-gray-900 mb-6 leading-tight">
               Learn to spend mindfully.
             </h1>
-            <p className="text-lg font-serif text-gray-700 mb-8 leading-relaxed">
+            <p className="text-lg lg:text-xl font-serif text-gray-700 mb-10 leading-relaxed">
               Psychology is the key to lasting financial change.
             </p>
             <Link 
               href="/quiz/financial-profile"
-              className="inline-block bg-orange-500 text-white px-8 py-4 text-lg font-medium hover:bg-orange-600 transition-colors shadow-lg"
+              className="inline-block bg-orange-500 text-white px-8 py-4 lg:px-10 lg:py-5 text-lg font-medium hover:bg-orange-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               Continue
                 </Link>
@@ -74,11 +77,11 @@ export default function Home() {
             </div>
             
         {/* Right Image */}
-        <div className="flex-1 bg-white flex items-center justify-center p-8">
+        <div className="flex-1 bg-white flex items-center justify-center p-8 lg:p-16">
           <div className="relative w-full h-full max-w-2xl">
             {/* Happy People Image */}
             <div className="relative overflow-hidden rounded-2xl shadow-2xl">
-              <div className="bg-gradient-to-br from-blue-100 to-purple-100 h-[600px] flex items-center justify-center">
+              <div className="bg-gradient-to-br from-blue-100 to-purple-100 h-[500px] lg:h-[600px] flex items-center justify-center">
                 {/* Happy People Illustration */}
                 <div className="relative w-full h-full">
                   {/* Background Elements */}
