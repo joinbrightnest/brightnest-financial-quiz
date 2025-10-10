@@ -580,20 +580,6 @@ export default function QuizEditor({ params }: QuizEditorProps) {
             </div>
             
             <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-4 text-sm text-gray-600">
-                <div className="flex items-center space-x-1">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span>{questions.length} Questions</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                  <span>{articles.length} Articles</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span>{loadingScreens.filter(ls => ls.triggerQuestionId).length} Loading Screens</span>
-                </div>
-              </div>
               <button
                 onClick={saveChanges}
                 disabled={isSaving}
