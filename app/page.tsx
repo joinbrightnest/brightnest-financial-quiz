@@ -62,10 +62,10 @@ export default function Home() {
         <div className="flex-1 flex items-center justify-center p-8 lg:p-16" style={{backgroundColor: '#faf8f0'}}>
           <div className="max-w-xl w-full">
             <h1 className="text-4xl lg:text-5xl xl:text-6xl font-serif text-gray-900 mb-4 leading-tight">
-              Learn to spend mindfully.
+              Real results, built one habit at a time.
             </h1>
             <p className="text-lg lg:text-xl font-serif text-gray-700 mb-8 leading-relaxed">
-              Psychology is the key to lasting financial change.
+              Because wealth isn't about math — it's about behavior.
             </p>
             <Link 
               href="/quiz/financial-profile"
