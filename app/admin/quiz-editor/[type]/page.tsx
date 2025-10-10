@@ -20,6 +20,8 @@ interface Question {
   skipButton?: boolean;
   continueButton?: boolean;
   continueButtonColor?: string;
+  textUnderAnswers?: string;
+  textUnderButton?: string;
 }
 
 interface Article {
@@ -913,6 +915,41 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                             </div>
                           </div>
                         )}
+                      </div>
+
+                      {/* Text Customization Options */}
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            Text Under Answers
+                          </label>
+                          <textarea
+                            value={question.textUnderAnswers || ""}
+                            onChange={(e) => handleQuestionEdit(question.id, "textUnderAnswers", e.target.value)}
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 resize-none"
+                            placeholder="Optional text to display under answer options (smaller, grey text)"
+                            rows={2}
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            This text will appear below the answer options in smaller, grey text
+                          </p>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            Text Under Button
+                          </label>
+                          <textarea
+                            value={question.textUnderButton || ""}
+                            onChange={(e) => handleQuestionEdit(question.id, "textUnderButton", e.target.value)}
+                            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-900 resize-none"
+                            placeholder="Optional text to display under submit/continue button (smaller, grey text)"
+                            rows={2}
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            This text will appear below the submit/continue button in smaller, grey text
+                          </p>
+                        </div>
                       </div>
 
                       {/* Options (only for single type) */}

@@ -47,6 +47,11 @@ model QuizQuestion {
   skipButton Boolean     @default(false) // Show skip option for this question
   continueButton Boolean @default(false) // Show continue button after answer selection
   continueButtonColor String @default("#09727c") // Color for continue button
+  
+  // Text customization options
+  textUnderAnswers String? // Text to display under answer options (smaller, grey)
+  textUnderButton String?  // Text to display under submit/continue button (smaller, grey)
+  
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   answers   QuizAnswer[]

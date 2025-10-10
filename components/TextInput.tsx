@@ -7,6 +7,8 @@ interface TextInputProps {
     skipButton?: boolean;
     continueButton?: boolean;
     continueButtonColor?: string;
+    textUnderAnswers?: string;
+    textUnderButton?: string;
   };
   value: string;
   onChange: (value: string) => void;
@@ -95,6 +97,15 @@ export default function TextInput({
               required
             />
             
+            {/* Text Under Input */}
+            {question.textUnderAnswers && (
+              <div className="text-center">
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  {question.textUnderAnswers}
+                </p>
+              </div>
+            )}
+            
             {question.continueButton ? (
               <button
                 type="button"
@@ -126,6 +137,15 @@ export default function TextInput({
               >
                 Continue
               </button>
+            )}
+            
+            {/* Text Under Button */}
+            {question.textUnderButton && (
+              <div className="text-center">
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  {question.textUnderButton}
+                </p>
+              </div>
             )}
           </form>
 

@@ -15,6 +15,8 @@ interface QuestionCardProps {
     skipButton?: boolean;
     continueButton?: boolean;
     continueButtonColor?: string;
+    textUnderAnswers?: string;
+    textUnderButton?: string;
   };
   currentQuestion: number;
   totalQuestions: number;
@@ -92,6 +94,15 @@ export default function QuestionCard({
             ))}
           </div>
 
+          {/* Text Under Answers */}
+          {question.textUnderAnswers && (
+            <div className="mt-4 text-center">
+              <p className="text-xs text-gray-500 leading-relaxed">
+                {question.textUnderAnswers}
+              </p>
+            </div>
+          )}
+
           {/* Skip Option */}
           {question.skipButton && (
             <div className="mt-6 text-center">
@@ -115,7 +126,7 @@ export default function QuestionCard({
                     ? "text-white hover:opacity-90" 
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
-                style={{ 
+                style={{
                   backgroundColor: selectedValue 
                     ? (question.continueButtonColor || "#09727c") 
                     : undefined 
@@ -123,6 +134,15 @@ export default function QuestionCard({
               >
                 Continue
               </button>
+              
+              {/* Text Under Button */}
+              {question.textUnderButton && (
+                <div className="mt-3 text-center">
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    {question.textUnderButton}
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>
