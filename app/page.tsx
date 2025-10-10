@@ -61,7 +61,7 @@ export default function Home() {
         {/* Left Content */}
         <div className="flex-1 flex items-center justify-center p-8 lg:p-16" style={{backgroundColor: '#faf8f0'}}>
           <div className="max-w-lg w-full">
-            <h1 className="text-3xl lg:text-4xl xl:text-5xl font-serif text-gray-900 mb-6 leading-tight">
+            <h1 className="text-2xl lg:text-3xl xl:text-4xl font-serif text-gray-900 mb-6 leading-tight">
               Learn to spend mindfully.
             </h1>
             <p className="text-lg lg:text-xl font-serif text-gray-700 mb-10 leading-relaxed">
