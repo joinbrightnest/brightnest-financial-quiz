@@ -8,9 +8,18 @@ interface ProgressBarProps {
 export default function ProgressBar({ current, total, onBack, canGoBack = false }: ProgressBarProps) {
   return (
     <div className="mb-8">
-      {/* Back Arrow */}
-      {canGoBack && onBack && (
-        <div className="mb-4">
+      {/* Progress Bar Container */}
+      <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+        <div 
+          className="h-full bg-teal-600 rounded-full transition-all duration-500 ease-out"
+          style={{ width: `${(current / total) * 100}%` }}
+        />
+      </div>
+      
+      {/* Back Arrow and Progress Indicators */}
+      <div className="flex items-center justify-between mt-2">
+        {/* Back Arrow */}
+        {canGoBack && onBack ? (
           <button
             onClick={onBack}
             className="flex items-center justify-center w-8 h-8 text-teal-600 hover:text-teal-700 transition-colors"
@@ -31,29 +40,26 @@ export default function ProgressBar({ current, total, onBack, canGoBack = false 
               />
             </svg>
           </button>
+        ) : (
+          <div className="w-8 h-8"></div> // Spacer to maintain alignment
+        )}
+        
+        {/* Progress Indicators */}
+        <div className="flex justify-between items-center flex-1 mx-4">
+          {Array.from({ length: total }, (_, index) => (
+            <div
+              key={index}
+              className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                index < current
+                  ? "bg-teal-600"
+                  : "bg-gray-300"
+              }`}
+            />
+          ))}
         </div>
-      )}
-      
-      {/* Progress Bar Container */}
-      <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-        <div 
-          className="h-full bg-teal-600 rounded-full transition-all duration-500 ease-out"
-          style={{ width: `${(current / total) * 100}%` }}
-        />
-      </div>
-      
-      {/* Progress Indicators */}
-      <div className="flex justify-between items-center mt-2">
-        {Array.from({ length: total }, (_, index) => (
-          <div
-            key={index}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              index < current
-                ? "bg-teal-600"
-                : "bg-gray-300"
-            }`}
-          />
-        ))}
+        
+        {/* Right spacer for symmetry */}
+        <div className="w-8 h-8"></div>
       </div>
     </div>
   );
