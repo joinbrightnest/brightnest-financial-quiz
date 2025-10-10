@@ -60,7 +60,7 @@ export default function Home() {
       <div className="flex flex-col lg:flex-row min-h-screen">
         {/* Left Content */}
         <div className="flex-1 flex items-center justify-center p-8 lg:p-16" style={{backgroundColor: '#faf8f0'}}>
-          <div className="max-w-lg w-full">
+          <div className="max-w-xl w-full">
             <h1 className="text-4xl lg:text-5xl xl:text-6xl font-serif text-gray-900 mb-4 leading-tight">
               Learn to spend mindfully.
             </h1>
@@ -69,7 +69,7 @@ export default function Home() {
             </p>
             <Link 
               href="/quiz/financial-profile"
-              className="inline-block bg-orange-500 text-white px-12 py-4 lg:px-16 lg:py-5 text-lg font-medium hover:bg-orange-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              className="inline-block bg-[#fa513c] text-white px-16 py-4 lg:px-20 lg:py-5 text-lg font-medium hover:bg-[#e04835] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               Continue
                 </Link>
