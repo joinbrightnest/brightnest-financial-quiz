@@ -57,6 +57,8 @@ export default function LeadsPage() {
     includeTimestamps: true,
     selectedFields: ['sessionId', 'quizType', 'name', 'email', 'status', 'archetype', 'answers', 'createdAt', 'completedAt']
   });
+  const [showLeadCheckboxes, setShowLeadCheckboxes] = useState(false);
+  const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetchLeads();
@@ -140,6 +142,61 @@ export default function LeadsPage() {
       startDate,
       endDate
     }));
+  };
+
+  const toggleLeadSelection = (leadId: string) => {
+    const newSelected = new Set(selectedLeads);
+    if (newSelected.has(leadId)) {
+      newSelected.delete(leadId);
+    } else {
+      newSelected.add(leadId);
+    }
+    setSelectedLeads(newSelected);
+  };
+
+  const selectAllLeads = () => {
+    const filteredLeads = getFilteredLeads();
+    setSelectedLeads(new Set(filteredLeads.map(lead => lead.id)));
+  };
+
+  const deselectAllLeads = () => {
+    setSelectedLeads(new Set());
+  };
+
+  const exportSelectedLeads = async () => {
+    if (selectedLeads.size === 0) return;
+
+    try {
+      const response = await fetch('/api/admin/export-leads', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          filters: {
+            ...filters,
+            selectedLeadIds: Array.from(selectedLeads)
+          },
+          exportOptions 
+        }),
+      });
+      
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `selected-leads-export-${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        setShowLeadCheckboxes(false);
+        setSelectedLeads(new Set());
+      }
+    } catch (error) {
+      console.error('Error exporting selected leads:', error);
+    }
   };
 
   const getFilteredLeads = () => {
@@ -509,7 +566,14 @@ export default function LeadsPage() {
     return (
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-black">All Quiz Answers</h3>
+          <div className="flex items-center space-x-4">
+            <h3 className="text-lg font-semibold text-black">All Quiz Answers</h3>
+            {showLeadCheckboxes && (
+              <div className="text-sm text-gray-600">
+                {selectedLeads.size} of {getFilteredLeads().length} selected
+              </div>
+            )}
+          </div>
           <div className="flex space-x-2">
             <select
               value={filters.quizType}
@@ -564,23 +628,56 @@ export default function LeadsPage() {
         
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Session ID</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Quiz Type</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Email</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Answers Count</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
+              <thead className="bg-gray-50">
+                <tr>
+                  {showLeadCheckboxes && (
+                    <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
+                      <input
+                        type="checkbox"
+                        checked={selectedLeads.size === getFilteredLeads().length && getFilteredLeads().length > 0}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            selectAllLeads();
+                          } else {
+                            deselectAllLeads();
+                          }
+                        }}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                      />
+                    </th>
+                  )}
+                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Session ID</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Quiz Type</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Name</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Email</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Answers Count</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {getFilteredLeads().map((lead) => {
                 const nameAnswer = lead.answers.find(a => a.question.type === "text");
                 const emailAnswer = lead.answers.find(a => a.question.type === "email");
                 return (
-                  <tr key={lead.id}>
+                  <tr 
+                    key={lead.id} 
+                    className={`transition-all duration-200 ${
+                      showLeadCheckboxes && selectedLeads.has(lead.id)
+                        ? 'bg-blue-50 border-l-4 border-blue-500'
+                        : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    {showLeadCheckboxes && (
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <input
+                          type="checkbox"
+                          checked={selectedLeads.has(lead.id)}
+                          onChange={() => toggleLeadSelection(lead.id)}
+                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                        />
+                      </td>
+                    )}
                     <td className="px-4 py-4 whitespace-nowrap text-sm font-mono text-black">
                       {lead.id.slice(0, 8)}...
                     </td>
@@ -786,13 +883,50 @@ export default function LeadsPage() {
             </div>
             <div className="flex space-x-3">
               <button
+                onClick={() => setShowLeadCheckboxes(!showLeadCheckboxes)}
+                className={`py-2.5 px-4 rounded-lg transition-all duration-200 text-sm font-medium ${
+                  showLeadCheckboxes 
+                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
+                }`}
+              >
+                {showLeadCheckboxes ? 'Hide Selection' : 'Select Leads'}
+              </button>
+              {showLeadCheckboxes && (
+                <>
+                  <button
+                    onClick={selectAllLeads}
+                    className="bg-green-600 text-white py-2.5 px-4 rounded-lg hover:bg-green-700 transition-all duration-200 text-sm font-medium"
+                  >
+                    Select All
+                  </button>
+                  <button
+                    onClick={deselectAllLeads}
+                    className="bg-orange-600 text-white py-2.5 px-4 rounded-lg hover:bg-orange-700 transition-all duration-200 text-sm font-medium"
+                  >
+                    Deselect All
+                  </button>
+                  <button
+                    onClick={exportSelectedLeads}
+                    disabled={selectedLeads.size === 0}
+                    className={`py-2.5 px-4 rounded-lg transition-all duration-200 text-sm font-medium ${
+                      selectedLeads.size === 0
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        : 'bg-purple-600 text-white hover:bg-purple-700'
+                    }`}
+                  >
+                    Export Selected ({selectedLeads.size})
+                  </button>
+                </>
+              )}
+              <button
                 onClick={() => setShowExportModal(true)}
                 className="bg-gradient-to-r from-green-600 to-green-700 text-white py-2.5 px-4 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center space-x-2 text-sm font-medium shadow-sm"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <span>Export Data</span>
+                <span>Export All</span>
               </button>
               <button
                 onClick={() => router.push('/admin/dashboard')}

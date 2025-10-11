@@ -55,6 +55,13 @@ export async function POST(request: NextRequest) {
       whereClause.createdAt = dateFilter;
     }
 
+    // Handle selected lead IDs if provided
+    if (filters.selectedLeadIds && filters.selectedLeadIds.length > 0) {
+      whereClause.id = {
+        in: filters.selectedLeadIds
+      };
+    }
+
     // Fetch leads with their answers and results
     const leads = await prisma.quizSession.findMany({
       where: whereClause,
