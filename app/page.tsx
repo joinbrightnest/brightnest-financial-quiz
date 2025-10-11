@@ -135,7 +135,7 @@ export default function Home() {
             >
               Start My Money Reset
             </Link>
-            <p className="text-xs text-gray-500 mt-6">
+            <p className="text-xs text-gray-500 mt-8">
               Based on results from real BrightNest members. Your data stays 100% private and secure.
             </p>
           </div>
@@ -144,7 +144,7 @@ export default function Home() {
       </div>
           
       {/* Footer */}
-      <footer className="bg-gray-800 text-white pt-0 pb-16">
+      <footer className="bg-gray-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-4 gap-8">
             {/* Logo and Social */}
