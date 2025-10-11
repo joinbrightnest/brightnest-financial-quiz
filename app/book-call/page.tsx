@@ -119,7 +119,7 @@ export default function BookCallPage() {
 
         {/* Calendar Background - Full Width */}
         <div className="max-w-4xl mx-auto px-4 pb-8">
-          <div className="bg-gray-100 rounded-lg p-6 mb-6">
+          <div className="bg-white rounded-lg p-6 mb-6 shadow-lg">
             {/* White Card with Calendar Interface */}
             <div className="bg-white rounded-lg shadow-sm max-w-2xl mx-auto p-0">
               {/* Calendly Inline Widget */}
