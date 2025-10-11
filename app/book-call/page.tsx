@@ -119,19 +119,7 @@ export default function BookCallPage() {
 
         {/* Calendar Background - Full Width */}
         <div className="max-w-4xl mx-auto px-4 pb-8">
-          <div className="bg-gray-50 rounded-lg p-6 mb-6 relative">
-            {/* Powered by Calendly Ribbon */}
-            <div className="absolute top-0 right-0 bg-gray-800 text-white text-xs px-3 py-1 transform rotate-45 translate-x-6 -translate-y-2 z-10">
-              POWERED BY Calendly
-            </div>
-            
-            {/* White Card with Calendar Header */}
-            <div className="bg-white rounded-lg shadow-sm max-w-2xl mx-auto p-6 mb-6">
-              <h4 className="text-xl font-bold text-gray-900 text-center">
-                Select a Date & Time
-              </h4>
-            </div>
-            
+          <div className="bg-gray-50 rounded-lg p-6 mb-6">
             {/* White Card with Calendar Interface */}
             <div className="bg-white rounded-lg shadow-sm max-w-2xl mx-auto p-0">
               {/* Calendly Inline Widget */}
