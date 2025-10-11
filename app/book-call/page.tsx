@@ -117,18 +117,18 @@ export default function BookCallPage() {
           </div>
         </div>
 
-        {/* White Card with Calendar - Centered, Not Full Width */}
+        {/* Calendar Background - Full Width */}
         <div className="max-w-4xl mx-auto px-4 pb-8">
-          <div className="bg-white rounded-b-lg shadow-2xl max-w-2xl mx-auto overflow-hidden">
-
-              {/* Calendar Section */}
-              <div className="p-6 pt-12">
-                <h4 className="text-xl font-bold text-gray-900 mb-6">
-                  Select a Date & Time
-                </h4>
-                
-                {/* Custom Calendar Interface */}
-                <div className="bg-gray-50 rounded-lg p-6 mb-6">
+          <div className="bg-gray-50 rounded-lg p-6 mb-6">
+            {/* White Card with Calendar Header */}
+            <div className="bg-white rounded-lg shadow-sm max-w-2xl mx-auto p-6 mb-6">
+              <h4 className="text-xl font-bold text-gray-900 mb-6">
+                Select a Date & Time
+              </h4>
+            </div>
+            
+            {/* Calendar Interface */}
+            <div className="bg-white rounded-lg shadow-sm max-w-2xl mx-auto p-6">
                   {/* Month Navigation */}
                   <div className="flex items-center justify-center mb-4">
                     <button className="text-gray-600 hover:text-gray-800 mr-4">
@@ -186,26 +186,25 @@ export default function BookCallPage() {
                   <div className="text-left text-sm text-gray-600 mt-4">
                     Time zone
                   </div>
-                </div>
-                
-                {/* Calendly Inline Widget */}
-                <div 
-                  className="calendly-inline-widget" 
-                  data-url="https://calendly.com/brightnest-assessment"
-                  style={{ minWidth: '320px', height: '600px' }}
-                ></div>
-              </div>
+            </div>
+            
+            {/* Calendly Inline Widget */}
+            <div 
+              className="calendly-inline-widget" 
+              data-url="https://calendly.com/brightnest-assessment"
+              style={{ minWidth: '320px', height: '600px' }}
+            ></div>
           </div>
+        </div>
 
-          {/* Back to Results */}
-          <div className="text-center mt-6">
-            <Link
-              href="/results"
-              className="text-gray-600 hover:text-gray-800 underline"
-            >
-              ← Back to Your Results
-            </Link>
-          </div>
+        {/* Back to Results */}
+        <div className="text-center mt-6">
+          <Link
+            href="/results"
+            className="text-gray-600 hover:text-gray-800 underline"
+          >
+            ← Back to Your Results
+          </Link>
         </div>
       </div>
     </>
