@@ -122,13 +122,13 @@ export default function BookCallPage() {
           <div className="bg-white rounded-b-lg shadow-2xl max-w-2xl mx-auto overflow-hidden">
 
               {/* Calendar Section */}
-              <div className="p-6">
+              <div className="p-6 pt-12">
                 <h4 className="text-xl font-bold text-gray-900 mb-6">
                   Select a Date & Time
                 </h4>
                 
                 {/* Custom Calendar Interface */}
-                <div className="mb-6">
+                <div className="bg-gray-50 rounded-lg p-6 mb-6">
                   {/* Month Navigation */}
                   <div className="flex items-center justify-center mb-4">
                     <button className="text-gray-600 hover:text-gray-800 mr-4">
