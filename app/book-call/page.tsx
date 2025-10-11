@@ -120,79 +120,11 @@ export default function BookCallPage() {
         {/* Calendar Background - Full Width */}
         <div className="max-w-4xl mx-auto px-4 pb-8">
           <div className="bg-gray-50 rounded-lg p-6 mb-6">
-            {/* White Card with Calendar Header */}
-            <div className="bg-white rounded-lg shadow-sm max-w-2xl mx-auto p-6 mb-6">
-              <h4 className="text-xl font-bold text-gray-900 mb-6">
-                Select a Date & Time
-              </h4>
-            </div>
-            
-            {/* Calendar Interface */}
-            <div className="bg-white rounded-lg shadow-sm max-w-2xl mx-auto p-6">
-                  {/* Month Navigation */}
-                  <div className="flex items-center justify-center mb-4">
-                    <button className="text-gray-600 hover:text-gray-800 mr-4">
-                      ←
-                    </button>
-                    <h5 className="text-lg font-semibold text-gray-900">October 2025</h5>
-                    <button className="text-gray-600 hover:text-gray-800 ml-4">
-                      →
-                    </button>
-                  </div>
-                  
-                  {/* Days of Week */}
-                  <div className="grid grid-cols-7 gap-1 mb-2">
-                    {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((day) => (
-                      <div key={day} className="text-center text-sm font-medium text-gray-600 py-2">
-                        {day}
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {/* Calendar Grid */}
-                  <div className="grid grid-cols-7 gap-1">
-                    {/* Empty cells for days before month starts */}
-                    {Array.from({ length: 1 }, (_, i) => (
-                      <div key={`empty-${i}`} className="h-10"></div>
-                    ))}
-                    
-                    {/* Calendar days */}
-                    {Array.from({ length: 31 }, (_, i) => {
-                      const day = i + 1;
-                      const isAvailable = day >= 12 && day <= 14;
-                      const isSelected = day === 12;
-                      
-                      return (
-                        <div key={day} className="h-10 flex items-center justify-center">
-                          <div className={`
-                            w-8 h-8 flex items-center justify-center text-sm font-medium rounded-full
-                            ${isAvailable 
-                              ? 'bg-pink-100 text-gray-900 hover:bg-pink-200 cursor-pointer' 
-                              : 'text-gray-600'
-                            }
-                            ${isSelected ? 'bg-pink-200' : ''}
-                          `}>
-                            {day}
-                            {isSelected && (
-                              <div className="absolute w-1 h-1 bg-pink-500 rounded-full mt-4"></div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  
-                  {/* Time Zone */}
-                  <div className="text-left text-sm text-gray-600 mt-4">
-                    Time zone
-                  </div>
-            </div>
-            
             {/* Calendly Inline Widget */}
             <div 
               className="calendly-inline-widget" 
               data-url="https://calendly.com/privatepublish/30min"
-              style={{ minWidth: '320px', height: '600px' }}
+              style={{ minWidth: '320px', height: '700px' }}
             ></div>
           </div>
         </div>
