@@ -57,92 +57,92 @@ export default function Home() {
       <div className="h-px bg-black"></div>
 
       {/* Hero Section */}
-      <div className="flex flex-col px-4 sm:px-6 lg:px-8 pt-8" style={{backgroundColor: '#FAF8F4'}}>
+      <div className="flex flex-col px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8" style={{backgroundColor: '#FAF8F4'}}>
         <div className="max-w-4xl mx-auto text-center">
           {/* 1️⃣ Microline */}
-          <p className="text-sm text-gray-600 mb-0 font-medium">
+          <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-0 font-medium">
             The behavior-based system for lasting financial peace.
           </p>
           
           {/* 2️⃣ Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-gray-900 mb-6 leading-tight">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-serif text-gray-900 mb-4 sm:mb-6 leading-tight">
             <div>Real results.</div>
             <div>Built one habit at a time.</div>
           </h1>
           
           {/* 3️⃣ Subheadline */}
-          <p className="text-lg sm:text-xl text-gray-700 mb-12 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-700 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed">
             Because wealth isn't about math — it's about behavior.
           </p>
           
           {/* 4️⃣ Visual Element */}
-          <div className="mb-12">
-            <div className="relative inline-block">
-              <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-3xl p-8 lg:p-12 shadow-xl border border-gray-100 max-w-lg mx-auto">
+          <div className="mb-8 sm:mb-12">
+            <div className="relative inline-block w-full max-w-sm sm:max-w-lg mx-auto">
+              <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-12 shadow-xl border border-gray-100 w-full">
                 {/* Behavior Progress Card */}
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {/* Header */}
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-800 mb-1">Behavior Progress Report</div>
-                    <div className="text-sm text-gray-600">Your habit transformation</div>
-              </div>
-              
+                    <div className="text-lg sm:text-2xl font-bold text-gray-800 mb-1">Behavior Progress Report</div>
+                    <div className="text-xs sm:text-sm text-gray-600">Your habit transformation</div>
+                  </div>
+                  
                   {/* Behavior Items */}
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-3 bg-white/60 rounded-xl">
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg">💬</span>
-                        <span className="text-sm font-medium text-gray-700">I check my accounts weekly</span>
+                  <div className="space-y-3 sm:space-y-4">
+                    <div className="flex items-center justify-between p-2 sm:p-3 bg-white/60 rounded-lg sm:rounded-xl">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <span className="text-sm sm:text-lg">💬</span>
+                        <span className="text-xs sm:text-sm font-medium text-gray-700">I check my accounts weekly</span>
                       </div>
-                      <span className="text-sm font-bold text-green-600">+80% consistency</span>
+                      <span className="text-xs sm:text-sm font-bold text-green-600">+80%</span>
               </div>
               
-                    <div className="flex items-center justify-between p-3 bg-white/60 rounded-xl">
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg">💡</span>
-                        <span className="text-sm font-medium text-gray-700">I plan my spending ahead</span>
+                    <div className="flex items-center justify-between p-2 sm:p-3 bg-white/60 rounded-lg sm:rounded-xl">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <span className="text-sm sm:text-lg">💡</span>
+                        <span className="text-xs sm:text-sm font-medium text-gray-700">I plan my spending ahead</span>
+                      </div>
+                      <span className="text-xs sm:text-sm font-bold text-blue-600">+70%</span>
               </div>
-                      <span className="text-sm font-bold text-blue-600">+70% habit score</span>
+              
+                    <div className="flex items-center justify-between p-2 sm:p-3 bg-white/60 rounded-lg sm:rounded-xl">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <span className="text-sm sm:text-lg">🌱</span>
+                        <span className="text-xs sm:text-sm font-medium text-gray-700">I save automatically</span>
+                      </div>
+                      <span className="text-xs sm:text-sm font-bold text-purple-600">+65%</span>
+              </div>
             </div>
             
-                    <div className="flex items-center justify-between p-3 bg-white/60 rounded-xl">
-                      <div className="flex items-center gap-3">
-                        <span className="text-lg">🌱</span>
-                        <span className="text-sm font-medium text-gray-700">I save automatically</span>
-                </div>
-                      <span className="text-sm font-bold text-purple-600">+65% momentum</span>
-                </div>
-              </div>
-              
                   {/* Bottom Message */}
-                  <div className="text-center pt-2">
-                    <div className="text-sm font-medium text-gray-700">Small wins, lasting change.</div>
+                  <div className="text-center pt-1 sm:pt-2">
+                    <div className="text-xs sm:text-sm font-medium text-gray-700">Small wins, lasting change.</div>
                 </div>
                 </div>
               </div>
               
               {/* Subtle Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-3xl blur-xl -z-10 animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-2xl sm:rounded-3xl blur-xl -z-10 animate-pulse"></div>
                 </div>
               </div>
               
           
           {/* 6️⃣ Primary CTA */}
-          <div className="mb-8">
-          <Link
+          <div className="mb-6 sm:mb-8">
+            <Link
               href="/quiz/financial-profile"
-              className="inline-block bg-[#FF5C41] text-white px-12 py-5 lg:px-16 lg:py-6 text-lg font-semibold hover:bg-[#e54a2f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 rounded-lg"
+              className="inline-block bg-[#FF5C41] text-white px-8 py-4 sm:px-12 sm:py-5 lg:px-16 lg:py-6 text-base sm:text-lg font-semibold hover:bg-[#e54a2f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 rounded-lg w-full sm:w-auto"
             >
               Start My Money Reset
             </Link>
-            <p className="text-xs text-gray-500 mt-8">
+            <p className="text-xs text-gray-500 mt-4 sm:mt-8 px-4 sm:px-0">
               Based on results from real BrightNest members. Your data stays 100% private and secure.
             </p>
-          </div>
+                </div>
           
-        </div>
-      </div>
-          
+                </div>
+              </div>
+              
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -210,7 +210,7 @@ export default function Home() {
               </ul>
             </div>
           </div>
-
+          
           {/* Bottom Section */}
           <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
             <div className="text-sm text-gray-400 mb-4 md:mb-0">
