@@ -7,8 +7,8 @@ import Script from "next/script";
 export default function BookCallPage() {
   const [timeLeft, setTimeLeft] = useState({
     hours: 0,
-    minutes: 4,
-    seconds: 27
+    minutes: 0,
+    seconds: 0
   });
 
   // Countdown timer effect
@@ -40,24 +40,24 @@ export default function BookCallPage() {
       
       <div className="min-h-screen">
         {/* Section 1: Dark Purple Background */}
-        <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-6 px-4">
+        <div className="bg-[#5C004D] py-6 px-4">
           <div className="max-w-4xl mx-auto text-center">
             {/* Logo */}
             <div className="mb-4">
               <h1 className="text-white text-2xl font-bold tracking-wide">
-                <span className="font-sans">BRIGHT</span>
-                <span className="font-serif italic ml-2">Nest</span>
+                <span className="font-sans">WARRIOR</span>
+                <span className="font-serif italic ml-2 text-lg">Babe</span>
               </h1>
             </div>
 
             {/* Main Headline */}
             <h2 className="text-2xl lg:text-3xl font-bold text-white mb-3 leading-tight">
-              Final Step: Required To Complete Your Application
+              <span className="text-[#FF007F]">Final Step:</span> Required To Complete Your Application
             </h2>
 
             {/* Sub-headline */}
             <p className="text-white text-sm lg:text-base max-w-2xl mx-auto leading-relaxed mb-4">
-              Congratulations On Taking The First Step! To Finalize Your Application And Determine If Our Money Behavior System™ Is Right For You Please Select A Time Below For Your FREE Financial Transformation Assessment
+              Congratulations On Taking The First Step! To Finalize Your Application And Determine If Our WB4 Method™ Is Right For You Please Select A Time Below For Your FREE Body Transformation Assessment
             </p>
 
             {/* Countdown Timer */}
@@ -86,10 +86,12 @@ export default function BookCallPage() {
               </div>
             </div>
 
-            {/* Process Indicators */}
-            <div className="flex justify-center space-x-2 mb-6">
+            {/* Social Proof Images */}
+            <div className="flex justify-center space-x-3 mb-6">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-2 h-2 bg-white rounded-full"></div>
+                <div key={i} className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full"></div>
+                </div>
               ))}
             </div>
           </div>
@@ -98,46 +100,98 @@ export default function BookCallPage() {
         {/* Section 2: White Background with Pink CTA and Calendly */}
         <div className="bg-white py-8 px-4">
           <div className="max-w-4xl mx-auto">
-            {/* Social Proof Images */}
-            <div className="flex justify-center space-x-3 mb-6 -mt-8">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg">
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full"></div>
-                </div>
-              ))}
-            </div>
-
-            {/* Pink CTA Bar - Centered, Not Full Width */}
-            <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg py-4 px-6 mb-4 max-w-2xl mx-auto">
-              <div className="text-center">
-                <h3 className="text-xl font-bold text-white mb-2">
-                  Schedule Your FREE Financial Transformation Assessment
-                </h3>
-                
-                <div className="flex items-center justify-center space-x-2 text-white">
-                  <span className="text-lg">⭐</span>
-                  <span className="text-sm">
-                    +157 People Have Booked Their Assessment In The Past 24 Hours
-                  </span>
+            {/* White Card with Calendar - Centered, Not Full Width */}
+            <div className="bg-white rounded-t-3xl rounded-b-lg shadow-2xl max-w-2xl mx-auto overflow-hidden">
+              {/* Integrated Pink Banner */}
+              <div className="bg-[#FF007F] py-4 px-6">
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    Schedule Your FREE Body Transformation Assessment
+                  </h3>
+                  
+                  <div className="flex items-center justify-center space-x-2 text-white">
+                    <span className="text-lg">⭐</span>
+                    <span className="text-sm">
+                      + 157 Women Have Booked Their Assessment In The Past 24 Hours
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* White Card with Calendar - Centered, Not Full Width */}
-            <div className="bg-white rounded-lg shadow-2xl p-6 max-w-2xl mx-auto">
               {/* Calendar Section */}
-              <div className="text-center mb-4">
-                <h4 className="text-xl font-bold text-gray-900 mb-3">
+              <div className="p-6">
+                <h4 className="text-xl font-bold text-gray-900 mb-6">
                   Select a Date & Time
                 </h4>
+                
+                {/* Custom Calendar Interface */}
+                <div className="mb-6">
+                  {/* Month Navigation */}
+                  <div className="flex items-center justify-center mb-4">
+                    <button className="text-gray-600 hover:text-gray-800 mr-4">
+                      ←
+                    </button>
+                    <h5 className="text-lg font-semibold text-gray-900">October 2025</h5>
+                    <button className="text-gray-600 hover:text-gray-800 ml-4">
+                      →
+                    </button>
+                  </div>
+                  
+                  {/* Days of Week */}
+                  <div className="grid grid-cols-7 gap-1 mb-2">
+                    {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((day) => (
+                      <div key={day} className="text-center text-sm font-medium text-gray-600 py-2">
+                        {day}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Calendar Grid */}
+                  <div className="grid grid-cols-7 gap-1">
+                    {/* Empty cells for days before month starts */}
+                    {Array.from({ length: 1 }, (_, i) => (
+                      <div key={`empty-${i}`} className="h-10"></div>
+                    ))}
+                    
+                    {/* Calendar days */}
+                    {Array.from({ length: 31 }, (_, i) => {
+                      const day = i + 1;
+                      const isAvailable = day >= 12 && day <= 14;
+                      const isSelected = day === 12;
+                      
+                      return (
+                        <div key={day} className="h-10 flex items-center justify-center">
+                          <div className={`
+                            w-8 h-8 flex items-center justify-center text-sm font-medium rounded-full
+                            ${isAvailable 
+                              ? 'bg-pink-100 text-gray-900 hover:bg-pink-200 cursor-pointer' 
+                              : 'text-gray-600'
+                            }
+                            ${isSelected ? 'bg-pink-200' : ''}
+                          `}>
+                            {day}
+                            {isSelected && (
+                              <div className="absolute w-1 h-1 bg-pink-500 rounded-full mt-4"></div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  {/* Time Zone */}
+                  <div className="text-left text-sm text-gray-600 mt-4">
+                    Time zone
+                  </div>
+                </div>
+                
+                {/* Calendly Inline Widget */}
+                <div 
+                  className="calendly-inline-widget" 
+                  data-url="https://calendly.com/brightnest-assessment"
+                  style={{ minWidth: '320px', height: '600px' }}
+                ></div>
               </div>
-              
-              {/* Calendly Inline Widget */}
-              <div 
-                className="calendly-inline-widget" 
-                data-url="https://calendly.com/brightnest-assessment"
-                style={{ minWidth: '320px', height: '600px' }}
-              ></div>
             </div>
 
             {/* Back to Results */}
