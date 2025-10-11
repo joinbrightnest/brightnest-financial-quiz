@@ -152,64 +152,147 @@ export default function LeadsPage() {
     return (
       <div className="space-y-6">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600">{totalLeads}</div>
-            <div className="text-sm text-black">Total Leads</div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-3xl font-bold text-blue-700">{totalLeads}</div>
+                <div className="text-sm font-medium text-blue-600 mt-1">Total Qualified Leads</div>
+                <div className="text-xs text-blue-500 mt-1">Quiz completions</div>
+              </div>
+              <div className="w-12 h-12 bg-blue-200 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </div>
+            </div>
           </div>
-          <div className="bg-green-50 p-4 rounded-lg">
-            <div className="text-2xl font-bold text-green-600">{completedLeads}</div>
-            <div className="text-sm text-black">Completed</div>
+          <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-3xl font-bold text-green-700">{Object.keys(archetypeStats).length}</div>
+                <div className="text-sm font-medium text-green-600 mt-1">Unique Archetypes</div>
+                <div className="text-xs text-green-500 mt-1">Personality types</div>
+              </div>
+              <div className="w-12 h-12 bg-green-200 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+            </div>
           </div>
-          <div className="bg-purple-50 p-4 rounded-lg">
-            <div className="text-2xl font-bold text-purple-600">{completionRate}%</div>
-            <div className="text-sm text-black">Completion Rate</div>
-          </div>
-          <div className="bg-orange-50 p-4 rounded-lg">
-            <div className="text-2xl font-bold text-orange-600">{Object.keys(archetypeStats).length}</div>
-            <div className="text-sm text-black">Archetypes</div>
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-3xl font-bold text-purple-700">{quizTypes.length}</div>
+                <div className="text-sm font-medium text-purple-600 mt-1">Active Quiz Types</div>
+                <div className="text-xs text-purple-500 mt-1">Assessment categories</div>
+              </div>
+              <div className="w-12 h-12 bg-purple-200 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Quiz Type Distribution */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4 text-black">Quiz Type Distribution</h3>
-          <div className="space-y-2">
-            {Object.entries(quizTypeStats).map(([quizType, count]) => (
-              <div key={quizType} className="flex justify-between items-center">
-                <span className="text-sm text-black">{getQuizTypeDisplayName(quizType)}</span>
-                <div className="flex items-center space-x-2">
-                  <div className="w-32 bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-blue-500 h-2 rounded-full" 
-                      style={{ width: `${(count / totalLeads) * 100}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-sm font-medium w-8 text-right text-black">{count}</span>
-                </div>
+        {/* Data Analytics Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Quiz Type Distribution */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-900">Quiz Type Distribution</h3>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <span className="text-xs text-gray-500">Lead Sources</span>
               </div>
-            ))}
+            </div>
+            <div className="space-y-4">
+              {Object.entries(quizTypeStats).map(([quizType, count]) => {
+                const percentage = totalLeads > 0 ? Math.round((count / totalLeads) * 100) : 0;
+                return (
+                  <div key={quizType} className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-700">{getQuizTypeDisplayName(quizType)}</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-semibold text-gray-900">{count}</span>
+                        <span className="text-xs text-gray-500">({percentage}%)</span>
+                      </div>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300" 
+                        style={{ width: `${percentage}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Archetype Distribution */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-900">Personality Archetypes</h3>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span className="text-xs text-gray-500">Behavioral Patterns</span>
+              </div>
+            </div>
+            <div className="space-y-4">
+              {Object.entries(archetypeStats).map(([archetype, count]) => {
+                const percentage = completedLeads > 0 ? Math.round((count / completedLeads) * 100) : 0;
+                return (
+                  <div key={archetype} className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-700">{archetype}</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-semibold text-gray-900">{count}</span>
+                        <span className="text-xs text-gray-500">({percentage}%)</span>
+                      </div>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-300" 
+                        style={{ width: `${percentage}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        {/* Archetype Distribution */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4 text-black">Archetype Distribution</h3>
-          <div className="space-y-2">
-            {Object.entries(archetypeStats).map(([archetype, count]) => (
-              <div key={archetype} className="flex justify-between items-center">
-                <span className="text-sm text-black">{archetype}</span>
-                <div className="flex items-center space-x-2">
-                  <div className="w-32 bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-green-500 h-2 rounded-full" 
-                      style={{ width: `${(count / completedLeads) * 100}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-sm font-medium w-8 text-right text-black">{count}</span>
-                </div>
-              </div>
-            ))}
+        {/* Performance Metrics */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-gray-900">Performance Metrics</h3>
+            <div className="flex items-center space-x-2">
+              <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <span className="text-xs text-gray-500">Analytics</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center p-4 bg-gray-50 rounded-lg">
+              <div className="text-2xl font-bold text-gray-900">{totalLeads}</div>
+              <div className="text-sm text-gray-600 mt-1">Total Assessments</div>
+              <div className="text-xs text-gray-500 mt-1">All quiz completions</div>
+            </div>
+            <div className="text-center p-4 bg-gray-50 rounded-lg">
+              <div className="text-2xl font-bold text-gray-900">{Object.keys(archetypeStats).length}</div>
+              <div className="text-sm text-gray-600 mt-1">Personality Types</div>
+              <div className="text-xs text-gray-500 mt-1">Unique behavioral patterns</div>
+            </div>
+            <div className="text-center p-4 bg-gray-50 rounded-lg">
+              <div className="text-2xl font-bold text-gray-900">{quizTypes.length}</div>
+              <div className="text-sm text-gray-600 mt-1">Assessment Categories</div>
+              <div className="text-xs text-gray-500 mt-1">Different quiz types</div>
+            </div>
           </div>
         </div>
       </div>
@@ -218,63 +301,127 @@ export default function LeadsPage() {
 
   const renderQuizTypeTab = (quizType: string) => {
     const filteredLeads = leads.filter(lead => lead.quizType === quizType);
+    const archetypeStats = getArchetypeStats();
+    const quizArchetypeStats = filteredLeads.reduce((acc, lead) => {
+      if (lead.result?.archetype) {
+        acc[lead.result.archetype] = (acc[lead.result.archetype] || 0) + 1;
+      }
+      return acc;
+    }, {} as { [key: string]: number });
     
     return (
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-black">{getQuizTypeDisplayName(quizType)} Leads</h3>
-          <span className="text-sm text-black">{filteredLeads.length} leads</span>
+      <div className="space-y-6">
+        {/* Header Section */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900">{getQuizTypeDisplayName(quizType)} Assessment</h3>
+              <p className="text-sm text-gray-600 mt-1">Detailed analysis of {quizType} quiz completions</p>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-bold text-blue-600">{filteredLeads.length}</div>
+              <div className="text-sm text-gray-600">Total Completions</div>
+            </div>
+          </div>
         </div>
+
+        {/* Archetype Breakdown for this Quiz Type */}
+        {Object.keys(quizArchetypeStats).length > 0 && (
+          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+            <div className="flex items-center justify-between mb-6">
+              <h4 className="text-lg font-semibold text-gray-900">Personality Distribution</h4>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span className="text-xs text-gray-500">Behavioral Analysis</span>
+              </div>
+            </div>
+            <div className="space-y-4">
+              {Object.entries(quizArchetypeStats).map(([archetype, count]) => {
+                const percentage = filteredLeads.length > 0 ? Math.round((count / filteredLeads.length) * 100) : 0;
+                return (
+                  <div key={archetype} className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-gray-700">{archetype}</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-semibold text-gray-900">{count}</span>
+                        <span className="text-xs text-gray-500">({percentage}%)</span>
+                      </div>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-300" 
+                        style={{ width: `${percentage}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
         
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Session ID</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Email</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Date</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Archetype</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+        {/* Leads Table */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h4 className="text-lg font-semibold text-gray-900">Individual Assessments</h4>
+            <p className="text-sm text-gray-600 mt-1">Detailed view of each quiz completion</p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Session ID</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Contact</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Assessment Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Personality Type</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
               {filteredLeads.map((lead) => {
                 const nameAnswer = lead.answers.find(a => a.question.type === "text");
                 const emailAnswer = lead.answers.find(a => a.question.type === "email");
                 return (
-                  <tr key={lead.id}>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm font-mono text-black">
-                      {lead.id.slice(0, 8)}...
+                  <tr key={lead.id} className="hover:bg-gray-50 transition-colors duration-150">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-mono text-gray-900">{lead.id.slice(0, 8)}...</div>
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
-                      {nameAnswer?.value || "N/A"}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{nameAnswer?.value || "N/A"}</div>
+                      <div className="text-xs text-gray-500">{emailAnswer?.value || "No email"}</div>
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
-                      {emailAnswer?.value || "N/A"}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900">{new Date(lead.createdAt).toLocaleDateString()}</div>
+                      <div className="text-xs text-gray-500">{new Date(lead.createdAt).toLocaleTimeString()}</div>
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
-                      {new Date(lead.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
                         lead.status === "completed" 
-                          ? "bg-green-100 text-green-800" 
-                          : "bg-orange-100 text-orange-800"
+                          ? "bg-green-100 text-green-800 border border-green-200" 
+                          : "bg-orange-100 text-orange-800 border border-orange-200"
                       }`}>
-                        {lead.status === "completed" ? "Completed" : "Partial"}
+                        {lead.status === "completed" ? "Completed" : "In Progress"}
                       </span>
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
-                      {lead.result?.archetype || "N/A"}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">{lead.result?.archetype || "Pending"}</div>
+                      {lead.result?.scores && (
+                        <div className="text-xs text-gray-500">
+                          {Object.keys(lead.result.scores).length} behavioral scores
+                        </div>
+                      )}
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <button
                         onClick={() => router.push(`/admin/leads/${lead.id}`)}
-                        className="text-blue-600 hover:text-blue-800 text-xs"
+                        className="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150"
                       >
-                        View Answers
+                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        View Details
                       </button>
                     </td>
                   </tr>
@@ -282,6 +429,7 @@ export default function LeadsPage() {
               })}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     );
@@ -429,33 +577,68 @@ export default function LeadsPage() {
           </div>
         </div>
 
-        {/* Custom Segments */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4 text-black">Custom Segments</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 border border-gray-200 rounded-lg">
-              <div className="font-medium text-sm mb-2 text-black">High Completion Rate</div>
-              <div className="text-xs text-black mb-2">Leads who completed the quiz</div>
-              <div className="text-lg font-bold text-green-600">
-                {leads.filter(l => l.status === 'completed').length}
+        {/* Advanced Analytics */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-gray-900">Advanced Analytics</h3>
+            <div className="flex items-center space-x-2">
+              <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              <span className="text-xs text-gray-500">Performance Insights</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-semibold text-sm text-green-800 mb-1">Qualified Leads</div>
+                  <div className="text-xs text-green-600 mb-3">Completed assessments</div>
+                  <div className="text-2xl font-bold text-green-700">
+                    {leads.filter(l => l.status === 'completed').length}
+                  </div>
+                </div>
+                <div className="w-10 h-10 bg-green-200 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
               </div>
             </div>
-            <div className="p-4 border border-gray-200 rounded-lg">
-              <div className="font-medium text-sm mb-2 text-black">Recent Leads</div>
-              <div className="text-xs text-black mb-2">Last 7 days</div>
-              <div className="text-lg font-bold text-blue-600">
-                {leads.filter(l => {
-                  const weekAgo = new Date();
-                  weekAgo.setDate(weekAgo.getDate() - 7);
-                  return new Date(l.createdAt) > weekAgo;
-                }).length}
+            <div className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-semibold text-sm text-blue-800 mb-1">Recent Activity</div>
+                  <div className="text-xs text-blue-600 mb-3">Last 7 days</div>
+                  <div className="text-2xl font-bold text-blue-700">
+                    {leads.filter(l => {
+                      const weekAgo = new Date();
+                      weekAgo.setDate(weekAgo.getDate() - 7);
+                      return new Date(l.createdAt) > weekAgo;
+                    }).length}
+                  </div>
+                </div>
+                <div className="w-10 h-10 bg-blue-200 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
               </div>
             </div>
-            <div className="p-4 border border-gray-200 rounded-lg">
-              <div className="font-medium text-sm mb-2 text-black">Email Collected</div>
-              <div className="text-xs text-black mb-2">Leads with email addresses</div>
-              <div className="text-lg font-bold text-purple-600">
-                {leads.filter(l => l.answers.some(a => a.question.type === 'email' && a.value)).length}
+            <div className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-semibold text-sm text-purple-800 mb-1">Contact Rate</div>
+                  <div className="text-xs text-purple-600 mb-3">Email addresses collected</div>
+                  <div className="text-2xl font-bold text-purple-700">
+                    {leads.filter(l => l.answers.some(a => a.question.type === 'email' && a.value)).length}
+                  </div>
+                </div>
+                <div className="w-10 h-10 bg-purple-200 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
               </div>
             </div>
           </div>
@@ -495,26 +678,26 @@ export default function LeadsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+          <div className="flex justify-between items-center py-8">
             <div>
-              <h1 className="text-2xl font-bold text-black">Lead Management</h1>
-              <p className="text-sm text-black">CRM system for managing quiz leads and segmentation</p>
+              <h1 className="text-3xl font-bold text-gray-900">Lead Analytics Dashboard</h1>
+              <p className="text-sm text-gray-600 mt-2">Comprehensive CRM system for behavioral assessment data and lead segmentation</p>
             </div>
             <div className="flex space-x-3">
               <button
                 onClick={exportLeads}
-                className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2 text-sm"
+                className="bg-gradient-to-r from-green-600 to-green-700 text-white py-2.5 px-4 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center space-x-2 text-sm font-medium shadow-sm"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                <span>Export Leads</span>
+                <span>Export Data</span>
               </button>
               <button
                 onClick={() => router.push('/admin/dashboard')}
-                className="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+                className="bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition-all duration-200 text-sm font-medium border border-gray-300"
               >
                 Back to Dashboard
               </button>
