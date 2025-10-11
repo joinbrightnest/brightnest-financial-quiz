@@ -40,45 +40,45 @@ export default function BookCallPage() {
       
       <div className="min-h-screen">
         {/* Section 1: Dark Purple Background */}
-        <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-8 px-4">
+        <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-6 px-4">
           <div className="max-w-4xl mx-auto text-center">
             {/* Logo */}
-            <div className="mb-6">
-              <h1 className="text-white text-3xl font-bold tracking-wide">
+            <div className="mb-4">
+              <h1 className="text-white text-2xl font-bold tracking-wide">
                 <span className="font-sans">BRIGHT</span>
                 <span className="font-serif italic ml-2">Nest</span>
               </h1>
             </div>
 
             {/* Main Headline */}
-            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4 leading-tight">
+            <h2 className="text-2xl lg:text-3xl font-bold text-white mb-3 leading-tight">
               Final Step: Required To Complete Your Application
             </h2>
 
             {/* Sub-headline */}
-            <p className="text-white text-base lg:text-lg max-w-3xl mx-auto leading-relaxed mb-6">
+            <p className="text-white text-sm lg:text-base max-w-2xl mx-auto leading-relaxed mb-4">
               Congratulations On Taking The First Step! To Finalize Your Application And Determine If Our Money Behavior System™ Is Right For You Please Select A Time Below For Your FREE Financial Transformation Assessment
             </p>
 
             {/* Countdown Timer */}
-            <div className="mb-8">
-              <div className="flex justify-center space-x-4">
+            <div className="mb-6">
+              <div className="flex justify-center space-x-3">
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-white">
+                  <div className="text-3xl font-bold text-white">
                     {String(timeLeft.hours).padStart(2, '0')}
                   </div>
                   <div className="text-white text-xs mt-1">Hours</div>
                 </div>
-                <div className="text-4xl font-bold text-white">:</div>
+                <div className="text-3xl font-bold text-white">:</div>
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-white">
+                  <div className="text-3xl font-bold text-white">
                     {String(timeLeft.minutes).padStart(2, '0')}
                   </div>
                   <div className="text-white text-xs mt-1">Minutes</div>
                 </div>
-                <div className="text-4xl font-bold text-white">:</div>
+                <div className="text-3xl font-bold text-white">:</div>
                 <div className="text-center">
-                  <div className="text-4xl font-bold text-white">
+                  <div className="text-3xl font-bold text-white">
                     {String(timeLeft.seconds).padStart(2, '0')}
                   </div>
                   <div className="text-white text-xs mt-1">Seconds</div>
@@ -87,45 +87,51 @@ export default function BookCallPage() {
             </div>
 
             {/* Process Indicators */}
-            <div className="flex justify-center space-x-3 mb-8">
+            <div className="flex justify-center space-x-2 mb-6">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-3 h-3 border-2 border-white rounded-full"></div>
+                <div key={i} className="w-2 h-2 bg-white rounded-full"></div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Section 2: Hot Pink Bar */}
-        <div className="bg-gradient-to-r from-pink-500 to-pink-600 py-8 px-4">
-          <div className="max-w-4xl mx-auto text-center">
+        {/* Section 2: Hot Pink Bar - Not Full Width */}
+        <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-4 px-4">
+          <div className="max-w-4xl mx-auto">
             {/* Social Proof Images */}
-            <div className="flex justify-center space-x-3 mb-6 -mt-12">
+            <div className="flex justify-center space-x-3 mb-6 -mt-8">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full"></div>
+                <div key={i} className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg">
+                  <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full"></div>
                 </div>
               ))}
             </div>
 
-            <h3 className="text-2xl lg:text-3xl font-bold text-white mb-4">
-              Schedule Your FREE Financial Transformation Assessment
-            </h3>
-            
-            <div className="flex items-center justify-center space-x-2 text-white">
-              <span className="text-xl">⭐</span>
-              <span className="text-lg">
-                +157 People Have Booked Their Assessment In The Past 24 Hours
-              </span>
+            {/* Pink Bar - Centered, Not Full Width */}
+            <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg py-6 px-8 max-w-2xl mx-auto">
+              <div className="text-center">
+                <h3 className="text-xl lg:text-2xl font-bold text-white mb-3">
+                  Schedule Your FREE Financial Transformation Assessment
+                </h3>
+                
+                <div className="flex items-center justify-center space-x-2 text-white">
+                  <span className="text-lg">⭐</span>
+                  <span className="text-base">
+                    +157 People Have Booked Their Assessment In The Past 24 Hours
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Section 3: White Background - Calendly */}
-        <div className="bg-white py-16 px-4">
+        {/* Section 3: White Background - Calendly - Not Full Width */}
+        <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-8 px-4">
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-2xl p-8">
-              <div className="text-center mb-8">
-                <h4 className="text-2xl font-bold text-gray-900 mb-4">
+            {/* White Section - Centered, Not Full Width */}
+            <div className="bg-white rounded-lg shadow-2xl p-6 max-w-2xl mx-auto">
+              <div className="text-center mb-6">
+                <h4 className="text-xl font-bold text-gray-900 mb-3">
                   Select a Date & Time
                 </h4>
               </div>
@@ -134,15 +140,15 @@ export default function BookCallPage() {
               <div 
                 className="calendly-inline-widget" 
                 data-url="https://calendly.com/brightnest-assessment"
-                style={{ minWidth: '320px', height: '700px' }}
+                style={{ minWidth: '320px', height: '600px' }}
               ></div>
             </div>
 
             {/* Back to Results */}
-            <div className="text-center mt-8">
+            <div className="text-center mt-6">
               <Link
                 href="/results"
-                className="text-gray-600 hover:text-gray-800 underline"
+                className="text-white hover:text-pink-300 underline"
               >
                 ← Back to Your Results
               </Link>
