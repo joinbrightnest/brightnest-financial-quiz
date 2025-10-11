@@ -126,21 +126,6 @@ export default function Home() {
                 </div>
               </div>
               
-          {/* 5️⃣ Proof Row */}
-          <div className="flex flex-wrap justify-center items-center gap-6 lg:gap-8 mb-12 text-sm text-gray-600">
-            <div className="flex items-center gap-2">
-              <span className="text-green-600">🧠</span>
-              <span className="font-medium">Psychology-based money system</span>
-                </div>
-            <div className="flex items-center gap-2">
-              <span className="text-blue-600">⚙️</span>
-              <span className="font-medium">Accountability that sticks</span>
-                </div>
-            <div className="flex items-center gap-2">
-              <span className="text-purple-600">🌿</span>
-              <span className="font-medium">Habits that last a lifetime</span>
-            </div>
-          </div>
           
           {/* 6️⃣ Primary CTA */}
           <div className="mb-8">
