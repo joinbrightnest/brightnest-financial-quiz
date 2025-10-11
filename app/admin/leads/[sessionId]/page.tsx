@@ -34,6 +34,8 @@ export default function SessionAnswersPage() {
   const [session, setSession] = useState<QuizSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showCheckboxes, setShowCheckboxes] = useState(false);
+  const [selectedAnswers, setSelectedAnswers] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const getSessionId = async () => {
@@ -67,6 +69,58 @@ export default function SessionAnswersPage() {
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
+  };
+
+  const toggleAnswerSelection = (answerId: string) => {
+    const newSelected = new Set(selectedAnswers);
+    if (newSelected.has(answerId)) {
+      newSelected.delete(answerId);
+    } else {
+      newSelected.add(answerId);
+    }
+    setSelectedAnswers(newSelected);
+  };
+
+  const selectAllAnswers = () => {
+    if (session) {
+      setSelectedAnswers(new Set(session.answers.map(a => a.id)));
+    }
+  };
+
+  const deselectAllAnswers = () => {
+    setSelectedAnswers(new Set());
+  };
+
+  const exportSelectedAnswers = () => {
+    if (!session || selectedAnswers.size === 0) return;
+
+    const selectedAnswersData = session.answers.filter(a => selectedAnswers.has(a.id));
+    
+    // Create CSV content
+    const csvHeaders = ['Question Order', 'Question Prompt', 'Answer Value', 'Question Type', 'Answered At'];
+    const csvRows = selectedAnswersData.map(answer => [
+      answer.question.order,
+      answer.question.prompt,
+      JSON.stringify(answer.value),
+      answer.question.type,
+      new Date(answer.createdAt).toISOString()
+    ]);
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvRows.map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))
+    ].join('\n');
+
+    // Download CSV
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `session-${session.id}-selected-answers-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
   };
 
   if (isLoading) {
@@ -110,12 +164,51 @@ export default function SessionAnswersPage() {
               <h1 className="text-2xl font-bold text-black">Quiz Session Details</h1>
               <p className="text-sm text-black">Session ID: {session.id}</p>
             </div>
-            <button
-              onClick={() => router.push('/admin/leads')}
-              className="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors text-sm"
-            >
-              Back to CRM
-            </button>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowCheckboxes(!showCheckboxes)}
+                className={`py-2 px-4 rounded-lg transition-colors text-sm font-medium ${
+                  showCheckboxes 
+                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
+                }`}
+              >
+                {showCheckboxes ? 'Hide Selection' : 'Select Answers'}
+              </button>
+              {showCheckboxes && (
+                <>
+                  <button
+                    onClick={selectAllAnswers}
+                    className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
+                  >
+                    Select All
+                  </button>
+                  <button
+                    onClick={deselectAllAnswers}
+                    className="bg-orange-600 text-white py-2 px-4 rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium"
+                  >
+                    Deselect All
+                  </button>
+                  <button
+                    onClick={exportSelectedAnswers}
+                    disabled={selectedAnswers.size === 0}
+                    className={`py-2 px-4 rounded-lg transition-colors text-sm font-medium ${
+                      selectedAnswers.size === 0
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        : 'bg-purple-600 text-white hover:bg-purple-700'
+                    }`}
+                  >
+                    Export Selected ({selectedAnswers.size})
+                  </button>
+                </>
+              )}
+              <button
+                onClick={() => router.push('/admin/leads')}
+                className="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+              >
+                Back to CRM
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -194,9 +287,16 @@ export default function SessionAnswersPage() {
 
           {/* Answers */}
           <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold mb-4 text-black">
-              Quiz Answers ({session.answers.length} answers)
-            </h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-black">
+                Quiz Answers ({session.answers.length} answers)
+              </h3>
+              {showCheckboxes && (
+                <div className="text-sm text-gray-600">
+                  {selectedAnswers.size} of {session.answers.length} selected
+                </div>
+              )}
+            </div>
             {session.answers.length === 0 ? (
               <div className="text-center py-8">
                 <div className="text-gray-500 text-lg mb-2">No answers recorded</div>
@@ -210,23 +310,44 @@ export default function SessionAnswersPage() {
                 {session.answers
                   .sort((a, b) => a.question.order - b.question.order)
                   .map((answer) => (
-                    <div key={answer.id} className="border border-gray-200 rounded-lg p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <div className="font-medium text-sm text-black">
-                          Question {answer.question.order}
+                    <div 
+                      key={answer.id} 
+                      className={`border rounded-lg p-4 transition-all duration-200 ${
+                        showCheckboxes && selectedAnswers.has(answer.id)
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-start space-x-3">
+                        {showCheckboxes && (
+                          <div className="flex-shrink-0 pt-1">
+                            <input
+                              type="checkbox"
+                              checked={selectedAnswers.has(answer.id)}
+                              onChange={() => toggleAnswerSelection(answer.id)}
+                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <div className="flex justify-between items-start mb-2">
+                            <div className="font-medium text-sm text-black">
+                              Question {answer.question.order}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {new Date(answer.createdAt).toLocaleString()}
+                            </div>
+                          </div>
+                          <div className="text-sm text-black mb-2">
+                            <span className="font-medium">Question:</span> {answer.question.prompt}
+                          </div>
+                          <div className="text-sm text-black mb-1">
+                            <span className="font-medium">Answer:</span> {JSON.stringify(answer.value)}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Type: {answer.question.type}
+                          </div>
                         </div>
-                        <div className="text-xs text-gray-500">
-                          {new Date(answer.createdAt).toLocaleString()}
-                        </div>
-                      </div>
-                      <div className="text-sm text-black mb-2">
-                        <span className="font-medium">Question:</span> {answer.question.prompt}
-                      </div>
-                      <div className="text-sm text-black mb-1">
-                        <span className="font-medium">Answer:</span> {JSON.stringify(answer.value)}
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        Type: {answer.question.type}
                       </div>
                     </div>
                   ))}
