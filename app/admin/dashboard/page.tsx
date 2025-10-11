@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useAdminAuth } from "@/lib/admin-auth";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -83,6 +84,7 @@ interface AdminStats {
 
 export default function AdminDashboard() {
   const router = useRouter();
+  const { isAuthenticated, isLoading: authLoading, logout } = useAdminAuth();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -196,9 +198,8 @@ export default function AdminDashboard() {
     window.URL.revokeObjectURL(url);
   };
 
-  const logout = () => {
-    localStorage.removeItem("admin_authenticated");
-    router.push("/admin");
+  const handleLogout = () => {
+    logout();
   };
 
   const resetAllData = async () => {
@@ -222,6 +223,23 @@ export default function AdminDashboard() {
       alert("Failed to reset data. Please try again.");
     }
   };
+
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Verifying authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not authenticated (redirect will happen)
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // Chart data for retention rates (showing downward trend)
   const retentionChartData = stats ? {
@@ -397,7 +415,7 @@ export default function AdminDashboard() {
                 <span className="text-sm font-medium">Reset All</span>
               </button>
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors group"
               >
                 <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

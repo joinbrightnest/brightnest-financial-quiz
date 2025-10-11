@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { useAdminAuth } from "@/lib/admin-auth";
 
 interface QuizSession {
   id: string;
@@ -31,20 +32,23 @@ interface QuizAnswer {
 export default function SessionAnswersPage() {
   const router = useRouter();
   const params = useParams();
+  const { isAuthenticated, isLoading: authLoading, logout } = useAdminAuth();
   const [session, setSession] = useState<QuizSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const getSessionId = async () => {
-      const resolvedParams = await params;
-      const sessionId = resolvedParams.sessionId as string;
-      if (sessionId) {
-        fetchSessionData(sessionId);
-      }
-    };
-    getSessionId();
-  }, [params]);
+    if (isAuthenticated) {
+      const getSessionId = async () => {
+        const resolvedParams = await params;
+        const sessionId = resolvedParams.sessionId as string;
+        if (sessionId) {
+          fetchSessionData(sessionId);
+        }
+      };
+      getSessionId();
+    }
+  }, [params, isAuthenticated]);
 
   const fetchSessionData = async (sessionId: string) => {
     try {
@@ -68,6 +72,23 @@ export default function SessionAnswersPage() {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   };
+
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Verifying authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not authenticated (redirect will happen)
+  if (!isAuthenticated) {
+    return null;
+  }
 
   if (isLoading) {
     return (
@@ -110,12 +131,20 @@ export default function SessionAnswersPage() {
               <h1 className="text-2xl font-bold text-black">Quiz Session Details</h1>
               <p className="text-sm text-black">Session ID: {session.id}</p>
             </div>
-            <button
-              onClick={() => router.push('/admin/leads')}
-              className="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors text-sm"
-            >
-              Back to CRM
-            </button>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => router.push('/admin/leads')}
+                className="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+              >
+                Back to CRM
+              </button>
+              <button
+                onClick={logout}
+                className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors text-sm"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </div>

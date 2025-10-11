@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useAdminAuth } from "@/lib/admin-auth";
 import ArticleDisplayStandardized from "../../../../components/ArticleDisplayStandardized";
 
 interface Question {
@@ -90,6 +91,7 @@ interface QuizEditorProps {
 
 export default function QuizEditor({ params }: QuizEditorProps) {
   const router = useRouter();
+  const { isAuthenticated, isLoading: authLoading, logout } = useAdminAuth();
   const [quizType, setQuizType] = useState<string>('');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -108,22 +110,24 @@ export default function QuizEditor({ params }: QuizEditorProps) {
 
   // Handle async params
   useEffect(() => {
-    const getParams = async () => {
-      const resolvedParams = await params;
-      setQuizType(resolvedParams.type);
-    };
-    getParams();
-  }, [params]);
+    if (isAuthenticated) {
+      const getParams = async () => {
+        const resolvedParams = await params;
+        setQuizType(resolvedParams.type);
+      };
+      getParams();
+    }
+  }, [params, isAuthenticated]);
 
   useEffect(() => {
-    if (quizType) {
+    if (quizType && isAuthenticated) {
       fetchQuestions();
       fetchArticles();
       fetchLoadingScreens();
       // Generate the quiz link
       setQuizLink(`https://joinbrightnest.com/quiz/${quizType}`);
     }
-  }, [quizType]);
+  }, [quizType, isAuthenticated]);
 
   // Refresh articles and loading screens when window gains focus (when user comes back from creation)
   useEffect(() => {

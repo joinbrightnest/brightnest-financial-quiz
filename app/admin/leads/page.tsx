@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAdminAuth } from "@/lib/admin-auth";
 
 interface QuizSession {
   id: string;
@@ -37,6 +38,7 @@ type TabType = 'overview' | 'financial-profile' | 'health-finance' | 'marriage-f
 
 export default function LeadsPage() {
   const router = useRouter();
+  const { isAuthenticated, isLoading: authLoading, logout } = useAdminAuth();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [leads, setLeads] = useState<QuizSession[]>([]);
   const [quizTypes, setQuizTypes] = useState<QuizType[]>([]);
@@ -61,9 +63,11 @@ export default function LeadsPage() {
   const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    fetchLeads();
-    fetchQuizTypes();
-  }, []);
+    if (isAuthenticated) {
+      fetchLeads();
+      fetchQuizTypes();
+    }
+  }, [isAuthenticated]);
 
   const fetchLeads = async () => {
     try {
@@ -860,6 +864,23 @@ export default function LeadsPage() {
     }
   };
 
+  // Show loading state while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Verifying authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not authenticated (redirect will happen)
+  if (!isAuthenticated) {
+    return null;
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -867,7 +888,7 @@ export default function LeadsPage() {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
               <p className="mt-4 text-black">Loading leads...</p>
             </div>
-      </div>
+          </div>
     );
   }
 
@@ -933,6 +954,12 @@ export default function LeadsPage() {
                 className="bg-white text-slate-700 border border-slate-300 py-2.5 px-4 rounded-md hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 text-sm font-medium"
               >
                 Back to Dashboard
+              </button>
+              <button
+                onClick={logout}
+                className="bg-red-600 text-white py-2.5 px-4 rounded-md hover:bg-red-700 transition-all duration-200 text-sm font-medium"
+              >
+                Logout
               </button>
             </div>
           </div>
