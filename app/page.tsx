@@ -135,7 +135,7 @@ export default function Home() {
             >
               Start My Money Reset
             </Link>
-            <p className="text-sm text-gray-600 mt-3">
+            <p className="text-xs text-gray-500 mt-3">
               Based on results from real BrightNest members. Your data stays 100% private and secure.
             </p>
           </div>
