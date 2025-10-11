@@ -132,8 +132,68 @@ export default function BookCallPage() {
           </div>
         </div>
 
+        {/* Social Proof Section */}
+        <div className="max-w-4xl mx-auto px-4 pb-6">
+          <div className="bg-white rounded-lg p-6 shadow-lg">
+            <div className="text-center">
+              <div className="flex items-center justify-center space-x-2 mb-4">
+                <span className="text-[#333333] font-semibold">Excellent</span>
+                <div className="flex space-x-1">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <span key={i} className="text-[#4CAF50] text-lg">★</span>
+                  ))}
+                </div>
+                <span className="text-[#333333]">4.9 out of 5 based on 543 reviews</span>
+                <span className="text-[#4CAF50]">★</span>
+                <span className="text-[#333333]">Trustpilot</span>
+              </div>
+              <p className="text-[#333333]">
+                Can't Find A Time That Works? <span className="text-[#D81B60] cursor-pointer hover:underline">Click Here</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Booking Activity Banner */}
+        <div className="bg-[#333333] py-6 px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center justify-center space-x-4">
+              <div className="flex -space-x-2">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                    <div className="w-10 h-10 bg-gradient-to-br from-[#A5D6A7] to-[#C8E6C9] rounded-full"></div>
+                  </div>
+                ))}
+              </div>
+              <span className="text-white text-lg font-semibold">
+                157 People Have Booked In The Past 24 Hours
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="bg-[#333333] py-8 px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="mb-4">
+              <h1 className="text-white text-2xl font-bold tracking-wide">
+                <span className="font-sans">BRIGHT</span>
+                <span className="font-serif italic ml-2">Nest</span>
+              </h1>
+            </div>
+            <div className="text-white mb-4">
+              <Link href="/privacy" className="hover:text-[#4CAF50]">Privacy Policy</Link>
+              <span className="mx-2">|</span>
+              <Link href="/terms" className="hover:text-[#4CAF50]">Terms and Conditions</Link>
+            </div>
+            <p className="text-white text-sm opacity-75">
+              This site is not a part of the Facebook website or Facebook Inc. Additionally This site is NOT endorsed by Facebook in any way.
+            </p>
+          </div>
+        </div>
+
         {/* Back to Results */}
-        <div className="text-center mt-6">
+        <div className="text-center mt-6 pb-6">
           <Link
             href="/results"
             className="text-[#333333] hover:text-[#4CAF50] underline"
