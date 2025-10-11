@@ -38,103 +38,115 @@ export default function BookCallPage() {
         strategy="afterInteractive"
       />
       
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800">
-        <div className="max-w-4xl mx-auto px-4 py-12">
-          {/* Logo */}
-          <div className="text-center mb-8">
-            <h1 className="text-white text-4xl font-bold tracking-wide">
-              <span className="font-sans">BRIGHT</span>
-              <span className="font-serif italic ml-2">Nest</span>
-            </h1>
-          </div>
+      <div className="min-h-screen">
+        {/* Section 1: Dark Purple Background */}
+        <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-16 px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            {/* Logo */}
+            <div className="mb-12">
+              <h1 className="text-white text-4xl font-bold tracking-wide">
+                <span className="font-sans">BRIGHT</span>
+                <span className="font-serif italic ml-2">Nest</span>
+              </h1>
+            </div>
 
-          {/* Main Headline */}
-          <div className="text-center mb-8">
-            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6">
+            {/* Main Headline */}
+            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-8 leading-tight">
               Final Step: Required To Complete Your Application
             </h2>
-            <p className="text-white text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed">
+
+            {/* Sub-headline */}
+            <p className="text-white text-lg lg:text-xl max-w-3xl mx-auto leading-relaxed mb-12">
               Congratulations On Taking The First Step! To Finalize Your Application And Determine If Our Money Behavior System™ Is Right For You Please Select A Time Below For Your FREE Financial Transformation Assessment
             </p>
-          </div>
 
-          {/* Countdown Timer */}
-          <div className="text-center mb-12">
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8 max-w-md mx-auto">
-              <div className="flex justify-center space-x-4 mb-4">
+            {/* Countdown Timer */}
+            <div className="mb-16">
+              <div className="flex justify-center space-x-6">
                 <div className="text-center">
-                  <div className="text-5xl font-bold text-white">
+                  <div className="text-6xl font-bold text-white">
                     {String(timeLeft.hours).padStart(2, '0')}
                   </div>
-                  <div className="text-white text-sm">Hours</div>
+                  <div className="text-white text-sm mt-2">Hours</div>
                 </div>
-                <div className="text-5xl font-bold text-white">:</div>
+                <div className="text-6xl font-bold text-white">:</div>
                 <div className="text-center">
-                  <div className="text-5xl font-bold text-white">
+                  <div className="text-6xl font-bold text-white">
                     {String(timeLeft.minutes).padStart(2, '0')}
                   </div>
-                  <div className="text-white text-sm">Minutes</div>
+                  <div className="text-white text-sm mt-2">Minutes</div>
                 </div>
-                <div className="text-5xl font-bold text-white">:</div>
+                <div className="text-6xl font-bold text-white">:</div>
                 <div className="text-center">
-                  <div className="text-5xl font-bold text-white">
+                  <div className="text-6xl font-bold text-white">
                     {String(timeLeft.seconds).padStart(2, '0')}
                   </div>
-                  <div className="text-white text-sm">Seconds</div>
+                  <div className="text-white text-sm mt-2">Seconds</div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Hot Pink Section */}
-          <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-2xl p-8 mb-8">
-            <div className="text-center">
-              {/* Social Proof Images */}
-              <div className="flex justify-center space-x-4 mb-6 -mt-16">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
-                    <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full"></div>
-                  </div>
-                ))}
-              </div>
-
-              <h3 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-                Schedule Your FREE Financial Transformation Assessment
-              </h3>
-              
-              <div className="flex items-center justify-center space-x-2 text-white">
-                <span className="text-2xl">⭐</span>
-                <span className="text-lg">
-                  +157 People Have Booked Their Assessment In The Past 24 Hours
-                </span>
-              </div>
+            {/* Process Indicators */}
+            <div className="flex justify-center space-x-4 mb-16">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="w-4 h-4 border-2 border-white rounded-full"></div>
+              ))}
             </div>
           </div>
+        </div>
 
-          {/* Calendly Embed Section */}
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <div className="text-center mb-6">
-              <h4 className="text-2xl font-bold text-gray-900 mb-2">
-                Select a Date & Time
-              </h4>
+        {/* Section 2: Hot Pink Bar */}
+        <div className="bg-gradient-to-r from-pink-500 to-pink-600 py-12 px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            {/* Social Proof Images */}
+            <div className="flex justify-center space-x-4 mb-8 -mt-20">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
+                  <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full"></div>
+                </div>
+              ))}
             </div>
+
+            <h3 className="text-3xl lg:text-4xl font-bold text-white mb-6">
+              Schedule Your FREE Financial Transformation Assessment
+            </h3>
             
-            {/* Calendly Inline Widget */}
-            <div 
-              className="calendly-inline-widget" 
-              data-url="https://calendly.com/brightnest-assessment"
-              style={{ minWidth: '320px', height: '700px' }}
-            ></div>
+            <div className="flex items-center justify-center space-x-2 text-white">
+              <span className="text-2xl">⭐</span>
+              <span className="text-xl">
+                +157 People Have Booked Their Assessment In The Past 24 Hours
+              </span>
+            </div>
           </div>
+        </div>
 
-          {/* Back to Results */}
-          <div className="text-center mt-8">
-            <Link
-              href="/results"
-              className="text-white hover:text-pink-300 underline"
-            >
-              ← Back to Your Results
-            </Link>
+        {/* Section 3: White Background - Calendly */}
+        <div className="bg-white py-16 px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-2xl p-8">
+              <div className="text-center mb-8">
+                <h4 className="text-2xl font-bold text-gray-900 mb-4">
+                  Select a Date & Time
+                </h4>
+              </div>
+              
+              {/* Calendly Inline Widget */}
+              <div 
+                className="calendly-inline-widget" 
+                data-url="https://calendly.com/brightnest-assessment"
+                style={{ minWidth: '320px', height: '700px' }}
+              ></div>
+            </div>
+
+            {/* Back to Results */}
+            <div className="text-center mt-8">
+              <Link
+                href="/results"
+                className="text-gray-600 hover:text-gray-800 underline"
+              >
+                ← Back to Your Results
+              </Link>
+            </div>
           </div>
         </div>
       </div>
