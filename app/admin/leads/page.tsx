@@ -280,43 +280,43 @@ export default function LeadsPage() {
       <div className="space-y-6">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200 shadow-sm">
+          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-3xl font-bold text-blue-700">{totalLeads}</div>
-                <div className="text-sm font-medium text-blue-600 mt-1">Total Qualified Leads</div>
-                <div className="text-xs text-blue-500 mt-1">Quiz completions</div>
+                <div className="text-3xl font-bold text-gray-900">{totalLeads}</div>
+                <div className="text-sm font-medium text-gray-600 mt-1">Total Qualified Leads</div>
+                <div className="text-xs text-gray-500 mt-1">Quiz completions</div>
               </div>
-              <div className="w-12 h-12 bg-blue-200 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
             </div>
           </div>
-          <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200 shadow-sm">
+          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-3xl font-bold text-green-700">{Object.keys(archetypeStats).length}</div>
-                <div className="text-sm font-medium text-green-600 mt-1">Unique Archetypes</div>
-                <div className="text-xs text-green-500 mt-1">Personality types</div>
+                <div className="text-3xl font-bold text-gray-900">{Object.keys(archetypeStats).length}</div>
+                <div className="text-sm font-medium text-gray-600 mt-1">Unique Archetypes</div>
+                <div className="text-xs text-gray-500 mt-1">Personality types</div>
               </div>
-              <div className="w-12 h-12 bg-green-200 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
               </div>
             </div>
           </div>
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200 shadow-sm">
+          <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-3xl font-bold text-purple-700">{quizTypes.length}</div>
-                <div className="text-sm font-medium text-purple-600 mt-1">Active Quiz Types</div>
-                <div className="text-xs text-purple-500 mt-1">Assessment categories</div>
+                <div className="text-3xl font-bold text-gray-900">{quizTypes.length}</div>
+                <div className="text-sm font-medium text-gray-600 mt-1">Active Quiz Types</div>
+                <div className="text-xs text-gray-500 mt-1">Assessment categories</div>
               </div>
-              <div className="w-12 h-12 bg-purple-200 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
@@ -642,7 +642,7 @@ export default function LeadsPage() {
                             deselectAllLeads();
                           }
                         }}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                        className="w-4 h-4 text-slate-700 bg-white border-gray-300 rounded focus:ring-slate-500 focus:ring-2"
                       />
                     </th>
                   )}
@@ -664,7 +664,7 @@ export default function LeadsPage() {
                     key={lead.id} 
                     className={`transition-all duration-200 ${
                       showLeadCheckboxes && selectedLeads.has(lead.id)
-                        ? 'bg-blue-50 border-l-4 border-blue-500'
+                        ? 'bg-slate-50 border-l-4 border-slate-700'
                         : 'hover:bg-gray-50'
                     }`}
                   >
@@ -674,7 +674,7 @@ export default function LeadsPage() {
                           type="checkbox"
                           checked={selectedLeads.has(lead.id)}
                           onChange={() => toggleLeadSelection(lead.id)}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                          className="w-4 h-4 text-slate-700 bg-white border-gray-300 rounded focus:ring-slate-500 focus:ring-2"
                         />
                       </td>
                     )}
@@ -705,9 +705,9 @@ export default function LeadsPage() {
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
                       <button
                         onClick={() => router.push(`/admin/leads/${lead.id}`)}
-                        className="text-blue-600 hover:text-blue-800 text-xs"
+                        className="text-slate-700 hover:text-slate-900 text-xs font-medium"
                       >
-                        View Answers
+                        View Details
                       </button>
                     </td>
                   </tr>
@@ -884,10 +884,10 @@ export default function LeadsPage() {
             <div className="flex space-x-3">
               <button
                 onClick={() => setShowLeadCheckboxes(!showLeadCheckboxes)}
-                className={`py-2.5 px-4 rounded-lg transition-all duration-200 text-sm font-medium ${
+                className={`py-2.5 px-4 rounded-md transition-all duration-200 text-sm font-medium border ${
                   showLeadCheckboxes 
-                    ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
+                    ? 'bg-slate-700 text-white border-slate-700 hover:bg-slate-800' 
+                    : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400'
                 }`}
               >
                 {showLeadCheckboxes ? 'Hide Selection' : 'Select Leads'}
@@ -896,23 +896,23 @@ export default function LeadsPage() {
                 <>
                   <button
                     onClick={selectAllLeads}
-                    className="bg-green-600 text-white py-2.5 px-4 rounded-lg hover:bg-green-700 transition-all duration-200 text-sm font-medium"
+                    className="bg-white text-slate-700 border border-slate-300 py-2.5 px-4 rounded-md hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 text-sm font-medium"
                   >
                     Select All
                   </button>
                   <button
                     onClick={deselectAllLeads}
-                    className="bg-orange-600 text-white py-2.5 px-4 rounded-lg hover:bg-orange-700 transition-all duration-200 text-sm font-medium"
+                    className="bg-white text-slate-700 border border-slate-300 py-2.5 px-4 rounded-md hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 text-sm font-medium"
                   >
                     Deselect All
                   </button>
                   <button
                     onClick={exportSelectedLeads}
                     disabled={selectedLeads.size === 0}
-                    className={`py-2.5 px-4 rounded-lg transition-all duration-200 text-sm font-medium ${
+                    className={`py-2.5 px-4 rounded-md transition-all duration-200 text-sm font-medium border ${
                       selectedLeads.size === 0
-                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-purple-600 text-white hover:bg-purple-700'
+                        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                        : 'bg-slate-700 text-white border-slate-700 hover:bg-slate-800'
                     }`}
                   >
                     Export Selected ({selectedLeads.size})
@@ -921,7 +921,7 @@ export default function LeadsPage() {
               )}
               <button
                 onClick={() => setShowExportModal(true)}
-                className="bg-gradient-to-r from-green-600 to-green-700 text-white py-2.5 px-4 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center space-x-2 text-sm font-medium shadow-sm"
+                className="bg-slate-700 text-white py-2.5 px-4 rounded-md hover:bg-slate-800 transition-all duration-200 flex items-center space-x-2 text-sm font-medium border border-slate-700"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -930,7 +930,7 @@ export default function LeadsPage() {
               </button>
               <button
                 onClick={() => router.push('/admin/dashboard')}
-                className="bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition-all duration-200 text-sm font-medium border border-gray-300"
+                className="bg-white text-slate-700 border border-slate-300 py-2.5 px-4 rounded-md hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 text-sm font-medium"
               >
                 Back to Dashboard
               </button>
@@ -950,8 +950,8 @@ export default function LeadsPage() {
                   onClick={() => setActiveTab(tab.id as TabType)}
                   className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap flex items-center space-x-2 ${
                     activeTab === tab.id
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-black hover:text-blue-600 hover:border-gray-300'
+                      ? 'border-slate-700 text-slate-700'
+                      : 'border-transparent text-gray-600 hover:text-slate-700 hover:border-gray-300'
                   }`}
                 >
                   <span>{tab.icon}</span>
@@ -987,7 +987,7 @@ export default function LeadsPage() {
                       type="checkbox"
                       checked={exportOptions.includeContactInfo}
                       onChange={(e) => setExportOptions({...exportOptions, includeContactInfo: e.target.checked})}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-gray-300 text-slate-700 focus:ring-slate-500"
                     />
                     <span className="text-sm text-gray-700">Contact Information (Name, Email)</span>
                   </label>
@@ -996,7 +996,7 @@ export default function LeadsPage() {
                       type="checkbox"
                       checked={exportOptions.includeAnswers}
                       onChange={(e) => setExportOptions({...exportOptions, includeAnswers: e.target.checked})}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-gray-300 text-slate-700 focus:ring-slate-500"
                     />
                     <span className="text-sm text-gray-700">Quiz Answers</span>
                   </label>
@@ -1005,7 +1005,7 @@ export default function LeadsPage() {
                       type="checkbox"
                       checked={exportOptions.includeResults}
                       onChange={(e) => setExportOptions({...exportOptions, includeResults: e.target.checked})}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-gray-300 text-slate-700 focus:ring-slate-500"
                     />
                     <span className="text-sm text-gray-700">Assessment Results (Archetype, Scores)</span>
                   </label>
@@ -1014,7 +1014,7 @@ export default function LeadsPage() {
                       type="checkbox"
                       checked={exportOptions.includeTimestamps}
                       onChange={(e) => setExportOptions({...exportOptions, includeTimestamps: e.target.checked})}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-gray-300 text-slate-700 focus:ring-slate-500"
                     />
                     <span className="text-sm text-gray-700">Timestamps (Created, Completed)</span>
                   </label>
@@ -1053,7 +1053,7 @@ export default function LeadsPage() {
                             });
                           }
                         }}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="rounded border-gray-300 text-slate-700 focus:ring-slate-500"
                       />
                       <span className="text-xs text-gray-700">{field.label}</span>
                     </label>
@@ -1082,13 +1082,13 @@ export default function LeadsPage() {
             <div className="p-6 border-t border-gray-200 flex justify-end space-x-3">
               <button
                 onClick={() => setShowExportModal(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 hover:border-slate-400 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={exportLeads}
-                className="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg hover:bg-green-700 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-white bg-slate-700 border border-slate-700 rounded-md hover:bg-slate-800 transition-colors"
               >
                 Export Data
               </button>
