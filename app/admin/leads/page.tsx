@@ -157,29 +157,29 @@ export default function LeadsPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-blue-50 p-4 rounded-lg">
             <div className="text-2xl font-bold text-blue-600">{totalLeads}</div>
-            <div className="text-sm text-gray-600">Total Leads</div>
+            <div className="text-sm text-black">Total Leads</div>
           </div>
           <div className="bg-green-50 p-4 rounded-lg">
             <div className="text-2xl font-bold text-green-600">{completedLeads}</div>
-            <div className="text-sm text-gray-600">Completed</div>
+            <div className="text-sm text-black">Completed</div>
           </div>
           <div className="bg-purple-50 p-4 rounded-lg">
             <div className="text-2xl font-bold text-purple-600">{completionRate}%</div>
-            <div className="text-sm text-gray-600">Completion Rate</div>
+            <div className="text-sm text-black">Completion Rate</div>
           </div>
           <div className="bg-orange-50 p-4 rounded-lg">
             <div className="text-2xl font-bold text-orange-600">{Object.keys(archetypeStats).length}</div>
-            <div className="text-sm text-gray-600">Archetypes</div>
+            <div className="text-sm text-black">Archetypes</div>
           </div>
         </div>
 
         {/* Quiz Type Distribution */}
         <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Quiz Type Distribution</h3>
+          <h3 className="text-lg font-semibold mb-4 text-black">Quiz Type Distribution</h3>
           <div className="space-y-2">
             {Object.entries(quizTypeStats).map(([quizType, count]) => (
               <div key={quizType} className="flex justify-between items-center">
-                <span className="text-sm">{getQuizTypeDisplayName(quizType)}</span>
+                <span className="text-sm text-black">{getQuizTypeDisplayName(quizType)}</span>
                 <div className="flex items-center space-x-2">
                   <div className="w-32 bg-gray-200 rounded-full h-2">
                     <div 
@@ -187,7 +187,7 @@ export default function LeadsPage() {
                       style={{ width: `${(count / totalLeads) * 100}%` }}
                     ></div>
                   </div>
-                  <span className="text-sm font-medium w-8 text-right">{count}</span>
+                  <span className="text-sm font-medium w-8 text-right text-black">{count}</span>
                 </div>
               </div>
             ))}
@@ -196,11 +196,11 @@ export default function LeadsPage() {
 
         {/* Archetype Distribution */}
         <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Archetype Distribution</h3>
+          <h3 className="text-lg font-semibold mb-4 text-black">Archetype Distribution</h3>
           <div className="space-y-2">
             {Object.entries(archetypeStats).map(([archetype, count]) => (
               <div key={archetype} className="flex justify-between items-center">
-                <span className="text-sm">{archetype}</span>
+                <span className="text-sm text-black">{archetype}</span>
                 <div className="flex items-center space-x-2">
                   <div className="w-32 bg-gray-200 rounded-full h-2">
                     <div 
@@ -208,7 +208,7 @@ export default function LeadsPage() {
                       style={{ width: `${(count / completedLeads) * 100}%` }}
                     ></div>
                   </div>
-                  <span className="text-sm font-medium w-8 text-right">{count}</span>
+                  <span className="text-sm font-medium w-8 text-right text-black">{count}</span>
                 </div>
               </div>
             ))}
@@ -224,21 +224,21 @@ export default function LeadsPage() {
     return (
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">{getQuizTypeDisplayName(quizType)} Leads</h3>
-          <span className="text-sm text-gray-500">{filteredLeads.length} leads</span>
+          <h3 className="text-lg font-semibold text-black">{getQuizTypeDisplayName(quizType)} Leads</h3>
+          <span className="text-sm text-black">{filteredLeads.length} leads</span>
         </div>
         
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Session ID</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Archetype</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Session ID</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Name</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Email</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Date</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Archetype</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -247,16 +247,16 @@ export default function LeadsPage() {
                 const emailAnswer = lead.answers.find(a => a.question.type === "email");
                 return (
                   <tr key={lead.id}>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm font-mono text-black">
                       {lead.id.slice(0, 8)}...
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
                       {nameAnswer?.value || "N/A"}
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
                       {emailAnswer?.value || "N/A"}
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
                       {new Date(lead.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
@@ -268,10 +268,10 @@ export default function LeadsPage() {
                         {lead.status === "completed" ? "Completed" : "Partial"}
                       </span>
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
                       {lead.result?.archetype || "N/A"}
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
                       <button
                         onClick={() => {
                           setSelectedLead(lead);
@@ -296,12 +296,12 @@ export default function LeadsPage() {
     return (
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">All Quiz Answers</h3>
+          <h3 className="text-lg font-semibold text-black">All Quiz Answers</h3>
           <div className="flex space-x-2">
             <select
               value={filters.quizType}
               onChange={(e) => setFilters({...filters, quizType: e.target.value})}
-              className="text-sm border border-gray-300 rounded px-2 py-1"
+              className="text-sm border border-gray-300 rounded px-2 py-1 text-black"
             >
               <option value="all">All Quiz Types</option>
               {quizTypes.map(qt => (
@@ -311,7 +311,7 @@ export default function LeadsPage() {
             <select
               value={filters.status}
               onChange={(e) => setFilters({...filters, status: e.target.value})}
-              className="text-sm border border-gray-300 rounded px-2 py-1"
+              className="text-sm border border-gray-300 rounded px-2 py-1 text-black"
             >
               <option value="all">All Status</option>
               <option value="completed">Completed</option>
@@ -324,13 +324,13 @@ export default function LeadsPage() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Session ID</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quiz Type</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Answers Count</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Session ID</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Quiz Type</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Name</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Email</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Answers Count</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -339,19 +339,19 @@ export default function LeadsPage() {
                 const emailAnswer = lead.answers.find(a => a.question.type === "email");
                 return (
                   <tr key={lead.id}>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm font-mono text-black">
                       {lead.id.slice(0, 8)}...
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
                       {getQuizTypeDisplayName(lead.quizType)}
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
                       {nameAnswer?.value || "N/A"}
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
                       {emailAnswer?.value || "N/A"}
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
                       {lead.answers.length}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
@@ -363,7 +363,7 @@ export default function LeadsPage() {
                         {lead.status === "completed" ? "Completed" : "Partial"}
                       </span>
                     </td>
-                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
                       <button
                         onClick={() => {
                           setSelectedLead(lead);
@@ -393,13 +393,13 @@ export default function LeadsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Archetype Segments */}
           <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold mb-4">Archetype Segments</h3>
+            <h3 className="text-lg font-semibold mb-4 text-black">Archetype Segments</h3>
             <div className="space-y-3">
               {Object.entries(archetypeStats).map(([archetype, count]) => (
                 <div key={archetype} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                   <div>
-                    <div className="font-medium text-sm">{archetype}</div>
-                    <div className="text-xs text-gray-500">{count} leads</div>
+                    <div className="font-medium text-sm text-black">{archetype}</div>
+                    <div className="text-xs text-black">{count} leads</div>
                   </div>
                   <button
                     onClick={() => {
@@ -417,13 +417,13 @@ export default function LeadsPage() {
 
           {/* Quiz Type Segments */}
           <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold mb-4">Quiz Type Segments</h3>
+            <h3 className="text-lg font-semibold mb-4 text-black">Quiz Type Segments</h3>
             <div className="space-y-3">
               {Object.entries(quizTypeStats).map(([quizType, count]) => (
                 <div key={quizType} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                   <div>
-                    <div className="font-medium text-sm">{getQuizTypeDisplayName(quizType)}</div>
-                    <div className="text-xs text-gray-500">{count} leads</div>
+                    <div className="font-medium text-sm text-black">{getQuizTypeDisplayName(quizType)}</div>
+                    <div className="text-xs text-black">{count} leads</div>
                   </div>
                   <button
                     onClick={() => setActiveTab(quizType as TabType)}
@@ -439,18 +439,18 @@ export default function LeadsPage() {
 
         {/* Custom Segments */}
         <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Custom Segments</h3>
+          <h3 className="text-lg font-semibold mb-4 text-black">Custom Segments</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-4 border border-gray-200 rounded-lg">
-              <div className="font-medium text-sm mb-2">High Completion Rate</div>
-              <div className="text-xs text-gray-500 mb-2">Leads who completed the quiz</div>
+              <div className="font-medium text-sm mb-2 text-black">High Completion Rate</div>
+              <div className="text-xs text-black mb-2">Leads who completed the quiz</div>
               <div className="text-lg font-bold text-green-600">
                 {leads.filter(l => l.status === 'completed').length}
               </div>
             </div>
             <div className="p-4 border border-gray-200 rounded-lg">
-              <div className="font-medium text-sm mb-2">Recent Leads</div>
-              <div className="text-xs text-gray-500 mb-2">Last 7 days</div>
+              <div className="font-medium text-sm mb-2 text-black">Recent Leads</div>
+              <div className="text-xs text-black mb-2">Last 7 days</div>
               <div className="text-lg font-bold text-blue-600">
                 {leads.filter(l => {
                   const weekAgo = new Date();
@@ -460,8 +460,8 @@ export default function LeadsPage() {
               </div>
             </div>
             <div className="p-4 border border-gray-200 rounded-lg">
-              <div className="font-medium text-sm mb-2">Email Collected</div>
-              <div className="text-xs text-gray-500 mb-2">Leads with email addresses</div>
+              <div className="font-medium text-sm mb-2 text-black">Email Collected</div>
+              <div className="text-xs text-black mb-2">Leads with email addresses</div>
               <div className="text-lg font-bold text-purple-600">
                 {leads.filter(l => l.answers.some(a => a.question.type === 'email' && a.value)).length}
               </div>
@@ -492,10 +492,10 @@ export default function LeadsPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading leads...</p>
-        </div>
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-4 text-black">Loading leads...</p>
+            </div>
       </div>
     );
   }
@@ -507,8 +507,8 @@ export default function LeadsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Lead Management</h1>
-              <p className="text-sm text-gray-600">CRM system for managing quiz leads and segmentation</p>
+              <h1 className="text-2xl font-bold text-black">Lead Management</h1>
+              <p className="text-sm text-black">CRM system for managing quiz leads and segmentation</p>
             </div>
             <div className="flex space-x-3">
               <button
@@ -543,7 +543,7 @@ export default function LeadsPage() {
                   className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap flex items-center space-x-2 ${
                     activeTab === tab.id
                       ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      : 'border-transparent text-black hover:text-blue-600 hover:border-gray-300'
                   }`}
                 >
                   <span>{tab.icon}</span>
@@ -565,7 +565,7 @@ export default function LeadsPage() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg max-w-4xl w-full max-h-[80vh] overflow-hidden">
             <div className="flex justify-between items-center p-6 border-b">
-              <h3 className="text-lg font-semibold">
+              <h3 className="text-lg font-semibold text-black">
                 Quiz Answers - {selectedLead.id.slice(0, 8)}...
               </h3>
               <button
@@ -579,7 +579,7 @@ export default function LeadsPage() {
             </div>
             <div className="p-6 overflow-y-auto max-h-[60vh]">
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-2 gap-4 text-sm text-black">
                   <div>
                     <span className="font-medium">Quiz Type:</span> {getQuizTypeDisplayName(selectedLead.quizType)}
                   </div>
@@ -596,8 +596,8 @@ export default function LeadsPage() {
                 
                 {selectedLead.result && (
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="font-medium mb-2">Result</h4>
-                    <div className="text-sm">
+                    <h4 className="font-medium mb-2 text-black">Result</h4>
+                    <div className="text-sm text-black">
                       <div><span className="font-medium">Archetype:</span> {selectedLead.result.archetype}</div>
                       <div><span className="font-medium">Scores:</span> {JSON.stringify(selectedLead.result.scores)}</div>
                     </div>
@@ -605,19 +605,19 @@ export default function LeadsPage() {
                 )}
 
                 <div>
-                  <h4 className="font-medium mb-3">Answers</h4>
+                  <h4 className="font-medium mb-3 text-black">Answers</h4>
                   <div className="space-y-3">
                     {selectedLead.answers
                       .sort((a, b) => a.question.order - b.question.order)
                       .map((answer) => (
                         <div key={answer.id} className="border border-gray-200 rounded-lg p-3">
-                          <div className="font-medium text-sm mb-1">
+                          <div className="font-medium text-sm mb-1 text-black">
                             Q{answer.question.order}: {answer.question.prompt}
                           </div>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-sm text-black">
                             <span className="font-medium">Answer:</span> {JSON.stringify(answer.value)}
                           </div>
-                          <div className="text-xs text-gray-500 mt-1">
+                          <div className="text-xs text-black mt-1">
                             Type: {answer.question.type}
                           </div>
                         </div>
