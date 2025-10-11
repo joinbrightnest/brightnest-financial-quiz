@@ -136,14 +136,10 @@ export default function Home() {
               Start My Money Reset
             </Link>
             <p className="text-sm text-gray-600 mt-3">
-              Discover your personalized Money Behavior Profile.
+              Based on results from real BrightNest members. Your data stays 100% private and secure.
             </p>
           </div>
           
-          {/* 7️⃣ Micro-trust Line */}
-          <p className="text-xs text-gray-500 max-w-md mx-auto">
-            Based on results from real BrightNest members. Your data stays 100% private and secure.
-          </p>
         </div>
       </div>
           
