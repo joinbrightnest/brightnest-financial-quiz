@@ -191,7 +191,7 @@ export default function BookCallPage() {
             {/* Calendly Inline Widget */}
             <div 
               className="calendly-inline-widget" 
-              data-url="https://calendly.com/brightnest-assessment"
+              data-url="https://calendly.com/privatepublish/30min"
               style={{ minWidth: '320px', height: '600px' }}
             ></div>
           </div>
