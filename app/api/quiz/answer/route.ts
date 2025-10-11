@@ -59,15 +59,8 @@ export async function POST(request: NextRequest) {
     ]);
 
     if (!nextQuestion) {
-      // No more questions, mark session as completed
-      await prisma.quizSession.update({
-        where: { id: sessionId },
-        data: {
-          status: "completed",
-          completedAt: new Date(),
-        },
-      });
-
+      // No more questions - let the result endpoint handle completion
+      // This ensures answers are saved before marking as completed
       return NextResponse.json({
         isComplete: true,
         message: "Quiz completed",
