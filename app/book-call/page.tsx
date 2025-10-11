@@ -184,16 +184,6 @@ export default function BookCallPage() {
             </div>
           </div>
         </div>
-
-        {/* Back to Results */}
-        <div className="text-center mt-6 pb-6">
-          <Link
-            href="/results"
-            className="text-[#333333] hover:text-[#4CAF50] underline"
-          >
-            ← Back to Your Results
-          </Link>
-        </div>
       </div>
     </>
   );
