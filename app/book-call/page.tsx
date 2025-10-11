@@ -38,9 +38,9 @@ export default function BookCallPage() {
         strategy="afterInteractive"
       />
       
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-[#F8F7F5]">
         {/* Section 1: Dark Purple Background */}
-        <div className="bg-[#4A006F] py-6 px-4">
+        <div className="bg-[#333333] py-6 px-4">
           <div className="max-w-4xl mx-auto text-center">
             {/* Logo */}
             <div className="mb-4">
@@ -52,7 +52,7 @@ export default function BookCallPage() {
 
             {/* Main Headline */}
             <h2 className="text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight">
-              <span className="text-[#D81B60]">Final Step:</span> Required To Complete Your Application
+              <span className="text-[#4CAF50]">Final Step:</span> Required To Complete Your Application
             </h2>
 
             {/* Sub-headline */}
@@ -90,7 +90,7 @@ export default function BookCallPage() {
             <div className="flex justify-center space-x-3 mb-6">
               {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-white">
-                  <div className="w-10 h-10 bg-gradient-to-br from-[#6A1B9A] to-[#F06292] rounded-full"></div>
+                  <div className="w-10 h-10 bg-gradient-to-br from-[#A5D6A7] to-[#C8E6C9] rounded-full"></div>
                 </div>
               ))}
             </div>
@@ -100,7 +100,7 @@ export default function BookCallPage() {
         {/* Pink Banner - Overlapping with dark section */}
         <div className="relative -mt-8 z-10">
           <div className="max-w-4xl mx-auto px-4">
-            <div className="bg-[#D81B60] rounded-t-3xl py-6 px-8">
+            <div className="bg-[#4CAF50] rounded-t-3xl py-6 px-8">
               <div className="text-center">
                 <h3 className="text-2xl font-bold text-white mb-2">
                   Schedule Your FREE Financial Transformation Assessment
@@ -119,7 +119,7 @@ export default function BookCallPage() {
 
         {/* Calendar Background - Full Width */}
         <div className="max-w-4xl mx-auto px-4 pb-8">
-          <div className="bg-gray-50 rounded-lg p-6 mb-6">
+          <div className="bg-gray-100 rounded-lg p-6 mb-6">
             {/* White Card with Calendar Interface */}
             <div className="bg-white rounded-lg shadow-sm max-w-2xl mx-auto p-0">
               {/* Calendly Inline Widget */}
@@ -136,7 +136,7 @@ export default function BookCallPage() {
         <div className="text-center mt-6">
           <Link
             href="/results"
-            className="text-gray-600 hover:text-gray-800 underline"
+            className="text-[#333333] hover:text-[#4CAF50] underline"
           >
             ← Back to Your Results
           </Link>
