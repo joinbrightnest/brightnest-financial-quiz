@@ -177,14 +177,11 @@ export default function BookCallPage() {
                 <span className="font-serif italic ml-2">Nest</span>
               </h1>
             </div>
-            <div className="text-white mb-4">
+            <div className="text-white">
               <Link href="/privacy" className="hover:text-[#4CAF50]">Privacy Policy</Link>
               <span className="mx-2">|</span>
               <Link href="/terms" className="hover:text-[#4CAF50]">Terms and Conditions</Link>
             </div>
-            <p className="text-white text-sm opacity-75">
-              This site is not a part of the Facebook website or Facebook Inc. Additionally This site is NOT endorsed by Facebook in any way.
-            </p>
           </div>
         </div>
 
