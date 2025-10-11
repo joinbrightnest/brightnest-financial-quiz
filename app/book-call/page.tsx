@@ -95,8 +95,8 @@ export default function BookCallPage() {
           </div>
         </div>
 
-        {/* Section 2: Hot Pink Bar - Not Full Width */}
-        <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-4 px-4">
+        {/* Section 2: White Card with Pink CTA and Calendly */}
+        <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-8 px-4">
           <div className="max-w-4xl mx-auto">
             {/* Social Proof Images */}
             <div className="flex justify-center space-x-3 mb-6 -mt-8">
@@ -107,29 +107,25 @@ export default function BookCallPage() {
               ))}
             </div>
 
-            {/* Pink Bar - Centered, Not Full Width */}
-            <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg py-6 px-8 max-w-2xl mx-auto">
-              <div className="text-center">
-                <h3 className="text-xl lg:text-2xl font-bold text-white mb-3">
-                  Schedule Your FREE Financial Transformation Assessment
-                </h3>
-                
-                <div className="flex items-center justify-center space-x-2 text-white">
-                  <span className="text-lg">⭐</span>
-                  <span className="text-base">
-                    +157 People Have Booked Their Assessment In The Past 24 Hours
-                  </span>
+            {/* White Card - Centered, Not Full Width */}
+            <div className="bg-white rounded-lg shadow-2xl p-6 max-w-2xl mx-auto">
+              {/* Pink CTA Button Inside White Card */}
+              <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg py-4 px-6 mb-6">
+                <div className="text-center">
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    Schedule Your FREE Financial Transformation Assessment
+                  </h3>
+                  
+                  <div className="flex items-center justify-center space-x-2 text-white">
+                    <span className="text-lg">⭐</span>
+                    <span className="text-sm">
+                      +157 People Have Booked Their Assessment In The Past 24 Hours
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
 
-        {/* Section 3: White Background - Calendly - Not Full Width */}
-        <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-8 px-4">
-          <div className="max-w-4xl mx-auto">
-            {/* White Section - Centered, Not Full Width */}
-            <div className="bg-white rounded-lg shadow-2xl p-6 max-w-2xl mx-auto">
+              {/* Calendar Section */}
               <div className="text-center mb-6">
                 <h4 className="text-xl font-bold text-gray-900 mb-3">
                   Select a Date & Time
