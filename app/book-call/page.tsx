@@ -97,26 +97,31 @@ export default function BookCallPage() {
           </div>
         </div>
 
-        {/* Section 2: White Background with Pink CTA and Calendly */}
+        {/* Pink Banner - Overlapping with dark section */}
+        <div className="relative -mt-8 z-10">
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="bg-[#FF007F] rounded-t-3xl py-4 px-6 max-w-2xl mx-auto">
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-white mb-2">
+                  Schedule Your FREE Body Transformation Assessment
+                </h3>
+                
+                <div className="flex items-center justify-center space-x-2 text-white">
+                  <span className="text-lg">⭐</span>
+                  <span className="text-sm">
+                    + 157 Women Have Booked Their Assessment In The Past 24 Hours
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 2: White Background with Calendar */}
         <div className="bg-white py-8 px-4">
           <div className="max-w-4xl mx-auto">
             {/* White Card with Calendar - Centered, Not Full Width */}
-            <div className="bg-white rounded-t-3xl rounded-b-lg shadow-2xl max-w-2xl mx-auto overflow-hidden">
-              {/* Integrated Pink Banner */}
-              <div className="bg-[#FF007F] py-4 px-6">
-                <div className="text-center">
-                  <h3 className="text-xl font-bold text-white mb-2">
-                    Schedule Your FREE Body Transformation Assessment
-                  </h3>
-                  
-                  <div className="flex items-center justify-center space-x-2 text-white">
-                    <span className="text-lg">⭐</span>
-                    <span className="text-sm">
-                      + 157 Women Have Booked Their Assessment In The Past 24 Hours
-                    </span>
-                  </div>
-                </div>
-              </div>
+            <div className="bg-white rounded-b-lg shadow-2xl max-w-2xl mx-auto overflow-hidden">
 
               {/* Calendar Section */}
               <div className="p-6">
