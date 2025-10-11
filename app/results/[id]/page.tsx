@@ -126,14 +126,17 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                 Get personalized financial advice and start building your brighter future today.
               </p>
               <div className="space-y-3">
-                <button className="w-full md:w-auto bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                  Join Our Waitlist
-                </button>
+                <Link
+                  href="/book-call"
+                  className="inline-block w-full md:w-auto bg-gradient-to-r from-pink-500 to-pink-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-pink-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                >
+                  Book Your FREE Financial Assessment
+                </Link>
                 <div className="text-sm text-gray-500">
                   or
                 </div>
-                <button className="w-full md:w-auto bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
-                  Book a Free Consultation
+                <button className="w-full md:w-auto bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                  Join Our Waitlist
                 </button>
               </div>
             </div>
