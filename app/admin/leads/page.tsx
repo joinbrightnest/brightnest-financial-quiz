@@ -45,7 +45,17 @@ export default function LeadsPage() {
     quizType: 'all',
     status: 'all',
     dateRange: 'all',
-    archetype: 'all'
+    archetype: 'all',
+    startDate: '',
+    endDate: ''
+  });
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportOptions, setExportOptions] = useState({
+    includeAnswers: true,
+    includeContactInfo: true,
+    includeResults: true,
+    includeTimestamps: true,
+    selectedFields: ['sessionId', 'quizType', 'name', 'email', 'status', 'archetype', 'answers', 'createdAt', 'completedAt']
   });
 
   useEffect(() => {
@@ -82,7 +92,10 @@ export default function LeadsPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ filters }),
+        body: JSON.stringify({ 
+          filters,
+          exportOptions 
+        }),
       });
       
       if (response.ok) {
@@ -95,10 +108,38 @@ export default function LeadsPage() {
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
+        setShowExportModal(false);
       }
     } catch (error) {
       console.error('Error exporting leads:', error);
     }
+  };
+
+  const handleDateRangeChange = (range: string) => {
+    const now = new Date();
+    let startDate = '';
+    let endDate = '';
+    
+    if (range === '7days') {
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      startDate = weekAgo.toISOString().split('T')[0];
+      endDate = now.toISOString().split('T')[0];
+    } else if (range === '30days') {
+      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      startDate = monthAgo.toISOString().split('T')[0];
+      endDate = now.toISOString().split('T')[0];
+    } else if (range === '90days') {
+      const quarterAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+      startDate = quarterAgo.toISOString().split('T')[0];
+      endDate = now.toISOString().split('T')[0];
+    }
+    
+    setFilters(prev => ({
+      ...prev,
+      dateRange: range,
+      startDate,
+      endDate
+    }));
   };
 
   const getFilteredLeads = () => {
@@ -106,6 +147,35 @@ export default function LeadsPage() {
       if (filters.quizType !== 'all' && lead.quizType !== filters.quizType) return false;
       if (filters.status !== 'all' && lead.status !== filters.status) return false;
       if (filters.archetype !== 'all' && lead.result?.archetype !== filters.archetype) return false;
+      
+      // Date filtering
+      if (filters.dateRange !== 'all' || filters.startDate || filters.endDate) {
+        const leadDate = new Date(lead.createdAt);
+        const now = new Date();
+        
+        if (filters.dateRange === '7days') {
+          const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          if (leadDate < weekAgo) return false;
+        } else if (filters.dateRange === '30days') {
+          const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          if (leadDate < monthAgo) return false;
+        } else if (filters.dateRange === '90days') {
+          const quarterAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+          if (leadDate < quarterAgo) return false;
+        }
+        
+        if (filters.startDate) {
+          const startDate = new Date(filters.startDate);
+          if (leadDate < startDate) return false;
+        }
+        
+        if (filters.endDate) {
+          const endDate = new Date(filters.endDate);
+          endDate.setHours(23, 59, 59, 999); // End of day
+          if (leadDate > endDate) return false;
+        }
+      }
+      
       return true;
     });
   };
@@ -460,6 +530,35 @@ export default function LeadsPage() {
               <option value="completed">Completed</option>
               <option value="in_progress">In Progress</option>
             </select>
+            <select
+              value={filters.dateRange}
+              onChange={(e) => handleDateRangeChange(e.target.value)}
+              className="text-sm border border-gray-300 rounded px-2 py-1 text-black"
+            >
+              <option value="all">All Time</option>
+              <option value="7days">Last 7 Days</option>
+              <option value="30days">Last 30 Days</option>
+              <option value="90days">Last 90 Days</option>
+              <option value="custom">Custom Range</option>
+            </select>
+            {filters.dateRange === 'custom' && (
+              <>
+                <input
+                  type="date"
+                  value={filters.startDate}
+                  onChange={(e) => setFilters({...filters, startDate: e.target.value})}
+                  className="text-sm border border-gray-300 rounded px-2 py-1 text-black"
+                  placeholder="Start Date"
+                />
+                <input
+                  type="date"
+                  value={filters.endDate}
+                  onChange={(e) => setFilters({...filters, endDate: e.target.value})}
+                  className="text-sm border border-gray-300 rounded px-2 py-1 text-black"
+                  placeholder="End Date"
+                />
+              </>
+            )}
           </div>
         </div>
         
@@ -687,7 +786,7 @@ export default function LeadsPage() {
             </div>
             <div className="flex space-x-3">
               <button
-                onClick={exportLeads}
+                onClick={() => setShowExportModal(true)}
                 className="bg-gradient-to-r from-green-600 to-green-700 text-white py-2.5 px-4 rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center space-x-2 text-sm font-medium shadow-sm"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -735,6 +834,134 @@ export default function LeadsPage() {
         {renderTabContent()}
       </div>
 
+      {/* Export Modal */}
+      {showExportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Export Configuration</h3>
+              <p className="text-sm text-gray-600 mt-1">Choose what data to include in your export</p>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              {/* Export Options */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium text-gray-900">Data Categories</h4>
+                <div className="space-y-3">
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={exportOptions.includeContactInfo}
+                      onChange={(e) => setExportOptions({...exportOptions, includeContactInfo: e.target.checked})}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-gray-700">Contact Information (Name, Email)</span>
+                  </label>
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={exportOptions.includeAnswers}
+                      onChange={(e) => setExportOptions({...exportOptions, includeAnswers: e.target.checked})}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-gray-700">Quiz Answers</span>
+                  </label>
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={exportOptions.includeResults}
+                      onChange={(e) => setExportOptions({...exportOptions, includeResults: e.target.checked})}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-gray-700">Assessment Results (Archetype, Scores)</span>
+                  </label>
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      checked={exportOptions.includeTimestamps}
+                      onChange={(e) => setExportOptions({...exportOptions, includeTimestamps: e.target.checked})}
+                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-gray-700">Timestamps (Created, Completed)</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Field Selection */}
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium text-gray-900">Specific Fields</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { key: 'sessionId', label: 'Session ID' },
+                    { key: 'quizType', label: 'Quiz Type' },
+                    { key: 'name', label: 'Name' },
+                    { key: 'email', label: 'Email' },
+                    { key: 'status', label: 'Status' },
+                    { key: 'archetype', label: 'Archetype' },
+                    { key: 'answers', label: 'Answers' },
+                    { key: 'createdAt', label: 'Created Date' },
+                    { key: 'completedAt', label: 'Completed Date' }
+                  ].map(field => (
+                    <label key={field.key} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={exportOptions.selectedFields.includes(field.key)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setExportOptions({
+                              ...exportOptions,
+                              selectedFields: [...exportOptions.selectedFields, field.key]
+                            });
+                          } else {
+                            setExportOptions({
+                              ...exportOptions,
+                              selectedFields: exportOptions.selectedFields.filter(f => f !== field.key)
+                            });
+                          }
+                        }}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="text-xs text-gray-700">{field.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Filter Summary */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="text-sm font-medium text-gray-900 mb-2">Export Summary</h4>
+                <div className="text-xs text-gray-600 space-y-1">
+                  <div>Records: {getFilteredLeads().length} leads</div>
+                  <div>Quiz Type: {filters.quizType === 'all' ? 'All' : getQuizTypeDisplayName(filters.quizType)}</div>
+                  <div>Status: {filters.status === 'all' ? 'All' : filters.status}</div>
+                  <div>Date Range: {
+                    filters.dateRange === 'all' ? 'All Time' :
+                    filters.dateRange === 'custom' ? `${filters.startDate} to ${filters.endDate}` :
+                    filters.dateRange === '7days' ? 'Last 7 Days' :
+                    filters.dateRange === '30days' ? 'Last 30 Days' :
+                    filters.dateRange === '90days' ? 'Last 90 Days' : 'All Time'
+                  }</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 flex justify-end space-x-3">
+              <button
+                onClick={() => setShowExportModal(false)}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={exportLeads}
+                className="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Export Data
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
