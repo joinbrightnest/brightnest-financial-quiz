@@ -41,8 +41,6 @@ export default function LeadsPage() {
   const [leads, setLeads] = useState<QuizSession[]>([]);
   const [quizTypes, setQuizTypes] = useState<QuizType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedLead, setSelectedLead] = useState<QuizSession | null>(null);
-  const [showAnswersModal, setShowAnswersModal] = useState(false);
   const [filters, setFilters] = useState({
     quizType: 'all',
     status: 'all',
@@ -273,10 +271,7 @@ export default function LeadsPage() {
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
                       <button
-                        onClick={() => {
-                          setSelectedLead(lead);
-                          setShowAnswersModal(true);
-                        }}
+                        onClick={() => router.push(`/admin/leads/${lead.id}`)}
                         className="text-blue-600 hover:text-blue-800 text-xs"
                       >
                         View Answers
@@ -365,10 +360,7 @@ export default function LeadsPage() {
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
                       <button
-                        onClick={() => {
-                          setSelectedLead(lead);
-                          setShowAnswersModal(true);
-                        }}
+                        onClick={() => router.push(`/admin/leads/${lead.id}`)}
                         className="text-blue-600 hover:text-blue-800 text-xs"
                       >
                         View Answers
@@ -560,75 +552,6 @@ export default function LeadsPage() {
         {renderTabContent()}
       </div>
 
-      {/* Answers Modal */}
-      {showAnswersModal && selectedLead && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[80vh] overflow-hidden">
-            <div className="flex justify-between items-center p-6 border-b">
-              <h3 className="text-lg font-semibold text-black">
-                Quiz Answers - {selectedLead.id.slice(0, 8)}...
-              </h3>
-              <button
-                onClick={() => setShowAnswersModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="p-6 overflow-y-auto max-h-[60vh]">
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm text-black">
-                  <div>
-                    <span className="font-medium">Quiz Type:</span> {getQuizTypeDisplayName(selectedLead.quizType)}
-                  </div>
-                  <div>
-                    <span className="font-medium">Status:</span> {selectedLead.status}
-                  </div>
-                  <div>
-                    <span className="font-medium">Started:</span> {new Date(selectedLead.createdAt).toLocaleString()}
-                  </div>
-                  <div>
-                    <span className="font-medium">Completed:</span> {selectedLead.completedAt ? new Date(selectedLead.completedAt).toLocaleString() : 'N/A'}
-                  </div>
-                </div>
-                
-                {selectedLead.result && (
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h4 className="font-medium mb-2 text-black">Result</h4>
-                    <div className="text-sm text-black">
-                      <div><span className="font-medium">Archetype:</span> {selectedLead.result.archetype}</div>
-                      <div><span className="font-medium">Scores:</span> {JSON.stringify(selectedLead.result.scores)}</div>
-                    </div>
-                  </div>
-                )}
-
-                <div>
-                  <h4 className="font-medium mb-3 text-black">Answers</h4>
-                  <div className="space-y-3">
-                    {selectedLead.answers
-                      .sort((a, b) => a.question.order - b.question.order)
-                      .map((answer) => (
-                        <div key={answer.id} className="border border-gray-200 rounded-lg p-3">
-                          <div className="font-medium text-sm mb-1 text-black">
-                            Q{answer.question.order}: {answer.question.prompt}
-                          </div>
-                          <div className="text-sm text-black">
-                            <span className="font-medium">Answer:</span> {JSON.stringify(answer.value)}
-                          </div>
-                          <div className="text-xs text-black mt-1">
-                            Type: {answer.question.type}
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
