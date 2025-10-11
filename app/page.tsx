@@ -6,7 +6,7 @@ export default function Home() {
       {/* Navigation */}
       <nav style={{backgroundColor: '#faf8f0'}}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-12">
+          <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
               <Link href="/" className="text-xl font-bold text-gray-900">
                 BrightNest
@@ -60,7 +60,7 @@ export default function Home() {
       <div className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-0" style={{backgroundColor: '#FAF8F4'}}>
         <div className="max-w-4xl mx-auto text-center">
           {/* 1️⃣ Microline */}
-          <p className="text-sm text-gray-600 mb-2 font-medium">
+          <p className="text-sm text-gray-600 mb-1 font-medium">
             The behavior-based system for lasting financial peace.
           </p>
           
