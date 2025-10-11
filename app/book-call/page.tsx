@@ -44,19 +44,19 @@ export default function BookCallPage() {
           <div className="max-w-4xl mx-auto text-center">
             {/* Logo */}
             <div className="mb-4">
-              <h1 className="text-white text-2xl font-bold tracking-wide">
+              <h1 className="text-white text-3xl font-bold tracking-wide">
                 <span className="font-sans">BRIGHT</span>
                 <span className="font-serif italic ml-2">Nest</span>
               </h1>
             </div>
 
             {/* Main Headline */}
-            <h2 className="text-2xl lg:text-3xl font-bold text-white mb-3 leading-tight">
+            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight">
               <span className="text-[#D81B60]">Final Step:</span> Required To Complete Your Application
             </h2>
 
             {/* Sub-headline */}
-            <p className="text-white text-sm lg:text-base max-w-2xl mx-auto leading-relaxed mb-4">
+            <p className="text-white text-base lg:text-lg max-w-2xl mx-auto leading-relaxed mb-4">
               Congratulations On Taking The First Step! To Finalize Your Application And Determine If Our Money Behavior System™ Is Right For You Please Select A Time Below For Your FREE Financial Transformation Assessment
             </p>
 
@@ -64,24 +64,24 @@ export default function BookCallPage() {
             <div className="mb-6">
               <div className="flex justify-center space-x-3">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-white">
+                  <div className="text-4xl font-bold text-white">
                     {String(timeLeft.hours).padStart(2, '0')}
                   </div>
-                  <div className="text-white text-xs mt-1">Hours</div>
+                  <div className="text-white text-sm mt-1">Hours</div>
                 </div>
-                <div className="text-3xl font-bold text-white">:</div>
+                <div className="text-4xl font-bold text-white">:</div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-white">
+                  <div className="text-4xl font-bold text-white">
                     {String(timeLeft.minutes).padStart(2, '0')}
                   </div>
-                  <div className="text-white text-xs mt-1">Minutes</div>
+                  <div className="text-white text-sm mt-1">Minutes</div>
                 </div>
-                <div className="text-3xl font-bold text-white">:</div>
+                <div className="text-4xl font-bold text-white">:</div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-white">
+                  <div className="text-4xl font-bold text-white">
                     {String(timeLeft.seconds).padStart(2, '0')}
                   </div>
-                  <div className="text-white text-xs mt-1">Seconds</div>
+                  <div className="text-white text-sm mt-1">Seconds</div>
                 </div>
               </div>
             </div>
@@ -100,15 +100,15 @@ export default function BookCallPage() {
         {/* Pink Banner - Overlapping with dark section */}
         <div className="relative -mt-8 z-10">
           <div className="max-w-4xl mx-auto px-4">
-            <div className="bg-[#D81B60] rounded-t-3xl py-4 px-6">
+            <div className="bg-[#D81B60] rounded-t-3xl py-6 px-8">
               <div className="text-center">
-                <h3 className="text-xl font-bold text-white mb-2">
+                <h3 className="text-2xl font-bold text-white mb-2">
                   Schedule Your FREE Financial Transformation Assessment
                 </h3>
                 
                 <div className="flex items-center justify-center space-x-2 text-white">
-                  <span className="text-lg">⭐</span>
-                  <span className="text-sm">
+                  <span className="text-xl">⭐</span>
+                  <span className="text-base">
                     + 157 People Have Booked Their Assessment In The Past 24 Hours
                   </span>
                 </div>
