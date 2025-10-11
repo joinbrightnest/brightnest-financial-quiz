@@ -100,7 +100,7 @@ export default function BookCallPage() {
         {/* Pink Banner - Overlapping with dark section */}
         <div className="relative -mt-8 z-10">
           <div className="max-w-4xl mx-auto px-4">
-            <div className="bg-[#FF007F] rounded-t-3xl py-4 px-6 max-w-2xl mx-auto">
+            <div className="bg-[#FF007F] rounded-t-3xl py-4 px-6">
               <div className="text-center">
                 <h3 className="text-xl font-bold text-white mb-2">
                   Schedule Your FREE Body Transformation Assessment
