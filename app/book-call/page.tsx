@@ -207,7 +207,6 @@ export default function BookCallPage() {
             </Link>
           </div>
         </div>
-        </div>
       </div>
     </>
   );
