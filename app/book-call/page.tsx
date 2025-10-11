@@ -38,7 +38,7 @@ export default function BookCallPage() {
         strategy="afterInteractive"
       />
       
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-white">
         {/* Section 1: Dark Purple Background */}
         <div className="bg-[#5C004D] py-6 px-4">
           <div className="max-w-4xl mx-auto text-center">
@@ -117,11 +117,9 @@ export default function BookCallPage() {
           </div>
         </div>
 
-        {/* Section 2: White Background with Calendar */}
-        <div className="bg-white py-8 px-4">
-          <div className="max-w-4xl mx-auto">
-            {/* White Card with Calendar - Centered, Not Full Width */}
-            <div className="bg-white rounded-b-lg shadow-2xl max-w-2xl mx-auto overflow-hidden">
+        {/* White Card with Calendar - Centered, Not Full Width */}
+        <div className="max-w-4xl mx-auto px-4 pb-8">
+          <div className="bg-white rounded-b-lg shadow-2xl max-w-2xl mx-auto overflow-hidden">
 
               {/* Calendar Section */}
               <div className="p-6">
@@ -197,18 +195,18 @@ export default function BookCallPage() {
                   style={{ minWidth: '320px', height: '600px' }}
                 ></div>
               </div>
-            </div>
-
-            {/* Back to Results */}
-            <div className="text-center mt-6">
-              <Link
-                href="/results"
-                className="text-gray-600 hover:text-gray-800 underline"
-              >
-                ← Back to Your Results
-              </Link>
-            </div>
           </div>
+
+          {/* Back to Results */}
+          <div className="text-center mt-6">
+            <Link
+              href="/results"
+              className="text-gray-600 hover:text-gray-800 underline"
+            >
+              ← Back to Your Results
+            </Link>
+          </div>
+        </div>
         </div>
       </div>
     </>
