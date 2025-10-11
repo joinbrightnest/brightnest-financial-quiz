@@ -129,13 +129,9 @@ export default function BookCallPage() {
                 style={{ minWidth: '320px', height: '700px' }}
               ></div>
             </div>
-          </div>
-        </div>
-
-        {/* Social Proof Section */}
-        <div className="max-w-4xl mx-auto px-4 pb-6">
-          <div className="bg-white rounded-lg p-6 shadow-lg">
-            <div className="text-center">
+            
+            {/* Social Proof Section */}
+            <div className="text-center mt-6">
               <div className="flex items-center justify-center space-x-2 mb-4">
                 <span className="text-[#333333] font-semibold">Excellent</span>
                 <div className="flex space-x-1">
