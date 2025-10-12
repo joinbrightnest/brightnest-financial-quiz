@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
     });
     
     console.log('Found answers:', answers.length);
+    console.log('Answer details:', answers.map(a => ({ questionId: a.questionId, value: a.value })));
 
     // Calculate scores
     const scores: ScoreCategory = {

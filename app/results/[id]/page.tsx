@@ -19,7 +19,10 @@ async function getResult(id: string): Promise<Result> {
   for (let attempt = 1; attempt <= 3; attempt++) {
     console.log(`Fetch attempt ${attempt}/3`);
     
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/results/${id}`, {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
+      (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3001');
+    
+    const response = await fetch(`${baseUrl}/api/results/${id}`, {
       cache: 'no-store'
     });
     

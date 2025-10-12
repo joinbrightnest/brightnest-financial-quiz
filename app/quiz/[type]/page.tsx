@@ -116,6 +116,7 @@ export default function QuizPage({ params }: QuizPageProps) {
         setSessionId(sessionData.sessionId);
         // Store session ID in localStorage for the analyzing page
         localStorage.setItem('quizSessionId', sessionData.sessionId);
+        console.log('Quiz: Stored sessionId in localStorage:', sessionData.sessionId);
         setCurrentQuestion(sessionData.question);
         setCurrentQuestionIndex(0);
         setTotalQuestions(countData.count);

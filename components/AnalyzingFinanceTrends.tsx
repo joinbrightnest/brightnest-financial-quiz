@@ -232,6 +232,7 @@ const AnalyzingFinanceTrends = () => {
       // Get the session ID from localStorage (set during quiz)
       const sessionId = localStorage.getItem('quizSessionId');
       console.log('Session ID from localStorage:', sessionId);
+      console.log('All localStorage keys:', Object.keys(localStorage));
       
       if (sessionId) {
         console.log('Generating result for session:', sessionId);
