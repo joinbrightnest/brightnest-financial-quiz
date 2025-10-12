@@ -34,8 +34,26 @@ export default function BookCallPage() {
   useEffect(() => {
     const handleCalendlyEvent = (e: any) => {
       if (e.data.event === 'calendly.event_scheduled') {
-        // Redirect to confirmation page after successful booking
-        window.location.href = '/book-call/confirmation';
+        // Show loading screen before redirect
+        const loadingDiv = document.createElement('div');
+        loadingDiv.innerHTML = `
+          <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #F8F7F5; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div style="width: 50px; height: 50px; border: 4px solid #4CAF50; border-top: 4px solid transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <p style="margin-top: 20px; color: #333333; font-size: 18px;">Processing your booking...</p>
+            <style>
+              @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+              }
+            </style>
+          </div>
+        `;
+        document.body.appendChild(loadingDiv);
+        
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          window.location.href = '/book-call/confirmation';
+        }, 2000);
       }
     };
 
