@@ -305,6 +305,198 @@ export default function ConfirmationPage() {
           </div>
         </div>
       </div>
+
+      {/* FAQ Video Section */}
+      <div className="max-w-5xl mx-auto px-4 pb-8">
+        <div className="bg-white rounded-lg shadow-2xl overflow-hidden">
+          <div className="p-8">
+            {/* Punctuality Section */}
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-[#333333] mb-3">Punctuality:</h3>
+              <p className="text-[#333333] leading-relaxed">
+                Join your Zoom call early and in a quiet environment. Your advisor will give you their undivided attention, and we expect the same from you. If you cannot meet these expectations, email support@brightnest.com to see if there is any way we can support you.
+              </p>
+            </div>
+
+            {/* Information Section */}
+            <div className="mb-8">
+              <h3 className="text-xl font-bold text-[#333333] mb-3">Information:</h3>
+              <p className="text-[#333333] leading-relaxed">
+                Come with whatever questions you have. We want you to be able to make an informed decision, regardless if you choose us or not.
+              </p>
+            </div>
+
+            {/* Step 3 Title */}
+            <h2 className="text-3xl font-bold text-[#333333] text-center mb-8 leading-tight">
+              Step 3: Review Our Most Frequently Asked Questions
+            </h2>
+
+            {/* Video Modules Grid */}
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Video Module 1 */}
+              <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-[#333333] to-[#2a2a2a] py-4 px-4">
+                  <h3 className="text-white font-bold text-lg text-center">
+                    What's Included In The Program?
+                  </h3>
+                </div>
+                
+                {/* Video Thumbnail */}
+                <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 aspect-video">
+                  {/* Video Content Placeholder */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center text-white">
+                      <div className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      </div>
+                      <p className="text-sm opacity-80">and tap into our exclusive</p>
+                    </div>
+                  </div>
+                  
+                  {/* Play Button Overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <button className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 transform">
+                      <svg className="w-6 h-6 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Progress Bar */}
+                <div className="bg-gray-100 p-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-[#333333] font-medium">0:38</span>
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-[#4CAF50] rounded-full"></div>
+                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                    </div>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
+                    <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] h-1 rounded-full w-1/3"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Video Module 2 */}
+              <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-[#333333] to-[#2a2a2a] py-4 px-4">
+                  <h3 className="text-white font-bold text-lg text-center">
+                    How Is This Program Different?
+                  </h3>
+                </div>
+                
+                {/* Video Thumbnail */}
+                <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 aspect-video">
+                  {/* Video Content Placeholder */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center text-white">
+                      <div className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      </div>
+                      <p className="text-sm opacity-80">get a random diet</p>
+                    </div>
+                  </div>
+                  
+                  {/* Play Button Overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <button className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 transform">
+                      <svg className="w-6 h-6 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Progress Bar */}
+                <div className="bg-gray-100 p-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-[#333333] font-medium">0:40</span>
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-[#4CAF50] rounded-full"></div>
+                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                    </div>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
+                    <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] h-1 rounded-full w-1/3"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Video Module 3 */}
+              <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-[#333333] to-[#2a2a2a] py-4 px-4">
+                  <h3 className="text-white font-bold text-lg text-center">
+                    How Soon Can I See Results?
+                  </h3>
+                </div>
+                
+                {/* Video Thumbnail */}
+                <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 aspect-video">
+                  {/* Video Content Placeholder */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center text-white">
+                      <div className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z"/>
+                        </svg>
+                      </div>
+                      <p className="text-sm opacity-80">you'll witness a real transformation in the mirror</p>
+                    </div>
+                  </div>
+                  
+                  {/* Play Button Overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <button className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 transform">
+                      <svg className="w-6 h-6 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                
+                {/* Progress Bar */}
+                <div className="bg-gray-100 p-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-[#333333] font-medium">0:33</span>
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-[#4CAF50] rounded-full"></div>
+                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                    </div>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
+                    <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] h-1 rounded-full w-1/3"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Final CTA */}
+            <div className="text-center mt-8 p-6 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-lg">
+              <h4 className="text-xl font-bold text-white mb-2">Ready to Transform Your Financial Future?</h4>
+              <p className="text-white mb-4">
+                Watch these videos to learn more about our Money Behavior System™
+              </p>
+              <p className="text-white text-sm">
+                Questions? Contact us at{" "}
+                <a href="mailto:support@brightnest.com" className="text-white font-semibold hover:underline">
+                  support@brightnest.com
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
