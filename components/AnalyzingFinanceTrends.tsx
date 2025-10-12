@@ -54,17 +54,7 @@ const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBar
   }, [isActive, isVisible, isCompleted]);
 
   return (
-    <motion.div 
-      className="w-full mb-6"
-      animate={{ 
-        scale: isActive ? 1.05 : 1,
-        y: isActive ? -2 : 0
-      }}
-      transition={{ 
-        duration: 0.3,
-        ease: "easeInOut"
-      }}
-    >
+    <div className="w-full mb-6">
       <div className="flex justify-between items-center mb-3">
         <span className="text-sm font-medium text-gray-700">{label}</span>
         <motion.span 
@@ -76,7 +66,16 @@ const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBar
           {percentage}%
         </motion.span>
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+      <motion.div 
+        className="w-full bg-gray-200 rounded-full overflow-hidden"
+        animate={{ 
+          height: isActive ? "12px" : "8px" // Make thicker when active
+        }}
+        transition={{ 
+          duration: 0.3,
+          ease: "easeInOut"
+        }}
+      >
         <motion.div
           className={`h-full rounded-full ${color}`}
           initial={{ width: "0%" }}
@@ -87,8 +86,8 @@ const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBar
             ease: "easeOut"
           }}
         />
-      </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 };
 
