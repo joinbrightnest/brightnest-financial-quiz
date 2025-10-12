@@ -117,12 +117,12 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <div className="container mx-auto px-4 py-16">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           
           {/* Header Section */}
-          <div className="text-center mb-20">
+          <div className="text-center mb-16">
             <div className="inline-flex items-center space-x-3 mb-8">
               <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-teal-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">B</span>
@@ -130,7 +130,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
               <h1 className="text-2xl font-bold text-gray-800">BrightNest</h1>
             </div>
             
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 mb-8">
+            <div className="mb-8">
               <div className="text-sm text-gray-500 font-medium mb-4">Your Financial Archetype</div>
               <h2 className="text-4xl font-bold text-blue-600 mb-4">
                 {copy.archetype}
@@ -141,41 +141,27 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             </div>
           </div>
 
-          {/* Recognition Section */}
-          <div className="mb-20">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-              <div className="flex items-start space-x-4">
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-4">Recognition</h3>
-                  <p className="text-lg text-gray-600 leading-relaxed">
-                    {copy.validation}
-                  </p>
-                </div>
-              </div>
+          {/* Main Content Container */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 space-y-12">
+            
+            {/* Recognition Section */}
+            <div className="opacity-0 translate-y-4 animate-fade-in">
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">Recognition</h3>
+              <p className="text-lg text-gray-600 leading-relaxed">
+                {copy.validation}
+              </p>
             </div>
-          </div>
 
-          {/* Personalized Insights Section */}
-          <div className="mb-20">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-              <div className="flex items-center space-x-3 mb-8">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold text-gray-800">Personalized Insights</h3>
-              </div>
-              <div className="space-y-6">
+            <hr className="my-8 border-gray-200" />
+
+            {/* Personalized Insights Section */}
+            <div className="opacity-0 translate-y-4 animate-fade-in">
+              <h3 className="text-2xl font-bold text-gray-800 mb-6">Personalized Insights</h3>
+              <div className="space-y-4">
                 {copy.personalized_insights.map((insight, index) => (
-                  <div key={index} className="flex items-start space-x-4">
-                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white font-bold text-sm">
+                  <div key={index} className="flex items-start space-x-3">
+                    <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <span className="text-white font-bold text-xs">
                         {index + 1}
                       </span>
                     </div>
@@ -184,59 +170,45 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                 ))}
               </div>
             </div>
-          </div>
 
-          {/* Hidden Challenge Section */}
-          <div className="mb-20">
-            <div className="bg-orange-50 rounded-xl border border-orange-100 p-8">
-              <div className="flex items-start space-x-4">
-                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-4">The Hidden Challenge</h3>
-                  <p className="text-lg text-gray-600 leading-relaxed">
-                    {copy.problem_realization}
-                  </p>
-                </div>
+            <hr className="my-8 border-gray-200" />
+
+            {/* Hidden Challenge Section */}
+            <div className="opacity-0 translate-y-4 animate-fade-in">
+              <div className="bg-yellow-50 rounded-lg p-6 -mx-6">
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">Hidden Challenge</h3>
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  {copy.problem_realization}
+                </p>
               </div>
             </div>
-          </div>
 
-          {/* Transformation Section */}
-          <div className="mb-20">
-            <div className="bg-green-50 rounded-xl border border-green-100 p-8">
-              <div className="flex items-start space-x-4">
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-4">Your Opportunity</h3>
-                  <p className="text-lg text-gray-600 leading-relaxed">
-                    {copy.hope_and_solution}
-                  </p>
-                </div>
+            <hr className="my-8 border-gray-200" />
+
+            {/* Your Opportunity Section */}
+            <div className="opacity-0 translate-y-4 animate-fade-in">
+              <div className="bg-green-50 rounded-lg p-6 -mx-6">
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">Your Opportunity</h3>
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  {copy.hope_and_solution}
+                </p>
               </div>
             </div>
-          </div>
 
-          {/* CTA Section */}
-          <div className="text-center mb-16">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12">
+            <hr className="my-8 border-gray-200" />
+
+            {/* CTA Section */}
+            <div className="opacity-0 translate-y-4 animate-fade-in text-center">
               <h3 className="text-3xl font-bold text-gray-800 mb-6">
                 {copy.cta.headline}
               </h3>
-              <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-2xl mx-auto">
+              <p className="text-lg text-gray-600 mb-8 leading-relaxed">
                 {copy.cta.body}
               </p>
               <div className="space-y-4">
                 <Link
                   href="/book-call"
-                  className="inline-block w-full md:w-auto bg-gradient-to-r from-blue-600 to-teal-600 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-teal-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  className="inline-block w-full md:w-auto bg-blue-600 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
                   {copy.cta.button}
                 </Link>
@@ -254,7 +226,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
           </div>
 
           {/* Footer */}
-          <div className="text-center">
+          <div className="text-center mt-16">
             <div className="inline-flex items-center space-x-6 text-gray-500">
               <Link
                 href="/quiz"
