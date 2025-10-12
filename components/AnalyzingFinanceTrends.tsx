@@ -58,6 +58,8 @@ const AnalyzingFinanceTrends = () => {
   const [showProgressDots, setShowProgressDots] = useState(false);
   const [activeBarIndex, setActiveBarIndex] = useState(0);
 
+  console.log('AnalyzingFinanceTrends component loaded');
+
   // Progress bars configuration
   const progressBars = [
     { label: "Spending Patterns", color: "bg-rose-500" },
