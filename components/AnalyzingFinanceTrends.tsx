@@ -86,6 +86,7 @@ const AnalyzingFinanceTrends = () => {
   const [showTrustText, setShowTrustText] = useState(false);
   const [showProgressDots, setShowProgressDots] = useState(false);
   const [activeBarIndex, setActiveBarIndex] = useState(0);
+  const [completedBars, setCompletedBars] = useState<number[]>([]);
 
 
   // Progress bars configuration - 7 bars like Noom
@@ -104,9 +105,12 @@ const AnalyzingFinanceTrends = () => {
     const progressInterval = setInterval(() => {
       setActiveBarIndex(prev => {
         if (prev < progressBars.length - 1) {
+          // Mark current bar as completed
+          setCompletedBars(completed => [...completed, prev]);
           return prev + 1;
         } else {
           // All bars completed, show trust text and dots
+          setCompletedBars(completed => [...completed, prev]);
           setShowTrustText(true);
           setShowProgressDots(true);
           clearInterval(progressInterval);
@@ -221,7 +225,7 @@ const AnalyzingFinanceTrends = () => {
                 delay: index * 0.1
               }}
             >
-              {index < activeBarIndex ? (
+              {completedBars.includes(index) ? (
                 // Show checkmark with bar color when bar is completed
                 <motion.div 
                   className={`w-6 h-6 rounded-full flex items-center justify-center ${bar.color}`}
@@ -236,23 +240,8 @@ const AnalyzingFinanceTrends = () => {
                     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                   </svg>
                 </motion.div>
-              ) : index === activeBarIndex ? (
-                // Show checkmark with bar color when current bar completes
-                <motion.div 
-                  className={`w-6 h-6 rounded-full flex items-center justify-center ${bar.color}`}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ 
-                    duration: 0.3,
-                    delay: 2.0 // Show checkmark after bar completes
-                  }}
-                >
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                  </svg>
-                </motion.div>
               ) : (
-                // Show empty gray dot
+                // Show empty gray dot for current and future bars
                 <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
               )}
             </motion.div>
