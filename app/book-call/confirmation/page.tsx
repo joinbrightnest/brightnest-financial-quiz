@@ -98,61 +98,9 @@ export default function ConfirmationPage() {
               </div>
             </div>
 
-            {/* Video Description */}
-            <div className="mt-6 text-center">
-              <h5 className="text-lg font-semibold text-[#333333] mb-2">
-                What You'll Learn:
-              </h5>
-              <ul className="text-[#333333] text-sm space-y-1">
-                <li>• How to prepare your financial documents</li>
-                <li>• What to expect during your assessment</li>
-                <li>• Key questions we'll discuss</li>
-                <li>• Next steps after your call</li>
-              </ul>
-            </div>
-
-            {/* Checklist Section */}
-            <div className="mt-8 p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl shadow-lg border border-gray-200">
-              <h6 className="font-semibold text-[#333333] mb-4 text-lg drop-shadow-sm">Pre-Call Checklist:</h6>
-              <div className="space-y-3">
-                {[
-                  "Gather recent bank statements",
-                  "List your current financial goals",
-                  "Note any specific money challenges",
-                  "Prepare questions about our Money Behavior System™"
-                ].map((item, index) => (
-                  <div key={index} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-white hover:shadow-md transition-all duration-200">
-                    <div className="w-5 h-5 border-2 border-[#4CAF50] rounded-full bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] flex items-center justify-center shadow-sm">
-                      <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                      </svg>
-                    </div>
-                    <span className="text-[#333333] text-sm font-medium">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Contact Information */}
-            <div className="mt-6 text-center">
-              <p className="text-[#333333] text-sm">
-                Questions? Contact us at{" "}
-                <a href="mailto:support@brightnest.com" className="text-[#4CAF50] hover:underline">
-                  support@brightnest.com
-                </a>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Pre-Call Checklist Section */}
-      <div className="max-w-5xl mx-auto px-4 pb-8">
-        <div className="bg-white rounded-lg shadow-2xl overflow-hidden">
-          <div className="p-8">
             {/* Reviews Section */}
-            <div className="text-center mb-8">
-              <div className="flex items-center justify-center space-x-2 mb-2">
+            <div className="text-center mt-6">
+              <div className="flex items-center justify-center space-x-2 mb-4">
                 <span className="text-[#333333] font-semibold">Excellent</span>
                 <div className="flex space-x-1">
                   {[1, 2, 3, 4, 5].map((i) => (
@@ -305,6 +253,7 @@ export default function ConfirmationPage() {
           </div>
         </div>
       </div>
+
 
       {/* FAQ Video Section */}
       <div className="max-w-5xl mx-auto px-4 pb-8">
