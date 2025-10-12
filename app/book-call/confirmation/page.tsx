@@ -6,10 +6,10 @@ export default function ConfirmationPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Section 1: Dark Purple Background */}
-      <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-6 px-4">
+      <div className="bg-gradient-to-br from-purple-900 via-purple-800 to-pink-800 py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
           {/* Logo */}
-          <div className="mb-4">
+          <div className="mb-8">
             <h1 className="text-white text-3xl font-bold tracking-wide">
               <span className="font-sans">BRIGHT</span>
               <span className="font-serif italic ml-2">Nest</span>
@@ -17,12 +17,12 @@ export default function ConfirmationPage() {
           </div>
 
           {/* Main Headline */}
-          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-8 leading-tight">
             CONGRATULATIONS!
           </h2>
 
           {/* Confirmation Banner */}
-          <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg py-4 px-6 max-w-2xl mx-auto">
+          <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg py-4 px-6 max-w-2xl mx-auto mb-8">
             <p className="text-white text-xl font-semibold">
               Confirmed: Your Financial Transformation Assessment Has Been Booked
             </p>
@@ -30,19 +30,15 @@ export default function ConfirmationPage() {
         </div>
       </div>
 
-      {/* Section 2: Pink Banner - Overlapping */}
-      <div className="relative -mt-8 z-10">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-t-3xl py-6 px-8">
-            <div className="text-center">
-              <h3 className="text-2xl font-bold text-white mb-2">
-                ✨ IMPORTANT NEXT STEPS:
-              </h3>
-              <p className="text-white text-lg">
-                Watch The Short 3 Minute Video & Complete Pre-Call Checklist To Confirm Your Appointment
-              </p>
-            </div>
-          </div>
+      {/* Section 2: Pink Banner - No Overlap */}
+      <div className="bg-gradient-to-r from-pink-500 to-pink-600 py-6 px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h3 className="text-2xl font-bold text-white mb-2">
+            ✨ IMPORTANT NEXT STEPS:
+          </h3>
+          <p className="text-white text-lg">
+            Watch The Short 3 Minute Video & Complete Pre-Call Checklist To Confirm Your Appointment
+          </p>
         </div>
       </div>
 
