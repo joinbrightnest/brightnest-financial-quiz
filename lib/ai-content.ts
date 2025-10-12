@@ -259,82 +259,107 @@ export class ArchetypeCopyService {
   }
 
   private buildSystemPrompt(): string {
-    return `You are an elite direct-response copywriter and behavioral psychologist specializing in "functional quizzes" that create emotional transformation.
+    return `You are an expert direct-response editor and transformation copywriter who specializes in emotional "state change" writing. 
+You take existing quiz result pages and rewrite them to follow the "Hidden Architecture of Quiz Funnels" emotional framework.
 
-Your goal is to write personalized result-page copy for a financial archetype quiz using the "Hidden Architecture of Quiz Funnels" methodology.
+Your job is to rewrite the user's result page while:
+- Keeping factual accuracy and personalization (name, archetype, answers, etc.)
+- Increasing emotional depth, identity connection, and flow
+- Following the five emotional stages of change
 
-The output must:
-1. Feel like it was written *about* the person.
-2. Move the reader through emotional state change:
-   (Validation → Reflection → Problem Realization → Hope → Call to Action)
-3. Use their own answers naturally in the text.
-4. Address them by their first name when appropriate.
-5. Maintain brand tone: empathetic, expert, emotionally intelligent.
+EMOTIONAL FRAMEWORK TO FOLLOW:
+
+1️⃣ **Validation / Identity Recognition**
+   - Start warm and affirming.
+   - Make the user feel deeply seen ("You're the kind of person who…").
+   - Use emotional cues tied to their archetype and answers.
+
+2️⃣ **Functional Reflection**
+   - Use 2–4 sentences that show their patterns of thinking or behavior.
+   - Each should mix logic + emotion.
+   - Use examples from their quiz answers naturally.
+
+3️⃣ **Problem Realization (Emotional Contrast)**
+   - Gently surface the hidden tension or contradiction they live with.
+   - Create mild discomfort or awareness, never shame.
+   - Example: "You've done everything right… but sometimes that control keeps you from moving forward."
+
+4️⃣ **Relief / Hope / Solution**
+   - Flip the tone to optimism.
+   - Show how their strength can become their superpower with the right guidance.
+   - Bridge into your offer ("That's exactly what we'll work on during your Free Financial Assessment…").
+
+5️⃣ **CTA / Transformation Invitation**
+   - Write a short, emotionally charged headline (identity or benefit based).
+   - 2–3 sentences of encouragement or reassurance.
+   - Button text: "Book My Free Financial Assessment"
+
+STYLE RULES:
+- Speak directly to the user by name.
+- Write in short, rhythmic sentences (avoid long walls of text).
+- Alternate positive → neutral → problem → hopeful tones.
+- Sound like a coach or therapist guiding self-discovery, not a salesman.
+- Preserve the original structure but rewrite each section with emotional momentum.
+- If the current text is too logical or detached, make it warmer and more visceral.
 
 OUTPUT FORMAT (JSON):
 {
-  "archetype": "{{archetype_name}}",
-  "header": {
-    "title": "Your Financial Archetype",
-    "subtitle": "Hey {{first_name}}, based on your answers, you're a {{archetype_name}} — {{1-sentence emotional definition}}"
-  },
-  "validation": "{{Opening paragraph that validates their best qualities and introduces emotional safety. Start with a sentence like 'You're the kind of person who…'}}",
-  "personalized_insights": [
-    "{{Use 2-3 of their actual answers to build functional insights (e.g., 'You mentioned that you check your bank balance every few days — that shows your need for control and awareness.') }}",
-    "{{Each insight should mix behavior + emotion + subtle identity reflection.}}",
-    "{{End this section with a line that transitions gently to awareness ('And yet, even with this discipline, there's a small part of you that wonders if…')}}"
-  ],
-  "problem_realization": "{{Describe the internal contradiction that archetype typically faces, but personalize with at least one element from their answers. Keep tone empathetic.}}",
-  "hope_and_solution": "{{Flip tone: give them hope and empowerment. Show how their strengths can turn into growth when guided correctly. Position the Free Financial Assessment as the next diagnostic step. Make it sound like the natural continuation of the quiz ('Now that you've uncovered your financial pattern, let's design your path forward…')}}",
+  "header": "",
+  "validation": "",
+  "reflection": "",
+  "problem_realization": "",
+  "hope_and_solution": "",
   "cta": {
-    "headline": "{{Emotionally charged, archetype-specific headline}}",
-    "body": "{{Comfort + urgency message that references their archetype and need state.}}",
-    "button": "Book My Free Financial Assessment",
-    "secondary": "Join Waitlist"
+    "headline": "",
+    "body": "",
+    "button": "Book My Free Financial Assessment"
   }
-}
-
-ARCHETYPE STYLES:
-
-1. **Stability Seeker**
-   - Tone: Reassuring, calm, structured.
-   - Emotional driver: Security, predictability.
-   - Limitation: Overcaution.
-   - CTA emotion: "Confidence through clarity."
-
-2. **Ambitious Investor**
-   - Tone: Energetic, motivational, strategic.
-   - Emotional driver: Growth, achievement.
-   - Limitation: Impatience, lack of structure.
-   - CTA emotion: "Structure that scales."
-
-3. **Overthinker**
-   - Tone: Warm, logical, simplifying.
-   - Emotional driver: Understanding, certainty.
-   - Limitation: Paralysis by analysis.
-   - CTA emotion: "Clarity that simplifies."
-
-4. **Impulse Spender**
-   - Tone: Friendly, accepting, empowering.
-   - Emotional driver: Freedom, enjoyment.
-   - Limitation: Lack of planning.
-   - CTA emotion: "Freedom with control."`;
+}`;
   }
 
   private buildUserPrompt(request: ArchetypeCopyRequest): string {
+    // First generate the initial copy using the original approach
+    const initialCopy = this.generateInitialCopy(request);
+    
     let prompt = `Name: ${request.userName || 'User'}
 Archetype: ${request.archetype}
-Quiz Answers (as JSON array):
-${JSON.stringify(request.quizAnswers || [], null, 2)}
-Archetype Summary: ${request.quizSummary}`;
+Original_Result_Page_Text: ${JSON.stringify(initialCopy, null, 2)}
 
-    if (request.scores) {
-      prompt += `\nScore Breakdown: ${JSON.stringify(request.scores)}`;
-    }
-
-    prompt += `\n\nGenerate personalized copy following the framework above. Use their actual answers naturally in the text and address them by their first name when appropriate.`;
+TASK:
+Rewrite the entire page using the 5-stage emotional structure.
+Keep existing personalization (name, answers, insights) but amplify emotional resonance, contrast, and flow.`;
 
     return prompt;
+  }
+
+  private generateInitialCopy(request: ArchetypeCopyRequest): any {
+    // Generate initial copy using the previous method
+    const archetype = request.archetype;
+    const userName = request.userName || 'User';
+    
+    return {
+      archetype: archetype,
+      header: {
+        title: "Your Financial Archetype",
+        subtitle: `Hey ${userName}, based on your answers, you're a ${archetype} — focused, determined, and ready to eliminate financial obstacles.`
+      },
+      validation: `You're the kind of person who tackles challenges head-on and doesn't shy away from difficult financial decisions.`,
+      personalized_insights: request.quizAnswers?.slice(0, 3).map(answer => 
+        `You mentioned that you ${answer.answer.toLowerCase()} — that shows your dedication and commitment.`
+      ) || [
+        "You prioritize eliminating debt to build financial freedom",
+        "You're motivated by clear progress and measurable results",
+        "You prefer structured approaches to financial challenges"
+      ],
+      problem_realization: `Your biggest challenge isn't motivation — it's maintaining momentum when progress feels slow.`,
+      hope_and_solution: `When that determination is paired with the right strategy, your debt-free timeline can accelerate dramatically. In your Free Financial Assessment Call, we'll help you identify which debts to tackle first and design a plan that maximizes your momentum.`,
+      cta: {
+        headline: "Ready to Crush Your Debt Faster?",
+        body: "Let's turn your determination into a strategic debt elimination plan that delivers results.",
+        button: "Book My Free Financial Assessment",
+        secondary: "Join Waitlist"
+      }
+    };
   }
 
   private parseArchetypeResponse(response: string): ArchetypeCopy {
@@ -344,10 +369,11 @@ Archetype Summary: ${request.quizSummary}`;
         archetype: parsed.archetype || 'Financial Profile',
         header: {
           title: parsed.header?.title || 'Your Financial Archetype',
-          subtitle: parsed.header?.subtitle || 'Based on your answers, this is your financial personality type.'
+          subtitle: parsed.header || 'Based on your answers, this is your financial personality type.'
         },
         validation: parsed.validation || 'You have unique financial strengths and opportunities for growth.',
-        personalized_insights: Array.isArray(parsed.personalized_insights) ? parsed.personalized_insights : [],
+        personalized_insights: parsed.reflection ? [parsed.reflection] : 
+                             Array.isArray(parsed.personalized_insights) ? parsed.personalized_insights : [],
         problem_realization: parsed.problem_realization || 'Your financial journey has unique challenges to overcome.',
         hope_and_solution: parsed.hope_and_solution || 'With the right guidance, you can achieve your financial goals.',
         cta: {
