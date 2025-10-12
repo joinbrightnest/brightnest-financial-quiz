@@ -260,8 +260,8 @@ const AnalyzingFinanceTrends = () => {
     const aiCopyTimer = setTimeout(startAICopyGeneration, 2000);
     
     // Sequential text changes - each text appears once in order
-    const totalDuration = progressBars.length * 2500; // Total time for all bars
-    const textInterval = totalDuration / loadingTexts.length; // Equal spacing
+    const textTotalDuration = progressBars.length * 2500; // Total time for all bars
+    const textInterval = textTotalDuration / loadingTexts.length; // Equal spacing
     
     const textTimer = setTimeout(() => {
       setCurrentTextIndex(1);
