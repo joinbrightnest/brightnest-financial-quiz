@@ -114,6 +114,8 @@ export default function QuizPage({ params }: QuizPageProps) {
         const countData = countResponse.ok ? await countResponse.json() : { count: 10 };
         
         setSessionId(sessionData.sessionId);
+        // Store session ID in localStorage for the analyzing page
+        localStorage.setItem('quizSessionId', sessionData.sessionId);
         setCurrentQuestion(sessionData.question);
         setCurrentQuestionIndex(0);
         setTotalQuestions(countData.count);
@@ -182,17 +184,8 @@ export default function QuizPage({ params }: QuizPageProps) {
       const answerData = await answerResponse.json();
 
       if (answerData.isComplete) {
-        // Quiz completed
-        const resultResponse = await fetch("/api/quiz/result", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId }),
-        });
-
-        if (resultResponse.ok) {
-          const resultData = await resultResponse.json();
-          router.push(`/results/${resultData.resultId}`);
-        }
+        // Quiz completed - redirect to analyzing page first
+        router.push('/analyzing');
       } else {
         // Check for loading screen
         if (answerData.loadingScreen) {
@@ -341,17 +334,8 @@ export default function QuizPage({ params }: QuizPageProps) {
       const answerData = await answerResponse.json();
 
       if (answerData.isComplete) {
-        // Quiz completed
-        const resultResponse = await fetch("/api/quiz/result", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId }),
-        });
-
-        if (resultResponse.ok) {
-          const resultData = await resultResponse.json();
-          router.push(`/results/${resultData.resultId}`);
-        }
+        // Quiz completed - redirect to analyzing page first
+        router.push('/analyzing');
       } else {
         // Check for loading screen
         if (answerData.loadingScreen) {

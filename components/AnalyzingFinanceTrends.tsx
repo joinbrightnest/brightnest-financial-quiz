@@ -70,9 +70,36 @@ const AnalyzingFinanceTrends = () => {
     // Show progress dots after trust text
     const dotsTimer = setTimeout(() => setShowProgressDots(true), 3000);
     
-    // Navigate to result page after 5 seconds
-    const navigationTimer = setTimeout(() => {
-      router.push('/result?persona=overthinker');
+    // Process quiz results and navigate after 5 seconds
+    const navigationTimer = setTimeout(async () => {
+      try {
+        // Get the session ID from localStorage (set during quiz)
+        const sessionId = localStorage.getItem('quizSessionId');
+        
+        if (sessionId) {
+          // Generate the result
+          const resultResponse = await fetch("/api/quiz/result", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sessionId }),
+          });
+
+          if (resultResponse.ok) {
+            const resultData = await resultResponse.json();
+            router.push(`/results/${resultData.resultId}`);
+          } else {
+            // Fallback if result generation fails
+            router.push('/results/sample');
+          }
+        } else {
+          // Fallback if no session ID
+          router.push('/results/sample');
+        }
+      } catch (error) {
+        console.error('Error generating result:', error);
+        // Fallback navigation
+        router.push('/results/sample');
+      }
     }, 5000);
 
     return () => {
