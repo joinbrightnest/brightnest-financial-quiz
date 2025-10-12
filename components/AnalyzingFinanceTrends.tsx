@@ -13,44 +13,6 @@ interface ProgressBarProps {
   isCompleted: boolean;
 }
 
-const TypingText = ({ text }: { text: string }) => {
-  const [displayText, setDisplayText] = useState("");
-  const [showCursor, setShowCursor] = useState(true);
-
-  useEffect(() => {
-    setDisplayText("");
-    let currentIndex = 0;
-    
-    const typeInterval = setInterval(() => {
-      if (currentIndex < text.length) {
-        setDisplayText(text.slice(0, currentIndex + 1));
-        currentIndex++;
-      } else {
-        clearInterval(typeInterval);
-        // Hide cursor after typing is complete
-        setTimeout(() => setShowCursor(false), 1000);
-      }
-    }, 50); // Typing speed: 50ms per character
-
-    return () => clearInterval(typeInterval);
-  }, [text]);
-
-  // Cursor blinking animation
-  useEffect(() => {
-    const cursorInterval = setInterval(() => {
-      setShowCursor(prev => !prev);
-    }, 500);
-
-    return () => clearInterval(cursorInterval);
-  }, []);
-
-  return (
-    <span>
-      {displayText}
-      {showCursor && <span className="animate-pulse">|</span>}
-    </span>
-  );
-};
 
 const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBarProps) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -235,8 +197,18 @@ const AnalyzingFinanceTrends = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h1 className="text-xl font-semibold text-gray-800 mb-2 min-h-[2rem]">
-            <TypingText text={loadingTexts[currentTextIndex]} />
+          <h1 className="text-xl font-semibold text-gray-800 mb-2">
+            {loadingTexts[currentTextIndex]}
+            <motion.span
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ 
+                duration: 1.5, 
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              ...
+            </motion.span>
           </h1>
         </motion.div>
 
