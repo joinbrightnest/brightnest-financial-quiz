@@ -5,84 +5,90 @@ import Link from "next/link";
 export default function ConfirmationPage() {
   return (
     <div className="min-h-screen bg-[#F8F7F5]">
-      {/* Section 1: Dark Charcoal Background */}
-      <div className="bg-gradient-to-br from-[#333333] via-[#2a2a2a] to-[#333333] py-10 px-4 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-[#4CAF50] rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-24 h-24 bg-[#4CAF50] rounded-full blur-2xl"></div>
-        </div>
-        
-        <div className="max-w-4xl mx-auto text-center relative z-10">
+      {/* Section 1: Clean Header */}
+      <div className="bg-white py-12 px-4">
+        <div className="max-w-4xl mx-auto text-center">
           {/* Logo */}
-          <div className="mb-6">
-            <h1 className="text-white text-4xl font-black tracking-wider drop-shadow-2xl" style={{textShadow: '0 0 20px rgba(255,255,255,0.3), 0 0 40px rgba(255,255,255,0.1)'}}>
-              <span className="font-sans bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">BRIGHT</span>
-              <span className="font-serif italic ml-3 text-3xl" style={{textShadow: '0 0 15px rgba(255,255,255,0.4)'}}>Nest</span>
-            </h1>
+          <div className="mb-8">
+            <div className="inline-flex items-center space-x-3">
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-teal-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xl">B</span>
+              </div>
+              <span className="text-3xl font-bold text-gray-800 font-serif">BrightNest</span>
+            </div>
           </div>
 
           {/* Main Headline */}
-          <h2 className="text-5xl lg:text-6xl font-black text-white mb-8 leading-tight" style={{textShadow: '0 0 30px rgba(255,255,255,0.4), 0 0 60px rgba(255,255,255,0.2)'}}>
-            <span className="text-[#4CAF50] drop-shadow-2xl bg-gradient-to-r from-[#4CAF50] via-[#66BB6A] to-[#4CAF50] bg-clip-text text-transparent animate-pulse" style={{textShadow: '0 0 20px rgba(76,175,80,0.6), 0 0 40px rgba(76,175,80,0.3)'}}>
-              CONGRATULATIONS!
-            </span>
-          </h2>
+          <h1 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6 leading-tight">
+            You're All Set!
+          </h1>
 
-          {/* Confirmation Banner */}
-          <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-xl py-6 px-8 max-w-3xl mx-auto mb-8 shadow-2xl transform hover:scale-105 transition-transform duration-300 border-2 border-white/20" style={{boxShadow: '0 0 30px rgba(76,175,80,0.4), 0 0 60px rgba(76,175,80,0.2)'}}>
-            <p className="text-white text-2xl font-black drop-shadow-lg" style={{textShadow: '0 0 15px rgba(255,255,255,0.5), 0 0 30px rgba(255,255,255,0.2)'}}>
-              Confirmed: Your Financial Transformation Assessment Has Been Booked
+          {/* Subtitle */}
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+            Your Financial Transformation Assessment has been successfully booked. Here's what happens next:
+          </p>
+
+          {/* Confirmation Card */}
+          <div className="bg-green-50 border border-green-200 rounded-lg py-6 px-8 max-w-2xl mx-auto mb-8">
+            <div className="flex items-center justify-center space-x-3 mb-4">
+              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-green-800">
+                Appointment Confirmed
+              </h2>
+            </div>
+            <p className="text-green-700 text-lg">
+              We'll send you a calendar invite and meeting details shortly.
             </p>
           </div>
         </div>
       </div>
 
-      {/* Section 2: Green Banner - Wider */}
-      <div className="relative -mt-8 z-10">
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-t-3xl py-6 px-8 shadow-2xl relative overflow-hidden">
-            {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-0 right-0 w-20 h-20 bg-white rounded-full blur-2xl"></div>
-              <div className="absolute bottom-0 left-0 w-16 h-16 bg-white rounded-full blur-xl"></div>
-            </div>
-            
-            <div className="text-center relative z-10">
-              <h3 className="text-3xl font-black text-white mb-4 drop-shadow-2xl" style={{textShadow: '0 0 20px rgba(255,255,255,0.6), 0 0 40px rgba(255,255,255,0.3)'}}>
-                ✨ IMPORTANT NEXT STEPS:
+      {/* Section 2: Next Steps */}
+      <div className="bg-gray-50 py-8 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 py-8 px-8">
+            <div className="text-center">
+              <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                Important Next Steps
               </h3>
-              <p className="text-white text-xl font-bold drop-shadow-lg" style={{textShadow: '0 0 15px rgba(255,255,255,0.4), 0 0 30px rgba(255,255,255,0.2)'}}>
-                Watch The Short 3 Minute Video & Complete Pre-Call Checklist To Confirm Your Appointment
+              <p className="text-lg text-gray-600 mb-6">
+                To ensure you get the most out of your assessment, please complete these steps:
               </p>
+              
+              <div className="flex items-center justify-center space-x-2 text-blue-600">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                </svg>
+                <span className="font-semibold">
+                  Watch the 3-minute preparation video below
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Section 3: White Card with Video */}
-      <div className="max-w-5xl mx-auto px-4 pb-8">
-        <div className="bg-white rounded-b-lg shadow-2xl overflow-hidden">
+      {/* Section 3: Video Section */}
+      <div className="max-w-4xl mx-auto px-4 pb-8">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           {/* Video Section */}
           <div className="p-6">
-            <div className="relative bg-gradient-to-br from-[#2a2a2a] via-[#333333] to-[#2a2a2a] rounded-lg overflow-hidden aspect-video shadow-2xl">
+            <div className="relative bg-gray-900 rounded-lg overflow-hidden aspect-video">
               {/* Video Thumbnail */}
-              <div className="absolute inset-0 bg-gradient-to-br from-[#2a2a2a] via-[#333333] to-[#2a2a2a] flex items-center justify-center relative overflow-hidden">
-                {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-20">
-                  <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-[#4CAF50] rounded-full blur-3xl"></div>
-                  <div className="absolute bottom-1/4 right-1/4 w-24 h-24 bg-[#4CAF50] rounded-full blur-2xl"></div>
-                </div>
-                
+              <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
                 {/* Video Content Placeholder */}
-                <div className="text-center text-white relative z-10">
-                  <div className="w-20 h-20 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center mx-auto mb-4 shadow-2xl transform hover:scale-110 transition-transform duration-300">
-                    <svg className="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                <div className="text-center text-white">
+                  <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-blue-700 transition-colors duration-200">
+                    <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z"/>
                     </svg>
                   </div>
-                  <h4 className="text-xl font-semibold mb-2 drop-shadow-lg">Pre-Call Preparation Video</h4>
-                  <p className="text-gray-300 text-sm drop-shadow-md">
+                  <h4 className="text-lg font-semibold mb-2">Pre-Call Preparation Video</h4>
+                  <p className="text-gray-300 text-sm">
                     Learn what to expect and how to prepare for your Financial Transformation Assessment
                   </p>
                 </div>
@@ -90,8 +96,8 @@ export default function ConfirmationPage() {
               
               {/* Play Button Overlay */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <button className="w-20 h-20 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center shadow-2xl hover:scale-110 hover:shadow-3xl transition-all duration-300 transform">
-                  <svg className="w-8 h-8 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <button className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors duration-200">
+                  <svg className="w-6 h-6 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z"/>
                   </svg>
                 </button>
