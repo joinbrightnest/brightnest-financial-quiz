@@ -1,5 +1,4 @@
 "use client";
-// Version: 2.0 - No alerts, automatic redirect
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";

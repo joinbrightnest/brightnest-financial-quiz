@@ -1,29 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
 interface ProgressBarProps {
   label: string;
   color: string;
-  delay: number;
-  targetPercentage: number;
   isActive: boolean;
   isCompleted: boolean;
 }
 
 
-const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBarProps) => {
+const ProgressBar = ({ label, color, isActive, isCompleted }: ProgressBarProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [percentage, setPercentage] = useState(0);
 
   useEffect(() => {
     if (isActive) {
-      const timer = setTimeout(() => setIsVisible(true), delay);
-      return () => clearTimeout(timer);
+      setIsVisible(true);
     }
-  }, [isActive, delay]);
+  }, [isActive]);
 
   useEffect(() => {
     if (isActive && isVisible) {
@@ -81,7 +78,7 @@ const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBar
           className={`text-sm font-medium ${isCompleted ? 'text-gray-700' : 'text-gray-400'}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: isVisible ? 1 : 0 }}
-          transition={{ delay: delay + 0.5 }}
+          transition={{ delay: 0.5 }}
         >
           {percentage}%
         </motion.span>
@@ -100,11 +97,10 @@ const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBar
           className={`h-full rounded-full ${color}`}
           initial={{ width: "0%" }}
           animate={{ width: isVisible && isActive ? "100%" : isCompleted ? "100%" : "0%" }}
-          transition={{ 
-            duration: 2, 
-            delay: delay,
-            ease: "easeOut"
-          }}
+              transition={{ 
+                duration: 2, 
+                ease: "easeOut"
+              }}
         />
       </motion.div>
     </div>
@@ -325,8 +321,6 @@ const AnalyzingFinanceTrends = () => {
               key={index}
               label={bar.label}
               color={bar.color}
-              delay={0}
-              targetPercentage={100}
               isActive={index === activeBarIndex}
               isCompleted={index < activeBarIndex}
             />
