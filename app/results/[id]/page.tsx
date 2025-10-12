@@ -100,11 +100,20 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
   // Use personalized copy if available, otherwise fallback to static insights
   const copy = personalizedCopy || {
     archetype: result.archetype,
-    header: `You're a ${result.archetype} — based on your answers, this is your financial personality type.`,
-    insights: getArchetypeInsights(result.archetype),
-    challenge: "Your financial journey has unique opportunities for growth.",
-    good_news: "With the right guidance, you can achieve your financial goals and build lasting wealth.",
-    cta: "Ready to take the next step? Book your Free Financial Assessment now and get personalized guidance."
+    header: {
+      title: "Your Financial Archetype",
+      subtitle: `You're a ${result.archetype} — based on your answers, this is your financial personality type.`
+    },
+    validation: "You have unique financial strengths and opportunities for growth.",
+    personalized_insights: getArchetypeInsights(result.archetype),
+    problem_realization: "Your financial journey has unique challenges to overcome.",
+    hope_and_solution: "With the right guidance, you can achieve your financial goals and build lasting wealth.",
+    cta: {
+      headline: "Ready to Take Action?",
+      body: "Let's turn your financial insights into actionable results.",
+      button: "Book My Free Financial Assessment",
+      secondary: "Join Waitlist"
+    }
   };
 
   return (
@@ -114,16 +123,23 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Your Financial Archetype
+              {copy.header.title}
             </h1>
             <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
               <h2 className="text-3xl font-bold text-blue-600 mb-2">
                 {copy.archetype}
               </h2>
               <p className="text-gray-600 text-lg">
-                {copy.header}
+                {copy.header.subtitle}
               </p>
             </div>
+          </div>
+
+          {/* Validation */}
+          <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <p className="text-gray-700 text-lg leading-relaxed">
+              {copy.validation}
+            </p>
           </div>
 
           {/* Personalized Insights */}
@@ -132,7 +148,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
               Personalized Insights
             </h3>
             <div className="space-y-4">
-              {copy.insights.map((insight, index) => (
+              {copy.personalized_insights.map((insight, index) => (
                 <div key={index} className="flex items-start space-x-3">
                   <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                     <span className="text-blue-600 font-bold text-sm">
@@ -145,23 +161,23 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             </div>
           </div>
 
-          {/* Hidden Challenge */}
+          {/* Problem Realization */}
           <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
             <h3 className="text-2xl font-semibold text-gray-900 mb-4">
               The Hidden Challenge
             </h3>
             <p className="text-gray-700 text-lg leading-relaxed">
-              {copy.challenge}
+              {copy.problem_realization}
             </p>
           </div>
 
-          {/* Good News */}
+          {/* Hope and Solution */}
           <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg shadow-lg p-8 mb-8">
             <h3 className="text-2xl font-semibold text-gray-900 mb-4">
               The Good News
             </h3>
             <p className="text-gray-700 text-lg leading-relaxed">
-              {copy.good_news}
+              {copy.hope_and_solution}
             </p>
           </div>
 
@@ -169,23 +185,23 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
           <div className="text-center">
             <div className="bg-white rounded-lg shadow-lg p-8">
               <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                Ready to Take Action?
+                {copy.cta.headline}
               </h3>
               <p className="text-gray-600 mb-6 text-lg">
-                {copy.cta}
+                {copy.cta.body}
               </p>
               <div className="space-y-3">
                 <Link
                   href="/book-call"
                   className="inline-block w-full md:w-auto bg-gradient-to-r from-pink-500 to-pink-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-pink-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
-                  Book My Free Financial Assessment
+                  {copy.cta.button}
                 </Link>
                 <div className="text-sm text-gray-500">
                   or
                 </div>
                 <button className="w-full md:w-auto bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                  Join Waitlist
+                  {copy.cta.secondary}
                 </button>
               </div>
             </div>

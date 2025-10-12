@@ -47,12 +47,19 @@ export async function POST(request: NextRequest) {
       answer.question.prompt.toLowerCase().includes('name')
     )?.value as string;
 
+    // Format quiz answers for AI
+    const quizAnswers = session.answers.map(answer => ({
+      question: answer.question.prompt,
+      answer: typeof answer.value === 'string' ? answer.value : JSON.stringify(answer.value)
+    }));
+
     // Prepare request for AI service
     const copyRequest: ArchetypeCopyRequest = {
       archetype: session.result.archetype,
       quizSummary,
       scores: session.result.scores as Record<string, number>,
-      userName: userName || undefined
+      userName: userName || undefined,
+      quizAnswers
     };
 
     // Generate personalized copy

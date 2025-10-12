@@ -199,15 +199,25 @@ export interface ArchetypeCopyRequest {
   quizSummary: string;
   scores?: Record<string, number>;
   userName?: string;
+  quizAnswers?: Array<{ question: string; answer: string }>;
 }
 
 export interface ArchetypeCopy {
   archetype: string;
-  header: string;
-  insights: string[];
-  challenge: string;
-  good_news: string;
-  cta: string;
+  header: {
+    title: string;
+    subtitle: string;
+  };
+  validation: string;
+  personalized_insights: string[];
+  problem_realization: string;
+  hope_and_solution: string;
+  cta: {
+    headline: string;
+    body: string;
+    button: string;
+    secondary: string;
+  };
 }
 
 export class ArchetypeCopyService {
@@ -249,48 +259,80 @@ export class ArchetypeCopyService {
   }
 
   private buildSystemPrompt(): string {
-    return `You are a senior brand copywriter and behavioral marketing strategist who specializes in "functional quizzes" and emotional conversion funnels.
+    return `You are an elite direct-response copywriter and behavioral psychologist specializing in "functional quizzes" that create emotional transformation.
 
-Your job is to write the full copy for a financial education quiz result page that feels 100% personalized to the user.
+Your goal is to write personalized result-page copy for a financial archetype quiz using the "Hidden Architecture of Quiz Funnels" methodology.
 
-Use the "Hidden Architecture of Quiz Funnels" framework:
-- Start positive (validation)
-- Move to neutral (awareness) 
-- End with negative (problem), then flip to positive (relief and solution).
-
-Maintain psychological contrast, comfort language, and functional identity statements.
-
-TONE GUIDELINES:
-- Empathetic, conversational, professional
-- Write as if talking directly to them ("you")
-- Blend authority with warmth
-- Maintain psychological contrast (good → neutral → problem → hope → action)
-- Keep length between 250–400 words total
+The output must:
+1. Feel like it was written *about* the person.
+2. Move the reader through emotional state change:
+   (Validation → Reflection → Problem Realization → Hope → Call to Action)
+3. Use their own answers naturally in the text.
+4. Address them by their first name when appropriate.
+5. Maintain brand tone: empathetic, expert, emotionally intelligent.
 
 OUTPUT FORMAT (JSON):
 {
-  "archetype": "",
-  "header": "",
-  "insights": [""],
-  "challenge": "",
-  "good_news": "",
-  "cta": ""
-}`;
+  "archetype": "{{archetype_name}}",
+  "header": {
+    "title": "Your Financial Archetype",
+    "subtitle": "Hey {{first_name}}, based on your answers, you're a {{archetype_name}} — {{1-sentence emotional definition}}"
+  },
+  "validation": "{{Opening paragraph that validates their best qualities and introduces emotional safety. Start with a sentence like 'You're the kind of person who…'}}",
+  "personalized_insights": [
+    "{{Use 2-3 of their actual answers to build functional insights (e.g., 'You mentioned that you check your bank balance every few days — that shows your need for control and awareness.') }}",
+    "{{Each insight should mix behavior + emotion + subtle identity reflection.}}",
+    "{{End this section with a line that transitions gently to awareness ('And yet, even with this discipline, there's a small part of you that wonders if…')}}"
+  ],
+  "problem_realization": "{{Describe the internal contradiction that archetype typically faces, but personalize with at least one element from their answers. Keep tone empathetic.}}",
+  "hope_and_solution": "{{Flip tone: give them hope and empowerment. Show how their strengths can turn into growth when guided correctly. Position the Free Financial Assessment as the next diagnostic step. Make it sound like the natural continuation of the quiz ('Now that you've uncovered your financial pattern, let's design your path forward…')}}",
+  "cta": {
+    "headline": "{{Emotionally charged, archetype-specific headline}}",
+    "body": "{{Comfort + urgency message that references their archetype and need state.}}",
+    "button": "Book My Free Financial Assessment",
+    "secondary": "Join Waitlist"
+  }
+}
+
+ARCHETYPE STYLES:
+
+1. **Stability Seeker**
+   - Tone: Reassuring, calm, structured.
+   - Emotional driver: Security, predictability.
+   - Limitation: Overcaution.
+   - CTA emotion: "Confidence through clarity."
+
+2. **Ambitious Investor**
+   - Tone: Energetic, motivational, strategic.
+   - Emotional driver: Growth, achievement.
+   - Limitation: Impatience, lack of structure.
+   - CTA emotion: "Structure that scales."
+
+3. **Overthinker**
+   - Tone: Warm, logical, simplifying.
+   - Emotional driver: Understanding, certainty.
+   - Limitation: Paralysis by analysis.
+   - CTA emotion: "Clarity that simplifies."
+
+4. **Impulse Spender**
+   - Tone: Friendly, accepting, empowering.
+   - Emotional driver: Freedom, enjoyment.
+   - Limitation: Lack of planning.
+   - CTA emotion: "Freedom with control."`;
   }
 
   private buildUserPrompt(request: ArchetypeCopyRequest): string {
-    let prompt = `Archetype: ${request.archetype}
-Quiz Summary: ${request.quizSummary}`;
-
-    if (request.userName) {
-      prompt += `\nUser Name: ${request.userName}`;
-    }
+    let prompt = `Name: ${request.userName || 'User'}
+Archetype: ${request.archetype}
+Quiz Answers (as JSON array):
+${JSON.stringify(request.quizAnswers || [], null, 2)}
+Archetype Summary: ${request.quizSummary}`;
 
     if (request.scores) {
       prompt += `\nScore Breakdown: ${JSON.stringify(request.scores)}`;
     }
 
-    prompt += `\n\nGenerate personalized copy following the framework above.`;
+    prompt += `\n\nGenerate personalized copy following the framework above. Use their actual answers naturally in the text and address them by their first name when appropriate.`;
 
     return prompt;
   }
@@ -300,21 +342,39 @@ Quiz Summary: ${request.quizSummary}`;
       const parsed = JSON.parse(response);
       return {
         archetype: parsed.archetype || 'Financial Profile',
-        header: parsed.header || 'Your Financial Archetype',
-        insights: Array.isArray(parsed.insights) ? parsed.insights : [],
-        challenge: parsed.challenge || 'Your financial journey has unique opportunities.',
-        good_news: parsed.good_news || 'With the right guidance, you can achieve your financial goals.',
-        cta: parsed.cta || 'Ready to take the next step? Book your Free Financial Assessment.'
+        header: {
+          title: parsed.header?.title || 'Your Financial Archetype',
+          subtitle: parsed.header?.subtitle || 'Based on your answers, this is your financial personality type.'
+        },
+        validation: parsed.validation || 'You have unique financial strengths and opportunities for growth.',
+        personalized_insights: Array.isArray(parsed.personalized_insights) ? parsed.personalized_insights : [],
+        problem_realization: parsed.problem_realization || 'Your financial journey has unique challenges to overcome.',
+        hope_and_solution: parsed.hope_and_solution || 'With the right guidance, you can achieve your financial goals.',
+        cta: {
+          headline: parsed.cta?.headline || 'Ready to Take Action?',
+          body: parsed.cta?.body || 'Let\'s turn your financial insights into actionable results.',
+          button: parsed.cta?.button || 'Book My Free Financial Assessment',
+          secondary: parsed.cta?.secondary || 'Join Waitlist'
+        }
       };
     } catch {
       // Fallback: treat as plain text and create basic structure
       return {
         archetype: 'Financial Profile',
-        header: 'Your Financial Archetype',
-        insights: [response.substring(0, 200) + '...'],
-        challenge: 'Your financial journey has unique opportunities.',
-        good_news: 'With the right guidance, you can achieve your financial goals.',
-        cta: 'Ready to take the next step? Book your Free Financial Assessment.'
+        header: {
+          title: 'Your Financial Archetype',
+          subtitle: 'Based on your answers, this is your financial personality type.'
+        },
+        validation: 'You have unique financial strengths and opportunities for growth.',
+        personalized_insights: [response.substring(0, 200) + '...'],
+        problem_realization: 'Your financial journey has unique challenges to overcome.',
+        hope_and_solution: 'With the right guidance, you can achieve your financial goals.',
+        cta: {
+          headline: 'Ready to Take Action?',
+          body: 'Let\'s turn your financial insights into actionable results.',
+          button: 'Book My Free Financial Assessment',
+          secondary: 'Join Waitlist'
+        }
       };
     }
   }
@@ -323,51 +383,87 @@ Quiz Summary: ${request.quizSummary}`;
     const fallbackCopies: Record<string, ArchetypeCopy> = {
       "Debt Crusher": {
         archetype: "Debt Crusher",
-        header: "You're a Debt Crusher — focused, determined, and ready to eliminate financial obstacles.",
-        insights: [
+        header: {
+          title: "Your Financial Archetype",
+          subtitle: "You're a Debt Crusher — focused, determined, and ready to eliminate financial obstacles."
+        },
+        validation: "You're the kind of person who tackles challenges head-on and doesn't shy away from difficult financial decisions.",
+        personalized_insights: [
           "You prioritize eliminating debt to build financial freedom",
           "You're motivated by clear progress and measurable results",
           "You prefer structured approaches to financial challenges"
         ],
-        challenge: "Your biggest challenge isn't motivation — it's maintaining momentum when progress feels slow.",
-        good_news: "When that determination is paired with the right strategy, your debt-free timeline can accelerate dramatically. In your Free Financial Assessment Call, we'll help you identify which debts to tackle first and design a plan that maximizes your momentum.",
-        cta: "Ready to crush your debt faster? Book your Free Financial Assessment now and get a personalized debt elimination strategy."
+        problem_realization: "Your biggest challenge isn't motivation — it's maintaining momentum when progress feels slow.",
+        hope_and_solution: "When that determination is paired with the right strategy, your debt-free timeline can accelerate dramatically. In your Free Financial Assessment Call, we'll help you identify which debts to tackle first and design a plan that maximizes your momentum.",
+        cta: {
+          headline: "Ready to Crush Your Debt Faster?",
+          body: "Let's turn your determination into a strategic debt elimination plan that delivers results.",
+          button: "Book My Free Financial Assessment",
+          secondary: "Join Waitlist"
+        }
       },
       "Savings Builder": {
-        archetype: "Savings Builder", 
-        header: "You're a Savings Builder — patient, strategic, and committed to building long-term wealth.",
-        insights: [
+        archetype: "Savings Builder",
+        header: {
+          title: "Your Financial Archetype",
+          subtitle: "You're a Savings Builder — patient, strategic, and committed to building long-term wealth."
+        },
+        validation: "You're the kind of person who values security and understands that wealth is built through consistent, disciplined action.",
+        personalized_insights: [
           "You value security and building wealth over time",
           "You prefer predictable, low-risk financial strategies",
           "You're disciplined about setting money aside regularly"
         ],
-        challenge: "Your biggest challenge isn't discipline — it's ensuring your savings strategy is optimized for maximum growth.",
-        good_news: "When that patience is paired with the right vehicles, your wealth can compound exponentially. In your Free Financial Assessment Call, we'll help you identify which savings strategies will deliver the best returns for your timeline.",
-        cta: "Ready to build wealth faster? Book your Free Financial Assessment now and get a personalized savings optimization plan."
+        problem_realization: "Your biggest challenge isn't discipline — it's ensuring your savings strategy is optimized for maximum growth.",
+        hope_and_solution: "When that patience is paired with the right vehicles, your wealth can compound exponentially. In your Free Financial Assessment Call, we'll help you identify which savings strategies will deliver the best returns for your timeline.",
+        cta: {
+          headline: "Ready to Build Wealth Faster?",
+          body: "Let's optimize your savings strategy to maximize growth while maintaining your security.",
+          button: "Book My Free Financial Assessment",
+          secondary: "Join Waitlist"
+        }
       },
       "Stability Seeker": {
         archetype: "Stability Seeker",
-        header: "You're a Stability Seeker — cautious, thoughtful, and committed to financial security.",
-        insights: [
+        header: {
+          title: "Your Financial Archetype",
+          subtitle: "You're a Stability Seeker — cautious, thoughtful, and committed to financial security."
+        },
+        validation: "You're the kind of person who makes careful, well-researched decisions and values peace of mind over risky gains.",
+        personalized_insights: [
           "You prefer predictable, low-risk financial strategies",
           "You value security over high returns",
           "You make decisions carefully and avoid unnecessary risks"
         ],
-        challenge: "Your biggest challenge isn't risk management — it's ensuring your cautious approach doesn't limit your long-term growth potential.",
-        good_news: "When that caution is paired with the right conservative strategies, you can achieve steady, reliable growth. In your Free Financial Assessment Call, we'll help you identify safe investment options that can still deliver meaningful returns.",
-        cta: "Ready to grow your wealth safely? Book your Free Financial Assessment now and get a personalized conservative growth strategy."
+        problem_realization: "Your biggest challenge isn't risk management — it's ensuring your cautious approach doesn't limit your long-term growth potential.",
+        hope_and_solution: "When that caution is paired with the right conservative strategies, you can achieve steady, reliable growth. In your Free Financial Assessment Call, we'll help you identify safe investment options that can still deliver meaningful returns.",
+        cta: {
+          headline: "Ready to Grow Your Wealth Safely?",
+          body: "Let's design a conservative growth strategy that protects your peace of mind while building wealth.",
+          button: "Book My Free Financial Assessment",
+          secondary: "Join Waitlist"
+        }
       },
       "Optimizer": {
         archetype: "Optimizer",
-        header: "You're an Optimizer — strategic, analytical, and focused on maximizing every financial opportunity.",
-        insights: [
+        header: {
+          title: "Your Financial Archetype",
+          subtitle: "You're an Optimizer — strategic, analytical, and focused on maximizing every financial opportunity."
+        },
+        validation: "You're the kind of person who loves analyzing data and finding ways to improve every aspect of your financial strategy.",
+        personalized_insights: [
           "You're strategic about maximizing returns and efficiency",
           "You enjoy analyzing financial data and trends",
           "You're comfortable with calculated risks for better returns"
         ],
-        challenge: "Your biggest challenge isn't analysis — it's avoiding analysis paralysis and taking action on your insights.",
-        good_news: "When that analytical mind is paired with proven strategies, your results can exceed expectations. In your Free Financial Assessment Call, we'll help you identify which optimization strategies will deliver the best returns for your situation.",
-        cta: "Ready to optimize your financial strategy? Book your Free Financial Assessment now and get a personalized wealth maximization plan."
+        problem_realization: "Your biggest challenge isn't analysis — it's avoiding analysis paralysis and taking action on your insights.",
+        hope_and_solution: "When that analytical mind is paired with proven strategies, your results can exceed expectations. In your Free Financial Assessment Call, we'll help you identify which optimization strategies will deliver the best returns for your situation.",
+        cta: {
+          headline: "Ready to Optimize Your Financial Strategy?",
+          body: "Let's turn your analytical skills into a comprehensive wealth maximization plan.",
+          button: "Book My Free Financial Assessment",
+          secondary: "Join Waitlist"
+        }
       }
     };
 
