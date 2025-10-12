@@ -138,6 +138,18 @@ const AnalyzingFinanceTrends = () => {
   ];
 
   useEffect(() => {
+    // Clean up localStorage on page load to prevent stale session issues
+    const cleanupLocalStorage = () => {
+      const sessionId = localStorage.getItem('quizSessionId');
+      if (sessionId && !sessionId.match(/^c[a-z0-9]{24}$/)) {
+        console.log('Cleaning up invalid sessionId from localStorage');
+        localStorage.removeItem('quizSessionId');
+        localStorage.removeItem('userName');
+      }
+    };
+    
+    cleanupLocalStorage();
+    
     // Sequential text changes - each text appears once in order
     const totalDuration = progressBars.length * 2500; // Total time for all bars
     const textInterval = totalDuration / loadingTexts.length; // Equal spacing
@@ -234,6 +246,15 @@ const AnalyzingFinanceTrends = () => {
       console.log('Session ID from localStorage:', sessionId);
       console.log('All localStorage keys:', Object.keys(localStorage));
       
+      // Validate sessionId format (should be a cuid)
+      if (sessionId && !sessionId.match(/^c[a-z0-9]{24}$/)) {
+        console.log('Invalid sessionId format, clearing localStorage');
+        localStorage.removeItem('quizSessionId');
+        localStorage.removeItem('userName');
+        router.push('/quiz/financial-profile');
+        return;
+      }
+      
       if (sessionId) {
         console.log('Generating result for session:', sessionId);
         // Generate the result
@@ -256,7 +277,17 @@ const AnalyzingFinanceTrends = () => {
         } else {
           const errorData = await resultResponse.json();
           console.error('Result generation failed:', errorData);
-          // Fallback to existing result
+          
+          // If session not found, redirect to quiz to start fresh
+          if (resultResponse.status === 404 && errorData.error === 'Session not found') {
+            console.log('Session not found, redirecting to quiz');
+            localStorage.removeItem('quizSessionId');
+            localStorage.removeItem('userName');
+            router.push('/quiz/financial-profile');
+            return;
+          }
+          
+          // Fallback to existing result for other errors
           router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
         }
       } else {
