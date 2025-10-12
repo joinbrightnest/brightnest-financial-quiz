@@ -9,3 +9,4 @@ ALTER TABLE "loading_screens" ADD COLUMN "showImage" BOOLEAN NOT NULL DEFAULT fa
 
 
 
+

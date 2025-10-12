@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { getArchetypeInsights } from "@/lib/scoring";
+import { ArchetypeCopy } from "@/lib/ai-content";
 
 interface Result {
   id: string;
@@ -17,6 +18,7 @@ interface Result {
 
 export default function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
   const [result, setResult] = useState<Result | null>(null);
+  const [personalizedCopy, setPersonalizedCopy] = useState<ArchetypeCopy | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const hasInitiallyLoaded = useRef(false);
@@ -33,6 +35,26 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         
         const data = await response.json();
         setResult(data);
+        
+        // Get session ID from result to fetch personalized copy
+        if (data.sessionId) {
+          try {
+            const copyResponse = await fetch('/api/quiz/archetype-copy', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ sessionId: data.sessionId })
+            });
+            
+            if (copyResponse.ok) {
+              const copyData = await copyResponse.json();
+              setPersonalizedCopy(copyData.copy);
+            }
+          } catch (copyError) {
+            console.error('Failed to fetch personalized copy:', copyError);
+            // Continue without personalized copy - will use fallback
+          }
+        }
+        
         hasInitiallyLoaded.current = true;
         setIsLoading(false);
       } catch (_err) {
@@ -75,7 +97,15 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
     );
   }
 
-  const insights = getArchetypeInsights(result.archetype);
+  // Use personalized copy if available, otherwise fallback to static insights
+  const copy = personalizedCopy || {
+    archetype: result.archetype,
+    header: `You're a ${result.archetype} — based on your answers, this is your financial personality type.`,
+    insights: getArchetypeInsights(result.archetype),
+    challenge: "Your financial journey has unique opportunities for growth.",
+    good_news: "With the right guidance, you can achieve your financial goals and build lasting wealth.",
+    cta: "Ready to take the next step? Book your Free Financial Assessment now and get personalized guidance."
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
@@ -88,21 +118,21 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             </h1>
             <div className="bg-white rounded-lg shadow-lg p-8 mb-6">
               <h2 className="text-3xl font-bold text-blue-600 mb-2">
-                {result.archetype}
+                {copy.archetype}
               </h2>
-              <p className="text-gray-600">
-                Based on your answers, this is your financial personality type
+              <p className="text-gray-600 text-lg">
+                {copy.header}
               </p>
             </div>
           </div>
 
-          {/* Insights */}
+          {/* Personalized Insights */}
           <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
             <h3 className="text-2xl font-semibold text-gray-900 mb-6">
               Personalized Insights
             </h3>
             <div className="space-y-4">
-              {insights.map((insight, index) => (
+              {copy.insights.map((insight, index) => (
                 <div key={index} className="flex items-start space-x-3">
                   <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                     <span className="text-blue-600 font-bold text-sm">
@@ -115,6 +145,25 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             </div>
           </div>
 
+          {/* Hidden Challenge */}
+          <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+              The Hidden Challenge
+            </h3>
+            <p className="text-gray-700 text-lg leading-relaxed">
+              {copy.challenge}
+            </p>
+          </div>
+
+          {/* Good News */}
+          <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg shadow-lg p-8 mb-8">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+              The Good News
+            </h3>
+            <p className="text-gray-700 text-lg leading-relaxed">
+              {copy.good_news}
+            </p>
+          </div>
 
           {/* CTA */}
           <div className="text-center">
@@ -122,21 +171,21 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
               <h3 className="text-2xl font-semibold text-gray-900 mb-4">
                 Ready to Take Action?
               </h3>
-              <p className="text-gray-600 mb-6">
-                Get personalized financial advice and start building your brighter future today.
+              <p className="text-gray-600 mb-6 text-lg">
+                {copy.cta}
               </p>
               <div className="space-y-3">
                 <Link
                   href="/book-call"
                   className="inline-block w-full md:w-auto bg-gradient-to-r from-pink-500 to-pink-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-pink-600 hover:to-pink-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
-                  Book Your FREE Financial Assessment
+                  Book My Free Financial Assessment
                 </Link>
                 <div className="text-sm text-gray-500">
                   or
                 </div>
                 <button className="w-full md:w-auto bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                  Join Our Waitlist
+                  Join Waitlist
                 </button>
               </div>
             </div>
