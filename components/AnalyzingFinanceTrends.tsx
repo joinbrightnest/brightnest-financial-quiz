@@ -240,7 +240,7 @@ const AnalyzingFinanceTrends = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h1 className="text-xl font-semibold text-gray-800 mb-2">
+              <h1 className="text-xl font-serif font-semibold text-gray-800 mb-2">
             {loadingTexts[currentTextIndex]}
             <motion.span
               initial={{ opacity: 0 }}
