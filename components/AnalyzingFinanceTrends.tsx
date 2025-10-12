@@ -15,6 +15,7 @@ interface ProgressBarProps {
 
 const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBarProps) => {
   const [isVisible, setIsVisible] = useState(false);
+  const [percentage, setPercentage] = useState(0);
 
   useEffect(() => {
     if (isActive) {
@@ -22,6 +23,34 @@ const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBar
       return () => clearTimeout(timer);
     }
   }, [isActive, delay]);
+
+  useEffect(() => {
+    if (isActive && isVisible) {
+      // Animate percentage from 0 to 100 over 2 seconds
+      const startTime = Date.now();
+      const duration = 2000; // 2 seconds
+      
+      const animatePercentage = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const currentPercentage = Math.floor(progress * 100);
+        
+        setPercentage(currentPercentage);
+        
+        if (progress < 1) {
+          requestAnimationFrame(animatePercentage);
+        } else {
+          setPercentage(100);
+        }
+      };
+      
+      requestAnimationFrame(animatePercentage);
+    } else if (isCompleted) {
+      setPercentage(100);
+    } else {
+      setPercentage(0);
+    }
+  }, [isActive, isVisible, isCompleted]);
 
   return (
     <div className="w-full mb-6">
@@ -33,7 +62,7 @@ const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBar
           animate={{ opacity: isVisible ? 1 : 0 }}
           transition={{ delay: delay + 0.5 }}
         >
-          {isCompleted ? '100%' : '0%'}
+          {percentage}%
         </motion.span>
       </div>
       <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
@@ -58,7 +87,6 @@ const AnalyzingFinanceTrends = () => {
   const [showProgressDots, setShowProgressDots] = useState(false);
   const [activeBarIndex, setActiveBarIndex] = useState(0);
 
-  console.log('AnalyzingFinanceTrends component loaded');
 
   // Progress bars configuration
   const progressBars = [

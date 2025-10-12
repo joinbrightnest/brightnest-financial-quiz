@@ -185,8 +185,6 @@ export default function QuizPage({ params }: QuizPageProps) {
 
       if (answerData.isComplete) {
         // Quiz completed - redirect to analyzing page first
-        console.log('Quiz completed! Redirecting to /analyzing');
-        alert('Quiz completed! Redirecting to /analyzing');
         router.push('/analyzing');
       } else {
         // Check for loading screen
@@ -337,8 +335,6 @@ export default function QuizPage({ params }: QuizPageProps) {
 
       if (answerData.isComplete) {
         // Quiz completed - redirect to analyzing page first
-        console.log('Quiz completed! Redirecting to /analyzing');
-        alert('Quiz completed! Redirecting to /analyzing');
         router.push('/analyzing');
       } else {
         // Check for loading screen
