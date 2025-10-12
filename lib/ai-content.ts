@@ -369,7 +369,7 @@ Keep existing personalization (name, answers, insights) but amplify emotional re
         archetype: parsed.archetype || 'Financial Profile',
         header: {
           title: parsed.header?.title || 'Your Financial Archetype',
-          subtitle: parsed.header || 'Based on your answers, this is your financial personality type.'
+          subtitle: parsed.header?.subtitle || parsed.header || 'Based on your answers, this is your financial personality type.'
         },
         validation: parsed.validation || 'You have unique financial strengths and opportunities for growth.',
         personalized_insights: parsed.reflection ? [parsed.reflection] : 
