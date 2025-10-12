@@ -15,23 +15,23 @@ export default function ConfirmationPage() {
         
         <div className="max-w-4xl mx-auto text-center relative z-10">
           {/* Logo */}
-          <div className="mb-4">
-            <h1 className="text-white text-3xl font-bold tracking-wide drop-shadow-lg">
-              <span className="font-sans">BRIGHT</span>
-              <span className="font-serif italic ml-2">Nest</span>
+          <div className="mb-6">
+            <h1 className="text-white text-4xl font-black tracking-wider drop-shadow-2xl" style={{textShadow: '0 0 20px rgba(255,255,255,0.3), 0 0 40px rgba(255,255,255,0.1)'}}>
+              <span className="font-sans bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">BRIGHT</span>
+              <span className="font-serif italic ml-3 text-3xl" style={{textShadow: '0 0 15px rgba(255,255,255,0.4)'}}>Nest</span>
             </h1>
           </div>
 
           {/* Main Headline */}
-          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
-            <span className="text-[#4CAF50] drop-shadow-2xl text-shadow-lg bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] bg-clip-text text-transparent">
+          <h2 className="text-5xl lg:text-6xl font-black text-white mb-8 leading-tight" style={{textShadow: '0 0 30px rgba(255,255,255,0.4), 0 0 60px rgba(255,255,255,0.2)'}}>
+            <span className="text-[#4CAF50] drop-shadow-2xl bg-gradient-to-r from-[#4CAF50] via-[#66BB6A] to-[#4CAF50] bg-clip-text text-transparent animate-pulse" style={{textShadow: '0 0 20px rgba(76,175,80,0.6), 0 0 40px rgba(76,175,80,0.3)'}}>
               CONGRATULATIONS!
             </span>
           </h2>
 
           {/* Confirmation Banner */}
-          <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-xl py-4 px-6 max-w-2xl mx-auto mb-6 shadow-2xl transform hover:scale-105 transition-transform duration-300">
-            <p className="text-white text-xl font-semibold drop-shadow-md">
+          <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-xl py-6 px-8 max-w-3xl mx-auto mb-8 shadow-2xl transform hover:scale-105 transition-transform duration-300 border-2 border-white/20" style={{boxShadow: '0 0 30px rgba(76,175,80,0.4), 0 0 60px rgba(76,175,80,0.2)'}}>
+            <p className="text-white text-2xl font-black drop-shadow-lg" style={{textShadow: '0 0 15px rgba(255,255,255,0.5), 0 0 30px rgba(255,255,255,0.2)'}}>
               Confirmed: Your Financial Transformation Assessment Has Been Booked
             </p>
           </div>
@@ -49,10 +49,10 @@ export default function ConfirmationPage() {
             </div>
             
             <div className="text-center relative z-10">
-              <h3 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">
+              <h3 className="text-3xl font-black text-white mb-4 drop-shadow-2xl" style={{textShadow: '0 0 20px rgba(255,255,255,0.6), 0 0 40px rgba(255,255,255,0.3)'}}>
                 ✨ IMPORTANT NEXT STEPS:
               </h3>
-              <p className="text-white text-lg drop-shadow-md">
+              <p className="text-white text-xl font-bold drop-shadow-lg" style={{textShadow: '0 0 15px rgba(255,255,255,0.4), 0 0 30px rgba(255,255,255,0.2)'}}>
                 Watch The Short 3 Minute Video & Complete Pre-Call Checklist To Confirm Your Appointment
               </p>
             </div>
@@ -114,14 +114,14 @@ export default function ConfirmationPage() {
             </div>
 
             {/* Main Title */}
-            <h2 className="text-3xl font-bold text-[#333333] text-center mb-8 leading-tight">
+            <h2 className="text-4xl font-black text-[#333333] text-center mb-8 leading-tight drop-shadow-lg" style={{textShadow: '0 0 15px rgba(51,51,51,0.3), 0 0 30px rgba(51,51,51,0.1)'}}>
               Complete This Quick 3 Step<br />
-              Pre-Call Checklist:
+              <span className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] bg-clip-text text-transparent">Pre-Call Checklist:</span>
             </h2>
 
             {/* Step 1 */}
             <div className="mb-8 p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
-              <h3 className="text-2xl font-bold text-[#333333] mb-4">Step 1:</h3>
+              <h3 className="text-3xl font-black text-[#333333] mb-6 drop-shadow-md" style={{textShadow: '0 0 10px rgba(51,51,51,0.2)'}}>Step 1:</h3>
               <div className="space-y-3">
                 <div className="flex items-start space-x-3">
                   <div className="w-6 h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
@@ -160,8 +160,8 @@ export default function ConfirmationPage() {
 
             {/* Step 2 */}
             <div className="mb-8 p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
-              <h3 className="text-2xl font-bold text-[#333333] mb-2">Step 2:</h3>
-              <h4 className="text-2xl font-bold text-[#333333] mb-4">Communication</h4>
+              <h3 className="text-3xl font-black text-[#333333] mb-2 drop-shadow-md" style={{textShadow: '0 0 10px rgba(51,51,51,0.2)'}}>Step 2:</h3>
+              <h4 className="text-3xl font-black text-[#333333] mb-6 drop-shadow-md" style={{textShadow: '0 0 10px rgba(51,51,51,0.2)'}}>Communication</h4>
               <p className="text-[#333333] mb-6">
                 Please check your email. We sent you an email confirming the date/time. Please mark this in your calendar now. Please ensure you confirm "I Know The Sender" from the email we sent you for your 1-1 session.
               </p>
@@ -203,7 +203,7 @@ export default function ConfirmationPage() {
 
             {/* Combined Step 3 and Information Section */}
             <div className="mt-8 p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
-              <h3 className="text-2xl font-bold text-[#333333] mb-4">Step 3: Punctuality</h3>
+              <h3 className="text-3xl font-black text-[#333333] mb-6 drop-shadow-md" style={{textShadow: '0 0 10px rgba(51,51,51,0.2)'}}>Step 3: Punctuality</h3>
               <div className="space-y-3 mb-6">
                 <div className="flex items-start space-x-3">
                   <div className="w-6 h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
@@ -240,14 +240,14 @@ export default function ConfirmationPage() {
               </div>
               
               <div className="border-t border-gray-200 pt-6">
-                <h4 className="text-xl font-bold text-[#333333] mb-3">Information:</h4>
+                <h4 className="text-2xl font-black text-[#333333] mb-4 drop-shadow-md" style={{textShadow: '0 0 10px rgba(51,51,51,0.2)'}}>Information:</h4>
                 <p className="text-[#333333] leading-relaxed">
                   Come with whatever questions you have. We want you to be able to make an informed decision, regardless if you choose us or not.
                 </p>
               </div>
               
               <div className="border-t border-gray-200 pt-8 mt-8">
-                <h2 className="text-3xl font-bold text-[#333333] text-center mb-8 leading-tight">
+                <h2 className="text-4xl font-black text-[#333333] text-center mb-8 leading-tight drop-shadow-lg" style={{textShadow: '0 0 15px rgba(51,51,51,0.3), 0 0 30px rgba(51,51,51,0.1)'}}>
                   Step 3: Review Our Most Frequently Asked Questions
                 </h2>
 
