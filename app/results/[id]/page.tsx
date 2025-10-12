@@ -43,56 +43,45 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         const { id } = await params;
         setResultId(id);
         
-        // Retry logic for database consistency
-        for (let attempt = 1; attempt <= 10; attempt++) {
-          console.log(`Fetch attempt ${attempt}/10 for result: ${id}`);
+        // Get pre-generated AI copy from localStorage
+        const storedCopy = localStorage.getItem('personalizedCopy');
+        let personalizedCopy = null;
+        
+        if (storedCopy) {
+          try {
+            personalizedCopy = JSON.parse(storedCopy);
+            console.log('Using pre-generated AI copy from localStorage');
+            // Clean up localStorage
+            localStorage.removeItem('personalizedCopy');
+          } catch (parseError) {
+            console.log('Error parsing stored copy:', parseError);
+          }
+        }
+        
+        // Fetch result data
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin;
+        const response = await fetch(`${baseUrl}/api/results/${id}`, {
+          cache: 'no-store'
+        });
+        
+        console.log('Result fetch response status:', response.status);
+        
+        if (response.ok) {
+          const resultData = await response.json();
+          console.log('Result fetched successfully:', resultData);
           
-          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin;
-          
-          const response = await fetch(`${baseUrl}/api/results/${id}`, {
-            cache: 'no-store'
+          // Combine result with pre-generated copy
+          setResult({
+            ...resultData,
+            personalizedCopy
           });
           
-          console.log('Result fetch response status:', response.status);
-          
-          if (response.ok) {
-            const resultData = await response.json();
-            console.log('Result fetched successfully:', resultData);
-            setResult(resultData);
-            
-            // Now fetch AI-generated personalized copy
-            try {
-              console.log('Fetching AI-generated personalized copy...');
-              const copyResponse = await fetch(`${baseUrl}/api/quiz/archetype-copy`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ sessionId: resultData.sessionId }),
-              });
-              
-              if (copyResponse.ok) {
-                const copyData = await copyResponse.json();
-                console.log('AI copy fetched successfully:', copyData);
-                setResult(prev => prev ? { ...prev, personalizedCopy: copyData.copy } : null);
-              } else {
-                console.log('AI copy fetch failed, using fallback');
-              }
-            } catch (copyError) {
-              console.log('AI copy fetch error, using fallback:', copyError);
-            }
-            
-            setIsLoading(false);
-            return;
-          }
-          
-          if (attempt < 10) {
-            console.log(`Attempt ${attempt} failed, retrying in 2 seconds...`);
-            await new Promise(resolve => setTimeout(resolve, 2000));
-          } else {
-            const errorData = await response.json().catch(() => ({}));
-            console.error('Result fetch failed after 10 attempts:', errorData);
-            setError("Result not found");
-            setIsLoading(false);
-          }
+          setIsLoading(false);
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          console.error('Result fetch failed:', errorData);
+          setError("Result not found");
+          setIsLoading(false);
         }
       } catch (err) {
         console.error('Error initializing result:', err);

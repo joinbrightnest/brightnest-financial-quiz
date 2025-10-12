@@ -292,6 +292,27 @@ const AnalyzingFinanceTrends = () => {
           const resultData = await resultResponse.json();
           console.log('Generated result data:', resultData);
           
+          // Generate AI copy while user sees intro sequence
+          try {
+            console.log('Generating AI personalized copy...');
+            const copyResponse = await fetch("/api/quiz/archetype-copy", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ sessionId }),
+            });
+            
+            if (copyResponse.ok) {
+              const copyData = await copyResponse.json();
+              console.log('AI copy generated successfully:', copyData);
+              // Store AI copy in localStorage for results page
+              localStorage.setItem('personalizedCopy', JSON.stringify(copyData.copy));
+            } else {
+              console.log('AI copy generation failed, results page will use fallback');
+            }
+          } catch (copyError) {
+            console.log('AI copy generation error:', copyError);
+          }
+          
           // Add a small delay to ensure database consistency
           await new Promise(resolve => setTimeout(resolve, 1000));
           
