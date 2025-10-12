@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import ResultIntroSequence from "./ResultIntroSequence";
 
 interface ProgressBarProps {
   label: string;
@@ -114,6 +115,7 @@ const AnalyzingFinanceTrends = () => {
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [userNameInitial, setUserNameInitial] = useState('U'); // Default to 'U'
   const [userName, setUserName] = useState(''); // Full user name
+  const [showIntroSequence, setShowIntroSequence] = useState(false);
 
   const loadingTexts = [
     "Analyzing Financial Background",
@@ -172,36 +174,9 @@ const AnalyzingFinanceTrends = () => {
       });
     }, 2500); // Each bar takes 2.5 seconds
 
-    // Navigate to results after all bars complete + 2 seconds
-    const navigationTimer = setTimeout(async () => {
-      try {
-        // Get the session ID from localStorage (set during quiz)
-        const sessionId = localStorage.getItem('quizSessionId');
-        
-        if (sessionId) {
-          // Generate the result
-          const resultResponse = await fetch("/api/quiz/result", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ sessionId }),
-          });
-
-          if (resultResponse.ok) {
-            const resultData = await resultResponse.json();
-            router.push(`/results/${resultData.resultId}`);
-          } else {
-            // Fallback if result generation fails
-            router.push('/results/sample');
-          }
-        } else {
-          // Fallback if no session ID
-          router.push('/results/sample');
-        }
-      } catch (error) {
-        console.error('Error generating result:', error);
-        // Fallback navigation
-        router.push('/results/sample');
-      }
+    // Show intro sequence after all bars complete + 2 seconds
+    const introTimer = setTimeout(() => {
+      setShowIntroSequence(true);
     }, (progressBars.length * 2500) + 2000); // Total time: bars * 2.5s + 2s buffer
 
     // Try to get user's name from database using sessionId
@@ -236,9 +211,51 @@ const AnalyzingFinanceTrends = () => {
       clearTimeout(textTimer2);
       clearTimeout(textTimer3);
       clearTimeout(textTimer4);
-      clearTimeout(navigationTimer);
+      clearTimeout(introTimer);
     };
   }, [router, progressBars.length]);
+
+  // Handle intro sequence completion
+  const handleIntroComplete = async () => {
+    try {
+      // Get the session ID from localStorage (set during quiz)
+      const sessionId = localStorage.getItem('quizSessionId');
+      
+      if (sessionId) {
+        // Generate the result
+        const resultResponse = await fetch("/api/quiz/result", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId }),
+        });
+
+        if (resultResponse.ok) {
+          const resultData = await resultResponse.json();
+          router.push(`/results/${resultData.resultId}`);
+        } else {
+          // Fallback if result generation fails
+          router.push('/results/sample');
+        }
+      } else {
+        // Fallback if no session ID
+        router.push('/results/sample');
+      }
+    } catch (error) {
+      console.error('Error generating result:', error);
+      // Fallback navigation
+      router.push('/results/sample');
+    }
+  };
+
+  // Show intro sequence if ready
+  if (showIntroSequence) {
+    return (
+      <ResultIntroSequence 
+        name={userName || 'there'} 
+        onComplete={handleIntroComplete}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
