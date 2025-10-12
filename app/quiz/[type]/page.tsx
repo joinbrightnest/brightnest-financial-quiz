@@ -184,7 +184,7 @@ export default function QuizPage({ params }: QuizPageProps) {
       const answerData = await answerResponse.json();
 
       if (answerData.isComplete) {
-        // Quiz completed - redirect to analyzing page first
+        // Quiz completed - redirect to analyzing page first (no alert)
         router.push('/analyzing');
       } else {
         // Check for loading screen
@@ -334,7 +334,7 @@ export default function QuizPage({ params }: QuizPageProps) {
       const answerData = await answerResponse.json();
 
       if (answerData.isComplete) {
-        // Quiz completed - redirect to analyzing page first
+        // Quiz completed - redirect to analyzing page first (no alert)
         router.push('/analyzing');
       } else {
         // Check for loading screen
