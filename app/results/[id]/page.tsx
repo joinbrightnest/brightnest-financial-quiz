@@ -13,15 +13,22 @@ interface Result {
 }
 
 async function getResult(id: string): Promise<Result> {
+  console.log('Fetching result for ID:', id);
   const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/results/${id}`, {
     cache: 'no-store'
   });
   
+  console.log('Result fetch response status:', response.status);
+  
   if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    console.error('Result fetch failed:', errorData);
     throw new Error("Failed to fetch result");
   }
   
-  return response.json();
+  const result = await response.json();
+  console.log('Result fetched successfully:', result);
+  return result;
 }
 
 export default async function ResultsPage({ params }: { params: Promise<{ id: string }> }) {

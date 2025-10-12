@@ -231,8 +231,10 @@ const AnalyzingFinanceTrends = () => {
     try {
       // Get the session ID from localStorage (set during quiz)
       const sessionId = localStorage.getItem('quizSessionId');
+      console.log('Session ID from localStorage:', sessionId);
       
       if (sessionId) {
+        console.log('Generating result for session:', sessionId);
         // Generate a new result for this session
         const resultResponse = await fetch("/api/quiz/result", {
           method: "POST",
@@ -240,14 +242,20 @@ const AnalyzingFinanceTrends = () => {
           body: JSON.stringify({ sessionId }),
         });
 
+        console.log('Result generation response status:', resultResponse.status);
+
         if (resultResponse.ok) {
           const resultData = await resultResponse.json();
+          console.log('Generated result data:', resultData);
           router.push(`/results/${resultData.resultId}`);
         } else {
+          const errorData = await resultResponse.json();
+          console.error('Result generation failed:', errorData);
           // Fallback to existing result
           router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
         }
       } else {
+        console.log('No session ID found, using fallback');
         // Fallback to existing result
         router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
       }
