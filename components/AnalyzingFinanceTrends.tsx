@@ -117,6 +117,7 @@ const AnalyzingFinanceTrends = () => {
   const [completedBars, setCompletedBars] = useState<number[]>([]);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [userNameInitial, setUserNameInitial] = useState('U'); // Default to 'U'
+  const [userName, setUserName] = useState(''); // Full user name
 
   const loadingTexts = [
     "Analyzing Financial Background",
@@ -221,6 +222,7 @@ const AnalyzingFinanceTrends = () => {
           if (response.ok) {
             const data = await response.json();
             if (data.name) {
+              setUserName(data.name);
               setUserNameInitial(data.name.charAt(0).toUpperCase());
             }
           }
@@ -244,14 +246,15 @@ const AnalyzingFinanceTrends = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Top Bar with BrightNest Logo and User Initial */}
-      <div className="w-full bg-[#28303B] px-6 py-4 relative">
+      {/* Top Bar with BrightNest Logo and User Info */}
+      <div className="w-full bg-[#28303B] px-6 py-6 relative">
         {/* BrightNest text - centered horizontally within the full width */}
         <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
           <span className="text-xl font-bold text-white font-serif">BrightNest</span>
         </div>
-        {/* User Initial - positioned absolutely to the right */}
-        <div className="absolute right-6 top-1/2 -translate-y-1/2">
+        {/* User Info - positioned absolutely to the right */}
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 flex items-center space-x-3">
+          <span className="text-white font-medium text-sm">{userName}</span>
           <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
             <span className="text-white font-bold text-sm">{userNameInitial}</span>
           </div>
