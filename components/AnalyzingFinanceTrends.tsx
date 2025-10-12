@@ -208,25 +208,29 @@ const AnalyzingFinanceTrends = () => {
     }, (progressBars.length * 2500) + 2000); // Total time: bars * 2.5s + 2s buffer
 
     // Try to get user's name from database using sessionId
-    const sessionId = localStorage.getItem('quizSessionId');
-    if (sessionId) {
-      try {
-        const response = await fetch('/api/quiz/user-name', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionId }),
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          if (data.name) {
-            setUserNameInitial(data.name.charAt(0).toUpperCase());
+    const fetchUserName = async () => {
+      const sessionId = localStorage.getItem('quizSessionId');
+      if (sessionId) {
+        try {
+          const response = await fetch('/api/quiz/user-name', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId }),
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data.name) {
+              setUserNameInitial(data.name.charAt(0).toUpperCase());
+            }
           }
+        } catch (error) {
+          console.error('Error fetching user name:', error);
         }
-      } catch (error) {
-        console.error('Error fetching user name:', error);
       }
-    }
+    };
+
+    fetchUserName();
 
     return () => {
       clearInterval(progressInterval);
