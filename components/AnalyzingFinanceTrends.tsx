@@ -9,37 +9,41 @@ interface ProgressBarProps {
   color: string;
   delay: number;
   targetPercentage: number;
+  isActive: boolean;
+  isCompleted: boolean;
 }
 
-const ProgressBar = ({ label, color, delay, targetPercentage }: ProgressBarProps) => {
+const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBarProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), delay);
-    return () => clearTimeout(timer);
-  }, [delay]);
+    if (isActive) {
+      const timer = setTimeout(() => setIsVisible(true), delay);
+      return () => clearTimeout(timer);
+    }
+  }, [isActive, delay]);
 
   return (
-    <div className="w-full mb-4">
-      <div className="flex justify-between items-center mb-2">
+    <div className="w-full mb-6">
+      <div className="flex justify-between items-center mb-3">
         <span className="text-sm font-medium text-gray-700">{label}</span>
         <motion.span 
-          className="text-sm text-gray-600"
+          className={`text-sm font-medium ${isCompleted ? 'text-gray-700' : 'text-gray-400'}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: isVisible ? 1 : 0 }}
           transition={{ delay: delay + 0.5 }}
         >
-          {targetPercentage}%
+          {isCompleted ? '100%' : '0%'}
         </motion.span>
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+      <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
         <motion.div
           className={`h-full rounded-full ${color}`}
           initial={{ width: "0%" }}
-          animate={{ width: isVisible ? `${targetPercentage}%` : "0%" }}
+          animate={{ width: isVisible && isActive ? "100%" : isCompleted ? "100%" : "0%" }}
           transition={{ 
-            duration: 1.2, 
-            delay: delay + 0.2,
+            duration: 2, 
+            delay: delay,
             ease: "easeOut"
           }}
         />
@@ -52,27 +56,35 @@ const AnalyzingFinanceTrends = () => {
   const router = useRouter();
   const [showTrustText, setShowTrustText] = useState(false);
   const [showProgressDots, setShowProgressDots] = useState(false);
+  const [activeBarIndex, setActiveBarIndex] = useState(0);
 
-
-
-  // Generate random percentages for each progress bar
+  // Progress bars configuration
   const progressBars = [
-    { label: "Spending Patterns", color: "bg-rose-500", delay: 0, targetPercentage: Math.floor(Math.random() * 41) + 60 },
-    { label: "Saving Habits", color: "bg-green-500", delay: 0.3, targetPercentage: Math.floor(Math.random() * 41) + 60 },
-    { label: "Financial Confidence", color: "bg-sky-500", delay: 0.6, targetPercentage: Math.floor(Math.random() * 41) + 60 },
-    { label: "Emotional Triggers", color: "bg-violet-500", delay: 0.9, targetPercentage: Math.floor(Math.random() * 41) + 60 },
-    { label: "Goal Alignment", color: "bg-amber-500", delay: 1.2, targetPercentage: Math.floor(Math.random() * 41) + 60 },
-    { label: "Decision-Making Consistency", color: "bg-blue-500", delay: 1.5, targetPercentage: Math.floor(Math.random() * 41) + 60 },
+    { label: "Spending Patterns", color: "bg-rose-500" },
+    { label: "Saving Habits", color: "bg-green-500" },
+    { label: "Financial Confidence", color: "bg-sky-500" },
+    { label: "Emotional Triggers", color: "bg-violet-500" },
+    { label: "Goal Alignment", color: "bg-amber-500" },
+    { label: "Decision-Making Consistency", color: "bg-blue-500" },
   ];
 
   useEffect(() => {
-    // Show trust text after progress bars start
-    const trustTextTimer = setTimeout(() => setShowTrustText(true), 2000);
-    
-    // Show progress dots after trust text
-    const dotsTimer = setTimeout(() => setShowProgressDots(true), 3000);
-    
-    // Navigate to results after 5 seconds (simple loading page)
+    // Sequential progress bar animation
+    const progressInterval = setInterval(() => {
+      setActiveBarIndex(prev => {
+        if (prev < progressBars.length - 1) {
+          return prev + 1;
+        } else {
+          // All bars completed, show trust text and dots
+          setShowTrustText(true);
+          setShowProgressDots(true);
+          clearInterval(progressInterval);
+          return prev;
+        }
+      });
+    }, 2500); // Each bar takes 2.5 seconds
+
+    // Navigate to results after all bars complete + 2 seconds
     const navigationTimer = setTimeout(async () => {
       try {
         // Get the session ID from localStorage (set during quiz)
@@ -102,47 +114,17 @@ const AnalyzingFinanceTrends = () => {
         // Fallback navigation
         router.push('/results/sample');
       }
-    }, 5000);
+    }, (progressBars.length * 2500) + 2000); // Total time: bars * 2.5s + 2s buffer
 
     return () => {
-      clearTimeout(trustTextTimer);
-      clearTimeout(dotsTimer);
+      clearInterval(progressInterval);
       clearTimeout(navigationTimer);
     };
-  }, [router]);
+  }, [router, progressBars.length]);
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] flex items-center justify-center px-4">
-      {/* Subtle background animation */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-[#4CAF50]/10 to-transparent rounded-full blur-3xl"
-          animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ 
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-[#66BB6A]/10 to-transparent rounded-full blur-3xl"
-          animate={{ 
-            scale: [1.2, 1, 1.2],
-            opacity: [0.5, 0.3, 0.5]
-          }}
-          transition={{ 
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 2
-          }}
-        />
-      </div>
-
-      <div className="relative z-10 max-w-md w-full">
+    <div className="min-h-screen bg-white flex items-center justify-center px-4">
+      <div className="relative z-10 max-w-2xl w-full">
         {/* Header */}
         <motion.div
           className="text-center mb-8"
@@ -162,14 +144,16 @@ const AnalyzingFinanceTrends = () => {
         </motion.div>
 
         {/* Progress Bars */}
-        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 mb-6">
+        <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 mb-6">
           {progressBars.map((bar, index) => (
             <ProgressBar
               key={index}
               label={bar.label}
               color={bar.color}
-              delay={bar.delay}
-              targetPercentage={bar.targetPercentage}
+              delay={0}
+              targetPercentage={100}
+              isActive={index === activeBarIndex}
+              isCompleted={index < activeBarIndex}
             />
           ))}
         </div>
