@@ -56,7 +56,25 @@ const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBar
   return (
     <div className="w-full mb-6">
       <div className="flex justify-between items-center mb-3">
-        <span className="text-sm font-medium text-gray-700">{label}</span>
+        <motion.span 
+          className={`text-sm font-medium ${isActive ? 'font-bold' : 'font-medium'}`}
+          animate={{ 
+            color: isActive ? 
+              (color === 'bg-red-500' ? '#ef4444' : 
+               color === 'bg-green-500' ? '#22c55e' : 
+               color === 'bg-teal-500' ? '#14b8a6' : 
+               color === 'bg-pink-500' ? '#ec4899' : 
+               color === 'bg-yellow-500' ? '#eab308' : 
+               color === 'bg-blue-500' ? '#3b82f6' : 
+               color === 'bg-orange-500' ? '#f97316' : '#374151') : '#374151'
+          }}
+          transition={{ 
+            duration: 0.3,
+            ease: "easeInOut"
+          }}
+        >
+          {label}
+        </motion.span>
         <motion.span 
           className={`text-sm font-medium ${isCompleted ? 'text-gray-700' : 'text-gray-400'}`}
           initial={{ opacity: 0 }}
