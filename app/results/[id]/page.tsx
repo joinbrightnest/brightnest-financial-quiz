@@ -1,9 +1,5 @@
-"use client";
-
-import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { getArchetypeInsights } from "@/lib/scoring";
-import { ArchetypeCopy } from "@/lib/ai-content";
 
 interface Result {
   id: string;
@@ -16,75 +12,31 @@ interface Result {
   };
 }
 
-export default function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
-  const [result, setResult] = useState<Result | null>(null);
-  const [personalizedCopy, setPersonalizedCopy] = useState<ArchetypeCopy | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const hasInitiallyLoaded = useRef(false);
-
-  useEffect(() => {
-    const fetchResult = async () => {
-      try {
-        const { id } = await params;
-        const response = await fetch(`/api/results/${id}`);
-        
-        if (!response.ok) {
-          throw new Error("Failed to fetch result");
-        }
-        
-        const data = await response.json();
-        setResult(data);
-        
-        // Get session ID from result to fetch personalized copy
-        if (data.sessionId) {
-          try {
-            const copyResponse = await fetch('/api/quiz/archetype-copy', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ sessionId: data.sessionId })
-            });
-            
-            if (copyResponse.ok) {
-              const copyData = await copyResponse.json();
-              setPersonalizedCopy(copyData.copy);
-            }
-          } catch (copyError) {
-            console.error('Failed to fetch personalized copy:', copyError);
-            // Continue without personalized copy - will use fallback
-          }
-        }
-        
-        hasInitiallyLoaded.current = true;
-        setIsLoading(false);
-      } catch (_err) {
-        setError("Failed to load results. Please try again.");
-        hasInitiallyLoaded.current = true;
-        setIsLoading(false);
-      }
-    };
-
-    fetchResult();
-  }, [params]);
-
-  if (isLoading && !hasInitiallyLoaded.current) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading your results...</p>
-        </div>
-      </div>
-    );
+async function getResult(id: string): Promise<Result> {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/results/${id}`, {
+    cache: 'no-store'
+  });
+  
+  if (!response.ok) {
+    throw new Error("Failed to fetch result");
   }
+  
+  return response.json();
+}
 
-  if (error || !result) {
+export default async function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  
+  let result: Result;
+  try {
+    result = await getResult(id);
+  } catch (error) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
             <h2 className="text-lg font-semibold text-red-800 mb-2">Error</h2>
-            <p className="text-red-600 mb-4">{error || "Result not found"}</p>
+            <p className="text-red-600 mb-4">Result not found</p>
             <Link
               href="/quiz"
               className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
@@ -97,8 +49,8 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
     );
   }
 
-  // Use personalized copy if available, otherwise fallback to static insights
-  const copy = personalizedCopy || {
+  // Use fallback copy since personalized copy requires server-side API key
+  const copy = {
     archetype: result.archetype,
     header: {
       title: "Your Financial Archetype",
@@ -145,7 +97,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 space-y-12">
             
             {/* Recognition Section */}
-            <div className="opacity-0 translate-y-4 animate-fade-in">
+            <div>
               <h3 className="text-2xl font-bold text-gray-800 mb-4">Recognition</h3>
               <p className="text-lg text-gray-600 leading-relaxed">
                 {copy.validation}

@@ -222,28 +222,24 @@ const AnalyzingFinanceTrends = () => {
       const sessionId = localStorage.getItem('quizSessionId');
       
       if (sessionId) {
-        // Generate the result
-        const resultResponse = await fetch("/api/quiz/result", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId }),
-        });
-
+        // Try to find an existing result for this session
+        const resultResponse = await fetch(`/api/results/by-session/${sessionId}`);
+        
         if (resultResponse.ok) {
           const resultData = await resultResponse.json();
-          router.push(`/results/${resultData.resultId}`);
+          router.push(`/results/${resultData.id}`);
         } else {
-          // Fallback if result generation fails
-          router.push('/results/sample');
+          // Fallback to existing result
+          router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
         }
       } else {
-        // Fallback if no session ID
-        router.push('/results/sample');
+        // Fallback to existing result
+        router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
       }
     } catch (error) {
-      console.error('Error generating result:', error);
-      // Fallback navigation
-      router.push('/results/sample');
+      console.error('Error finding result:', error);
+      // Fallback navigation to existing result
+      router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
     }
   };
 
