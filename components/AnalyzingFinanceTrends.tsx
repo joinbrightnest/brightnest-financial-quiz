@@ -139,12 +139,34 @@ const AnalyzingFinanceTrends = () => {
 
   useEffect(() => {
     // Clean up localStorage on page load to prevent stale session issues
-    const cleanupLocalStorage = () => {
+    const cleanupLocalStorage = async () => {
       const sessionId = localStorage.getItem('quizSessionId');
       if (sessionId && !sessionId.match(/^c[a-z0-9]{24}$/)) {
         console.log('Cleaning up invalid sessionId from localStorage');
         localStorage.removeItem('quizSessionId');
         localStorage.removeItem('userName');
+        return;
+      }
+      
+      // Check if sessionId exists in database
+      if (sessionId) {
+        try {
+          const response = await fetch('/api/quiz/session-exists', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId }),
+          });
+          
+          if (!response.ok || !(await response.json()).exists) {
+            console.log('Cleaning up stale sessionId from localStorage');
+            localStorage.removeItem('quizSessionId');
+            localStorage.removeItem('userName');
+          }
+        } catch (error) {
+          console.log('Error checking session, cleaning up localStorage');
+          localStorage.removeItem('quizSessionId');
+          localStorage.removeItem('userName');
+        }
       }
     };
     
