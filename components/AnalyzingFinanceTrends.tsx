@@ -85,6 +85,15 @@ const AnalyzingFinanceTrends = () => {
   const router = useRouter();
   const [activeBarIndex, setActiveBarIndex] = useState(0);
   const [completedBars, setCompletedBars] = useState<number[]>([]);
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+
+  const loadingTexts = [
+    "Analyzing Financial Background",
+    "Cross-checking with User Database",
+    "Mapping Your Financial Behavior Trends",
+    "Building Your Personalized Growth Plan",
+    "Predicting Future Results"
+  ];
 
 
   // Progress bars configuration - 7 bars like Noom
@@ -99,6 +108,14 @@ const AnalyzingFinanceTrends = () => {
   ];
 
   useEffect(() => {
+    // Random text changes during each bar
+    const textInterval = setInterval(() => {
+      setCurrentTextIndex(prev => {
+        const nextIndex = Math.floor(Math.random() * loadingTexts.length);
+        return nextIndex;
+      });
+    }, 800); // Change text every 800ms
+
     // Sequential progress bar animation
     const progressInterval = setInterval(() => {
       setActiveBarIndex(prev => {
@@ -110,6 +127,7 @@ const AnalyzingFinanceTrends = () => {
           // All bars completed
           setCompletedBars(completed => [...completed, prev]);
           clearInterval(progressInterval);
+          clearInterval(textInterval);
           return prev;
         }
       });
@@ -149,6 +167,7 @@ const AnalyzingFinanceTrends = () => {
 
     return () => {
       clearInterval(progressInterval);
+      clearInterval(textInterval);
       clearTimeout(navigationTimer);
     };
   }, [router, progressBars.length]);
@@ -163,9 +182,26 @@ const AnalyzingFinanceTrends = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h1 className="text-xl font-semibold text-gray-800 mb-2">
-            Matching Financial Behavior Trends...
-          </h1>
+          <motion.h1 
+            className="text-xl font-semibold text-gray-800 mb-2"
+            key={currentTextIndex}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+          >
+            {loadingTexts[currentTextIndex]}
+            <motion.span
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ 
+                duration: 1.5, 
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              ...
+            </motion.span>
+          </motion.h1>
         </motion.div>
 
         {/* Progress Bars */}
