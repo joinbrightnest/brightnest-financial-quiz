@@ -53,6 +53,9 @@ const AnalyzingFinanceTrends = () => {
   const [showTrustText, setShowTrustText] = useState(false);
   const [showProgressDots, setShowProgressDots] = useState(false);
 
+  // Debug log
+  console.log('AnalyzingFinanceTrends component loaded');
+
   // Generate random percentages for each progress bar
   const progressBars = [
     { label: "Spending Patterns", color: "bg-rose-500", delay: 0, targetPercentage: Math.floor(Math.random() * 41) + 60 },
