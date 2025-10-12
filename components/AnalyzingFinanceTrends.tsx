@@ -201,45 +201,48 @@ const AnalyzingFinanceTrends = () => {
         </AnimatePresence>
 
         {/* Progress Dots with Checkmarks */}
-        <AnimatePresence>
-          {showProgressDots && (
+        <motion.div
+          className="flex justify-center space-x-3"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4 }}
+        >
+          {progressBars.map((bar, index) => (
             <motion.div
-              className="flex justify-center space-x-3"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
+              key={index}
+              className="flex items-center justify-center"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ 
+                opacity: 1,
+                scale: 1
+              }}
+              transition={{
+                duration: 0.5,
+                delay: index * 0.1
+              }}
             >
-              {progressBars.map((bar, index) => (
-                <motion.div
-                  key={index}
-                  className="flex items-center justify-center"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ 
-                    opacity: index <= activeBarIndex ? 1 : 0.3,
-                    scale: index <= activeBarIndex ? 1 : 0.8
-                  }}
-                  transition={{
-                    duration: 0.5,
-                    delay: index * 0.1
+              {index < activeBarIndex ? (
+                // Show checkmark with bar color
+                <motion.div 
+                  className={`w-6 h-6 rounded-full flex items-center justify-center ${bar.color}`}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ 
+                    duration: 0.3,
+                    delay: 2.2 // Show checkmark after bar completes (2s animation + 0.2s delay)
                   }}
                 >
-                  {index < activeBarIndex ? (
-                    // Show checkmark with bar color
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${bar.color.replace('bg-', 'bg-')}`}>
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                      </svg>
-                    </div>
-                  ) : (
-                    // Show empty dot
-                    <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
-                  )}
+                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                  </svg>
                 </motion.div>
-              ))}
+              ) : (
+                // Show empty gray dot
+                <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
+              )}
             </motion.div>
-          )}
-        </AnimatePresence>
+          ))}
+        </motion.div>
 
         {/* Loading indicator */}
         <motion.div
