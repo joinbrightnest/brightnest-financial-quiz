@@ -217,8 +217,22 @@ const AnalyzingFinanceTrends = () => {
   }, [router, progressBars.length]);
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
-      <div className="relative z-10 w-full max-w-none">
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* Top Bar with BrightNest Logo */}
+      <div className="w-full bg-white border-b border-gray-200 px-6 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">B</span>
+            </div>
+            <span className="text-xl font-bold text-gray-800">BrightNest</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex items-start justify-center px-4 pt-8">
+        <div className="relative z-10 w-full max-w-none">
         {/* Header */}
         <motion.div
           className="text-center mb-8"
@@ -361,6 +375,7 @@ const AnalyzingFinanceTrends = () => {
             }}
           />
         </motion.div>
+        </div>
       </div>
     </div>
   );
