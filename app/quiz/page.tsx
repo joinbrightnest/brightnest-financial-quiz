@@ -176,7 +176,9 @@ export default function QuizPage() {
 
         if (resultResponse.ok) {
           const resultData = await resultResponse.json();
-          router.push(`/results/${resultData.resultId}`);
+          // Store session ID for analyzing page
+          localStorage.setItem('quizSessionId', sessionId);
+          router.push('/analyzing');
         }
       } else {
         // Move to next question
