@@ -240,15 +240,12 @@ export default function ConfirmationPage() {
               </div>
             </div>
 
-            {/* Final Contact Info */}
-            <div className="text-center mt-8 p-6 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-lg">
-              <h4 className="text-xl font-bold text-white mb-2">Ready for Your Financial Transformation?</h4>
-              <p className="text-white mb-4">
-                If you have any questions or need to reschedule, contact us immediately
+            {/* Information Section */}
+            <div className="mt-8 p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+              <h3 className="text-xl font-bold text-[#333333] mb-3">Information:</h3>
+              <p className="text-[#333333] leading-relaxed">
+                Come with whatever questions you have. We want you to be able to make an informed decision, regardless if you choose us or not.
               </p>
-              <a href="mailto:support@brightnest.com" className="text-white font-semibold hover:underline">
-                support@brightnest.com
-              </a>
             </div>
           </div>
         </div>
@@ -259,21 +256,6 @@ export default function ConfirmationPage() {
       <div className="max-w-5xl mx-auto px-4 pb-8">
         <div className="bg-white rounded-lg shadow-2xl overflow-hidden">
           <div className="p-8">
-            {/* Punctuality Section */}
-            <div className="mb-6">
-              <h3 className="text-xl font-bold text-[#333333] mb-3">Punctuality:</h3>
-              <p className="text-[#333333] leading-relaxed">
-                Join your Zoom call early and in a quiet environment. Your advisor will give you their undivided attention, and we expect the same from you. If you cannot meet these expectations, email support@brightnest.com to see if there is any way we can support you.
-              </p>
-            </div>
-
-            {/* Information Section */}
-            <div className="mb-8">
-              <h3 className="text-xl font-bold text-[#333333] mb-3">Information:</h3>
-              <p className="text-[#333333] leading-relaxed">
-                Come with whatever questions you have. We want you to be able to make an informed decision, regardless if you choose us or not.
-              </p>
-            </div>
 
             {/* Step 3 Title */}
             <h2 className="text-3xl font-bold text-[#333333] text-center mb-8 leading-tight">
