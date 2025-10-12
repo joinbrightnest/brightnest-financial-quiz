@@ -14,21 +14,34 @@ interface Result {
 
 async function getResult(id: string): Promise<Result> {
   console.log('Fetching result for ID:', id);
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/results/${id}`, {
-    cache: 'no-store'
-  });
   
-  console.log('Result fetch response status:', response.status);
-  
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    console.error('Result fetch failed:', errorData);
-    throw new Error("Failed to fetch result");
+  // Retry logic for database consistency
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    console.log(`Fetch attempt ${attempt}/3`);
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/results/${id}`, {
+      cache: 'no-store'
+    });
+    
+    console.log('Result fetch response status:', response.status);
+    
+    if (response.ok) {
+      const result = await response.json();
+      console.log('Result fetched successfully:', result);
+      return result;
+    }
+    
+    if (attempt < 3) {
+      console.log(`Attempt ${attempt} failed, retrying in 1 second...`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    } else {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Result fetch failed after 3 attempts:', errorData);
+      throw new Error("Failed to fetch result");
+    }
   }
   
-  const result = await response.json();
-  console.log('Result fetched successfully:', result);
-  return result;
+  throw new Error("Failed to fetch result");
 }
 
 export default async function ResultsPage({ params }: { params: Promise<{ id: string }> }) {

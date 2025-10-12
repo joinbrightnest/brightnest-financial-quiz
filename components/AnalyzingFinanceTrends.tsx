@@ -247,6 +247,10 @@ const AnalyzingFinanceTrends = () => {
         if (resultResponse.ok) {
           const resultData = await resultResponse.json();
           console.log('Generated result data:', resultData);
+          
+          // Add a small delay to ensure database consistency
+          await new Promise(resolve => setTimeout(resolve, 500));
+          
           router.push(`/results/${resultData.resultId}`);
         } else {
           const errorData = await resultResponse.json();
