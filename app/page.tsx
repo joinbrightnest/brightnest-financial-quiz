@@ -171,11 +171,10 @@ export default function Home() {
             <div>
               <h4 className="text-sm font-bold uppercase tracking-wide mb-4">Company</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/about" className="text-gray-300 hover:text-white">About Us</Link></li>
-                <li><Link href="/careers" className="text-gray-300 hover:text-white">Careers</Link></li>
-                <li><Link href="/research" className="text-gray-300 hover:text-white">Research</Link></li>
-                <li><Link href="/press" className="text-gray-300 hover:text-white">Press</Link></li>
-                <li><Link href="/blog" className="text-gray-300 hover:text-white">Blog</Link></li>
+                <li><Link href="/book-call" className="text-gray-300 hover:text-white">Contact Us</Link></li>
+                <li><Link href="/quiz/financial-profile" className="text-gray-300 hover:text-white">Financial Profile</Link></li>
+                <li><Link href="/quiz/health-finance" className="text-gray-300 hover:text-white">Health Finance</Link></li>
+                <li><Link href="/quiz/marriage-finance" className="text-gray-300 hover:text-white">Marriage Finance</Link></li>
               </ul>
             </div>
 
@@ -183,10 +182,10 @@ export default function Home() {
             <div>
               <h4 className="text-sm font-bold uppercase tracking-wide mb-4">Resources</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="/help" className="text-gray-300 hover:text-white">Support</Link></li>
-                <li><Link href="/quiz/financial-profile" className="text-gray-300 hover:text-white">Financial Profile</Link></li>
-                <li><Link href="/quiz/health-finance" className="text-gray-300 hover:text-white">Health Finance</Link></li>
-                <li><Link href="/quiz/marriage-finance" className="text-gray-300 hover:text-white">Marriage Finance</Link></li>
+                <li><Link href="/book-call" className="text-gray-300 hover:text-white">Book a Call</Link></li>
+                <li><Link href="/quiz/financial-profile" className="text-gray-300 hover:text-white">Financial Profile Quiz</Link></li>
+                <li><Link href="/quiz/health-finance" className="text-gray-300 hover:text-white">Health Finance Quiz</Link></li>
+                <li><Link href="/quiz/marriage-finance" className="text-gray-300 hover:text-white">Marriage Finance Quiz</Link></li>
               </ul>
             </div>
 
@@ -208,13 +207,9 @@ export default function Home() {
               Copyright © 2025 BrightNest, Inc. All Rights Reserved
             </div>
             <div className="flex space-x-4 text-sm">
-              <Link href="/login" className="text-gray-400 hover:text-white underline">Login</Link>
+              <Link href="/book-call" className="text-gray-400 hover:text-white underline">Contact Us</Link>
               <span className="text-gray-600">|</span>
-              <Link href="/privacy" className="text-gray-400 hover:text-white underline">Privacy Policy</Link>
-              <span className="text-gray-600">|</span>
-              <Link href="/terms" className="text-gray-400 hover:text-white underline">Terms and Conditions</Link>
-              <span className="text-gray-600">|</span>
-              <Link href="/accessibility" className="text-gray-400 hover:text-white underline">Accessibility</Link>
+              <Link href="/quiz/financial-profile" className="text-gray-400 hover:text-white underline">Start Quiz</Link>
             </div>
           </div>
         </div>
