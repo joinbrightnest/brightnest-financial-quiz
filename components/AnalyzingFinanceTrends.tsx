@@ -10,10 +10,11 @@ interface ProgressBarProps {
   color: string;
   isActive: boolean;
   isCompleted: boolean;
+  index: number; // Add index for unique behavior
 }
 
 
-const ProgressBar = ({ label, color, isActive, isCompleted }: ProgressBarProps) => {
+const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBarProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [percentage, setPercentage] = useState(0);
 
@@ -25,16 +26,66 @@ const ProgressBar = ({ label, color, isActive, isCompleted }: ProgressBarProps) 
 
   useEffect(() => {
     if (isActive && isVisible) {
-      // Animate percentage from 0 to 100 over 2 seconds
+      // Create realistic variable speed animation
       const startTime = Date.now();
-      const duration = 2000; // 2 seconds
+      const baseDuration = 2500; // Base 2.5 seconds
       
+      // Add random variation to make each bar unique
+      const randomVariation = (Math.random() - 0.5) * 1000; // ±500ms variation
+      const duration = baseDuration + randomVariation;
+      
+      // Add micro-pauses based on index for more realistic feel
+      const pausePoints = [
+        { time: 0.3, duration: 200 + Math.random() * 300 }, // Pause at 30%
+        { time: 0.6, duration: 150 + Math.random() * 250 }, // Pause at 60%
+        { time: 0.85, duration: 100 + Math.random() * 200 }  // Pause at 85%
+      ];
+      
+      // Create realistic progress curve with variable speeds and pauses
+      let pauseOffset = 0;
       const animatePercentage = () => {
         const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        const currentPercentage = Math.floor(progress * 100);
+        let adjustedElapsed = elapsed - pauseOffset;
         
-        setPercentage(currentPercentage);
+        // Check for pause points
+        const currentProgress = Math.min(adjustedElapsed / duration, 1);
+        const pausePoint = pausePoints.find(p => 
+          currentProgress >= p.time && 
+          currentProgress < p.time + (p.duration / duration)
+        );
+        
+        if (pausePoint) {
+          // We're in a pause, don't update progress
+          requestAnimationFrame(animatePercentage);
+          return;
+        }
+        
+        const progress = Math.min(adjustedElapsed / duration, 1);
+        
+        // Create realistic progress curve with variable speeds
+        let currentPercentage;
+        if (progress < 0.2) {
+          // Slow start (0-20% of time = 0-15% progress)
+          currentPercentage = (progress / 0.2) * 15;
+        } else if (progress < 0.4) {
+          // Fast middle section (20-40% of time = 15-60% progress)
+          currentPercentage = 15 + ((progress - 0.2) / 0.2) * 45;
+        } else if (progress < 0.7) {
+          // Slow section (40-70% of time = 60-80% progress)
+          currentPercentage = 60 + ((progress - 0.4) / 0.3) * 20;
+        } else if (progress < 0.9) {
+          // Medium speed (70-90% of time = 80-95% progress)
+          currentPercentage = 80 + ((progress - 0.7) / 0.2) * 15;
+        } else {
+          // Slow finish (90-100% of time = 95-100% progress)
+          currentPercentage = 95 + ((progress - 0.9) / 0.1) * 5;
+        }
+        
+        // Add some randomness to make it feel more organic
+        const randomJitter = (Math.random() - 0.5) * 1.5; // ±0.75% jitter
+        currentPercentage = Math.max(0, Math.min(100, currentPercentage + randomJitter));
+        
+        setPercentage(Math.floor(currentPercentage));
         
         if (progress < 1) {
           requestAnimationFrame(animatePercentage);
@@ -98,10 +149,12 @@ const ProgressBar = ({ label, color, isActive, isCompleted }: ProgressBarProps) 
           className={`h-full rounded-full ${color}`}
           initial={{ width: "0%" }}
           animate={{ width: isVisible && isActive ? "100%" : isCompleted ? "100%" : "0%" }}
-              transition={{ 
-                duration: 2, 
-                ease: "easeOut"
-              }}
+          transition={{ 
+            duration: 2.5, 
+            ease: [0.25, 0.1, 0.25, 1], // Custom cubic-bezier for realistic feel
+            times: [0, 0.2, 0.4, 0.7, 0.9, 1], // Variable speed points
+            ease: "easeInOut"
+          }}
         />
       </motion.div>
     </div>
@@ -221,7 +274,7 @@ const AnalyzingFinanceTrends = () => {
       setCurrentTextIndex(4);
     }, textInterval * 4);
 
-    // Sequential progress bar animation
+    // Sequential progress bar animation with variable timing
     const progressInterval = setInterval(() => {
       setActiveBarIndex(prev => {
         if (prev < progressBars.length - 1) {
@@ -235,7 +288,7 @@ const AnalyzingFinanceTrends = () => {
           return prev;
         }
       });
-    }, 2500); // Each bar takes 2.5 seconds
+    }, 2000 + Math.random() * 1000); // Variable timing: 2-3 seconds per bar
 
     // Show intro sequence after all bars complete + 2 seconds
     const introTimer = setTimeout(() => {
@@ -455,6 +508,7 @@ const AnalyzingFinanceTrends = () => {
               color={bar.color}
               isActive={index === activeBarIndex}
               isCompleted={index < activeBarIndex}
+              index={index}
             />
           ))}
         </div>
