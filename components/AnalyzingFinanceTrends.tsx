@@ -53,8 +53,6 @@ const AnalyzingFinanceTrends = () => {
   const [showTrustText, setShowTrustText] = useState(false);
   const [showProgressDots, setShowProgressDots] = useState(false);
 
-  // Debug log
-  console.log('AnalyzingFinanceTrends component loaded');
 
   // Generate random percentages for each progress bar
   const progressBars = [
@@ -73,7 +71,7 @@ const AnalyzingFinanceTrends = () => {
     // Show progress dots after trust text
     const dotsTimer = setTimeout(() => setShowProgressDots(true), 3000);
     
-    // Process quiz results and navigate after 5 seconds
+    // Navigate to results after 5 seconds (simple loading page)
     const navigationTimer = setTimeout(async () => {
       try {
         // Get the session ID from localStorage (set during quiz)
