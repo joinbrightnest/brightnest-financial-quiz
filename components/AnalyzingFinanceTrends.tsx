@@ -53,7 +53,6 @@ const AnalyzingFinanceTrends = () => {
   const [showTrustText, setShowTrustText] = useState(false);
   const [showProgressDots, setShowProgressDots] = useState(false);
 
-  console.log('AnalyzingFinanceTrends component loaded');
 
 
   // Generate random percentages for each progress bar
