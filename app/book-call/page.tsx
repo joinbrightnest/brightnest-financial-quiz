@@ -30,6 +30,22 @@ export default function BookCallPage() {
     return () => clearInterval(timer);
   }, []);
 
+  // Calendly event listener for booking completion
+  useEffect(() => {
+    const handleCalendlyEvent = (e: any) => {
+      if (e.data.event === 'calendly.event_scheduled') {
+        // Redirect to confirmation page after successful booking
+        window.location.href = '/book-call/confirmation';
+      }
+    };
+
+    window.addEventListener('message', handleCalendlyEvent);
+    
+    return () => {
+      window.removeEventListener('message', handleCalendlyEvent);
+    };
+  }, []);
+
   return (
     <>
       {/* Calendly Script */}
@@ -125,7 +141,7 @@ export default function BookCallPage() {
               {/* Calendly Inline Widget */}
               <div 
                 className="calendly-inline-widget" 
-                data-url="https://calendly.com/privatepublish/30min?hide_event_type_details=1"
+                data-url="https://calendly.com/privatepublish/30min?hide_event_type_details=1&embed_domain=joinbrightnest.com&embed_type=Inline"
                 style={{ minWidth: '320px', height: '700px' }}
               ></div>
             </div>
