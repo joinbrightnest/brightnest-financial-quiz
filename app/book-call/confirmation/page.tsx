@@ -30,15 +30,19 @@ export default function ConfirmationPage() {
         </div>
       </div>
 
-      {/* Section 2: Pink Banner - No Overlap */}
-      <div className="bg-gradient-to-r from-pink-500 to-pink-600 py-6 px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h3 className="text-2xl font-bold text-white mb-2">
-            ✨ IMPORTANT NEXT STEPS:
-          </h3>
-          <p className="text-white text-lg">
-            Watch The Short 3 Minute Video & Complete Pre-Call Checklist To Confirm Your Appointment
-          </p>
+      {/* Section 2: Pink Banner - Full Width */}
+      <div className="relative -mt-8 z-10">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-t-3xl py-6 px-8">
+            <div className="text-center">
+              <h3 className="text-2xl font-bold text-white mb-2">
+                ✨ IMPORTANT NEXT STEPS:
+              </h3>
+              <p className="text-white text-lg">
+                Watch The Short 3 Minute Video & Complete Pre-Call Checklist To Confirm Your Appointment
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
