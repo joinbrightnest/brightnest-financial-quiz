@@ -5,89 +5,65 @@ import Link from "next/link";
 export default function ConfirmationPage() {
   return (
     <div className="min-h-screen bg-[#F8F7F5]">
-      {/* Section 1: Clean Header */}
-      <div className="bg-white py-12 px-4">
+      {/* Section 1: Dark Charcoal Background */}
+      <div className="bg-gradient-to-br from-[#333333] via-[#2a2a2a] to-[#333333] py-10 px-4">
         <div className="max-w-4xl mx-auto text-center">
           {/* Logo */}
-          <div className="mb-8">
-            <div className="inline-flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-teal-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">B</span>
-              </div>
-              <span className="text-3xl font-bold text-gray-800 font-serif">BrightNest</span>
-            </div>
+          <div className="mb-6">
+            <h1 className="text-white text-4xl font-black tracking-wider">
+              <span className="font-sans">BRIGHT</span>
+              <span className="font-serif italic ml-3 text-3xl">Nest</span>
+            </h1>
           </div>
 
           {/* Main Headline */}
-          <h1 className="text-4xl lg:text-5xl font-bold text-gray-800 mb-6 leading-tight">
-            You're All Set!
-          </h1>
+          <h2 className="text-5xl lg:text-6xl font-black text-white mb-8 leading-tight">
+            <span className="text-[#4CAF50]">
+              CONGRATULATIONS!
+            </span>
+          </h2>
 
-          {/* Subtitle */}
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Your Financial Transformation Assessment has been successfully booked. Here's what happens next:
-          </p>
-
-          {/* Confirmation Card */}
-          <div className="bg-green-50 border border-green-200 rounded-lg py-6 px-8 max-w-2xl mx-auto mb-8">
-            <div className="flex items-center justify-center space-x-3 mb-4">
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-green-800">
-                Appointment Confirmed
-              </h2>
-            </div>
-            <p className="text-green-700 text-lg">
-              We'll send you a calendar invite and meeting details shortly.
+          {/* Confirmation Banner */}
+          <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-xl py-6 px-8 max-w-3xl mx-auto mb-8 shadow-lg border-2 border-white/20">
+            <p className="text-white text-2xl font-black">
+              Confirmed: Your Financial Transformation Assessment Has Been Booked
             </p>
           </div>
         </div>
       </div>
 
-      {/* Section 2: Next Steps */}
-      <div className="bg-gray-50 py-8 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 py-8 px-8">
-            <div className="text-center">
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                Important Next Steps
+      {/* Section 2: Green Banner - Wider */}
+      <div className="relative -mt-8 z-10">
+        <div className="max-w-5xl mx-auto px-4">
+          <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-t-3xl py-6 px-8 shadow-lg relative overflow-hidden">
+            <div className="text-center relative z-10">
+              <h3 className="text-3xl font-black text-white mb-4">
+                ✨ IMPORTANT NEXT STEPS:
               </h3>
-              <p className="text-lg text-gray-600 mb-6">
-                To ensure you get the most out of your assessment, please complete these steps:
+              <p className="text-white text-xl font-bold">
+                Watch The Short 3 Minute Video & Complete Pre-Call Checklist To Confirm Your Appointment
               </p>
-              
-              <div className="flex items-center justify-center space-x-2 text-blue-600">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                </svg>
-                <span className="font-semibold">
-                  Watch the 3-minute preparation video below
-                </span>
-              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Section 3: Video Section */}
-      <div className="max-w-4xl mx-auto px-4 pb-8">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      {/* Section 3: White Card with Video */}
+      <div className="max-w-5xl mx-auto px-4 pb-8">
+        <div className="bg-white rounded-b-lg shadow-lg overflow-hidden">
           {/* Video Section */}
           <div className="p-6">
-            <div className="relative bg-gray-900 rounded-lg overflow-hidden aspect-video">
+            <div className="relative bg-gradient-to-br from-[#2a2a2a] via-[#333333] to-[#2a2a2a] rounded-lg overflow-hidden aspect-video shadow-lg">
               {/* Video Thumbnail */}
-              <div className="absolute inset-0 bg-gray-900 flex items-center justify-center">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#2a2a2a] via-[#333333] to-[#2a2a2a] flex items-center justify-center relative overflow-hidden">
                 {/* Video Content Placeholder */}
-                <div className="text-center text-white">
-                  <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-blue-700 transition-colors duration-200">
-                    <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                <div className="text-center text-white relative z-10">
+                  <div className="w-20 h-20 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg transition-transform duration-300">
+                    <svg className="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z"/>
                     </svg>
                   </div>
-                  <h4 className="text-lg font-semibold mb-2">Pre-Call Preparation Video</h4>
+                  <h4 className="text-xl font-semibold mb-2">Pre-Call Preparation Video</h4>
                   <p className="text-gray-300 text-sm">
                     Learn what to expect and how to prepare for your Financial Transformation Assessment
                   </p>
@@ -96,8 +72,8 @@ export default function ConfirmationPage() {
               
               {/* Play Button Overlay */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <button className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors duration-200">
-                  <svg className="w-6 h-6 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <button className="w-20 h-20 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform">
+                  <svg className="w-8 h-8 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M8 5v14l11-7z"/>
                   </svg>
                 </button>
