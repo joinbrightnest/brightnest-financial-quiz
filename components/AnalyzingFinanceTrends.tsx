@@ -57,16 +57,18 @@ const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBar
     <div className="w-full mb-6">
       <div className="flex justify-between items-center mb-3">
         <motion.span 
-          className={`text-sm font-medium ${isActive ? 'font-bold' : 'font-medium'}`}
+          className={`text-sm ${isActive ? 'font-bold' : 'font-medium'}`}
+          style={{
+            color: color === 'bg-red-500' ? '#ef4444' : 
+                   color === 'bg-green-500' ? '#22c55e' : 
+                   color === 'bg-teal-500' ? '#14b8a6' : 
+                   color === 'bg-pink-500' ? '#ec4899' : 
+                   color === 'bg-yellow-500' ? '#eab308' : 
+                   color === 'bg-blue-500' ? '#3b82f6' : 
+                   color === 'bg-orange-500' ? '#f97316' : '#374151'
+          }}
           animate={{ 
-            color: isActive ? 
-              (color === 'bg-red-500' ? '#ef4444' : 
-               color === 'bg-green-500' ? '#22c55e' : 
-               color === 'bg-teal-500' ? '#14b8a6' : 
-               color === 'bg-pink-500' ? '#ec4899' : 
-               color === 'bg-yellow-500' ? '#eab308' : 
-               color === 'bg-blue-500' ? '#3b82f6' : 
-               color === 'bg-orange-500' ? '#f97316' : '#374151') : '#374151'
+            fontWeight: isActive ? 'bold' : 'medium'
           }}
           transition={{ 
             duration: 0.3,
