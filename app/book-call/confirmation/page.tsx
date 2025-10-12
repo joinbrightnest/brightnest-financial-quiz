@@ -245,24 +245,14 @@ export default function ConfirmationPage() {
                   Come with whatever questions you have. We want you to be able to make an informed decision, regardless if you choose us or not.
                 </p>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
+              
+              <div className="border-t border-gray-200 pt-8 mt-8">
+                <h2 className="text-3xl font-bold text-[#333333] text-center mb-8 leading-tight">
+                  Step 3: Review Our Most Frequently Asked Questions
+                </h2>
 
-
-      {/* FAQ Video Section */}
-      <div className="max-w-5xl mx-auto px-4 pb-8">
-        <div className="bg-white rounded-lg shadow-2xl overflow-hidden">
-          <div className="p-8">
-
-            {/* Step 3 Title */}
-            <h2 className="text-3xl font-bold text-[#333333] text-center mb-8 leading-tight">
-              Step 3: Review Our Most Frequently Asked Questions
-            </h2>
-
-            {/* Video Modules Grid */}
-            <div className="grid md:grid-cols-3 gap-6">
+                {/* Video Modules Grid */}
+                <div className="grid md:grid-cols-3 gap-6">
               {/* Video Module 1 */}
               <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
                 {/* Header */}
@@ -409,20 +399,8 @@ export default function ConfirmationPage() {
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Final CTA */}
-            <div className="text-center mt-8 p-6 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-lg">
-              <h4 className="text-xl font-bold text-white mb-2">Ready to Transform Your Financial Future?</h4>
-              <p className="text-white mb-4">
-                Watch these videos to learn more about our Money Behavior System™
-              </p>
-              <p className="text-white text-sm">
-                Questions? Contact us at{" "}
-                <a href="mailto:support@brightnest.com" className="text-white font-semibold hover:underline">
-                  support@brightnest.com
-                </a>
-              </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
