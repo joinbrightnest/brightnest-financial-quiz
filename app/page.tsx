@@ -12,9 +12,6 @@ export default function Home() {
                 BrightNest
               </Link>
               <div className="hidden md:flex items-center space-x-6">
-                <Link href="/careers" className="text-gray-900 font-medium text-xs uppercase tracking-wide">
-                  Careers
-                </Link>
                 <Link href="/quiz/financial-profile" className="text-gray-900 font-medium text-xs uppercase tracking-wide">
                   Financial Profile
                 </Link>
@@ -24,14 +21,8 @@ export default function Home() {
                 <Link href="/quiz/marriage-finance" className="text-gray-900 font-medium text-xs uppercase tracking-wide">
                   Marriage Finance
                 </Link>
-                <Link href="/about" className="text-gray-900 font-medium text-xs uppercase tracking-wide">
-                  Company
-                </Link>
-                <Link href="/help" className="text-gray-900 font-medium text-xs uppercase tracking-wide">
-                  Support
-                </Link>
-                <Link href="/login" className="text-gray-900 font-medium text-xs uppercase tracking-wide">
-                  Login
+                <Link href="/book-call" className="text-gray-900 font-medium text-xs uppercase tracking-wide">
+                  Book Call
                 </Link>
               </div>
             </div>

@@ -17,7 +17,11 @@ export async function POST(request: NextRequest) {
       where: {
         sessionId,
         question: {
-          type: "text"
+          type: "text",
+          prompt: {
+            contains: "name",
+            mode: "insensitive"
+          }
         }
       },
       include: {
@@ -25,7 +29,41 @@ export async function POST(request: NextRequest) {
       }
     });
 
+    console.log('Name answer search result:', nameAnswer ? 'found' : 'not found');
+    
+    if (nameAnswer) {
+      console.log('Name answer details:', {
+        questionPrompt: nameAnswer.question.prompt,
+        answerValue: nameAnswer.value
+      });
+    }
+
     if (!nameAnswer) {
+      // Try to find any text answer as fallback
+      const anyTextAnswer = await prisma.quizAnswer.findFirst({
+        where: {
+          sessionId,
+          question: {
+            type: "text"
+          }
+        },
+        include: {
+          question: true
+        }
+      });
+      
+      console.log('Any text answer found:', anyTextAnswer ? 'yes' : 'no');
+      
+      if (anyTextAnswer) {
+        console.log('Fallback text answer:', {
+          questionPrompt: anyTextAnswer.question.prompt,
+          answerValue: anyTextAnswer.value
+        });
+        return NextResponse.json({
+          name: anyTextAnswer.value as string,
+        });
+      }
+      
       return NextResponse.json(
         { name: null },
         { status: 200 }

@@ -179,8 +179,17 @@ const AnalyzingFinanceTrends = () => {
       setShowIntroSequence(true);
     }, (progressBars.length * 2500) + 2000); // Total time: bars * 2.5s + 2s buffer
 
-    // Try to get user's name from database using sessionId
+    // Try to get user's name from localStorage first, then API as fallback
     const fetchUserName = async () => {
+      // First try to get name from localStorage (stored during quiz)
+      const storedName = localStorage.getItem('userName');
+      if (storedName) {
+        setUserName(storedName);
+        setUserNameInitial(storedName.charAt(0).toUpperCase());
+        return;
+      }
+
+      // Fallback to API if not in localStorage
       const sessionId = localStorage.getItem('quizSessionId');
       if (sessionId) {
         try {
@@ -195,6 +204,8 @@ const AnalyzingFinanceTrends = () => {
             if (data.name) {
               setUserName(data.name);
               setUserNameInitial(data.name.charAt(0).toUpperCase());
+              // Store in localStorage for future use
+              localStorage.setItem('userName', data.name);
             }
           }
         } catch (error) {
