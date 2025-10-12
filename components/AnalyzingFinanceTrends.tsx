@@ -116,6 +116,7 @@ const AnalyzingFinanceTrends = () => {
   const [activeBarIndex, setActiveBarIndex] = useState(0);
   const [completedBars, setCompletedBars] = useState<number[]>([]);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
+  const [userNameInitial, setUserNameInitial] = useState('U'); // Default to 'U'
 
   const loadingTexts = [
     "Analyzing Financial Background",
@@ -206,6 +207,12 @@ const AnalyzingFinanceTrends = () => {
       }
     }, (progressBars.length * 2500) + 2000); // Total time: bars * 2.5s + 2s buffer
 
+    // Try to get user's name from localStorage
+    const storedUserName = localStorage.getItem('userName');
+    if (storedUserName) {
+      setUserNameInitial(storedUserName.charAt(0).toUpperCase());
+    }
+
     return () => {
       clearInterval(progressInterval);
       clearTimeout(textTimer);
@@ -218,14 +225,16 @@ const AnalyzingFinanceTrends = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Top Bar with BrightNest Logo */}
-      <div className="w-full bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">B</span>
-            </div>
-            <span className="text-xl font-bold text-gray-800">BrightNest</span>
+      {/* Top Bar with BrightNest Logo and User Initial */}
+      <div className="w-full bg-[#28303B] px-6 py-4 relative">
+        {/* BrightNest text - centered horizontally within the full width */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
+          <span className="text-xl font-bold text-white font-serif">BrightNest</span>
+        </div>
+        {/* User Initial - positioned absolutely to the right */}
+        <div className="absolute right-6 top-1/2 -translate-y-1/2">
+          <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+            <span className="text-white font-bold text-sm">{userNameInitial}</span>
           </div>
         </div>
       </div>
