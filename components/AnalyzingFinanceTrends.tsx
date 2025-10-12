@@ -172,6 +172,35 @@ const AnalyzingFinanceTrends = () => {
     
     cleanupLocalStorage();
     
+    // Start AI copy generation early (during progress bars)
+    const startAICopyGeneration = async () => {
+      const sessionId = localStorage.getItem('quizSessionId');
+      if (sessionId && sessionId.match(/^c[a-z0-9]{24}$/)) {
+        try {
+          console.log('Starting AI copy generation during progress bars...');
+          const copyResponse = await fetch("/api/quiz/archetype-copy", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sessionId }),
+          });
+          
+          if (copyResponse.ok) {
+            const copyData = await copyResponse.json();
+            console.log('AI copy generated successfully during progress bars:', copyData);
+            // Store AI copy in localStorage for results page
+            localStorage.setItem('personalizedCopy', JSON.stringify(copyData.copy));
+          } else {
+            console.log('AI copy generation failed during progress bars');
+          }
+        } catch (copyError) {
+          console.log('AI copy generation error during progress bars:', copyError);
+        }
+      }
+    };
+    
+    // Start AI copy generation after a short delay (let progress bars start first)
+    const aiCopyTimer = setTimeout(startAICopyGeneration, 2000);
+    
     // Sequential text changes - each text appears once in order
     const totalDuration = progressBars.length * 2500; // Total time for all bars
     const textInterval = totalDuration / loadingTexts.length; // Equal spacing
@@ -250,14 +279,15 @@ const AnalyzingFinanceTrends = () => {
 
     fetchUserName();
 
-    return () => {
-      clearInterval(progressInterval);
-      clearTimeout(textTimer);
-      clearTimeout(textTimer2);
-      clearTimeout(textTimer3);
-      clearTimeout(textTimer4);
-      clearTimeout(introTimer);
-    };
+        return () => {
+          clearInterval(progressInterval);
+          clearTimeout(textTimer);
+          clearTimeout(textTimer2);
+          clearTimeout(textTimer3);
+          clearTimeout(textTimer4);
+          clearTimeout(introTimer);
+          clearTimeout(aiCopyTimer);
+        };
   }, [router, progressBars.length]);
 
   // Handle intro sequence completion
@@ -292,25 +322,12 @@ const AnalyzingFinanceTrends = () => {
           const resultData = await resultResponse.json();
           console.log('Generated result data:', resultData);
           
-          // Generate AI copy while user sees intro sequence
-          try {
-            console.log('Generating AI personalized copy...');
-            const copyResponse = await fetch("/api/quiz/archetype-copy", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ sessionId }),
-            });
-            
-            if (copyResponse.ok) {
-              const copyData = await copyResponse.json();
-              console.log('AI copy generated successfully:', copyData);
-              // Store AI copy in localStorage for results page
-              localStorage.setItem('personalizedCopy', JSON.stringify(copyData.copy));
-            } else {
-              console.log('AI copy generation failed, results page will use fallback');
-            }
-          } catch (copyError) {
-            console.log('AI copy generation error:', copyError);
+          // AI copy should already be generated during progress bars
+          const existingCopy = localStorage.getItem('personalizedCopy');
+          if (existingCopy) {
+            console.log('AI copy already generated during progress bars');
+          } else {
+            console.log('AI copy not found, results page will use fallback');
           }
           
           // Add a small delay to ensure database consistency
