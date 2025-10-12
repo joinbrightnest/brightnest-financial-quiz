@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { getArchetypeInsights } from "@/lib/scoring";
 
 interface Result {
@@ -12,54 +15,94 @@ interface Result {
   };
 }
 
-async function getResult(id: string): Promise<Result> {
-  console.log('Fetching result for ID:', id);
-  
-  // Retry logic for database consistency
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    console.log(`Fetch attempt ${attempt}/3`);
-    
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
-      (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3001');
-    
-    const response = await fetch(`${baseUrl}/api/results/${id}`, {
-      cache: 'no-store'
-    });
-    
-    console.log('Result fetch response status:', response.status);
-    
-    if (response.ok) {
-      const result = await response.json();
-      console.log('Result fetched successfully:', result);
-      return result;
-    }
-    
-    if (attempt < 3) {
-      console.log(`Attempt ${attempt} failed, retrying in 1 second...`);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    } else {
-      const errorData = await response.json().catch(() => ({}));
-      console.error('Result fetch failed after 3 attempts:', errorData);
-      throw new Error("Failed to fetch result");
-    }
-  }
-  
-  throw new Error("Failed to fetch result");
-}
+export default function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
+  const [result, setResult] = useState<Result | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [resultId, setResultId] = useState<string | null>(null);
 
-export default async function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  
-  let result: Result;
-  try {
-    result = await getResult(id);
-  } catch (error) {
+  useEffect(() => {
+    const initializeResult = async () => {
+      try {
+        const { id } = await params;
+        setResultId(id);
+        
+        // Retry logic for database consistency
+        for (let attempt = 1; attempt <= 10; attempt++) {
+          console.log(`Fetch attempt ${attempt}/10 for result: ${id}`);
+          
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || window.location.origin;
+          
+          const response = await fetch(`${baseUrl}/api/results/${id}`, {
+            cache: 'no-store'
+          });
+          
+          console.log('Result fetch response status:', response.status);
+          
+          if (response.ok) {
+            const resultData = await response.json();
+            console.log('Result fetched successfully:', resultData);
+            setResult(resultData);
+            setIsLoading(false);
+            return;
+          }
+          
+          if (attempt < 10) {
+            console.log(`Attempt ${attempt} failed, retrying in 2 seconds...`);
+            await new Promise(resolve => setTimeout(resolve, 2000));
+          } else {
+            const errorData = await response.json().catch(() => ({}));
+            console.error('Result fetch failed after 10 attempts:', errorData);
+            setError("Result not found");
+            setIsLoading(false);
+          }
+        }
+      } catch (err) {
+        console.error('Error initializing result:', err);
+        setError("Failed to load result");
+        setIsLoading(false);
+      }
+    };
+
+    initializeResult();
+  }, [params]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col">
+        {/* Top Bar with BrightNest Logo */}
+        <div className="w-full bg-[#28303B] px-6 py-6 relative">
+          <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
+            <span className="text-xl font-bold text-white font-serif">BrightNest</span>
+          </div>
+        </div>
+
+        {/* Loading Content */}
+        <div className="flex-1 flex items-center justify-center px-4">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Preparing Your Results</h2>
+            <p className="text-gray-600 text-lg">
+              Please wait while we finalize your personalized financial insights...
+            </p>
+            {resultId && (
+              <p className="text-sm text-gray-500 mt-2">
+                Loading result: {resultId}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !result) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
             <h2 className="text-lg font-semibold text-red-800 mb-2">Error</h2>
-            <p className="text-red-600 mb-4">Result not found</p>
+            <p className="text-red-600 mb-4">{error || "Result not found"}</p>
             <Link
               href="/quiz"
               className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
