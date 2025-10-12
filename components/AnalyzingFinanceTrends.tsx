@@ -221,7 +221,7 @@ const AnalyzingFinanceTrends = () => {
                 delay: index * 0.1
               }}
             >
-              {index <= activeBarIndex ? (
+              {index < activeBarIndex ? (
                 // Show checkmark with bar color when bar is completed
                 <motion.div 
                   className={`w-6 h-6 rounded-full flex items-center justify-center ${bar.color}`}
@@ -229,7 +229,22 @@ const AnalyzingFinanceTrends = () => {
                   animate={{ scale: 1 }}
                   transition={{ 
                     duration: 0.3,
-                    delay: index === activeBarIndex ? 2.0 : 0 // Show checkmark immediately when bar completes
+                    delay: 0 // Show checkmark immediately for completed bars
+                  }}
+                >
+                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                  </svg>
+                </motion.div>
+              ) : index === activeBarIndex ? (
+                // Show checkmark with bar color when current bar completes
+                <motion.div 
+                  className={`w-6 h-6 rounded-full flex items-center justify-center ${bar.color}`}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ 
+                    duration: 0.3,
+                    delay: 2.0 // Show checkmark after bar completes
                   }}
                 >
                   <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
