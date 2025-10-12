@@ -83,8 +83,6 @@ const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBar
 
 const AnalyzingFinanceTrends = () => {
   const router = useRouter();
-  const [showTrustText, setShowTrustText] = useState(false);
-  const [showProgressDots, setShowProgressDots] = useState(false);
   const [activeBarIndex, setActiveBarIndex] = useState(0);
   const [completedBars, setCompletedBars] = useState<number[]>([]);
 
@@ -109,10 +107,8 @@ const AnalyzingFinanceTrends = () => {
           setCompletedBars(completed => [...completed, prev]);
           return prev + 1;
         } else {
-          // All bars completed, show trust text and dots
+          // All bars completed
           setCompletedBars(completed => [...completed, prev]);
-          setShowTrustText(true);
-          setShowProgressDots(true);
           clearInterval(progressInterval);
           return prev;
         }
@@ -187,26 +183,9 @@ const AnalyzingFinanceTrends = () => {
           ))}
         </div>
 
-        {/* Trust Text */}
-        <AnimatePresence>
-          {showTrustText && (
-            <motion.div
-              className="text-center"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.6 }}
-            >
-              <p className="text-sm text-gray-600 mb-4">
-                Sit tight! We're building your perfect plan based on millions of data points from successful BrightNest users.
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Progress Dots with Checkmarks */}
         <motion.div
-          className="flex justify-center space-x-3"
+          className="flex justify-center space-x-3 mb-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4 }}
@@ -246,6 +225,18 @@ const AnalyzingFinanceTrends = () => {
               )}
             </motion.div>
           ))}
+        </motion.div>
+
+        {/* Trust Text - Always visible under dots */}
+        <motion.div
+          className="text-center"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+        >
+          <p className="text-sm text-gray-600">
+            Sit tight! We're building your perfect plan based on millions of data points from successful BrightNest users.
+          </p>
         </motion.div>
 
         {/* Loading indicator */}
