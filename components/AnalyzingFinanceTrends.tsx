@@ -13,6 +13,45 @@ interface ProgressBarProps {
   isCompleted: boolean;
 }
 
+const TypingText = ({ text }: { text: string }) => {
+  const [displayText, setDisplayText] = useState("");
+  const [showCursor, setShowCursor] = useState(true);
+
+  useEffect(() => {
+    setDisplayText("");
+    let currentIndex = 0;
+    
+    const typeInterval = setInterval(() => {
+      if (currentIndex < text.length) {
+        setDisplayText(text.slice(0, currentIndex + 1));
+        currentIndex++;
+      } else {
+        clearInterval(typeInterval);
+        // Hide cursor after typing is complete
+        setTimeout(() => setShowCursor(false), 1000);
+      }
+    }, 50); // Typing speed: 50ms per character
+
+    return () => clearInterval(typeInterval);
+  }, [text]);
+
+  // Cursor blinking animation
+  useEffect(() => {
+    const cursorInterval = setInterval(() => {
+      setShowCursor(prev => !prev);
+    }, 500);
+
+    return () => clearInterval(cursorInterval);
+  }, []);
+
+  return (
+    <span>
+      {displayText}
+      {showCursor && <span className="animate-pulse">|</span>}
+    </span>
+  );
+};
+
 const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBarProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [percentage, setPercentage] = useState(0);
@@ -108,13 +147,25 @@ const AnalyzingFinanceTrends = () => {
   ];
 
   useEffect(() => {
-    // Random text changes during each bar
-    const textInterval = setInterval(() => {
-      setCurrentTextIndex(prev => {
-        const nextIndex = Math.floor(Math.random() * loadingTexts.length);
-        return nextIndex;
-      });
-    }, 800); // Change text every 800ms
+    // Sequential text changes - each text appears once in order
+    const totalDuration = progressBars.length * 2500; // Total time for all bars
+    const textInterval = totalDuration / loadingTexts.length; // Equal spacing
+    
+    const textTimer = setTimeout(() => {
+      setCurrentTextIndex(1);
+    }, textInterval);
+    
+    const textTimer2 = setTimeout(() => {
+      setCurrentTextIndex(2);
+    }, textInterval * 2);
+    
+    const textTimer3 = setTimeout(() => {
+      setCurrentTextIndex(3);
+    }, textInterval * 3);
+    
+    const textTimer4 = setTimeout(() => {
+      setCurrentTextIndex(4);
+    }, textInterval * 4);
 
     // Sequential progress bar animation
     const progressInterval = setInterval(() => {
@@ -127,7 +178,6 @@ const AnalyzingFinanceTrends = () => {
           // All bars completed
           setCompletedBars(completed => [...completed, prev]);
           clearInterval(progressInterval);
-          clearInterval(textInterval);
           return prev;
         }
       });
@@ -167,7 +217,10 @@ const AnalyzingFinanceTrends = () => {
 
     return () => {
       clearInterval(progressInterval);
-      clearInterval(textInterval);
+      clearTimeout(textTimer);
+      clearTimeout(textTimer2);
+      clearTimeout(textTimer3);
+      clearTimeout(textTimer4);
       clearTimeout(navigationTimer);
     };
   }, [router, progressBars.length]);
@@ -182,26 +235,9 @@ const AnalyzingFinanceTrends = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <motion.h1 
-            className="text-xl font-semibold text-gray-800 mb-2"
-            key={currentTextIndex}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-          >
-            {loadingTexts[currentTextIndex]}
-            <motion.span
-              animate={{ opacity: [1, 0, 1] }}
-              transition={{ 
-                duration: 1.5, 
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              ...
-            </motion.span>
-          </motion.h1>
+          <h1 className="text-xl font-semibold text-gray-800 mb-2 min-h-[2rem]">
+            <TypingText text={loadingTexts[currentTextIndex]} />
+          </h1>
         </motion.div>
 
         {/* Progress Bars */}
