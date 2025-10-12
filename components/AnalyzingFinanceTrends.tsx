@@ -54,7 +54,17 @@ const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBar
   }, [isActive, isVisible, isCompleted]);
 
   return (
-    <div className="w-full mb-6">
+    <motion.div 
+      className="w-full mb-6"
+      animate={{ 
+        scale: isActive ? 1.05 : 1,
+        y: isActive ? -2 : 0
+      }}
+      transition={{ 
+        duration: 0.3,
+        ease: "easeInOut"
+      }}
+    >
       <div className="flex justify-between items-center mb-3">
         <span className="text-sm font-medium text-gray-700">{label}</span>
         <motion.span 
@@ -78,7 +88,7 @@ const ProgressBar = ({ label, color, delay, isActive, isCompleted }: ProgressBar
           }}
         />
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -189,7 +199,7 @@ const AnalyzingFinanceTrends = () => {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
-      <div className="relative z-10 max-w-4xl w-full">
+      <div className="relative z-10 w-full max-w-none">
         {/* Header */}
         <motion.div
           className="text-center mb-8"
@@ -245,7 +255,7 @@ const AnalyzingFinanceTrends = () => {
         </motion.div>
 
         {/* Progress Bars */}
-        <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 mb-6">
+        <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 mb-6 mx-4">
           {progressBars.map((bar, index) => (
             <ProgressBar
               key={index}
