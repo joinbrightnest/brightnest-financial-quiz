@@ -88,14 +88,15 @@ const AnalyzingFinanceTrends = () => {
   const [activeBarIndex, setActiveBarIndex] = useState(0);
 
 
-  // Progress bars configuration
+  // Progress bars configuration - 7 bars like Noom
   const progressBars = [
-    { label: "Spending Patterns", color: "bg-rose-500" },
-    { label: "Saving Habits", color: "bg-green-500" },
-    { label: "Financial Confidence", color: "bg-sky-500" },
-    { label: "Emotional Triggers", color: "bg-violet-500" },
-    { label: "Goal Alignment", color: "bg-amber-500" },
-    { label: "Decision-Making Consistency", color: "bg-blue-500" },
+    { label: "DEMOGRAPHIC PROFILE", color: "bg-red-500", dotColor: "text-red-500" },
+    { label: "FINANCIAL GOALS", color: "bg-green-500", dotColor: "text-green-500" },
+    { label: "SPENDING HISTORY", color: "bg-teal-500", dotColor: "text-teal-500" },
+    { label: "SAVINGS & INVESTMENTS", color: "bg-pink-500", dotColor: "text-pink-500" },
+    { label: "DEBT MANAGEMENT", color: "bg-yellow-500", dotColor: "text-yellow-500" },
+    { label: "FINANCIAL CONFIDENCE", color: "bg-blue-500", dotColor: "text-blue-500" },
+    { label: "DECISION-MAKING STYLE", color: "bg-orange-500", dotColor: "text-orange-500" },
   ];
 
   useEffect(() => {
@@ -154,7 +155,7 @@ const AnalyzingFinanceTrends = () => {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
-      <div className="relative z-10 max-w-2xl w-full">
+      <div className="relative z-10 max-w-4xl w-full">
         {/* Header */}
         <motion.div
           className="text-center mb-8"
@@ -163,14 +164,8 @@ const AnalyzingFinanceTrends = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <h1 className="text-xl font-semibold text-gray-800 mb-2">
-            Analyzing Your Financial Behavior Trends...
+            Matching Financial Behavior Trends...
           </h1>
-          <motion.div
-            className="w-16 h-1 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full mx-auto"
-            initial={{ width: 0 }}
-            animate={{ width: 64 }}
-            transition={{ duration: 1, delay: 0.5 }}
-          />
         </motion.div>
 
         {/* Progress Bars */}
@@ -199,38 +194,48 @@ const AnalyzingFinanceTrends = () => {
               transition={{ duration: 0.6 }}
             >
               <p className="text-sm text-gray-600 mb-4">
-                Sit tight — we're crafting your personalized Money Mindset Plan using data from thousands of successful BrightNest users.
+                Sit tight! We're building your perfect plan based on millions of data points from successful BrightNest users.
               </p>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Progress Dots */}
+        {/* Progress Dots with Checkmarks */}
         <AnimatePresence>
           {showProgressDots && (
             <motion.div
-              className="flex justify-center space-x-2"
+              className="flex justify-center space-x-3"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.4 }}
             >
-              {[0, 1, 2, 3, 4].map((index) => (
+              {progressBars.map((bar, index) => (
                 <motion.div
                   key={index}
-                  className="w-2 h-2 bg-[#4CAF50] rounded-full"
-                  initial={{ opacity: 0.3, scale: 0.8 }}
+                  className="flex items-center justify-center"
+                  initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ 
-                    opacity: [0.3, 1, 0.3],
-                    scale: [0.8, 1.2, 0.8]
+                    opacity: index <= activeBarIndex ? 1 : 0.3,
+                    scale: index <= activeBarIndex ? 1 : 0.8
                   }}
                   transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    delay: index * 0.2,
-                    ease: "easeInOut"
+                    duration: 0.5,
+                    delay: index * 0.1
                   }}
-                />
+                >
+                  {index < activeBarIndex ? (
+                    // Show checkmark with bar color
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${bar.color.replace('bg-', 'bg-')}`}>
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                      </svg>
+                    </div>
+                  ) : (
+                    // Show empty dot
+                    <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
+                  )}
+                </motion.div>
               ))}
             </motion.div>
           )}
