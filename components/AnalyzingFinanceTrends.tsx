@@ -200,14 +200,46 @@ const AnalyzingFinanceTrends = () => {
           <h1 className="text-xl font-semibold text-gray-800 mb-2">
             {loadingTexts[currentTextIndex]}
             <motion.span
-              animate={{ opacity: [1, 0, 1] }}
+              initial={{ opacity: 0 }}
+              animate={{ 
+                opacity: [0, 1, 1, 1, 0, 0, 0, 0]
+              }}
               transition={{ 
-                duration: 1.5, 
+                duration: 2.4, 
                 repeat: Infinity,
-                ease: "easeInOut"
+                ease: "easeInOut",
+                times: [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 1]
               }}
             >
-              ...
+              .
+            </motion.span>
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ 
+                opacity: [0, 0, 1, 1, 1, 0, 0, 0]
+              }}
+              transition={{ 
+                duration: 2.4, 
+                repeat: Infinity,
+                ease: "easeInOut",
+                times: [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 1]
+              }}
+            >
+              .
+            </motion.span>
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ 
+                opacity: [0, 0, 0, 1, 1, 1, 0, 0]
+              }}
+              transition={{ 
+                duration: 2.4, 
+                repeat: Infinity,
+                ease: "easeInOut",
+                times: [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 1]
+              }}
+            >
+              .
             </motion.span>
           </h1>
         </motion.div>
