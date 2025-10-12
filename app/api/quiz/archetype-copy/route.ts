@@ -32,13 +32,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!session.result) {
-      return NextResponse.json(
-        { error: "Result not found for this session" },
-        { status: 404 }
-      );
-    }
-
     // Build quiz summary from answers
     const quizSummary = buildQuizSummary(session.answers);
     
@@ -53,22 +46,36 @@ export async function POST(request: NextRequest) {
       answer: typeof answer.value === 'string' ? answer.value : JSON.stringify(answer.value)
     }));
 
-    // Prepare request for AI service
-    const copyRequest: ArchetypeCopyRequest = {
-      archetype: session.result.archetype,
-      quizSummary,
-      scores: session.result.scores as Record<string, number>,
-      userName: userName || undefined,
-      quizAnswers
-    };
+    let personalizedCopy;
 
-    // Generate personalized copy
-    const personalizedCopy = await archetypeCopyService.generatePersonalizedCopy(copyRequest);
+    if (session.result) {
+      // Result exists - generate personalized copy
+      const copyRequest: ArchetypeCopyRequest = {
+        archetype: session.result.archetype,
+        quizSummary,
+        scores: session.result.scores as Record<string, number>,
+        userName: userName || undefined,
+        quizAnswers
+      };
+
+      personalizedCopy = await archetypeCopyService.generatePersonalizedCopy(copyRequest);
+    } else {
+      // Result doesn't exist yet - generate fallback copy based on answers
+      const fallbackRequest: ArchetypeCopyRequest = {
+        archetype: "Stability Seeker", // Default archetype
+        quizSummary,
+        scores: { debt: 0, savings: 0, spending: 0, investing: 0 }, // Default scores
+        userName: userName || undefined,
+        quizAnswers
+      };
+
+      personalizedCopy = await archetypeCopyService.generatePersonalizedCopy(fallbackRequest);
+    }
 
     return NextResponse.json({
       copy: personalizedCopy,
-      archetype: session.result.archetype,
-      scores: session.result.scores
+      archetype: session.result?.archetype || "Stability Seeker",
+      scores: session.result?.scores || { debt: 0, savings: 0, spending: 0, investing: 0 }
     });
 
   } catch (error) {
