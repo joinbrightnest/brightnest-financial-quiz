@@ -30,9 +30,9 @@ export default function ConfirmationPage() {
         </div>
       </div>
 
-      {/* Section 2: Pink Banner - Full Width */}
+      {/* Section 2: Pink Banner - Wider */}
       <div className="relative -mt-8 z-10">
-        <div className="max-w-4xl mx-auto px-4">
+        <div className="max-w-5xl mx-auto px-4">
           <div className="bg-gradient-to-r from-pink-500 to-pink-600 rounded-t-3xl py-6 px-8">
             <div className="text-center">
               <h3 className="text-2xl font-bold text-white mb-2">
@@ -47,8 +47,8 @@ export default function ConfirmationPage() {
       </div>
 
       {/* Section 3: White Card with Video */}
-      <div className="max-w-4xl mx-auto px-4 pb-8">
-        <div className="bg-white rounded-b-lg shadow-2xl max-w-2xl mx-auto overflow-hidden">
+      <div className="max-w-5xl mx-auto px-4 pb-8">
+        <div className="bg-white rounded-b-lg shadow-2xl overflow-hidden">
           {/* Video Section */}
           <div className="p-6">
             <div className="relative bg-gray-900 rounded-lg overflow-hidden aspect-video">
