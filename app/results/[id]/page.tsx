@@ -117,62 +117,42 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%239C92AC%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
-      
-      {/* Floating Orbs */}
-      <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full opacity-20 blur-xl animate-pulse"></div>
-      <div className="absolute bottom-20 right-10 w-48 h-48 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full opacity-20 blur-xl animate-pulse delay-1000"></div>
-      <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full opacity-20 blur-xl animate-pulse delay-500"></div>
-
-      <div className="relative z-10 container mx-auto px-4 py-12">
-        <div className="max-w-5xl mx-auto">
-          {/* Brand Header */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-xl">B</span>
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto">
+          
+          {/* Header Section */}
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center space-x-3 mb-8">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-teal-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">B</span>
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                BrightNest
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-800">BrightNest</h1>
             </div>
-            <div className="text-sm text-purple-300 font-medium tracking-wider uppercase mb-8">
-              Financial Intelligence Platform
+            
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 mb-8">
+              <div className="text-sm text-gray-500 font-medium mb-4">Your Financial Archetype</div>
+              <h2 className="text-4xl font-bold text-blue-600 mb-4">
+                {copy.archetype}
+              </h2>
+              <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
+                {copy.header.subtitle}
+              </p>
             </div>
           </div>
 
-          {/* Hero Section */}
-          <div className="text-center mb-16">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl blur-2xl opacity-30"></div>
-              <div className="relative bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-12 shadow-2xl">
-                <div className="inline-block px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-white font-semibold text-sm mb-6">
-                  Your Financial Archetype
-                </div>
-                <h2 className="text-5xl font-bold text-white mb-6 leading-tight">
-                  {copy.archetype}
-                </h2>
-                <p className="text-xl text-purple-100 leading-relaxed max-w-3xl mx-auto">
-                  {copy.header.subtitle}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Validation Section */}
-          <div className="mb-16">
-            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 shadow-xl">
+          {/* Recognition Section */}
+          <div className="mb-20">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-4">Recognition</h3>
-                  <p className="text-lg text-purple-100 leading-relaxed">
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4">Recognition</h3>
+                  <p className="text-lg text-gray-600 leading-relaxed">
                     {copy.validation}
                   </p>
                 </div>
@@ -180,44 +160,44 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             </div>
           </div>
 
-          {/* Insights Section */}
-          <div className="mb-16">
-            <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-8 shadow-xl">
-              <div className="flex items-center space-x-4 mb-8">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {/* Personalized Insights Section */}
+          <div className="mb-20">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+              <div className="flex items-center space-x-3 mb-8">
+                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-bold text-white">Personalized Insights</h3>
+                <h3 className="text-2xl font-bold text-gray-800">Personalized Insights</h3>
               </div>
               <div className="space-y-6">
                 {copy.personalized_insights.map((insight, index) => (
                   <div key={index} className="flex items-start space-x-4">
-                    <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                       <span className="text-white font-bold text-sm">
                         {index + 1}
                       </span>
                     </div>
-                    <p className="text-lg text-purple-100 leading-relaxed">{insight}</p>
+                    <p className="text-lg text-gray-600 leading-relaxed">{insight}</p>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Challenge Section */}
-          <div className="mb-16">
-            <div className="bg-gradient-to-r from-red-500/20 to-orange-500/20 backdrop-blur-lg border border-red-500/30 rounded-2xl p-8 shadow-xl">
+          {/* Hidden Challenge Section */}
+          <div className="mb-20">
+            <div className="bg-orange-50 rounded-xl border border-orange-100 p-8">
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-4">The Hidden Challenge</h3>
-                  <p className="text-lg text-red-100 leading-relaxed">
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4">The Hidden Challenge</h3>
+                  <p className="text-lg text-gray-600 leading-relaxed">
                     {copy.problem_realization}
                   </p>
                 </div>
@@ -225,18 +205,18 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             </div>
           </div>
 
-          {/* Solution Section */}
-          <div className="mb-16">
-            <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-lg border border-green-500/30 rounded-2xl p-8 shadow-xl">
+          {/* Transformation Section */}
+          <div className="mb-20">
+            <div className="bg-green-50 rounded-xl border border-green-100 p-8">
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-4">The Transformation</h3>
-                  <p className="text-lg text-green-100 leading-relaxed">
+                  <h3 className="text-2xl font-bold text-gray-800 mb-4">Your Opportunity</h3>
+                  <p className="text-lg text-gray-600 leading-relaxed">
                     {copy.hope_and_solution}
                   </p>
                 </div>
@@ -246,51 +226,51 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
 
           {/* CTA Section */}
           <div className="text-center mb-16">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl blur-2xl opacity-40"></div>
-              <div className="relative bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-12 shadow-2xl">
-                <h3 className="text-4xl font-bold text-white mb-6">
-                  {copy.cta.headline}
-                </h3>
-                <p className="text-xl text-purple-100 mb-8 leading-relaxed max-w-2xl mx-auto">
-                  {copy.cta.body}
-                </p>
-                <div className="space-y-4">
-                  <Link
-                    href="/book-call"
-                    className="inline-block w-full md:w-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white px-12 py-4 rounded-2xl font-bold text-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-2xl hover:shadow-purple-500/25 transform hover:-translate-y-2"
-                  >
-                    {copy.cta.button}
-                  </Link>
-                  <div className="text-purple-300 font-medium">
-                    or
-                  </div>
-                  <button className="w-full md:w-auto bg-white/20 backdrop-blur-lg border border-white/30 text-white px-12 py-4 rounded-2xl font-bold text-lg hover:bg-white/30 transition-all duration-300">
-                    {copy.cta.secondary}
-                  </button>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12">
+              <h3 className="text-3xl font-bold text-gray-800 mb-6">
+                {copy.cta.headline}
+              </h3>
+              <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-2xl mx-auto">
+                {copy.cta.body}
+              </p>
+              <div className="space-y-4">
+                <Link
+                  href="/book-call"
+                  className="inline-block w-full md:w-auto bg-gradient-to-r from-blue-600 to-teal-600 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-teal-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                >
+                  {copy.cta.button}
+                </Link>
+                <div className="text-gray-500 font-medium">
+                  or
                 </div>
+                <button className="w-full md:w-auto bg-gray-100 text-gray-700 px-10 py-4 rounded-lg font-semibold text-lg hover:bg-gray-200 transition-all duration-300">
+                  {copy.cta.secondary}
+                </button>
               </div>
+              <p className="text-sm text-gray-500 mt-6">
+                No pressure — just clarity and guidance.
+              </p>
             </div>
           </div>
 
           {/* Footer */}
           <div className="text-center">
-            <div className="inline-flex items-center space-x-6 text-purple-300">
+            <div className="inline-flex items-center space-x-6 text-gray-500">
               <Link
                 href="/quiz"
-                className="hover:text-white transition-colors duration-300 font-medium"
+                className="hover:text-gray-700 transition-colors duration-300 font-medium"
               >
                 Take the quiz again
               </Link>
-              <div className="w-1 h-1 bg-purple-400 rounded-full"></div>
+              <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
               <Link
                 href="/"
-                className="hover:text-white transition-colors duration-300 font-medium"
+                className="hover:text-gray-700 transition-colors duration-300 font-medium"
               >
                 Back to Home
               </Link>
             </div>
-            <div className="mt-8 text-purple-400 text-sm">
+            <div className="mt-8 text-gray-400 text-sm">
               © 2024 BrightNest. All rights reserved.
             </div>
           </div>
