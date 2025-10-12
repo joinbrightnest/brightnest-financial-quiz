@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import ResultIntroSequence from "./ResultIntroSequence";
 
 interface ProgressBarProps {
   label: string;
@@ -115,7 +114,6 @@ const AnalyzingFinanceTrends = () => {
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [userNameInitial, setUserNameInitial] = useState('U'); // Default to 'U'
   const [userName, setUserName] = useState(''); // Full user name
-  const [showIntroSequence, setShowIntroSequence] = useState(false);
 
   const loadingTexts = [
     "Analyzing Financial Background",
@@ -174,9 +172,36 @@ const AnalyzingFinanceTrends = () => {
       });
     }, 2500); // Each bar takes 2.5 seconds
 
-    // Show intro sequence after all bars complete + 2 seconds
-    const introTimer = setTimeout(() => {
-      setShowIntroSequence(true);
+    // Navigate to results after all bars complete + 2 seconds
+    const navigationTimer = setTimeout(async () => {
+      try {
+        // Get the session ID from localStorage (set during quiz)
+        const sessionId = localStorage.getItem('quizSessionId');
+        
+        if (sessionId) {
+          // Generate the result
+          const resultResponse = await fetch("/api/quiz/result", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sessionId }),
+          });
+
+          if (resultResponse.ok) {
+            const resultData = await resultResponse.json();
+            router.push(`/results/${resultData.resultId}`);
+          } else {
+            // Fallback if result generation fails
+            router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
+          }
+        } else {
+          // Fallback if no session ID
+          router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
+        }
+      } catch (error) {
+        console.error('Error generating result:', error);
+        // Fallback navigation
+        router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
+      }
     }, (progressBars.length * 2500) + 2000); // Total time: bars * 2.5s + 2s buffer
 
     // Try to get user's name from localStorage first, then API as fallback
@@ -222,63 +247,10 @@ const AnalyzingFinanceTrends = () => {
       clearTimeout(textTimer2);
       clearTimeout(textTimer3);
       clearTimeout(textTimer4);
-      clearTimeout(introTimer);
+      clearTimeout(navigationTimer);
     };
   }, [router, progressBars.length]);
 
-  // Handle intro sequence completion
-  const handleIntroComplete = async () => {
-    try {
-      // Get the session ID from localStorage (set during quiz)
-      const sessionId = localStorage.getItem('quizSessionId');
-      console.log('Session ID from localStorage:', sessionId);
-      
-      if (sessionId) {
-        console.log('Generating result for session:', sessionId);
-        // Generate a new result for this session
-        const resultResponse = await fetch("/api/quiz/result", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId }),
-        });
-
-        console.log('Result generation response status:', resultResponse.status);
-
-        if (resultResponse.ok) {
-          const resultData = await resultResponse.json();
-          console.log('Generated result data:', resultData);
-          
-          // Add a small delay to ensure database consistency
-          await new Promise(resolve => setTimeout(resolve, 500));
-          
-          router.push(`/results/${resultData.resultId}`);
-        } else {
-          const errorData = await resultResponse.json();
-          console.error('Result generation failed:', errorData);
-          // Fallback to existing result
-          router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
-        }
-      } else {
-        console.log('No session ID found, using fallback');
-        // Fallback to existing result
-        router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
-      }
-    } catch (error) {
-      console.error('Error generating result:', error);
-      // Fallback navigation to existing result
-      router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
-    }
-  };
-
-  // Show intro sequence if ready
-  if (showIntroSequence) {
-    return (
-      <ResultIntroSequence 
-        name={userName || 'there'} 
-        onComplete={handleIntroComplete}
-      />
-    );
-  }
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
