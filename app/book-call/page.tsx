@@ -72,6 +72,29 @@ export default function BookCallPage() {
         strategy="afterInteractive"
       />
       
+      {/* Custom CSS to hide Calendly logo/bio section */}
+      <style jsx global>{`
+        .calendly-inline-widget iframe {
+          height: 700px !important;
+        }
+        /* Hide the event type details section */
+        .calendly-inline-widget .calendly-event-type-details {
+          display: none !important;
+        }
+        /* Hide the organizer info section */
+        .calendly-inline-widget .calendly-organizer-info {
+          display: none !important;
+        }
+        /* Hide any logo or branding */
+        .calendly-inline-widget .calendly-logo {
+          display: none !important;
+        }
+        /* Hide description section */
+        .calendly-inline-widget .calendly-description {
+          display: none !important;
+        }
+      `}</style>
+      
       <div className="min-h-screen bg-[#F8F7F5]">
         {/* Section 1: Dark Purple Background */}
         <div className="bg-[#333333] py-6 px-4">
@@ -159,7 +182,7 @@ export default function BookCallPage() {
               {/* Calendly Inline Widget */}
               <div 
                 className="calendly-inline-widget" 
-                data-url="https://calendly.com/privatepublish/30min?hide_event_type_details=1&embed_domain=joinbrightnest.com&embed_type=Inline"
+                data-url="https://calendly.com/privatepublish/30min?hide_event_type_details=1&hide_gdpr_banner=1&hide_landing_page_details=1&embed_domain=joinbrightnest.com&embed_type=Inline"
                 style={{ minWidth: '320px', height: '700px' }}
               ></div>
             </div>
