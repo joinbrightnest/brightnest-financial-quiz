@@ -17,6 +17,7 @@ interface ProgressBarProps {
 const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBarProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const [percentage, setPercentage] = useState(0);
+  const [visualWidth, setVisualWidth] = useState(0);
 
   useEffect(() => {
     if (isActive) {
@@ -96,18 +97,24 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
         
         setPercentage(Math.floor(currentPercentage));
         
+        // Update visual width with variable speed animation
+        setVisualWidth(currentPercentage);
+        
         if (progress < 1) {
           requestAnimationFrame(animatePercentage);
         } else {
           setPercentage(100);
+          setVisualWidth(100);
         }
       };
       
       requestAnimationFrame(animatePercentage);
     } else if (isCompleted) {
       setPercentage(100);
+      setVisualWidth(100);
     } else {
       setPercentage(0);
+      setVisualWidth(0);
     }
   }, [isActive, isVisible, isCompleted]);
 
@@ -154,14 +161,9 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
           ease: "easeInOut"
         }}
       >
-        <motion.div
-          className={`h-full rounded-full ${color}`}
-          initial={{ width: "0%" }}
-          animate={{ width: isVisible && isActive ? "100%" : isCompleted ? "100%" : "0%" }}
-          transition={{ 
-            duration: 3, 
-            ease: "easeInOut"
-          }}
+        <div
+          className={`h-full rounded-full ${color} transition-all duration-75 ease-out`}
+          style={{ width: `${visualWidth}%` }}
         />
       </motion.div>
     </div>
