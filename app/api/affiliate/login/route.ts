@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { findMockAffiliate } from "@/lib/mock-affiliates";
 
 const prisma = new PrismaClient();
-
-// Mock affiliate data for now (until database is set up)
-const mockAffiliates: any[] = [];
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,10 +16,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find affiliate
-    const affiliate = await prisma.affiliate.findUnique({
-      where: { email },
-    });
+    // Find affiliate (mock data for now)
+    const affiliate = findMockAffiliate(email);
 
     if (!affiliate) {
       return NextResponse.json(
@@ -55,15 +51,8 @@ export async function POST(request: NextRequest) {
       timestamp: Date.now(),
     })).toString('base64');
 
-    // Create audit log
-    await prisma.affiliateAuditLog.create({
-      data: {
-        affiliateId: affiliate.id,
-        action: "login",
-        ipAddress: request.headers.get("x-forwarded-for") || "unknown",
-        userAgent: request.headers.get("user-agent") || "unknown",
-      },
-    });
+    // Create audit log (mock for now)
+    console.log(`Affiliate login: ${affiliate.email} from ${request.headers.get("x-forwarded-for") || "unknown"}`);
 
     return NextResponse.json({
       success: true,

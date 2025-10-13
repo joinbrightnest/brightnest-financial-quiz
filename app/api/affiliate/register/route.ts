@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { mockAffiliates, addMockAffiliate, findMockAffiliate } from "@/lib/mock-affiliates";
 
 const prisma = new PrismaClient();
-
-// Mock affiliate data for now (until database is set up)
-const mockAffiliates: any[] = [];
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,7 +17,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if affiliate already exists (mock check for now)
-    const existingAffiliate = mockAffiliates.find(aff => aff.email === email);
+    const existingAffiliate = findMockAffiliate(email);
     if (existingAffiliate) {
       return NextResponse.json(
         { error: "An affiliate with this email already exists" },
@@ -66,7 +64,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Add to mock array
-    mockAffiliates.push(affiliate);
+    addMockAffiliate(affiliate);
 
     return NextResponse.json({
       success: true,
