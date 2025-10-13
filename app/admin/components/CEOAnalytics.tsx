@@ -89,30 +89,45 @@ export default function CEOAnalytics() {
   };
 
   const handleExport = async (format: 'csv' | 'json' | 'crm') => {
+    // Simple export functionality - generate CSV/JSON from current data
+    if (!data) return;
+    
     try {
-      const response = await fetch('/api/export-leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          format,
-          dateRange,
-          exportType: 'ceo-global'
-        })
-      });
-
-      if (format === 'crm') {
-        const result = await response.json();
-        alert(`Data sent to CRM successfully! ${result.message || ''}`);
-      } else {
-        const blob = await response.blob();
+      if (format === 'csv') {
+        const csvContent = [
+          "Metric,Value",
+          `Total Leads,${data.totalLeads}`,
+          `Total Completions,${data.totalCompletions}`,
+          `Conversion Rate,${data.conversionRate}%`,
+          `Average Completion Time,${data.avgCompletionTime}min`,
+          `Distinct Archetypes,${data.distinctArchetypes}`,
+          `Assessment Categories,${data.assessmentCategories}`,
+          `Total Revenue,$${data.totalRevenue}`,
+        ].join('\n');
+        
+        const blob = new Blob([csvContent], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `ceo-analytics-${dateRange}.${format}`;
+        a.download = `affiliate-analytics-${dateRange}.csv`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
+      } else if (format === 'json') {
+        const jsonContent = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonContent], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `affiliate-analytics-${dateRange}.json`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } else if (format === 'crm') {
+        // Mock CRM integration
+        alert('Data would be sent to CRM system. This is a demo feature.');
       }
     } catch (err) {
       console.error('Export error:', err);
