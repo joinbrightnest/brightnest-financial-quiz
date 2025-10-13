@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/lib/admin-auth";
+import CEOAnalytics from "../components/CEOAnalytics";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -94,6 +95,7 @@ export default function AdminDashboard() {
   const [selectedQuizType, setSelectedQuizType] = useState<string>('all');
   // const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [showComparison, setShowComparison] = useState(false);
+  const [showCEOAnalytics, setShowCEOAnalytics] = useState(false);
 
   // Format duration from milliseconds to human readable format
   const formatDuration = (ms: number): string => {
@@ -346,22 +348,17 @@ export default function AdminDashboard() {
               <span className="text-sm font-medium">Quiz Management</span>
             </button>
             <button
-              onClick={() => window.open('/analytics', '_blank')}
-              className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors group"
+              onClick={() => setShowCEOAnalytics(!showCEOAnalytics)}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
+                showCEOAnalytics 
+                  ? 'text-blue-700 bg-blue-50 border-r-2 border-blue-600' 
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
             >
-              <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
-              <span className="text-sm font-medium">Analytics Dashboard</span>
-            </button>
-            <button
-              onClick={() => window.open('/analytics/ceo', '_blank')}
-              className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors group"
-            >
-              <svg className="w-5 h-5 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`w-5 h-5 group-hover:text-gray-600 ${showCEOAnalytics ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
-              <span className="text-sm font-medium">CEO Dashboard</span>
+              <span className="text-sm font-medium">CEO Analytics</span>
             </button>
           </nav>
 
@@ -454,6 +451,13 @@ export default function AdminDashboard() {
             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
             <p className="text-gray-600 mt-1">BrightNest Quiz Analytics</p>
           </div>
+
+          {/* CEO Analytics Section */}
+          {showCEOAnalytics && (
+            <div className="mb-8">
+              <CEOAnalytics />
+            </div>
+          )}
 
           {/* Stats Cards */}
           {isLoading && !hasInitiallyLoaded.current ? (
