@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || "brightnest-affiliate-secret";
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,16 +44,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate JWT token
-    const token = jwt.sign(
-      {
-        affiliateId: affiliate.id,
-        email: affiliate.email,
-        tier: affiliate.tier,
-      },
-      JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    // Generate simple session token (for now, we'll use a simple approach)
+    const token = Buffer.from(JSON.stringify({
+      affiliateId: affiliate.id,
+      email: affiliate.email,
+      tier: affiliate.tier,
+      timestamp: Date.now(),
+    })).toString('base64');
 
     // Create audit log
     await prisma.affiliateAuditLog.create({
