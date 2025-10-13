@@ -35,55 +35,41 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
       const complexityVariation = (Math.random() - 0.5) * 1000; // ±500ms variation
       const duration = baseDuration + complexityVariation;
       
-      // Create fluid progress curve with variable speeds (no pauses)
-      const animatePercentage = () => {
+      // Use smooth incremental progress with variable speed (like LoadingScreenDisplay)
+      let lastProgress = 0;
+      let currentSpeed = 1;
+      let nextSpeedChange = Math.random() * 500 + 300; // Change speed every 300-800ms
+      
+      const interval = setInterval(() => {
         const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
         
-        // Create realistic variable speed progress with dramatic speed changes
-        let currentPercentage;
-        
-        if (progress < 0.1) {
-          // Very fast initial burst (0-10% of time = 0-25% progress)
-          currentPercentage = progress * 250;
-        } else if (progress < 0.25) {
-          // Slow crawl (10-25% of time = 25-30% progress)
-          currentPercentage = 25 + (progress - 0.1) * 33.33;
-        } else if (progress < 0.4) {
-          // Medium speed (25-40% of time = 30-50% progress)
-          currentPercentage = 30 + (progress - 0.25) * 133.33;
-        } else if (progress < 0.6) {
-          // Very slow section (40-60% of time = 50-60% progress)
-          currentPercentage = 50 + (progress - 0.4) * 50;
-        } else if (progress < 0.75) {
-          // Fast acceleration (60-75% of time = 60-80% progress)
-          currentPercentage = 60 + (progress - 0.6) * 133.33;
-        } else if (progress < 0.9) {
-          // Slow down again (75-90% of time = 80-85% progress)
-          currentPercentage = 80 + (progress - 0.75) * 33.33;
-        } else {
-          // Final burst to finish (90-100% of time = 85-100% progress)
-          currentPercentage = 85 + (progress - 0.9) * 150;
+        // Randomly change speed at intervals
+        if (elapsed > nextSpeedChange) {
+          // More dramatic speed changes: 0.5x to 1.8x
+          currentSpeed = 0.5 + Math.random() * 1.3;
+          nextSpeedChange = elapsed + (Math.random() * 600 + 400); // Next change in 400-1000ms
         }
         
-        // Add more randomness to make it feel more organic and realistic
-        const randomJitter = (Math.random() - 0.5) * 3; // ±1.5% jitter
-        currentPercentage = Math.max(0, Math.min(100, currentPercentage + randomJitter));
+        // Calculate progress increment with current speed
+        const baseIncrement = (100 / duration) * 50; // Base progress per 50ms
+        const increment = baseIncrement * currentSpeed;
+        lastProgress += increment;
         
-        setPercentage(Math.floor(currentPercentage));
+        // Make sure we don't overshoot
+        const maxProgress = (elapsed / duration) * 100;
+        lastProgress = Math.min(lastProgress, maxProgress);
         
-        // Update visual width with variable speed animation
-        setVisualWidth(currentPercentage);
-        
-        if (progress < 1) {
-          requestAnimationFrame(animatePercentage);
-        } else {
+        // Ensure we reach 100% at the end
+        if (elapsed >= duration) {
           setPercentage(100);
           setVisualWidth(100);
+          clearInterval(interval);
+        } else {
+          const currentPercentage = Math.min(lastProgress, 99);
+          setPercentage(Math.floor(currentPercentage));
+          setVisualWidth(currentPercentage);
         }
-      };
-      
-      requestAnimationFrame(animatePercentage);
+      }, 50);
     } else if (isCompleted) {
       setPercentage(100);
       setVisualWidth(100);
