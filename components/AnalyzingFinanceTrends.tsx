@@ -26,14 +26,9 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
 
   useEffect(() => {
     if (isActive && isVisible) {
-      // Create realistic variable speed animation
+      // Create realistic variable speed animation within each bar
       const startTime = Date.now();
-      
-      // Much more dramatic speed variations based on index
-      const speedMultipliers = [1.2, 0.8, 1.5, 0.6, 1.3, 0.9, 1.1]; // Different speeds per bar
-      const baseDuration = 3000; // Base 3 seconds
-      const speedMultiplier = speedMultipliers[index] || 1;
-      const duration = baseDuration * speedMultiplier;
+      const duration = 3000; // 3 seconds per bar
       
       // Add micro-pauses based on index for more realistic feel
       const pausePoints = [
@@ -63,28 +58,21 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
         
         const progress = Math.min(adjustedElapsed / duration, 1);
         
-        // Create much more dramatic progress curves based on index
+        // Create variable speed progress within each bar: faster, slower, slower, faster
         let currentPercentage;
-        const curveType = index % 4; // 4 different curve types
         
-        if (curveType === 0) {
-          // Fast start, slow finish
-          currentPercentage = progress < 0.3 ? progress * 80 : 24 + (progress - 0.3) * 95;
-        } else if (curveType === 1) {
-          // Slow start, fast middle, slow finish
-          currentPercentage = progress < 0.2 ? progress * 20 : 
-                            progress < 0.6 ? 4 + (progress - 0.2) * 90 : 
-                            40 + (progress - 0.6) * 150;
-        } else if (curveType === 2) {
-          // Steady progress with occasional jumps
-          currentPercentage = progress < 0.5 ? progress * 60 : 
-                            progress < 0.7 ? 30 + (progress - 0.5) * 200 : 
-                            70 + (progress - 0.7) * 100;
+        if (progress < 0.2) {
+          // Fast start (0-20% of time = 0-40% progress)
+          currentPercentage = progress * 200;
+        } else if (progress < 0.5) {
+          // Slow section (20-50% of time = 40-60% progress)
+          currentPercentage = 40 + (progress - 0.2) * 66.67;
+        } else if (progress < 0.8) {
+          // Slower section (50-80% of time = 60-80% progress)
+          currentPercentage = 60 + (progress - 0.5) * 66.67;
         } else {
-          // Erratic progress
-          currentPercentage = progress < 0.4 ? progress * 30 : 
-                            progress < 0.8 ? 12 + (progress - 0.4) * 110 : 
-                            56 + (progress - 0.8) * 110;
+          // Fast finish (80-100% of time = 80-100% progress)
+          currentPercentage = 80 + (progress - 0.8) * 100;
         }
         
         // Add some randomness to make it feel more organic
@@ -157,8 +145,7 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
           animate={{ width: isVisible && isActive ? "100%" : isCompleted ? "100%" : "0%" }}
           transition={{ 
             duration: 3, 
-            ease: "easeInOut",
-            delay: index * 0.1 // Stagger the visual animation too
+            ease: "easeInOut"
           }}
         />
       </motion.div>
@@ -279,26 +266,26 @@ const AnalyzingFinanceTrends = () => {
       setCurrentTextIndex(4);
     }, textInterval * 4);
 
-    // Start all bars with staggered delays for more realistic effect
-    progressBars.forEach((bar, index) => {
-      const delay = index * (800 + Math.random() * 1200); // 0.8-2s between each bar
-      setTimeout(() => {
-        setActiveBarIndex(index);
-        // Mark previous bars as completed
-        setCompletedBars(prev => [...prev, ...Array.from({length: index}, (_, i) => i)]);
-      }, delay);
-    });
-
-    // Complete all bars after total duration
-    const totalDuration = progressBars.length * 2000 + 3000; // Extra buffer
-    setTimeout(() => {
-      setCompletedBars(Array.from({length: progressBars.length}, (_, i) => i));
-    }, totalDuration);
+    // Sequential progress bar animation - one at a time
+    const progressInterval = setInterval(() => {
+      setActiveBarIndex(prev => {
+        if (prev < progressBars.length - 1) {
+          // Mark current bar as completed
+          setCompletedBars(completed => [...completed, prev]);
+          return prev + 1;
+        } else {
+          // All bars completed
+          setCompletedBars(completed => [...completed, prev]);
+          clearInterval(progressInterval);
+          return prev;
+        }
+      });
+    }, 3000); // Each bar takes 3 seconds
 
     // Show intro sequence after all bars complete + 2 seconds
     const introTimer = setTimeout(() => {
       setShowIntroSequence(true);
-    }, totalDuration + 2000); // Use the calculated total duration
+    }, (progressBars.length * 3000) + 2000); // Total time: bars * 3s + 2s buffer
 
     // Try to get user's name from localStorage first, then API as fallback
     const fetchUserName = async () => {
@@ -338,6 +325,7 @@ const AnalyzingFinanceTrends = () => {
     fetchUserName();
 
         return () => {
+          clearInterval(progressInterval);
           clearTimeout(textTimer);
           clearTimeout(textTimer2);
           clearTimeout(textTimer3);
