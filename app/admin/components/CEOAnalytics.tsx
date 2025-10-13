@@ -166,9 +166,9 @@ export default function CEOAnalytics() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">CEO Analytics</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Affiliate Analytics</h2>
           <p className="text-gray-600 mt-1">
-            Executive overview of all quiz performance and lead generation
+            Track affiliate performance, conversions, and revenue attribution
           </p>
         </div>
         

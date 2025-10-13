@@ -96,6 +96,7 @@ export default function AdminDashboard() {
   // const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [showComparison, setShowComparison] = useState(false);
   const [showCEOAnalytics, setShowCEOAnalytics] = useState(false);
+  const [showMainDashboard, setShowMainDashboard] = useState(true);
 
   // Format duration from milliseconds to human readable format
   const formatDuration = (ms: number): string => {
@@ -332,8 +333,18 @@ export default function AdminDashboard() {
             <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
               Analytics
             </div>
-            <button className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 bg-blue-50 border-r-2 border-blue-600 rounded-l-lg">
-              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <button 
+              onClick={() => {
+                setShowMainDashboard(true);
+                setShowCEOAnalytics(false);
+              }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
+                showMainDashboard 
+                  ? 'text-blue-700 bg-blue-50 border-r-2 border-blue-600' 
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <svg className={`w-5 h-5 group-hover:text-gray-600 ${showMainDashboard ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
               <span className="text-sm font-medium">Dashboard</span>
@@ -348,7 +359,10 @@ export default function AdminDashboard() {
               <span className="text-sm font-medium">Quiz Management</span>
             </button>
             <button
-              onClick={() => setShowCEOAnalytics(!showCEOAnalytics)}
+              onClick={() => {
+                setShowCEOAnalytics(true);
+                setShowMainDashboard(false);
+              }}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
                 showCEOAnalytics 
                   ? 'text-blue-700 bg-blue-50 border-r-2 border-blue-600' 
@@ -358,7 +372,7 @@ export default function AdminDashboard() {
               <svg className={`w-5 h-5 group-hover:text-gray-600 ${showCEOAnalytics ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
-              <span className="text-sm font-medium">CEO Analytics</span>
+              <span className="text-sm font-medium">Affiliate Analytics</span>
             </button>
           </nav>
 
@@ -459,8 +473,11 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* Stats Cards */}
-          {isLoading && !hasInitiallyLoaded.current ? (
+          {/* Main Dashboard Content */}
+          {showMainDashboard && (
+            <>
+              {/* Stats Cards */}
+              {isLoading && !hasInitiallyLoaded.current ? (
             <div className="text-center py-8 opacity-50 transition-opacity duration-300">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
               <p className="text-sm text-gray-500">Loading stats...</p>
@@ -1058,6 +1075,8 @@ export default function AdminDashboard() {
               </div>
             </>
           ) : null}
+            </>
+          )}
         </div>
       </div>
     </div>
