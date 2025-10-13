@@ -28,13 +28,19 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
     if (isActive && isVisible) {
       // Create realistic variable speed animation within each bar
       const startTime = Date.now();
-      const duration = 3000; // 3 seconds per bar
       
-      // Add micro-pauses based on index for more realistic feel
+      // Add random duration variation to simulate different processing complexity
+      const baseDuration = 3000; // Base 3 seconds
+      const complexityVariation = (Math.random() - 0.5) * 1000; // ±500ms variation
+      const duration = baseDuration + complexityVariation;
+      
+      // Add realistic processing pauses
       const pausePoints = [
-        { time: 0.3, duration: 200 + Math.random() * 300 }, // Pause at 30%
-        { time: 0.6, duration: 150 + Math.random() * 250 }, // Pause at 60%
-        { time: 0.85, duration: 100 + Math.random() * 200 }  // Pause at 85%
+        { time: 0.15, duration: 300 + Math.random() * 400 }, // Pause at 15% - data loading
+        { time: 0.35, duration: 200 + Math.random() * 300 }, // Pause at 35% - processing
+        { time: 0.55, duration: 400 + Math.random() * 500 }, // Pause at 55% - complex calculation
+        { time: 0.8, duration: 150 + Math.random() * 250 }, // Pause at 80% - validation
+        { time: 0.95, duration: 100 + Math.random() * 200 }  // Pause at 95% - finalizing
       ];
       
       // Create realistic progress curve with variable speeds and pauses
@@ -58,25 +64,34 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
         
         const progress = Math.min(adjustedElapsed / duration, 1);
         
-        // Create variable speed progress within each bar: faster, slower, slower, faster
+        // Create realistic variable speed progress with dramatic speed changes
         let currentPercentage;
         
-        if (progress < 0.2) {
-          // Fast start (0-20% of time = 0-40% progress)
-          currentPercentage = progress * 200;
-        } else if (progress < 0.5) {
-          // Slow section (20-50% of time = 40-60% progress)
-          currentPercentage = 40 + (progress - 0.2) * 66.67;
-        } else if (progress < 0.8) {
-          // Slower section (50-80% of time = 60-80% progress)
-          currentPercentage = 60 + (progress - 0.5) * 66.67;
+        if (progress < 0.1) {
+          // Very fast initial burst (0-10% of time = 0-25% progress)
+          currentPercentage = progress * 250;
+        } else if (progress < 0.25) {
+          // Slow crawl (10-25% of time = 25-30% progress)
+          currentPercentage = 25 + (progress - 0.1) * 33.33;
+        } else if (progress < 0.4) {
+          // Medium speed (25-40% of time = 30-50% progress)
+          currentPercentage = 30 + (progress - 0.25) * 133.33;
+        } else if (progress < 0.6) {
+          // Very slow section (40-60% of time = 50-60% progress)
+          currentPercentage = 50 + (progress - 0.4) * 50;
+        } else if (progress < 0.75) {
+          // Fast acceleration (60-75% of time = 60-80% progress)
+          currentPercentage = 60 + (progress - 0.6) * 133.33;
+        } else if (progress < 0.9) {
+          // Slow down again (75-90% of time = 80-85% progress)
+          currentPercentage = 80 + (progress - 0.75) * 33.33;
         } else {
-          // Fast finish (80-100% of time = 80-100% progress)
-          currentPercentage = 80 + (progress - 0.8) * 100;
+          // Final burst to finish (90-100% of time = 85-100% progress)
+          currentPercentage = 85 + (progress - 0.9) * 150;
         }
         
-        // Add some randomness to make it feel more organic
-        const randomJitter = (Math.random() - 0.5) * 1.5; // ±0.75% jitter
+        // Add more randomness to make it feel more organic and realistic
+        const randomJitter = (Math.random() - 0.5) * 3; // ±1.5% jitter
         currentPercentage = Math.max(0, Math.min(100, currentPercentage + randomJitter));
         
         setPercentage(Math.floor(currentPercentage));
@@ -266,7 +281,7 @@ const AnalyzingFinanceTrends = () => {
       setCurrentTextIndex(4);
     }, textInterval * 4);
 
-    // Sequential progress bar animation - one at a time
+    // Sequential progress bar animation - one at a time with variable timing
     const progressInterval = setInterval(() => {
       setActiveBarIndex(prev => {
         if (prev < progressBars.length - 1) {
@@ -280,7 +295,7 @@ const AnalyzingFinanceTrends = () => {
           return prev;
         }
       });
-    }, 3000); // Each bar takes 3 seconds
+    }, 3000 + Math.random() * 1000); // Variable timing: 3-4 seconds per bar
 
     // Show intro sequence after all bars complete + 2 seconds
     const introTimer = setTimeout(() => {
