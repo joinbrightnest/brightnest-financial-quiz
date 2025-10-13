@@ -4,6 +4,9 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+// Mock affiliate data for now (until database is set up)
+const mockAffiliates: any[] = [];
+
 export async function POST(request: NextRequest) {
   try {
     const { name, email, password, tier, payoutMethod } = await request.json();
@@ -15,11 +18,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if affiliate already exists
-    const existingAffiliate = await prisma.affiliate.findUnique({
-      where: { email },
-    });
-
+    // Check if affiliate already exists (mock check for now)
+    const existingAffiliate = mockAffiliates.find(aff => aff.email === email);
     if (existingAffiliate) {
       return NextResponse.json(
         { error: "An affiliate with this email already exists" },
@@ -43,35 +43,30 @@ export async function POST(request: NextRequest) {
 
     const commissionRate = commissionRates[tier as keyof typeof commissionRates] || 0.10;
 
-    // Create affiliate
-    const affiliate = await prisma.affiliate.create({
-      data: {
-        name,
-        email,
-        passwordHash,
-        tier: tier || "quiz",
-        referralCode,
-        customLink,
-        payoutMethod: payoutMethod || "stripe",
-        commissionRate,
-        isApproved: tier === "quiz", // Auto-approve quiz tier, others need approval
-      },
-    });
+    // Create affiliate (mock for now)
+    const affiliate = {
+      id: `aff_${Date.now()}`,
+      name,
+      email,
+      passwordHash,
+      tier: tier || "quiz",
+      referralCode,
+      customLink,
+      payoutMethod: payoutMethod || "stripe",
+      commissionRate,
+      isApproved: tier === "quiz", // Auto-approve quiz tier, others need approval
+      totalClicks: 0,
+      totalLeads: 0,
+      totalBookings: 0,
+      totalSales: 0,
+      totalCommission: 0,
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-    // Create audit log
-    await prisma.affiliateAuditLog.create({
-      data: {
-        affiliateId: affiliate.id,
-        action: "account_created",
-        details: {
-          tier,
-          payoutMethod,
-          commissionRate,
-        },
-        ipAddress: request.headers.get("x-forwarded-for") || "unknown",
-        userAgent: request.headers.get("user-agent") || "unknown",
-      },
-    });
+    // Add to mock array
+    mockAffiliates.push(affiliate);
 
     return NextResponse.json({
       success: true,

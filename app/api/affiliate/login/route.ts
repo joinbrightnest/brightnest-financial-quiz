@@ -4,6 +4,9 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+// Mock affiliate data for now (until database is set up)
+const mockAffiliates: any[] = [];
+
 export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
