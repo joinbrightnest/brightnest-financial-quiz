@@ -19,19 +19,20 @@ model User {
 }
 
 model QuizSession {
-  id          String       @id @default(cuid())
-  userId      String?
-  quizType    String       @default("financial-profile") // Type of quiz (financial-profile, health-finance, marriage-finance)
-  startedAt   DateTime     @default(now())
-  completedAt DateTime?
-  status      String       @default("in_progress")
-  durationMs  Int?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  answers     QuizAnswer[]
-  user        User?        @relation(fields: [userId], references: [id])
-  result      Result?
-  articleViews ArticleView[]
+  id            String       @id @default(cuid())
+  userId        String?
+  quizType      String       @default("financial-profile") // Type of quiz (financial-profile, health-finance, marriage-finance)
+  affiliateCode String?      @map("affiliate_code") // Referral code from affiliate link
+  startedAt     DateTime     @default(now())
+  completedAt   DateTime?
+  status        String       @default("in_progress")
+  durationMs    Int?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  answers       QuizAnswer[]
+  user          User?        @relation(fields: [userId], references: [id])
+  result        Result?
+  articleViews  ArticleView[]
 
   @@map("quiz_sessions")
 }
@@ -214,4 +215,121 @@ model LoadingScreen {
   question        QuizQuestion? @relation(fields: [triggerQuestionId], references: [id])
 
   @@map("loading_screens")
+}
+
+// Affiliate System Models
+model Affiliate {
+  id              String      @id @default(cuid())
+  name            String
+  email           String      @unique
+  passwordHash    String      @map("password_hash")
+  tier            AffiliateTier @default(quiz)
+  referralCode    String      @unique @map("referral_code")
+  customLink      String      @map("custom_link")
+  payoutMethod    PayoutMethod? @map("payout_method")
+  payoutDetails   Json?       @map("payout_details")
+  commissionRate  Decimal     @default(0.1000) @map("commission_rate") @db.Decimal(5, 4)
+  totalClicks     Int         @default(0) @map("total_clicks")
+  totalLeads      Int         @default(0) @map("total_leads")
+  totalBookings   Int         @default(0) @map("total_bookings")
+  totalSales      Int         @default(0) @map("total_sales")
+  totalCommission Decimal     @default(0.00) @map("total_commission") @db.Decimal(10, 2)
+  isActive        Boolean     @default(true) @map("is_active")
+  isApproved      Boolean     @default(false) @map("is_approved")
+  stripeAccountId String?     @map("stripe_account_id")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+  
+  clicks          AffiliateClick[]
+  conversions     AffiliateConversion[]
+  payouts         AffiliatePayout[]
+  auditLogs       AffiliateAuditLog[]
+
+  @@map("affiliates")
+}
+
+model AffiliateClick {
+  id          String    @id @default(cuid())
+  affiliateId String    @map("affiliate_id")
+  ipAddress   String?   @map("ip_address")
+  userAgent   String?   @map("user_agent")
+  referrer    String?
+  utmSource   String?   @map("utm_source")
+  utmMedium   String?   @map("utm_medium")
+  utmCampaign String?   @map("utm_campaign")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  affiliate   Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+
+  @@map("affiliate_clicks")
+}
+
+model AffiliateConversion {
+  id          String            @id @default(cuid())
+  affiliateId String            @map("affiliate_id")
+  leadEmail   String?           @map("lead_email")
+  sessionId   String?           @map("session_id")
+  status      ConversionStatus  @default(lead)
+  amount      Decimal?          @db.Decimal(10, 2)
+  commission  Decimal?          @db.Decimal(10, 2)
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+  
+  affiliate   Affiliate         @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+
+  @@map("affiliate_conversions")
+}
+
+model AffiliatePayout {
+  id              String        @id @default(cuid())
+  affiliateId     String        @map("affiliate_id")
+  amountDue       Decimal       @map("amount_due") @db.Decimal(10, 2)
+  status          PayoutStatus  @default(pending)
+  paidAt          DateTime?     @map("paid_at")
+  stripeTransferId String?      @map("stripe_transfer_id")
+  notes           String?
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  
+  affiliate       Affiliate     @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+
+  @@map("affiliate_payouts")
+}
+
+model AffiliateAuditLog {
+  id          String    @id @default(cuid())
+  affiliateId String?   @map("affiliate_id")
+  action      String
+  details     Json?
+  ipAddress   String?   @map("ip_address")
+  userAgent   String?   @map("user_agent")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  affiliate   Affiliate? @relation(fields: [affiliateId], references: [id], onDelete: SetNull)
+
+  @@map("affiliate_audit_logs")
+}
+
+enum AffiliateTier {
+  quiz
+  creator
+  agency
+}
+
+enum PayoutMethod {
+  stripe
+  paypal
+  wise
+}
+
+enum ConversionStatus {
+  lead
+  booked_call
+  sale
+}
+
+enum PayoutStatus {
+  pending
+  paid
+  rejected
 }

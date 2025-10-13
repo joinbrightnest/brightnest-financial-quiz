@@ -5,11 +5,15 @@ export async function POST(request: NextRequest) {
   try {
     const { quizType = "financial-profile" } = await request.json();
 
+    // Get affiliate code from cookie
+    const affiliateCode = request.cookies.get("affiliate_ref")?.value;
+
     // Create a new quiz session
     const session = await prisma.quizSession.create({
       data: {
         quizType,
         status: "in_progress",
+        affiliateCode,
       },
     });
 

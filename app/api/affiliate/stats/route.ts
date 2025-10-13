@@ -1,0 +1,141 @@
+import { NextRequest, NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
+import jwt from "jsonwebtoken";
+
+const prisma = new PrismaClient();
+const JWT_SECRET = process.env.JWT_SECRET || "brightnest-affiliate-secret";
+
+export async function GET(request: NextRequest) {
+  try {
+    const authHeader = request.headers.get("authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json(
+        { error: "No token provided" },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.substring(7);
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+
+    const { searchParams } = new URL(request.url);
+    const dateRange = searchParams.get("dateRange") || "30d";
+
+    // Calculate date filter
+    const now = new Date();
+    let startDate: Date;
+    
+    switch (dateRange) {
+      case "7d":
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        break;
+      case "30d":
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        break;
+      case "90d":
+        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+        break;
+      case "1y":
+        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+        break;
+      default:
+        startDate = new Date(0); // All time
+    }
+
+    // Get affiliate data
+    const affiliate = await prisma.affiliate.findUnique({
+      where: { id: decoded.affiliateId },
+      include: {
+        clicks: {
+          where: {
+            createdAt: {
+              gte: startDate,
+            },
+          },
+        },
+        conversions: {
+          where: {
+            createdAt: {
+              gte: startDate,
+            },
+          },
+        },
+        payouts: {
+          where: {
+            createdAt: {
+              gte: startDate,
+            },
+          },
+        },
+      },
+    });
+
+    if (!affiliate) {
+      return NextResponse.json(
+        { error: "Affiliate not found" },
+        { status: 404 }
+      );
+    }
+
+    // Calculate stats
+    const totalClicks = affiliate.clicks.length;
+    const totalLeads = affiliate.conversions.filter(c => c.status === "lead").length;
+    const totalBookings = affiliate.conversions.filter(c => c.status === "booked_call").length;
+    const totalSales = affiliate.conversions.filter(c => c.status === "sale").length;
+    const totalCommission = affiliate.conversions.reduce((sum, c) => sum + (c.commission || 0), 0);
+    const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
+    const averageSaleValue = totalSales > 0 ? totalCommission / totalSales : 0;
+
+    // Calculate pending and paid commissions
+    const pendingCommission = affiliate.payouts
+      .filter(p => p.status === "pending")
+      .reduce((sum, p) => sum + p.amountDue, 0);
+    
+    const paidCommission = affiliate.payouts
+      .filter(p => p.status === "paid")
+      .reduce((sum, p) => sum + p.amountDue, 0);
+
+    // Generate daily stats (mock data for now)
+    const dailyStats = generateDailyStats(dateRange, totalClicks, totalSales, totalCommission);
+
+    const stats = {
+      totalClicks,
+      totalLeads,
+      totalBookings,
+      totalSales,
+      totalCommission,
+      conversionRate,
+      averageSaleValue,
+      pendingCommission,
+      paidCommission,
+      dailyStats,
+    };
+
+    return NextResponse.json(stats);
+  } catch (error) {
+    console.error("Affiliate stats error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch stats" },
+      { status: 500 }
+    );
+  }
+}
+
+function generateDailyStats(dateRange: string, totalClicks: number, totalSales: number, totalCommission: number) {
+  const now = new Date();
+  const days = dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : dateRange === "90d" ? 90 : 365;
+  const data = [];
+
+  for (let i = days - 1; i >= 0; i--) {
+    const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+    data.push({
+      date: date.toISOString().split('T')[0],
+      clicks: Math.floor(Math.random() * 10) + 1,
+      leads: Math.floor(Math.random() * 3) + 1,
+      sales: Math.floor(Math.random() * 2),
+      commission: Math.floor(Math.random() * 100) + 20,
+    });
+  }
+
+  return data;
+}

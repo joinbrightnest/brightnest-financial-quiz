@@ -36,100 +36,54 @@ export async function GET(request: NextRequest) {
       affiliateWhereClause.tier = tier;
     }
 
-    // Mock affiliate data (in production, this would come from your affiliate tables)
-    const mockAffiliates = [
-      {
-        id: "aff_001",
-        name: "Sarah Johnson",
-        tier: "creator",
-        referral_code: "SARAH2024",
-        commission_rate: 0.15,
-        total_clicks: 1250,
-        total_leads: 89,
-        total_bookings: 23,
-        total_sales: 12,
-        total_commission: 2400,
-        created_at: new Date("2024-01-15"),
+    // Get real affiliate data from database
+    const affiliates = await prisma.affiliate.findMany({
+      where: {
+        isActive: true,
+        isApproved: true,
+        ...(tier !== "all" && { tier }),
       },
-      {
-        id: "aff_002", 
-        name: "Mike Chen",
-        tier: "quiz",
-        referral_code: "MIKEQUIZ",
-        commission_rate: 0.10,
-        total_clicks: 890,
-        total_leads: 67,
-        total_bookings: 18,
-        total_sales: 8,
-        total_commission: 1200,
-        created_at: new Date("2024-02-01"),
+      include: {
+        clicks: {
+          where: {
+            createdAt: {
+              gte: startDate,
+            },
+          },
+        },
+        conversions: {
+          where: {
+            createdAt: {
+              gte: startDate,
+            },
+          },
+        },
       },
-      {
-        id: "aff_003",
-        name: "FinanceGuru Agency",
-        tier: "agency",
-        referral_code: "FINANCEGURU",
-        commission_rate: 0.20,
-        total_clicks: 2100,
-        total_leads: 156,
-        total_bookings: 45,
-        total_sales: 28,
-        total_commission: 5600,
-        created_at: new Date("2024-01-01"),
+      orderBy: {
+        totalCommission: "desc",
       },
-      {
-        id: "aff_004",
-        name: "Emma Davis",
-        tier: "creator",
-        referral_code: "EMMADAVIS",
-        commission_rate: 0.12,
-        total_clicks: 750,
-        total_leads: 45,
-        total_bookings: 12,
-        total_sales: 6,
-        total_commission: 900,
-        created_at: new Date("2024-02-15"),
-      },
-      {
-        id: "aff_005",
-        name: "QuizMaster Pro",
-        tier: "quiz",
-        referral_code: "QUIZMASTER",
-        commission_rate: 0.08,
-        total_clicks: 1100,
-        total_leads: 78,
-        total_bookings: 22,
-        total_sales: 11,
-        total_commission: 1320,
-        created_at: new Date("2024-01-20"),
-      },
-    ];
-
-    // Filter by tier if specified
-    const filteredAffiliates = tier === "all" 
-      ? mockAffiliates 
-      : mockAffiliates.filter(affiliate => affiliate.tier === tier);
+    });
 
     // Calculate overview metrics
-    const totalActiveAffiliates = filteredAffiliates.length;
-    const totalLeadsFromAffiliates = filteredAffiliates.reduce((sum, aff) => sum + aff.total_leads, 0);
-    const totalSalesValue = filteredAffiliates.reduce((sum, aff) => sum + (aff.total_sales * 200), 0); // Mock $200 per sale
-    const totalCommissionsPaid = filteredAffiliates.reduce((sum, aff) => sum + (aff.total_commission * 0.7), 0); // 70% paid
-    const totalCommissionsPending = filteredAffiliates.reduce((sum, aff) => sum + (aff.total_commission * 0.3), 0); // 30% pending
+    const totalActiveAffiliates = affiliates.length;
+    const totalLeadsFromAffiliates = affiliates.reduce((sum, aff) => sum + aff.totalLeads, 0);
+    const totalSalesValue = affiliates.reduce((sum, aff) => sum + (aff.totalSales * 200), 0); // Mock $200 per sale
+    const totalCommissionsPaid = affiliates.reduce((sum, aff) => sum + (aff.totalCommission * 0.7), 0); // 70% paid
+    const totalCommissionsPending = affiliates.reduce((sum, aff) => sum + (aff.totalCommission * 0.3), 0); // 30% pending
 
     // Generate top affiliates performance data
-    const topAffiliates = filteredAffiliates.map(affiliate => ({
+    const topAffiliates = affiliates.map(affiliate => ({
       id: affiliate.id,
       name: affiliate.name,
       tier: affiliate.tier,
-      clicks: affiliate.total_clicks,
-      leads: affiliate.total_leads,
-      bookedCalls: affiliate.total_bookings,
-      sales: affiliate.total_sales,
-      conversionRate: affiliate.total_clicks > 0 ? (affiliate.total_leads / affiliate.total_clicks) * 100 : 0,
-      revenue: affiliate.total_sales * 200, // Mock $200 per sale
-      commission: affiliate.total_commission,
-      lastActive: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(), // Random within last 7 days
+      clicks: affiliate.clicks.length,
+      leads: affiliate.conversions.filter(c => c.status === "lead").length,
+      bookedCalls: affiliate.conversions.filter(c => c.status === "booked_call").length,
+      sales: affiliate.conversions.filter(c => c.status === "sale").length,
+      conversionRate: affiliate.clicks.length > 0 ? (affiliate.conversions.filter(c => c.status === "sale").length / affiliate.clicks.length) * 100 : 0,
+      revenue: affiliate.conversions.filter(c => c.status === "sale").length * 200, // Mock $200 per sale
+      commission: affiliate.totalCommission,
+      lastActive: affiliate.updatedAt.toISOString(),
     })).sort((a, b) => b.revenue - a.revenue);
 
     // Generate traffic source breakdown
