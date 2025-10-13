@@ -35,35 +35,10 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
       const complexityVariation = (Math.random() - 0.5) * 1000; // ±500ms variation
       const duration = baseDuration + complexityVariation;
       
-      // Add realistic processing pauses
-      const pausePoints = [
-        { time: 0.15, duration: 300 + Math.random() * 400 }, // Pause at 15% - data loading
-        { time: 0.35, duration: 200 + Math.random() * 300 }, // Pause at 35% - processing
-        { time: 0.55, duration: 400 + Math.random() * 500 }, // Pause at 55% - complex calculation
-        { time: 0.8, duration: 150 + Math.random() * 250 }, // Pause at 80% - validation
-        { time: 0.95, duration: 100 + Math.random() * 200 }  // Pause at 95% - finalizing
-      ];
-      
-      // Create realistic progress curve with variable speeds and pauses
-      let pauseOffset = 0;
+      // Create fluid progress curve with variable speeds (no pauses)
       const animatePercentage = () => {
         const elapsed = Date.now() - startTime;
-        let adjustedElapsed = elapsed - pauseOffset;
-        
-        // Check for pause points
-        const currentProgress = Math.min(adjustedElapsed / duration, 1);
-        const pausePoint = pausePoints.find(p => 
-          currentProgress >= p.time && 
-          currentProgress < p.time + (p.duration / duration)
-        );
-        
-        if (pausePoint) {
-          // We're in a pause, don't update progress
-          requestAnimationFrame(animatePercentage);
-          return;
-        }
-        
-        const progress = Math.min(adjustedElapsed / duration, 1);
+        const progress = Math.min(elapsed / duration, 1);
         
         // Create realistic variable speed progress with dramatic speed changes
         let currentPercentage;
@@ -162,7 +137,7 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
         }}
       >
         <div
-          className={`h-full rounded-full ${color} transition-all duration-75 ease-out`}
+          className={`h-full rounded-full ${color} transition-all duration-50 ease-out`}
           style={{ width: `${visualWidth}%` }}
         />
       </motion.div>
