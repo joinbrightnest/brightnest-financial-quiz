@@ -11,6 +11,7 @@ import PerformanceMetrics from "./components/PerformanceMetrics";
 import AnswersTable from "./components/AnswersTable";
 import SegmentCards from "./components/SegmentCards";
 import FiltersBar from "./components/FiltersBar";
+import AffiliateOverview from "./components/AffiliateOverview";
 import { AnalyticsData, QuizType, ArchetypeData } from "./types";
 
 export default function AnalyticsDashboard() {
@@ -35,6 +36,7 @@ export default function AnalyticsDashboard() {
     { id: "overview", name: "Overview", icon: "📊" },
     { id: "answers", name: "Answers", icon: "📋" },
     { id: "segments", name: "Segments", icon: "🧩" },
+    { id: "affiliates", name: "Affiliates", icon: "💼" },
   ];
 
   useEffect(() => {
@@ -260,6 +262,16 @@ export default function AnalyticsDashboard() {
               data={analyticsData.archetypeSegments}
               onSegmentClick={handleArchetypeFilter}
             />
+          </motion.div>
+        )}
+
+        {activeTab === "affiliates" && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <AffiliateOverview />
           </motion.div>
         )}
       </div>

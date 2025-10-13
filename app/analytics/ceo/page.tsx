@@ -354,6 +354,100 @@ export default function CEODashboard() {
           </motion.div>
         </div>
 
+        {/* Affiliate Performance Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.6 }}
+          className="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-gray-900">
+              Affiliate Performance
+            </h3>
+            <button
+              onClick={() => window.open('/analytics?tab=affiliates', '_blank')}
+              className="text-sm text-blue-600 hover:text-blue-700"
+            >
+              View Full Affiliate Analytics →
+            </button>
+          </div>
+
+          {/* Top 5 Affiliates */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {[
+              { name: "FinanceGuru Agency", revenue: 5600, leads: 156, roi: 3.2 },
+              { name: "Sarah Johnson", revenue: 2400, leads: 89, roi: 2.8 },
+              { name: "QuizMaster Pro", revenue: 1320, leads: 78, roi: 2.1 },
+              { name: "Mike Chen", revenue: 1200, leads: 67, roi: 1.9 },
+              { name: "Emma Davis", revenue: 900, leads: 45, roi: 1.6 },
+            ].map((affiliate, index) => (
+              <div key={affiliate.name} className="border border-gray-200 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium text-gray-900 text-sm">
+                    {affiliate.name}
+                  </h4>
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                    ROI: {affiliate.roi}x
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Revenue:</span>
+                    <span className="font-medium">${affiliate.revenue.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Leads:</span>
+                    <span className="font-medium">{affiliate.leads}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Affiliate vs Organic Revenue */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-medium text-gray-900 mb-3">Revenue Breakdown</h4>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Affiliate Revenue</span>
+                  <span className="text-sm font-medium">$11,420 (68%)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">Organic Revenue</span>
+                  <span className="text-sm font-medium">$5,380 (32%)</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="bg-blue-600 h-2 rounded-full" style={{ width: '68%' }}></div>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h4 className="font-medium text-gray-900 mb-3">Funnel Performance</h4>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Affiliate Clicks → Quiz Starts</span>
+                  <span className="font-medium">5,090 → 435 (8.5%)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Quiz Starts → Completed</span>
+                  <span className="font-medium">435 → 312 (71.7%)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Completed → Booked</span>
+                  <span className="font-medium">312 → 120 (38.5%)</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Booked → Closed</span>
+                  <span className="font-medium text-green-600">120 → 65 (54.2%)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
         {/* Quick Actions */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
