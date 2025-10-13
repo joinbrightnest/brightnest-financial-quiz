@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
       return NextResponse.next()
     }
 
-    // Check for analytics token
+    // Check for analytics token in cookies or authorization header
     const token = request.cookies.get('analytics_token')?.value || 
                   request.headers.get('authorization')?.replace('Bearer ', '')
 

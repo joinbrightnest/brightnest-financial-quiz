@@ -31,6 +31,10 @@ export default function AnalyticsAuth() {
         const data = await response.json();
         console.log("Login successful, token received");
         localStorage.setItem("analytics_token", data.token);
+        
+        // Also set cookie for middleware
+        document.cookie = `analytics_token=${data.token}; path=/; max-age=86400; SameSite=Lax`;
+        
         router.push("/analytics");
       } else {
         const errorData = await response.json();
