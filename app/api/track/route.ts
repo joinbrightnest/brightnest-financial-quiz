@@ -21,10 +21,19 @@ export async function GET(request: NextRequest) {
       where: { referralCode: ref },
     });
 
-    if (!affiliate || !affiliate.isActive || !affiliate.isApproved) {
+    if (!affiliate || !affiliate.isActive) {
       // Invalid or inactive affiliate, redirect to main site
       return NextResponse.redirect(new URL("/", request.url));
     }
+
+    // Log the tracking attempt
+    console.log("Tracking click for affiliate:", {
+      id: affiliate.id,
+      name: affiliate.name,
+      referralCode: affiliate.referralCode,
+      isApproved: affiliate.isApproved,
+      isActive: affiliate.isActive
+    });
 
     // Get client IP and user agent
     const ipAddress = request.headers.get("x-forwarded-for") || 

@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       prisma.affiliate.update({
         where: { id: affiliate.id },
         data: {
-          customLink: `${baseUrl}/?ref=${affiliate.referralCode}`,
+          customLink: `${baseUrl}/api/track?ref=${affiliate.referralCode}`,
         },
       })
     );
