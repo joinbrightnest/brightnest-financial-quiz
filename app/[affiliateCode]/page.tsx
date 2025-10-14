@@ -22,10 +22,20 @@ function AffiliateRedirectContent() {
           quizType: "financial-profile",
           affiliateCode: affiliateCode
         }),
-      }).then(() => {
+      }).then(response => {
+        console.log("Quiz start API response:", response.status);
+        if (response.ok) {
+          console.log("Affiliate click tracked successfully");
+        } else {
+          console.error("Failed to track affiliate click");
+        }
         // Redirect to homepage after tracking
         window.location.href = "/";
-      }).catch(console.error);
+      }).catch(error => {
+        console.error("Error tracking affiliate click:", error);
+        // Still redirect even if tracking fails
+        window.location.href = "/";
+      });
     }
   }, [affiliateCode]);
 
