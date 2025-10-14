@@ -40,32 +40,9 @@ export async function GET(request: NextRequest) {
         startDate = new Date(0); // All time
     }
 
-    // Get affiliate data
+    // Get affiliate data (without includes to avoid issues)
     const affiliate = await prisma.affiliate.findUnique({
       where: { id: decoded.affiliateId },
-      include: {
-        clicks: {
-          where: {
-            createdAt: {
-              gte: startDate,
-            },
-          },
-        },
-        conversions: {
-          where: {
-            createdAt: {
-              gte: startDate,
-            },
-          },
-        },
-        payouts: {
-          where: {
-            createdAt: {
-              gte: startDate,
-            },
-          },
-        },
-      },
     });
 
     if (!affiliate) {
@@ -75,21 +52,57 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Get related data separately
+    const [clicks, conversions, payouts] = await Promise.all([
+      prisma.affiliateClick.findMany({
+        where: {
+          affiliateId: affiliate.id,
+          createdAt: {
+            gte: startDate,
+          },
+        },
+      }),
+      prisma.affiliateConversion.findMany({
+        where: {
+          affiliateId: affiliate.id,
+          createdAt: {
+            gte: startDate,
+          },
+        },
+      }),
+      prisma.affiliatePayout.findMany({
+        where: {
+          affiliateId: affiliate.id,
+          createdAt: {
+            gte: startDate,
+          },
+        },
+      }),
+    ]);
+
+    // Combine the data
+    const affiliateWithData = {
+      ...affiliate,
+      clicks,
+      conversions,
+      payouts,
+    };
+
     // Calculate stats
-    const totalClicks = affiliate.clicks.length;
-    const totalLeads = affiliate.conversions.filter(c => c.status === "confirmed").length;
-    const totalBookings = affiliate.conversions.filter(c => c.conversionType === "booking").length;
-    const totalSales = affiliate.conversions.filter(c => c.conversionType === "sale").length;
-    const totalCommission = affiliate.conversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
+    const totalClicks = affiliateWithData.clicks.length;
+    const totalLeads = affiliateWithData.conversions.filter(c => c.status === "confirmed").length;
+    const totalBookings = affiliateWithData.conversions.filter(c => c.conversionType === "booking").length;
+    const totalSales = affiliateWithData.conversions.filter(c => c.conversionType === "sale").length;
+    const totalCommission = affiliateWithData.conversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
     const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
     const averageSaleValue = totalSales > 0 ? totalCommission / totalSales : 0;
 
     // Calculate pending and paid commissions
-    const pendingCommission = affiliate.payouts
+    const pendingCommission = affiliateWithData.payouts
       .filter(p => p.status === "pending")
       .reduce((sum, p) => sum + Number(p.amount), 0);
     
-    const paidCommission = affiliate.payouts
+    const paidCommission = affiliateWithData.payouts
       .filter(p => p.status === "completed")
       .reduce((sum, p) => sum + Number(p.amount), 0);
 
