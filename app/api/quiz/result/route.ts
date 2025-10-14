@@ -88,10 +88,12 @@ export async function POST(request: NextRequest) {
           await prisma.affiliateConversion.create({
             data: {
               affiliateId: affiliate.id,
-              sessionId: sessionId,
+              quizSessionId: sessionId,
+              referralCode: session.affiliateCode,
               conversionType: "quiz_completion",
-              status: "completed",
-              value: 0, // No monetary value for quiz completion
+              status: "confirmed",
+              commissionAmount: 0.00,
+              saleValue: 0.00,
             },
           });
 
