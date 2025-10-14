@@ -505,7 +505,7 @@ export default function LeadsPage() {
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Contact</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Assessment Date</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Personality Type</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Source</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
@@ -536,12 +536,13 @@ export default function LeadsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{lead.result?.archetype || "Pending"}</div>
-                      {lead.result?.scores && (
-                        <div className="text-xs text-gray-500">
-                          {Object.keys(lead.result.scores).length} behavioral scores
-                        </div>
-                      )}
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        lead.source?.includes('Affiliate') 
+                          ? "bg-blue-100 text-blue-800" 
+                          : "bg-gray-100 text-gray-800"
+                      }`}>
+                        {lead.source || 'Website'}
+                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button

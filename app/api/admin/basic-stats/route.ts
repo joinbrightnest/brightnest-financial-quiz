@@ -60,6 +60,44 @@ export async function GET(request: Request) {
       take: 50,
     });
 
+    // Get affiliate information for leads that have affiliate codes
+    let affiliateMap: Record<string, string> = {};
+    
+    if (allLeads.length > 0) {
+      const affiliateCodes = allLeads
+        .filter(lead => lead.affiliateCode)
+        .map(lead => lead.affiliateCode!)
+        .filter((code): code is string => code !== null);
+      
+      if (affiliateCodes.length > 0) {
+        const affiliates = await prisma.affiliate.findMany({
+          where: {
+            referralCode: {
+              in: affiliateCodes
+            }
+          },
+          select: {
+            referralCode: true,
+            name: true,
+          }
+        });
+
+        // Create a map of affiliate codes to names
+        affiliateMap = affiliates.reduce((map, affiliate) => {
+          map[affiliate.referralCode] = affiliate.name;
+          return map;
+        }, {} as Record<string, string>);
+      }
+    }
+
+    // Add source information to each lead
+    const leadsWithSource = allLeads.map(lead => ({
+      ...lead,
+      source: lead.affiliateCode 
+        ? `Affiliate: ${affiliateMap[lead.affiliateCode] || lead.affiliateCode}`
+        : 'Website'
+    }));
+
     // Get archetype distribution
     const archetypeStats = await prisma.result.groupBy({
       by: ["archetype"],
@@ -379,7 +417,7 @@ export async function GET(request: Request) {
       completedSessions,
       completionRate: Math.round(completionRate * 100) / 100,
       avgDurationMs: avgDurationResult._avg.durationMs || 0,
-      allLeads,
+      allLeads: leadsWithSource,
       archetypeStats,
       questionAnalytics: questionAnalytics.filter(Boolean),
       dailyActivity,
