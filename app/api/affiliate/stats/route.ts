@@ -77,21 +77,21 @@ export async function GET(request: NextRequest) {
 
     // Calculate stats
     const totalClicks = affiliate.clicks.length;
-    const totalLeads = affiliate.conversions.filter(c => c.status === "lead").length;
-    const totalBookings = affiliate.conversions.filter(c => c.status === "booked_call").length;
-    const totalSales = affiliate.conversions.filter(c => c.status === "sale").length;
-    const totalCommission = affiliate.conversions.reduce((sum, c) => sum + (c.commission || 0), 0);
+    const totalLeads = affiliate.conversions.filter(c => c.status === "confirmed").length;
+    const totalBookings = affiliate.conversions.filter(c => c.conversionType === "booking").length;
+    const totalSales = affiliate.conversions.filter(c => c.conversionType === "sale").length;
+    const totalCommission = affiliate.conversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
     const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
     const averageSaleValue = totalSales > 0 ? totalCommission / totalSales : 0;
 
     // Calculate pending and paid commissions
     const pendingCommission = affiliate.payouts
       .filter(p => p.status === "pending")
-      .reduce((sum, p) => sum + p.amountDue, 0);
+      .reduce((sum, p) => sum + Number(p.amount), 0);
     
     const paidCommission = affiliate.payouts
-      .filter(p => p.status === "paid")
-      .reduce((sum, p) => sum + p.amountDue, 0);
+      .filter(p => p.status === "completed")
+      .reduce((sum, p) => sum + Number(p.amount), 0);
 
     // Generate daily stats (mock data for now)
     const dailyStats = generateDailyStats(dateRange, totalClicks, totalSales, totalCommission);

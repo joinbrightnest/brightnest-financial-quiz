@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
         customLink,
         payoutMethod: payoutMethod || "stripe",
         commissionRate,
-        isApproved: tier === "quiz", // Auto-approve quiz tier, others need approval
+        isApproved: false, // All affiliates need manual approval for now
       },
     });
 
