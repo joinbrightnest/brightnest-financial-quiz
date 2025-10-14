@@ -42,12 +42,11 @@ export async function POST(request: NextRequest) {
                        "unknown";
       const userAgent = request.headers.get("user-agent") || "unknown";
 
-      // Check if we already tracked this visitor recently (within 1 hour) to avoid duplicate clicks
+      // Check if we already tracked this browser recently (within 1 hour) to avoid duplicate clicks
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
       const existingClick = await prisma.affiliateClick.findFirst({
         where: {
           affiliateId: affiliate.id,
-          ipAddress: ipAddress,
           userAgent: userAgent,
           createdAt: {
             gte: oneHourAgo
@@ -56,9 +55,9 @@ export async function POST(request: NextRequest) {
       });
 
       if (existingClick) {
-        console.log("🔄 Duplicate click detected for same visitor, skipping:", {
+        console.log("🔄 Duplicate click detected for same browser, skipping:", {
           affiliate: affiliate.referralCode,
-          ip: ipAddress,
+          userAgent: userAgent.substring(0, 50) + "...",
           existingClickTime: existingClick.createdAt
         });
       } else {
@@ -75,7 +74,7 @@ export async function POST(request: NextRequest) {
               utmCampaign: utm_campaign,
             },
           });
-          console.log("✅ Unique click recorded successfully for affiliate:", affiliate.referralCode);
+          console.log("✅ Unique browser click recorded successfully for affiliate:", affiliate.referralCode);
         } catch (clickError) {
           console.error("Error recording click:", clickError);
           // Continue anyway - still set cookie
