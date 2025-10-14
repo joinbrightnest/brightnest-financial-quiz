@@ -1,0 +1,43 @@
+-- Create a test affiliate record for georgecq33
+INSERT INTO affiliates (
+    id,
+    name,
+    email,
+    password_hash,
+    tier,
+    referral_code,
+    custom_link,
+    commission_rate,
+    total_clicks,
+    total_leads,
+    total_bookings,
+    total_sales,
+    total_commission,
+    is_active,
+    is_approved,
+    created_at,
+    updated_at
+) VALUES (
+    'test-affiliate-id',
+    'George',
+    'george@example.com',
+    '$2b$10$dummy.hash.for.testing',
+    'quiz',
+    'georgecq33',
+    'https://joinbrightnest.com/georgecq33',
+    0.1000,
+    0,
+    0,
+    0,
+    0,
+    0.00,
+    true,
+    true,
+    NOW(),
+    NOW()
+) ON CONFLICT (referral_code) DO UPDATE SET
+    name = EXCLUDED.name,
+    email = EXCLUDED.email,
+    is_active = EXCLUDED.is_active,
+    is_approved = EXCLUDED.is_approved,
+    updated_at = NOW();
