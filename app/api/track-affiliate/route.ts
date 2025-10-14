@@ -42,39 +42,64 @@ export async function POST(request: NextRequest) {
                        "unknown";
       const userAgent = request.headers.get("user-agent") || "unknown";
 
-      // Record the click with error handling
-      try {
-        await prisma.affiliateClick.create({
-          data: {
-            affiliateId: affiliate.id,
-            referralCode: affiliate.referralCode,
-            ipAddress,
-            userAgent,
-            utmSource: utm_source,
-            utmMedium: utm_medium,
-            utmCampaign: utm_campaign,
-          },
+      // Check if we already tracked this visitor recently (within 1 hour) to avoid duplicate clicks
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+      const existingClick = await prisma.affiliateClick.findFirst({
+        where: {
+          affiliateId: affiliate.id,
+          ipAddress: ipAddress,
+          userAgent: userAgent,
+          createdAt: {
+            gte: oneHourAgo
+          }
+        }
+      });
+
+      if (existingClick) {
+        console.log("🔄 Duplicate click detected for same visitor, skipping:", {
+          affiliate: affiliate.referralCode,
+          ip: ipAddress,
+          existingClickTime: existingClick.createdAt
         });
-        console.log("Click recorded successfully for affiliate:", affiliate.referralCode);
-      } catch (clickError) {
-        console.error("Error recording click:", clickError);
-        // Continue anyway - still set cookie
+      } else {
+        // Record the click with error handling
+        try {
+          await prisma.affiliateClick.create({
+            data: {
+              affiliateId: affiliate.id,
+              referralCode: affiliate.referralCode,
+              ipAddress,
+              userAgent,
+              utmSource: utm_source,
+              utmMedium: utm_medium,
+              utmCampaign: utm_campaign,
+            },
+          });
+          console.log("✅ Unique click recorded successfully for affiliate:", affiliate.referralCode);
+        } catch (clickError) {
+          console.error("Error recording click:", clickError);
+          // Continue anyway - still set cookie
+        }
       }
 
-      // Update affiliate's total clicks
-      try {
-        await prisma.affiliate.update({
-          where: { id: affiliate.id },
-          data: {
-            totalClicks: {
-              increment: 1,
+      // Update affiliate's total clicks only if we recorded a unique click
+      if (!existingClick) {
+        try {
+          await prisma.affiliate.update({
+            where: { id: affiliate.id },
+            data: {
+              totalClicks: {
+                increment: 1,
+              },
             },
-          },
-        });
-        console.log("Affiliate total clicks updated successfully");
-      } catch (updateError) {
-        console.error("Error updating affiliate clicks:", updateError);
-        // Continue anyway - click was recorded
+          });
+          console.log("✅ Affiliate total clicks updated successfully");
+        } catch (updateError) {
+          console.error("Error updating affiliate clicks:", updateError);
+          // Continue anyway - click was recorded
+        }
+      } else {
+        console.log("🔄 Skipping total clicks update - duplicate click");
       }
     } else {
       console.log("Affiliate not found or database unavailable, but still setting cookie for:", ref);
