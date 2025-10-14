@@ -366,16 +366,19 @@ export default function AffiliateCRMView() {
                         Session ID
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
-                        Email
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
                         Quiz Type
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
-                        Archetype
+                        Name
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
-                        Completed
+                        Email
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+                        Answers Count
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
+                        Status
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-900 uppercase tracking-wider">
                         Duration
@@ -392,16 +395,25 @@ export default function AffiliateCRMView() {
                           {lead.sessionId.slice(-8)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {lead.user?.email || "N/A"}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           {lead.quizType}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {lead.result?.archetype || "N/A"}
+                          {lead.user?.name || "N/A"}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {lead.completedAt ? new Date(lead.completedAt).toLocaleDateString() : "Incomplete"}
+                          {lead.user?.email || "N/A"}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {lead.answers?.length || 0}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            lead.status === "completed" 
+                              ? "bg-green-100 text-green-800" 
+                              : "bg-orange-100 text-orange-800"
+                          }`}>
+                            {lead.status === "completed" ? "Completed" : "In Progress"}
+                          </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           {lead.durationMs ? `${Math.round(lead.durationMs / 60000)}min` : "N/A"}
