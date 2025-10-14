@@ -32,9 +32,8 @@ export async function POST(request: NextRequest) {
 
     // Generate unique referral code
     const referralCode = generateReferralCode(name);
-    // The tracking link should use the current Vercel domain for now
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://birghtnest-pztwbhpi0-joinbrightnests-projects.vercel.app';
-    const customLink = `${baseUrl}/?ref=${referralCode}`;
+    // Simple affiliate link format: https://joinbrightnest.com/referralcode
+    const customLink = `https://joinbrightnest.com/${referralCode}`;
     
     console.log("Generated affiliate link:", {
       name,
