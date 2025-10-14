@@ -12,16 +12,41 @@ function AffiliateRedirectContent() {
       console.log("🎯 Affiliate visit detected:", affiliateCode);
       console.log("🍪 Setting affiliate cookie...");
       
-      // Set the affiliate cookie for the quiz system (don't track click yet)
+      // Set the affiliate cookie for the quiz system
       document.cookie = `affiliate_ref=${affiliateCode}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
       
       console.log("✅ Affiliate cookie set successfully");
-      console.log("🔄 Redirecting to homepage...");
+      console.log("📊 Tracking affiliate click...");
       
-      // Add a small delay to ensure the message is visible
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 1000);
+      // Track the affiliate click immediately
+      fetch("/api/track-affiliate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          ref: affiliateCode,
+          utm_source: new URLSearchParams(window.location.search).get("utm_source"),
+          utm_medium: new URLSearchParams(window.location.search).get("utm_medium"),
+          utm_campaign: new URLSearchParams(window.location.search).get("utm_campaign")
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log("✅ Affiliate click tracked successfully");
+        } else {
+          console.error("❌ Failed to track affiliate click:", data.error);
+        }
+      })
+      .catch(error => {
+        console.error("❌ Error tracking affiliate click:", error);
+      })
+      .finally(() => {
+        console.log("🔄 Redirecting to homepage...");
+        // Add a small delay to ensure the tracking completes
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 500);
+      });
     }
   }, [affiliateCode]);
 

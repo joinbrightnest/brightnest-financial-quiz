@@ -249,17 +249,18 @@ model Affiliate {
 }
 
 model AffiliateClick {
-  id          String    @id @default(cuid())
-  affiliateId String    @map("affiliate_id")
-  ipAddress   String?   @map("ip_address")
-  userAgent   String?   @map("user_agent")
-  referrer    String?
-  utmSource   String?   @map("utm_source")
-  utmMedium   String?   @map("utm_medium")
-  utmCampaign String?   @map("utm_campaign")
-  createdAt   DateTime  @default(now()) @map("created_at")
+  id           String    @id @default(cuid())
+  affiliateId  String    @map("affiliate_id")
+  referralCode String    @map("referral_code")
+  ipAddress    String?   @map("ip_address")
+  userAgent    String?   @map("user_agent")
+  referrer     String?
+  utmSource    String?   @map("utm_source")
+  utmMedium    String?   @map("utm_medium")
+  utmCampaign  String?   @map("utm_campaign")
+  createdAt    DateTime  @default(now()) @map("created_at")
   
-  affiliate   Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  affiliate    Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
 
   @@map("affiliate_clicks")
 }
