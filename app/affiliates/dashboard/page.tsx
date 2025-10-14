@@ -99,35 +99,39 @@ export default function AffiliateDashboard() {
     try {
       setLoading(true);
       
-      // Use the new affiliate data API
+      // Use the working admin API with affiliate code parameter
       console.log("Fetching affiliate data for:", affiliate.referralCode);
-      const response = await fetch(`/api/affiliate-data?referralCode=${affiliate.referralCode}`);
+      const response = await fetch(`/api/admin/basic-stats?affiliateCode=${affiliate.referralCode}`);
 
       if (response.ok) {
         const data = await response.json();
-        setStats(data.stats);
-        setError(null);
-        console.log("Affiliate data loaded:", data.stats);
+        if (data.affiliateData && data.affiliateData.stats) {
+          setStats(data.affiliateData.stats);
+          setError(null);
+          console.log("Affiliate data loaded:", data.affiliateData.stats);
+        } else {
+          throw new Error("No affiliate data in response");
+        }
       } else {
-        // Fallback to affiliate profile data
-        console.log("Using affiliate profile data as fallback");
-        const stats = {
-          totalClicks: affiliate.totalClicks || 0,
-          totalLeads: affiliate.totalLeads || 0,
-          totalBookings: affiliate.totalBookings || 0,
-          totalSales: affiliate.totalSales || 0,
-          totalCommission: Number(affiliate.commissionRate) * (affiliate.totalSales || 0),
-          conversionRate: (affiliate.totalClicks || 0) > 0 ? ((affiliate.totalSales || 0) / (affiliate.totalClicks || 0)) * 100 : 0,
-          averageSaleValue: (affiliate.totalSales || 0) > 0 ? (Number(affiliate.commissionRate) * (affiliate.totalSales || 0)) / (affiliate.totalSales || 0) : 0,
-          pendingCommission: 0,
-          paidCommission: 0,
-          dailyStats: []
-        };
-        setStats(stats);
-        setError(null);
+        throw new Error("Failed to fetch affiliate data");
       }
     } catch (err) {
       console.error("Error fetching stats:", err);
+      // Fallback to affiliate profile data
+      console.log("Using affiliate profile data as fallback");
+      const stats = {
+        totalClicks: affiliate.totalClicks || 0,
+        totalLeads: affiliate.totalLeads || 0,
+        totalBookings: affiliate.totalBookings || 0,
+        totalSales: affiliate.totalSales || 0,
+        totalCommission: Number(affiliate.commissionRate) * (affiliate.totalSales || 0),
+        conversionRate: (affiliate.totalClicks || 0) > 0 ? ((affiliate.totalSales || 0) / (affiliate.totalClicks || 0)) * 100 : 0,
+        averageSaleValue: (affiliate.totalSales || 0) > 0 ? (Number(affiliate.commissionRate) * (affiliate.totalSales || 0)) / (affiliate.totalSales || 0) : 0,
+        pendingCommission: 0,
+        paidCommission: 0,
+        dailyStats: []
+      };
+      setStats(stats);
       setError(err instanceof Error ? err.message : "Failed to load stats");
     } finally {
       setLoading(false);
