@@ -12,6 +12,7 @@ export async function POST(request: NextRequest) {
 
     // If we have an affiliate code, track the click (only when quiz is actually started)
     if (affiliateCode) {
+      console.log("🎯 Quiz started with affiliate code:", affiliateCode);
       try {
         // Find the affiliate
         const affiliate = await (prisma as any).affiliate.findUnique({
@@ -19,6 +20,7 @@ export async function POST(request: NextRequest) {
         });
 
         if (affiliate && affiliate.isActive) {
+          console.log("✅ Found affiliate:", affiliate.name);
           // Record the click (this happens when user actually starts a quiz)
           await (prisma as any).affiliateClick.create({
             data: {
@@ -39,12 +41,19 @@ export async function POST(request: NextRequest) {
             },
           });
 
-          console.log("Affiliate click tracked (quiz started):", affiliateCode);
+          console.log("🎉 Affiliate click tracked successfully:", affiliateCode);
+        } else {
+          console.log("❌ Affiliate not found or inactive:", affiliateCode);
+          // For now, just log that we would track this click
+          console.log("📊 Would track click for affiliate:", affiliateCode);
         }
       } catch (error) {
-        console.error("Error tracking affiliate click:", error);
+        console.error("❌ Error tracking affiliate click:", error);
+        console.log("📊 Would track click for affiliate:", affiliateCode);
         // Continue with quiz creation even if tracking fails
       }
+    } else {
+      console.log("ℹ️ No affiliate code found in request");
     }
 
     // Create a new quiz session
