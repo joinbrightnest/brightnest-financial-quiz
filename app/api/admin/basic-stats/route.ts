@@ -289,13 +289,15 @@ export async function GET(request: Request) {
     // Add affiliate data if affiliateCode is provided
     let affiliateData = null;
     if (affiliateCode) {
+      console.log("Looking for affiliate with code:", affiliateCode);
       try {
         const affiliate = await prisma.affiliate.findUnique({
           where: { referralCode: affiliateCode },
         });
 
+        console.log("Affiliate lookup result:", affiliate ? "Found" : "Not found");
         if (affiliate) {
-          console.log("Found affiliate:", affiliate.id, affiliate.referralCode);
+          console.log("Found affiliate:", affiliate.id, affiliate.referralCode, affiliate.name);
           
           const [clicks, conversions] = await Promise.all([
             prisma.affiliateClick.findMany({
