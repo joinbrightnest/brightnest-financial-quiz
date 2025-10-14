@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 
 interface AffiliatePerformance {
@@ -28,7 +28,6 @@ export default function AffiliatePerformanceTable({ data, loading, onRefresh }: 
   const [itemsPerPage] = useState(10);
   const [sortField, setSortField] = useState<keyof AffiliatePerformance>("revenue");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
-  const [showDetailModal, setShowDetailModal] = useState<string | null>(null);
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -275,12 +274,12 @@ export default function AffiliatePerformanceTable({ data, loading, onRefresh }: 
                   {formatDate(affiliate.lastActive)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button
-                    onClick={() => setShowDetailModal(affiliate.id)}
+                  <a
+                    href={`/admin/affiliates/${affiliate.id}`}
                     className="text-blue-600 hover:text-blue-900"
                   >
                     View Details
-                  </button>
+                  </a>
                 </td>
               </motion.tr>
             ))}
@@ -318,265 +317,7 @@ export default function AffiliatePerformanceTable({ data, loading, onRefresh }: 
         </div>
       )}
 
-      {/* Detail Modal */}
-      {showDetailModal && (
-        <AffiliateDetailModal
-          affiliateId={showDetailModal}
-          onClose={() => setShowDetailModal(null)}
-        />
-      )}
     </div>
   );
 }
 
-function AffiliateDetailModal({ affiliateId, onClose }: { affiliateId: string; onClose: () => void }) {
-  const [affiliateData, setAffiliateData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [dateRange, setDateRange] = useState("30d");
-
-  useEffect(() => {
-    fetchAffiliateDetails();
-  }, [affiliateId, dateRange]);
-
-  const fetchAffiliateDetails = async () => {
-    try {
-      setLoading(true);
-      // This would be a real API call to get detailed affiliate data
-      // For now, we'll simulate the data structure
-      const mockData = {
-        id: affiliateId,
-        name: "Sample Affiliate",
-        email: "affiliate@example.com",
-        tier: "quiz",
-        referralCode: "sample123",
-        totalClicks: 1250,
-        totalLeads: 89,
-        totalBookings: 23,
-        totalSales: 12,
-        totalCommission: 2400,
-        conversionRate: 0.96,
-        averageOrderValue: 200,
-        dailyStats: generateMockDailyStats(),
-        trafficSources: [
-          { source: "YouTube", clicks: 450, percentage: 36 },
-          { source: "TikTok", clicks: 320, percentage: 25.6 },
-          { source: "Instagram", clicks: 280, percentage: 22.4 },
-          { source: "Facebook", clicks: 150, percentage: 12 },
-          { source: "Direct", clicks: 50, percentage: 4 },
-        ],
-        conversionFunnel: [
-          { stage: "Clicks", count: 1250, percentage: 100 },
-          { stage: "Quiz Starts", count: 450, percentage: 36 },
-          { stage: "Quiz Completions", count: 89, percentage: 7.1 },
-          { stage: "Booked Calls", count: 23, percentage: 1.8 },
-          { stage: "Sales", count: 12, percentage: 0.96 },
-        ],
-        recentActivity: [
-          { date: "2024-01-15", action: "Sale", amount: 200, commission: 20 },
-          { date: "2024-01-14", action: "Lead", amount: 0, commission: 0 },
-          { date: "2024-01-13", action: "Click", amount: 0, commission: 0 },
-          { date: "2024-01-12", action: "Sale", amount: 200, commission: 20 },
-          { date: "2024-01-11", action: "Booking", amount: 0, commission: 0 },
-        ]
-      };
-      
-      setTimeout(() => {
-        setAffiliateData(mockData);
-        setLoading(false);
-      }, 500);
-    } catch (error) {
-      console.error("Error fetching affiliate details:", error);
-      setLoading(false);
-    }
-  };
-
-  const generateMockDailyStats = () => {
-    const stats = [];
-    for (let i = 29; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      stats.push({
-        date: date.toISOString().split('T')[0],
-        clicks: Math.floor(Math.random() * 50) + 10,
-        leads: Math.floor(Math.random() * 5) + 1,
-        sales: Math.floor(Math.random() * 2),
-        commission: Math.floor(Math.random() * 40) + 10,
-      });
-    }
-    return stats;
-  };
-
-  if (loading) {
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Affiliate Performance Details
-              </h3>
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-          </div>
-          <div className="px-6 py-8">
-            <div className="animate-pulse">
-              <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
-              <div className="h-32 bg-gray-200 rounded mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg max-w-6xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">
-                Affiliate Performance Details
-              </h3>
-              <p className="text-sm text-gray-600 mt-1">
-                {affiliateData?.name} • {affiliateData?.tier} tier • Code: {affiliateData?.referralCode}
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <select
-                value={dateRange}
-                onChange={(e) => setDateRange(e.target.value)}
-                className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-              >
-                <option value="7d">Last 7 days</option>
-                <option value="30d">Last 30 days</option>
-                <option value="90d">Last 90 days</option>
-                <option value="1y">Last year</option>
-              </select>
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <div className="px-6 py-6">
-          {affiliateData && (
-            <div className="space-y-6">
-              {/* Key Metrics */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <p className="text-2xl font-bold text-blue-600">{affiliateData.totalClicks.toLocaleString()}</p>
-                  <p className="text-sm text-gray-900">Total Clicks</p>
-                </div>
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <p className="text-2xl font-bold text-green-600">{affiliateData.totalLeads.toLocaleString()}</p>
-                  <p className="text-sm text-gray-900">Total Leads</p>
-                </div>
-                <div className="bg-purple-50 p-4 rounded-lg">
-                  <p className="text-2xl font-bold text-purple-600">{affiliateData.totalSales.toLocaleString()}</p>
-                  <p className="text-sm text-gray-900">Total Sales</p>
-                </div>
-                <div className="bg-yellow-50 p-4 rounded-lg">
-                  <p className="text-2xl font-bold text-yellow-600">${affiliateData.totalCommission.toLocaleString()}</p>
-                  <p className="text-sm text-gray-900">Total Commission</p>
-                </div>
-              </div>
-
-              {/* Charts Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Performance Chart */}
-                <div className="bg-white border border-gray-200 rounded-lg p-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Performance Over Time</h4>
-                  <div className="h-64 flex items-center justify-center bg-gray-50 rounded">
-                    <div className="text-center">
-                      <div className="text-4xl text-gray-400 mb-2">📈</div>
-                      <p className="text-gray-900">Performance chart</p>
-                      <p className="text-sm text-gray-900">{affiliateData.dailyStats.length} data points</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Conversion Funnel */}
-                <div className="bg-white border border-gray-200 rounded-lg p-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Conversion Funnel</h4>
-                  <div className="space-y-3">
-                    {affiliateData.conversionFunnel.map((stage: any, index: number) => (
-                      <div key={stage.stage} className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-medium text-blue-600">
-                            {index + 1}
-                          </div>
-                          <span className="text-sm font-medium text-gray-900">{stage.stage}</span>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-bold text-gray-900">{stage.count.toLocaleString()}</p>
-                          <p className="text-xs text-gray-900">{stage.percentage.toFixed(1)}%</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Traffic Sources & Recent Activity */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Traffic Sources */}
-                <div className="bg-white border border-gray-200 rounded-lg p-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Traffic Sources</h4>
-                  <div className="space-y-3">
-                    {affiliateData.trafficSources.map((source: any) => (
-                      <div key={source.source} className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-900">{source.source}</span>
-                        <div className="text-right">
-                          <p className="text-sm font-bold text-gray-900">{source.clicks.toLocaleString()}</p>
-                          <p className="text-xs text-gray-900">{source.percentage}%</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Recent Activity */}
-                <div className="bg-white border border-gray-200 rounded-lg p-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h4>
-                  <div className="space-y-3">
-                    {affiliateData.recentActivity.map((activity: any, index: number) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">{activity.action}</p>
-                          <p className="text-xs text-gray-900">{new Date(activity.date).toLocaleDateString()}</p>
-                        </div>
-                        <div className="text-right">
-                          {activity.amount > 0 && (
-                            <p className="text-sm font-bold text-gray-900">${activity.amount}</p>
-                          )}
-                          {activity.commission > 0 && (
-                            <p className="text-xs text-green-600">+${activity.commission}</p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
