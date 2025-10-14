@@ -112,11 +112,11 @@ export async function GET(request: NextRequest) {
       name: affiliate.name,
       tier: affiliate.tier,
       clicks: affiliate.clicks.length,
-      leads: affiliate.conversions.filter(c => c.status === "lead").length,
-      bookedCalls: affiliate.conversions.filter(c => c.status === "booked_call").length,
-      sales: affiliate.conversions.filter(c => c.status === "sale").length,
-      conversionRate: affiliate.clicks.length > 0 ? (affiliate.conversions.filter(c => c.status === "sale").length / affiliate.clicks.length) * 100 : 0,
-      revenue: affiliate.conversions.filter(c => c.status === "sale").length * 200, // Mock $200 per sale
+      leads: affiliate.conversions.filter(c => c.status === "confirmed").length,
+      bookedCalls: affiliate.conversions.filter(c => c.conversionType === "booking").length,
+      sales: affiliate.conversions.filter(c => c.conversionType === "sale").length,
+      conversionRate: affiliate.clicks.length > 0 ? (affiliate.conversions.filter(c => c.conversionType === "sale").length / affiliate.clicks.length) * 100 : 0,
+      revenue: affiliate.conversions.filter(c => c.conversionType === "sale").length * 200, // Mock $200 per sale
       commission: affiliate.totalCommission,
       lastActive: affiliate.updatedAt.toISOString(),
     })).sort((a, b) => b.revenue - a.revenue);
