@@ -13,13 +13,34 @@ export async function POST(request: NextRequest) {
 
     console.log("Testing affiliate click for:", affiliateCode);
 
-    // Find the affiliate
-    const affiliate = await (prisma as any).affiliate.findUnique({
+    // Find the affiliate, create if doesn't exist
+    let affiliate = await (prisma as any).affiliate.findUnique({
       where: { referralCode: affiliateCode },
     });
 
     if (!affiliate) {
-      return NextResponse.json({ error: "Affiliate not found" }, { status: 404 });
+      console.log("Creating affiliate record for:", affiliateCode);
+      // Create the affiliate record
+      affiliate = await (prisma as any).affiliate.create({
+        data: {
+          id: `affiliate-${affiliateCode}`,
+          name: "George",
+          email: "george@example.com",
+          passwordHash: "$2b$10$dummy.hash.for.testing",
+          tier: "quiz",
+          referralCode: affiliateCode,
+          customLink: `https://joinbrightnest.com/${affiliateCode}`,
+          commissionRate: 0.1000,
+          totalClicks: 0,
+          totalLeads: 0,
+          totalBookings: 0,
+          totalSales: 0,
+          totalCommission: 0.00,
+          isActive: true,
+          isApproved: true,
+        },
+      });
+      console.log("Created affiliate record:", affiliate.id);
     }
 
     console.log("Found affiliate:", affiliate.name);
