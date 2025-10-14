@@ -2,6 +2,7 @@
 
 import { useEffect, Suspense } from "react";
 import { useParams } from "next/navigation";
+import HomePageContent from "../../components/HomePageContent";
 
 function AffiliateRedirectContent() {
   const params = useParams();
@@ -43,49 +44,8 @@ function AffiliateRedirectContent() {
     }
   }, [affiliateCode]);
 
-  // Show the actual homepage content while maintaining affiliate URL
-  return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-gray-900">BrightNest</h1>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-6">
-              Discover Your Financial Personality
-            </h1>
-            <p className="text-xl text-gray-600 mb-8">
-              Take our comprehensive quiz to understand your financial habits, goals, and personality type.
-            </p>
-            
-            <div className="space-y-4">
-              <a
-                href="/quiz/financial-profile"
-                className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-              >
-                Start Your Financial Profile Quiz
-              </a>
-              
-              <div className="text-sm text-gray-500">
-                <p>✅ Affiliate tracking active: {affiliateCode}</p>
-                <p>🍪 Cookie set for 30 days</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
+  // Show the same homepage content but with affiliate tracking
+  return <HomePageContent />;
 }
 
 export default function AffiliateRedirect() {
