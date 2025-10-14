@@ -49,6 +49,7 @@ interface AdminStats {
         type: string;
       };
     }>;
+    source?: string;
   }>;
   quizTypes?: Array<{
     name: string;
@@ -1029,7 +1030,7 @@ export default function AdminDashboard() {
                           Completed At
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Archetype
+                          Source
                         </th>
                       </tr>
                     </thead>
@@ -1064,7 +1065,13 @@ export default function AdminDashboard() {
                               {lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A"}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {lead.result?.archetype || "N/A"}
+                              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                lead.source?.includes('Affiliate') 
+                                  ? "bg-blue-100 text-blue-800" 
+                                  : "bg-gray-100 text-gray-800"
+                              }`}>
+                                {lead.source || 'Website'}
+                              </span>
                             </td>
                           </tr>
                         );
