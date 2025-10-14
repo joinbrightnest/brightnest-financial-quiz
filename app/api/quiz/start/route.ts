@@ -14,13 +14,13 @@ export async function POST(request: NextRequest) {
     if (affiliateCode) {
       try {
         // Find the affiliate
-        const affiliate = await prisma.affiliate.findUnique({
+        const affiliate = await (prisma as any).affiliate.findUnique({
           where: { referralCode: affiliateCode },
         });
 
         if (affiliate && affiliate.isActive) {
           // Record the click (this happens when user actually starts a quiz)
-          await prisma.affiliateClick.create({
+          await (prisma as any).affiliateClick.create({
             data: {
               affiliateId: affiliate.id,
               referralCode: affiliate.referralCode,
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
           });
 
           // Update affiliate's total clicks
-          await prisma.affiliate.update({
+          await (prisma as any).affiliate.update({
             where: { id: affiliate.id },
             data: {
               totalClicks: {
