@@ -38,7 +38,6 @@ export async function POST(request: NextRequest) {
     console.log("Generated affiliate link:", {
       name,
       referralCode,
-      baseUrl,
       customLink
     });
 
