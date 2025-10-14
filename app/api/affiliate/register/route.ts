@@ -32,7 +32,15 @@ export async function POST(request: NextRequest) {
 
     // Generate unique referral code
     const referralCode = generateReferralCode(name);
-    const customLink = `${process.env.NEXT_PUBLIC_BASE_URL || 'https://brightnest.com'}/?ref=${referralCode}`;
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://brightnest.com';
+    const customLink = `${baseUrl}/?ref=${referralCode}`;
+    
+    console.log("Generated affiliate link:", {
+      name,
+      referralCode,
+      baseUrl,
+      customLink
+    });
 
     // Set commission rate based on tier
     const commissionRates = {

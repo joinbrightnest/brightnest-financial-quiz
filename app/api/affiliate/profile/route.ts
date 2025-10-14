@@ -5,8 +5,10 @@ const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
+    console.log("Affiliate profile API called");
     const authHeader = request.headers.get("authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.log("No authorization header found");
       return NextResponse.json(
         { error: "No token provided" },
         { status: 401 }
@@ -15,18 +17,29 @@ export async function GET(request: NextRequest) {
 
     const token = authHeader.substring(7);
     const decoded = JSON.parse(Buffer.from(token, 'base64').toString());
+    console.log("Decoded token:", decoded);
 
     // Get affiliate profile
+    console.log("Looking for affiliate with ID:", decoded.affiliateId);
     const affiliate = await prisma.affiliate.findUnique({
       where: { id: decoded.affiliateId },
     });
 
+    console.log("Affiliate found:", affiliate ? "Yes" : "No");
     if (!affiliate) {
+      console.log("Affiliate not found in database");
       return NextResponse.json(
         { error: "Affiliate not found" },
         { status: 404 }
       );
     }
+
+    console.log("Affiliate data:", {
+      id: affiliate.id,
+      name: affiliate.name,
+      referralCode: affiliate.referralCode,
+      customLink: affiliate.customLink
+    });
 
     return NextResponse.json({
       id: affiliate.id,
