@@ -42,30 +42,37 @@ export async function GET(
     });
 
     // Transform the data for the CRM view
-    const leads = quizSessions.map(session => ({
-      id: session.id,
-      sessionId: session.id,
-      quizType: session.quizType,
-      startedAt: session.startedAt.toISOString(),
-      completedAt: session.completedAt?.toISOString() || null,
-      status: session.status,
-      durationMs: session.durationMs,
-      result: session.result ? {
-        archetype: session.result.archetype,
-        score: session.result.score,
-        insights: session.result.insights || [],
-      } : null,
-      answers: session.answers.map(answer => ({
-        questionId: answer.questionId,
-        questionText: answer.question?.prompt || "Unknown question",
-        answer: answer.value,
-        answerValue: answer.value,
-      })),
-      user: session.user ? {
-        email: session.user.email,
-        role: session.user.role,
-      } : null,
-    }));
+    const leads = quizSessions.map(session => {
+      // Extract name and email from quiz answers (like general admin CRM)
+      const nameAnswer = session.answers.find(a => a.question.type === "text");
+      const emailAnswer = session.answers.find(a => a.question.type === "email");
+      
+      return {
+        id: session.id,
+        sessionId: session.id,
+        quizType: session.quizType,
+        startedAt: session.startedAt.toISOString(),
+        completedAt: session.completedAt?.toISOString() || null,
+        status: session.status,
+        durationMs: session.durationMs,
+        result: session.result ? {
+          archetype: session.result.archetype,
+          score: session.result.score,
+          insights: session.result.insights || [],
+        } : null,
+        answers: session.answers.map(answer => ({
+          questionId: answer.questionId,
+          questionText: answer.question?.prompt || "Unknown question",
+          answer: answer.value,
+          answerValue: answer.value,
+        })),
+        user: {
+          email: emailAnswer?.value || "N/A",
+          name: nameAnswer?.value || "N/A",
+          role: "user",
+        },
+      };
+    });
 
     // Calculate CRM stats - only count completed sessions as leads (matching general admin CRM)
     const totalLeads = leads.filter(lead => lead.status === "completed").length;
