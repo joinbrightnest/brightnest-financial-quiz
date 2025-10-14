@@ -99,44 +99,23 @@ export default function AffiliateDashboard() {
     try {
       setLoading(true);
       
-      // Try the affiliate stats API first
-      let response = await fetch(`/api/affiliate/stats?dateRange=${dateRange}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("affiliate_token")}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setStats(data);
-        setError(null);
-        return;
-      }
-
-      // If affiliate stats API fails, use admin API as fallback
-      console.log("Affiliate stats API failed, trying admin API...");
-      response = await fetch(`/api/admin/affiliates/${affiliate.id}/stats?dateRange=${dateRange}`);
-
-      if (response.ok) {
-        const data = await response.json();
-        // Transform admin API data to match affiliate dashboard format
-        const transformedStats = {
-          totalClicks: data.totalClicks,
-          totalLeads: data.totalLeads,
-          totalBookings: data.totalBookings,
-          totalSales: data.totalBookings, // Use bookings as sales for now
-          totalCommission: data.totalCommission,
-          conversionRate: data.conversionRate,
-          averageSaleValue: data.totalCommission / Math.max(data.totalBookings, 1),
-          pendingCommission: 0,
-          paidCommission: 0,
-          dailyStats: data.dailyStats || []
-        };
-        setStats(transformedStats);
-        setError(null);
-      } else {
-        throw new Error("Failed to fetch stats from both APIs");
-      }
+      // Use affiliate profile data directly since APIs are not working
+      console.log("Using affiliate profile data directly");
+      const stats = {
+        totalClicks: affiliate.totalClicks || 0,
+        totalLeads: affiliate.totalLeads || 0,
+        totalBookings: affiliate.totalBookings || 0,
+        totalSales: affiliate.totalSales || 0,
+        totalCommission: Number(affiliate.commissionRate) * (affiliate.totalSales || 0),
+        conversionRate: (affiliate.totalClicks || 0) > 0 ? ((affiliate.totalSales || 0) / (affiliate.totalClicks || 0)) * 100 : 0,
+        averageSaleValue: (affiliate.totalSales || 0) > 0 ? (Number(affiliate.commissionRate) * (affiliate.totalSales || 0)) / (affiliate.totalSales || 0) : 0,
+        pendingCommission: 0,
+        paidCommission: 0,
+        dailyStats: []
+      };
+      
+      setStats(stats);
+      setError(null);
     } catch (err) {
       console.error("Error fetching stats:", err);
       setError(err instanceof Error ? err.message : "Failed to load stats");
