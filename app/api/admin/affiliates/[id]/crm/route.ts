@@ -57,9 +57,9 @@ export async function GET(
       } : null,
       answers: session.answers.map(answer => ({
         questionId: answer.questionId,
-        questionText: answer.question?.text || "Unknown question",
-        answer: answer.answer,
-        answerValue: answer.answerValue,
+        questionText: answer.question?.prompt || "Unknown question",
+        answer: answer.value,
+        answerValue: answer.value,
       })),
       user: session.user ? {
         email: session.user.email,
