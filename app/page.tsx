@@ -7,22 +7,31 @@ function HomePageContent() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Handle affiliate tracking
-    const ref = searchParams.get("ref");
-    if (ref) {
+    // Handle affiliate tracking from URL path
+    const pathname = window.location.pathname;
+    const affiliateCode = pathname.substring(1); // Remove leading slash
+    
+    // Check if this looks like an affiliate code (not a regular page)
+    if (affiliateCode && 
+        !affiliateCode.includes('/') && 
+        !affiliateCode.includes('.') && 
+        affiliateCode.length > 3) {
+      
+      console.log("Tracking affiliate visit:", affiliateCode);
+      
       // Track the affiliate click
-      fetch("/api/track-affiliate", {
+      fetch("/api/track-click", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          ref,
-          utm_source: searchParams.get("utm_source"),
-          utm_medium: searchParams.get("utm_medium"),
-          utm_campaign: searchParams.get("utm_campaign"),
+          affiliateCode: affiliateCode
         }),
+      }).then(() => {
+        // Redirect to homepage after tracking
+        window.location.href = "/";
       }).catch(console.error);
     }
-  }, [searchParams]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -32,11 +41,11 @@ function HomePageContent() {
           BrightNest
         </h1>
         <p className="text-xl text-gray-600 mb-8">
-          The behavior-based system for lasting financial peace.
-        </p>
+            The behavior-based system for lasting financial peace.
+          </p>
         <div className="space-x-4">
           <a
-            href="/quiz/financial-profile"
+              href="/quiz/financial-profile"
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
           >
             Start Financial Profile Quiz
