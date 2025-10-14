@@ -117,8 +117,11 @@ export async function GET(
       archetypeDistribution,
     };
 
+    // Only return completed quiz sessions as leads (matching general admin CRM)
+    const completedLeads = leads.filter(lead => lead.status === "completed");
+    
     return NextResponse.json({
-      leads,
+      leads: completedLeads,
       stats,
     });
   } catch (error) {
