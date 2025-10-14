@@ -59,7 +59,7 @@ export default function AffiliateLinkCard({ affiliate, loading }: AffiliateLinkC
         <h3 className="text-lg font-semibold text-gray-900">
           Your Affiliate Link
         </h3>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-gray-900">
           Referral Code: {affiliate.referralCode}
         </div>
       </div>
@@ -125,13 +125,13 @@ export default function AffiliateLinkCard({ affiliate, loading }: AffiliateLinkC
               <p className="text-lg font-bold text-blue-600">
                 {affiliate.totalClicks.toLocaleString()}
               </p>
-              <p className="text-xs text-blue-500">Total Clicks</p>
+              <p className="text-xs text-gray-900">Total Clicks</p>
             </div>
             <div className="text-center p-3 bg-green-50 rounded-lg">
               <p className="text-lg font-bold text-green-600">
                 {affiliate.totalLeads.toLocaleString()}
               </p>
-              <p className="text-xs text-green-500">Leads Generated</p>
+              <p className="text-xs text-gray-900">Leads Generated</p>
             </div>
           </div>
         </div>

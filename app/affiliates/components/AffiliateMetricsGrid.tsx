@@ -84,7 +84,7 @@ export default function AffiliateMetricsGrid({ stats }: AffiliateMetricsGridProp
             <div className="flex-1">
               <div className="flex items-center mb-2">
                 <span className="text-2xl mr-3">{metric.icon}</span>
-                <h3 className="text-sm font-medium text-gray-500 truncate">
+                <h3 className="text-sm font-medium text-gray-900 truncate">
                   {metric.title}
                 </h3>
               </div>
@@ -112,7 +112,7 @@ export default function AffiliateMetricsGrid({ stats }: AffiliateMetricsGridProp
                   {metric.trend}
                 </div>
               </div>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-gray-900 mt-1">
                 {metric.description}
               </p>
             </div>

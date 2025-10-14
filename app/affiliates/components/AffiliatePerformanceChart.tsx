@@ -38,7 +38,7 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
         <h3 className="text-lg font-semibold text-gray-900">
           Performance Over Time
         </h3>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-gray-900">
           {dailyStats.length} days
         </div>
       </div>
@@ -46,8 +46,8 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
       <div className="h-64 flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl text-gray-400 mb-2">📈</div>
-          <p className="text-gray-500">Performance chart would go here</p>
-          <p className="text-sm text-gray-400">
+          <p className="text-gray-900">Performance chart would go here</p>
+          <p className="text-sm text-gray-900">
             {dailyStats.length} data points available
           </p>
         </div>
@@ -59,13 +59,13 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
           <p className="text-2xl font-bold text-blue-600">
             {dailyStats.reduce((sum, day) => sum + day.clicks, 0).toLocaleString()}
           </p>
-          <p className="text-xs text-gray-500">Total Clicks</p>
+          <p className="text-xs text-gray-900">Total Clicks</p>
         </div>
         <div className="text-center p-3 bg-gray-50 rounded-lg">
           <p className="text-2xl font-bold text-green-600">
             {dailyStats.reduce((sum, day) => sum + day.sales, 0).toLocaleString()}
           </p>
-          <p className="text-xs text-gray-500">Total Sales</p>
+          <p className="text-xs text-gray-900">Total Sales</p>
         </div>
       </div>
     </motion.div>

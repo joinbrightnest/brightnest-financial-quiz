@@ -115,8 +115,16 @@ export async function GET(request: NextRequest) {
       .filter(p => p.status === "completed")
       .reduce((sum, p) => sum + Number(p.amount), 0);
 
-    // Generate daily stats (mock data for now)
+    // Generate daily stats based on actual data
     const dailyStats = generateDailyStats(dateRange, totalClicks, totalSales, totalCommission);
+    
+    console.log("Stats calculated:", {
+      totalClicks,
+      totalLeads,
+      totalSales,
+      totalCommission,
+      dailyStatsLength: dailyStats.length
+    });
 
     const stats = {
       totalClicks,
