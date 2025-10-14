@@ -41,37 +41,63 @@ export async function GET(request: NextRequest) {
 
     // Get real affiliate data from database (both approved and pending)
     console.log("Fetching affiliates from database...");
+    
+    // First, try to get affiliates without includes to see if that works
     const affiliates = await prisma.affiliate.findMany({
       where: {
         isActive: true,
         ...(tier !== "all" && { tier }),
-      },
-      include: {
-        clicks: {
-          where: {
-            createdAt: {
-              gte: startDate,
-            },
-          },
-        },
-        conversions: {
-          where: {
-            createdAt: {
-              gte: startDate,
-            },
-          },
-        },
       },
       orderBy: {
         totalCommission: "desc",
       },
     });
     
-    console.log(`Found ${affiliates.length} affiliates`);
+    console.log(`Found ${affiliates.length} affiliates without includes`);
+    
+    // Now get the related data separately to avoid potential issues
+    const affiliatesWithData = await Promise.all(
+      affiliates.map(async (affiliate) => {
+        try {
+          const clicks = await prisma.affiliateClick.findMany({
+            where: {
+              affiliateId: affiliate.id,
+              createdAt: {
+                gte: startDate,
+              },
+            },
+          });
+          
+          const conversions = await prisma.affiliateConversion.findMany({
+            where: {
+              affiliateId: affiliate.id,
+              createdAt: {
+                gte: startDate,
+              },
+            },
+          });
+          
+          return {
+            ...affiliate,
+            clicks,
+            conversions,
+          };
+        } catch (error) {
+          console.error(`Error fetching data for affiliate ${affiliate.id}:`, error);
+          return {
+            ...affiliate,
+            clicks: [],
+            conversions: [],
+          };
+        }
+      })
+    );
+    
+    console.log(`Found ${affiliatesWithData.length} affiliates with data`);
 
     // Calculate overview metrics
-    const approvedAffiliates = affiliates.filter(aff => aff.isApproved);
-    const pendingAffiliates = affiliates.filter(aff => !aff.isApproved);
+    const approvedAffiliates = affiliatesWithData.filter(aff => aff.isApproved);
+    const pendingAffiliates = affiliatesWithData.filter(aff => !aff.isApproved);
     
     const totalActiveAffiliates = approvedAffiliates.length;
     const totalPendingAffiliates = pendingAffiliates.length;
