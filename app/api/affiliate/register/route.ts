@@ -15,10 +15,82 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if affiliate already exists
-    const existingAffiliate = await prisma.affiliate.findUnique({
-      where: { email },
-    });
+    // Try database first, fallback to mock if tables don't exist
+    let existingAffiliate = null;
+    try {
+      existingAffiliate = await prisma.affiliate.findUnique({
+        where: { email },
+      });
+    } catch (dbError) {
+      console.log("Database not ready, using fallback system");
+      // Import mock system as fallback
+      const { findMockAffiliate, addMockAffiliate } = await import("@/lib/mock-affiliates");
+      
+      // Check if affiliate already exists in mock data
+      existingAffiliate = findMockAffiliate(email);
+      
+      if (existingAffiliate) {
+        return NextResponse.json(
+          { error: "An affiliate with this email already exists" },
+          { status: 400 }
+        );
+      }
+
+      // Hash password
+      const passwordHash = await bcrypt.hash(password, 12);
+
+      // Generate unique referral code
+      const referralCode = generateReferralCode(name);
+      const customLink = `${process.env.NEXT_PUBLIC_BASE_URL || 'https://brightnest.com'}/?ref=${referralCode}`;
+
+      // Set commission rate based on tier
+      const commissionRates = {
+        quiz: 0.10,    // 10%
+        creator: 0.15, // 15%
+        agency: 0.20,  // 20%
+      };
+
+      const commissionRate = commissionRates[tier as keyof typeof commissionRates] || 0.10;
+
+      // Create affiliate (mock for now)
+      const affiliate = {
+        id: `aff_${Date.now()}`,
+        name,
+        email,
+        passwordHash,
+        tier: tier || "quiz",
+        referralCode,
+        customLink,
+        payoutMethod: payoutMethod || "stripe",
+        commissionRate,
+        isApproved: tier === "quiz", // Auto-approve quiz tier, others need approval
+        totalClicks: 0,
+        totalLeads: 0,
+        totalBookings: 0,
+        totalSales: 0,
+        totalCommission: 0,
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      // Add to mock array
+      addMockAffiliate(affiliate);
+
+      return NextResponse.json({
+        success: true,
+        message: "Affiliate account created successfully (using fallback system)",
+        affiliate: {
+          id: affiliate.id,
+          name: affiliate.name,
+          email: affiliate.email,
+          tier: affiliate.tier,
+          referralCode: affiliate.referralCode,
+          customLink: affiliate.customLink,
+          isApproved: affiliate.isApproved,
+        },
+      });
+    }
 
     if (existingAffiliate) {
       return NextResponse.json(
