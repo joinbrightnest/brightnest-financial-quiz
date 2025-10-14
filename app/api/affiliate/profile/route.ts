@@ -34,11 +34,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Ensure customLink always uses production domain
+    const correctCustomLink = `https://joinbrightnest.com/${affiliate.referralCode}`;
+    
     console.log("Affiliate data:", {
       id: affiliate.id,
       name: affiliate.name,
       referralCode: affiliate.referralCode,
-      customLink: affiliate.customLink
+      customLink: affiliate.customLink,
+      correctCustomLink: correctCustomLink
     });
 
     return NextResponse.json({
@@ -47,7 +51,7 @@ export async function GET(request: NextRequest) {
       email: affiliate.email,
       tier: affiliate.tier,
       referralCode: affiliate.referralCode,
-      customLink: affiliate.customLink,
+      customLink: correctCustomLink,
       commissionRate: affiliate.commissionRate,
       totalClicks: affiliate.totalClicks,
       totalLeads: affiliate.totalLeads,
