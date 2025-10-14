@@ -42,28 +42,40 @@ export async function GET(request: NextRequest) {
     const userAgent = request.headers.get("user-agent") || "unknown";
     const referrer = request.headers.get("referer") || "unknown";
 
-    // Record the click
-    await prisma.affiliateClick.create({
-      data: {
-        affiliateId: affiliate.id,
-        ipAddress,
-        userAgent,
-        referrer,
-        utmSource: utm_source,
-        utmMedium: utm_medium,
-        utmCampaign: utm_campaign,
-      },
-    });
+    // Record the click with error handling
+    try {
+      await prisma.affiliateClick.create({
+        data: {
+          affiliateId: affiliate.id,
+          referralCode: affiliate.referralCode,
+          ipAddress,
+          userAgent,
+          utmSource: utm_source,
+          utmMedium: utm_medium,
+          utmCampaign: utm_campaign,
+        },
+      });
+      console.log("Click recorded successfully for affiliate:", affiliate.referralCode);
+    } catch (clickError) {
+      console.error("Error recording click:", clickError);
+      // Continue anyway - don't let click recording failure break the redirect
+    }
 
     // Update affiliate's total clicks
-    await prisma.affiliate.update({
-      where: { id: affiliate.id },
-      data: {
-        totalClicks: {
-          increment: 1,
+    try {
+      await prisma.affiliate.update({
+        where: { id: affiliate.id },
+        data: {
+          totalClicks: {
+            increment: 1,
+          },
         },
-      },
-    });
+      });
+      console.log("Affiliate total clicks updated successfully");
+    } catch (updateError) {
+      console.error("Error updating affiliate clicks:", updateError);
+      // Continue anyway
+    }
 
     // Set affiliate tracking cookie (30 days)
     const response = NextResponse.redirect(new URL("/", request.url));
