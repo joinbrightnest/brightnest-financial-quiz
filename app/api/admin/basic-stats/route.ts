@@ -290,23 +290,27 @@ export async function GET(request: Request) {
     let affiliateData = null;
     if (affiliateCode) {
       try {
-        const affiliate = await (prisma as any).affiliate.findUnique({
+        const affiliate = await prisma.affiliate.findUnique({
           where: { referralCode: affiliateCode },
         });
 
         if (affiliate) {
+          console.log("Found affiliate:", affiliate.id, affiliate.referralCode);
+          
           const [clicks, conversions] = await Promise.all([
-            (prisma as any).affiliateClick.findMany({
+            prisma.affiliateClick.findMany({
               where: { affiliateId: affiliate.id },
               orderBy: { createdAt: "desc" },
               take: 10
-            }).catch(() => []),
-            (prisma as any).affiliateConversion.findMany({
+            }),
+            prisma.affiliateConversion.findMany({
               where: { affiliateId: affiliate.id },
               orderBy: { createdAt: "desc" },
               take: 10
-            }).catch(() => [])
+            })
           ]);
+          
+          console.log("Retrieved clicks:", clicks.length, "conversions:", conversions.length);
 
           const totalClicks = clicks.length;
           const totalLeads = conversions.filter((c: any) => c.status === "completed").length;
