@@ -5,9 +5,12 @@ const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
+    console.log("Track affiliate API called");
     const { ref, utm_source, utm_medium, utm_campaign } = await request.json();
+    console.log("Request data:", { ref, utm_source, utm_medium, utm_campaign });
 
     if (!ref) {
+      console.log("No referral code provided");
       return NextResponse.json({ success: false, error: "No referral code" });
     }
 

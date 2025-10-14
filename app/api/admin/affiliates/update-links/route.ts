@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     // Update all affiliate links to use the correct base URL
     const affiliates = await prisma.affiliate.findMany();
     
-    const baseUrl = 'https://joinbrightnest.com';
+    const baseUrl = 'https://birghtnest-pztwbhpi0-joinbrightnests-projects.vercel.app';
     
     const updatePromises = affiliates.map(affiliate => 
       prisma.affiliate.update({
