@@ -1,8 +1,32 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function HomePageContent() {
+  const [affiliateCode, setAffiliateCode] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if we're on an affiliate URL
+    const pathname = window.location.pathname;
+    const code = pathname.substring(1); // Remove leading slash
+    
+    // Check if this looks like an affiliate code (not a regular page)
+    if (code && 
+        !code.includes('/') && 
+        !code.includes('.') && 
+        code.length > 3) {
+      setAffiliateCode(code);
+    }
+  }, []);
+
+  // Helper function to generate links that preserve affiliate context
+  const getQuizLink = (quizType: string) => {
+    if (affiliateCode) {
+      return `/${affiliateCode}/quiz/${quizType}`;
+    }
+    return `/quiz/${quizType}`;
+  };
   return (
     <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
       {/* Top Purple Bar */}
@@ -21,13 +45,13 @@ export default function HomePageContent() {
             
             {/* Menu Items - Right Side with Equal Spacing */}
             <div className="flex items-center space-x-8">
-              <Link href="/quiz/financial-profile" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors"> 
+              <Link href={getQuizLink("financial-profile")} className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors"> 
                 FINANCIAL PROFILE
               </Link>
-              <Link href="/quiz/health-finance" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">    
+              <Link href={getQuizLink("health-finance")} className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">    
                 HEALTH FINANCE
               </Link>
-              <Link href="/quiz/marriage-finance" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">  
+              <Link href={getQuizLink("marriage-finance")} className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">  
                 MARRIAGE FINANCE
               </Link>
               <Link href="/book-call" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">              
@@ -43,7 +67,7 @@ export default function HomePageContent() {
               </div>
               
               {/* CTA Button */}
-              <Link href="/quiz/financial-profile" className="bg-[#1ABC9C] text-white px-6 py-2 rounded-md font-medium text-sm hover:bg-[#16a085] transition-colors">                                                                           
+              <Link href={getQuizLink("financial-profile")} className="bg-[#1ABC9C] text-white px-6 py-2 rounded-md font-medium text-sm hover:bg-[#16a085] transition-colors">                                                                           
                 Learn More
               </Link>
             </div>
@@ -123,7 +147,7 @@ export default function HomePageContent() {
           
           {/* 5️⃣ CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center mb-8 sm:mb-12">
-            <Link href="/quiz/financial-profile" className="w-full sm:w-auto bg-[#1ABC9C] text-white px-8 sm:px-12 py-4 sm:py-5 rounded-lg sm:rounded-xl font-bold text-lg sm:text-xl hover:bg-[#16a085] transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+            <Link href={getQuizLink("financial-profile")} className="w-full sm:w-auto bg-[#1ABC9C] text-white px-8 sm:px-12 py-4 sm:py-5 rounded-lg sm:rounded-xl font-bold text-lg sm:text-xl hover:bg-[#16a085] transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
               Start Your Financial Profile Quiz
             </Link>
             <Link href="/book-call" className="w-full sm:w-auto bg-white text-[#1ABC9C] px-8 sm:px-12 py-4 sm:py-5 rounded-lg sm:rounded-xl font-bold text-lg sm:text-xl border-2 border-[#1ABC9C] hover:bg-[#1ABC9C] hover:text-white transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">

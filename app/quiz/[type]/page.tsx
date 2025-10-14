@@ -90,18 +90,43 @@ export default function QuizPage({ params }: QuizPageProps) {
     getParams();
   }, [params]);
 
+  // Handle affiliate parameter from URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const affiliateCode = urlParams.get('affiliate');
+    
+    if (affiliateCode) {
+      console.log("🎯 Quiz started with affiliate code from URL:", affiliateCode);
+      // Set the affiliate cookie for the quiz system
+      document.cookie = `affiliate_ref=${affiliateCode}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
+    }
+  }, []);
+
   // Initialize quiz
   useEffect(() => {
     if (!quizType) return;
     
     const initializeQuiz = async () => {
       try {
+        // Get affiliate code from URL parameter or cookie
+        const urlParams = new URLSearchParams(window.location.search);
+        const affiliateFromUrl = urlParams.get('affiliate');
+        const affiliateFromCookie = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('affiliate_ref='))
+          ?.split('=')[1];
+        
+        const affiliateCode = affiliateFromUrl || affiliateFromCookie;
+        
         // Run initialization in parallel for faster loading
         const [sessionResponse, countResponse] = await Promise.all([
           fetch("/api/quiz/start", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ quizType }),
+            body: JSON.stringify({ 
+              quizType,
+              affiliateCode: affiliateCode || undefined
+            }),
           }),
           fetch(`/api/quiz/questions/count?quizType=${quizType}`)
         ]);
