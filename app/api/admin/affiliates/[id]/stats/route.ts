@@ -58,7 +58,7 @@ export async function GET(
               gte: startDate,
             },
           },
-        }).catch(() => []),
+        }),
         prisma.affiliateConversion.findMany({
           where: {
             affiliateId: affiliate.id,
@@ -66,10 +66,14 @@ export async function GET(
               gte: startDate,
             },
           },
-        }).catch(() => []),
+        }),
       ]);
+      console.log("Retrieved clicks:", clicks.length, "conversions:", conversions.length);
     } catch (error) {
       console.error("Error fetching related data:", error);
+      // Set empty arrays if there's an error
+      clicks = [];
+      conversions = [];
     }
 
     // Calculate stats from real data

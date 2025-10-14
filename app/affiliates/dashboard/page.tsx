@@ -71,25 +71,18 @@ export default function AffiliateDashboard() {
     }
 
     try {
-      // Use mock affiliate data since the profile API doesn't exist
-      const mockAffiliate = {
-        id: "temp-id",
-        name: "George",
-        email: "george@example.com",
-        tier: "quiz",
-        referralCode: "georgecq33",
-        customLink: "https://joinbrightnest.com/georgecq33",
-        commissionRate: 0.1,
-        totalClicks: 0,
-        totalLeads: 0,
-        totalBookings: 0,
-        totalSales: 0,
-        totalCommission: 0,
-        isApproved: true,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      setAffiliate(mockAffiliate);
+      // Fetch real affiliate data from the API
+      const response = await fetch(`/api/admin/basic-stats?affiliateCode=georgecq33`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.affiliateData && data.affiliateData.affiliate) {
+          setAffiliate(data.affiliateData.affiliate);
+        } else {
+          throw new Error("No affiliate data found");
+        }
+      } else {
+        throw new Error("Failed to fetch affiliate data");
+      }
     } catch (error) {
       console.error("Auth check failed:", error);
       localStorage.removeItem("affiliate_token");

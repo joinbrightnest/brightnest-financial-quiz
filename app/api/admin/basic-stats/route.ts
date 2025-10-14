@@ -365,40 +365,8 @@ export async function GET(request: Request) {
         }
       } catch (error) {
         console.error("Error fetching affiliate data:", error);
-        // Fallback to mock data if database query fails
-        affiliateData = {
-          affiliate: {
-            id: "temp-id",
-            name: "George",
-            email: "george@example.com",
-            tier: "quiz",
-            referralCode: affiliateCode,
-            customLink: `https://joinbrightnest.com/${affiliateCode}`,
-            commissionRate: 0.1,
-            totalClicks: 0,
-            totalLeads: 0,
-            totalBookings: 0,
-            totalSales: 0,
-            totalCommission: 0.00,
-            isApproved: true,
-            createdAt: new Date(),
-            updatedAt: new Date()
-          },
-          stats: {
-            totalClicks: 0,
-            totalLeads: 0,
-            totalBookings: 0,
-            totalSales: 0,
-            totalCommission: 0.00,
-            conversionRate: 0.0,
-            averageSaleValue: 0.00,
-            pendingCommission: 0,
-            paidCommission: 0,
-            dailyStats: []
-          },
-          clicks: [],
-          conversions: []
-        };
+        // Don't provide fallback data - let the error bubble up
+        affiliateData = null;
       }
     }
 
