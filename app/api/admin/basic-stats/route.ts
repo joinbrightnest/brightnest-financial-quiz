@@ -290,18 +290,18 @@ export async function GET(request: Request) {
     let affiliateData = null;
     if (affiliateCode) {
       try {
-        const affiliate = await prisma.affiliate.findUnique({
+        const affiliate = await (prisma as any).affiliate.findUnique({
           where: { referralCode: affiliateCode },
         });
 
         if (affiliate) {
           const [clicks, conversions] = await Promise.all([
-            prisma.affiliateClick.findMany({
+            (prisma as any).affiliateClick.findMany({
               where: { affiliateId: affiliate.id },
               orderBy: { createdAt: "desc" },
               take: 10
             }).catch(() => []),
-            prisma.affiliateConversion.findMany({
+            (prisma as any).affiliateConversion.findMany({
               where: { affiliateId: affiliate.id },
               orderBy: { createdAt: "desc" },
               take: 10
