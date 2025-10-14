@@ -5,10 +5,10 @@ CREATE TYPE "AffiliateTier" AS ENUM ('quiz', 'creator', 'agency');
 CREATE TYPE "PayoutMethod" AS ENUM ('stripe', 'paypal', 'wise');
 
 -- CreateEnum
-CREATE TYPE "ConversionStatus" AS ENUM ('lead', 'booked_call', 'sale');
+CREATE TYPE "ConversionStatus" AS ENUM ('pending', 'confirmed', 'cancelled');
 
 -- CreateEnum
-CREATE TYPE "PayoutStatus" AS ENUM ('pending', 'paid', 'rejected');
+CREATE TYPE "PayoutStatus" AS ENUM ('pending', 'processing', 'completed', 'failed');
 
 -- CreateTable
 CREATE TABLE "affiliates" (
@@ -40,9 +40,10 @@ CREATE TABLE "affiliates" (
 CREATE TABLE "affiliate_clicks" (
     "id" TEXT NOT NULL,
     "affiliate_id" TEXT NOT NULL,
+    "referral_code" TEXT NOT NULL,
     "ip_address" TEXT,
     "user_agent" TEXT,
-    "referrer" TEXT,
+    "landing_page" TEXT,
     "utm_source" TEXT,
     "utm_medium" TEXT,
     "utm_campaign" TEXT,
@@ -55,11 +56,12 @@ CREATE TABLE "affiliate_clicks" (
 CREATE TABLE "affiliate_conversions" (
     "id" TEXT NOT NULL,
     "affiliate_id" TEXT NOT NULL,
-    "lead_email" TEXT,
-    "session_id" TEXT,
-    "status" "ConversionStatus" NOT NULL DEFAULT 'lead',
-    "amount" DECIMAL(10,2),
-    "commission" DECIMAL(10,2),
+    "quiz_session_id" TEXT,
+    "referral_code" TEXT NOT NULL,
+    "conversion_type" TEXT NOT NULL,
+    "status" "ConversionStatus" NOT NULL DEFAULT 'pending',
+    "commission_amount" DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    "sale_value" DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -70,11 +72,12 @@ CREATE TABLE "affiliate_conversions" (
 CREATE TABLE "affiliate_payouts" (
     "id" TEXT NOT NULL,
     "affiliate_id" TEXT NOT NULL,
-    "amount_due" DECIMAL(10,2) NOT NULL,
+    "amount" DECIMAL(10,2) NOT NULL,
     "status" "PayoutStatus" NOT NULL DEFAULT 'pending',
-    "paid_at" TIMESTAMP(3),
-    "stripe_transfer_id" TEXT,
-    "notes" TEXT,
+    "payout_method" "PayoutMethod" NOT NULL,
+    "payout_details" JSONB,
+    "stripe_payout_id" TEXT,
+    "processed_at" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -84,7 +87,7 @@ CREATE TABLE "affiliate_payouts" (
 -- CreateTable
 CREATE TABLE "affiliate_audit_logs" (
     "id" TEXT NOT NULL,
-    "affiliate_id" TEXT,
+    "affiliate_id" TEXT NOT NULL,
     "action" TEXT NOT NULL,
     "details" JSONB,
     "ip_address" TEXT,
@@ -104,28 +107,34 @@ CREATE UNIQUE INDEX "affiliates_referral_code_key" ON "affiliates"("referral_cod
 CREATE INDEX "affiliate_clicks_affiliate_id_idx" ON "affiliate_clicks"("affiliate_id");
 
 -- CreateIndex
-CREATE INDEX "affiliate_clicks_created_at_idx" ON "affiliate_clicks"("created_at");
+CREATE INDEX "affiliate_clicks_referral_code_idx" ON "affiliate_clicks"("referral_code");
 
 -- CreateIndex
 CREATE INDEX "affiliate_conversions_affiliate_id_idx" ON "affiliate_conversions"("affiliate_id");
 
 -- CreateIndex
-CREATE INDEX "affiliate_conversions_status_idx" ON "affiliate_conversions"("status");
+CREATE INDEX "affiliate_conversions_quiz_session_id_idx" ON "affiliate_conversions"("quiz_session_id");
 
 -- CreateIndex
 CREATE INDEX "affiliate_payouts_affiliate_id_idx" ON "affiliate_payouts"("affiliate_id");
 
 -- CreateIndex
-CREATE INDEX "affiliate_payouts_status_idx" ON "affiliate_payouts"("status");
+CREATE INDEX "affiliate_audit_logs_affiliate_id_idx" ON "affiliate_audit_logs"("affiliate_id");
 
 -- AddForeignKey
-ALTER TABLE "affiliate_clicks" ADD CONSTRAINT "affiliate_clicks_affiliate_id_fkey" FOREIGN KEY ("affiliate_id") REFERENCES "affiliates"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "affiliate_clicks" ADD CONSTRAINT "affiliate_clicks_affiliate_id_fkey" FOREIGN KEY ("affiliate_id") REFERENCES "affiliates"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "affiliate_conversions" ADD CONSTRAINT "affiliate_conversions_affiliate_id_fkey" FOREIGN KEY ("affiliate_id") REFERENCES "affiliates"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "affiliate_conversions" ADD CONSTRAINT "affiliate_conversions_affiliate_id_fkey" FOREIGN KEY ("affiliate_id") REFERENCES "affiliates"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "affiliate_payouts" ADD CONSTRAINT "affiliate_payouts_affiliate_id_fkey" FOREIGN KEY ("affiliate_id") REFERENCES "affiliates"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "affiliate_conversions" ADD CONSTRAINT "affiliate_conversions_quiz_session_id_fkey" FOREIGN KEY ("quiz_session_id") REFERENCES "quiz_sessions"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "affiliate_audit_logs" ADD CONSTRAINT "affiliate_audit_logs_affiliate_id_fkey" FOREIGN KEY ("affiliate_id") REFERENCES "affiliates"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "affiliate_payouts" ADD CONSTRAINT "affiliate_payouts_affiliate_id_fkey" FOREIGN KEY ("affiliate_id") REFERENCES "affiliates"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "affiliate_audit_logs" ADD CONSTRAINT "affiliate_audit_logs_affiliate_id_fkey" FOREIGN KEY ("affiliate_id") REFERENCES "affiliates"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- Add affiliate_code column to quiz_sessions if it doesn't exist
+ALTER TABLE "quiz_sessions" ADD COLUMN IF NOT EXISTS "affiliate_code" TEXT;
