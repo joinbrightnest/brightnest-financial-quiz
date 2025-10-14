@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
         id: aff.id,
         name: aff.name,
         referralCode: aff.referralCode,
-        newLink: `${baseUrl}/?ref=${aff.referralCode}`,
+        newLink: `https://joinbrightnest.com/${aff.referralCode}`,
       })),
     });
   } catch (error) {
