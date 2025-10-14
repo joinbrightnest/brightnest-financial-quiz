@@ -9,33 +9,13 @@ function AffiliateRedirectContent() {
 
   useEffect(() => {
     if (affiliateCode) {
-      console.log("Tracking affiliate visit:", affiliateCode);
+      console.log("Affiliate visit detected:", affiliateCode);
       
-      // Set the affiliate cookie for the quiz system
+      // Set the affiliate cookie for the quiz system (don't track click yet)
       document.cookie = `affiliate_ref=${affiliateCode}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
       
-      // Track the affiliate click using the existing quiz start API
-      fetch("/api/quiz/start", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          quizType: "financial-profile",
-          affiliateCode: affiliateCode
-        }),
-      }).then(response => {
-        console.log("Quiz start API response:", response.status);
-        if (response.ok) {
-          console.log("Affiliate click tracked successfully");
-        } else {
-          console.error("Failed to track affiliate click");
-        }
-        // Redirect to homepage after tracking
-        window.location.href = "/";
-      }).catch(error => {
-        console.error("Error tracking affiliate click:", error);
-        // Still redirect even if tracking fails
-        window.location.href = "/";
-      });
+      // Just redirect to homepage without tracking click
+      window.location.href = "/";
     }
   }, [affiliateCode]);
 

@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     // Get affiliate code from cookie or request
     const affiliateCode = requestAffiliateCode || request.cookies.get("affiliate_ref")?.value;
 
-    // If we have an affiliate code, track the click
+    // If we have an affiliate code, track the click (only when quiz is actually started)
     if (affiliateCode) {
       try {
         // Find the affiliate
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
         });
 
         if (affiliate && affiliate.isActive) {
-          // Record the click
+          // Record the click (this happens when user actually starts a quiz)
           await prisma.affiliateClick.create({
             data: {
               affiliateId: affiliate.id,
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
             },
           });
 
-          console.log("Affiliate click tracked:", affiliateCode);
+          console.log("Affiliate click tracked (quiz started):", affiliateCode);
         }
       } catch (error) {
         console.error("Error tracking affiliate click:", error);
