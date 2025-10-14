@@ -5,9 +5,12 @@ const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
+    console.log("Affiliate overview API called");
     const { searchParams } = new URL(request.url);
     const dateRange = searchParams.get("dateRange") || "30d";
     const tier = searchParams.get("tier") || "all";
+    
+    console.log("Parameters:", { dateRange, tier });
 
     // Calculate date filter
     const now = new Date();
@@ -37,6 +40,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get real affiliate data from database (both approved and pending)
+    console.log("Fetching affiliates from database...");
     const affiliates = await prisma.affiliate.findMany({
       where: {
         isActive: true,
@@ -62,6 +66,8 @@ export async function GET(request: NextRequest) {
         totalCommission: "desc",
       },
     });
+    
+    console.log(`Found ${affiliates.length} affiliates`);
 
     // Calculate overview metrics
     const approvedAffiliates = affiliates.filter(aff => aff.isApproved);
@@ -151,6 +157,12 @@ export async function GET(request: NextRequest) {
       conversionFunnelByTier,
     };
 
+    console.log("Returning affiliate data:", {
+      totalActiveAffiliates: affiliateData.totalActiveAffiliates,
+      totalPendingAffiliates: affiliateData.totalPendingAffiliates,
+      topAffiliatesCount: affiliateData.topAffiliates.length
+    });
+    
     return NextResponse.json(affiliateData);
   } catch (error) {
     console.error("Affiliate overview API error:", error);
