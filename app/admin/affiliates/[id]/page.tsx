@@ -168,6 +168,12 @@ export default function AffiliatePerformancePage() {
                 <option value="90d">Last 90 days</option>
                 <option value="1y">Last year</option>
               </select>
+              <a
+                href={`/admin/affiliates/${affiliateId}/crm`}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+              >
+                CRM View
+              </a>
               <button
                 onClick={() => router.back()}
                 className="text-gray-400 hover:text-gray-600"
