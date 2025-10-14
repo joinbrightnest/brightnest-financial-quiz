@@ -28,10 +28,12 @@ export default function CEOAnalytics() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState("30d");
-  const [activeSection, setActiveSection] = useState<"overview" | "affiliates">("overview");
+  const [activeSection, setActiveSection] = useState<"overview" | "affiliates" | "pending">("overview");
+  const [pendingAffiliates, setPendingAffiliates] = useState<any[]>([]);
 
   useEffect(() => {
     fetchCEOAnalytics();
+    fetchPendingAffiliates();
   }, [dateRange]);
 
   const fetchCEOAnalytics = async () => {
@@ -85,6 +87,43 @@ export default function CEOAnalytics() {
       setError(err instanceof Error ? err.message : "Failed to load CEO analytics");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPendingAffiliates = async () => {
+    try {
+      const response = await fetch("/api/admin/affiliates/pending");
+      if (response.ok) {
+        const result = await response.json();
+        setPendingAffiliates(result.pendingAffiliates || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch pending affiliates:", error);
+    }
+  };
+
+  const handleApproveAffiliate = async (affiliateId: string, approved: boolean) => {
+    try {
+      const response = await fetch("/api/admin/affiliates/approve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ affiliateId, approved }),
+      });
+
+      if (response.ok) {
+        // Refresh pending affiliates list
+        fetchPendingAffiliates();
+        // Refresh affiliate overview
+        if (activeSection === "affiliates") {
+          // Trigger refresh of affiliate data
+          window.location.reload();
+        }
+      } else {
+        alert("Failed to update affiliate status");
+      }
+    } catch (error) {
+      console.error("Failed to approve affiliate:", error);
+      alert("Failed to update affiliate status");
     }
   };
 
@@ -240,6 +279,16 @@ export default function CEOAnalytics() {
           >
             💼 Affiliate Performance
           </button>
+          <button
+            onClick={() => setActiveSection("pending")}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeSection === "pending"
+                ? "border-blue-500 text-blue-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            }`}
+          >
+            ⏳ Pending Approval {pendingAffiliates.length > 0 && `(${pendingAffiliates.length})`}
+          </button>
         </nav>
       </div>
 
@@ -383,6 +432,80 @@ export default function CEOAnalytics() {
           transition={{ duration: 0.3 }}
         >
           <AffiliateOverview />
+        </motion.div>
+      )}
+
+      {activeSection === "pending" && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="space-y-6"
+        >
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Pending Affiliate Approvals ({pendingAffiliates.length})
+            </h3>
+            
+            {pendingAffiliates.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="text-gray-400 text-6xl mb-4">✅</div>
+                <p className="text-gray-500">No pending affiliate approvals</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {pendingAffiliates.map((affiliate) => (
+                  <div key={affiliate.id} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span className="text-blue-600 font-medium">
+                              {affiliate.name.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-gray-900">{affiliate.name}</h4>
+                            <p className="text-sm text-gray-500">{affiliate.email}</p>
+                            <div className="flex items-center space-x-4 mt-1">
+                              <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                                {affiliate.tier} tier
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                {(affiliate.commissionRate * 100).toFixed(0)}% commission
+                              </span>
+                              <span className="text-xs text-gray-500">
+                                Code: {affiliate.referralCode}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => handleApproveAffiliate(affiliate.id, true)}
+                          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium"
+                        >
+                          ✅ Approve
+                        </button>
+                        <button
+                          onClick={() => handleApproveAffiliate(affiliate.id, false)}
+                          className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium"
+                        >
+                          ❌ Reject
+                        </button>
+                      </div>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <p className="text-xs text-gray-500">
+                        Applied: {new Date(affiliate.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </motion.div>
       )}
     </div>

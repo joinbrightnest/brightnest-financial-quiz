@@ -35,6 +35,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if account is approved
+    if (!affiliate.isApproved) {
+      return NextResponse.json(
+        { error: "Account is pending approval. Please wait for admin approval before logging in." },
+        { status: 401 }
+      );
+    }
+
     // Verify password
     const isValidPassword = await bcrypt.compare(password, affiliate.passwordHash);
     if (!isValidPassword) {

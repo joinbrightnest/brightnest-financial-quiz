@@ -36,11 +36,10 @@ export async function GET(request: NextRequest) {
       affiliateWhereClause.tier = tier;
     }
 
-    // Get real affiliate data from database
+    // Get real affiliate data from database (both approved and pending)
     const affiliates = await prisma.affiliate.findMany({
       where: {
         isActive: true,
-        isApproved: true,
         ...(tier !== "all" && { tier }),
       },
       include: {
@@ -65,14 +64,18 @@ export async function GET(request: NextRequest) {
     });
 
     // Calculate overview metrics
-    const totalActiveAffiliates = affiliates.length;
-    const totalLeadsFromAffiliates = affiliates.reduce((sum, aff) => sum + aff.totalLeads, 0);
-    const totalSalesValue = affiliates.reduce((sum, aff) => sum + (aff.totalSales * 200), 0); // Mock $200 per sale
-    const totalCommissionsPaid = affiliates.reduce((sum, aff) => sum + (aff.totalCommission * 0.7), 0); // 70% paid
-    const totalCommissionsPending = affiliates.reduce((sum, aff) => sum + (aff.totalCommission * 0.3), 0); // 30% pending
+    const approvedAffiliates = affiliates.filter(aff => aff.isApproved);
+    const pendingAffiliates = affiliates.filter(aff => !aff.isApproved);
+    
+    const totalActiveAffiliates = approvedAffiliates.length;
+    const totalPendingAffiliates = pendingAffiliates.length;
+    const totalLeadsFromAffiliates = approvedAffiliates.reduce((sum, aff) => sum + aff.totalLeads, 0);
+    const totalSalesValue = approvedAffiliates.reduce((sum, aff) => sum + (aff.totalSales * 200), 0); // Mock $200 per sale
+    const totalCommissionsPaid = approvedAffiliates.reduce((sum, aff) => sum + (aff.totalCommission * 0.7), 0); // 70% paid
+    const totalCommissionsPending = approvedAffiliates.reduce((sum, aff) => sum + (aff.totalCommission * 0.3), 0); // 30% pending
 
-    // Generate top affiliates performance data
-    const topAffiliates = affiliates.map(affiliate => ({
+    // Generate top affiliates performance data (only approved ones)
+    const topAffiliates = approvedAffiliates.map(affiliate => ({
       id: affiliate.id,
       name: affiliate.name,
       tier: affiliate.tier,
@@ -85,6 +88,18 @@ export async function GET(request: NextRequest) {
       commission: affiliate.totalCommission,
       lastActive: affiliate.updatedAt.toISOString(),
     })).sort((a, b) => b.revenue - a.revenue);
+
+    // Generate pending affiliates data
+    const pendingAffiliatesData = pendingAffiliates.map(affiliate => ({
+      id: affiliate.id,
+      name: affiliate.name,
+      email: affiliate.email,
+      tier: affiliate.tier,
+      referralCode: affiliate.referralCode,
+      customLink: affiliate.customLink,
+      commissionRate: affiliate.commissionRate,
+      createdAt: affiliate.createdAt.toISOString(),
+    }));
 
     // Generate traffic source breakdown
     const trafficSourceBreakdown = [
@@ -125,11 +140,13 @@ export async function GET(request: NextRequest) {
 
     const affiliateData = {
       totalActiveAffiliates,
+      totalPendingAffiliates,
       totalLeadsFromAffiliates,
       totalSalesValue,
       totalCommissionsPaid,
       totalCommissionsPending,
       topAffiliates,
+      pendingAffiliates: pendingAffiliatesData,
       trafficSourceBreakdown,
       conversionFunnelByTier,
     };
