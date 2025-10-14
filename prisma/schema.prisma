@@ -254,7 +254,6 @@ model AffiliateClick {
   referralCode String    @map("referral_code")
   ipAddress    String?   @map("ip_address")
   userAgent    String?   @map("user_agent")
-  referrer     String?
   utmSource    String?   @map("utm_source")
   utmMedium    String?   @map("utm_medium")
   utmCampaign  String?   @map("utm_campaign")
@@ -266,17 +265,18 @@ model AffiliateClick {
 }
 
 model AffiliateConversion {
-  id          String            @id @default(cuid())
-  affiliateId String            @map("affiliate_id")
-  leadEmail   String?           @map("lead_email")
-  sessionId   String?           @map("session_id")
-  status      ConversionStatus  @default(lead)
-  amount      Decimal?          @db.Decimal(10, 2)
-  commission  Decimal?          @db.Decimal(10, 2)
-  createdAt   DateTime          @default(now()) @map("created_at")
-  updatedAt   DateTime          @updatedAt @map("updated_at")
+  id              String            @id @default(cuid())
+  affiliateId     String            @map("affiliate_id")
+  quizSessionId   String?           @map("quiz_session_id")
+  referralCode    String            @map("referral_code")
+  conversionType  String            @map("conversion_type")
+  status          ConversionStatus  @default(pending)
+  commissionAmount Decimal          @default(0.00) @map("commission_amount") @db.Decimal(10, 2)
+  saleValue       Decimal           @default(0.00) @map("sale_value") @db.Decimal(10, 2)
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
   
-  affiliate   Affiliate         @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  affiliate       Affiliate         @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
 
   @@map("affiliate_conversions")
 }
@@ -324,13 +324,14 @@ enum PayoutMethod {
 }
 
 enum ConversionStatus {
-  lead
-  booked_call
-  sale
+  pending
+  confirmed
+  cancelled
 }
 
 enum PayoutStatus {
   pending
-  paid
-  rejected
+  processing
+  completed
+  failed
 }

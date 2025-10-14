@@ -136,17 +136,17 @@ export default function AffiliateDashboard() {
       // Skip affiliate record creation for now to avoid 500 errors
       console.log("Skipping affiliate record creation, using test data...");
       
-      // Use the working admin API with affiliate code parameter
+      // Use the new simplified affiliate stats API
       console.log("Fetching affiliate data for:", affiliate.referralCode);
-      const response = await fetch(`/api/admin/basic-stats?affiliateCode=${affiliate.referralCode}`);
+      const response = await fetch(`/api/admin/affiliate-stats?affiliateCode=${affiliate.referralCode}`);
 
       if (response.ok) {
         const data = await response.json();
         console.log("Full API response:", data);
         
-        if (data.affiliateData && data.affiliateData.stats) {
-          console.log("Using real affiliate data:", data.affiliateData.stats);
-          setStats(data.affiliateData.stats);
+        if (data.stats) {
+          console.log("Using real affiliate data:", data.stats);
+          setStats(data.stats);
           setError(null);
         } else {
           console.log("No affiliate data found in response");

@@ -367,6 +367,8 @@ export async function GET(request: Request) {
         }
       } catch (error) {
         console.error("Error fetching affiliate data:", error);
+        console.error("Error details:", error.message);
+        console.error("Error stack:", error.stack);
         // Don't provide fallback data - let the error bubble up
         affiliateData = null;
       }
