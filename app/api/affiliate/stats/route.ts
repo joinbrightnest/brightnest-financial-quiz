@@ -52,33 +52,42 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get related data separately
-    const [clicks, conversions, payouts] = await Promise.all([
-      prisma.affiliateClick.findMany({
-        where: {
-          affiliateId: affiliate.id,
-          createdAt: {
-            gte: startDate,
+    // Get related data separately with error handling
+    let clicks = [];
+    let conversions = [];
+    let payouts = [];
+    
+    try {
+      [clicks, conversions, payouts] = await Promise.all([
+        prisma.affiliateClick.findMany({
+          where: {
+            affiliateId: affiliate.id,
+            createdAt: {
+              gte: startDate,
+            },
           },
-        },
-      }),
-      prisma.affiliateConversion.findMany({
-        where: {
-          affiliateId: affiliate.id,
-          createdAt: {
-            gte: startDate,
+        }).catch(() => []),
+        prisma.affiliateConversion.findMany({
+          where: {
+            affiliateId: affiliate.id,
+            createdAt: {
+              gte: startDate,
+            },
           },
-        },
-      }),
-      prisma.affiliatePayout.findMany({
-        where: {
-          affiliateId: affiliate.id,
-          createdAt: {
-            gte: startDate,
+        }).catch(() => []),
+        prisma.affiliatePayout.findMany({
+          where: {
+            affiliateId: affiliate.id,
+            createdAt: {
+              gte: startDate,
+            },
           },
-        },
-      }),
-    ]);
+        }).catch(() => []),
+      ]);
+    } catch (error) {
+      console.error("Error fetching related data:", error);
+      // Continue with empty arrays if related data fails
+    }
 
     // Combine the data
     const affiliateWithData = {
