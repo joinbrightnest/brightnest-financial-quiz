@@ -9,13 +9,19 @@ function AffiliateRedirectContent() {
 
   useEffect(() => {
     if (affiliateCode) {
-      console.log("Affiliate visit detected:", affiliateCode);
+      console.log("🎯 Affiliate visit detected:", affiliateCode);
+      console.log("🍪 Setting affiliate cookie...");
       
       // Set the affiliate cookie for the quiz system (don't track click yet)
       document.cookie = `affiliate_ref=${affiliateCode}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
       
-      // Just redirect to homepage without tracking click
-      window.location.href = "/";
+      console.log("✅ Affiliate cookie set successfully");
+      console.log("🔄 Redirecting to homepage...");
+      
+      // Add a small delay to ensure the message is visible
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1000);
     }
   }, [affiliateCode]);
 

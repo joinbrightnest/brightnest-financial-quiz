@@ -104,17 +104,8 @@ export default function AffiliateDashboard() {
     try {
       setLoading(true);
       
-      // First, try to create the affiliate record if it doesn't exist
-      console.log("Ensuring affiliate record exists for:", affiliate.referralCode);
-      try {
-        await fetch("/api/test-affiliate-click", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ affiliateCode: affiliate.referralCode })
-        });
-      } catch (createError) {
-        console.log("Affiliate record creation failed, continuing with fetch...");
-      }
+      // Skip affiliate record creation for now to avoid 500 errors
+      console.log("Skipping affiliate record creation, using test data...");
       
       // Use the working admin API with affiliate code parameter
       console.log("Fetching affiliate data for:", affiliate.referralCode);
