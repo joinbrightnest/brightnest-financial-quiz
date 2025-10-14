@@ -73,6 +73,44 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Handle affiliate conversion tracking
+    if (session.affiliateCode) {
+      try {
+        // Find the affiliate
+        const affiliate = await prisma.affiliate.findUnique({
+          where: { referralCode: session.affiliateCode },
+        });
+
+        if (affiliate && affiliate.isActive) {
+          // Record the conversion (lead)
+          await prisma.affiliateConversion.create({
+            data: {
+              affiliateId: affiliate.id,
+              sessionId: sessionId,
+              conversionType: "quiz_completion",
+              status: "completed",
+              value: 0, // No monetary value for quiz completion
+            },
+          });
+
+          // Update affiliate's total leads
+          await prisma.affiliate.update({
+            where: { id: affiliate.id },
+            data: {
+              totalLeads: {
+                increment: 1,
+              },
+            },
+          });
+
+          console.log("Affiliate conversion tracked:", session.affiliateCode);
+        }
+      } catch (error) {
+        console.error("Error tracking affiliate conversion:", error);
+        // Continue with result creation even if tracking fails
+      }
+    }
+
     // Check if result already exists
     let result = await prisma.result.findUnique({
       where: { sessionId }
