@@ -290,7 +290,78 @@ export async function GET(request: Request) {
     let affiliateData = null;
     if (affiliateCode) {
       try {
-        // For now, return mock data until database is properly set up
+        const affiliate = await prisma.affiliate.findUnique({
+          where: { referralCode: affiliateCode },
+        });
+
+        if (affiliate) {
+          const [clicks, conversions] = await Promise.all([
+            prisma.affiliateClick.findMany({
+              where: { affiliateId: affiliate.id },
+              orderBy: { createdAt: "desc" },
+              take: 10
+            }).catch(() => []),
+            prisma.affiliateConversion.findMany({
+              where: { affiliateId: affiliate.id },
+              orderBy: { createdAt: "desc" },
+              take: 10
+            }).catch(() => [])
+          ]);
+
+          const totalClicks = clicks.length;
+          const totalLeads = conversions.filter((c: any) => c.status === "completed").length;
+          const totalBookings = conversions.filter((c: any) => c.conversionType === "booking").length;
+          const totalSales = conversions.filter((c: any) => c.conversionType === "sale").length;
+          const totalCommission = conversions.reduce((sum: number, c: any) => sum + Number(c.commissionAmount || 0), 0);
+          const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
+
+          affiliateData = {
+            affiliate: {
+              id: affiliate.id,
+              name: affiliate.name,
+              email: affiliate.email,
+              tier: affiliate.tier,
+              referralCode: affiliate.referralCode,
+              customLink: affiliate.customLink,
+              commissionRate: affiliate.commissionRate,
+              totalClicks: affiliate.totalClicks,
+              totalLeads: affiliate.totalLeads,
+              totalBookings: affiliate.totalBookings,
+              totalSales: affiliate.totalSales,
+              totalCommission: affiliate.totalCommission,
+              isApproved: affiliate.isApproved,
+              createdAt: affiliate.createdAt,
+              updatedAt: affiliate.updatedAt
+            },
+            stats: {
+              totalClicks,
+              totalLeads,
+              totalBookings,
+              totalSales,
+              totalCommission,
+              conversionRate,
+              averageSaleValue: totalSales > 0 ? totalCommission / totalSales : 0,
+              pendingCommission: 0,
+              paidCommission: 0,
+              dailyStats: []
+            },
+            clicks: clicks.map((click: any) => ({
+              id: click.id,
+              createdAt: click.createdAt,
+              ipAddress: click.ipAddress
+            })),
+            conversions: conversions.map((conv: any) => ({
+              id: conv.id,
+              conversionType: conv.conversionType,
+              status: conv.status,
+              createdAt: conv.createdAt,
+              value: conv.value
+            }))
+          };
+        }
+      } catch (error) {
+        console.error("Error fetching affiliate data:", error);
+        // Fallback to mock data if database query fails
         affiliateData = {
           affiliate: {
             id: "temp-id",
@@ -300,23 +371,23 @@ export async function GET(request: Request) {
             referralCode: affiliateCode,
             customLink: `https://joinbrightnest.com/${affiliateCode}`,
             commissionRate: 0.1,
-            totalClicks: 5,
-            totalLeads: 2,
-            totalBookings: 1,
-            totalSales: 1,
-            totalCommission: 50.00,
+            totalClicks: 0,
+            totalLeads: 0,
+            totalBookings: 0,
+            totalSales: 0,
+            totalCommission: 0.00,
             isApproved: true,
             createdAt: new Date(),
             updatedAt: new Date()
           },
           stats: {
-            totalClicks: 5,
-            totalLeads: 2,
-            totalBookings: 1,
-            totalSales: 1,
-            totalCommission: 50.00,
-            conversionRate: 20.0,
-            averageSaleValue: 50.00,
+            totalClicks: 0,
+            totalLeads: 0,
+            totalBookings: 0,
+            totalSales: 0,
+            totalCommission: 0.00,
+            conversionRate: 0.0,
+            averageSaleValue: 0.00,
             pendingCommission: 0,
             paidCommission: 0,
             dailyStats: []
@@ -324,8 +395,6 @@ export async function GET(request: Request) {
           clicks: [],
           conversions: []
         };
-      } catch (error) {
-        console.error("Error fetching affiliate data:", error);
       }
     }
 
