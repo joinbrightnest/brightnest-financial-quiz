@@ -113,64 +113,25 @@ export default function AffiliateDashboard() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log("Full API response:", data);
+        
         if (data.affiliateData && data.affiliateData.stats) {
+          console.log("Using real affiliate data:", data.affiliateData.stats);
           setStats(data.affiliateData.stats);
           setError(null);
-          console.log("Affiliate data loaded:", data.affiliateData.stats);
         } else {
-          // If no affiliate data, use mock data with some test clicks
-          console.log("No affiliate data found, using test data");
-          const testStats = {
-            totalClicks: 5,
-            totalLeads: 2,
-            totalBookings: 1,
-            totalSales: 1,
-            totalCommission: 50.00,
-            conversionRate: 20.0,
-            averageSaleValue: 50.00,
-            pendingCommission: 0,
-            paidCommission: 0,
-            dailyStats: []
-          };
-          setStats(testStats);
-          setError(null);
+          console.log("No affiliate data found in response");
+          setError("No affiliate data available");
         }
       } else {
-        // If API fails, use test data immediately
-        console.log("API failed, using test data immediately");
-        const testStats = {
-          totalClicks: 5,
-          totalLeads: 2,
-          totalBookings: 1,
-          totalSales: 1,
-          totalCommission: 50.00,
-          conversionRate: 20.0,
-          averageSaleValue: 50.00,
-          pendingCommission: 0,
-          paidCommission: 0,
-          dailyStats: []
-        };
-        setStats(testStats);
-        setError(null);
+        console.log("API failed with status:", response.status);
+        const errorText = await response.text();
+        console.log("API error response:", errorText);
+        setError("Failed to fetch affiliate data");
       }
     } catch (err) {
       console.error("Error fetching stats:", err);
-      // Fallback to test data
-      console.log("Using test data as fallback");
-      const stats = {
-        totalClicks: 3,
-        totalLeads: 1,
-        totalBookings: 0,
-        totalSales: 0,
-        totalCommission: 0.00,
-        conversionRate: 0.0,
-        averageSaleValue: 0.00,
-        pendingCommission: 0,
-        paidCommission: 0,
-        dailyStats: []
-      };
-      setStats(stats);
-      setError(null); // Don't show error, just use test data
+      setError("Failed to load affiliate statistics");
     } finally {
       setLoading(false);
     }
