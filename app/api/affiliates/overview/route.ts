@@ -59,28 +59,41 @@ export async function GET(request: NextRequest) {
     const affiliatesWithData = await Promise.all(
       affiliates.map(async (affiliate) => {
         try {
-          const clicks = await prisma.affiliateClick.findMany({
-            where: {
-              affiliateId: affiliate.id,
-              createdAt: {
-                gte: startDate,
+          const [clicks, conversions, quizSessions] = await Promise.all([
+            prisma.affiliateClick.findMany({
+              where: {
+                affiliateId: affiliate.id,
+                createdAt: {
+                  gte: startDate,
+                },
               },
-            },
-          });
-          
-          const conversions = await prisma.affiliateConversion.findMany({
-            where: {
-              affiliateId: affiliate.id,
-              createdAt: {
-                gte: startDate,
+            }),
+            prisma.affiliateConversion.findMany({
+              where: {
+                affiliateId: affiliate.id,
+                createdAt: {
+                  gte: startDate,
+                },
               },
-            },
-          });
+            }),
+            prisma.quizSession.findMany({
+              where: {
+                affiliateCode: affiliate.referralCode,
+                createdAt: {
+                  gte: startDate,
+                },
+              },
+              include: {
+                result: true,
+              },
+            }),
+          ]);
           
           return {
             ...affiliate,
             clicks,
             conversions,
+            quizSessions,
           };
         } catch (error) {
           console.error(`Error fetching data for affiliate ${affiliate.id}:`, error);
@@ -88,6 +101,7 @@ export async function GET(request: NextRequest) {
             ...affiliate,
             clicks: [],
             conversions: [],
+            quizSessions: [],
           };
         }
       })

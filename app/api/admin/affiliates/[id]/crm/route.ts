@@ -67,10 +67,10 @@ export async function GET(
       } : null,
     }));
 
-    // Calculate CRM stats
-    const totalLeads = leads.length;
-    const totalCompletions = leads.filter(lead => lead.status === "completed").length;
-    const completionRate = totalLeads > 0 ? (totalCompletions / totalLeads) * 100 : 0;
+    // Calculate CRM stats - only count completed sessions as leads (matching general admin CRM)
+    const totalLeads = leads.filter(lead => lead.status === "completed").length;
+    const totalCompletions = totalLeads; // Same as totalLeads since we only count completed as leads
+    const completionRate = leads.length > 0 ? (totalLeads / leads.length) * 100 : 0;
     const averageCompletionTime = totalCompletions > 0 
       ? leads
           .filter(lead => lead.durationMs)
@@ -83,9 +83,9 @@ export async function GET(
       .map(lead => lead.result!.archetype);
     const distinctArchetypes = [...new Set(archetypes)];
 
-    // Quiz type distribution
+    // Quiz type distribution (only for completed leads)
     const quizTypeCounts: { [key: string]: number } = {};
-    leads.forEach(lead => {
+    leads.filter(lead => lead.status === "completed").forEach(lead => {
       quizTypeCounts[lead.quizType] = (quizTypeCounts[lead.quizType] || 0) + 1;
     });
 
@@ -93,7 +93,7 @@ export async function GET(
       quizType,
       count,
       percentage: totalLeads > 0 ? (count / totalLeads) * 100 : 0,
-    }));
+    })).filter(item => item.count > 0); // Only show quiz types that have completed leads
 
     // Archetype distribution
     const archetypeCounts: { [key: string]: number } = {};
