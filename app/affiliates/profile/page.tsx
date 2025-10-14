@@ -1,21 +1,88 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function AffiliateProfilePage() {
   const [formData, setFormData] = useState({
-    name: "George",
-    email: "george@example.com",
+    name: "",
+    email: "",
     payoutMethod: "stripe",
     payoutDetails: ""
   });
+  const [affiliate, setAffiliate] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem("affiliate_token");
+      const affiliateId = localStorage.getItem("affiliate_id");
+      
+      if (!token || !affiliateId) {
+        router.push("/affiliates/login");
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/affiliate/profile", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const affiliateData = await response.json();
+          setAffiliate(affiliateData);
+          setFormData({
+            name: affiliateData.name || "",
+            email: affiliateData.email || "",
+            payoutMethod: "stripe",
+            payoutDetails: ""
+          });
+        } else {
+          router.push("/affiliates/login");
+          return;
+        }
+      } catch (error) {
+        console.error("Auth check failed:", error);
+        router.push("/affiliates/login");
+        return;
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [router]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission
     console.log("Profile updated:", formData);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!affiliate) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Please log in to access this page.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -74,7 +141,7 @@ export default function AffiliateProfilePage() {
                   Referral Code
                 </label>
                 <div className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-gray-50 text-gray-900">
-                  georgecq33
+                  {affiliate?.referralCode || "Loading..."}
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
                   Your unique referral code cannot be changed

@@ -82,48 +82,20 @@ export default function AffiliateDashboard() {
         const affiliateData = await response.json();
         setAffiliate(affiliateData);
       } else {
-        // If profile API fails, create a basic affiliate object for georgecq33
-        console.log("Profile API failed, using basic affiliate data");
-        const basicAffiliate = {
-          id: affiliateId,
-          name: "George",
-          email: "george@example.com",
-          tier: "quiz",
-          referralCode: "georgecq33",
-          customLink: "https://joinbrightnest.com/georgecq33",
-          commissionRate: 0.1,
-          totalClicks: 0,
-          totalLeads: 0,
-          totalBookings: 0,
-          totalSales: 0,
-          totalCommission: 0,
-          isApproved: true,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        };
-        setAffiliate(basicAffiliate);
+        // If profile API fails, redirect to login
+        console.log("Profile API failed, redirecting to login");
+        localStorage.removeItem("affiliate_token");
+        localStorage.removeItem("affiliate_id");
+        router.push("/affiliates/login");
+        return;
       }
     } catch (error) {
       console.error("Auth check failed:", error);
-      // Don't log out on auth check failure - just use basic data
-      const basicAffiliate = {
-        id: affiliateId,
-        name: "George",
-        email: "george@example.com",
-        tier: "quiz",
-        referralCode: "georgecq33",
-        customLink: "https://joinbrightnest.com/georgecq33",
-        commissionRate: 0.1,
-        totalClicks: 0,
-        totalLeads: 0,
-        totalBookings: 0,
-        totalSales: 0,
-        totalCommission: 0,
-        isApproved: true,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      setAffiliate(basicAffiliate);
+      // Redirect to login on auth failure
+      localStorage.removeItem("affiliate_token");
+      localStorage.removeItem("affiliate_id");
+      router.push("/affiliates/login");
+      return;
     }
   };
 
@@ -133,8 +105,8 @@ export default function AffiliateDashboard() {
     try {
       setLoading(true);
       
-      // Skip affiliate record creation for now to avoid 500 errors
-      console.log("Skipping affiliate record creation, using test data...");
+      // Fetch affiliate stats using the simplified API
+      console.log("Fetching affiliate stats...");
       
       // Use the new simplified affiliate stats API
       console.log("Fetching affiliate data for:", affiliate.referralCode);
