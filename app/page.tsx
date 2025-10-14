@@ -13,10 +13,13 @@ function HomePageContentWrapper() {
     const affiliateCode = pathname.substring(1); // Remove leading slash
     
     // Check if this looks like an affiliate code (not a regular page)
+    // Exclude known page routes
+    const knownRoutes = ['affiliates', 'admin', 'quiz', 'results', 'analyzing', 'book-call'];
     if (affiliateCode && 
         !affiliateCode.includes('/') && 
         !affiliateCode.includes('.') && 
-        affiliateCode.length > 3) {
+        affiliateCode.length > 3 &&
+        !knownRoutes.includes(affiliateCode)) {
       
       console.log("Tracking affiliate visit:", affiliateCode);
       
