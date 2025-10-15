@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
     const token = authHeader.substring(7);
     const decoded = JSON.parse(Buffer.from(token, 'base64').toString());
-    console.log("Decoded token:", decoded);
+    // Token decoded successfully
 
     // Get affiliate profile
     console.log("Looking for affiliate with ID:", decoded.affiliateId);
