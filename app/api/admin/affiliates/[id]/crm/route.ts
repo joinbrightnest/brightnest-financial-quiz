@@ -60,13 +60,22 @@ export async function GET(
     // Transform the data for the CRM view
     const leads = quizSessions.map(session => {
       // Extract name and email from quiz answers (like general admin CRM)
-      const nameAnswer = session.answers.find(a => a.question.type === "text");
-      const emailAnswer = session.answers.find(a => a.question.type === "email");
+      // Look for questions containing "name" or "email" in the text
+      const nameAnswer = session.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes("name") || 
+        a.question?.text?.toLowerCase().includes("name")
+      );
+      const emailAnswer = session.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes("email") || 
+        a.question?.text?.toLowerCase().includes("email")
+      );
       
       return {
         id: session.id,
         sessionId: session.id,
         quizType: session.quizType,
+        name: nameAnswer?.value || nameAnswer?.answer || nameAnswer?.answerValue || "N/A",
+        email: emailAnswer?.value || emailAnswer?.answer || emailAnswer?.answerValue || "N/A",
         startedAt: session.startedAt.toISOString(),
         completedAt: session.completedAt?.toISOString() || null,
         status: session.status,
@@ -83,8 +92,8 @@ export async function GET(
           answerValue: answer.value,
         })),
         user: {
-          email: emailAnswer?.value || "N/A",
-          name: nameAnswer?.value || "N/A",
+          email: emailAnswer?.value || emailAnswer?.answer || emailAnswer?.answerValue || "N/A",
+          name: nameAnswer?.value || nameAnswer?.answer || nameAnswer?.answerValue || "N/A",
           role: "user",
         },
       };
