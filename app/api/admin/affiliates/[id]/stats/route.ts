@@ -48,9 +48,10 @@ export async function GET(
     // Get related data with error handling
     let clicks = [];
     let conversions = [];
+    let quizSessions = [];
     
     try {
-      [clicks, conversions] = await Promise.all([
+      [clicks, conversions, quizSessions] = await Promise.all([
         prisma.affiliateClick.findMany({
           where: {
             affiliateId: affiliate.id,
@@ -67,13 +68,22 @@ export async function GET(
             },
           },
         }),
+        prisma.quizSession.findMany({
+          where: {
+            affiliateCode: affiliate.referralCode,
+            createdAt: {
+              gte: startDate,
+            },
+          },
+        }),
       ]);
-      console.log("Retrieved clicks:", clicks.length, "conversions:", conversions.length);
+      console.log("Retrieved clicks:", clicks.length, "conversions:", conversions.length, "quiz sessions:", quizSessions.length);
     } catch (error) {
       console.error("Error fetching related data:", error);
       // Set empty arrays if there's an error
       clicks = [];
       conversions = [];
+      quizSessions = [];
     }
 
     // Calculate stats from real data
@@ -90,7 +100,7 @@ export async function GET(
     const trafficSources = generateTrafficSourcesFromRealData(clicks);
 
     // Generate conversion funnel from real data
-    const conversionFunnel = generateConversionFunnelFromRealData(clicks, conversions);
+    const conversionFunnel = generateConversionFunnelFromRealData(clicks, conversions, quizSessions);
 
     // Generate recent activity from real data
     const recentActivity = generateRecentActivityFromRealData(clicks, conversions);
@@ -159,9 +169,9 @@ function generateTrafficSourcesFromRealData(clicks: any[]) {
   }));
 }
 
-function generateConversionFunnelFromRealData(clicks: any[], conversions: any[]) {
+function generateConversionFunnelFromRealData(clicks: any[], conversions: any[], quizSessions: any[]) {
   const totalClicks = clicks.length;
-  const quizStarts = conversions.filter(c => c.conversionType === "quiz_start").length;
+  const quizStarts = quizSessions.length; // All quiz sessions represent quiz starts
   const quizCompletions = conversions.filter(c => c.status === "confirmed").length;
   const bookings = conversions.filter(c => c.conversionType === "booking").length;
   
