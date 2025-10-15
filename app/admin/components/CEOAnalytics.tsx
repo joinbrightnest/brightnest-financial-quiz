@@ -143,53 +143,6 @@ export default function CEOAnalytics() {
     setTrackingLinkInput("");
   };
 
-  const handleExport = async (format: 'csv' | 'json' | 'crm') => {
-    // Simple export functionality - generate CSV/JSON from current data
-    if (!data) return;
-    
-    try {
-      if (format === 'csv') {
-        const csvContent = [
-          "Metric,Value",
-          `Active Affiliates,${data.totalAffiliates}`,
-          `Total Visitors,${data.totalVisitors}`,
-          `Total Quiz Starts,${data.totalQuizStarts}`,
-          `Total Completed,${data.totalCompleted}`,
-          `Total Sales,${data.totalSales}`,
-          `Conversion Rate,${data.overallClickToCompletionRate}%`,
-          `Total Revenue,$${data.totalRevenue}`,
-          `Total Commissions,$${data.totalCommission}`,
-        ].join('\n');
-        
-        const blob = new Blob([csvContent], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `affiliate-analytics-${dateRange}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      } else if (format === 'json') {
-        const jsonContent = JSON.stringify(data, null, 2);
-        const blob = new Blob([jsonContent], { type: 'application/json' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `affiliate-analytics-${dateRange}.json`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      } else if (format === 'crm') {
-        // Mock CRM integration
-        alert('Data would be sent to CRM system. This is a demo feature.');
-      }
-    } catch (err) {
-      console.error('Export error:', err);
-      alert('Export failed. Please try again.');
-    }
-  };
 
   if (loading) {
     return (
@@ -281,27 +234,6 @@ export default function CEOAnalytics() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </div>
-              </div>
-              
-              <div className="flex space-x-3">
-            <button
-              onClick={() => handleExport('csv')}
-                  className="inline-flex items-center px-5 py-3 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm hover:shadow-md transition-all duration-200"
-            >
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-              Export CSV
-            </button>
-            <button
-              onClick={() => handleExport('crm')}
-                  className="inline-flex items-center px-5 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-semibold hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200"
-            >
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                  </svg>
-              Send to CRM
-            </button>
               </div>
           </div>
         </div>
