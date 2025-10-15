@@ -15,6 +15,7 @@ interface AffiliateData {
   tier: string;
   referralCode: string;
   customLink: string;
+  customTrackingLink?: string;
   commissionRate: number;
   totalClicks: number;
   totalLeads: number;
@@ -109,8 +110,13 @@ export default function AffiliateDashboard() {
       console.log("Fetching affiliate stats...");
       
       // Use the new simplified affiliate stats API
-      console.log("Fetching affiliate data for:", affiliate.referralCode);
-      const response = await fetch(`/api/admin/affiliate-stats?affiliateCode=${affiliate.referralCode}`);
+      // Use custom tracking link if it exists, otherwise use referral code
+      const affiliateCode = affiliate.customTrackingLink 
+        ? affiliate.customTrackingLink.replace('/', '') 
+        : affiliate.referralCode;
+      
+      console.log("Fetching affiliate data for:", affiliateCode);
+      const response = await fetch(`/api/admin/affiliate-stats?affiliateCode=${affiliateCode}`);
 
       if (response.ok) {
         const data = await response.json();
