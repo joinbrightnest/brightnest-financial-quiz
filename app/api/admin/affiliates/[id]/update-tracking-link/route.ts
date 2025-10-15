@@ -28,23 +28,40 @@ export async function PUT(
     }
 
     // Update the affiliate's custom tracking link
-    const updatedAffiliate = await prisma.affiliate.update({
+    // Temporarily use raw SQL until Prisma client is regenerated
+    if (customTrackingLink?.trim()) {
+      await prisma.$executeRaw`
+        UPDATE "affiliates" 
+        SET "custom_tracking_link" = ${customTrackingLink.trim()}, "updated_at" = NOW()
+        WHERE "id" = ${affiliateId}
+      `;
+    } else {
+      await prisma.$executeRaw`
+        UPDATE "affiliates" 
+        SET "custom_tracking_link" = NULL, "updated_at" = NOW()
+        WHERE "id" = ${affiliateId}
+      `;
+    }
+
+    // Get the updated affiliate data
+    const updatedAffiliate = await prisma.affiliate.findUnique({
       where: { id: affiliateId },
-      data: {
-        customTrackingLink: customTrackingLink?.trim() || null,
-        updatedAt: new Date(),
-      },
       select: {
         id: true,
         name: true,
         referralCode: true,
         customLink: true,
-        customTrackingLink: true,
         updatedAt: true,
       },
     });
 
-    console.log("Affiliate tracking link updated successfully:", updatedAffiliate);
+    // Add customTrackingLink manually since Prisma client doesn't recognize it yet
+    const affiliateWithCustomLink = {
+      ...updatedAffiliate,
+      customTrackingLink: customTrackingLink?.trim() || null,
+    };
+
+    console.log("Affiliate tracking link updated successfully:", affiliateWithCustomLink);
 
     // Log the change for audit purposes
     await prisma.affiliateAuditLog.create({
@@ -64,7 +81,7 @@ export async function PUT(
     return NextResponse.json({
       success: true,
       message: "Affiliate tracking link updated successfully",
-      affiliate: updatedAffiliate,
+      affiliate: affiliateWithCustomLink,
     });
 
   } catch (error) {
