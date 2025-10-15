@@ -29,7 +29,7 @@ export async function GET(
       tier: affiliate.tier,
       referralCode: affiliate.referralCode,
       customLink: affiliate.customLink,
-      customTrackingLink: affiliate.customTrackingLink,
+      customTrackingLink: (affiliate as any).customTrackingLink || null,
       commissionRate: affiliate.commissionRate,
       totalClicks: affiliate.totalClicks,
       totalLeads: affiliate.totalLeads,

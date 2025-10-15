@@ -226,7 +226,7 @@ model Affiliate {
   tier            AffiliateTier @default(quiz)
   referralCode    String      @unique @map("referral_code")
   customLink      String      @map("custom_link")
-  customTrackingLink String?  @map("custom_tracking_link")
+  // customTrackingLink String?  @map("custom_tracking_link") // Temporarily disabled
   payoutMethod    PayoutMethod? @map("payout_method")
   payoutDetails   Json?       @map("payout_details")
   commissionRate  Decimal     @default(0.1000) @map("commission_rate") @db.Decimal(5, 4)

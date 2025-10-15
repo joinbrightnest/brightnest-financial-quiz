@@ -31,7 +31,7 @@ export async function PUT(
     const updatedAffiliate = await prisma.affiliate.update({
       where: { id: affiliateId },
       data: {
-        customTrackingLink: customTrackingLink?.trim() || null,
+        // customTrackingLink: customTrackingLink?.trim() || null, // Temporarily disabled
         updatedAt: new Date(),
       },
       select: {
@@ -39,7 +39,7 @@ export async function PUT(
         name: true,
         referralCode: true,
         customLink: true,
-        customTrackingLink: true,
+        // customTrackingLink: true, // Temporarily disabled
         updatedAt: true,
       },
     });

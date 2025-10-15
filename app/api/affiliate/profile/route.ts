@@ -35,14 +35,15 @@ export async function GET(request: NextRequest) {
     }
 
     // Use custom tracking link if available, otherwise use default
-    const activeTrackingLink = affiliate.customTrackingLink || `https://joinbrightnest.com/${affiliate.referralCode}`;
+    const customTrackingLink = (affiliate as any).customTrackingLink;
+    const activeTrackingLink = customTrackingLink || `https://joinbrightnest.com/${affiliate.referralCode}`;
     
     console.log("Affiliate data:", {
       id: affiliate.id,
       name: affiliate.name,
       referralCode: affiliate.referralCode,
       customLink: affiliate.customLink,
-      customTrackingLink: affiliate.customTrackingLink,
+      customTrackingLink: customTrackingLink,
       activeTrackingLink: activeTrackingLink
     });
 
