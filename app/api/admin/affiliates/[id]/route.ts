@@ -5,10 +5,10 @@ const prisma = new PrismaClient();
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const affiliateId = params.id;
+    const { id: affiliateId } = await params;
 
     // Get affiliate data
     const affiliate = await prisma.affiliate.findUnique({
