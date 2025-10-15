@@ -126,6 +126,7 @@ export async function GET(request: NextRequest) {
       name: affiliate.name,
       tier: affiliate.tier,
       clicks: affiliate.clicks.length,
+      quizStarts: affiliate.quizSessions.length, // Add quiz starts from quiz sessions
       leads: affiliate.conversions.filter(c => c.status === "confirmed").length,
       bookedCalls: affiliate.conversions.filter(c => c.conversionType === "booking").length,
       sales: affiliate.conversions.filter(c => c.conversionType === "sale").length,

@@ -8,6 +8,7 @@ interface AffiliatePerformance {
   name: string;
   tier: string;
   clicks: number;
+  quizStarts: number;
   leads: number;
   bookedCalls: number;
   sales: number;
@@ -123,15 +124,23 @@ export default function AffiliatePerformanceTable({ data, loading, onRefresh }: 
                   </span>
                 )}
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Tier
-              </th>
               <th 
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                 onClick={() => handleSort("clicks")}
               >
                 Clicks
                 {sortField === "clicks" && (
+                  <span className="ml-1">
+                    {sortDirection === "asc" ? "↑" : "↓"}
+                  </span>
+                )}
+              </th>
+              <th 
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                onClick={() => handleSort("quizStarts")}
+              >
+                Quiz Starts
+                {sortField === "quizStarts" && (
                   <span className="ml-1">
                     {sortDirection === "asc" ? "↑" : "↓"}
                   </span>
@@ -246,11 +255,11 @@ export default function AffiliatePerformanceTable({ data, loading, onRefresh }: 
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  {getTierBadge(affiliate.tier)}
-                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {affiliate.clicks.toLocaleString()}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {affiliate.quizStarts.toLocaleString()}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {affiliate.leads.toLocaleString()}

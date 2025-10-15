@@ -22,6 +22,7 @@ interface AffiliatePerformance {
   name: string;
   tier: string;
   clicks: number;
+  quizStarts: number;
   leads: number;
   bookedCalls: number;
   sales: number;
