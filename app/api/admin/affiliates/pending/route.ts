@@ -5,8 +5,11 @@ const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
-    // Get all affiliates (they are all "pending" until approved)
+    // Get only unapproved affiliates (pending approval)
     const pendingAffiliates = await prisma.affiliate.findMany({
+      where: {
+        isApproved: false,  // Only show unapproved affiliates
+      },
       orderBy: {
         createdAt: "desc",
       },

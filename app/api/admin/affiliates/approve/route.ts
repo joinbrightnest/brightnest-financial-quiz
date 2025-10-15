@@ -28,12 +28,15 @@ export async function POST(request: NextRequest) {
 
     if (approved) {
       // APPROVE: Update affiliate with custom tracking link or keep auto-generated
-      let updateData: any = {};
+      let updateData: any = {
+        isApproved: true,  // Mark as approved so they can log in
+      };
       
       if (customTrackingLink && customTrackingLink.trim()) {
         // Use custom tracking link
         const cleanTrackingLink = customTrackingLink.trim().replace(/^\/+/, '');
         updateData = {
+          ...updateData,
           referralCode: cleanTrackingLink,
           customLink: `https://joinbrightnest.com/${cleanTrackingLink}`,
         };
