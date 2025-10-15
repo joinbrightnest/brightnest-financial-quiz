@@ -90,6 +90,7 @@ export async function GET(request: NextRequest) {
     const totalVisitors = affiliatePerformance.reduce((sum, aff) => sum + aff.visitors, 0);
     const totalQuizStarts = affiliatePerformance.reduce((sum, aff) => sum + aff.quizStarts, 0);
     const totalCompleted = affiliatePerformance.reduce((sum, aff) => sum + aff.completed, 0);
+    const totalBookedCalls = affiliatePerformance.reduce((sum, aff) => sum + aff.bookedCall, 0);
     const totalSales = affiliatePerformance.reduce((sum, aff) => sum + aff.sales, 0);
     const totalRevenue = affiliatePerformance.reduce((sum, aff) => sum + aff.totalRevenue, 0);
     const totalCommission = affiliatePerformance.reduce((sum, aff) => sum + aff.totalCommission, 0);
@@ -112,6 +113,7 @@ export async function GET(request: NextRequest) {
         totalVisitors,
         totalQuizStarts,
         totalCompleted,
+        totalBookedCalls,
         totalSales,
         totalRevenue,
         totalCommission,

@@ -32,6 +32,7 @@ interface CEOAnalyticsData {
   totalVisitors: number;
   totalQuizStarts: number;
   totalCompleted: number;
+  totalBookedCalls: number;
   totalSales: number;
   totalRevenue: number;
   totalCommission: number;
@@ -459,10 +460,26 @@ export default function CEOAnalytics() {
                     </p>
                   </div>
                 </div>
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl border border-teal-100">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                      4
+                    </div>
+                    <span className="text-sm font-semibold text-slate-700">Booked Calls</span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-slate-900">
+                      {data.totalBookedCalls.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-slate-500 font-medium">
+                      {data.totalCompleted > 0 ? ((data.totalBookedCalls / data.totalCompleted) * 100).toFixed(1) : 0}%
+                    </p>
+                  </div>
+                </div>
                 <div className="flex items-center justify-between p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl border border-orange-100">
                   <div className="flex items-center space-x-4">
                     <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
-                      4
+                      5
                     </div>
                     <span className="text-sm font-semibold text-slate-700">Sales</span>
                   </div>
@@ -471,7 +488,7 @@ export default function CEOAnalytics() {
                       {data.totalSales.toLocaleString()}
                     </p>
                     <p className="text-xs text-slate-500 font-medium">
-                      {data.overallClickToCompletionRate.toFixed(1)}%
+                      {data.totalBookedCalls > 0 ? ((data.totalSales / data.totalBookedCalls) * 100).toFixed(1) : 0}%
                     </p>
                   </div>
                 </div>
