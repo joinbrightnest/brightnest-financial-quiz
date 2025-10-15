@@ -53,25 +53,38 @@ export async function POST(request: NextRequest) {
 
     // Update affiliate approval status and optionally override tracking link
     if (approved && customTrackingLink) {
-      // Clean the tracking link (remove leading slash if present)
-      const cleanTrackingLink = customTrackingLink.trim().replace(/^\/+/, '');
-      
-      // Generate new referral code based on the custom tracking link
-      const newReferralCode = cleanTrackingLink;
-      
-      // Create the full custom link
-      const fullCustomLink = `https://joinbrightnest.com/${cleanTrackingLink}`;
-      
-      // Update with custom tracking link using raw SQL
+      try {
+        // Clean the tracking link (remove leading slash if present)
+        const cleanTrackingLink = customTrackingLink.trim().replace(/^\/+/, '');
+        
+        // Generate new referral code based on the custom tracking link
+        const newReferralCode = cleanTrackingLink;
+        
+        // Create the full custom link
+        const fullCustomLink = `https://joinbrightnest.com/${cleanTrackingLink}`;
+        
+        // Update with custom tracking link using raw SQL
+        await prisma.$executeRaw`
+          UPDATE "affiliates"
+          SET "referral_code" = ${newReferralCode},
+              "custom_link" = ${fullCustomLink},
+              "is_approved" = true,
+              "is_active" = true
+          WHERE "id" = ${affiliateId}
+        `;
+        
+      } catch (updateError) {
+        console.error("Error updating affiliate with custom tracking link:", updateError);
+        throw updateError;
+      }
+    } else {
+      // Just update the affiliate for auto-approval
       await prisma.$executeRaw`
         UPDATE "affiliates"
-        SET "referral_code" = ${newReferralCode},
-            "custom_link" = ${fullCustomLink}
+        SET "is_approved" = true,
+            "is_active" = true
         WHERE "id" = ${affiliateId}
       `;
-    } else {
-      // Just update the affiliate (no changes needed for auto-approval)
-      // No database update needed for auto-approval
     }
 
     // Get the updated affiliate data

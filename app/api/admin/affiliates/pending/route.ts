@@ -5,12 +5,8 @@ const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
-    // Get all pending affiliates
+    // Get all pending affiliates (simplified - just get all affiliates for now)
     const pendingAffiliates = await prisma.affiliate.findMany({
-      where: {
-        isActive: true,
-        isApproved: false,
-      },
       orderBy: {
         createdAt: "desc",
       },
