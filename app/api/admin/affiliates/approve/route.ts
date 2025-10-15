@@ -43,10 +43,27 @@ export async function POST(request: NextRequest) {
       }
       // If no custom link provided, keep the auto-generated one
 
-      // Update the affiliate
-      const updatedAffiliate = await prisma.affiliate.update({
+      // Update the affiliate using raw SQL to handle missing fields
+      if (customTrackingLink && customTrackingLink.trim()) {
+        const cleanTrackingLink = customTrackingLink.trim().replace(/^\/+/, '');
+        await prisma.$executeRaw`
+          UPDATE "affiliates"
+          SET "referral_code" = ${cleanTrackingLink},
+              "custom_link" = ${`https://joinbrightnest.com/${cleanTrackingLink}`},
+              "is_approved" = true
+          WHERE "id" = ${affiliateId}
+        `;
+      } else {
+        await prisma.$executeRaw`
+          UPDATE "affiliates"
+          SET "is_approved" = true
+          WHERE "id" = ${affiliateId}
+        `;
+      }
+
+      // Get the updated affiliate
+      const updatedAffiliate = await prisma.affiliate.findUnique({
         where: { id: affiliateId },
-        data: updateData,
       });
 
       return NextResponse.json({
