@@ -58,7 +58,7 @@ export default function AffiliateRedirect() {
         </div>
       </div>
     }>
-      <AffiliateRedirectContent />
+      <AffiliatePageContent />
     </Suspense>
   );
 }
