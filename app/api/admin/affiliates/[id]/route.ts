@@ -28,23 +28,24 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({
-      id: affiliate.id,
-      name: affiliate.name,
-      email: affiliate.email,
-      tier: affiliate.tier,
-      referralCode: affiliate.referral_code,
-      customLink: affiliate.custom_link,
-      customTrackingLink: affiliate.custom_tracking_link,
-      commissionRate: affiliate.commission_rate,
-      totalClicks: affiliate.total_clicks,
-      totalLeads: affiliate.total_leads,
-      totalBookings: affiliate.total_bookings,
-      totalCommission: affiliate.total_commission,
-      isApproved: affiliate.is_approved,
-      createdAt: affiliate.created_at,
-      updatedAt: affiliate.updated_at,
-    });
+        return NextResponse.json({
+          id: affiliate.id,
+          name: affiliate.name,
+          email: affiliate.email,
+          tier: affiliate.tier,
+          referralCode: affiliate.referral_code,
+          customLink: affiliate.custom_link,
+          customTrackingLink: affiliate.custom_tracking_link || null,
+          commissionRate: affiliate.commission_rate,
+          totalClicks: affiliate.total_clicks,
+          totalLeads: affiliate.total_leads,
+          totalBookings: affiliate.total_bookings,
+          totalCommission: affiliate.total_commission,
+          isApproved: affiliate.is_approved,
+          isActive: affiliate.is_active,
+          createdAt: affiliate.created_at,
+          updatedAt: affiliate.updated_at,
+        });
   } catch (error) {
     console.error("Error fetching affiliate:", error);
     return NextResponse.json(

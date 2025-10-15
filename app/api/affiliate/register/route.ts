@@ -61,7 +61,6 @@ export async function POST(request: NextRequest) {
         customLink,
         payoutMethod: payoutMethod || "stripe",
         commissionRate,
-        isApproved: false, // All affiliates need manual approval for now
       },
     });
 
@@ -82,7 +81,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Affiliate account created successfully",
+      message: "Affiliate account created successfully. Your account is pending admin approval.",
       affiliate: {
         id: affiliate.id,
         name: affiliate.name,
@@ -90,7 +89,7 @@ export async function POST(request: NextRequest) {
         tier: affiliate.tier,
         referralCode: affiliate.referralCode,
         customLink: affiliate.customLink,
-        isApproved: affiliate.isApproved,
+        isApproved: false,
       },
     });
   } catch (error) {
