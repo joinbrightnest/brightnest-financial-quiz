@@ -29,6 +29,8 @@ export default function AffiliatePerformanceTable({ data, loading, onRefresh }: 
   const [itemsPerPage] = useState(10);
   const [sortField, setSortField] = useState<keyof AffiliatePerformance>("revenue");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [deletingAffiliate, setDeletingAffiliate] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -66,6 +68,43 @@ export default function AffiliatePerformanceTable({ data, loading, onRefresh }: 
       month: "short",
       day: "numeric",
     });
+  };
+
+  const handleDeleteAffiliate = async (affiliateId: string, affiliateName: string) => {
+    if (!confirm(`Are you sure you want to delete "${affiliateName}"? This will permanently remove the affiliate and ALL their data (clicks, conversions, payouts, etc.). This action cannot be undone.`)) {
+      return;
+    }
+
+    setDeletingAffiliate(affiliateId);
+    setShowDeleteConfirm(null);
+
+    try {
+      const response = await fetch(`/api/admin/affiliates/${affiliateId}/delete`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete affiliate');
+      }
+
+      const result = await response.json();
+      console.log('Affiliate deleted successfully:', result);
+
+      // Refresh the data
+      onRefresh();
+
+      // Show success message
+      alert(`Successfully deleted affiliate "${affiliateName}" and all related data.`);
+    } catch (error) {
+      console.error('Error deleting affiliate:', error);
+      alert(`Error deleting affiliate: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      setDeletingAffiliate(null);
+    }
   };
 
   if (loading) {
@@ -283,12 +322,34 @@ export default function AffiliatePerformanceTable({ data, loading, onRefresh }: 
                   {formatDate(affiliate.lastActive)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <a
-                    href={`/admin/affiliates/${affiliate.id}`}
-                    className="text-blue-600 hover:text-blue-900"
-                  >
-                    View Details
-                  </a>
+                  <div className="flex items-center space-x-3">
+                    <a
+                      href={`/admin/affiliates/${affiliate.id}`}
+                      className="text-blue-600 hover:text-blue-900 transition-colors"
+                    >
+                      View Details
+                    </a>
+                    <button
+                      onClick={() => handleDeleteAffiliate(affiliate.id, affiliate.name)}
+                      disabled={deletingAffiliate === affiliate.id}
+                      className="text-red-600 hover:text-red-900 disabled:text-red-400 disabled:cursor-not-allowed transition-colors"
+                      title="Delete affiliate and all related data"
+                    >
+                      {deletingAffiliate === affiliate.id ? (
+                        <div className="flex items-center">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600 mr-1"></div>
+                          Deleting...
+                        </div>
+                      ) : (
+                        <div className="flex items-center">
+                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          Delete
+                        </div>
+                      )}
+                    </button>
+                  </div>
                 </td>
               </motion.tr>
             ))}
