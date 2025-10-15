@@ -26,6 +26,26 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Also check if this is a referral code that should be disabled
+    if (!affiliate) {
+      const referralAffiliate = await prisma.affiliate.findFirst({
+        where: {
+          referralCode: customLink.replace('/', ''), // Remove leading slash
+        },
+      });
+      
+      if (referralAffiliate && (referralAffiliate as any).customTrackingLink) {
+        console.log("❌ Referral code link disabled - affiliate has custom tracking link:", {
+          referralCode: customLink,
+          customTrackingLink: (referralAffiliate as any).customTrackingLink
+        });
+        return NextResponse.json(
+          { error: "This referral code link is no longer active. Please use the custom tracking link." },
+          { status: 410 } // 410 Gone - resource no longer available
+        );
+      }
+    }
+
     if (!affiliate) {
       console.log("❌ No affiliate found for custom link:", customLink);
       return NextResponse.json(

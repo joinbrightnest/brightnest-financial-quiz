@@ -28,6 +28,19 @@ export async function POST(request: NextRequest) {
     }
 
     if (affiliate) {
+      // Check if this affiliate has a custom tracking link
+      // If they do, the referral code link should not work
+      if ((affiliate as any).customTrackingLink) {
+        console.log("❌ Referral code link disabled - affiliate has custom tracking link:", {
+          referralCode: ref,
+          customTrackingLink: (affiliate as any).customTrackingLink
+        });
+        return NextResponse.json(
+          { error: "This referral code link is no longer active. Please use the custom tracking link." },
+          { status: 410 } // 410 Gone - resource no longer available
+        );
+      }
+
       console.log("Found affiliate:", {
         id: affiliate.id,
         name: affiliate.name,
