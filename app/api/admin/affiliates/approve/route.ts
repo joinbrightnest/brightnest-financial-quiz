@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
         console.error("Error updating affiliate with custom tracking link:", updateError);
         throw updateError;
       }
-    } else {
+    } else if (approved) {
       // Just update the affiliate for auto-approval
       await prisma.$executeRaw`
         UPDATE "affiliates"
@@ -85,42 +85,52 @@ export async function POST(request: NextRequest) {
             "is_active" = true
         WHERE "id" = ${affiliateId}
       `;
-    }
-
-    // Get the updated affiliate data
-    const affiliate = await prisma.affiliate.findUnique({
-      where: { id: affiliateId },
-    });
-
-    if (!affiliate) {
-      return NextResponse.json(
-        { error: "Failed to update affiliate" },
-        { status: 500 }
-      );
-    }
-
-    // Create audit log (simplified)
-    try {
-      await prisma.affiliateAuditLog.create({
-        data: {
-          affiliateId: affiliate.id,
-          action: approved ? "account_approved" : "account_rejected",
-          details: { 
-            approved,
-            customTrackingLink: approved && customTrackingLink ? customTrackingLink.trim().replace(/^\/+/, '') : null,
-          },
-          ipAddress: request.headers.get("x-forwarded-for") || "unknown",
-          userAgent: request.headers.get("user-agent") || "unknown",
-        },
+    } else {
+      // Reject the affiliate by deleting it completely
+      await prisma.affiliate.delete({
+        where: { id: affiliateId }
       });
-    } catch (auditError) {
-      console.log("Audit log creation failed, continuing:", auditError);
+    }
+
+    // Get the updated affiliate data (if it wasn't deleted)
+    let affiliate = null;
+    if (approved) {
+      affiliate = await prisma.affiliate.findUnique({
+        where: { id: affiliateId },
+      });
+
+      if (!affiliate) {
+        return NextResponse.json(
+          { error: "Failed to update affiliate" },
+          { status: 500 }
+        );
+      }
+    }
+
+    // Create audit log (simplified) - only for approved affiliates
+    if (approved && affiliate) {
+      try {
+        await prisma.affiliateAuditLog.create({
+          data: {
+            affiliateId: affiliate.id,
+            action: "account_approved",
+            details: { 
+              approved,
+              customTrackingLink: customTrackingLink ? customTrackingLink.trim().replace(/^\/+/, '') : null,
+            },
+            ipAddress: request.headers.get("x-forwarded-for") || "unknown",
+            userAgent: request.headers.get("user-agent") || "unknown",
+          },
+        });
+      } catch (auditError) {
+        console.log("Audit log creation failed, continuing:", auditError);
+      }
     }
 
     return NextResponse.json({
       success: true,
       message: `Affiliate ${approved ? 'approved' : 'rejected'} successfully`,
-      affiliate: {
+      affiliate: approved && affiliate ? {
         id: affiliate.id,
         name: affiliate.name,
         email: affiliate.email,
@@ -128,8 +138,8 @@ export async function POST(request: NextRequest) {
         referralCode: affiliate.referralCode,
         customLink: affiliate.customLink,
         customTrackingLink: null,
-        isApproved: true, // Assume approved if we got here
-      },
+        isApproved: true,
+      } : null,
     });
   } catch (error) {
     console.error("Affiliate approval error:", error);
