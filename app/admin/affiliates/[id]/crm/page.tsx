@@ -72,7 +72,6 @@ export default function AffiliateCRMView() {
   const [stats, setStats] = useState<CRMStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedLead, setSelectedLead] = useState<LeadData | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState("");
@@ -497,8 +496,8 @@ export default function AffiliateCRMView() {
                           {lead.durationMs ? `${Math.round(lead.durationMs / 60000)}min` : "N/A"}
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap text-sm font-semibold">
-                          <button
-                            onClick={() => setSelectedLead(lead)}
+                          <a
+                            href={`/admin/leads/${lead.sessionId}`}
                             className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-semibold hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200"
                           >
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -506,7 +505,7 @@ export default function AffiliateCRMView() {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
                             View Details
-                          </button>
+                          </a>
                         </td>
                       </motion.tr>
                     ))}
@@ -553,143 +552,6 @@ export default function AffiliateCRMView() {
           </motion.div>
         )}
 
-        {/* Premium Lead Detail Modal */}
-        {selectedLead && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-              {/* Premium Header */}
-              <div className="px-8 py-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-2xl font-bold text-slate-900">
-                      Lead Details
-                    </h3>
-                    <p className="text-sm text-slate-600 mt-1">
-                      Session ID: {selectedLead.sessionId}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setSelectedLead(null)}
-                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-200"
-                  >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-8 space-y-6">
-                {/* Session Information Card */}
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                  <h4 className="text-lg font-bold text-slate-900 mb-4">Session Information</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-slate-600 mb-1">Quiz Type</p>
-                      <p className="font-semibold text-slate-900">{selectedLead.quizType}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-slate-600 mb-1">Status</p>
-                      <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${
-                        selectedLead.status === "completed" 
-                          ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg" 
-                          : "bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-lg"
-                      }`}>
-                        {selectedLead.status === "completed" ? "Completed" : "In Progress"}
-                      </span>
-                    </div>
-                    <div>
-                      <p className="text-sm text-slate-600 mb-1">Started</p>
-                      <p className="font-semibold text-slate-900">{new Date(selectedLead.startedAt).toLocaleString()}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-slate-600 mb-1">Completed</p>
-                      <p className="font-semibold text-slate-900">
-                        {selectedLead.completedAt ? new Date(selectedLead.completedAt).toLocaleString() : "Incomplete"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-slate-600 mb-1">Duration</p>
-                      <p className="font-semibold text-slate-900">
-                        {selectedLead.durationMs ? `${Math.round(selectedLead.durationMs / 60000)} minutes` : "N/A"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Contact Information Card */}
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                  <h4 className="text-lg font-bold text-slate-900 mb-4">Contact Information</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-slate-600 mb-1">Name</p>
-                      <p className="font-semibold text-slate-900">{selectedLead.user?.name || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-slate-600 mb-1">Email</p>
-                      <p className="font-semibold text-slate-900">{selectedLead.user?.email || "N/A"}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quiz Result Card */}
-                {selectedLead.result && (
-                  <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                    <h4 className="text-lg font-bold text-slate-900 mb-4">Quiz Result</h4>
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-sm text-slate-600 mb-1">Archetype</p>
-                        <p className="text-lg font-bold text-slate-900">{selectedLead.result.archetype}</p>
-                      </div>
-                      {selectedLead.result.score && (
-                        <div>
-                          <p className="text-sm text-slate-600 mb-2">Scores</p>
-                          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                            <pre className="text-sm font-mono text-slate-900 whitespace-pre-wrap">
-                              {typeof selectedLead.result.score === 'string' 
-                                ? selectedLead.result.score 
-                                : JSON.stringify(selectedLead.result.score, null, 2)
-                              }
-                            </pre>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Quiz Answers Card */}
-                {selectedLead.answers.length > 0 && (
-                  <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                    <h4 className="text-lg font-bold text-slate-900 mb-4">
-                      Quiz Answers ({selectedLead.answers.length} answers)
-                    </h4>
-                    <div className="space-y-4">
-                      {selectedLead.answers.map((answer, index) => (
-                        <div key={index} className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-                          <div className="flex items-start justify-between mb-2">
-                            <h5 className="font-bold text-slate-900">Question {index + 1}</h5>
-                            <span className="text-xs text-slate-500">
-                              {new Date(selectedLead.startedAt).toLocaleString()}
-                            </span>
-                          </div>
-                          <p className="text-slate-900 mb-2">{answer.questionText}</p>
-                          <p className="text-slate-700 mb-1">
-                            <span className="font-medium">Answer:</span> "{answer.answer}"
-                          </p>
-                          <p className="text-sm text-slate-600">
-                            <span className="font-medium">Type:</span> single
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
