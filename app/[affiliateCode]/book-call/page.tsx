@@ -1,0 +1,179 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import Script from "next/script";
+import { useParams } from "next/navigation";
+
+export default function AffiliateBookCallPage() {
+  const params = useParams();
+  const affiliateCode = params.affiliateCode as string;
+  
+  const [timeLeft, setTimeLeft] = useState({
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
+
+  // Set affiliate cookie when page loads
+  useEffect(() => {
+    if (affiliateCode) {
+      console.log("🎯 Affiliate book-call page visit detected:", affiliateCode);
+      console.log("🍪 Setting affiliate cookie...");
+      
+      // Set the affiliate cookie for the quiz system
+      document.cookie = `affiliate_ref=${affiliateCode}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
+      
+      console.log("✅ Affiliate cookie set successfully");
+    }
+  }, [affiliateCode]);
+
+  // Countdown timer effect
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev.seconds > 0) {
+          return { ...prev, seconds: prev.seconds - 1 };
+        } else if (prev.minutes > 0) {
+          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
+        } else if (prev.hours > 0) {
+          return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
+        } else {
+          return { hours: 0, minutes: 0, seconds: 0 };
+        }
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Helper function to generate affiliate-aware links
+  const getAffiliateLink = (path: string) => {
+    return `/${affiliateCode}${path}`;
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <Link href={getAffiliateLink("/")} className="text-2xl font-bold text-gray-900">
+              BrightNest
+            </Link>
+            <div className="flex items-center space-x-6">
+              <Link href={getAffiliateLink("/quiz/financial-profile")} className="text-gray-600 hover:text-gray-900">
+                Take Quiz
+              </Link>
+              <Link href={getAffiliateLink("/")} className="text-gray-600 hover:text-gray-900">
+                Home
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Book Your Free Financial Consultation
+          </h1>
+          <p className="text-xl text-gray-600 mb-8">
+            Get personalized financial advice from our experts
+          </p>
+          
+          {/* Countdown Timer */}
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+            <h3 className="text-lg font-semibold text-red-800 mb-2">
+              Limited Time Offer
+            </h3>
+            <div className="flex justify-center space-x-4 text-2xl font-bold text-red-600">
+              <div className="text-center">
+                <div>{timeLeft.hours.toString().padStart(2, '0')}</div>
+                <div className="text-sm text-red-500">Hours</div>
+              </div>
+              <div className="text-center">
+                <div>{timeLeft.minutes.toString().padStart(2, '0')}</div>
+                <div className="text-sm text-red-500">Minutes</div>
+              </div>
+              <div className="text-center">
+                <div>{timeLeft.seconds.toString().padStart(2, '0')}</div>
+                <div className="text-sm text-red-500">Seconds</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Calendly Widget */}
+        <div className="bg-white rounded-lg shadow-lg p-8">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+              Schedule Your Free 30-Minute Consultation
+            </h2>
+            <p className="text-gray-600">
+              Choose a time that works best for you
+            </p>
+          </div>
+          
+          <div className="calendly-inline-widget" 
+               data-url="https://calendly.com/privatepublish/30min?hide_event_type_details=1&hide_gdpr_banner=1&hide_landing_page_details=1&embed_domain=joinbrightnest.com&embed_type=Inline"
+               style={{ minWidth: '320px', height: '700px' }}>
+          </div>
+        </div>
+
+        {/* Benefits Section */}
+        <div className="mt-12 grid md:grid-cols-3 gap-8">
+          <div className="text-center">
+            <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Free Consultation</h3>
+            <p className="text-gray-600">No cost, no obligation. Just valuable insights into your financial situation.</p>
+          </div>
+          
+          <div className="text-center">
+            <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Personalized Plan</h3>
+            <p className="text-gray-600">Get a customized financial strategy based on your unique goals and situation.</p>
+          </div>
+          
+          <div className="text-center">
+            <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Quick Results</h3>
+            <p className="text-gray-600">Start implementing changes immediately with actionable advice from our experts.</p>
+          </div>
+        </div>
+
+        {/* CTA Section */}
+        <div className="mt-12 text-center">
+          <p className="text-gray-600 mb-4">
+            Not ready to book a call? Start with our free financial assessment:
+          </p>
+          <Link
+            href={getAffiliateLink("/quiz/financial-profile")}
+            className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+          >
+            Take Free Financial Assessment
+          </Link>
+        </div>
+      </div>
+
+      {/* Calendly Script */}
+      <Script
+        src="https://assets.calendly.com/assets/external/widget.js"
+        strategy="lazyOnload"
+      />
+    </div>
+  );
+}
