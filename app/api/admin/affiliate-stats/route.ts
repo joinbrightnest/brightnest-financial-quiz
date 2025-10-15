@@ -14,9 +14,24 @@ export async function GET(request: NextRequest) {
   try {
     console.log("Looking for affiliate with code:", affiliateCode);
     
-    const affiliate = await prisma.affiliate.findUnique({
+    // First try to find by referral code
+    let affiliate = await prisma.affiliate.findUnique({
       where: { referralCode: affiliateCode },
     });
+
+    // If not found, try to find by custom tracking link
+    if (!affiliate) {
+      console.log("Not found by referral code, trying custom tracking link...");
+      const affiliateResult = await prisma.$queryRaw`
+        SELECT * FROM "affiliates" 
+        WHERE "custom_tracking_link" = ${`/${affiliateCode}`}
+        LIMIT 1
+      `;
+      
+      affiliate = Array.isArray(affiliateResult) && affiliateResult.length > 0 
+        ? affiliateResult[0] 
+        : null;
+    }
 
     console.log("Affiliate lookup result:", affiliate ? "Found" : "Not found");
     
@@ -24,7 +39,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Affiliate not found" }, { status: 404 });
     }
 
-    console.log("Found affiliate:", affiliate.id, affiliate.referralCode, affiliate.name);
+    console.log("Found affiliate:", affiliate.id, affiliate.referral_code || affiliate.referralCode, affiliate.name);
     
     const [clicks, conversions] = await Promise.all([
       prisma.affiliateClick.findMany({
