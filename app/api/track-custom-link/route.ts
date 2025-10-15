@@ -19,25 +19,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find the affiliate by custom tracking link
-    const affiliate = await prisma.affiliate.findFirst({
-      where: {
-        customTrackingLink: customLink,
-      },
-    });
+    // Find the affiliate by custom tracking link using raw SQL
+    const affiliateResult = await prisma.$queryRaw`
+      SELECT * FROM "affiliates" 
+      WHERE "custom_tracking_link" = ${customLink}
+      LIMIT 1
+    `;
+    
+    const affiliate = Array.isArray(affiliateResult) && affiliateResult.length > 0 
+      ? affiliateResult[0] 
+      : null;
 
     // Also check if this is a referral code that should be disabled
     if (!affiliate) {
-      const referralAffiliate = await prisma.affiliate.findFirst({
-        where: {
-          referralCode: customLink.replace('/', ''), // Remove leading slash
-        },
-      });
+      const referralCode = customLink.replace('/', ''); // Remove leading slash
+      const referralAffiliateResult = await prisma.$queryRaw`
+        SELECT * FROM "affiliates" 
+        WHERE "referral_code" = ${referralCode}
+        LIMIT 1
+      `;
       
-      if (referralAffiliate && (referralAffiliate as any).customTrackingLink) {
+      const referralAffiliate = Array.isArray(referralAffiliateResult) && referralAffiliateResult.length > 0 
+        ? referralAffiliateResult[0] 
+        : null;
+      
+      if (referralAffiliate && (referralAffiliate as any).custom_tracking_link) {
         console.log("❌ Referral code link permanently disabled - affiliate has custom tracking link:", {
           referralCode: customLink,
-          customTrackingLink: (referralAffiliate as any).customTrackingLink
+          customTrackingLink: (referralAffiliate as any).custom_tracking_link
         });
         return NextResponse.json(
           { error: "This referral code link has been permanently removed. Please use the current tracking link." },
