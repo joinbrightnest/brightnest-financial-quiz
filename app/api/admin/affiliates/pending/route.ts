@@ -5,10 +5,12 @@ const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
-    // Get all pending affiliates - only show those that haven't been processed yet
-    // Since we don't have isApproved field, we'll use a different approach
-    // For now, let's just return an empty list since all affiliates have been processed
-    const pendingAffiliates: any[] = [];
+    // Get all pending affiliates - show all affiliates for now since we need to see new registrations
+    const pendingAffiliates = await prisma.affiliate.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
     return NextResponse.json({
       success: true,
