@@ -186,9 +186,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
               <h4 className="text-sm font-bold uppercase tracking-wide mb-4">Company</h4>
               <ul className="space-y-2 text-sm">
                 <li><Link href={getLink("/book-call")} className="text-gray-300 hover:text-white">Contact Us</Link></li>
-                <li><Link href={getLink("/quiz/financial-profile")} className="text-gray-300 hover:text-white">Financial Profile</Link></li>
-                <li><Link href={getLink("/quiz/health-finance")} className="text-gray-300 hover:text-white">Health Finance</Link></li>
-                <li><Link href={getLink("/quiz/marriage-finance")} className="text-gray-300 hover:text-white">Marriage Finance</Link></li>
+                <li><Link href="/affiliates/signup" className="text-gray-300 hover:text-white">Become a Partner</Link></li>
               </ul>
             </div>
 
