@@ -2,9 +2,9 @@
 
 import { useEffect, Suspense } from "react";
 import { useParams } from "next/navigation";
-import HomePageContent from "../../components/HomePageContent";
+import SharedHomePage from "../../components/SharedHomePage";
 
-function AffiliateRedirectContent() {
+function AffiliatePageContent() {
   const params = useParams();
   const affiliateCode = params.affiliateCode as string;
 
@@ -44,8 +44,8 @@ function AffiliateRedirectContent() {
     }
   }, [affiliateCode]);
 
-  // Show the same homepage content but with affiliate tracking
-  return <HomePageContent />;
+  // Use the shared homepage component with affiliate code
+  return <SharedHomePage affiliateCode={affiliateCode} />;
 }
 
 export default function AffiliateRedirect() {
