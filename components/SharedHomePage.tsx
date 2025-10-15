@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { useState } from "react";
 
 interface SharedHomePageProps {
   affiliateCode?: string;
 }
 
 export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   // Helper function to generate affiliate-aware links
   const getLink = (path: string) => {
     if (affiliateCode) {
@@ -20,17 +22,17 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
       
       {/* Navigation */}
       <nav className="bg-[#F8F7F0] border-b border-gray-300">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16 sm:h-20">
             {/* Logo - Left Side */}
             <div className="flex items-center">
-              <Link href={getLink("/")} className="text-2xl font-bold text-gray-900">
+              <Link href={getLink("/")} className="text-xl sm:text-2xl font-bold text-gray-900">
                 BrightNest
               </Link>
             </div>
             
-            {/* Menu Items - Right Side with Equal Spacing */}
-            <div className="flex items-center space-x-8">
+            {/* Desktop Menu Items - Hidden on Mobile */}
+            <div className="hidden lg:flex items-center space-x-6">
               <Link href={getLink("/quiz/financial-profile")} className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
                 FINANCIAL PROFILE
               </Link>
@@ -53,11 +55,75 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
               </div>
               
               {/* CTA Button */}
-              <Link href={getLink("/quiz/financial-profile")} className="bg-[#1ABC9C] text-white px-6 py-2 rounded-md font-medium text-sm hover:bg-[#16a085] transition-colors">
+              <Link href={getLink("/quiz/financial-profile")} className="bg-[#1ABC9C] text-white px-4 py-2 rounded-md font-medium text-sm hover:bg-[#16a085] transition-colors">
                 Learn More
               </Link>
             </div>
+
+            {/* Mobile Menu Button */}
+            <div className="lg:hidden">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-gray-900 hover:text-gray-700 focus:outline-none focus:text-gray-700"
+                aria-label="Toggle mobile menu"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {isMobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
           </div>
+
+          {/* Mobile Menu - Dropdown */}
+          {isMobileMenuOpen && (
+            <div className="lg:hidden bg-[#F8F7F0] border-t border-gray-300">
+              <div className="px-4 py-4 space-y-4">
+                <Link 
+                  href={getLink("/quiz/financial-profile")} 
+                  className="block text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Financial Profile
+                </Link>
+                <Link 
+                  href={getLink("/quiz/health-finance")} 
+                  className="block text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Health Finance
+                </Link>
+                <Link 
+                  href={getLink("/quiz/marriage-finance")} 
+                  className="block text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Marriage Finance
+                </Link>
+                <Link 
+                  href={getLink("/book-call")} 
+                  className="block text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Book Call
+                </Link>
+                
+                {/* Mobile CTA Button */}
+                <div className="pt-4 border-t border-gray-300">
+                  <Link 
+                    href={getLink("/quiz/financial-profile")} 
+                    className="block w-full bg-[#1ABC9C] text-white px-4 py-3 rounded-md font-medium text-sm text-center hover:bg-[#16a085] transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Start Your Quiz
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </nav>
 
@@ -149,14 +215,14 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
               </div>
               
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-16">
+      <footer className="bg-gray-800 text-white py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-6">
             {/* Logo and Social */}
-            <div className="md:col-span-1">
-              <Link href={getLink("/")} className="text-3xl font-bold text-white mb-6 block">
+            <div className="sm:col-span-2 md:col-span-1">
+              <Link href={getLink("/")} className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-6 block">
                 BrightNest
-          </Link>
+              </Link>
               <div className="flex space-x-4">
                 <a href="#" className="text-white hover:text-orange-400 transition-colors">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
