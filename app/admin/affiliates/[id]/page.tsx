@@ -11,6 +11,7 @@ interface AffiliateData {
   tier: string;
   referralCode: string;
   customLink: string;
+  customTrackingLink?: string;
   commissionRate: number;
   totalClicks: number;
   totalLeads: number;
@@ -62,6 +63,11 @@ export default function AffiliatePerformancePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState("30d");
+  
+  // Tracking link editor state
+  const [isEditingTrackingLink, setIsEditingTrackingLink] = useState(false);
+  const [customTrackingLink, setCustomTrackingLink] = useState("");
+  const [updatingTrackingLink, setUpdatingTrackingLink] = useState(false);
 
   useEffect(() => {
     if (affiliateId) {
@@ -96,6 +102,58 @@ export default function AffiliatePerformancePage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const updateTrackingLink = async () => {
+    if (!affiliateData) return;
+    
+    try {
+      setUpdatingTrackingLink(true);
+      
+      const response = await fetch(`/api/admin/affiliates/${affiliateId}/update-tracking-link`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customTrackingLink: customTrackingLink.trim() || null,
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Tracking link updated successfully:", result);
+        
+        // Update local state
+        setAffiliateData(prev => prev ? {
+          ...prev,
+          customTrackingLink: customTrackingLink.trim() || undefined,
+          updatedAt: new Date().toISOString(),
+        } : null);
+        
+        setIsEditingTrackingLink(false);
+        setCustomTrackingLink("");
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to update tracking link:", errorData);
+        setError(errorData.error || "Failed to update tracking link");
+      }
+    } catch (err) {
+      console.error("Error updating tracking link:", err);
+      setError("Failed to update tracking link");
+    } finally {
+      setUpdatingTrackingLink(false);
+    }
+  };
+
+  const startEditingTrackingLink = () => {
+    setCustomTrackingLink(affiliateData?.customTrackingLink || "");
+    setIsEditingTrackingLink(true);
+  };
+
+  const cancelEditingTrackingLink = () => {
+    setCustomTrackingLink("");
+    setIsEditingTrackingLink(false);
   };
 
   if (loading) {
@@ -182,6 +240,131 @@ export default function AffiliatePerformancePage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Tracking Link Editor */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Tracking Link Settings</h2>
+            {!isEditingTrackingLink && (
+              <button
+                onClick={startEditingTrackingLink}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium"
+              >
+                Edit Tracking Link
+              </button>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            {/* Default Link */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Default Tracking Link
+              </label>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  value={affiliateData.customLink}
+                  readOnly
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm text-gray-600"
+                />
+                <button
+                  onClick={() => navigator.clipboard.writeText(affiliateData.customLink)}
+                  className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm"
+                >
+                  Copy
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                This is the automatically generated link based on the referral code.
+              </p>
+            </div>
+
+            {/* Custom Tracking Link */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Custom Tracking Link
+              </label>
+              {isEditingTrackingLink ? (
+                <div className="space-y-3">
+                  <input
+                    type="text"
+                    value={customTrackingLink}
+                    onChange={(e) => setCustomTrackingLink(e.target.value)}
+                    placeholder="Enter custom tracking link (e.g., /special-offer, https://example.com/track)"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={updateTrackingLink}
+                      disabled={updatingTrackingLink}
+                      className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium disabled:opacity-50"
+                    >
+                      {updatingTrackingLink ? "Saving..." : "Save"}
+                    </button>
+                    <button
+                      onClick={cancelEditingTrackingLink}
+                      className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 text-sm font-medium"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Leave empty to use the default link. Can be a custom path (e.g., /special-offer) or full URL.
+                  </p>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="text"
+                    value={affiliateData.customTrackingLink || "No custom link set"}
+                    readOnly
+                    className={`flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm ${
+                      affiliateData.customTrackingLink 
+                        ? "bg-white text-gray-900" 
+                        : "bg-gray-50 text-gray-500"
+                    }`}
+                  />
+                  {affiliateData.customTrackingLink && (
+                    <button
+                      onClick={() => navigator.clipboard.writeText(affiliateData.customTrackingLink!)}
+                      className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm"
+                    >
+                      Copy
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Current Active Link */}
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+              <h3 className="text-sm font-medium text-blue-900 mb-2">Currently Active Link</h3>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="text"
+                  value={affiliateData.customTrackingLink || affiliateData.customLink}
+                  readOnly
+                  className="flex-1 px-3 py-2 border border-blue-300 rounded-md bg-white text-sm font-mono"
+                />
+                <button
+                  onClick={() => navigator.clipboard.writeText(affiliateData.customTrackingLink || affiliateData.customLink)}
+                  className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+                >
+                  Copy Active
+                </button>
+              </div>
+              <p className="text-xs text-blue-700 mt-1">
+                This is the link that will be used for tracking. Custom link takes priority over default.
+              </p>
             </div>
           </div>
         </motion.div>

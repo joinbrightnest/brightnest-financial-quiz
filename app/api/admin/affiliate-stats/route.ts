@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
         email: affiliate.email,
         tier: affiliate.tier,
         referralCode: affiliate.referralCode,
-        customLink: `https://joinbrightnest.com/${affiliate.referralCode}`,
+        customLink: affiliate.customTrackingLink || `https://joinbrightnest.com/${affiliate.referralCode}`,
         commissionRate: affiliate.commissionRate,
         totalClicks: affiliate.totalClicks,
         totalLeads: affiliate.totalLeads,

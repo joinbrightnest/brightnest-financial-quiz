@@ -34,15 +34,16 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Ensure customLink always uses production domain
-    const correctCustomLink = `https://joinbrightnest.com/${affiliate.referralCode}`;
+    // Use custom tracking link if available, otherwise use default
+    const activeTrackingLink = affiliate.customTrackingLink || `https://joinbrightnest.com/${affiliate.referralCode}`;
     
     console.log("Affiliate data:", {
       id: affiliate.id,
       name: affiliate.name,
       referralCode: affiliate.referralCode,
       customLink: affiliate.customLink,
-      correctCustomLink: correctCustomLink
+      customTrackingLink: affiliate.customTrackingLink,
+      activeTrackingLink: activeTrackingLink
     });
 
     return NextResponse.json({
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
       email: affiliate.email,
       tier: affiliate.tier,
       referralCode: affiliate.referralCode,
-      customLink: correctCustomLink,
+      customLink: activeTrackingLink,
       commissionRate: affiliate.commissionRate,
       totalClicks: affiliate.totalClicks,
       totalLeads: affiliate.totalLeads,
