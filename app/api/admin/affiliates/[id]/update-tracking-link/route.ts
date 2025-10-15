@@ -3,11 +3,11 @@ import { prisma } from "@/lib/prisma";
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { customTrackingLink } = await request.json();
-    const affiliateId = params.id;
+    const { id: affiliateId } = await params;
 
     console.log("Updating affiliate tracking link:", {
       affiliateId,
@@ -31,7 +31,7 @@ export async function PUT(
     const updatedAffiliate = await prisma.affiliate.update({
       where: { id: affiliateId },
       data: {
-        // customTrackingLink: customTrackingLink?.trim() || null, // Temporarily disabled
+        customTrackingLink: customTrackingLink?.trim() || null,
         updatedAt: new Date(),
       },
       select: {
@@ -39,7 +39,7 @@ export async function PUT(
         name: true,
         referralCode: true,
         customLink: true,
-        // customTrackingLink: true, // Temporarily disabled
+        customTrackingLink: true,
         updatedAt: true,
       },
     });
