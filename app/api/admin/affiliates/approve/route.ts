@@ -79,14 +79,23 @@ export async function POST(request: NextRequest) {
         },
       });
     } else {
-      // REJECT: Delete the affiliate completely
-      await prisma.affiliate.delete({
-        where: { id: affiliateId }
+      // REJECT: Mark affiliate as inactive instead of deleting
+      console.log(`Rejecting affiliate: ${currentAffiliate.name} (${currentAffiliate.email})`);
+      
+      // Mark as inactive and unapproved instead of deleting
+      await prisma.affiliate.update({
+        where: { id: affiliateId },
+        data: {
+          isActive: false,
+          isApproved: false,
+        },
       });
+
+      console.log(`Successfully rejected affiliate: ${affiliateId}`);
 
       return NextResponse.json({
         success: true,
-        message: "Affiliate rejected and removed",
+        message: "Affiliate rejected and deactivated",
         affiliate: null,
       });
     }
