@@ -1,0 +1,128 @@
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+
+export async function GET(request: NextRequest) {
+  try {
+    // Get all approved affiliates with their performance data
+    const affiliates = await prisma.affiliate.findMany({
+      where: {
+        isApproved: true,
+      },
+      orderBy: {
+        totalClicks: "desc",
+      },
+    });
+
+    // Get detailed performance data for each affiliate
+    const affiliatePerformance = await Promise.all(
+      affiliates.map(async (affiliate) => {
+        // Get clicks for this affiliate
+        const clicks = await prisma.affiliateClick.findMany({
+          where: {
+            affiliateId: affiliate.id,
+          },
+        });
+
+        // Get conversions for this affiliate
+        const conversions = await prisma.affiliateConversion.findMany({
+          where: {
+            affiliateId: affiliate.id,
+          },
+        });
+
+        // Get quiz sessions for this affiliate
+        const quizSessions = await prisma.quizSession.findMany({
+          where: {
+            affiliateCode: affiliate.referralCode,
+          },
+        });
+
+        // Calculate conversion rates
+        const clickCount = clicks.length;
+        const conversionCount = conversions.length;
+        const quizCount = quizSessions.length;
+        const completionCount = quizSessions.filter(session => session.status === "completed").length;
+
+        // Calculate conversion rates
+        const clickToQuizRate = clickCount > 0 ? (quizCount / clickCount) * 100 : 0;
+        const quizToCompletionRate = quizCount > 0 ? (completionCount / quizCount) * 100 : 0;
+        const clickToCompletionRate = clickCount > 0 ? (completionCount / clickCount) * 100 : 0;
+
+        // Calculate revenue (assuming $150 per sale)
+        const totalRevenue = conversionCount * 150;
+        const totalCommission = totalRevenue * affiliate.commissionRate;
+
+        return {
+          id: affiliate.id,
+          name: affiliate.name,
+          email: affiliate.email,
+          referralCode: affiliate.referralCode,
+          customLink: affiliate.customLink,
+          tier: affiliate.tier,
+          commissionRate: affiliate.commissionRate,
+          // Funnel metrics
+          visitors: clickCount,
+          quizStarts: quizCount,
+          completed: completionCount,
+          bookedCall: Math.floor(completionCount * 0.1), // Estimate 10% book calls
+          sales: conversionCount,
+          // Conversion rates
+          clickToQuizRate: clickToQuizRate,
+          quizToCompletionRate: quizToCompletionRate,
+          clickToCompletionRate: clickToCompletionRate,
+          // Revenue
+          totalRevenue: totalRevenue,
+          totalCommission: totalCommission,
+          // Dates
+          createdAt: affiliate.createdAt,
+          updatedAt: affiliate.updatedAt,
+        };
+      })
+    );
+
+    // Calculate overall affiliate stats
+    const totalAffiliates = affiliatePerformance.length;
+    const totalVisitors = affiliatePerformance.reduce((sum, aff) => sum + aff.visitors, 0);
+    const totalQuizStarts = affiliatePerformance.reduce((sum, aff) => sum + aff.quizStarts, 0);
+    const totalCompleted = affiliatePerformance.reduce((sum, aff) => sum + aff.completed, 0);
+    const totalSales = affiliatePerformance.reduce((sum, aff) => sum + aff.sales, 0);
+    const totalRevenue = affiliatePerformance.reduce((sum, aff) => sum + aff.totalRevenue, 0);
+    const totalCommission = affiliatePerformance.reduce((sum, aff) => sum + aff.totalCommission, 0);
+
+    // Calculate overall conversion rates
+    const overallClickToQuizRate = totalVisitors > 0 ? (totalQuizStarts / totalVisitors) * 100 : 0;
+    const overallQuizToCompletionRate = totalQuizStarts > 0 ? (totalCompleted / totalQuizStarts) * 100 : 0;
+    const overallClickToCompletionRate = totalVisitors > 0 ? (totalCompleted / totalVisitors) * 100 : 0;
+
+    // Get top performing affiliates
+    const topAffiliates = affiliatePerformance
+      .sort((a, b) => b.totalRevenue - a.totalRevenue)
+      .slice(0, 10);
+
+    return NextResponse.json({
+      success: true,
+      data: {
+        // Overall stats
+        totalAffiliates,
+        totalVisitors,
+        totalQuizStarts,
+        totalCompleted,
+        totalSales,
+        totalRevenue,
+        totalCommission,
+        overallClickToQuizRate,
+        overallQuizToCompletionRate,
+        overallClickToCompletionRate,
+        // Individual affiliate performance
+        affiliatePerformance,
+        topAffiliates,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching affiliate performance:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch affiliate performance data" },
+      { status: 500 }
+    );
+  }
+}

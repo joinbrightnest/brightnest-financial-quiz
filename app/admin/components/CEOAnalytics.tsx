@@ -4,23 +4,43 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import AffiliateOverview from "./AffiliateOverview";
 
-interface CEOAnalyticsData {
-  totalLeads: number;
-  totalCompletions: number;
-  conversionRate: number;
-  avgCompletionTime: number;
-  distinctArchetypes: number;
-  assessmentCategories: number;
-  dropOffRate: number;
-  quizTypeDistribution: any[];
-  archetypeDistribution: any[];
-  leadsGrowth: any[];
-  funnelData: any[];
-  topPerformingQuiz: any;
-  topArchetype: any;
-  growthRate: number;
-  averageSessionValue: number;
+interface AffiliatePerformance {
+  id: string;
+  name: string;
+  email: string;
+  referralCode: string;
+  customLink: string;
+  tier: string;
+  commissionRate: number;
+  visitors: number;
+  quizStarts: number;
+  completed: number;
+  bookedCall: number;
+  sales: number;
+  clickToQuizRate: number;
+  quizToCompletionRate: number;
+  clickToCompletionRate: number;
   totalRevenue: number;
+  totalCommission: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface CEOAnalyticsData {
+  // Overall affiliate stats
+  totalAffiliates: number;
+  totalVisitors: number;
+  totalQuizStarts: number;
+  totalCompleted: number;
+  totalSales: number;
+  totalRevenue: number;
+  totalCommission: number;
+  overallClickToQuizRate: number;
+  overallQuizToCompletionRate: number;
+  overallClickToCompletionRate: number;
+  // Individual affiliate data
+  affiliatePerformance: AffiliatePerformance[];
+  topAffiliates: AffiliatePerformance[];
 }
 
 export default function CEOAnalytics() {
@@ -42,52 +62,22 @@ export default function CEOAnalytics() {
   const fetchCEOAnalytics = async () => {
     try {
       setLoading(true);
-      // Use the existing admin API for now, we'll enhance it with CEO-specific data
-      const response = await fetch(`/api/admin/basic-stats?activity=daily`);
+      // Fetch affiliate performance data
+      const response = await fetch(`/api/admin/affiliate-performance`);
       if (!response.ok) {
-        throw new Error("Failed to fetch CEO analytics");
+        throw new Error("Failed to fetch affiliate performance data");
       }
       const result = await response.json();
       
-      // Transform the data to match CEO analytics format
-      const ceoData = {
-        totalLeads: result.visitors || 0,
-        totalCompletions: result.leadsCollected || 0,
-        conversionRate: result.completionRate || 0,
-        avgCompletionTime: result.averageTimeMs ? Math.floor(result.averageTimeMs / 1000 / 60) : 0,
-        distinctArchetypes: result.archetypeStats?.length || 0,
-        assessmentCategories: result.quizTypes?.length || 0,
-        dropOffRate: 100 - (result.completionRate || 0),
-        quizTypeDistribution: result.quizTypes?.map((qt: any) => ({
-          quizType: qt.name,
-          count: Math.floor(Math.random() * 100) + 50, // Mock data
-          conversionRate: 75
-        })) || [],
-        archetypeDistribution: result.archetypeStats?.map((as: any) => ({
-          archetype: as.archetype,
-          count: as._count.archetype,
-          percentage: (as._count.archetype / (result.leadsCollected || 1)) * 100
-        })) || [],
-        leadsGrowth: [], // Mock data
-        funnelData: [
-          { stage: "Visitors", count: result.visitors || 0, percentage: 100 },
-          { stage: "Quiz Starts", count: result.visitors || 0, percentage: 100 },
-          { stage: "Completed", count: result.leadsCollected || 0, percentage: result.completionRate || 0 },
-          { stage: "Booked Call", count: Math.floor((result.leadsCollected || 0) * 0.1), percentage: 10 },
-          { stage: "Sale", count: Math.floor((result.leadsCollected || 0) * 0.05), percentage: 5 },
-        ],
-        topPerformingQuiz: null,
-        topArchetype: null,
-        growthRate: 12.5,
-        averageSessionValue: 150,
-        totalRevenue: Math.floor((result.leadsCollected || 0) * 0.05 * 150),
-      };
-      
-      setData(ceoData);
-      setError(null);
+      if (result.success) {
+        setData(result.data);
+        setError(null);
+      } else {
+        throw new Error(result.error || "Failed to load affiliate performance data");
+      }
     } catch (err) {
-      console.error("Error fetching CEO data:", err);
-      setError(err instanceof Error ? err.message : "Failed to load CEO analytics");
+      console.error("Error fetching affiliate performance data:", err);
+      setError(err instanceof Error ? err.message : "Failed to load affiliate performance data");
     } finally {
       setLoading(false);
     }
@@ -233,13 +223,6 @@ export default function CEOAnalytics() {
     );
   }
 
-  const topQuizType = data.quizTypeDistribution.reduce((prev, current) => 
-    prev.count > current.count ? prev : current
-  );
-
-  const topArchetype = data.archetypeDistribution.reduce((prev, current) => 
-    prev.count > current.count ? prev : current
-  );
 
   return (
     <div className="space-y-6">
@@ -326,17 +309,17 @@ export default function CEOAnalytics() {
           transition={{ duration: 0.3 }}
           className="space-y-6"
         >
-          {/* Global KPIs */}
+          {/* Affiliate Performance KPIs */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-blue-100 rounded-lg">
-                  <span className="text-2xl">🧍‍♂️</span>
+                  <span className="text-2xl">👥</span>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Total Leads</p>
+                  <p className="text-sm font-medium text-gray-500">Active Affiliates</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {data.totalLeads.toLocaleString()}
+                    {data.totalAffiliates}
                   </p>
                 </div>
               </div>
@@ -345,12 +328,12 @@ export default function CEOAnalytics() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-green-100 rounded-lg">
-                  <span className="text-2xl">✅</span>
+                  <span className="text-2xl">👀</span>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Total Completions</p>
+                  <p className="text-sm font-medium text-gray-500">Total Visitors</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {data.totalCompletions.toLocaleString()}
+                    {data.totalVisitors.toLocaleString()}
                   </p>
                 </div>
               </div>
@@ -362,9 +345,9 @@ export default function CEOAnalytics() {
                   <span className="text-2xl">💰</span>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Conversion Rate</p>
+                  <p className="text-sm font-medium text-gray-500">Total Revenue</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {data.conversionRate.toFixed(1)}%
+                    ${data.totalRevenue.toLocaleString()}
                   </p>
                 </div>
               </div>
@@ -373,14 +356,13 @@ export default function CEOAnalytics() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-orange-100 rounded-lg">
-                  <span className="text-2xl">📊</span>
+                  <span className="text-2xl">📈</span>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Top Quiz by Volume</p>
-                  <p className="text-lg font-bold text-gray-900 truncate">
-                    {topQuizType.quizType.replace("-", " ").replace(/\b\w/g, l => l.toUpperCase())}
+                  <p className="text-sm font-medium text-gray-500">Conversion Rate</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {data.overallClickToCompletionRate.toFixed(1)}%
                   </p>
-                  <p className="text-xs text-gray-500">{topQuizType.count} completions</p>
                 </div>
               </div>
             </div>
@@ -388,64 +370,186 @@ export default function CEOAnalytics() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center">
                 <div className="p-2 bg-pink-100 rounded-lg">
-                  <span className="text-2xl">🎭</span>
+                  <span className="text-2xl">🏆</span>
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-500">Top Archetype</p>
+                  <p className="text-sm font-medium text-gray-500">Top Affiliate</p>
                   <p className="text-lg font-bold text-gray-900 truncate">
-                    {topArchetype.archetype}
+                    {data.topAffiliates[0]?.name || "N/A"}
                   </p>
-                  <p className="text-xs text-gray-500">{topArchetype.percentage.toFixed(1)}% of leads</p>
+                  <p className="text-xs text-gray-500">${data.topAffiliates[0]?.totalRevenue || 0} revenue</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Charts Section */}
+          {/* Affiliate Performance Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Leads Growth Chart */}
+            {/* Overall Affiliate Funnel */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Leads Growth Over Time
+                Overall Affiliate Funnel (Visitors → Sales)
               </h3>
-              <div className="h-64 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-4xl text-gray-400 mb-2">📈</div>
-                  <p className="text-gray-500">Chart visualization would go here</p>
-                  <p className="text-sm text-gray-400">
-                    {data.leadsGrowth.length} data points available
-                  </p>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-medium text-blue-600">
+                      1
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">Visitors</span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-gray-900">
+                      {data.totalVisitors.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-gray-500">100.0%</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-sm font-medium text-green-600">
+                      2
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">Quiz Starts</span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-gray-900">
+                      {data.totalQuizStarts.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {data.overallClickToQuizRate.toFixed(1)}%
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-sm font-medium text-purple-600">
+                      3
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">Completed</span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-gray-900">
+                      {data.totalCompleted.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {data.overallQuizToCompletionRate.toFixed(1)}%
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-sm font-medium text-orange-600">
+                      4
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">Sales</span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-gray-900">
+                      {data.totalSales.toLocaleString()}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {data.overallClickToCompletionRate.toFixed(1)}%
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Funnel Conversion */}
+            {/* Top Affiliates List */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Funnel Conversion (Start → Sale)
+                Top Performing Affiliates
               </h3>
               <div className="space-y-3">
-                {data.funnelData.map((stage, index) => (
-                  <div key={stage.stage} className="flex items-center justify-between">
+                {data.topAffiliates.slice(0, 5).map((affiliate, index) => (
+                  <div key={affiliate.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-medium text-blue-600">
                         {index + 1}
                       </div>
-                      <span className="text-sm font-medium text-gray-700">
-                        {stage.stage}
-                      </span>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{affiliate.name}</p>
+                        <p className="text-xs text-gray-500">{affiliate.tier} tier</p>
+                      </div>
                     </div>
                     <div className="text-right">
                       <p className="text-sm font-bold text-gray-900">
-                        {stage.count.toLocaleString()}
+                        ${affiliate.totalRevenue.toLocaleString()}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {stage.percentage.toFixed(1)}%
+                        {affiliate.visitors} visitors
                       </p>
                     </div>
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+
+          {/* Individual Affiliate Performance Table */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Individual Affiliate Performance
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Affiliate
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Visitors
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Quiz Starts
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Completed
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Sales
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Revenue
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Conversion Rate
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {data.affiliatePerformance.map((affiliate) => (
+                    <tr key={affiliate.id}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{affiliate.name}</div>
+                          <div className="text-sm text-gray-500">{affiliate.tier} tier</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {affiliate.visitors}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {affiliate.quizStarts}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {affiliate.completed}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {affiliate.sales}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${affiliate.totalRevenue.toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {affiliate.clickToCompletionRate.toFixed(1)}%
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </motion.div>
