@@ -54,22 +54,17 @@ export default function LeadDetailsPage() {
       setLoading(true);
       setError(null);
 
-      // Fetch lead data from the admin basic stats API
-      const response = await fetch(`/api/admin/basic-stats`);
+      // Fetch lead data from the dedicated API endpoint
+      const response = await fetch(`/api/admin/leads/${sessionId}`);
       if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error("Lead not found");
+        }
         throw new Error("Failed to fetch lead data");
       }
       
-      const data = await response.json();
-      
-      // Find the specific lead by sessionId
-      const lead = data.leads?.find((l: any) => l.sessionId === sessionId);
-      
-      if (!lead) {
-        throw new Error("Lead not found");
-      }
-
-      setLeadData(lead);
+      const leadData = await response.json();
+      setLeadData(leadData);
     } catch (err) {
       console.error("Error fetching lead data:", err);
       setError(err instanceof Error ? err.message : "Failed to load lead data");
