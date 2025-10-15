@@ -10,10 +10,16 @@ export async function GET(
   try {
     const { id: affiliateId } = await params;
 
-    // Get affiliate data
-    const affiliate = await prisma.affiliate.findUnique({
-      where: { id: affiliateId },
-    });
+    // Get affiliate data using raw SQL to include customTrackingLink
+    const affiliateResult = await prisma.$queryRaw`
+      SELECT * FROM "affiliates" 
+      WHERE "id" = ${affiliateId}
+      LIMIT 1
+    `;
+    
+    const affiliate = Array.isArray(affiliateResult) && affiliateResult.length > 0 
+      ? affiliateResult[0] 
+      : null;
 
     if (!affiliate) {
       return NextResponse.json(
@@ -27,17 +33,17 @@ export async function GET(
       name: affiliate.name,
       email: affiliate.email,
       tier: affiliate.tier,
-      referralCode: affiliate.referralCode,
-      customLink: affiliate.customLink,
-      customTrackingLink: (affiliate as any).customTrackingLink || null,
-      commissionRate: affiliate.commissionRate,
-      totalClicks: affiliate.totalClicks,
-      totalLeads: affiliate.totalLeads,
-      totalBookings: affiliate.totalBookings,
-      totalCommission: affiliate.totalCommission,
-      isApproved: affiliate.isApproved,
-      createdAt: affiliate.createdAt.toISOString(),
-      updatedAt: affiliate.updatedAt.toISOString(),
+      referralCode: affiliate.referral_code,
+      customLink: affiliate.custom_link,
+      customTrackingLink: affiliate.custom_tracking_link,
+      commissionRate: affiliate.commission_rate,
+      totalClicks: affiliate.total_clicks,
+      totalLeads: affiliate.total_leads,
+      totalBookings: affiliate.total_bookings,
+      totalCommission: affiliate.total_commission,
+      isApproved: affiliate.is_approved,
+      createdAt: affiliate.created_at,
+      updatedAt: affiliate.updated_at,
     });
   } catch (error) {
     console.error("Error fetching affiliate:", error);
