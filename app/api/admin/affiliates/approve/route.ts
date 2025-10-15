@@ -14,8 +14,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Custom tracking link is optional - if not provided, keep the auto-generated one
-
     // Get current affiliate data
     const currentAffiliate = await prisma.affiliate.findUnique({
       where: { id: affiliateId },
@@ -28,123 +26,54 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let updateData: any = {
-      isApproved: approved,
-      isActive: approved,
-    };
-
-    if (approved && customTrackingLink) {
-      // Clean the tracking link (remove leading slash if present)
-      const cleanTrackingLink = customTrackingLink.trim().replace(/^\/+/, '');
+    if (approved) {
+      // APPROVE: Update affiliate with custom tracking link or keep auto-generated
+      let updateData: any = {};
       
-      // Generate new referral code based on the custom tracking link
-      const newReferralCode = cleanTrackingLink;
-      
-      // Create the full custom link
-      const fullCustomLink = `https://joinbrightnest.com/${cleanTrackingLink}`;
-      
-      updateData = {
-        ...updateData,
-        referralCode: newReferralCode,
-        customLink: fullCustomLink,
-        customTrackingLink: `/${cleanTrackingLink}`,
-      };
-    }
-
-    // Update affiliate approval status and optionally override tracking link
-    if (approved && customTrackingLink) {
-      try {
-        // Clean the tracking link (remove leading slash if present)
+      if (customTrackingLink && customTrackingLink.trim()) {
+        // Use custom tracking link
         const cleanTrackingLink = customTrackingLink.trim().replace(/^\/+/, '');
-        
-        // Generate new referral code based on the custom tracking link
-        const newReferralCode = cleanTrackingLink;
-        
-        // Create the full custom link
-        const fullCustomLink = `https://joinbrightnest.com/${cleanTrackingLink}`;
-        
-        // Update with custom tracking link using raw SQL
-        await prisma.$executeRaw`
-          UPDATE "affiliates"
-          SET "referral_code" = ${newReferralCode},
-              "custom_link" = ${fullCustomLink},
-              "is_approved" = true,
-              "is_active" = true
-          WHERE "id" = ${affiliateId}
-        `;
-        
-      } catch (updateError) {
-        console.error("Error updating affiliate with custom tracking link:", updateError);
-        throw updateError;
+        updateData = {
+          referralCode: cleanTrackingLink,
+          customLink: `https://joinbrightnest.com/${cleanTrackingLink}`,
+        };
       }
-    } else if (approved) {
-      // Just update the affiliate for auto-approval
-      await prisma.$executeRaw`
-        UPDATE "affiliates"
-        SET "is_approved" = true,
-            "is_active" = true
-        WHERE "id" = ${affiliateId}
-      `;
+      // If no custom link provided, keep the auto-generated one
+
+      // Update the affiliate
+      const updatedAffiliate = await prisma.affiliate.update({
+        where: { id: affiliateId },
+        data: updateData,
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: "Affiliate approved successfully",
+        affiliate: {
+          id: updatedAffiliate.id,
+          name: updatedAffiliate.name,
+          email: updatedAffiliate.email,
+          tier: updatedAffiliate.tier,
+          referralCode: updatedAffiliate.referralCode,
+          customLink: updatedAffiliate.customLink,
+        },
+      });
     } else {
-      // Reject the affiliate by deleting it completely
+      // REJECT: Delete the affiliate completely
       await prisma.affiliate.delete({
         where: { id: affiliateId }
       });
-    }
 
-    // Get the updated affiliate data (if it wasn't deleted)
-    let affiliate = null;
-    if (approved) {
-      affiliate = await prisma.affiliate.findUnique({
-        where: { id: affiliateId },
+      return NextResponse.json({
+        success: true,
+        message: "Affiliate rejected and removed",
+        affiliate: null,
       });
-
-      if (!affiliate) {
-        return NextResponse.json(
-          { error: "Failed to update affiliate" },
-          { status: 500 }
-        );
-      }
     }
-
-    // Create audit log (simplified) - only for approved affiliates
-    if (approved && affiliate) {
-      try {
-        await prisma.affiliateAuditLog.create({
-          data: {
-            affiliateId: affiliate.id,
-            action: "account_approved",
-            details: { 
-              approved,
-              customTrackingLink: customTrackingLink ? customTrackingLink.trim().replace(/^\/+/, '') : null,
-            },
-            ipAddress: request.headers.get("x-forwarded-for") || "unknown",
-            userAgent: request.headers.get("user-agent") || "unknown",
-          },
-        });
-      } catch (auditError) {
-        console.log("Audit log creation failed, continuing:", auditError);
-      }
-    }
-
-    return NextResponse.json({
-      success: true,
-      message: `Affiliate ${approved ? 'approved' : 'rejected'} successfully`,
-      affiliate: approved && affiliate ? {
-        id: affiliate.id,
-        name: affiliate.name,
-        email: affiliate.email,
-        tier: affiliate.tier,
-        referralCode: affiliate.referralCode,
-        customLink: affiliate.customLink,
-        customTrackingLink: null,
-        isApproved: true,
-      } : null,
-    });
   } catch (error) {
     console.error("Affiliate approval error:", error);
     return NextResponse.json(
-      { error: "Failed to update affiliate status" },
+      { error: "Failed to process affiliate request" },
       { status: 500 }
     );
   }
