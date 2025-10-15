@@ -383,12 +383,12 @@ export default function CEOAnalytics() {
             </div>
           </div>
 
-          {/* Affiliate Performance Section */}
+          {/* Program Health & Insights */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Overall Affiliate Funnel */}
+            {/* Program Performance Funnel */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Overall Affiliate Funnel (Visitors → Sales)
+                Program Performance Funnel
               </h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -396,7 +396,7 @@ export default function CEOAnalytics() {
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-medium text-blue-600">
                       1
                     </div>
-                    <span className="text-sm font-medium text-gray-700">Visitors</span>
+                    <span className="text-sm font-medium text-gray-700">Total Visitors</span>
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-bold text-gray-900">
@@ -456,100 +456,80 @@ export default function CEOAnalytics() {
               </div>
             </div>
 
-            {/* Top Affiliates List */}
+            {/* Program Health Metrics */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Top Performing Affiliates
+                Program Health Metrics
               </h3>
-              <div className="space-y-3">
-                {data.topAffiliates.slice(0, 5).map((affiliate, index) => (
-                  <div key={affiliate.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-medium text-blue-600">
-                        {index + 1}
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{affiliate.name}</p>
-                        <p className="text-xs text-gray-500">{affiliate.tier} tier</p>
-                      </div>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                      <span className="text-green-600 text-sm">💰</span>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-bold text-gray-900">
-                        ${affiliate.totalRevenue.toLocaleString()}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {affiliate.visitors} visitors
-                      </p>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">Total Commissions</p>
+                      <p className="text-xs text-gray-500">Paid to affiliates</p>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-gray-900">
+                      ${data.totalCommission.toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-blue-600 text-sm">📊</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">Avg Revenue per Affiliate</p>
+                      <p className="text-xs text-gray-500">Program efficiency</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-gray-900">
+                      ${data.totalAffiliates > 0 ? Math.round(data.totalRevenue / data.totalAffiliates) : 0}
+                    </p>
+                  </div>
+                </div>
 
-          {/* Individual Affiliate Performance Table */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Individual Affiliate Performance
-            </h3>
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Affiliate
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Visitors
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Quiz Starts
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Completed
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Sales
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Revenue
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Conversion Rate
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {data.affiliatePerformance.map((affiliate) => (
-                    <tr key={affiliate.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{affiliate.name}</div>
-                          <div className="text-sm text-gray-500">{affiliate.tier} tier</div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {affiliate.visitors}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {affiliate.quizStarts}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {affiliate.completed}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {affiliate.sales}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        ${affiliate.totalRevenue.toLocaleString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {affiliate.clickToCompletionRate.toFixed(1)}%
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                      <span className="text-purple-600 text-sm">🎯</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">Active Affiliate Rate</p>
+                      <p className="text-xs text-gray-500">Generating traffic</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-gray-900">
+                      {data.totalAffiliates > 0 ? Math.round((data.affiliatePerformance.filter(a => a.visitors > 0).length / data.totalAffiliates) * 100) : 0}%
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                      <span className="text-orange-600 text-sm">⚡</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">Top Performer Share</p>
+                      <p className="text-xs text-gray-500">Revenue concentration</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-bold text-gray-900">
+                      {data.totalRevenue > 0 && data.topAffiliates[0] ? Math.round((data.topAffiliates[0].totalRevenue / data.totalRevenue) * 100) : 0}%
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </motion.div>
