@@ -264,32 +264,32 @@ export default function AffiliatePerformancePage() {
           </div>
 
           <div className="space-y-4">
-            {/* Active Tracking Link */}
-            <div className="bg-green-50 border border-green-200 rounded-md p-4">
-              <h3 className="text-sm font-medium text-green-900 mb-2">Active Tracking Link</h3>
+            {/* Current Tracking Link */}
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+              <h3 className="text-sm font-medium text-blue-900 mb-2">Current Tracking Link</h3>
               <div className="flex items-center space-x-2">
                 <input
                   type="text"
                   value={affiliateData.customTrackingLink || affiliateData.customLink}
                   readOnly
-                  className="flex-1 px-3 py-2 border border-green-300 rounded-md bg-white text-sm font-mono text-black"
+                  className="flex-1 px-3 py-2 border border-blue-300 rounded-md bg-white text-sm font-mono text-black"
                 />
                 <button
                   onClick={() => navigator.clipboard.writeText(affiliateData.customTrackingLink || affiliateData.customLink)}
-                  className="px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm"
+                  className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
                 >
-                  Copy Active
+                  Copy
                 </button>
               </div>
               <p className="text-xs text-black mt-1">
-                This is the link that will be used for tracking. Only this link will work for affiliate tracking.
+                This is the only link that works for affiliate tracking. Old links are completely removed.
               </p>
             </div>
 
-            {/* Custom Tracking Link Editor */}
+            {/* Edit Tracking Link */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Set Custom Tracking Link
+                Edit Tracking Link
               </label>
               {isEditingTrackingLink ? (
                 <div className="space-y-3">
@@ -297,16 +297,16 @@ export default function AffiliatePerformancePage() {
                     type="text"
                     value={customTrackingLink}
                     onChange={(e) => setCustomTrackingLink(e.target.value)}
-                    placeholder="Enter custom tracking link (e.g., /special-offer, https://example.com/track)"
+                    placeholder="Enter new tracking link (e.g., /special-offer, https://example.com/track)"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={updateTrackingLink}
                       disabled={updatingTrackingLink}
-                      className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium disabled:opacity-50"
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium disabled:opacity-50"
                     >
-                      {updatingTrackingLink ? "Saving..." : "Save & Activate"}
+                      {updatingTrackingLink ? "Updating..." : "Update Link"}
                     </button>
                     <button
                       onClick={cancelEditingTrackingLink}
@@ -316,7 +316,7 @@ export default function AffiliatePerformancePage() {
                     </button>
                   </div>
                   <p className="text-xs text-black">
-                    When you save a custom link, it will replace the current active link. The old link will stop working.
+                    The new link will completely replace the current one. The old link will be permanently removed.
                   </p>
                 </div>
               ) : (
@@ -324,56 +324,23 @@ export default function AffiliatePerformancePage() {
                   <div className="flex items-center space-x-2">
                     <input
                       type="text"
-                      value={affiliateData.customTrackingLink || "No custom link set"}
+                      value={affiliateData.customTrackingLink || affiliateData.customLink}
                       readOnly
-                      className={`flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm ${
-                        affiliateData.customTrackingLink 
-                          ? "bg-white text-black" 
-                          : "bg-gray-50 text-gray-500"
-                      }`}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm text-gray-600"
                     />
-                    {affiliateData.customTrackingLink && (
-                      <button
-                        onClick={() => navigator.clipboard.writeText(affiliateData.customTrackingLink!)}
-                        className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm"
-                      >
-                        Copy
-                      </button>
-                    )}
+                    <button
+                      onClick={startEditingTrackingLink}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium"
+                    >
+                      Edit
+                    </button>
                   </div>
                   <p className="text-xs text-black">
-                    {affiliateData.customTrackingLink 
-                      ? "Custom link is active. The default link is disabled."
-                      : "No custom link set. Using default referral code link."
-                    }
+                    Click "Edit" to change the tracking link. Only the current link works for affiliate tracking.
                   </p>
                 </div>
               )}
             </div>
-
-            {/* Default Link (only show if no custom link) */}
-            {!affiliateData.customTrackingLink && (
-              <div className="bg-gray-50 border border-gray-200 rounded-md p-4">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Default Link (Inactive)</h3>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="text"
-                    value={affiliateData.customLink}
-                    readOnly
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-sm text-gray-500"
-                  />
-                  <button
-                    onClick={() => navigator.clipboard.writeText(affiliateData.customLink)}
-                    className="px-3 py-2 bg-gray-200 text-gray-600 rounded-md hover:bg-gray-300 text-sm"
-                  >
-                    Copy
-                  </button>
-                </div>
-                <p className="text-xs text-black mt-1">
-                  This is the automatically generated link. It will be disabled when you set a custom link.
-                </p>
-              </div>
-            )}
           </div>
         </motion.div>
 

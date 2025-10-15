@@ -30,11 +30,20 @@ function AffiliatePageContent() {
           utm_campaign: new URLSearchParams(window.location.search).get("utm_campaign")
         }),
       })
-      .then(response => response.json())
+      .then(response => {
+        if (response.status === 410) {
+          // Link has been permanently removed
+          console.error("❌ This affiliate link has been permanently removed");
+          // Redirect to main page without affiliate tracking
+          window.location.href = "/";
+          return;
+        }
+        return response.json();
+      })
       .then(data => {
-        if (data.success) {
+        if (data && data.success) {
           console.log("✅ Affiliate click tracked successfully");
-        } else {
+        } else if (data && data.error) {
           console.error("❌ Failed to track affiliate click:", data.error);
         }
       })
