@@ -553,18 +553,24 @@ export default function AffiliateCRMView() {
           </motion.div>
         )}
 
-        {/* Lead Detail Modal */}
+        {/* Premium Lead Detail Modal */}
         {selectedLead && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-              <div className="px-6 py-4 border-b border-gray-200">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+              {/* Premium Header */}
+              <div className="px-8 py-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    Lead Details
-                  </h3>
+                  <div>
+                    <h3 className="text-2xl font-bold text-slate-900">
+                      Lead Details
+                    </h3>
+                    <p className="text-sm text-slate-600 mt-1">
+                      Session ID: {selectedLead.sessionId}
+                    </p>
+                  </div>
                   <button
                     onClick={() => setSelectedLead(null)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-200"
                   >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -572,45 +578,109 @@ export default function AffiliateCRMView() {
                   </button>
                 </div>
               </div>
-              <div className="px-6 py-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Session Information</h4>
-                    <div className="space-y-2 text-sm">
-                      <p><span className="font-medium">Session ID:</span> {selectedLead.sessionId}</p>
-                      <p><span className="font-medium">Quiz Type:</span> {selectedLead.quizType}</p>
-                      <p><span className="font-medium">Started:</span> {new Date(selectedLead.startedAt).toLocaleString()}</p>
-                      <p><span className="font-medium">Completed:</span> {selectedLead.completedAt ? new Date(selectedLead.completedAt).toLocaleString() : "Incomplete"}</p>
-                      <p><span className="font-medium">Status:</span> {selectedLead.status}</p>
-                      <p><span className="font-medium">Duration:</span> {selectedLead.durationMs ? `${Math.round(selectedLead.durationMs / 60000)} minutes` : "N/A"}</p>
+
+              {/* Content */}
+              <div className="p-8 space-y-6">
+                {/* Session Information Card */}
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                  <h4 className="text-lg font-bold text-slate-900 mb-4">Session Information</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-slate-600 mb-1">Quiz Type</p>
+                      <p className="font-semibold text-slate-900">{selectedLead.quizType}</p>
                     </div>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">User Information</h4>
-                    <div className="space-y-2 text-sm">
-                      <p><span className="font-medium">Email:</span> {selectedLead.user?.email || "N/A"}</p>
-                      <p><span className="font-medium">Role:</span> {selectedLead.user?.role || "N/A"}</p>
+                    <div>
+                      <p className="text-sm text-slate-600 mb-1">Status</p>
+                      <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${
+                        selectedLead.status === "completed" 
+                          ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg" 
+                          : "bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-lg"
+                      }`}>
+                        {selectedLead.status === "completed" ? "Completed" : "In Progress"}
+                      </span>
                     </div>
-                    {selectedLead.result && (
-                      <div className="mt-4">
-                        <h4 className="font-semibold text-gray-900 mb-2">Quiz Results</h4>
-                        <div className="space-y-2 text-sm">
-                          <p><span className="font-medium">Archetype:</span> {selectedLead.result.archetype}</p>
-                          <p><span className="font-medium">Score:</span> {selectedLead.result.score}</p>
-                        </div>
-                      </div>
-                    )}
+                    <div>
+                      <p className="text-sm text-slate-600 mb-1">Started</p>
+                      <p className="font-semibold text-slate-900">{new Date(selectedLead.startedAt).toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-600 mb-1">Completed</p>
+                      <p className="font-semibold text-slate-900">
+                        {selectedLead.completedAt ? new Date(selectedLead.completedAt).toLocaleString() : "Incomplete"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-600 mb-1">Duration</p>
+                      <p className="font-semibold text-slate-900">
+                        {selectedLead.durationMs ? `${Math.round(selectedLead.durationMs / 60000)} minutes` : "N/A"}
+                      </p>
+                    </div>
                   </div>
                 </div>
+
+                {/* Contact Information Card */}
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                  <h4 className="text-lg font-bold text-slate-900 mb-4">Contact Information</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-slate-600 mb-1">Name</p>
+                      <p className="font-semibold text-slate-900">{selectedLead.user?.name || "N/A"}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-600 mb-1">Email</p>
+                      <p className="font-semibold text-slate-900">{selectedLead.user?.email || "N/A"}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quiz Result Card */}
+                {selectedLead.result && (
+                  <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                    <h4 className="text-lg font-bold text-slate-900 mb-4">Quiz Result</h4>
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-sm text-slate-600 mb-1">Archetype</p>
+                        <p className="text-lg font-bold text-slate-900">{selectedLead.result.archetype}</p>
+                      </div>
+                      {selectedLead.result.score && (
+                        <div>
+                          <p className="text-sm text-slate-600 mb-2">Scores</p>
+                          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                            <pre className="text-sm font-mono text-slate-900 whitespace-pre-wrap">
+                              {typeof selectedLead.result.score === 'string' 
+                                ? selectedLead.result.score 
+                                : JSON.stringify(selectedLead.result.score, null, 2)
+                              }
+                            </pre>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Quiz Answers Card */}
                 {selectedLead.answers.length > 0 && (
-                  <div className="mt-6">
-                    <h4 className="font-semibold text-gray-900 mb-4">Quiz Answers</h4>
-                    <div className="space-y-3">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                    <h4 className="text-lg font-bold text-slate-900 mb-4">
+                      Quiz Answers ({selectedLead.answers.length} answers)
+                    </h4>
+                    <div className="space-y-4">
                       {selectedLead.answers.map((answer, index) => (
-                        <div key={index} className="border border-gray-200 rounded-lg p-4">
-                          <p className="font-medium text-gray-900 mb-2">{answer.questionText}</p>
-                          <p className="text-gray-900">Answer: {answer.answer}</p>
-                          <p className="text-sm text-gray-900">Value: {answer.answerValue}</p>
+                        <div key={index} className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <h5 className="font-bold text-slate-900">Question {index + 1}</h5>
+                            <span className="text-xs text-slate-500">
+                              {new Date(selectedLead.startedAt).toLocaleString()}
+                            </span>
+                          </div>
+                          <p className="text-slate-900 mb-2">{answer.questionText}</p>
+                          <p className="text-slate-700 mb-1">
+                            <span className="font-medium">Answer:</span> "{answer.answer}"
+                          </p>
+                          <p className="text-sm text-slate-600">
+                            <span className="font-medium">Type:</span> single
+                          </p>
                         </div>
                       ))}
                     </div>
