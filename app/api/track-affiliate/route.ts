@@ -114,10 +114,14 @@ export async function POST(request: NextRequest) {
         console.log("🔄 Skipping total clicks update - duplicate click");
       }
     } else {
-      console.log("Affiliate not found or database unavailable, but still setting cookie for:", ref);
+      console.log("❌ Affiliate not found for code:", ref);
+      return NextResponse.json(
+        { success: false, error: "Affiliate not found" },
+        { status: 404 }
+      );
     }
 
-    // Always set affiliate tracking cookie (30 days) - this is the most important part
+    // Set affiliate tracking cookie for valid affiliates only
     const response = NextResponse.json({ success: true });
     response.cookies.set("affiliate_ref", ref, {
       maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -130,25 +134,6 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     console.error("Tracking error:", error);
-    
-    // Even if there's an error, try to set the cookie
-    try {
-      const { ref } = await request.json();
-      if (ref) {
-        const response = NextResponse.json({ success: true });
-        response.cookies.set("affiliate_ref", ref, {
-          maxAge: 30 * 24 * 60 * 60, // 30 days
-          httpOnly: false, // Allow client-side access
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-        });
-        console.log("✅ Affiliate cookie set as fallback for:", ref);
-        return response;
-      }
-    } catch (fallbackError) {
-      console.error("Fallback cookie setting failed:", fallbackError);
-    }
-    
     return NextResponse.json(
       { success: false, error: "Tracking failed" },
       { status: 500 }
