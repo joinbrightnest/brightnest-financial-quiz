@@ -70,7 +70,8 @@ export async function GET(request: Request) {
         .filter((code): code is string => code !== null);
       
       if (affiliateCodes.length > 0) {
-        const affiliates = await prisma.affiliate.findMany({
+        // First try to find by referral code
+        const affiliatesByReferralCode = await prisma.affiliate.findMany({
           where: {
             referralCode: {
               in: affiliateCodes
@@ -82,11 +83,30 @@ export async function GET(request: Request) {
           }
         });
 
+        // Then try to find by custom tracking link using raw SQL
+        const affiliatesByCustomLink = await prisma.$queryRaw`
+          SELECT "referral_code", "name", "custom_tracking_link"
+          FROM "affiliates" 
+          WHERE "custom_tracking_link" = ANY(${affiliateCodes.map(code => `/${code}`)})
+        `;
+
         // Create a map of affiliate codes to names
-        affiliateMap = affiliates.reduce((map, affiliate) => {
-          map[affiliate.referralCode] = affiliate.name;
-          return map;
-        }, {} as Record<string, string>);
+        affiliateMap = {};
+        
+        // Add affiliates found by referral code
+        affiliatesByReferralCode.forEach(affiliate => {
+          affiliateMap[affiliate.referralCode] = affiliate.name;
+        });
+        
+        // Add affiliates found by custom tracking link
+        if (Array.isArray(affiliatesByCustomLink)) {
+          affiliatesByCustomLink.forEach((affiliate: any) => {
+            const customCode = affiliate.custom_tracking_link?.replace('/', '');
+            if (customCode) {
+              affiliateMap[customCode] = affiliate.name;
+            }
+          });
+        }
       }
     }
 
@@ -94,7 +114,7 @@ export async function GET(request: Request) {
     const leadsWithSource = allLeads.map(lead => ({
       ...lead,
       source: lead.affiliateCode 
-        ? `Affiliate: ${affiliateMap[lead.affiliateCode] || lead.affiliateCode}`
+        ? affiliateMap[lead.affiliateCode] || 'Unknown Affiliate'
         : 'Website'
     }));
 
