@@ -27,18 +27,62 @@ export async function PUT(
       }
     }
 
-    // Update the affiliate's custom tracking link
-    // Temporarily use raw SQL until Prisma client is regenerated
+    // Get the current affiliate data first
+    const currentAffiliate = await prisma.$queryRaw`
+      SELECT * FROM "affiliates" WHERE "id" = ${affiliateId} LIMIT 1
+    `;
+    
+    if (!Array.isArray(currentAffiliate) || currentAffiliate.length === 0) {
+      return NextResponse.json({ error: "Affiliate not found" }, { status: 404 });
+    }
+    
+    const affiliate = currentAffiliate[0] as any;
+    const oldReferralCode = affiliate.referral_code;
+    const newReferralCode = customTrackingLink?.trim()?.replace('/', '') || oldReferralCode;
+
+    // Update the affiliate's custom tracking link and referral code
     if (customTrackingLink?.trim()) {
       await prisma.$executeRaw`
         UPDATE "affiliates" 
-        SET "custom_tracking_link" = ${customTrackingLink.trim()}, "updated_at" = NOW()
+        SET "custom_tracking_link" = ${customTrackingLink.trim()}, 
+            "referral_code" = ${newReferralCode},
+            "updated_at" = NOW()
         WHERE "id" = ${affiliateId}
       `;
+      
+      // Update all historical data to use the new referral code
+      console.log("Updating historical data from", oldReferralCode, "to", newReferralCode);
+      
+      // Update all affiliate clicks
+      await prisma.$executeRaw`
+        UPDATE "affiliate_clicks" 
+        SET "referral_code" = ${newReferralCode}
+        WHERE "affiliate_id" = ${affiliateId} AND "referral_code" = ${oldReferralCode}
+      `;
+      
+      // Update all affiliate conversions
+      await prisma.$executeRaw`
+        UPDATE "affiliate_conversions" 
+        SET "referral_code" = ${newReferralCode}
+        WHERE "affiliate_id" = ${affiliateId} AND "referral_code" = ${oldReferralCode}
+      `;
+      
+      // Update all quiz sessions
+      await prisma.$executeRaw`
+        UPDATE "quiz_sessions" 
+        SET "affiliate_code" = ${newReferralCode}
+        WHERE "affiliate_code" = ${oldReferralCode}
+      `;
+      
+      console.log("Historical data updated successfully");
+      
     } else {
+      // If removing custom tracking link, restore original referral code
       await prisma.$executeRaw`
         UPDATE "affiliates" 
-        SET "custom_tracking_link" = NULL, "updated_at" = NOW()
+        SET "custom_tracking_link" = NULL, 
+            "referral_code" = ${oldReferralCode},
+            "updated_at" = NOW()
         WHERE "id" = ${affiliateId}
       `;
     }
@@ -69,7 +113,9 @@ export async function PUT(
         affiliateId: affiliateId,
         action: "tracking_link_updated",
         details: {
-          oldTrackingLink: null, // We don't store the old value, but we could
+          oldReferralCode: oldReferralCode,
+          newReferralCode: newReferralCode,
+          oldTrackingLink: null,
           newTrackingLink: customTrackingLink?.trim() || null,
           updatedBy: "admin", // You could add admin user tracking here
         },
