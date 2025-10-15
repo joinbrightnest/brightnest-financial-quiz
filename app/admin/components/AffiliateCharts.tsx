@@ -51,14 +51,21 @@ export default function AffiliateCharts({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+        className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 hover:shadow-lg transition-all duration-300"
       >
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-gray-900">
-            Top Affiliates by Revenue
-          </h3>
-          <div className="text-sm text-gray-500">
-            {topAffiliates.length} affiliates
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg">
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h3 className="text-xl font-bold text-slate-900">
+              Top Affiliates by Revenue
+            </h3>
+            <p className="text-sm text-slate-600 font-medium">
+              {topAffiliates.length} affiliates
+            </p>
           </div>
         </div>
 
@@ -69,40 +76,45 @@ export default function AffiliateCharts({
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="group cursor-pointer"
+              className="group cursor-pointer p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-300"
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-medium text-blue-600">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                    <span className="text-white font-bold text-lg">
                       {affiliate.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
                   <div>
-                    <h4 className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
+                    <h4 className="font-bold text-slate-900 text-lg group-hover:text-indigo-600 transition-colors">
                       {affiliate.name}
                     </h4>
-                    <p className="text-sm text-gray-500">
-                      {affiliate.tier} • {affiliate.leads} leads
-                    </p>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <span className="px-2 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full text-xs font-semibold">
+                        {affiliate.tier}
+                      </span>
+                      <span className="text-sm text-slate-600 font-medium">
+                        {affiliate.leads} leads
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-semibold text-gray-900">
+                  <div className="text-xl font-bold text-slate-900">
                     ${affiliate.revenue.toLocaleString()}
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-slate-600 font-medium">
                     {affiliate.conversionRate.toFixed(1)}% conversion
                   </div>
                 </div>
               </div>
               
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-slate-200 rounded-full h-3">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${(affiliate.revenue / maxRevenue) * 100}%` }}
                   transition={{ duration: 0.8, delay: index * 0.1 }}
-                  className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full group-hover:from-blue-600 group-hover:to-blue-700 transition-all"
+                  className="bg-gradient-to-r from-indigo-500 to-purple-600 h-3 rounded-full group-hover:from-indigo-600 group-hover:to-purple-700 transition-all shadow-sm"
                 />
               </div>
             </motion.div>
@@ -115,14 +127,21 @@ export default function AffiliateCharts({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.2 }}
-        className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+        className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 hover:shadow-lg transition-all duration-300"
       >
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-gray-900">
-            Traffic Source Breakdown
-          </h3>
-          <div className="text-sm text-gray-500">
-            {trafficSources.length} sources
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg">
+            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h3 className="text-xl font-bold text-slate-900">
+              Traffic Source Breakdown
+            </h3>
+            <p className="text-sm text-slate-600 font-medium">
+              {trafficSources.length} sources
+            </p>
           </div>
         </div>
 
@@ -133,33 +152,33 @@ export default function AffiliateCharts({
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="group cursor-pointer"
+              className="group cursor-pointer p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-300"
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center space-x-3">
-                  <div className="w-4 h-4 rounded-full bg-green-500" />
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center space-x-4">
+                  <div className="w-4 h-4 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 shadow-sm" />
                   <div>
-                    <h4 className="font-medium text-gray-900 group-hover:text-green-600 transition-colors">
+                    <h4 className="font-bold text-slate-900 text-lg group-hover:text-emerald-600 transition-colors">
                       {source.source}
                     </h4>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-slate-600 font-medium">
                       {source.count.toLocaleString()} clicks
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-semibold text-gray-900">
+                  <div className="text-xl font-bold text-slate-900">
                     {source.percentage.toFixed(1)}%
                   </div>
                 </div>
               </div>
               
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-slate-200 rounded-full h-3">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${source.percentage}%` }}
                   transition={{ duration: 0.8, delay: index * 0.1 }}
-                  className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full group-hover:from-green-600 group-hover:to-green-700 transition-all"
+                  className="bg-gradient-to-r from-emerald-500 to-teal-600 h-3 rounded-full group-hover:from-emerald-600 group-hover:to-teal-700 transition-all shadow-sm"
                 />
               </div>
             </motion.div>
