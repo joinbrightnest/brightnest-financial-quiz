@@ -103,19 +103,19 @@ export default function AffiliatePerformancePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+        <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2 mb-8"></div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div className="h-8 bg-slate-200 rounded w-1/3 mb-4"></div>
+            <div className="h-4 bg-slate-200 rounded w-1/2 mb-8"></div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-24 bg-gray-200 rounded-lg"></div>
+                <div key={i} className="h-32 bg-slate-200 rounded-2xl"></div>
               ))}
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="h-64 bg-gray-200 rounded-lg"></div>
-              <div className="h-64 bg-gray-200 rounded-lg"></div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="h-64 bg-slate-200 rounded-2xl"></div>
+              <div className="h-64 bg-slate-200 rounded-2xl"></div>
             </div>
           </div>
         </div>
@@ -125,15 +125,23 @@ export default function AffiliatePerformancePage() {
 
   if (error || !affiliateData) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
-            <h3 className="text-lg font-semibold text-red-800 mb-2">Error</h3>
-            <p className="text-red-600 mb-4">{error}</p>
+          <div className="bg-white border border-red-200 rounded-2xl p-8 max-w-md mx-auto shadow-lg">
+            <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">Error Loading Data</h3>
+            <p className="text-slate-600 mb-6">{error}</p>
             <button
               onClick={() => router.back()}
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-xl text-sm font-semibold hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200"
             >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
               Go Back
             </button>
           </div>
@@ -143,43 +151,62 @@ export default function AffiliatePerformancePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Premium Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-12"
         >
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
-                Affiliate Performance Details
-              </h1>
-              <p className="text-gray-900 mt-1">
-                {affiliateData.name} • {affiliateData.tier} tier • Code: {affiliateData.referralCode}
-              </p>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                    Affiliate Performance Details
+                  </h1>
+                  <p className="text-slate-600 font-medium">
+                    {affiliateData.name} • {affiliateData.tier} tier • Code: {affiliateData.referralCode}
+                  </p>
+                </div>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
-              <select
-                value={dateRange}
-                onChange={(e) => setDateRange(e.target.value)}
-                className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-              >
-                <option value="7d">Last 7 days</option>
-                <option value="30d">Last 30 days</option>
-                <option value="90d">Last 90 days</option>
-                <option value="1y">Last year</option>
-              </select>
+              <div className="relative">
+                <select
+                  value={dateRange}
+                  onChange={(e) => setDateRange(e.target.value)}
+                  className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
+                >
+                  <option value="7d">Last 7 days</option>
+                  <option value="30d">Last 30 days</option>
+                  <option value="90d">Last 90 days</option>
+                  <option value="1y">Last year</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
               <a
                 href={`/admin/affiliates/${affiliateId}/crm`}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+                className="inline-flex items-center px-5 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-semibold hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200"
               >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
                 CRM View
               </a>
               <button
                 onClick={() => router.back()}
-                className="text-gray-400 hover:text-gray-600"
+                className="p-3 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-200"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -189,42 +216,58 @@ export default function AffiliatePerformancePage() {
           </div>
         </motion.div>
 
-        {/* Tracking Link Display */}
+        {/* Premium Tracking Link Display */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+          className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 hover:shadow-lg transition-all duration-300"
         >
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Tracking Link</h2>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-gradient-to-r from-emerald-500 to-green-600 rounded-lg">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-slate-900">Tracking Link</h2>
+            </div>
             <div className="flex items-center space-x-2">
-              <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium">
+              <span className="px-3 py-1 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-full text-xs font-semibold">
                 Active
               </span>
             </div>
           </div>
 
-          <div className="bg-green-50 border border-green-200 rounded-md p-4">
-            <h3 className="text-sm font-medium text-green-900 mb-2">Current Tracking Link</h3>
-            <div className="flex items-center space-x-2">
+          <div className="bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-xl p-6">
+            <h3 className="text-sm font-bold text-emerald-900 mb-4">Current Tracking Link</h3>
+            <div className="flex items-center space-x-3">
               <input
                 type="text"
                 value={affiliateData.customTrackingLink || affiliateData.customLink}
                 readOnly
-                className="flex-1 px-3 py-2 border border-green-300 rounded-md bg-white text-sm font-mono text-black"
+                className="flex-1 px-4 py-3 border border-emerald-300 rounded-xl bg-white text-sm font-mono text-slate-900 shadow-sm"
               />
               <button
                 onClick={() => navigator.clipboard.writeText(affiliateData.customTrackingLink || affiliateData.customLink)}
-                className="px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm"
+                className="inline-flex items-center px-5 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl text-sm font-semibold hover:from-emerald-700 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200"
               >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
                 Copy
               </button>
             </div>
-            <p className="text-xs text-green-700 mt-2">
-              ✅ This tracking link was set during approval and is permanently active. 
-              Contact admin if you need to change your tracking link.
-            </p>
+            <div className="flex items-center mt-4 p-3 bg-white rounded-lg border border-emerald-200">
+              <div className="w-5 h-5 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center mr-3">
+                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <p className="text-sm text-emerald-800 font-medium">
+                This tracking link was set during approval and is permanently active. Contact admin if you need to change your tracking link.
+              </p>
+            </div>
           </div>
         </motion.div>
 
@@ -235,55 +278,110 @@ export default function AffiliatePerformancePage() {
             transition={{ delay: 0.1 }}
             className="space-y-6"
           >
-            {/* Key Metrics */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-blue-50 p-6 rounded-lg">
-                <p className="text-3xl font-bold text-blue-600">{stats.totalClicks.toLocaleString()}</p>
-                <p className="text-sm text-gray-900">Total Clicks</p>
+            {/* Premium Key Metrics */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
+                <div className="flex items-center">
+                  <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Total Clicks</p>
+                    <p className="text-3xl font-bold text-slate-900 mt-1">{stats.totalClicks.toLocaleString()}</p>
+                  </div>
+                </div>
               </div>
-              <div className="bg-green-50 p-6 rounded-lg">
-                <p className="text-3xl font-bold text-green-600">{stats.totalLeads.toLocaleString()}</p>
-                <p className="text-sm text-gray-900">Total Leads</p>
+              <div className="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
+                <div className="flex items-center">
+                  <div className="p-3 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Total Leads</p>
+                    <p className="text-3xl font-bold text-slate-900 mt-1">{stats.totalLeads.toLocaleString()}</p>
+                  </div>
+                </div>
               </div>
-              <div className="bg-purple-50 p-6 rounded-lg">
-                <p className="text-3xl font-bold text-purple-600">{stats.totalBookings.toLocaleString()}</p>
-                <p className="text-sm text-gray-900">Booked Calls</p>
+              <div className="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
+                <div className="flex items-center">
+                  <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Booked Calls</p>
+                    <p className="text-3xl font-bold text-slate-900 mt-1">{stats.totalBookings.toLocaleString()}</p>
+                  </div>
+                </div>
               </div>
-              <div className="bg-yellow-50 p-6 rounded-lg">
-                <p className="text-3xl font-bold text-yellow-600">${stats.totalCommission.toLocaleString()}</p>
-                <p className="text-sm text-gray-900">Total Commission</p>
+              <div className="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
+                <div className="flex items-center">
+                  <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl shadow-lg">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                    </svg>
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Total Commission</p>
+                    <p className="text-3xl font-bold text-slate-900 mt-1">${stats.totalCommission.toLocaleString()}</p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Charts Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Premium Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Performance Chart */}
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h4 className="text-lg font-semibold text-gray-900 mb-4">Performance Over Time</h4>
-                <div className="h-64 flex items-center justify-center bg-gray-50 rounded">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 hover:shadow-lg transition-all duration-300">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                  </div>
+                  <h4 className="text-xl font-bold text-slate-900">Performance Over Time</h4>
+                </div>
+                <div className="h-64 flex items-center justify-center bg-gradient-to-br from-slate-50 to-white rounded-xl border border-slate-200">
                   <div className="text-center">
-                    <div className="text-4xl text-gray-400 mb-2">📈</div>
-                    <p className="text-gray-900">Performance chart</p>
-                    <p className="text-sm text-gray-900">{stats.dailyStats.length} data points</p>
+                    <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                      </svg>
+                    </div>
+                    <p className="text-slate-900 font-semibold">Performance chart</p>
+                    <p className="text-sm text-slate-600 font-medium">{stats.dailyStats.length} data points</p>
                   </div>
                 </div>
               </div>
 
               {/* Conversion Funnel */}
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h4 className="text-lg font-semibold text-gray-900 mb-4">Conversion Funnel</h4>
-                <div className="space-y-3">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 hover:shadow-lg transition-all duration-300">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <h4 className="text-xl font-bold text-slate-900">Conversion Funnel</h4>
+                </div>
+                <div className="space-y-4">
                   {stats.conversionFunnel.map((stage, index) => (
-                    <div key={stage.stage} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-medium text-blue-600">
+                    <div key={stage.stage} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
                           {index + 1}
                         </div>
-                        <span className="text-sm font-medium text-gray-900">{stage.stage}</span>
+                        <span className="text-sm font-semibold text-slate-900">{stage.stage}</span>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-bold text-gray-900">{stage.count.toLocaleString()}</p>
-                        <p className="text-xs text-gray-900">{stage.percentage.toFixed(1)}%</p>
+                        <p className="text-lg font-bold text-slate-900">{stage.count.toLocaleString()}</p>
+                        <p className="text-xs text-slate-600 font-medium">{stage.percentage.toFixed(1)}%</p>
                       </div>
                     </div>
                   ))}
@@ -292,17 +390,24 @@ export default function AffiliatePerformancePage() {
             </div>
 
             {/* Traffic Sources & Recent Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Traffic Sources */}
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h4 className="text-lg font-semibold text-gray-900 mb-4">Traffic Sources</h4>
-                <div className="space-y-3">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 hover:shadow-lg transition-all duration-300">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="p-2 bg-gradient-to-r from-purple-500 to-violet-600 rounded-lg">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                  </div>
+                  <h4 className="text-xl font-bold text-slate-900">Traffic Sources</h4>
+                </div>
+                <div className="space-y-4">
                   {stats.trafficSources.map((source) => (
-                    <div key={source.source} className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-900">{source.source}</span>
+                    <div key={source.source} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
+                      <span className="text-sm font-semibold text-slate-900">{source.source}</span>
                       <div className="text-right">
-                        <p className="text-sm font-bold text-gray-900">{source.clicks.toLocaleString()}</p>
-                        <p className="text-xs text-gray-900">{source.percentage}%</p>
+                        <p className="text-lg font-bold text-slate-900">{source.clicks.toLocaleString()}</p>
+                        <p className="text-xs text-slate-600 font-medium">{source.percentage}%</p>
                       </div>
                     </div>
                   ))}
@@ -310,21 +415,28 @@ export default function AffiliatePerformancePage() {
               </div>
 
               {/* Recent Activity */}
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <h4 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h4>
-                <div className="space-y-3">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 hover:shadow-lg transition-all duration-300">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="p-2 bg-gradient-to-r from-orange-500 to-amber-600 rounded-lg">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h4 className="text-xl font-bold text-slate-900">Recent Activity</h4>
+                </div>
+                <div className="space-y-4">
                   {stats.recentActivity.map((activity, index) => (
-                    <div key={index} className="flex items-center justify-between">
+                    <div key={index} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{activity.action}</p>
-                        <p className="text-xs text-gray-900">{new Date(activity.date).toLocaleDateString()}</p>
+                        <p className="text-sm font-semibold text-slate-900">{activity.action}</p>
+                        <p className="text-xs text-slate-600 font-medium">{new Date(activity.date).toLocaleDateString()}</p>
                       </div>
                       <div className="text-right">
                         {activity.amount && activity.amount > 0 && (
-                          <p className="text-sm font-bold text-gray-900">${activity.amount}</p>
+                          <p className="text-lg font-bold text-slate-900">${activity.amount}</p>
                         )}
                         {activity.commission && activity.commission > 0 && (
-                          <p className="text-xs text-green-600">+${activity.commission}</p>
+                          <p className="text-xs text-emerald-600 font-semibold">+${activity.commission}</p>
                         )}
                       </div>
                     </div>
