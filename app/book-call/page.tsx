@@ -32,8 +32,40 @@ export default function BookCallPage() {
 
   // Calendly event listener for booking completion
   useEffect(() => {
-    const handleCalendlyEvent = (e: any) => {
+    const handleCalendlyEvent = async (e: any) => {
       if (e.data.event === 'calendly.event_scheduled') {
+        console.log("🎯 Calendly booking completed:", e.data);
+        
+        // Get affiliate code from cookie
+        const affiliateCode = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('affiliate_ref='))
+          ?.split('=')[1];
+
+        // Track the booking if there's an affiliate
+        if (affiliateCode) {
+          try {
+            console.log("📞 Tracking booking for affiliate:", affiliateCode);
+            await fetch('/api/track-booking', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                affiliateCode,
+                bookingDetails: {
+                  eventType: e.data.event,
+                  scheduledAt: new Date().toISOString(),
+                  calendlyEvent: e.data.payload?.event || null,
+                }
+              }),
+            });
+            console.log("✅ Booking tracked successfully");
+          } catch (error) {
+            console.error("❌ Error tracking booking:", error);
+          }
+        } else {
+          console.log("ℹ️ No affiliate code found for booking");
+        }
+
         // Show loading screen before redirect
         const loadingDiv = document.createElement('div');
         loadingDiv.innerHTML = `

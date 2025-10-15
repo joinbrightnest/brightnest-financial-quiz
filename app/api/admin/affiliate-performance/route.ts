@@ -42,6 +42,11 @@ export async function GET(request: NextRequest) {
         const conversionCount = conversions.length;
         const quizCount = quizSessions.length;
         const completionCount = quizSessions.filter(session => session.status === "completed").length;
+        
+        // Count actual bookings and sales from conversions
+        const bookingCount = conversions.filter(c => c.conversionType === "booking").length;
+        const saleCount = conversions.filter(c => c.conversionType === "sale").length;
+        const leadCount = conversions.filter(c => c.conversionType === "quiz_completion").length;
 
         // Calculate conversion rates
         const clickToQuizRate = clickCount > 0 ? (quizCount / clickCount) * 100 : 0;
@@ -49,7 +54,7 @@ export async function GET(request: NextRequest) {
         const clickToCompletionRate = clickCount > 0 ? (completionCount / clickCount) * 100 : 0;
 
         // Calculate revenue (assuming $150 per sale)
-        const totalRevenue = conversionCount * 150;
+        const totalRevenue = saleCount * 150;
         const totalCommission = totalRevenue * affiliate.commissionRate;
 
         return {
@@ -64,8 +69,8 @@ export async function GET(request: NextRequest) {
           visitors: clickCount,
           quizStarts: quizCount,
           completed: completionCount,
-          bookedCall: Math.floor(completionCount * 0.1), // Estimate 10% book calls
-          sales: conversionCount,
+          bookedCall: bookingCount, // Use actual booking count
+          sales: saleCount, // Use actual sale count
           // Conversion rates
           clickToQuizRate: clickToQuizRate,
           quizToCompletionRate: quizToCompletionRate,
