@@ -10,10 +10,16 @@ export async function GET(
   try {
     const { id: affiliateId } = await params;
 
-    // Get affiliate data
-    const affiliate = await prisma.affiliate.findUnique({
-      where: { id: affiliateId },
-    });
+    // Get affiliate data using raw SQL to include customTrackingLink
+    const affiliateResult = await prisma.$queryRaw`
+      SELECT * FROM "affiliates" 
+      WHERE "id" = ${affiliateId}
+      LIMIT 1
+    `;
+    
+    const affiliate = Array.isArray(affiliateResult) && affiliateResult.length > 0 
+      ? affiliateResult[0] 
+      : null;
 
     if (!affiliate) {
       return NextResponse.json(
@@ -23,10 +29,20 @@ export async function GET(
     }
 
     // Get all quiz sessions attributed to this affiliate
+    // Include both original referral code and custom tracking link
+    const whereClause = affiliate.custom_tracking_link 
+      ? {
+          OR: [
+            { affiliateCode: affiliate.referral_code },
+            { affiliateCode: affiliate.custom_tracking_link.replace('/', '') }
+          ]
+        }
+      : {
+          affiliateCode: affiliate.referral_code,
+        };
+
     const quizSessions = await prisma.quizSession.findMany({
-      where: {
-        affiliateCode: affiliate.referralCode,
-      },
+      where: whereClause,
       include: {
         user: true,
         result: true,
