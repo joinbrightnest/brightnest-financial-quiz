@@ -145,28 +145,35 @@ export async function GET(request: Request) {
       orderBy: { order: 'asc' }
     });
 
-    const questionAnalytics = await Promise.all(
-      allQuestions.map(async (question) => {
-        // Count unique sessions that answered this question
-        const uniqueSessionsAnswered = await prisma.quizAnswer.findMany({
-          where: { questionId: question.id },
-          select: { sessionId: true },
-          distinct: ['sessionId']
-        });
+    // Get all question analytics in a single query to avoid connection pool issues
+    const questionAnalyticsData = await prisma.quizAnswer.groupBy({
+      by: ['questionId'],
+      _count: {
+        sessionId: true
+      },
+      where: {
+        questionId: {
+          in: allQuestions.map(q => q.id)
+        }
+      }
+    });
 
-        const answeredCount = uniqueSessionsAnswered.length;
-
-        // Calculate retention rate (how many people are still in the quiz)
-        const retentionRate = totalSessions > 0 ? (answeredCount / totalSessions) * 100 : 0;
-
-        return {
-          questionNumber: question.order,
-          questionText: question.prompt,
-          answeredCount,
-          retentionRate: Math.round(retentionRate * 100) / 100,
-        };
-      })
+    // Create a map for quick lookup
+    const questionCountMap = new Map(
+      questionAnalyticsData.map(item => [item.questionId, item._count.sessionId])
     );
+
+    const questionAnalytics = allQuestions.map(question => {
+      const answeredCount = questionCountMap.get(question.id) || 0;
+      const retentionRate = totalSessions > 0 ? (answeredCount / totalSessions) * 100 : 0;
+
+      return {
+        questionNumber: question.order,
+        questionText: question.prompt,
+        answeredCount,
+        retentionRate: Math.round(retentionRate * 100) / 100,
+      };
+    });
 
     // Get activity data based on timeframe
     const getActivityData = async (timeframe: string) => {
