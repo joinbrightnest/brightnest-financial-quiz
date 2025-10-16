@@ -189,6 +189,28 @@ export default function CloserManagement() {
     }
   };
 
+  const handleImportBookings = async () => {
+    try {
+      const response = await fetch('/api/admin/import-bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        fetchAppointments();
+        alert(`Successfully imported ${data.importedCount} existing bookings!`);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || 'Failed to import bookings');
+      }
+    } catch (error) {
+      setError('Network error importing bookings');
+    }
+  };
+
   const openAssignmentModal = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setSelectedCloser(appointment.closer?.id || '');
@@ -249,6 +271,12 @@ export default function CloserManagement() {
           <p className="text-gray-600">Manage closers and appointment assignments</p>
         </div>
         <div className="flex space-x-3">
+          <button
+            onClick={() => handleImportBookings()}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+          >
+            Import Existing Bookings
+          </button>
           <button
             onClick={() => setShowCreateAppointment(true)}
             className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium"
