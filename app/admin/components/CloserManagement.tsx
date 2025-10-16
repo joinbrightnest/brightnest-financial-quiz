@@ -254,11 +254,17 @@ export default function CloserManagement() {
       if (response.ok) {
         fetchAppointments();
         alert('Appointment deleted successfully');
+      } else if (response.status === 404) {
+        // Appointment already deleted, just refresh the list
+        console.log('Appointment already deleted, refreshing list');
+        fetchAppointments();
+        alert('Appointment was already deleted');
       } else {
         const errorData = await response.json();
         setError(errorData.error || 'Failed to delete appointment');
       }
     } catch (error) {
+      console.error('Error deleting appointment:', error);
       setError('Network error deleting appointment');
     }
   };
