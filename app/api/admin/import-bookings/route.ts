@@ -5,6 +5,20 @@ const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
+    // First, let's check what's actually in the database
+    const allConversions = await prisma.affiliateConversion.findMany({
+      select: {
+        id: true,
+        conversionType: true,
+        status: true,
+        createdAt: true,
+        referralCode: true
+      }
+    });
+
+    console.log(`📊 Total conversions in database: ${allConversions.length}`);
+    console.log('📊 Conversion types found:', allConversions.map(c => c.conversionType));
+
     // Get all existing booking conversions that haven't been imported yet
     const existingBookings = await prisma.affiliateConversion.findMany({
       where: {
@@ -27,10 +41,34 @@ export async function POST(request: NextRequest) {
 
     console.log(`📊 Found ${existingBookings.length} existing booking conversions to import`);
 
+    // If no booking conversions found, let's try to import any conversions as bookings
+    let conversionsToImport = existingBookings;
+    if (existingBookings.length === 0 && allConversions.length > 0) {
+      console.log('📊 No booking conversions found, importing all conversions as bookings');
+      conversionsToImport = await prisma.affiliateConversion.findMany({
+        where: {
+          status: 'confirmed'
+        },
+        include: {
+          affiliate: {
+            select: {
+              id: true,
+              name: true,
+              referralCode: true
+            }
+          }
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      });
+      console.log(`📊 Found ${conversionsToImport.length} total conversions to import as bookings`);
+    }
+
     let importedCount = 0;
     const errors: string[] = [];
 
-    for (const booking of existingBookings) {
+    for (const booking of conversionsToImport) {
       try {
         // Check if this booking has already been imported
         const existingAppointment = await prisma.appointment.findFirst({
@@ -75,7 +113,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       importedCount,
-      totalFound: existingBookings.length,
+      totalFound: conversionsToImport.length,
+      totalConversionsInDB: allConversions.length,
+      conversionTypes: allConversions.map(c => c.conversionType),
       errors: errors.length > 0 ? errors : undefined
     });
 
