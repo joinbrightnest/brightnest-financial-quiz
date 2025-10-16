@@ -44,6 +44,15 @@ export default function CloserManagement() {
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [selectedCloser, setSelectedCloser] = useState<string>('');
   const [showAssignmentModal, setShowAssignmentModal] = useState(false);
+  const [showCreateAppointment, setShowCreateAppointment] = useState(false);
+  const [newAppointment, setNewAppointment] = useState({
+    customerName: '',
+    customerEmail: '',
+    customerPhone: '',
+    scheduledAt: '',
+    duration: 30,
+    affiliateCode: ''
+  });
 
   useEffect(() => {
     fetchClosers();
@@ -143,6 +152,43 @@ export default function CloserManagement() {
     }
   };
 
+  const handleCreateAppointment = async () => {
+    if (!newAppointment.customerName || !newAppointment.customerEmail || !newAppointment.scheduledAt) {
+      setError('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/admin/appointments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...newAppointment,
+          calendlyEventId: `manual-${Date.now()}`, // Generate unique ID
+        }),
+      });
+
+      if (response.ok) {
+        fetchAppointments();
+        setShowCreateAppointment(false);
+        setNewAppointment({
+          customerName: '',
+          customerEmail: '',
+          customerPhone: '',
+          scheduledAt: '',
+          duration: 30,
+          affiliateCode: ''
+        });
+      } else {
+        setError('Failed to create appointment');
+      }
+    } catch (error) {
+      setError('Network error creating appointment');
+    }
+  };
+
   const openAssignmentModal = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setSelectedCloser(appointment.closer?.id || '');
@@ -203,6 +249,12 @@ export default function CloserManagement() {
           <p className="text-gray-600">Manage closers and appointment assignments</p>
         </div>
         <div className="flex space-x-3">
+          <button
+            onClick={() => setShowCreateAppointment(true)}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+          >
+            Create Appointment
+          </button>
           <button
             onClick={() => window.open('/closers/signup', '_blank')}
             className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
@@ -528,6 +580,103 @@ export default function CloserManagement() {
                   className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Assign Closer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Appointment Modal */}
+      {showCreateAppointment && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div className="mt-3">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Create New Appointment
+              </h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Customer Name *</label>
+                  <input
+                    type="text"
+                    value={newAppointment.customerName}
+                    onChange={(e) => setNewAppointment({ ...newAppointment, customerName: e.target.value })}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Enter customer name"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Customer Email *</label>
+                  <input
+                    type="email"
+                    value={newAppointment.customerEmail}
+                    onChange={(e) => setNewAppointment({ ...newAppointment, customerEmail: e.target.value })}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Enter customer email"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Customer Phone</label>
+                  <input
+                    type="tel"
+                    value={newAppointment.customerPhone}
+                    onChange={(e) => setNewAppointment({ ...newAppointment, customerPhone: e.target.value })}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Enter customer phone (optional)"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Scheduled Date & Time *</label>
+                  <input
+                    type="datetime-local"
+                    value={newAppointment.scheduledAt}
+                    onChange={(e) => setNewAppointment({ ...newAppointment, scheduledAt: e.target.value })}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Duration (minutes)</label>
+                  <input
+                    type="number"
+                    value={newAppointment.duration}
+                    onChange={(e) => setNewAppointment({ ...newAppointment, duration: parseInt(e.target.value) || 30 })}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    min="15"
+                    max="120"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Affiliate Code</label>
+                  <input
+                    type="text"
+                    value={newAppointment.affiliateCode}
+                    onChange={(e) => setNewAppointment({ ...newAppointment, affiliateCode: e.target.value })}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Enter affiliate code (optional)"
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 mt-6">
+                <button
+                  onClick={() => setShowCreateAppointment(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreateAppointment}
+                  disabled={!newAppointment.customerName || !newAppointment.customerEmail || !newAppointment.scheduledAt}
+                  className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Create Appointment
                 </button>
               </div>
             </div>
