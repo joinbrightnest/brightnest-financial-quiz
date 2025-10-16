@@ -5,6 +5,19 @@ const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
+    // First, let's check all closers to see what we have
+    const allClosers = await prisma.closer.findMany({
+      select: {
+        id: true,
+        name: true,
+        isActive: true,
+        isApproved: true,
+        calendlyLink: true,
+      }
+    });
+    
+    console.log('🔍 All closers in database:', allClosers);
+
     // Get the first active and approved closer with a Calendly link
     const activeCloser = await prisma.closer.findFirst({
       where: {
@@ -23,6 +36,8 @@ export async function GET(request: NextRequest) {
         createdAt: 'asc' // Get the first one (oldest)
       }
     });
+
+    console.log('🎯 Active closer found:', activeCloser);
 
     if (!activeCloser) {
       return NextResponse.json({
