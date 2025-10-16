@@ -134,6 +134,7 @@ export default function BookCallPage() {
 
         // Also track the booking for closer assignment (even without affiliate)
         console.log("🔍 Active closer check:", activeCloser);
+        console.log("🔍 Full Calendly event data:", JSON.stringify(e.data, null, 2));
         
         // If activeCloser is null, try to fetch it again
         let closerToUse = activeCloser;
