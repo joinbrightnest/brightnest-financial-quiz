@@ -22,13 +22,46 @@ export async function POST(request: NextRequest) {
     }
 
     // Extract customer details from Calendly event
-    const customerName = calendlyEvent?.invitee?.name || 'Unknown';
-    const customerEmail = calendlyEvent?.invitee?.email || 'unknown@example.com';
-    const customerPhone = calendlyEvent?.invitee?.phone_number || null;
-    const scheduledAt = calendlyEvent?.scheduled_event?.start_time ? 
-      new Date(calendlyEvent.scheduled_event.start_time) : 
-      new Date();
-    const calendlyEventId = calendlyEvent?.event?.uuid || `manual-${Date.now()}`;
+    let customerName = 'Unknown';
+    let customerEmail = 'unknown@example.com';
+    let customerPhone = null;
+    let scheduledAt = new Date();
+    let calendlyEventId = `manual-${Date.now()}`;
+
+    // If we have URIs, try to fetch the actual data
+    if (calendlyEvent?.invitee?.uri) {
+      try {
+        console.log("🔍 Fetching invitee data from:", calendlyEvent.invitee.uri);
+        const inviteeResponse = await fetch(calendlyEvent.invitee.uri);
+        if (inviteeResponse.ok) {
+          const inviteeData = await inviteeResponse.json();
+          customerName = inviteeData.resource?.name || 'Unknown';
+          customerEmail = inviteeData.resource?.email || 'unknown@example.com';
+          customerPhone = inviteeData.resource?.phone_number || null;
+          console.log("✅ Fetched invitee data:", { customerName, customerEmail });
+        }
+      } catch (error) {
+        console.error("❌ Error fetching invitee data:", error);
+      }
+    }
+
+    // If we have scheduled event URI, try to fetch the scheduled time
+    if (calendlyEvent?.event?.uri) {
+      try {
+        console.log("🔍 Fetching scheduled event data from:", calendlyEvent.event.uri);
+        const eventResponse = await fetch(calendlyEvent.event.uri);
+        if (eventResponse.ok) {
+          const eventData = await eventResponse.json();
+          scheduledAt = eventData.resource?.start_time ? 
+            new Date(eventData.resource.start_time) : 
+            new Date();
+          calendlyEventId = eventData.resource?.uri?.split('/').pop() || `manual-${Date.now()}`;
+          console.log("✅ Fetched event data:", { scheduledAt, calendlyEventId });
+        }
+      } catch (error) {
+        console.error("❌ Error fetching event data:", error);
+      }
+    }
 
     console.log("📝 Extracted booking details:", {
       customerName,
