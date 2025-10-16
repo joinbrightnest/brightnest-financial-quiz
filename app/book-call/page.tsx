@@ -23,25 +23,10 @@ export default function BookCallPage() {
         if (data.success && data.closer) {
           console.log("🎯 Found active closer:", data.closer);
           setActiveCloser(data.closer);
-          // Update Calendly URL to use closer's link
+          // Update Calendly URL to use closer's link - use exact same format as working default
           const closerCalendlyUrl = `${data.closer.calendlyLink}?hide_event_type_details=1&hide_gdpr_banner=1&hide_landing_page_details=1&embed_domain=joinbrightnest.com&embed_type=Inline`;
           setCalendlyUrl(closerCalendlyUrl);
           console.log("🔄 Using closer's Calendly:", closerCalendlyUrl);
-          
-          // Test if the URL is valid by trying to load it
-          setTimeout(() => {
-            const widget = document.querySelector('.calendly-inline-widget');
-            if (widget) {
-              console.log("📊 Calendly widget element found:", widget);
-              // Check if Calendly loaded successfully
-              const calendlyFrame = widget.querySelector('iframe');
-              if (calendlyFrame) {
-                console.log("✅ Calendly iframe loaded successfully");
-              } else {
-                console.log("❌ Calendly iframe not found - URL might be invalid");
-              }
-            }
-          }, 2000);
         } else {
           console.log("ℹ️ No active closer found, using default Calendly");
         }
