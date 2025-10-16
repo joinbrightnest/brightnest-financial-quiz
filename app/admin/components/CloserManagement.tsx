@@ -318,12 +318,12 @@ export default function CloserManagement() {
                             <div>{closer.totalCalls} calls</div>
                             <div>{closer.totalConversions} conversions</div>
                             <div className="text-xs text-gray-500">
-                              {(closer.conversionRate * 100).toFixed(1)}% rate
+                              {typeof closer.conversionRate === 'number' ? (closer.conversionRate * 100).toFixed(1) : '0.0'}% rate
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          ${closer.totalRevenue.toFixed(2)}
+                          ${typeof closer.totalRevenue === 'number' ? closer.totalRevenue.toFixed(2) : '0.00'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <div className="flex space-x-2">
