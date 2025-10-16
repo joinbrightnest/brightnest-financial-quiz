@@ -344,6 +344,7 @@ model Closer {
   email           String    @unique
   passwordHash    String    @map("password_hash")
   phone           String?
+  calendlyLink    String?   @map("calendly_link")
   isActive        Boolean   @default(true) @map("is_active")
   isApproved      Boolean   @default(false) @map("is_approved")
   commissionRate  Decimal   @default(0.1500) @map("commission_rate") @db.Decimal(5, 4)

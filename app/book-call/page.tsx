@@ -10,6 +10,32 @@ export default function BookCallPage() {
     minutes: 0,
     seconds: 0
   });
+  const [calendlyUrl, setCalendlyUrl] = useState("https://calendly.com/privatepublish/30min?hide_event_type_details=1&hide_gdpr_banner=1&hide_landing_page_details=1&embed_domain=joinbrightnest.com&embed_type=Inline");
+  const [activeCloser, setActiveCloser] = useState<{id: string, name: string, calendlyLink: string} | null>(null);
+
+  // Fetch active closer's Calendly link
+  useEffect(() => {
+    const fetchActiveCloser = async () => {
+      try {
+        const response = await fetch('/api/closer/active-calendly');
+        const data = await response.json();
+        
+        if (data.success && data.closer) {
+          console.log("🎯 Found active closer:", data.closer);
+          setActiveCloser(data.closer);
+          // Update Calendly URL to use closer's link
+          const closerCalendlyUrl = `${data.closer.calendlyLink}?hide_event_type_details=1&hide_gdpr_banner=1&hide_landing_page_details=1&embed_domain=joinbrightnest.com&embed_type=Inline`;
+          setCalendlyUrl(closerCalendlyUrl);
+        } else {
+          console.log("ℹ️ No active closer found, using default Calendly");
+        }
+      } catch (error) {
+        console.error("❌ Error fetching active closer:", error);
+      }
+    };
+
+    fetchActiveCloser();
+  }, []);
 
   // Countdown timer effect
   useEffect(() => {
@@ -55,6 +81,7 @@ export default function BookCallPage() {
                   eventType: e.data.event,
                   scheduledAt: new Date().toISOString(),
                   calendlyEvent: e.data.payload?.event || null,
+                  closerId: activeCloser?.id || null, // Include closer ID for auto-assignment
                 }
               }),
             });
@@ -64,6 +91,25 @@ export default function BookCallPage() {
           }
         } else {
           console.log("ℹ️ No affiliate code found for booking");
+        }
+
+        // Also track the booking for closer assignment (even without affiliate)
+        if (activeCloser) {
+          try {
+            console.log("🎯 Auto-assigning booking to closer:", activeCloser.name);
+            await fetch('/api/track-closer-booking', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                closerId: activeCloser.id,
+                calendlyEvent: e.data.payload?.event || null,
+                affiliateCode: affiliateCode || null,
+              }),
+            });
+            console.log("✅ Booking auto-assigned to closer successfully");
+          } catch (error) {
+            console.error("❌ Error auto-assigning booking to closer:", error);
+          }
         }
 
         // Show loading screen before redirect
@@ -214,7 +260,7 @@ export default function BookCallPage() {
               {/* Calendly Inline Widget */}
               <div 
                 className="calendly-inline-widget" 
-                data-url="https://calendly.com/privatepublish/30min?hide_event_type_details=1&hide_gdpr_banner=1&hide_landing_page_details=1&embed_domain=joinbrightnest.com&embed_type=Inline"
+                data-url={calendlyUrl}
                 style={{ minWidth: '320px', height: '700px' }}
               ></div>
             </div>

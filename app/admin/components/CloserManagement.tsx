@@ -7,6 +7,7 @@ interface Closer {
   name: string;
   email: string;
   phone: string;
+  calendlyLink: string | null;
   isActive: boolean;
   isApproved: boolean;
   totalCalls: number;
@@ -53,6 +54,8 @@ export default function CloserManagement() {
     duration: 30,
     affiliateCode: ''
   });
+  const [editingCloserId, setEditingCloserId] = useState<string | null>(null);
+  const [editingCalendlyLink, setEditingCalendlyLink] = useState('');
 
   useEffect(() => {
     fetchClosers();
@@ -211,6 +214,30 @@ export default function CloserManagement() {
     }
   };
 
+  const handleUpdateCalendlyLink = async (closerId: string) => {
+    try {
+      const response = await fetch(`/api/admin/closers/${closerId}/calendly-link`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          calendlyLink: editingCalendlyLink,
+        }),
+      });
+
+      if (response.ok) {
+        fetchClosers();
+        setEditingCloserId(null);
+        setEditingCalendlyLink('');
+      } else {
+        setError('Failed to update Calendly link');
+      }
+    } catch (error) {
+      setError('Network error updating Calendly link');
+    }
+  };
+
   const openAssignmentModal = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setSelectedCloser(appointment.closer?.id || '');
@@ -356,6 +383,9 @@ export default function CloserManagement() {
                         Status
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Calendly Link
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Performance
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -392,6 +422,69 @@ export default function CloserManagement() {
                               {closer.isActive ? 'Active' : 'Inactive'}
                             </span>
                           </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {editingCloserId === closer.id ? (
+                            <div className="flex space-x-2">
+                              <input
+                                type="text"
+                                value={editingCalendlyLink}
+                                onChange={(e) => setEditingCalendlyLink(e.target.value)}
+                                placeholder="https://calendly.com/username"
+                                className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs"
+                              />
+                              <button
+                                onClick={() => handleUpdateCalendlyLink(closer.id)}
+                                className="text-green-600 hover:text-green-900 text-xs"
+                              >
+                                ✓
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setEditingCloserId(null);
+                                  setEditingCalendlyLink('');
+                                }}
+                                className="text-red-600 hover:text-red-900 text-xs"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ) : (
+                            <div>
+                              {closer.calendlyLink ? (
+                                <div>
+                                  <a
+                                    href={closer.calendlyLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 hover:text-blue-800 text-xs break-all"
+                                  >
+                                    {closer.calendlyLink}
+                                  </a>
+                                  <br />
+                                  <button
+                                    onClick={() => {
+                                      setEditingCloserId(closer.id);
+                                      setEditingCalendlyLink(closer.calendlyLink || '');
+                                    }}
+                                    className="text-gray-500 hover:text-gray-700 text-xs mt-1"
+                                  >
+                                    Edit
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => {
+                                    setEditingCloserId(closer.id);
+                                    setEditingCalendlyLink('');
+                                  }}
+                                  className="text-blue-600 hover:text-blue-800 text-xs"
+                                >
+                                  + Add Calendly Link
+                                </button>
+                              )}
+                            </div>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           <div>
