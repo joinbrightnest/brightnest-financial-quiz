@@ -134,14 +134,31 @@ export default function BookCallPage() {
 
         // Also track the booking for closer assignment (even without affiliate)
         console.log("🔍 Active closer check:", activeCloser);
-        if (activeCloser) {
+        
+        // If activeCloser is null, try to fetch it again
+        let closerToUse = activeCloser;
+        if (!closerToUse) {
+          console.log("🔄 Active closer is null, fetching again...");
           try {
-            console.log("🎯 Auto-assigning booking to closer:", activeCloser.name);
+            const response = await fetch('/api/closer/active-calendly');
+            const data = await response.json();
+            if (data.success && data.closer) {
+              closerToUse = data.closer;
+              console.log("✅ Fetched closer for assignment:", closerToUse);
+            }
+          } catch (error) {
+            console.error("❌ Error fetching closer for assignment:", error);
+          }
+        }
+        
+        if (closerToUse) {
+          try {
+            console.log("🎯 Auto-assigning booking to closer:", closerToUse.name);
             const response = await fetch('/api/track-closer-booking', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                closerId: activeCloser.id,
+                closerId: closerToUse.id,
                 calendlyEvent: e.data.payload?.event || null,
                 affiliateCode: affiliateCode || null,
               }),
