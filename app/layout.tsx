@@ -21,6 +21,9 @@ export const metadata: Metadata = {
     maximumScale: 1,
     userScalable: false,
   },
+  other: {
+    'permissions-policy': 'payment=*',
+  },
 };
 
 export default function RootLayout({

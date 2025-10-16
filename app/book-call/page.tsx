@@ -26,8 +26,11 @@ export default function BookCallPage() {
   useEffect(() => {
     const fetchActiveCloser = async () => {
       try {
+        console.log("🔍 Fetching active closer...");
         const response = await fetch('/api/closer/active-calendly');
+        console.log("📡 Active closer API response:", response.status, response.statusText);
         const data = await response.json();
+        console.log("📊 Active closer API data:", data);
         
         if (data.success && data.closer) {
           console.log("🎯 Found active closer:", data.closer);
