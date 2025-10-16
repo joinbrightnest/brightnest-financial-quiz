@@ -94,6 +94,7 @@ export default function BookCallPage() {
   // Calendly event listener for booking completion
   useEffect(() => {
     const handleCalendlyEvent = async (e: any) => {
+      console.log("🔍 Calendly event received:", e.data);
       if (e.data.event === 'calendly.event_scheduled') {
         console.log("🎯 Calendly booking completed:", e.data);
         
