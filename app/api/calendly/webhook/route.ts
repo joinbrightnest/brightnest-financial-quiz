@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,16 +12,23 @@ export async function POST(request: NextRequest) {
       payload: body.payload
     });
 
+    // TODO: Uncomment when Prisma database integration is working
     // Handle different Calendly events
-    if (body.event === 'invitee.created') {
-      await handleInviteeCreated(body.payload);
-    } else if (body.event === 'invitee.canceled') {
-      await handleInviteeCanceled(body.payload);
-    } else if (body.event === 'invitee.rescheduled') {
-      await handleInviteeRescheduled(body.payload);
-    }
+    // if (body.event === 'invitee.created') {
+    //   await handleInviteeCreated(body.payload);
+    // } else if (body.event === 'invitee.canceled') {
+    //   await handleInviteeCanceled(body.payload);
+    // } else if (body.event === 'invitee.rescheduled') {
+    //   await handleInviteeRescheduled(body.payload);
+    // }
 
-    return NextResponse.json({ success: true });
+    // For now, just log the webhook data
+    console.log('📝 Calendly webhook received (database integration pending):', body);
+
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Webhook received - database integration in progress' 
+    });
 
   } catch (error) {
     console.error('❌ Error processing Calendly webhook:', error);
@@ -32,6 +39,8 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// TODO: Uncomment when Prisma database integration is working
+/*
 async function handleInviteeCreated(payload: any) {
   try {
     const { event, invitee, questions_and_answers } = payload;
@@ -202,3 +211,4 @@ async function tryAutoAssignToCloser(appointmentId: string, affiliateCode: strin
     console.error('❌ Error in auto-assignment:', error);
   }
 }
+*/
