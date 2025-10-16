@@ -13,6 +13,9 @@ export async function POST(request: NextRequest) {
       affiliateCode
     });
 
+    // Debug: Log the full Calendly event structure
+    console.log("🔍 Full Calendly event structure:", JSON.stringify(calendlyEvent, null, 2));
+
     if (!closerId) {
       console.log("No closer ID provided for booking");
       return NextResponse.json({ success: true, message: "Booking tracked (no closer)" });
