@@ -336,3 +336,86 @@ enum PayoutStatus {
   completed
   failed
 }
+
+// Closer System Models
+model Closer {
+  id              String    @id @default(cuid())
+  name            String
+  email           String    @unique
+  passwordHash    String    @map("password_hash")
+  phone           String?
+  isActive        Boolean   @default(true) @map("is_active")
+  isApproved      Boolean   @default(false) @map("is_approved")
+  commissionRate  Decimal   @default(0.1500) @map("commission_rate") @db.Decimal(5, 4)
+  totalCalls      Int       @default(0) @map("total_calls")
+  totalConversions Int      @default(0) @map("total_conversions")
+  totalRevenue    Decimal   @default(0.00) @map("total_revenue") @db.Decimal(10, 2)
+  conversionRate  Decimal   @default(0.00) @map("conversion_rate") @db.Decimal(5, 4)
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  
+  appointments    Appointment[]
+  auditLogs       CloserAuditLog[]
+
+  @@map("closers")
+}
+
+model Appointment {
+  id              String            @id @default(cuid())
+  closerId        String?           @map("closer_id")
+  calendlyEventId String            @unique @map("calendly_event_id")
+  customerName    String            @map("customer_name")
+  customerEmail   String            @map("customer_email")
+  customerPhone   String?           @map("customer_phone")
+  scheduledAt     DateTime          @map("scheduled_at")
+  duration        Int               @default(30) // Duration in minutes
+  status          AppointmentStatus @default(scheduled)
+  outcome         CallOutcome?
+  notes           String?
+  saleValue       Decimal?          @map("sale_value") @db.Decimal(10, 2)
+  commissionAmount Decimal?         @map("commission_amount") @db.Decimal(10, 2)
+  affiliateCode   String?           @map("affiliate_code")
+  utmSource       String?           @map("utm_source")
+  utmMedium       String?           @map("utm_medium")
+  utmCampaign     String?           @map("utm_campaign")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  
+  closer          Closer?           @relation(fields: [closerId], references: [id], onDelete: SetNull)
+
+  @@map("appointments")
+}
+
+model CloserAuditLog {
+  id          String    @id @default(cuid())
+  closerId    String?   @map("closer_id")
+  action      String
+  details     Json?
+  ipAddress   String?   @map("ip_address")
+  userAgent   String?   @map("user_agent")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  closer      Closer?   @relation(fields: [closerId], references: [id], onDelete: SetNull)
+
+  @@map("closer_audit_logs")
+}
+
+enum AppointmentStatus {
+  scheduled
+  confirmed
+  in_progress
+  completed
+  no_show
+  cancelled
+  rescheduled
+}
+
+enum CallOutcome {
+  converted
+  not_interested
+  needs_follow_up
+  wrong_number
+  no_answer
+  callback_requested
+  rescheduled
+}

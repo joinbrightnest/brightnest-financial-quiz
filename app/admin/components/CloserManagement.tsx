@@ -1,0 +1,539 @@
+"use client";
+
+import { useState, useEffect } from 'react';
+
+interface Closer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  isActive: boolean;
+  isApproved: boolean;
+  totalCalls: number;
+  totalConversions: number;
+  totalRevenue: number;
+  conversionRate: number;
+  createdAt: string;
+}
+
+interface Appointment {
+  id: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  scheduledAt: string;
+  duration: number;
+  status: string;
+  outcome: string | null;
+  notes: string | null;
+  saleValue: number | null;
+  commissionAmount: number | null;
+  affiliateCode: string | null;
+  closer: {
+    id: string;
+    name: string;
+  } | null;
+}
+
+export default function CloserManagement() {
+  const [closers, setClosers] = useState<Closer[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [activeTab, setActiveTab] = useState<'closers' | 'appointments' | 'assignments'>('closers');
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedCloser, setSelectedCloser] = useState<string>('');
+  const [showAssignmentModal, setShowAssignmentModal] = useState(false);
+
+  useEffect(() => {
+    fetchClosers();
+    fetchAppointments();
+  }, []);
+
+  const fetchClosers = async () => {
+    try {
+      const response = await fetch('/api/admin/closers');
+      if (response.ok) {
+        const data = await response.json();
+        setClosers(data.closers || []);
+      } else {
+        setError('Failed to load closers');
+      }
+    } catch (error) {
+      setError('Network error loading closers');
+    }
+  };
+
+  const fetchAppointments = async () => {
+    try {
+      const response = await fetch('/api/admin/appointments');
+      if (response.ok) {
+        const data = await response.json();
+        setAppointments(data.appointments || []);
+      } else {
+        setError('Failed to load appointments');
+      }
+    } catch (error) {
+      setError('Network error loading appointments');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleApproveCloser = async (closerId: string) => {
+    try {
+      const response = await fetch(`/api/admin/closers/${closerId}/approve`, {
+        method: 'PUT',
+      });
+
+      if (response.ok) {
+        fetchClosers();
+      } else {
+        setError('Failed to approve closer');
+      }
+    } catch (error) {
+      setError('Network error approving closer');
+    }
+  };
+
+  const handleDeactivateCloser = async (closerId: string) => {
+    if (!confirm('Are you sure you want to deactivate this closer?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/closers/${closerId}/deactivate`, {
+        method: 'PUT',
+      });
+
+      if (response.ok) {
+        fetchClosers();
+      } else {
+        setError('Failed to deactivate closer');
+      }
+    } catch (error) {
+      setError('Network error deactivating closer');
+    }
+  };
+
+  const handleAssignAppointment = async () => {
+    if (!selectedAppointment || !selectedCloser) return;
+
+    try {
+      const response = await fetch(`/api/admin/appointments/${selectedAppointment.id}/assign`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          closerId: selectedCloser,
+        }),
+      });
+
+      if (response.ok) {
+        fetchAppointments();
+        setShowAssignmentModal(false);
+        setSelectedAppointment(null);
+        setSelectedCloser('');
+      } else {
+        setError('Failed to assign appointment');
+      }
+    } catch (error) {
+      setError('Network error assigning appointment');
+    }
+  };
+
+  const openAssignmentModal = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    setSelectedCloser(appointment.closer?.id || '');
+    setShowAssignmentModal(true);
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'scheduled': return 'bg-blue-100 text-blue-800';
+      case 'confirmed': return 'bg-green-100 text-green-800';
+      case 'completed': return 'bg-gray-100 text-gray-800';
+      case 'no_show': return 'bg-red-100 text-red-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getOutcomeColor = (outcome: string | null) => {
+    switch (outcome) {
+      case 'converted': return 'bg-green-100 text-green-800';
+      case 'not_interested': return 'bg-red-100 text-red-800';
+      case 'needs_follow_up': return 'bg-yellow-100 text-yellow-800';
+      case 'callback_requested': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+          {error}
+        </div>
+      )}
+
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Closer Management</h2>
+          <p className="text-gray-600">Manage closers and appointment assignments</p>
+        </div>
+        <div className="flex space-x-3">
+          <button
+            onClick={() => window.open('/closers/signup', '_blank')}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+          >
+            Add New Closer
+          </button>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="border-b border-gray-200">
+        <nav className="-mb-px flex space-x-8">
+          <button
+            onClick={() => setActiveTab('closers')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'closers'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Closers ({closers.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('appointments')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'appointments'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            All Appointments ({appointments.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('assignments')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'assignments'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Unassigned ({appointments.filter(a => !a.closer).length})
+          </button>
+        </nav>
+      </div>
+
+      {/* Closers Tab */}
+      {activeTab === 'closers' && (
+        <div className="bg-white shadow overflow-hidden sm:rounded-md">
+          <div className="px-4 py-5 sm:px-6">
+            <h3 className="text-lg leading-6 font-medium text-gray-900">Closer Accounts</h3>
+            <p className="mt-1 max-w-2xl text-sm text-gray-500">Manage closer accounts and permissions</p>
+          </div>
+          <div className="border-t border-gray-200">
+            {closers.length === 0 ? (
+              <div className="text-center py-12">
+                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <h3 className="mt-2 text-sm font-medium text-gray-900">No closers</h3>
+                <p className="mt-1 text-sm text-gray-500">Get started by adding your first closer.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Closer
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Performance
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Revenue
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {closers.map((closer) => (
+                      <tr key={closer.id}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">{closer.name}</div>
+                            <div className="text-sm text-gray-500">{closer.email}</div>
+                            {closer.phone && (
+                              <div className="text-sm text-gray-500">{closer.phone}</div>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="space-y-1">
+                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                              closer.isApproved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {closer.isApproved ? 'Approved' : 'Pending'}
+                            </span>
+                            <br />
+                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                              closer.isActive ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
+                            }`}>
+                              {closer.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          <div>
+                            <div>{closer.totalCalls} calls</div>
+                            <div>{closer.totalConversions} conversions</div>
+                            <div className="text-xs text-gray-500">
+                              {(closer.conversionRate * 100).toFixed(1)}% rate
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          ${closer.totalRevenue.toFixed(2)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <div className="flex space-x-2">
+                            {!closer.isApproved && (
+                              <button
+                                onClick={() => handleApproveCloser(closer.id)}
+                                className="text-green-600 hover:text-green-900"
+                              >
+                                Approve
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDeactivateCloser(closer.id)}
+                              className="text-red-600 hover:text-red-900"
+                            >
+                              {closer.isActive ? 'Deactivate' : 'Activate'}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Appointments Tab */}
+      {activeTab === 'appointments' && (
+        <div className="bg-white shadow overflow-hidden sm:rounded-md">
+          <div className="px-4 py-5 sm:px-6">
+            <h3 className="text-lg leading-6 font-medium text-gray-900">All Appointments</h3>
+            <p className="mt-1 max-w-2xl text-sm text-gray-500">View and manage all scheduled appointments</p>
+          </div>
+          <div className="border-t border-gray-200">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Customer
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Scheduled
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Assigned Closer
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Outcome
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Sale Value
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {appointments.map((appointment) => (
+                    <tr key={appointment.id}>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{appointment.customerName}</div>
+                          <div className="text-sm text-gray-500">{appointment.customerEmail}</div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {formatDate(appointment.scheduledAt)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {appointment.closer ? appointment.closer.name : 'Unassigned'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(appointment.status)}`}>
+                          {appointment.status.replace('_', ' ')}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {appointment.outcome ? (
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getOutcomeColor(appointment.outcome)}`}>
+                            {appointment.outcome.replace('_', ' ')}
+                          </span>
+                        ) : (
+                          <span className="text-sm text-gray-500">Not set</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {appointment.saleValue ? `$${appointment.saleValue.toFixed(2)}` : '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assignments Tab */}
+      {activeTab === 'assignments' && (
+        <div className="bg-white shadow overflow-hidden sm:rounded-md">
+          <div className="px-4 py-5 sm:px-6">
+            <h3 className="text-lg leading-6 font-medium text-gray-900">Unassigned Appointments</h3>
+            <p className="mt-1 max-w-2xl text-sm text-gray-500">Assign appointments to available closers</p>
+          </div>
+          <div className="border-t border-gray-200">
+            {appointments.filter(a => !a.closer).length === 0 ? (
+              <div className="text-center py-12">
+                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h3 className="mt-2 text-sm font-medium text-gray-900">All appointments assigned</h3>
+                <p className="mt-1 text-sm text-gray-500">Great job! All appointments have been assigned to closers.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Customer
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Scheduled
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {appointments.filter(a => !a.closer).map((appointment) => (
+                      <tr key={appointment.id}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">{appointment.customerName}</div>
+                            <div className="text-sm text-gray-500">{appointment.customerEmail}</div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {formatDate(appointment.scheduledAt)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <button
+                            onClick={() => openAssignmentModal(appointment)}
+                            className="text-indigo-600 hover:text-indigo-900"
+                          >
+                            Assign Closer
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Assignment Modal */}
+      {showAssignmentModal && selectedAppointment && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div className="mt-3">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Assign Closer - {selectedAppointment.customerName}
+              </h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Select Closer</label>
+                  <select
+                    value={selectedCloser}
+                    onChange={(e) => setSelectedCloser(e.target.value)}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  >
+                    <option value="">Choose a closer</option>
+                    {closers.filter(c => c.isActive && c.isApproved).map((closer) => (
+                      <option key={closer.id} value={closer.id}>
+                        {closer.name} ({closer.totalCalls} calls, {(closer.conversionRate * 100).toFixed(1)}% rate)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 mt-6">
+                <button
+                  onClick={() => setShowAssignmentModal(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAssignAppointment}
+                  disabled={!selectedCloser}
+                  className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Assign Closer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

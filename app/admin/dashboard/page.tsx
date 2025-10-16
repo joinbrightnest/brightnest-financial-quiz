@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/lib/admin-auth";
 import CEOAnalytics from "../components/CEOAnalytics";
+import CloserManagement from "../components/CloserManagement";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -98,6 +99,7 @@ export default function AdminDashboard() {
   const [showComparison, setShowComparison] = useState(false);
   const [showCEOAnalytics, setShowCEOAnalytics] = useState(false);
   const [showMainDashboard, setShowMainDashboard] = useState(true);
+  const [showCloserManagement, setShowCloserManagement] = useState(false);
 
   // Format duration from milliseconds to human readable format
   const formatDuration = (ms: number): string => {
@@ -363,6 +365,7 @@ export default function AdminDashboard() {
               onClick={() => {
                 setShowCEOAnalytics(true);
                 setShowMainDashboard(false);
+                setShowCloserManagement(false);
               }}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
                 showCEOAnalytics 
@@ -374,6 +377,29 @@ export default function AdminDashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
               <span className="text-sm font-medium">Affiliate Analytics</span>
+            </button>
+          </nav>
+
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Management
+            </div>
+            <button
+              onClick={() => {
+                setShowCloserManagement(true);
+                setShowMainDashboard(false);
+                setShowCEOAnalytics(false);
+              }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
+                showCloserManagement 
+                  ? 'text-blue-700 bg-blue-50 border-r-2 border-blue-600' 
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <svg className={`w-5 h-5 group-hover:text-gray-600 ${showCloserManagement ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <span className="text-sm font-medium">Closer Management</span>
             </button>
           </nav>
 
@@ -471,6 +497,13 @@ export default function AdminDashboard() {
           {showCEOAnalytics && (
             <div className="mb-8">
               <CEOAnalytics />
+            </div>
+          )}
+
+          {/* Closer Management Section */}
+          {showCloserManagement && (
+            <div className="mb-8">
+              <CloserManagement />
             </div>
           )}
 
