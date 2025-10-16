@@ -238,6 +238,31 @@ export default function CloserManagement() {
     }
   };
 
+  const handleDeleteAppointment = async (appointmentId: string) => {
+    if (!confirm('Are you sure you want to delete this appointment? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/appointments/${appointmentId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        fetchAppointments();
+        alert('Appointment deleted successfully');
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || 'Failed to delete appointment');
+      }
+    } catch (error) {
+      setError('Network error deleting appointment');
+    }
+  };
+
   const openAssignmentModal = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
     setSelectedCloser(appointment.closer?.id || '');
@@ -556,6 +581,9 @@ export default function CloserManagement() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Sale Value
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -589,6 +617,14 @@ export default function CloserManagement() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {appointment.saleValue ? `$${appointment.saleValue.toFixed(2)}` : '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button
+                          onClick={() => handleDeleteAppointment(appointment.id)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          Delete
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -644,12 +680,20 @@ export default function CloserManagement() {
                           {formatDate(appointment.scheduledAt)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <button
-                            onClick={() => openAssignmentModal(appointment)}
-                            className="text-indigo-600 hover:text-indigo-900"
-                          >
-                            Assign Closer
-                          </button>
+                          <div className="flex space-x-3">
+                            <button
+                              onClick={() => openAssignmentModal(appointment)}
+                              className="text-indigo-600 hover:text-indigo-900"
+                            >
+                              Assign Closer
+                            </button>
+                            <button
+                              onClick={() => handleDeleteAppointment(appointment.id)}
+                              className="text-red-600 hover:text-red-900"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
