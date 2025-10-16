@@ -218,7 +218,7 @@ export async function POST(request: NextRequest) {
           customerPhone,
           scheduledAt,
           duration: 30,
-          status: 'scheduled' as any, // Use string instead of enum to avoid database issues
+          status: 'scheduled',
           affiliateCode: affiliateCode || null,
         },
       });
