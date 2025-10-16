@@ -193,6 +193,15 @@ export default function BookCallPage() {
         console.log("🔍 Active closer check:", activeCloser);
         console.log("🔍 Full Calendly event data:", JSON.stringify(e.data, null, 2));
         
+        // Check if customer data is in the event itself
+        console.log("🔍 Checking for customer data in event...");
+        if (e.data.payload?.invitee) {
+          console.log("🔍 Invitee data:", e.data.payload.invitee);
+        }
+        if (e.data.payload?.event) {
+          console.log("🔍 Event data:", e.data.payload.event);
+        }
+        
         // If activeCloser is null, try to fetch it again
         let closerToUse = activeCloser;
         if (!closerToUse) {

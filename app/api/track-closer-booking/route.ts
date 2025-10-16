@@ -37,6 +37,63 @@ export async function POST(request: NextRequest) {
       customerEmail = customerData.email;
       console.log("✅ Using customer email from form:", customerEmail);
     }
+
+    // If we still don't have customer data, try to get it from quiz session
+    if ((customerName === 'Unknown' || customerEmail === 'unknown@example.com') && affiliateCode) {
+      try {
+        console.log("🔍 Looking for customer data in quiz session for affiliate:", affiliateCode);
+        
+        // Find the most recent quiz session for this affiliate
+        const recentSession = await prisma.quizSession.findFirst({
+          where: {
+            affiliateCode: affiliateCode,
+            status: 'completed'
+          },
+          include: {
+            answers: {
+              include: {
+                question: true
+              }
+            }
+          },
+          orderBy: {
+            completedAt: 'desc'
+          }
+        });
+
+        if (recentSession) {
+          console.log("✅ Found recent quiz session:", recentSession.id);
+          
+          // Look for name in quiz answers
+          if (customerName === 'Unknown') {
+            const nameAnswer = recentSession.answers.find(answer => 
+              answer.question.type === 'text' && 
+              answer.question.prompt.toLowerCase().includes('name')
+            );
+            if (nameAnswer) {
+              customerName = nameAnswer.value as string;
+              console.log("✅ Found customer name in quiz:", customerName);
+            }
+          }
+
+          // Look for email in quiz answers
+          if (customerEmail === 'unknown@example.com') {
+            const emailAnswer = recentSession.answers.find(answer => 
+              answer.question.type === 'email' && 
+              answer.question.prompt.toLowerCase().includes('email')
+            );
+            if (emailAnswer) {
+              customerEmail = emailAnswer.value as string;
+              console.log("✅ Found customer email in quiz:", customerEmail);
+            }
+          }
+        } else {
+          console.log("❌ No recent quiz session found for affiliate:", affiliateCode);
+        }
+      } catch (error) {
+        console.error("❌ Error fetching quiz session data:", error);
+      }
+    }
     
     // Try to extract customer data from different possible locations as fallback
     console.log("🔍 Looking for customer data in Calendly event...");
