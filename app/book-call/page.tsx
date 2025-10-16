@@ -105,17 +105,57 @@ export default function BookCallPage() {
         let customerName = 'Unknown';
         let customerEmail = 'unknown@example.com';
         
-        // Look for customer data in the Calendly form
-        const nameInput = document.querySelector('input[name="name"], input[placeholder*="name" i], input[placeholder*="Name"]');
-        const emailInput = document.querySelector('input[name="email"], input[type="email"], input[placeholder*="email" i], input[placeholder*="Email"]');
+        console.log("🔍 Searching for customer data in Calendly form...");
         
-        if (nameInput && (nameInput as HTMLInputElement).value) {
-          customerName = (nameInput as HTMLInputElement).value;
-          console.log("✅ Found customer name in form:", customerName);
+        // Look for customer data in the Calendly form with multiple selectors
+        const nameInputs = document.querySelectorAll('input[name="name"], input[placeholder*="name" i], input[placeholder*="Name" i], input[data-testid*="name" i]');
+        const emailInputs = document.querySelectorAll('input[name="email"], input[type="email"], input[placeholder*="email" i], input[placeholder*="Email" i], input[data-testid*="email" i]');
+        
+        console.log("🔍 Found name inputs:", nameInputs.length);
+        console.log("🔍 Found email inputs:", emailInputs.length);
+        
+        // Try each name input
+        for (let i = 0; i < nameInputs.length; i++) {
+          const input = nameInputs[i] as HTMLInputElement;
+          console.log(`🔍 Name input ${i}:`, input.value, input.name, input.placeholder);
+          if (input.value && input.value.trim()) {
+            customerName = input.value.trim();
+            console.log("✅ Found customer name in form:", customerName);
+            break;
+          }
         }
-        if (emailInput && (emailInput as HTMLInputElement).value) {
-          customerEmail = (emailInput as HTMLInputElement).value;
-          console.log("✅ Found customer email in form:", customerEmail);
+        
+        // Try each email input
+        for (let i = 0; i < emailInputs.length; i++) {
+          const input = emailInputs[i] as HTMLInputElement;
+          console.log(`🔍 Email input ${i}:`, input.value, input.name, input.placeholder);
+          if (input.value && input.value.trim()) {
+            customerEmail = input.value.trim();
+            console.log("✅ Found customer email in form:", customerEmail);
+            break;
+          }
+        }
+        
+        // If still not found, try to get from all inputs
+        if (customerName === 'Unknown' || customerEmail === 'unknown@example.com') {
+          console.log("🔍 Searching all inputs for customer data...");
+          const allInputs = document.querySelectorAll('input');
+          for (let i = 0; i < allInputs.length; i++) {
+            const input = allInputs[i] as HTMLInputElement;
+            if (input.value && input.value.trim()) {
+              console.log(`🔍 Input ${i}:`, input.value, input.name, input.placeholder, input.type);
+              // Check if it looks like a name (no @ symbol)
+              if (customerName === 'Unknown' && !input.value.includes('@') && input.value.length > 2) {
+                customerName = input.value.trim();
+                console.log("✅ Found potential name:", customerName);
+              }
+              // Check if it looks like an email (has @ symbol)
+              if (customerEmail === 'unknown@example.com' && input.value.includes('@')) {
+                customerEmail = input.value.trim();
+                console.log("✅ Found potential email:", customerEmail);
+              }
+            }
+          }
         }
         
         // Get affiliate code from cookie
