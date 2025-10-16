@@ -130,10 +130,11 @@ export default function BookCallPage() {
         }
 
         // Also track the booking for closer assignment (even without affiliate)
+        console.log("🔍 Active closer check:", activeCloser);
         if (activeCloser) {
           try {
             console.log("🎯 Auto-assigning booking to closer:", activeCloser.name);
-            await fetch('/api/track-closer-booking', {
+            const response = await fetch('/api/track-closer-booking', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -142,10 +143,13 @@ export default function BookCallPage() {
                 affiliateCode: affiliateCode || null,
               }),
             });
-            console.log("✅ Booking auto-assigned to closer successfully");
+            const result = await response.json();
+            console.log("✅ Booking auto-assigned to closer successfully:", result);
           } catch (error) {
             console.error("❌ Error auto-assigning booking to closer:", error);
           }
+        } else {
+          console.log("❌ No active closer found for assignment");
         }
 
         // Show loading screen before redirect
