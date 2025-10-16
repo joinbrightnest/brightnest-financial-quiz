@@ -28,17 +28,42 @@ export async function POST(request: NextRequest) {
     let scheduledAt = new Date();
     let calendlyEventId = `manual-${Date.now()}`;
 
-    // If we have URIs, try to fetch the actual data
-    if (calendlyEvent?.invitee?.uri) {
+    // Try to extract customer data from different possible locations
+    console.log("🔍 Looking for customer data in Calendly event...");
+    
+    // Check if customer data is directly in the event
+    if (calendlyEvent?.invitee?.name) {
+      customerName = calendlyEvent.invitee.name;
+      console.log("✅ Found customer name in event:", customerName);
+    }
+    if (calendlyEvent?.invitee?.email) {
+      customerEmail = calendlyEvent.invitee.email;
+      console.log("✅ Found customer email in event:", customerEmail);
+    }
+    
+    // Check if customer data is in a different location
+    if (calendlyEvent?.payload?.invitee?.name) {
+      customerName = calendlyEvent.payload.invitee.name;
+      console.log("✅ Found customer name in payload:", customerName);
+    }
+    if (calendlyEvent?.payload?.invitee?.email) {
+      customerEmail = calendlyEvent.payload.invitee.email;
+      console.log("✅ Found customer email in payload:", customerEmail);
+    }
+    
+    // If we have URIs, try to fetch the actual data (but this might not work due to CORS/auth)
+    if (calendlyEvent?.invitee?.uri && customerName === 'Unknown') {
       try {
-        console.log("🔍 Fetching invitee data from:", calendlyEvent.invitee.uri);
+        console.log("🔍 Attempting to fetch invitee data from:", calendlyEvent.invitee.uri);
         const inviteeResponse = await fetch(calendlyEvent.invitee.uri);
         if (inviteeResponse.ok) {
           const inviteeData = await inviteeResponse.json();
-          customerName = inviteeData.resource?.name || 'Unknown';
-          customerEmail = inviteeData.resource?.email || 'unknown@example.com';
-          customerPhone = inviteeData.resource?.phone_number || null;
-          console.log("✅ Fetched invitee data:", { customerName, customerEmail });
+          customerName = inviteeData.resource?.name || customerName;
+          customerEmail = inviteeData.resource?.email || customerEmail;
+          customerPhone = inviteeData.resource?.phone_number || customerPhone;
+          console.log("✅ Fetched invitee data from API:", { customerName, customerEmail });
+        } else {
+          console.log("❌ Calendly API call failed:", inviteeResponse.status);
         }
       } catch (error) {
         console.error("❌ Error fetching invitee data:", error);
