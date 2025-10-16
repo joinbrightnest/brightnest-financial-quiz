@@ -101,6 +101,23 @@ export default function BookCallPage() {
       if (e.data.event === 'calendly.event_scheduled') {
         console.log("🎯 Calendly booking completed:", e.data);
         
+        // Try to extract customer data from the Calendly form
+        let customerName = 'Unknown';
+        let customerEmail = 'unknown@example.com';
+        
+        // Look for customer data in the Calendly form
+        const nameInput = document.querySelector('input[name="name"], input[placeholder*="name" i], input[placeholder*="Name"]');
+        const emailInput = document.querySelector('input[name="email"], input[type="email"], input[placeholder*="email" i], input[placeholder*="Email"]');
+        
+        if (nameInput && (nameInput as HTMLInputElement).value) {
+          customerName = (nameInput as HTMLInputElement).value;
+          console.log("✅ Found customer name in form:", customerName);
+        }
+        if (emailInput && (emailInput as HTMLInputElement).value) {
+          customerEmail = (emailInput as HTMLInputElement).value;
+          console.log("✅ Found customer email in form:", customerEmail);
+        }
+        
         // Get affiliate code from cookie
         const affiliateCode = document.cookie
           .split('; ')
@@ -162,6 +179,10 @@ export default function BookCallPage() {
                 closerId: closerToUse.id,
                 calendlyEvent: e.data.payload || null, // Pass the full payload, not just the event
                 affiliateCode: affiliateCode || null,
+                customerData: {
+                  name: customerName,
+                  email: customerEmail,
+                },
               }),
             });
             const result = await response.json();

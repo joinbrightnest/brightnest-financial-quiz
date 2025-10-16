@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
-    const { closerId, calendlyEvent, affiliateCode } = await request.json();
+    const { closerId, calendlyEvent, affiliateCode, customerData } = await request.json();
 
     console.log("🎯 Closer booking tracked:", {
       closerId,
@@ -28,25 +28,35 @@ export async function POST(request: NextRequest) {
     let scheduledAt = new Date();
     let calendlyEventId = `manual-${Date.now()}`;
 
-    // Try to extract customer data from different possible locations
+    // Use customer data from the form if available
+    if (customerData?.name) {
+      customerName = customerData.name;
+      console.log("✅ Using customer name from form:", customerName);
+    }
+    if (customerData?.email) {
+      customerEmail = customerData.email;
+      console.log("✅ Using customer email from form:", customerEmail);
+    }
+    
+    // Try to extract customer data from different possible locations as fallback
     console.log("🔍 Looking for customer data in Calendly event...");
     
     // Check if customer data is directly in the event
-    if (calendlyEvent?.invitee?.name) {
+    if (calendlyEvent?.invitee?.name && customerName === 'Unknown') {
       customerName = calendlyEvent.invitee.name;
       console.log("✅ Found customer name in event:", customerName);
     }
-    if (calendlyEvent?.invitee?.email) {
+    if (calendlyEvent?.invitee?.email && customerEmail === 'unknown@example.com') {
       customerEmail = calendlyEvent.invitee.email;
       console.log("✅ Found customer email in event:", customerEmail);
     }
     
     // Check if customer data is in a different location
-    if (calendlyEvent?.payload?.invitee?.name) {
+    if (calendlyEvent?.payload?.invitee?.name && customerName === 'Unknown') {
       customerName = calendlyEvent.payload.invitee.name;
       console.log("✅ Found customer name in payload:", customerName);
     }
-    if (calendlyEvent?.payload?.invitee?.email) {
+    if (calendlyEvent?.payload?.invitee?.email && customerEmail === 'unknown@example.com') {
       customerEmail = calendlyEvent.payload.invitee.email;
       console.log("✅ Found customer email in payload:", customerEmail);
     }
