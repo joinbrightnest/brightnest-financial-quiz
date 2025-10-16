@@ -159,7 +159,7 @@ export default function BookCallPage() {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 closerId: closerToUse.id,
-                calendlyEvent: e.data.payload?.event || null,
+                calendlyEvent: e.data.payload || null, // Pass the full payload, not just the event
                 affiliateCode: affiliateCode || null,
               }),
             });
