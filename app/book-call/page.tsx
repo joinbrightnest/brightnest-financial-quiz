@@ -4,6 +4,15 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Script from "next/script";
 
+// Declare Calendly global
+declare global {
+  interface Window {
+    Calendly: {
+      initInlineWidget: (options: { url: string; parentElement: HTMLElement }) => void;
+    };
+  }
+}
+
 export default function BookCallPage() {
   const [timeLeft, setTimeLeft] = useState({
     hours: 0,
@@ -27,6 +36,31 @@ export default function BookCallPage() {
           const closerCalendlyUrl = `${data.closer.calendlyLink}?hide_event_type_details=1&hide_gdpr_banner=1&hide_landing_page_details=1&embed_domain=joinbrightnest.com&embed_type=Inline`;
           setCalendlyUrl(closerCalendlyUrl);
           console.log("🔄 Using closer's Calendly:", closerCalendlyUrl);
+          
+          // Force Calendly widget to reload with new URL
+          setTimeout(() => {
+            const widget = document.querySelector('.calendly-inline-widget');
+            if (widget) {
+              // Remove the old widget
+              widget.innerHTML = '';
+              // Create new widget with updated URL
+              const newWidget = document.createElement('div');
+              newWidget.className = 'calendly-inline-widget';
+              newWidget.setAttribute('data-url', closerCalendlyUrl);
+              newWidget.style.minWidth = '320px';
+              newWidget.style.height = '700px';
+              widget.parentNode?.replaceChild(newWidget, widget);
+              
+              // Reinitialize Calendly
+              if (window.Calendly) {
+                window.Calendly.initInlineWidget({
+                  url: closerCalendlyUrl,
+                  parentElement: newWidget
+                });
+              }
+              console.log("🔄 Calendly widget reloaded with new URL");
+            }
+          }, 100);
         } else {
           console.log("ℹ️ No active closer found, using default Calendly");
         }
