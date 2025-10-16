@@ -25,9 +25,18 @@ export async function GET(request: NextRequest) {
       }
     });
 
+    // Ensure numeric fields have default values
+    const closersWithDefaults = closers.map(closer => ({
+      ...closer,
+      totalCalls: closer.totalCalls || 0,
+      totalConversions: closer.totalConversions || 0,
+      totalRevenue: closer.totalRevenue || 0,
+      conversionRate: closer.conversionRate || 0,
+    }));
+
     return NextResponse.json({
       success: true,
-      closers
+      closers: closersWithDefaults
     });
 
   } catch (error) {

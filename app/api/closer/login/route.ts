@@ -97,10 +97,10 @@ export async function POST(request: NextRequest) {
         phone: closer.phone,
         isActive: closer.isActive,
         isApproved: closer.isApproved,
-        totalCalls: closer.totalCalls,
-        totalConversions: closer.totalConversions,
-        totalRevenue: closer.totalRevenue,
-        conversionRate: closer.conversionRate,
+        totalCalls: closer.totalCalls || 0,
+        totalConversions: closer.totalConversions || 0,
+        totalRevenue: closer.totalRevenue || 0,
+        conversionRate: closer.conversionRate || 0,
         createdAt: closer.createdAt,
       }
     });
