@@ -18,16 +18,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, message: "Booking tracked (no closer)" });
     }
 
-    // Find the closer
-    const closer = await prisma.closer.findUnique({
-      where: { id: closerId },
-    });
-
-    if (!closer || !closer.isActive) {
-      console.log("Closer not found or inactive for booking:", closerId);
-      return NextResponse.json({ success: true, message: "Booking tracked (closer not found)" });
-    }
-
     // Extract customer details from Calendly event
     const customerName = calendlyEvent?.invitee?.name || 'Unknown';
     const customerEmail = calendlyEvent?.invitee?.email || 'unknown@example.com';
@@ -37,31 +27,120 @@ export async function POST(request: NextRequest) {
       new Date();
     const calendlyEventId = calendlyEvent?.event?.uuid || `manual-${Date.now()}`;
 
-    // Create appointment and auto-assign to closer
-    const appointment = await prisma.appointment.create({
-      data: {
-        closerId: closer.id,
-        calendlyEventId,
-        customerName,
-        customerEmail,
-        customerPhone,
-        scheduledAt,
-        duration: 30, // Default duration
-        status: 'scheduled',
-        affiliateCode: affiliateCode || null,
-        // UTM parameters can be extracted from Calendly event if available
-      },
+    console.log("📝 Extracted booking details:", {
+      customerName,
+      customerEmail,
+      scheduledAt,
+      calendlyEventId
     });
 
-    // Update closer's total calls
-    await prisma.closer.update({
-      where: { id: closer.id },
-      data: {
-        totalCalls: {
-          increment: 1,
+    // Try to find the closer with timeout
+    let closer;
+    try {
+      const closerPromise = prisma.closer.findUnique({
+        where: { id: closerId },
+        select: {
+          id: true,
+          name: true,
+          isActive: true,
+        }
+      });
+
+      // Add timeout to prevent hanging
+      closer = await Promise.race([
+        closerPromise,
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Database timeout')), 5000)
+        )
+      ]);
+    } catch (dbError) {
+      console.error("❌ Database error finding closer:", dbError);
+      // Return success even if database fails - we don't want to break the booking
+      return NextResponse.json({ 
+        success: true, 
+        message: "Booking tracked (database temporarily unavailable)",
+        closerId,
+        customerName,
+        scheduledAt: scheduledAt.toISOString()
+      });
+    }
+
+    if (!closer || !closer.isActive) {
+      console.log("Closer not found or inactive for booking:", closerId);
+      return NextResponse.json({ 
+        success: true, 
+        message: "Booking tracked (closer not found)",
+        closerId,
+        customerName,
+        scheduledAt: scheduledAt.toISOString()
+      });
+    }
+
+    console.log("✅ Found closer:", closer.name);
+
+    // Try to create appointment with timeout
+    let appointment;
+    try {
+      const appointmentPromise = prisma.appointment.create({
+        data: {
+          closerId: closer.id,
+          calendlyEventId,
+          customerName,
+          customerEmail,
+          customerPhone,
+          scheduledAt,
+          duration: 30,
+          status: 'scheduled',
+          affiliateCode: affiliateCode || null,
         },
-      },
-    });
+      });
+
+      appointment = await Promise.race([
+        appointmentPromise,
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Database timeout')), 5000)
+        )
+      ]);
+
+      console.log("✅ Appointment created:", appointment.id);
+    } catch (dbError) {
+      console.error("❌ Database error creating appointment:", dbError);
+      // Return success even if appointment creation fails
+      return NextResponse.json({ 
+        success: true, 
+        message: "Booking tracked (appointment creation failed)",
+        closer: {
+          name: closer.name,
+          id: closer.id,
+        },
+        customerName,
+        scheduledAt: scheduledAt.toISOString()
+      });
+    }
+
+    // Try to update closer's total calls with timeout
+    try {
+      const updatePromise = prisma.closer.update({
+        where: { id: closer.id },
+        data: {
+          totalCalls: {
+            increment: 1,
+          },
+        },
+      });
+
+      await Promise.race([
+        updatePromise,
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Database timeout')), 5000)
+        )
+      ]);
+
+      console.log("✅ Closer total calls updated");
+    } catch (dbError) {
+      console.error("❌ Database error updating closer calls:", dbError);
+      // Don't fail the whole request for this
+    }
 
     console.log("✅ Booking auto-assigned to closer:", closer.name);
 
@@ -81,14 +160,10 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error("❌ Error tracking closer booking:", error);
-    console.error("❌ Error details:", {
-      message: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
-      name: error instanceof Error ? error.name : undefined
-    });
     return NextResponse.json({ 
-      error: "Failed to track closer booking",
-      details: error instanceof Error ? error.message : String(error)
-    }, { status: 500 });
+      success: true, // Return success to not break the booking flow
+      message: "Booking tracked (closer assignment failed)",
+      error: error instanceof Error ? error.message : String(error)
+    });
   }
 }
