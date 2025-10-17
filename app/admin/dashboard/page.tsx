@@ -93,7 +93,6 @@ export default function AdminDashboard() {
   const [error, setError] = useState<string | null>(null);
   const hasInitiallyLoaded = useRef(false);
   const [dateRange, setDateRange] = useState('7d');
-  const [activityTimeframe, setActivityTimeframe] = useState('daily');
   const [selectedQuizType, setSelectedQuizType] = useState<string>('all');
   // const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [showComparison, setShowComparison] = useState(false);
@@ -118,7 +117,7 @@ export default function AdminDashboard() {
     
     try {
       const quizTypeParam = selectedQuizType === 'all' ? '' : `&quizType=${selectedQuizType}`;
-      const response = await fetch(`/api/admin/basic-stats?activity=${activityTimeframe}${quizTypeParam}`, {
+      const response = await fetch(`/api/admin/basic-stats?dateRange=${dateRange}${quizTypeParam}`, {
         headers: {
           "Content-Type": "application/json"
         }
@@ -139,7 +138,7 @@ export default function AdminDashboard() {
         setIsLoading(false);
       }
     }
-  }, [activityTimeframe, selectedQuizType]);
+  }, [dateRange, selectedQuizType]);
 
   useEffect(() => {
     fetchStats(true); // Pass true to indicate this is a timeframe change
@@ -279,20 +278,22 @@ export default function AdminDashboard() {
   const getActivityChartData = () => {
     if (!stats) return null;
 
-    const formatLabel = (dateStr: string, timeframe: string) => {
+    const formatLabel = (dateStr: string, dateRange: string) => {
       const date = new Date(dateStr);
       if (isNaN(date.getTime())) {
         return 'Invalid Date';
       }
       
-      switch (timeframe) {
-        case 'hourly':
+      switch (dateRange) {
+        case '1d':
           return date.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
-        case 'daily':
+        case '7d':
           return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        case 'weekly':
+        case '30d':
           return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        case 'monthly':
+        case '90d':
+          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        case '1y':
           return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
         default:
           return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -300,7 +301,7 @@ export default function AdminDashboard() {
     };
 
     return {
-      labels: stats.dailyActivity.map(day => formatLabel(day.createdAt, activityTimeframe)),
+      labels: stats.dailyActivity.map(day => formatLabel(day.createdAt, dateRange)),
       datasets: [
         {
           label: 'Sessions',
@@ -788,19 +789,6 @@ export default function AdminDashboard() {
                       </svg>
                       Activity
                     </h3>
-                    <div className="flex items-center space-x-2">
-                      <label className="text-sm font-medium text-gray-700">Timeframe:</label>
-                      <select
-                        value={activityTimeframe}
-                        onChange={(e) => setActivityTimeframe(e.target.value)}
-                        className="border border-gray-300 rounded-lg px-3 py-1 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      >
-                        <option value="hourly">Last 24 Hours</option>
-                        <option value="daily">Last 7 Days</option>
-                        <option value="weekly">Last 30 Days</option>
-                        <option value="monthly">Last 12 Months</option>
-                      </select>
-                    </div>
                   </div>
                   {dailyActivityData && (
                     <div className="h-80">
