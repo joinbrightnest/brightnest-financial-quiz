@@ -490,7 +490,7 @@ Keep existing personalization (name, answers, insights) but amplify emotional re
           button: "Book My Free Financial Assessment",
           secondary: "Join Waitlist"
         }
-      }
+      },
     };
 
     return fallbackCopies[archetype] || fallbackCopies["Stability Seeker"];
