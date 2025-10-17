@@ -435,6 +435,7 @@ export async function GET(request: Request) {
     // Only calculate if there are actual user sessions (not just empty quiz structure)
     const questionsWithDrops = totalSessions > 0 ? questionAnalytics
       .filter((q): q is NonNullable<typeof q> => q !== null)
+      .filter(q => q.answeredCount > 0) // Only include questions that have actual user engagement
       .map((q, index) => {
         const previousQuestion = index > 0 ? questionAnalytics[index - 1] : null;
         
