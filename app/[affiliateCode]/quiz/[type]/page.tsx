@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -151,10 +151,28 @@ export default async function AffiliateQuizPage({ params, searchParams }: Affili
 
   // If not a valid affiliate, redirect to 404
   if (!isValidAffiliate) {
-    redirect('/404');
+    return (
+      <html>
+        <head>
+          <script dangerouslySetInnerHTML={{
+            __html: `window.location.replace('/404');`
+          }} />
+        </head>
+        <body></body>
+      </html>
+    );
   }
 
-  // IMMEDIATE server-side redirect to quiz with affiliate parameter
-  // This causes an HTTP redirect - no client-side rendering at all
-  redirect(`/quiz/${type}?affiliate=${affiliateCode}`);
+  // IMMEDIATE JavaScript redirect to quiz with affiliate parameter
+  // This is the fastest possible redirect method
+  return (
+    <html>
+      <head>
+        <script dangerouslySetInnerHTML={{
+          __html: `window.location.replace('/quiz/${type}?affiliate=${affiliateCode}');`
+        }} />
+      </head>
+      <body></body>
+    </html>
+  );
 }
