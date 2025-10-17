@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, Suspense } from "react";
+import { useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 
@@ -53,29 +53,10 @@ function AffiliateQuizContent() {
     }
   }, [affiliateCode, quizType, router]);
 
-  // Show loading while redirecting
-  return (
-    <div className="min-h-screen bg-white flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Starting your quiz...</p>
-        <p className="text-sm text-gray-500 mt-2">Affiliate: {affiliateCode}</p>
-      </div>
-    </div>
-  );
+  // Return null to avoid showing any loading screen - redirect happens immediately
+  return null;
 }
 
 export default function AffiliateQuiz() {
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    }>
-      <AffiliateQuizContent />
-    </Suspense>
-  );
+  return <AffiliateQuizContent />;
 }
