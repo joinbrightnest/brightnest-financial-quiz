@@ -288,15 +288,19 @@ export async function GET(request: Request) {
       questionAnalyticsData.map(item => [item.questionId, item._count.sessionId])
     );
 
-    const questionAnalytics = allQuestions.map(question => {
+    const questionAnalytics = allQuestions.map((question, index) => {
       const answeredCount = questionCountMap.get(question.id) || 0;
       const retentionRate = totalSessions > 0 ? (answeredCount / totalSessions) * 100 : 0;
 
+      console.log(`📊 Question ${index + 1} (DB order: ${question.order}): ${question.prompt}`);
+      console.log(`   Answers: ${answeredCount}/${totalSessions} (${retentionRate.toFixed(1)}% retention)`);
+
       return {
-        questionNumber: question.order,
+        questionNumber: index + 1, // Use sequential numbering (1, 2, 3, 4, 5...) instead of database order
         questionText: question.prompt,
         answeredCount,
         retentionRate: Math.round(retentionRate * 100) / 100,
+        originalOrder: question.order, // Keep original order for reference
       };
     });
 
@@ -433,6 +437,8 @@ export async function GET(request: Request) {
 
     // Get top 3 questions responsible for biggest drop-offs (questions that CAUSE the drop)
     // Only calculate if there are actual user sessions (not just empty quiz structure)
+    console.log(`\n🎯 CALCULATING DROP-OFFS (${totalSessions} total sessions)...`);
+    
     const questionsWithDrops = totalSessions > 0 ? questionAnalytics
       .filter((q): q is NonNullable<typeof q> => q !== null)
       .filter(q => q.answeredCount > 0) // Only include questions that have actual user engagement
@@ -451,6 +457,10 @@ export async function GET(request: Request) {
           dropFromPrevious = 100 - q.retentionRate;
         }
         
+        console.log(`  Q${q.questionNumber}: ${q.retentionRate}% retention (drop: ${dropFromPrevious.toFixed(1)}%)`);
+        console.log(`    Question: ${q.questionText}`);
+        console.log(`    Previous: ${previousRetentionRate}% → Current: ${q.retentionRate}%`);
+        
         return {
           questionNumber: q.questionNumber,
           questionText: q.questionText,
@@ -459,10 +469,15 @@ export async function GET(request: Request) {
           previousRetentionRate: previousRetentionRate
         };
       })
-      .filter(q => q.dropFromPrevious > 0) // Only questions that caused a drop
+      .filter(q => q.dropFromPrevious > 5) // Only show significant drops (5% or more)
       .sort((a, b) => b.dropFromPrevious - a.dropFromPrevious)
       .slice(0, 3) // Top 3 questions responsible for drops
       : []; // Return empty array if no user sessions exist
+    
+    console.log(`\n🎯 TOP DROP-OFFS FOUND: ${questionsWithDrops.length}`);
+    questionsWithDrops.forEach((q, index) => {
+      console.log(`  #${index + 1}: Q${q.questionNumber} - ${q.dropFromPrevious}% drop-off`);
+    });
 
     // Get all quiz types for dashboard integration
     const quizTypes = await prisma.quizQuestion.groupBy({
