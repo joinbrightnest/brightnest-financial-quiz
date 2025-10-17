@@ -93,7 +93,7 @@ export default function AdminDashboard() {
   const [error, setError] = useState<string | null>(null);
   const hasInitiallyLoaded = useRef(false);
   const [dateRange, setDateRange] = useState('7d');
-  const [selectedQuizType, setSelectedQuizType] = useState<string>('all');
+  const [selectedQuizType, setSelectedQuizType] = useState<string>('financial-profile');
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
   const [showQuickLinks, setShowQuickLinks] = useState(false);

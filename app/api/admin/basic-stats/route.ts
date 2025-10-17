@@ -292,15 +292,15 @@ export async function GET(request: Request) {
       const answeredCount = questionCountMap.get(question.id) || 0;
       const retentionRate = totalSessions > 0 ? (answeredCount / totalSessions) * 100 : 0;
 
-      console.log(`📊 Question ${index + 1} (DB order: ${question.order}): ${question.prompt}`);
+      console.log(`📊 Question ${question.order} (DB order: ${question.order}): ${question.prompt}`);
       console.log(`   Answers: ${answeredCount}/${totalSessions} (${retentionRate.toFixed(1)}% retention)`);
 
       return {
-        questionNumber: index + 1, // Use sequential numbering (1, 2, 3, 4, 5...) instead of database order
+        questionNumber: question.order, // Use database order directly (now sequential: 1, 2, 3, 4, 5...)
         questionText: question.prompt,
         answeredCount,
         retentionRate: Math.round(retentionRate * 100) / 100,
-        originalOrder: question.order, // Keep original order for reference
+        originalOrder: question.order, // Same as questionNumber now
       };
     });
 
@@ -443,7 +443,9 @@ export async function GET(request: Request) {
       .filter((q): q is NonNullable<typeof q> => q !== null)
       .filter(q => q.answeredCount > 0) // Only include questions that have actual user engagement
       .map((q, index) => {
-        const previousQuestion = index > 0 ? questionAnalytics[index - 1] : null;
+        // Find the previous question in the original array (not the filtered array)
+        const originalIndex = questionAnalytics.findIndex(origQ => origQ.questionNumber === q.questionNumber);
+        const previousQuestion = originalIndex > 0 ? questionAnalytics[originalIndex - 1] : null;
         
         // Calculate drop from previous question
         let dropFromPrevious = 0;
