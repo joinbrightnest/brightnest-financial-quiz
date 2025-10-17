@@ -97,6 +97,7 @@ export default function AdminDashboard() {
   const [customStartDate, setCustomStartDate] = useState('');
   const [customEndDate, setCustomEndDate] = useState('');
   const [showQuickLinks, setShowQuickLinks] = useState(false);
+  const [showResetDropdown, setShowResetDropdown] = useState(false);
   // const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
   const [showComparison, setShowComparison] = useState(false);
   const [showCEOAnalytics, setShowCEOAnalytics] = useState(false);
@@ -213,18 +214,26 @@ export default function AdminDashboard() {
     logout();
   };
 
-  const resetAllData = async () => {
-    if (!confirm("Are you sure you want to delete ALL quiz data? This action cannot be undone.")) {
+  const resetData = async (resetType: string) => {
+    const messages = {
+      quiz: "Are you sure you want to delete ALL quiz data (sessions, answers, results)? This action cannot be undone.",
+      affiliate: "Are you sure you want to delete ALL affiliate data (clicks, conversions, payouts)? This action cannot be undone.",
+      closer: "Are you sure you want to delete ALL closer data (appointments, performance)? This action cannot be undone.",
+      all: "Are you sure you want to delete ALL data from the entire system? This will reset everything including quiz, affiliate, and closer data. This action cannot be undone."
+    };
+
+    if (!confirm(messages[resetType as keyof typeof messages])) {
       return;
     }
 
     try {
-      const response = await fetch("/api/admin/basic-stats", {
+      const response = await fetch(`/api/admin/basic-stats?type=${resetType}`, {
         method: "DELETE",
       });
 
       if (response.ok) {
-        alert("All data has been reset successfully!");
+        const data = await response.json();
+        alert(`${data.message}`);
         fetchStats(); // Refresh the dashboard
       } else {
         alert("Failed to reset data. Please try again.");
@@ -611,15 +620,100 @@ export default function AdminDashboard() {
             </div>
             
             <div className="space-y-2 px-3">
-              <button
-                onClick={resetAllData}
-                className="w-full flex items-center space-x-3 px-3 py-2.5 text-red-700 hover:bg-red-50 rounded-lg transition-colors group"
-              >
-                <svg className="w-5 h-5 text-red-400 group-hover:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-                <span className="text-sm font-medium">Reset All</span>
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => setShowResetDropdown(!showResetDropdown)}
+                  className="w-full flex items-center justify-between px-3 py-2.5 text-red-700 hover:bg-red-50 rounded-lg transition-colors group"
+                >
+                  <div className="flex items-center space-x-3">
+                    <svg className="w-5 h-5 text-red-400 group-hover:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    <span className="text-sm font-medium">Reset Data</span>
+                  </div>
+                  <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {showResetDropdown && (
+                  <div className="absolute bottom-full left-0 mb-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                    <div className="py-2">
+                      <button
+                        onClick={() => {
+                          resetData('quiz');
+                          setShowResetDropdown(false);
+                        }}
+                        className="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100"
+                      >
+                        <div className="flex items-center">
+                          <svg className="w-5 h-5 mr-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          <div>
+                            <div className="font-medium">Quiz Data</div>
+                            <div className="text-xs text-gray-500">Sessions, answers, results</div>
+                          </div>
+                        </div>
+                      </button>
+                      
+                      <button
+                        onClick={() => {
+                          resetData('affiliate');
+                          setShowResetDropdown(false);
+                        }}
+                        className="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100"
+                      >
+                        <div className="flex items-center">
+                          <svg className="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                          </svg>
+                          <div>
+                            <div className="font-medium">Affiliate Data</div>
+                            <div className="text-xs text-gray-500">Clicks, conversions, payouts</div>
+                          </div>
+                        </div>
+                      </button>
+                      
+                      <button
+                        onClick={() => {
+                          resetData('closer');
+                          setShowResetDropdown(false);
+                        }}
+                        className="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-100"
+                      >
+                        <div className="flex items-center">
+                          <svg className="w-5 h-5 mr-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          <div>
+                            <div className="font-medium">Closer Data</div>
+                            <div className="text-xs text-gray-500">Appointments, performance</div>
+                          </div>
+                        </div>
+                      </button>
+                      
+                      <button
+                        onClick={() => {
+                          resetData('all');
+                          setShowResetDropdown(false);
+                        }}
+                        className="block w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        <div className="flex items-center">
+                          <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          <div>
+                            <div className="font-medium">Everything</div>
+                            <div className="text-xs text-red-500">Complete system reset</div>
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
               <button
                 onClick={handleLogout}
                 className="w-full flex items-center space-x-3 px-3 py-2.5 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors group"

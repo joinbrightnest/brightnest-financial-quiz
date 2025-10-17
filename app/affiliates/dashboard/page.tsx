@@ -100,7 +100,7 @@ export default function AffiliateDashboard() {
     }
   };
 
-  const fetchStats = async () => {
+  const fetchStats = async (forceRefresh = false) => {
     if (!affiliate) return;
 
     try {
@@ -116,7 +116,10 @@ export default function AffiliateDashboard() {
         : affiliate.referralCode;
       
       console.log("Fetching affiliate data for:", affiliateCode);
-      const response = await fetch(`/api/admin/affiliate-stats?affiliateCode=${affiliateCode}`);
+      
+      // Add cache-busting parameter to ensure fresh data
+      const cacheBuster = forceRefresh ? `&_t=${Date.now()}` : '';
+      const response = await fetch(`/api/admin/affiliate-stats?affiliateCode=${affiliateCode}${cacheBuster}`);
 
       if (response.ok) {
         const data = await response.json();
@@ -213,8 +216,8 @@ export default function AffiliateDashboard() {
           </p>
         </motion.div>
 
-        {/* Date Range Filter */}
-        <div className="mb-6">
+        {/* Date Range Filter and Refresh */}
+        <div className="mb-6 flex items-center justify-between">
           <select
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value)}
@@ -226,6 +229,22 @@ export default function AffiliateDashboard() {
             <option value="1y">Last year</option>
             <option value="all">All time</option>
           </select>
+          
+          <button
+            onClick={() => fetchStats(true)}
+            disabled={loading}
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <svg 
+              className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            {loading ? 'Refreshing...' : 'Refresh Data'}
+          </button>
         </div>
 
         {/* Metrics Grid */}

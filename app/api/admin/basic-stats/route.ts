@@ -3,18 +3,96 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function DELETE() {
+export async function DELETE(request: Request) {
   try {
-    // Delete all quiz data
-    await prisma.quizAnswer.deleteMany();
-    await prisma.result.deleteMany();
-    await prisma.quizSession.deleteMany();
+    const { searchParams } = new URL(request.url);
+    const resetType = searchParams.get('type') || 'quiz'; // 'quiz', 'affiliate', 'closer', 'all'
     
-    return NextResponse.json({ success: true, message: "All metrics reset successfully" });
+    console.log(`🔄 Starting ${resetType} data reset...`);
+    
+    if (resetType === 'quiz' || resetType === 'all') {
+      // Delete quiz-related data
+      await prisma.quizAnswer.deleteMany();
+      await prisma.result.deleteMany();
+      await prisma.quizSession.deleteMany();
+      await prisma.articleView.deleteMany();
+      
+      // Also reset affiliate stats since they're connected to quiz data
+      await prisma.affiliate.updateMany({
+        data: {
+          totalClicks: 0,
+          totalLeads: 0,
+          totalBookings: 0,
+          totalSales: 0,
+          totalCommission: 0
+        }
+      });
+      
+      // Reset closer stats since they're connected to quiz data
+      await prisma.closer.updateMany({
+        data: {
+          totalCalls: 0,
+          totalConversions: 0,
+          totalRevenue: 0,
+          conversionRate: 0
+        }
+      });
+      
+      console.log('✅ Quiz data and connected stats deleted');
+    }
+    
+    if (resetType === 'affiliate' || resetType === 'all') {
+      // Delete affiliate-related data
+      await prisma.affiliateClick.deleteMany();
+      await prisma.affiliateConversion.deleteMany();
+      await prisma.affiliatePayout.deleteMany();
+      await prisma.affiliateAuditLog.deleteMany();
+      // Reset affiliate stats but keep the affiliate accounts
+      await prisma.affiliate.updateMany({
+        data: {
+          totalClicks: 0,
+          totalLeads: 0,
+          totalBookings: 0,
+          totalSales: 0,
+          totalCommission: 0
+        }
+      });
+      console.log('✅ Affiliate data deleted');
+    }
+    
+    if (resetType === 'closer' || resetType === 'all') {
+      // Delete closer-related data
+      await prisma.appointment.deleteMany();
+      await prisma.closerAuditLog.deleteMany();
+      // Reset closer stats but keep the closer accounts
+      await prisma.closer.updateMany({
+        data: {
+          totalCalls: 0,
+          totalConversions: 0,
+          totalRevenue: 0,
+          conversionRate: 0
+        }
+      });
+      console.log('✅ Closer data deleted');
+    }
+    
+    if (resetType === 'all') {
+      // Also reset user data if doing complete reset
+      await prisma.user.deleteMany();
+      console.log('✅ User data deleted');
+    }
+    
+    console.log(`🎉 ${resetType} data reset completed successfully`);
+    
+    return NextResponse.json({ 
+      success: true, 
+      message: `${resetType} data reset successfully`,
+      resetType: resetType
+    });
   } catch (error) {
-    console.error("Error resetting metrics:", error);
+    console.error("Error resetting data:", error);
     return NextResponse.json(
-      { error: "Failed to reset metrics" },
+      { error: "Failed to reset data" },
       { status: 500 }
     );
   }
