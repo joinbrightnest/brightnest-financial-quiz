@@ -432,7 +432,8 @@ export async function GET(request: Request) {
     const averageTimeMs = avgDurationResult._avg.durationMs || 0; // Average time in milliseconds
 
     // Get top 3 questions responsible for biggest drop-offs (questions that CAUSE the drop)
-    const questionsWithDrops = questionAnalytics
+    // Only calculate if there are actual user sessions (not just empty quiz structure)
+    const questionsWithDrops = totalSessions > 0 ? questionAnalytics
       .filter((q): q is NonNullable<typeof q> => q !== null)
       .map((q, index) => {
         const previousQuestion = index > 0 ? questionAnalytics[index - 1] : null;
@@ -459,7 +460,8 @@ export async function GET(request: Request) {
       })
       .filter(q => q.dropFromPrevious > 0) // Only questions that caused a drop
       .sort((a, b) => b.dropFromPrevious - a.dropFromPrevious)
-      .slice(0, 3); // Top 3 questions responsible for drops
+      .slice(0, 3) // Top 3 questions responsible for drops
+      : []; // Return empty array if no user sessions exist
 
     // Get all quiz types for dashboard integration
     const quizTypes = await prisma.quizQuestion.groupBy({

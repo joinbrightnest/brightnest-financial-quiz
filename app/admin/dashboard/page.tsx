@@ -1123,19 +1123,38 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center shadow-lg">
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center shadow-lg ${
+                  stats.topDropOffQuestions.length > 0 
+                    ? 'bg-gradient-to-br from-red-500 to-red-600' 
+                    : 'bg-gradient-to-br from-green-500 to-green-600'
+                }`}>
                   <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                    {stats.topDropOffQuestions.length > 0 ? (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+                    ) : (
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    )}
                   </svg>
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-gray-900">Top Funnel Drop-offs</h3>
-                  <p className="text-xs text-gray-500">Questions causing the highest user abandonment</p>
+                  <p className="text-xs text-gray-500">
+                    {stats.topDropOffQuestions.length > 0 
+                      ? 'Questions causing the highest user abandonment' 
+                      : 'No significant drop-offs detected'
+                    }
+                  </p>
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-xl font-bold text-red-600">{stats.topDropOffQuestions.length}</div>
-                <div className="text-xs text-gray-500 uppercase tracking-wide">Critical Issues</div>
+                <div className={`text-xl font-bold ${
+                  stats.topDropOffQuestions.length > 0 ? 'text-red-600' : 'text-green-600'
+                }`}>
+                  {stats.topDropOffQuestions.length}
+                </div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">
+                  {stats.topDropOffQuestions.length > 0 ? 'Critical Issues' : 'Issues Found'}
+                </div>
               </div>
             </div>
             
