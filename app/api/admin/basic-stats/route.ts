@@ -439,38 +439,45 @@ export async function GET(request: Request) {
     // Only calculate if there are actual user sessions (not just empty quiz structure)
     console.log(`\n🎯 CALCULATING DROP-OFFS (${totalSessions} total sessions)...`);
     
+    // Calculate drop-offs by looking at each question and seeing how many people dropped off before reaching it
     const questionsWithDrops = totalSessions > 0 ? questionAnalytics
       .filter((q): q is NonNullable<typeof q> => q !== null)
-      .filter(q => q.answeredCount > 0) // Only include questions that have actual user engagement
       .map((q, index) => {
-        // Find the previous question in the original array (not the filtered array)
-        const originalIndex = questionAnalytics.findIndex(origQ => origQ.questionNumber === q.questionNumber);
-        const previousQuestion = originalIndex > 0 ? questionAnalytics[originalIndex - 1] : null;
+        // For each question, calculate how many people dropped off before reaching it
+        const previousQuestion = index > 0 ? questionAnalytics[index - 1] : null;
         
-        // Calculate drop from previous question
-        let dropFromPrevious = 0;
+        let dropOffCount = 0;
         let previousRetentionRate = 100; // Default to 100% for first question
         
         if (previousQuestion) {
+          // People who answered the previous question but didn't reach this question
           previousRetentionRate = previousQuestion.retentionRate;
-          dropFromPrevious = previousRetentionRate - q.retentionRate;
+          dropOffCount = previousQuestion.retentionRate - q.retentionRate;
         } else {
-          // For the first question, calculate drop from 100% (all users who started)
-          dropFromPrevious = 100 - q.retentionRate;
+          // For the first question, people who started but didn't answer it
+          dropOffCount = 100 - q.retentionRate;
         }
         
-        console.log(`  Q${q.questionNumber}: ${q.retentionRate}% retention (drop: ${dropFromPrevious.toFixed(1)}%)`);
-        console.log(`    Question: ${q.questionText}`);
-        console.log(`    Previous: ${previousRetentionRate}% → Current: ${q.retentionRate}%`);
+        const dropOffPercentage = Math.round(dropOffCount * 100) / 100;
         
-        return {
-          questionNumber: q.questionNumber,
-          questionText: q.questionText,
-          dropFromPrevious: Math.round(dropFromPrevious * 100) / 100,
-          retentionRate: q.retentionRate,
-          previousRetentionRate: previousRetentionRate
-        };
+        console.log(`  Q${q.questionNumber}: ${q.retentionRate}% reached this question`);
+        console.log(`    Previous: ${previousRetentionRate}% → Current: ${q.retentionRate}%`);
+        console.log(`    Drop-off: ${dropOffPercentage}% (${dropOffCount} people dropped off before reaching Q${q.questionNumber})`);
+        console.log(`    Question: ${q.questionText}`);
+        
+        // Only include questions where there's actually a drop-off
+        if (dropOffPercentage > 0) {
+          return {
+            questionNumber: q.questionNumber, // Show the question where people dropped off
+            questionText: q.questionText,
+            dropFromPrevious: dropOffPercentage,
+            retentionRate: q.retentionRate,
+            previousRetentionRate: previousRetentionRate
+          };
+        }
+        return null;
       })
+      .filter((q): q is NonNullable<typeof q> => q !== null) // Remove null entries
       .filter(q => q.dropFromPrevious > 5) // Only show significant drops (5% or more)
       .sort((a, b) => b.dropFromPrevious - a.dropFromPrevious)
       .slice(0, 3) // Top 3 questions responsible for drops
