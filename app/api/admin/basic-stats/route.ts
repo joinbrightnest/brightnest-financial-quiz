@@ -22,20 +22,66 @@ export async function DELETE() {
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const activityTimeframe = searchParams.get('activity') || 'daily';
+  const dateRange = searchParams.get('dateRange') || '7d';
+  const startDate = searchParams.get('startDate');
+  const endDate = searchParams.get('endDate');
   const quizType = searchParams.get('quizType') || null;
   const affiliateCode = searchParams.get('affiliateCode') || null;
   
   try {
+    // Build date filter
+    const buildDateFilter = () => {
+      const now = new Date();
+      let startDate = new Date();
+      let endDate = new Date();
+
+      if (dateRange === 'custom' && startDate && endDate) {
+        const customStart = new Date(startDate);
+        const customEnd = new Date(endDate);
+        customEnd.setHours(23, 59, 59, 999);
+        return {
+          gte: customStart,
+          lte: customEnd
+        };
+      } else {
+        switch (dateRange) {
+          case '1d':
+            startDate.setHours(now.getHours() - 24);
+            break;
+          case '7d':
+            startDate.setDate(now.getDate() - 7);
+            break;
+          case '30d':
+            startDate.setDate(now.getDate() - 30);
+            break;
+          case '90d':
+            startDate.setDate(now.getDate() - 90);
+            break;
+          case '1y':
+            startDate.setFullYear(now.getFullYear() - 1);
+            break;
+          default:
+            startDate.setDate(now.getDate() - 7);
+        }
+        return { gte: startDate };
+      }
+    };
+
+    const dateFilter = buildDateFilter();
+
     // Get total sessions (all quiz attempts)
     const totalSessions = await prisma.quizSession.count({
-      where: quizType ? { quizType } : {}
+      where: {
+        createdAt: dateFilter,
+        ...(quizType ? { quizType } : {})
+      }
     });
     
     // Calculate average duration for completed sessions
     const avgDurationResult = await prisma.quizSession.aggregate({
       _avg: { durationMs: true },
       where: { 
+        createdAt: dateFilter,
         status: "completed",
         durationMs: { not: null },
         ...(quizType ? { quizType } : {})
@@ -45,6 +91,7 @@ export async function GET(request: Request) {
     // Get all leads (completed sessions - anyone who completed the quiz is a lead)
     const allLeads = await prisma.quizSession.findMany({
       where: {
+        createdAt: dateFilter,
         status: "completed",
         ...(quizType ? { quizType } : {})
       },
@@ -175,33 +222,45 @@ export async function GET(request: Request) {
       };
     });
 
-    // Get activity data based on timeframe
-    const getActivityData = async (timeframe: string) => {
+    // Get activity data based on date range
+    const getActivityData = async (dateRange: string, customStartDate?: string, customEndDate?: string) => {
       const now = new Date();
-      const startDate = new Date();
+      let startDate = new Date();
+      let endDate = new Date();
 
-      switch (timeframe) {
-        case 'hourly':
-          startDate.setHours(now.getHours() - 24);
-          break;
-        case 'daily':
-          startDate.setDate(now.getDate() - 7);
-          break;
-        case 'weekly':
-          startDate.setDate(now.getDate() - 30);
-          break;
-        case 'monthly':
-          startDate.setMonth(now.getMonth() - 12);
-          break;
-        default:
-          startDate.setDate(now.getDate() - 7);
+      if (dateRange === 'custom' && customStartDate && customEndDate) {
+        startDate = new Date(customStartDate);
+        endDate = new Date(customEndDate);
+        // Set end date to end of day
+        endDate.setHours(23, 59, 59, 999);
+      } else {
+        switch (dateRange) {
+          case '1d':
+            startDate.setHours(now.getHours() - 24);
+            break;
+          case '7d':
+            startDate.setDate(now.getDate() - 7);
+            break;
+          case '30d':
+            startDate.setDate(now.getDate() - 30);
+            break;
+          case '90d':
+            startDate.setDate(now.getDate() - 90);
+            break;
+          case '1y':
+            startDate.setFullYear(now.getFullYear() - 1);
+            break;
+          default:
+            startDate.setDate(now.getDate() - 7);
+        }
       }
 
       // Get all sessions in the timeframe
       const sessions = await prisma.quizSession.findMany({
         where: {
           createdAt: {
-            gte: startDate
+            gte: startDate,
+            ...(dateRange === 'custom' && customStartDate && customEndDate ? { lte: endDate } : {})
           },
           ...(quizType ? { quizType } : {})
         },
@@ -220,21 +279,24 @@ export async function GET(request: Request) {
         const date = new Date(session.createdAt);
         let key: string;
         
-        switch (timeframe) {
-          case 'hourly':
+        switch (dateRange) {
+          case '1d':
             key = date.toISOString().slice(0, 13); // YYYY-MM-DDTHH
             break;
-          case 'daily':
+          case '7d':
             key = date.toISOString().slice(0, 10); // YYYY-MM-DD
             break;
-          case 'weekly':
-            // Get start of week (Monday)
-            const weekStart = new Date(date);
-            weekStart.setDate(date.getDate() - date.getDay() + 1);
-            key = weekStart.toISOString().slice(0, 10);
+          case '30d':
+            key = date.toISOString().slice(0, 10); // YYYY-MM-DD
             break;
-          case 'monthly':
+          case '90d':
+            key = date.toISOString().slice(0, 10); // YYYY-MM-DD
+            break;
+          case '1y':
             key = date.toISOString().slice(0, 7); // YYYY-MM
+            break;
+          case 'custom':
+            key = date.toISOString().slice(0, 10); // YYYY-MM-DD
             break;
           default:
             key = date.toISOString().slice(0, 10);
@@ -247,22 +309,30 @@ export async function GET(request: Request) {
       return Object.entries(groupedData).map(([key, count]) => {
         let formattedDate: string;
         
-        switch (timeframe) {
-          case 'hourly':
+        switch (dateRange) {
+          case '1d':
             // Convert YYYY-MM-DDTHH to a proper date string
             formattedDate = new Date(key + ':00:00.000Z').toISOString();
             break;
-          case 'daily':
+          case '7d':
             // Convert YYYY-MM-DD to a proper date string
             formattedDate = new Date(key + 'T00:00:00.000Z').toISOString();
             break;
-          case 'weekly':
+          case '30d':
             // Convert YYYY-MM-DD to a proper date string
             formattedDate = new Date(key + 'T00:00:00.000Z').toISOString();
             break;
-          case 'monthly':
+          case '90d':
+            // Convert YYYY-MM-DD to a proper date string
+            formattedDate = new Date(key + 'T00:00:00.000Z').toISOString();
+            break;
+          case '1y':
             // Convert YYYY-MM to a proper date string
             formattedDate = new Date(key + '-01T00:00:00.000Z').toISOString();
+            break;
+          case 'custom':
+            // Convert YYYY-MM-DD to a proper date string
+            formattedDate = new Date(key + 'T00:00:00.000Z').toISOString();
             break;
           default:
             formattedDate = new Date(key + 'T00:00:00.000Z').toISOString();
@@ -275,7 +345,7 @@ export async function GET(request: Request) {
       });
     };
 
-    const dailyActivity = await getActivityData(activityTimeframe);
+    const dailyActivity = await getActivityData(dateRange, startDate || undefined, endDate || undefined);
 
     // Calculate new metrics
     const visitors = totalSessions; // Total unique visitors who started the quiz
