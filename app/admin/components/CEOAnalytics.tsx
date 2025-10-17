@@ -679,7 +679,7 @@ export default function CEOAnalytics() {
                                   value={trackingLinkInput}
                                   onChange={(e) => setTrackingLinkInput(e.target.value)}
                                   placeholder="e.g., special-offer, john-doe, exclusive-deal"
-                                  className="flex-1 px-4 py-3 border border-slate-300 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
+                                  className="flex-1 px-4 py-3 border border-slate-300 rounded-xl text-sm font-medium text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm"
                                 />
                               </div>
                               <div className="flex items-center space-x-3">
