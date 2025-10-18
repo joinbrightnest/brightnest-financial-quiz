@@ -737,7 +737,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                       type="text"
                       value={quizLink}
                       onChange={(e) => setQuizLink(e.target.value)}
-                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white shadow-sm"
+                      className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
                       placeholder="Enter custom quiz link..."
                     />
                     <button
@@ -895,7 +895,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                           id={`prompt-${question.id}`}
                           value={question.prompt}
                           onChange={(e) => handleQuestionEdit(question.id, "prompt", e.target.value)}
-                          className="w-full px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white shadow-sm text-base"
+                          className="w-full px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm text-base"
                           rows={3}
                           placeholder="Type your question here. Use double curly braces with name or email to personalize..."
                         />
@@ -973,7 +973,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                                   type="text"
                                   value={question.continueButtonText || ""}
                                   onChange={(e) => handleQuestionEdit(question.id, "continueButtonText", e.target.value)}
-                                  className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white shadow-sm"
+                                  className="w-full px-4 py-3 text-sm border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 bg-white shadow-sm"
                                   placeholder="Continue"
                                 />
                               </div>
@@ -992,7 +992,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                                     type="text"
                                     value={question.continueButtonColor || "#09727c"}
                                     onChange={(e) => handleQuestionEdit(question.id, "continueButtonColor", e.target.value)}
-                                    className="flex-1 px-4 py-3 text-sm border border-gray-300 rounded-lg text-black bg-white shadow-sm"
+                                    className="flex-1 px-4 py-3 text-sm border border-gray-300 rounded-lg text-gray-900 bg-white shadow-sm"
                                     placeholder="#09727c"
                                   />
                                 </div>

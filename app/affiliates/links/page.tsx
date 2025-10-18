@@ -149,7 +149,7 @@ export default function AffiliateLinksPage() {
                   type="text"
                   value={utmSource}
                   onChange={(e) => setUtmSource(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-black placeholder-gray-500"
                   placeholder="youtube"
                 />
               </div>
@@ -162,7 +162,7 @@ export default function AffiliateLinksPage() {
                   type="text"
                   value={utmMedium}
                   onChange={(e) => setUtmMedium(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-black placeholder-gray-500"
                   placeholder="video"
                 />
               </div>
@@ -175,7 +175,7 @@ export default function AffiliateLinksPage() {
                   type="text"
                   value={utmCampaign}
                   onChange={(e) => setUtmCampaign(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-black placeholder-gray-500"
                   placeholder="jan2024"
                 />
               </div>
