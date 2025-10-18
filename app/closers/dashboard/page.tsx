@@ -152,11 +152,15 @@ export default function CloserDashboard() {
 
   const openOutcomeModal = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
+    
+    // Get the existing recording link based on the outcome
+    const existingRecordingLink = getRecordingLink(appointment);
+    
     setOutcomeData({
       outcome: appointment.outcome || '',
       notes: appointment.notes || '',
       saleValue: appointment.saleValue?.toString() || '',
-      recordingLink: ''
+      recordingLink: existingRecordingLink || ''
     });
     setShowOutcomeModal(true);
   };
