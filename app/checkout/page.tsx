@@ -205,12 +205,12 @@ function CheckoutContent() {
               <hr className="my-8 border-gray-200" />
 
               {/* Checkout Section */}
-              <div className="bg-black rounded-xl p-8 -mx-6">
+              <div className="bg-white rounded-xl shadow-lg p-8 -mx-6">
                 <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold text-white mb-4">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-4">
                     Complete Your Financial Assessment
                   </h2>
-                  <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+                  <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                     Get your personalized financial roadmap and start building lasting wealth today.
                   </p>
                 </div>
@@ -218,39 +218,39 @@ function CheckoutContent() {
                 {/* Package Options */}
                 <div className="grid md:grid-cols-2 gap-8">
                   {/* Basic Package */}
-                  <div className="bg-gray-900 rounded-xl p-8 border border-gray-700">
+                  <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-gray-200">
                     <div className="text-center">
-                      <h3 className="text-2xl font-bold text-white mb-4">Basic Assessment</h3>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-4">Basic Assessment</h3>
                       <div className="mb-6">
-                        <span className="text-4xl font-bold text-blue-400">$100</span>
-                        <span className="text-gray-400 ml-2">one-time</span>
+                        <span className="text-4xl font-bold text-blue-600">$100</span>
+                        <span className="text-gray-500 ml-2">one-time</span>
                       </div>
                       <div className="mb-6">
-                        <h4 className="text-lg font-semibold text-white mb-3">Confirming This Means:</h4>
+                        <h4 className="text-lg font-semibold text-gray-900 mb-3">Confirming This Means:</h4>
                         <ul className="text-left space-y-2">
-                          <li className="flex items-center text-gray-300">
+                          <li className="flex items-center text-gray-700">
                             <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-white">Personalized Financial Archetype Report</span>
+                            <span className="text-gray-900">Personalized Financial Archetype Report</span>
                           </li>
-                          <li className="flex items-center text-gray-300">
+                          <li className="flex items-center text-gray-700">
                             <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-white">Detailed Financial Patterns Analysis</span>
+                            <span className="text-gray-900">Detailed Financial Patterns Analysis</span>
                           </li>
-                          <li className="flex items-center text-gray-300">
+                          <li className="flex items-center text-gray-700">
                             <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-white">Customized Action Plan</span>
+                            <span className="text-gray-900">Customized Action Plan</span>
                           </li>
-                          <li className="flex items-center text-gray-300">
+                          <li className="flex items-center text-gray-700">
                             <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-white">Email Support</span>
+                            <span className="text-gray-900">Email Support</span>
                           </li>
                         </ul>
                       </div>
@@ -269,42 +269,42 @@ function CheckoutContent() {
                   </div>
 
                   {/* Premium Package */}
-                  <div className="bg-gray-900 rounded-xl p-8 border-2 border-blue-500 relative">
+                  <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-blue-500 relative">
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
                       Most Popular
                     </div>
                     <div className="text-center">
-                      <h3 className="text-2xl font-bold text-white mb-4">Premium Assessment</h3>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-4">Premium Assessment</h3>
                       <div className="mb-6">
-                        <span className="text-4xl font-bold text-blue-400">$200</span>
-                        <span className="text-gray-400 ml-2">one-time</span>
+                        <span className="text-4xl font-bold text-blue-600">$200</span>
+                        <span className="text-gray-500 ml-2">one-time</span>
                       </div>
                       <div className="mb-6">
-                        <h4 className="text-lg font-semibold text-white mb-3">Confirming This Means:</h4>
+                        <h4 className="text-lg font-semibold text-gray-900 mb-3">Confirming This Means:</h4>
                         <ul className="text-left space-y-2">
-                          <li className="flex items-center text-gray-300">
+                          <li className="flex items-center text-gray-700">
                             <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-white">Everything in Basic Assessment</span>
+                            <span className="text-gray-900">Everything in Basic Assessment</span>
                           </li>
-                          <li className="flex items-center text-gray-300">
+                          <li className="flex items-center text-gray-700">
                             <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-white">30-Minute Personal Consultation Call</span>
+                            <span className="text-gray-900">30-Minute Personal Consultation Call</span>
                           </li>
-                          <li className="flex items-center text-gray-300">
+                          <li className="flex items-center text-gray-700">
                             <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-white">Priority Support</span>
+                            <span className="text-gray-900">Priority Support</span>
                           </li>
-                          <li className="flex items-center text-gray-300">
+                          <li className="flex items-center text-gray-700">
                             <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-white">Follow-up Resources</span>
+                            <span className="text-gray-900">Follow-up Resources</span>
                           </li>
                         </ul>
                       </div>
