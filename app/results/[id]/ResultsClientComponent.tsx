@@ -89,7 +89,7 @@ export default function ResultsClientComponent({ result }: { result: Result }) {
           <div className="text-center mb-16">
             <div className="mb-8">
               <div className="text-sm text-gray-500 font-medium mb-4">Your Financial Archetype</div>
-              <h2 className="text-4xl font-bold text-blue-600 mb-4">
+              <h2 className="text-4xl font-bold text-blue-600 mb-4 font-serif">
                 {result.archetype}
               </h2>
               <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
