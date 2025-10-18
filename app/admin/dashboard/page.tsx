@@ -558,8 +558,6 @@ export default function AdminDashboard() {
                 </select>
                 
               </div>
-
-              </div>
             </div>
           </div>
 
