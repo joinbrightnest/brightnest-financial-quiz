@@ -373,6 +373,13 @@ model Appointment {
   status          AppointmentStatus @default(scheduled)
   outcome         CallOutcome?
   notes           String?
+  recordingLinkConverted String?           @map("recording_link_converted")
+  recordingLinkNotInterested String?       @map("recording_link_not_interested")
+  recordingLinkNeedsFollowUp String?      @map("recording_link_needs_follow_up")
+  recordingLinkWrongNumber String?         @map("recording_link_wrong_number")
+  recordingLinkNoAnswer String?            @map("recording_link_no_answer")
+  recordingLinkCallbackRequested String?   @map("recording_link_callback_requested")
+  recordingLinkRescheduled String?         @map("recording_link_rescheduled")
   saleValue       Decimal?          @map("sale_value") @db.Decimal(10, 2)
   commissionAmount Decimal?         @map("commission_amount") @db.Decimal(10, 2)
   affiliateCode   String?           @map("affiliate_code")

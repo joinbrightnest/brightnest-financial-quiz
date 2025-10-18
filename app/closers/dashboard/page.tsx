@@ -27,6 +27,13 @@ interface Appointment {
   saleValue: number | null;
   commissionAmount: number | null;
   affiliateCode: string | null;
+  recordingLinkConverted?: string | null;
+  recordingLinkNotInterested?: string | null;
+  recordingLinkNeedsFollowUp?: string | null;
+  recordingLinkWrongNumber?: string | null;
+  recordingLinkNoAnswer?: string | null;
+  recordingLinkCallbackRequested?: string | null;
+  recordingLinkRescheduled?: string | null;
 }
 
 export default function CloserDashboard() {
@@ -39,7 +46,8 @@ export default function CloserDashboard() {
   const [outcomeData, setOutcomeData] = useState({
     outcome: '',
     notes: '',
-    saleValue: ''
+    saleValue: '',
+    recordingLink: ''
   });
   const router = useRouter();
 
@@ -123,6 +131,7 @@ export default function CloserDashboard() {
           outcome: outcomeData.outcome,
           notes: outcomeData.notes,
           saleValue: outcomeData.saleValue ? parseFloat(outcomeData.saleValue) : null,
+          recordingLink: outcomeData.recordingLink || null,
         }),
       });
 
@@ -132,7 +141,7 @@ export default function CloserDashboard() {
         fetchCloserStats(token);
         setShowOutcomeModal(false);
         setSelectedAppointment(null);
-        setOutcomeData({ outcome: '', notes: '', saleValue: '' });
+        setOutcomeData({ outcome: '', notes: '', saleValue: '', recordingLink: '' });
       } else {
         setError('Failed to update appointment outcome');
       }
@@ -146,7 +155,8 @@ export default function CloserDashboard() {
     setOutcomeData({
       outcome: appointment.outcome || '',
       notes: appointment.notes || '',
-      saleValue: appointment.saleValue?.toString() || ''
+      saleValue: appointment.saleValue?.toString() || '',
+      recordingLink: ''
     });
     setShowOutcomeModal(true);
   };
@@ -159,6 +169,29 @@ export default function CloserDashboard() {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const getRecordingLink = (appointment: Appointment) => {
+    if (!appointment.outcome) return null;
+    
+    switch (appointment.outcome) {
+      case 'converted':
+        return appointment.recordingLinkConverted;
+      case 'not_interested':
+        return appointment.recordingLinkNotInterested;
+      case 'needs_follow_up':
+        return appointment.recordingLinkNeedsFollowUp;
+      case 'wrong_number':
+        return appointment.recordingLinkWrongNumber;
+      case 'no_answer':
+        return appointment.recordingLinkNoAnswer;
+      case 'callback_requested':
+        return appointment.recordingLinkCallbackRequested;
+      case 'rescheduled':
+        return appointment.recordingLinkRescheduled;
+      default:
+        return null;
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -346,6 +379,9 @@ export default function CloserDashboard() {
                         Sale Value
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Recording
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
@@ -381,6 +417,20 @@ export default function CloserDashboard() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           {appointment.saleValue ? `$${Number(appointment.saleValue).toFixed(2)}` : '-'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {getRecordingLink(appointment) ? (
+                            <a
+                              href={getRecordingLink(appointment)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-indigo-600 hover:text-indigo-900 underline"
+                            >
+                              View Recording
+                            </a>
+                          ) : (
+                            <span className="text-gray-500">-</span>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <button
@@ -450,6 +500,18 @@ export default function CloserDashboard() {
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black placeholder-gray-500"
                     placeholder="Add any notes about the call..."
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Recording Link</label>
+                  <input
+                    type="url"
+                    value={outcomeData.recordingLink}
+                    onChange={(e) => setOutcomeData({ ...outcomeData, recordingLink: e.target.value })}
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black placeholder-gray-500"
+                    placeholder="https://example.com/recording-link"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">Optional: Add a link to the call recording for review</p>
                 </div>
               </div>
 

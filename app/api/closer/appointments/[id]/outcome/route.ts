@@ -29,7 +29,7 @@ export async function PUT(
       );
     }
 
-    const { outcome, notes, saleValue } = await request.json();
+    const { outcome, notes, saleValue, recordingLink } = await request.json();
 
     if (!outcome) {
       return NextResponse.json(
@@ -93,6 +93,34 @@ export async function PUT(
       }
     }
 
+    // Prepare recording link data based on outcome
+    const recordingLinkData: any = {};
+    if (recordingLink) {
+      switch (outcome) {
+        case 'converted':
+          recordingLinkData.recordingLinkConverted = recordingLink;
+          break;
+        case 'not_interested':
+          recordingLinkData.recordingLinkNotInterested = recordingLink;
+          break;
+        case 'needs_follow_up':
+          recordingLinkData.recordingLinkNeedsFollowUp = recordingLink;
+          break;
+        case 'wrong_number':
+          recordingLinkData.recordingLinkWrongNumber = recordingLink;
+          break;
+        case 'no_answer':
+          recordingLinkData.recordingLinkNoAnswer = recordingLink;
+          break;
+        case 'callback_requested':
+          recordingLinkData.recordingLinkCallbackRequested = recordingLink;
+          break;
+        case 'rescheduled':
+          recordingLinkData.recordingLinkRescheduled = recordingLink;
+          break;
+      }
+    }
+
     // Update appointment
     const updatedAppointment = await prisma.appointment.update({
       where: { id: id },
@@ -102,7 +130,8 @@ export async function PUT(
         saleValue: saleValue ? parseFloat(saleValue) : null,
         commissionAmount,
         status: 'completed',
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        ...recordingLinkData
       }
     });
 
@@ -146,6 +175,7 @@ export async function PUT(
           affiliateCode: appointment.affiliateCode,
           affiliateCommissionAmount,
           customerName: appointment.customerName,
+          recordingLink,
         },
         ipAddress: request.headers.get('x-forwarded-for') || 
                    request.headers.get('x-real-ip') || 
