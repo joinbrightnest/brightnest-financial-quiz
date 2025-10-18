@@ -511,8 +511,14 @@ export default function LeadsPage() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
               {filteredLeads.map((lead) => {
-                const nameAnswer = lead.answers.find(a => a.question.type === "text");
-                const emailAnswer = lead.answers.find(a => a.question.type === "email");
+                const nameAnswer = lead.answers.find(a => 
+                  a.question?.prompt?.toLowerCase().includes('name') ||
+                  a.question?.text?.toLowerCase().includes('name')
+                );
+                const emailAnswer = lead.answers.find(a => 
+                  a.question?.prompt?.toLowerCase().includes('email') ||
+                  a.question?.text?.toLowerCase().includes('email')
+                );
                 return (
                   <tr key={lead.id} className="hover:bg-gray-50 transition-colors duration-150">
                     <td className="px-6 py-4 whitespace-nowrap">
