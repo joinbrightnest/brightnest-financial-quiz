@@ -218,8 +218,8 @@ function CheckoutContent() {
                 {/* Package Options */}
                 <div className="grid md:grid-cols-2 gap-8">
                   {/* Basic Package */}
-                  <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-gray-200">
-                    <div className="text-center">
+                  <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-gray-200 flex flex-col">
+                    <div className="text-center flex-grow">
                       <h3 className="text-2xl font-bold text-gray-900 mb-4">Basic Assessment</h3>
                       <div className="mb-6">
                         <span className="text-4xl font-bold text-blue-600">$100</span>
@@ -254,26 +254,26 @@ function CheckoutContent() {
                           </li>
                         </ul>
                       </div>
-                      <button
-                        onClick={() => {
-                          window.location.href = `https://whop.com/sahila/basic-plan-a5-ad15?email=${encodeURIComponent(userData.email || '')}&name=${encodeURIComponent(userData.name || '')}`;
-                        }}
-                        className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 px-6 rounded-lg font-bold text-lg transition-colors"
-                      >
-                        <div className="text-center">
-                          <div className="text-white font-bold">Yes! Confirm My Upgrade</div>
-                          <div className="text-sm text-orange-100">And Add Only $100 To My Order</div>
-                        </div>
-                      </button>
                     </div>
+                    <button
+                      onClick={() => {
+                        window.location.href = `https://whop.com/sahila/basic-plan-a5-ad15?email=${encodeURIComponent(userData.email || '')}&name=${encodeURIComponent(userData.name || '')}`;
+                      }}
+                      className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 px-6 rounded-lg font-bold text-lg transition-colors mt-auto"
+                    >
+                      <div className="text-center">
+                        <div className="text-white font-bold">Yes! Confirm My Upgrade</div>
+                        <div className="text-sm text-orange-100">And Add Only $100 To My Order</div>
+                      </div>
+                    </button>
                   </div>
 
                   {/* Premium Package */}
-                  <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-blue-500 relative">
+                  <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-blue-500 relative flex flex-col">
                     <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
                       Most Popular
                     </div>
-                    <div className="text-center">
+                    <div className="text-center flex-grow">
                       <h3 className="text-2xl font-bold text-gray-900 mb-4">Premium Assessment</h3>
                       <div className="mb-6">
                         <span className="text-4xl font-bold text-blue-600">$200</span>
@@ -308,18 +308,18 @@ function CheckoutContent() {
                           </li>
                         </ul>
                       </div>
-                      <button
-                        onClick={() => {
-                          window.location.href = `https://whop.com/sahila/top-plan-dd?email=${encodeURIComponent(userData.email || '')}&name=${encodeURIComponent(userData.name || '')}`;
-                        }}
-                        className="w-full bg-green-500 hover:bg-green-600 text-white py-4 px-6 rounded-lg font-bold text-lg transition-colors"
-                      >
-                        <div className="text-center">
-                          <div className="text-white font-bold">Yes! Confirm My Upgrade</div>
-                          <div className="text-sm text-green-100">And Add Only $200 To My Order</div>
-                        </div>
-                      </button>
                     </div>
+                    <button
+                      onClick={() => {
+                        window.location.href = `https://whop.com/sahila/top-plan-dd?email=${encodeURIComponent(userData.email || '')}&name=${encodeURIComponent(userData.name || '')}`;
+                      }}
+                      className="w-full bg-green-500 hover:bg-green-600 text-white py-4 px-6 rounded-lg font-bold text-lg transition-colors mt-auto"
+                    >
+                      <div className="text-center">
+                        <div className="text-white font-bold">Yes! Confirm My Upgrade</div>
+                        <div className="text-sm text-green-100">And Add Only $200 To My Order</div>
+                      </div>
+                    </button>
                   </div>
                 </div>
               </div>
