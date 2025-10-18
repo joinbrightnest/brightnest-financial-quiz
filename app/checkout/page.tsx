@@ -80,10 +80,12 @@ export default function CheckoutPage() {
           {/* Logo */}
           <div className="mb-4">
             <Link href="/" className="flex-shrink-0">
-              <h1 className="text-white text-3xl font-bold tracking-wide">
-                <span className="font-sans">BRIGHT</span>
-                <span className="font-serif italic ml-2">Nest</span>
-              </h1>
+              <div className="inline-flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-teal-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">B</span>
+                </div>
+                <span className="text-xl font-bold text-white font-serif">BrightNest</span>
+              </div>
             </Link>
           </div>
         </div>
