@@ -380,7 +380,7 @@ export default function CloserDashboard() {
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {appointment.saleValue ? `$${appointment.saleValue.toFixed(2)}` : '-'}
+                          {appointment.saleValue ? `$${Number(appointment.saleValue).toFixed(2)}` : '-'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <button

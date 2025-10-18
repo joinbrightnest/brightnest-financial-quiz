@@ -61,7 +61,7 @@ export async function PUT(
       });
       
       if (closer) {
-        commissionAmount = saleValue * closer.commissionRate;
+        commissionAmount = parseFloat(saleValue) * closer.commissionRate;
       }
     }
 
@@ -71,7 +71,7 @@ export async function PUT(
       data: {
         outcome,
         notes: notes || null,
-        saleValue: saleValue || null,
+        saleValue: saleValue ? parseFloat(saleValue) : null,
         commissionAmount,
         status: 'completed',
         updatedAt: new Date()
@@ -85,7 +85,7 @@ export async function PUT(
         data: {
           totalCalls: { increment: 1 },
           totalConversions: { increment: 1 },
-          totalRevenue: { increment: saleValue },
+          totalRevenue: { increment: parseFloat(saleValue) },
           conversionRate: {
             // Recalculate conversion rate
             set: await calculateConversionRate(decoded.closerId)
