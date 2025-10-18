@@ -3,11 +3,6 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Script from "next/script";
-
-// Whop Plan IDs - Replace with your actual plan IDs
-const BASE_PLAN_ID = "basic-plan-a5-ad15"; // Your $100 basic plan
-const BUNDLE_PLAN_ID = "top-plan-dd"; // Your $200 top plan
 
 interface UserData {
   email?: string;
@@ -23,9 +18,6 @@ function CheckoutContent() {
   const [userData, setUserData] = useState<UserData>({});
   const [isLoading, setIsLoading] = useState(true);
   const [personalizedCopy, setPersonalizedCopy] = useState<any>(null);
-  const [isOrderBumpEnabled, setIsOrderBumpEnabled] = useState(false);
-  const [whopLoaded, setWhopLoaded] = useState(false);
-  const [currentPlanId, setCurrentPlanId] = useState(BASE_PLAN_ID);
 
   // Load user data and prefilled information
   useEffect(() => {
@@ -84,20 +76,6 @@ function CheckoutContent() {
     setIsLoading(false);
   }, [searchParams]);
 
-  // Handle order bump toggle
-  const handleOrderBumpToggle = (enabled: boolean) => {
-    setIsOrderBumpEnabled(enabled);
-    setCurrentPlanId(enabled ? BUNDLE_PLAN_ID : BASE_PLAN_ID);
-    
-    // Re-render Whop checkout with new plan
-    setTimeout(() => {
-      const checkoutDiv = document.querySelector('.whop-checkout-embed');
-      if (checkoutDiv && window.Whop) {
-        checkoutDiv.setAttribute('data-whop-checkout-plan-id', currentPlanId);
-        window.Whop.reload();
-      }
-    }, 100);
-  };
 
   // Use AI-generated copy if available, otherwise fallback
   const copy = personalizedCopy || {
@@ -125,15 +103,7 @@ function CheckoutContent() {
   }
 
   return (
-    <>
-      {/* Whop Script */}
-      <Script
-        src="https://js.whop.com/static/checkout/loader.js"
-        strategy="afterInteractive"
-        onLoad={() => setWhopLoaded(true)}
-      />
-
-      <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
+    <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
         {/* Header */}
         <div className="bg-[#333333] py-3 px-4">
           <div className="max-w-4xl mx-auto text-center">
@@ -236,73 +206,105 @@ function CheckoutContent() {
                 </p>
               </div>
 
-              {/* Order Bump Section */}
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 mb-8 border border-blue-200">
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <input
-                      type="checkbox"
-                      id="orderBump"
-                      checked={isOrderBumpEnabled}
-                      onChange={(e) => handleOrderBumpToggle(e.target.checked)}
-                      className="w-5 h-5 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                    />
+            {/* Package Options */}
+            <div className="grid md:grid-cols-2 gap-8 mb-12">
+              {/* Basic Package */}
+              <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-gray-200">
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Basic Assessment</h3>
+                  <div className="mb-6">
+                    <span className="text-4xl font-bold text-blue-600">$100</span>
+                    <span className="text-gray-500 ml-2">one-time</span>
                   </div>
-                  <div className="flex-1">
-                    <label htmlFor="orderBump" className="block">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                            Add Personalized Follow-up Call
-                          </h3>
-                          <p className="text-gray-600 mb-2">
-                            Get a 30-minute one-on-one consultation with our financial expert to discuss your personalized roadmap.
-                          </p>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-sm text-gray-500 line-through">$200</span>
-                            <span className="text-xl font-bold text-green-600">$100</span>
-                            <span className="text-sm text-gray-500">(Save $100)</span>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-                            Limited Time
-                          </div>
-                        </div>
-                      </div>
-                    </label>
-                  </div>
+                  <ul className="text-left space-y-3 mb-8">
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      Personalized Financial Archetype Report
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      Detailed Financial Patterns Analysis
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      Customized Action Plan
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      Email Support
+                    </li>
+                  </ul>
+                  <button
+                    onClick={() => {
+                      // Redirect to Whop checkout for basic plan
+                      window.open(`https://whop.com/sahila/basic-plan-a5-ad15?email=${encodeURIComponent(userData.email || '')}&name=${encodeURIComponent(userData.name || '')}`, '_blank');
+                    }}
+                    className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                  >
+                    Get Basic Assessment
+                  </button>
                 </div>
               </div>
 
-              {/* Whop Checkout Embed */}
-              <div className="bg-gray-50 rounded-lg p-6">
-                {!whopLoaded ? (
-                  <div className="text-center py-12">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading secure checkout...</p>
+              {/* Premium Package */}
+              <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-blue-500 relative">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+                    Most Popular
+                  </span>
+                </div>
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Premium Assessment</h3>
+                  <div className="mb-6">
+                    <span className="text-4xl font-bold text-blue-600">$200</span>
+                    <span className="text-gray-500 ml-2">one-time</span>
                   </div>
-                ) : (
-                  <div 
-                    className="whop-checkout-embed"
-                    data-whop-checkout-plan-id={currentPlanId}
-                    data-whop-checkout-email={userData.email}
-                    data-whop-checkout-name={userData.name}
-                    data-whop-checkout-redirect-url="/thank-you"
-                    style={{ minHeight: '600px' }}
-                  ></div>
-                )}
-              </div>
-
-              {/* Security Badge */}
-              <div className="text-center mt-6">
-                <div className="inline-flex items-center space-x-2 text-sm text-gray-500">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                  </svg>
-                  <span>Secure checkout powered by Whop</span>
+                  <ul className="text-left space-y-3 mb-8">
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      Everything in Basic Assessment
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      30-Minute Personal Consultation Call
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      Priority Support
+                    </li>
+                    <li className="flex items-center">
+                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      Follow-up Resources
+                    </li>
+                  </ul>
+                  <button
+                    onClick={() => {
+                      // Redirect to Whop checkout for premium plan
+                      window.open(`https://whop.com/sahila/top-plan-dd?email=${encodeURIComponent(userData.email || '')}&name=${encodeURIComponent(userData.name || '')}`, '_blank');
+                    }}
+                    className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                  >
+                    Get Premium Assessment
+                  </button>
                 </div>
               </div>
+            </div>
             </div>
 
             {/* FAQ Section */}
@@ -396,7 +398,6 @@ function CheckoutContent() {
           </div>
         </div>
       </div>
-    </>
   );
 }
 
