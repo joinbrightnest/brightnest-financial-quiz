@@ -41,7 +41,7 @@ export async function GET(
           affiliateCode: affiliate.referral_code,
         };
 
-    const quizSessions = await prisma.quizSession.findMany({
+    const allQuizSessions = await prisma.quizSession.findMany({
       where: whereClause,
       include: {
         user: true,
@@ -57,8 +57,23 @@ export async function GET(
       },
     });
 
+    // Filter to only include sessions that have name and email (actual leads)
+    // A lead is someone who completed the quiz AND provided contact information
+    const quizSessionsWithContactInfo = allQuizSessions.filter(session => {
+      const nameAnswer = session.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes("name") || 
+        a.question?.text?.toLowerCase().includes("name")
+      );
+      const emailAnswer = session.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes("email") || 
+        a.question?.text?.toLowerCase().includes("email")
+      );
+      
+      return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
+    });
+
     // Transform the data for the CRM view
-    const leads = quizSessions.map(session => {
+    const leads = quizSessionsWithContactInfo.map(session => {
       // Extract name and email from quiz answers (like general admin CRM)
       // Look for questions containing "name" or "email" in the text
       const nameAnswer = session.answers.find(a => 
@@ -99,9 +114,9 @@ export async function GET(
       };
     });
 
-    // Calculate CRM stats - only count completed sessions as leads (matching general admin CRM)
+    // Calculate CRM stats - only count actual leads (completed sessions with contact info)
     const totalLeads = leads.filter(lead => lead.status === "completed").length;
-    const totalCompletions = totalLeads; // Same as totalLeads since we only count completed as leads
+    const totalCompletions = totalLeads; // Same as totalLeads since we only count actual leads
     const completionRate = leads.length > 0 ? (totalLeads / leads.length) * 100 : 0;
     const averageCompletionTime = totalCompletions > 0 
       ? leads
