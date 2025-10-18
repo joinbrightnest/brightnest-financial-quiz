@@ -10,6 +10,8 @@ interface Result {
     savings: number;
     spending: number;
     investing: number;
+    totalPoints?: number;
+    qualifiesForCall?: boolean;
   };
 }
 

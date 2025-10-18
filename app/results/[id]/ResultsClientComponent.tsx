@@ -11,12 +11,21 @@ interface Result {
     savings: number;
     spending: number;
     investing: number;
+    totalPoints?: number;
+    qualifiesForCall?: boolean;
   };
 }
 
 export default function ResultsClientComponent({ result }: { result: Result }) {
   const [personalizedCopy, setPersonalizedCopy] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Calculate qualification if not already stored (for existing results)
+  const totalPoints = result.scores.totalPoints || 
+    (result.scores.debt + result.scores.savings + result.scores.spending + result.scores.investing);
+  const qualifiesForCall = result.scores.qualifiesForCall !== undefined 
+    ? result.scores.qualifiesForCall 
+    : totalPoints >= 10;
 
   useEffect(() => {
     // Get pre-generated AI copy from localStorage
@@ -140,12 +149,23 @@ export default function ResultsClientComponent({ result }: { result: Result }) {
                 {copy.cta.body}
               </p>
               <div className="space-y-4">
-                <Link
-                  href="/book-call"
-                  className="inline-block w-full md:w-auto bg-blue-600 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-                >
-                  {copy.cta.button}
-                </Link>
+                {qualifiesForCall ? (
+                  // User qualifies for call - show book call button
+                  <Link
+                    href="/book-call"
+                    className="inline-block w-full md:w-auto bg-blue-600 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  >
+                    {copy.cta.button}
+                  </Link>
+                ) : (
+                  // User doesn't qualify - show checkout button
+                  <Link
+                    href="/checkout"
+                    className="inline-block w-full md:w-auto bg-blue-600 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  >
+                    Complete Your Financial Assessment
+                  </Link>
+                )}
                 <div className="text-gray-500 font-medium">
                   or
                 </div>
