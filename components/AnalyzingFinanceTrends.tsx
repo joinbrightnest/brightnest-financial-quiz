@@ -356,7 +356,16 @@ const AnalyzingFinanceTrends = () => {
           // Add a small delay to ensure database consistency
           await new Promise(resolve => setTimeout(resolve, 1000));
           
-          router.push(`/results/${resultData.resultId}`);
+          // Check qualification and redirect accordingly
+          if (resultData.qualifiesForCall) {
+            console.log('User qualifies for call, redirecting to results page');
+            router.push(`/results/${resultData.resultId}`);
+          } else {
+            console.log('User does not qualify for call, redirecting to checkout');
+            // Store result data for checkout page
+            localStorage.setItem('quizResult', JSON.stringify(resultData));
+            router.push('/checkout');
+          }
         } else {
           const errorData = await resultResponse.json();
           console.error('Result generation failed:', errorData);

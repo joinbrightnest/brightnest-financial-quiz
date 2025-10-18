@@ -26,6 +26,8 @@ export async function POST(request: NextRequest) {
       investing: 0,
     };
 
+    let totalPoints = 0;
+
     answers.forEach((answer) => {
       const questionOptions = answer.question.options as Array<{
         value: string;
@@ -39,11 +41,15 @@ export async function POST(request: NextRequest) {
 
       if (selectedOption) {
         scores[selectedOption.weightCategory] += selectedOption.weightValue;
+        totalPoints += selectedOption.weightValue;
       }
     });
 
     // Calculate archetype
     const archetype = calculateArchetype(scores);
+
+    // Determine qualification (≥10 points qualifies for call, <10 points goes to checkout)
+    const qualifiesForCall = totalPoints >= 10;
 
     // Get the session to calculate duration
     const session = await prisma.quizSession.findUnique({
@@ -130,7 +136,11 @@ export async function POST(request: NextRequest) {
         data: {
           sessionId,
           archetype,
-          scores: scores as unknown as Record<string, number>,
+          scores: {
+            ...scores,
+            totalPoints,
+            qualifiesForCall,
+          } as unknown as Record<string, number>,
         },
       });
 
@@ -141,6 +151,8 @@ export async function POST(request: NextRequest) {
       resultId: result.id,
       archetype,
       scores,
+      totalPoints,
+      qualifiesForCall,
     });
   } catch (error) {
     console.error("Error calculating result:", error);
