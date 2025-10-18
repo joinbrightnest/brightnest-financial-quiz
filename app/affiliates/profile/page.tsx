@@ -120,7 +120,7 @@ export default function AffiliateProfilePage() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 />
               </div>
               
@@ -132,7 +132,7 @@ export default function AffiliateProfilePage() {
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 />
               </div>
               
@@ -140,7 +140,7 @@ export default function AffiliateProfilePage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Referral Code
                 </label>
-                <div className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-gray-50 text-gray-900">
+                <div className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm bg-gray-50 text-black">
                   {affiliate?.referralCode || "Loading..."}
                 </div>
                 <p className="mt-1 text-xs text-gray-500">
