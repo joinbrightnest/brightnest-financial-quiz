@@ -239,7 +239,7 @@ export async function GET(request: Request) {
     const leadsWithSource = allLeads.map(lead => ({
       ...lead,
       source: lead.affiliateCode 
-        ? affiliateMap[lead.affiliateCode] || 'Unknown Affiliate'
+        ? (affiliateMap[lead.affiliateCode] || 'Unknown Affiliate')
         : 'Website'
     }));
 
