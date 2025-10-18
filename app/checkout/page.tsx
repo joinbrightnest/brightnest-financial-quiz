@@ -127,20 +127,18 @@ function CheckoutContent() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 container mx-auto px-4 py-16">
-          <div className="max-w-3xl mx-auto">
+        <div className="px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-4xl mx-auto">
             
             {/* Archetype Header */}
             <div className="text-center mb-16">
-              <div className="mb-8">
-                <div className="text-sm text-gray-500 font-medium mb-4">{copy.header.title}</div>
-                <h1 className="text-4xl font-bold text-blue-600 mb-4 font-serif">
-                  {userData.archetype}
-                </h1>
-                <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
-                  {copy.header.subtitle}
-                </p>
-              </div>
+              <p className="text-gray-500 text-sm mb-2">{copy.header.title}</p>
+              <h1 className="text-4xl md:text-5xl font-serif text-blue-600 mb-4">
+                {userData.archetype}
+              </h1>
+              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                {copy.header.subtitle}
+              </p>
             </div>
 
             {/* Main Content Container */}

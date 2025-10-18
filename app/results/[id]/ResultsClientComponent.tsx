@@ -82,20 +82,18 @@ export default function ResultsClientComponent({ result }: { result: Result }) {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 container mx-auto px-4 py-16">
-        <div className="max-w-3xl mx-auto">
+      <div className="flex-1 px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-4xl mx-auto">
           
           {/* Header Section */}
           <div className="text-center mb-16">
-            <div className="mb-8">
-              <div className="text-sm text-gray-500 font-medium mb-4">Your Financial Archetype</div>
-              <h2 className="text-4xl font-bold text-blue-600 mb-4 font-serif">
-                {result.archetype}
-              </h2>
-              <p className="text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
-                {copy.header.subtitle}
-              </p>
-            </div>
+            <p className="text-gray-500 text-sm mb-2">Your Financial Archetype</p>
+            <h2 className="text-4xl md:text-5xl font-serif text-blue-600 mb-4">
+              {result.archetype}
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              {copy.header.subtitle}
+            </p>
           </div>
 
           {/* Main Content Container */}
