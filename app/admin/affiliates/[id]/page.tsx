@@ -69,24 +69,12 @@ export default function AffiliatePerformancePage() {
   const [passwordResetLoading, setPasswordResetLoading] = useState(false);
   const [passwordResetSuccess, setPasswordResetSuccess] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   
 
   useEffect(() => {
     if (affiliateId) {
       fetchAffiliateData();
     }
-  }, [affiliateId, dateRange]);
-
-  // Auto-refresh data every 30 seconds to keep cards updated
-  useEffect(() => {
-    if (!affiliateId) return;
-
-    const interval = setInterval(() => {
-      fetchAffiliateData();
-    }, 30000); // Refresh every 30 seconds
-
-    return () => clearInterval(interval);
   }, [affiliateId, dateRange]);
 
   const fetchAffiliateData = async (isManualRefresh = false) => {
@@ -113,7 +101,6 @@ export default function AffiliatePerformancePage() {
       }
       const statsData = await statsResponse.json();
       setStats(statsData);
-      setLastUpdated(new Date());
 
     } catch (err) {
       console.error("Error fetching affiliate data:", err);
@@ -488,26 +475,6 @@ export default function AffiliatePerformancePage() {
             transition={{ delay: 0.1 }}
             className="space-y-8"
           >
-            {/* Last Updated Indicator */}
-            {lastUpdated && (
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2 text-sm text-slate-500">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
-                </div>
-                {isRefreshing && (
-                  <div className="flex items-center space-x-2 text-sm text-blue-600">
-                    <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    <span>Updating...</span>
-                  </div>
-                )}
-              </div>
-            )}
-            
             {/* Premium Key Metrics */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
               <div className="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
