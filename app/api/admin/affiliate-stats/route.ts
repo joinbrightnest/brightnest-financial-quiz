@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const affiliateCode = searchParams.get('affiliateCode');
+  const dateRange = searchParams.get('dateRange') || '30d';
 
   if (!affiliateCode) {
     return NextResponse.json({ error: "Affiliate code is required" }, { status: 400 });
@@ -63,6 +64,9 @@ export async function GET(request: NextRequest) {
     const totalCommission = conversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
     const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
 
+    // Generate daily stats from real data
+    const dailyStats = generateDailyStatsFromRealData(clicks, conversions, dateRange);
+    
     const affiliateData = {
       affiliate: {
         id: affiliate.id,
@@ -91,7 +95,7 @@ export async function GET(request: NextRequest) {
         averageSaleValue: totalSales > 0 ? totalCommission / totalSales : 0,
         pendingCommission: 0,
         paidCommission: 0,
-        dailyStats: [],
+        dailyStats,
       },
       clicks: clicks.map((click) => ({
         id: click.id,
@@ -119,4 +123,31 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+function generateDailyStatsFromRealData(clicks: any[], conversions: any[], dateRange: string) {
+  const days = dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : dateRange === "90d" ? 90 : 365;
+  const stats = [];
+  
+  for (let i = days - 1; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split('T')[0];
+    
+    const dayClicks = clicks.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
+    const dayConversions = conversions.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
+    const dayBookings = dayConversions.filter(c => c.conversionType === "booking");
+    const daySales = dayConversions.filter(c => c.conversionType === "sale");
+    const dayCommission = dayConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
+    
+    stats.push({
+      date: dateStr,
+      clicks: dayClicks.length,
+      leads: dayConversions.filter(c => c.status === "confirmed" && c.conversionType === "quiz_completion").length,
+      sales: daySales.length,
+      commission: dayCommission,
+    });
+  }
+  
+  return stats;
 }

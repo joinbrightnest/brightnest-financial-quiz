@@ -119,7 +119,7 @@ export default function AffiliateDashboard() {
       
       // Add cache-busting parameter to ensure fresh data
       const cacheBuster = forceRefresh ? `&_t=${Date.now()}` : '';
-      const response = await fetch(`/api/admin/affiliate-stats?affiliateCode=${affiliateCode}${cacheBuster}`);
+      const response = await fetch(`/api/admin/affiliate-stats?affiliateCode=${affiliateCode}&dateRange=${dateRange}${cacheBuster}`);
 
       if (response.ok) {
         const data = await response.json();
