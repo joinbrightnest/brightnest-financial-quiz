@@ -25,7 +25,7 @@ export default function ResultsClientComponent({ result }: { result: Result }) {
     (result.scores.debt + result.scores.savings + result.scores.spending + result.scores.investing);
   const qualifiesForCall = result.scores.qualifiesForCall !== undefined 
     ? result.scores.qualifiesForCall 
-    : totalPoints >= 10;
+    : totalPoints >= 17;
 
   useEffect(() => {
     // Get pre-generated AI copy from localStorage

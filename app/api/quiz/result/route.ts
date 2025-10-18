@@ -48,8 +48,8 @@ export async function POST(request: NextRequest) {
     // Calculate archetype
     const archetype = calculateArchetype(scores);
 
-    // Determine qualification (≥10 points qualifies for call, <10 points goes to checkout)
-    const qualifiesForCall = totalPoints >= 10;
+    // Determine qualification (≥17 points qualifies for call, <17 points goes to checkout)
+    const qualifiesForCall = totalPoints >= 17;
 
     // Get the session to calculate duration
     const session = await prisma.quizSession.findUnique({

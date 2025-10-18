@@ -109,7 +109,7 @@ export default function CheckoutPage() {
                 </p>
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                   <p className="text-yellow-800">
-                    <strong>Next Step:</strong> Complete your financial assessment to qualify for a personalized consultation call.
+                    <strong>Next Step:</strong> Complete your financial assessment to qualify for a personalized consultation call. (Requires 17+ points)
                   </p>
                 </div>
               </div>
