@@ -133,8 +133,18 @@ export async function POST(request: NextRequest) {
     }
 
     const csvRows = leads.map(lead => {
-      const nameAnswer = lead.answers.find(a => a.question.type === "text");
-      const emailAnswer = lead.answers.find(a => a.question.type === "email");
+      const nameAnswer = lead.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes('name') ||
+        a.question?.text?.toLowerCase().includes('name')
+      );
+      const emailAnswer = lead.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes('email') ||
+        a.question?.text?.toLowerCase().includes('email')
+      );
+      
+      // Handle case where session has no answers (shouldn't happen but safeguard)
+      const name = nameAnswer?.value || (lead.answers.length === 0 ? "No Answers" : "N/A");
+      const email = emailAnswer?.value || (lead.answers.length === 0 ? "No Answers" : "N/A");
       
       const row: string[] = [];
       
@@ -146,10 +156,10 @@ export async function POST(request: NextRequest) {
         row.push(lead.quizType);
       }
       if (exportOptions.selectedFields.includes('name') && exportOptions.includeContactInfo) {
-        row.push(nameAnswer?.value || '');
+        row.push(name);
       }
       if (exportOptions.selectedFields.includes('email') && exportOptions.includeContactInfo) {
-        row.push(emailAnswer?.value || '');
+        row.push(email);
       }
       if (exportOptions.selectedFields.includes('status')) {
         row.push(lead.status);

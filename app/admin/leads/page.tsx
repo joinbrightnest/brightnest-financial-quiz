@@ -519,14 +519,19 @@ export default function LeadsPage() {
                   a.question?.prompt?.toLowerCase().includes('email') ||
                   a.question?.text?.toLowerCase().includes('email')
                 );
+                
+                // Handle case where session has no answers (shouldn't happen but safeguard)
+                const name = nameAnswer?.value || (lead.answers.length === 0 ? "No Answers" : "N/A");
+                const email = emailAnswer?.value || (lead.answers.length === 0 ? "No Answers" : "N/A");
+                
                 return (
                   <tr key={lead.id} className="hover:bg-gray-50 transition-colors duration-150">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-mono text-gray-900">{lead.id.slice(0, 8)}...</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{nameAnswer?.value || "N/A"}</div>
-                      <div className="text-xs text-gray-500">{emailAnswer?.value || "No email"}</div>
+                      <div className="text-sm text-gray-900">{name}</div>
+                      <div className="text-xs text-gray-500">{email}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">{new Date(lead.createdAt).toLocaleDateString()}</div>
@@ -668,8 +673,19 @@ export default function LeadsPage() {
               </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {getFilteredLeads().map((lead) => {
-                const nameAnswer = lead.answers.find(a => a.question.type === "text");
-                const emailAnswer = lead.answers.find(a => a.question.type === "email");
+                const nameAnswer = lead.answers.find(a => 
+                  a.question?.prompt?.toLowerCase().includes('name') ||
+                  a.question?.text?.toLowerCase().includes('name')
+                );
+                const emailAnswer = lead.answers.find(a => 
+                  a.question?.prompt?.toLowerCase().includes('email') ||
+                  a.question?.text?.toLowerCase().includes('email')
+                );
+                
+                // Handle case where session has no answers (shouldn't happen but safeguard)
+                const name = nameAnswer?.value || (lead.answers.length === 0 ? "No Answers" : "N/A");
+                const email = emailAnswer?.value || (lead.answers.length === 0 ? "No Answers" : "N/A");
+                
                 return (
                   <tr 
                     key={lead.id} 
@@ -696,10 +712,10 @@ export default function LeadsPage() {
                       {getQuizTypeDisplayName(lead.quizType)}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
-                      {nameAnswer?.value || "N/A"}
+                      {name}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
-                      {emailAnswer?.value || "N/A"}
+                      {email}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
                       {lead.answers.length}
