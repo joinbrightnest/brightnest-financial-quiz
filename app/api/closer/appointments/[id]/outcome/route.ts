@@ -65,6 +65,34 @@ export async function PUT(
       }
     }
 
+    // Calculate affiliate commission if appointment has affiliate code
+    let affiliateCommissionAmount = null;
+    if (saleValue && outcome === 'converted' && appointment.affiliateCode) {
+      const affiliate = await prisma.affiliate.findUnique({
+        where: { referralCode: appointment.affiliateCode }
+      });
+      
+      if (affiliate) {
+        affiliateCommissionAmount = parseFloat(saleValue) * affiliate.commissionRate;
+        
+        // Update affiliate's total commission
+        await prisma.affiliate.update({
+          where: { id: affiliate.id },
+          data: {
+            totalCommission: { increment: affiliateCommissionAmount }
+          }
+        });
+        
+        console.log('💰 Affiliate commission calculated:', {
+          affiliateCode: appointment.affiliateCode,
+          affiliateName: affiliate.name,
+          saleValue: parseFloat(saleValue),
+          commissionRate: affiliate.commissionRate,
+          commissionAmount: affiliateCommissionAmount
+        });
+      }
+    }
+
     // Update appointment
     const updatedAppointment = await prisma.appointment.update({
       where: { id: id },
@@ -115,6 +143,8 @@ export async function PUT(
           outcome,
           saleValue,
           commissionAmount,
+          affiliateCode: appointment.affiliateCode,
+          affiliateCommissionAmount,
           customerName: appointment.customerName,
         },
         ipAddress: request.headers.get('x-forwarded-for') || 

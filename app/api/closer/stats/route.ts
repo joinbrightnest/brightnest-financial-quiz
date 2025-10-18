@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
     const actualTotalConversions = appointments.filter(apt => apt.outcome === 'converted').length;
     const actualTotalRevenue = appointments
       .filter(apt => apt.outcome === 'converted' && apt.saleValue)
-      .reduce((sum, apt) => sum + (apt.saleValue || 0), 0);
+      .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
     const actualConversionRate = actualTotalCalls > 0 ? (actualTotalConversions / actualTotalCalls) * 100 : 0;
 
     // Ensure numeric fields have default values
