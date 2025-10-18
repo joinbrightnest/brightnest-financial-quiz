@@ -64,14 +64,17 @@ export default function ResultsClientComponent({ result }: { result: Result }) {
 
   return (
     <div className="min-h-screen flex flex-col" style={{backgroundColor: '#faf8f0'}}>
-      {/* Top Bar with BrightNest Logo */}
-      <div className="w-full bg-[#28303B] px-6 py-6 relative">
-        <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
-          <div className="inline-flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-teal-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">B</span>
-            </div>
-            <span className="text-xl font-bold text-white font-serif">BrightNest</span>
+      {/* Header */}
+      <div className="bg-[#333333] py-6 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          {/* Logo */}
+          <div className="mb-4">
+            <Link href="/" className="flex-shrink-0">
+              <h1 className="text-white text-3xl font-bold tracking-wide">
+                <span className="font-sans">BRIGHT</span>
+                <span className="font-serif italic ml-2">Nest</span>
+              </h1>
+            </Link>
           </div>
         </div>
       </div>

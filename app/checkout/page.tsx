@@ -75,34 +75,16 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+      <div className="bg-[#333333] py-6 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          {/* Logo */}
+          <div className="mb-4">
             <Link href="/" className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-gray-900">
-                BrightNest
+              <h1 className="text-white text-3xl font-bold tracking-wide">
+                <span className="font-sans">BRIGHT</span>
+                <span className="font-serif italic ml-2">Nest</span>
               </h1>
             </Link>
-            <nav className="hidden md:flex space-x-8">
-              <Link
-                href="/quiz"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium"
-              >
-                Take Quiz
-              </Link>
-              <Link
-                href="/affiliates/login"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium"
-              >
-                Affiliates
-              </Link>
-              <Link
-                href="/book-call"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium"
-              >
-                Book Call
-              </Link>
-            </nav>
           </div>
         </div>
       </div>
