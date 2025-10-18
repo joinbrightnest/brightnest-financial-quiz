@@ -6,8 +6,8 @@ import Link from "next/link";
 import Script from "next/script";
 
 // Whop Plan IDs - Replace with your actual plan IDs
-const BASE_PLAN_ID = "plan_base123"; // Replace with your base plan ID (e.g., $97)
-const BUNDLE_PLAN_ID = "plan_bundle456"; // Replace with your bundle plan ID (e.g., $197)
+const BASE_PLAN_ID = "basic-plan-a5-ad15"; // Your $100 basic plan
+const BUNDLE_PLAN_ID = "top-plan-dd"; // Your $200 top plan
 
 interface UserData {
   email?: string;
@@ -259,9 +259,9 @@ export default function CheckoutPage() {
                             Get a 30-minute one-on-one consultation with our financial expert to discuss your personalized roadmap.
                           </p>
                           <div className="flex items-center space-x-2">
-                            <span className="text-sm text-gray-500 line-through">$197</span>
+                            <span className="text-sm text-gray-500 line-through">$200</span>
                             <span className="text-xl font-bold text-green-600">$100</span>
-                            <span className="text-sm text-gray-500">(Save $97)</span>
+                            <span className="text-sm text-gray-500">(Save $100)</span>
                           </div>
                         </div>
                         <div className="text-right">
