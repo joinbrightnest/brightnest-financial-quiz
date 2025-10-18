@@ -126,12 +126,17 @@ export async function GET(request: NextRequest) {
 }
 
 function generateDailyStatsFromRealData(clicks: any[], conversions: any[], dateRange: string) {
-  const days = dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : dateRange === "90d" ? 90 : 365;
+  const days = dateRange === "1d" ? 1 : dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : dateRange === "90d" ? 90 : 365;
   const stats = [];
   
   for (let i = days - 1; i >= 0; i--) {
     const date = new Date();
-    date.setDate(date.getDate() - i);
+    if (dateRange === "1d") {
+      // For 24 hours, show hourly data
+      date.setHours(date.getHours() - i);
+    } else {
+      date.setDate(date.getDate() - i);
+    }
     const dateStr = date.toISOString().split('T')[0];
     
     const dayClicks = clicks.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);

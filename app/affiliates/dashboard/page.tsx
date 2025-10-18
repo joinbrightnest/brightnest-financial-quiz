@@ -223,11 +223,10 @@ export default function AffiliateDashboard() {
             onChange={(e) => setDateRange(e.target.value)}
             className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
           >
-            <option value="7d">Last 7 days</option>
-            <option value="30d">Last 30 days</option>
-            <option value="90d">Last 90 days</option>
-            <option value="1y">Last year</option>
-            <option value="all">All time</option>
+            <option value="1d">24 hours</option>
+            <option value="7d">7 days</option>
+            <option value="30d">30 days</option>
+            <option value="custom">Custom</option>
           </select>
           
           <button
