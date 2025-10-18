@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import AdminAffiliatePerformanceChart from "../../components/AdminAffiliatePerformanceChart";
 
 interface AffiliateData {
   id: string;
@@ -228,6 +229,7 @@ export default function AffiliatePerformancePage() {
                   onChange={(e) => setDateRange(e.target.value)}
                   className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
                 >
+                  <option value="1d">24 hours</option>
                   <option value="7d">Last 7 days</option>
                   <option value="30d">Last 30 days</option>
                   <option value="90d">Last 90 days</option>
@@ -514,27 +516,10 @@ export default function AffiliatePerformancePage() {
             {/* Premium Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Performance Chart */}
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 hover:shadow-lg transition-all duration-300">
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                    </svg>
-                  </div>
-                  <h4 className="text-xl font-bold text-slate-900">Performance Over Time</h4>
-                </div>
-                <div className="h-64 flex items-center justify-center bg-gradient-to-br from-slate-50 to-white rounded-xl border border-slate-200">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                      </svg>
-                    </div>
-                    <p className="text-slate-900 font-semibold">Performance chart</p>
-                    <p className="text-sm text-slate-600 font-medium">{stats.dailyStats.length} data points</p>
-                  </div>
-                </div>
-              </div>
+              <AdminAffiliatePerformanceChart 
+                dailyStats={stats.dailyStats}
+                loading={loading}
+              />
 
               {/* Conversion Funnel */}
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 hover:shadow-lg transition-all duration-300">
