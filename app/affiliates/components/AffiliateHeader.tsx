@@ -46,29 +46,18 @@ export default function AffiliateHeader({ affiliate, onLogout }: AffiliateHeader
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo and Title */}
+        <div className="flex items-center py-4">
+          {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0">
               <h1 className="text-2xl font-bold text-gray-900">
                 BrightNest
               </h1>
             </Link>
-            <div className="ml-4">
-              <p className="text-sm text-gray-500">
-                Affiliate Dashboard
-              </p>
-            </div>
           </div>
 
-          {/* Navigation */}
-          <nav className="hidden md:flex space-x-8">
-            <Link
-              href="/affiliates/dashboard"
-              className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium"
-            >
-              Dashboard
-            </Link>
+          {/* Navigation - Centered */}
+          <nav className="hidden md:flex space-x-8 flex-1 justify-center">
             <Link
               href="/affiliates/links"
               className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium"
