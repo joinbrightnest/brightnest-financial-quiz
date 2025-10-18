@@ -155,7 +155,7 @@ export default function QuizEditor({ params }: QuizEditorProps) {
       if (!hasInitiallyLoaded.current) {
         setIsLoading(true);
       }
-      const response = await fetch(`/api/admin/quiz-questions?quizType=${quizType}`, {
+      const response = await fetch(`/api/admin/quiz-questions?quizType=${quizType}&t=${Date.now()}`, {
         credentials: 'include'
       });
       const data = await response.json();
