@@ -36,7 +36,30 @@ export default function AffiliatePerformanceTable({ data, loading, onRefresh }: 
   const totalPages = Math.ceil(data.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentData = data.slice(startIndex, endIndex);
+  
+  // Sort the data before slicing
+  const sortedData = [...data].sort((a, b) => {
+    const aValue = a[sortField];
+    const bValue = b[sortField];
+    
+    // Handle different data types
+    if (typeof aValue === 'string' && typeof bValue === 'string') {
+      return sortDirection === 'asc' 
+        ? aValue.localeCompare(bValue)
+        : bValue.localeCompare(aValue);
+    }
+    
+    if (typeof aValue === 'number' && typeof bValue === 'number') {
+      return sortDirection === 'asc' 
+        ? aValue - bValue
+        : bValue - aValue;
+    }
+    
+    // Fallback for other types
+    return 0;
+  });
+  
+  const currentData = sortedData.slice(startIndex, endIndex);
 
   const handleSort = (field: keyof AffiliatePerformance) => {
     if (sortField === field) {
@@ -45,6 +68,8 @@ export default function AffiliatePerformanceTable({ data, loading, onRefresh }: 
       setSortField(field);
       setSortDirection("desc");
     }
+    // Reset to first page when sorting changes
+    setCurrentPage(1);
   };
 
   const getTierBadge = (tier: string) => {
