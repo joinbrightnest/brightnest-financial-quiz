@@ -8,6 +8,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [quizResult, setQuizResult] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [personalizedCopy, setPersonalizedCopy] = useState<any>(null);
 
   useEffect(() => {
     // Get quiz result from localStorage
@@ -21,6 +22,19 @@ export default function CheckoutPage() {
         console.error('Error parsing quiz result:', error);
       }
     }
+
+    // Get pre-generated AI copy from localStorage
+    const storedCopy = localStorage.getItem('personalizedCopy');
+    if (storedCopy) {
+      try {
+        const copy = JSON.parse(storedCopy);
+        setPersonalizedCopy(copy);
+        console.log('Using pre-generated AI copy from localStorage');
+      } catch (parseError) {
+        console.log('Error parsing stored copy:', parseError);
+      }
+    }
+
     setIsLoading(false);
   }, []);
 
@@ -33,12 +47,26 @@ export default function CheckoutPage() {
     router.push('/quiz/financial-profile');
   };
 
+  // Use AI-generated copy if available, otherwise fallback
+  const copy = personalizedCopy || {
+    header: {
+      title: "Your Financial Archetype",
+      subtitle: `You're a ${quizResult?.archetype || 'Financial Explorer'} — based on your answers, this is your financial personality type.`
+    },
+    validation: "You have unique financial strengths and opportunities for growth.",
+    reflection: "Your financial patterns reveal important insights about your money mindset.",
+    problem_realization: "Your financial journey has unique challenges to overcome.",
+    hope_and_solution: "With the right guidance, you can achieve your financial goals and build lasting wealth.",
+  };
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+      <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading...</p>
+          </div>
         </div>
       </div>
     );
@@ -82,13 +110,46 @@ export default function CheckoutPage() {
       {/* Main Content */}
       <div className="px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-4xl mx-auto">
-          {/* Title */}
+          {/* Archetype Header */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-serif text-gray-900 mb-4">
-              Complete Your Financial Assessment
+            <p className="text-gray-500 text-sm mb-2">{copy.header.title}</p>
+            <h1 className="text-4xl md:text-5xl font-serif text-blue-600 mb-4">
+              {quizResult?.archetype || 'Financial Explorer'}
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              You're on the right track! Complete your personalized financial plan to unlock your full potential.
+              {copy.header.subtitle}
+            </p>
+          </div>
+
+          {/* Recognition Section */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Recognition</h2>
+            <p className="text-lg text-gray-700 leading-relaxed">
+              {copy.validation}
+            </p>
+          </div>
+
+          {/* Your Financial Patterns Section */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Your Financial Patterns</h2>
+            <p className="text-lg text-gray-700 leading-relaxed">
+              {copy.reflection}
+            </p>
+          </div>
+
+          {/* Hidden Challenge Section */}
+          <div className="mb-12 bg-yellow-50 rounded-xl p-8 border border-yellow-200">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Hidden Challenge</h2>
+            <p className="text-lg text-gray-700 leading-relaxed">
+              {copy.problem_realization}
+            </p>
+          </div>
+
+          {/* Hope and Solution Section */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-900 mb-6">Hope and Solution</h2>
+            <p className="text-lg text-gray-700 leading-relaxed">
+              {copy.hope_and_solution}
             </p>
           </div>
 

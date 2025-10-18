@@ -63,7 +63,7 @@ export default function ResultsClientComponent({ result }: { result: Result }) {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{backgroundColor: '#faf8f0'}}>
       {/* Top Bar with BrightNest Logo */}
       <div className="w-full bg-[#28303B] px-6 py-6 relative">
         <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
