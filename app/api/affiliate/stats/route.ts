@@ -104,7 +104,7 @@ export async function GET(request: NextRequest) {
     const totalLeads = leadData.totalLeads;
     const totalBookings = affiliateWithData.conversions.filter(c => c.conversionType === "booking").length;
     const totalSales = affiliateWithData.conversions.filter(c => c.conversionType === "sale").length;
-    const totalCommission = affiliateWithData.conversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
+    const totalCommission = affiliate.totalCommission || 0; // Use database field instead of calculating from conversions
     const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
     const averageSaleValue = totalSales > 0 ? totalCommission / totalSales : 0;
 
