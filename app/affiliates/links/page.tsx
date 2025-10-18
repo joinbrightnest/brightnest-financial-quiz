@@ -124,11 +124,11 @@ export default function AffiliateLinksPage() {
                     type="text"
                     value={affiliate ? `https://joinbrightnest.com/${affiliate.referralCode}` : "Loading..."}
                     readOnly
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md bg-gray-50 text-sm"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md bg-gray-50 text-sm text-black"
                   />
                   <button
                     onClick={() => affiliate && navigator.clipboard.writeText(`https://joinbrightnest.com/${affiliate.referralCode}`)}
-                    className="px-3 py-2 bg-gray-100 border border-l-0 border-gray-300 rounded-r-md hover:bg-gray-200"
+                    className="px-3 py-2 bg-gray-100 border border-l-0 border-gray-300 rounded-r-md hover:bg-gray-200 text-black"
                   >
                     Copy
                   </button>
