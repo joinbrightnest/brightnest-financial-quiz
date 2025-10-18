@@ -282,7 +282,7 @@ export default function CloserDashboard() {
                 <div className="ml-5 w-0 flex-1">
                   <dl>
                     <dt className="text-sm font-medium text-gray-500 truncate">Conversion Rate</dt>
-                    <dd className="text-lg font-medium text-gray-900">{typeof closer.conversionRate === 'number' ? (closer.conversionRate * 100).toFixed(1) : '0.0'}%</dd>
+                    <dd className="text-lg font-medium text-gray-900">{typeof closer.conversionRate === 'number' ? closer.conversionRate.toFixed(1) : '0.0'}%</dd>
                   </dl>
                 </div>
               </div>
