@@ -60,7 +60,12 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
   const chartData = {
     labels: dailyStats.map(day => {
       const date = new Date(day.date);
-      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      // Check if this is hourly data (contains time)
+      if (day.date.includes('T')) {
+        return date.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
+      } else {
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }
     }),
     datasets: [
       {
@@ -133,7 +138,7 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
           Performance Over Time
         </h3>
         <div className="text-sm text-gray-900">
-          {dailyStats.length} days
+          {dailyStats.length === 24 ? '24 hours' : `${dailyStats.length} days`}
         </div>
       </div>
 

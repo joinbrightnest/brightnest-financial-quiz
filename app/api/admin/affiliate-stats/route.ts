@@ -126,32 +126,59 @@ export async function GET(request: NextRequest) {
 }
 
 function generateDailyStatsFromRealData(clicks: any[], conversions: any[], dateRange: string) {
-  const days = dateRange === "1d" ? 1 : dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : dateRange === "90d" ? 90 : 365;
   const stats = [];
   
-  for (let i = days - 1; i >= 0; i--) {
-    const date = new Date();
-    if (dateRange === "1d") {
-      // For 24 hours, show hourly data
+  if (dateRange === "1d") {
+    // For 24 hours, show hourly data for the last 24 hours
+    for (let i = 23; i >= 0; i--) {
+      const date = new Date();
       date.setHours(date.getHours() - i);
-    } else {
-      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      const hourStr = date.getHours().toString().padStart(2, '0');
+      
+      const hourClicks = clicks.filter(c => {
+        const clickDate = c.createdAt.toISOString().split('T')[0];
+        const clickHour = c.createdAt.getHours().toString().padStart(2, '0');
+        return clickDate === dateStr && clickHour === hourStr;
+      });
+      
+      const hourConversions = conversions.filter(c => {
+        const convDate = c.createdAt.toISOString().split('T')[0];
+        const convHour = c.createdAt.getHours().toString().padStart(2, '0');
+        return convDate === dateStr && convHour === hourStr;
+      });
+      
+      stats.push({
+        date: `${dateStr}T${hourStr}:00:00.000Z`, // Include hour for proper sorting
+        clicks: hourClicks.length,
+        leads: hourConversions.filter(c => c.status === "confirmed" && c.conversionType === "quiz_completion").length,
+        bookedCalls: hourConversions.filter(c => c.conversionType === "booking").length,
+        commission: hourConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0),
+      });
     }
-    const dateStr = date.toISOString().split('T')[0];
+  } else {
+    // For other timeframes, show daily data
+    const days = dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : dateRange === "90d" ? 90 : 365;
     
-    const dayClicks = clicks.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
-    const dayConversions = conversions.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
-    const dayBookings = dayConversions.filter(c => c.conversionType === "booking");
-    const daySales = dayConversions.filter(c => c.conversionType === "sale");
-    const dayCommission = dayConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
-    
-    stats.push({
-      date: dateStr,
-      clicks: dayClicks.length,
-      leads: dayConversions.filter(c => c.status === "confirmed" && c.conversionType === "quiz_completion").length,
-      bookedCalls: dayConversions.filter(c => c.conversionType === "booking").length,
-      commission: dayCommission,
-    });
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      
+      const dayClicks = clicks.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
+      const dayConversions = conversions.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
+      const dayBookings = dayConversions.filter(c => c.conversionType === "booking");
+      const daySales = dayConversions.filter(c => c.conversionType === "sale");
+      const dayCommission = dayConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
+      
+      stats.push({
+        date: dateStr,
+        clicks: dayClicks.length,
+        leads: dayConversions.filter(c => c.status === "confirmed" && c.conversionType === "quiz_completion").length,
+        bookedCalls: dayConversions.filter(c => c.conversionType === "booking").length,
+        commission: dayCommission,
+      });
+    }
   }
   
   return stats;
