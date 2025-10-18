@@ -559,18 +559,6 @@ export default function AdminDashboard() {
                 
               </div>
 
-              <div>
-                <label className="block text-xs font-medium text-gray-700 mb-2">Comparison</label>
-                <button
-                  onClick={() => setShowComparison(!showComparison)}
-                  className={`w-full px-3 py-2 rounded-lg text-sm transition-colors ${
-                    showComparison 
-                      ? 'bg-blue-600 text-white' 
-                      : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
-                  }`}
-                >
-                  {showComparison ? 'Hide' : 'Show'} Previous Period
-                </button>
               </div>
             </div>
           </div>
@@ -750,13 +738,6 @@ export default function AdminDashboard() {
                         {stats.visitors}
                       </p>
                       <p className="text-xs text-gray-500">Total quiz starters</p>
-                      {showComparison && (
-                        <div className="flex items-center mt-2">
-                          <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full font-medium">
-                            ▲ +12%
-                          </span>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -776,13 +757,6 @@ export default function AdminDashboard() {
                         {stats.partialSubmissions}
                       </p>
                       <p className="text-xs text-gray-500">Started but didn&apos;t complete</p>
-                      {showComparison && (
-                        <div className="flex items-center mt-2">
-                          <span className="text-xs text-red-600 bg-red-50 px-2 py-1 rounded-full font-medium">
-                            ▼ +8%
-                          </span>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -802,13 +776,6 @@ export default function AdminDashboard() {
                         {stats.averageTimeMs > 0 ? formatDuration(stats.averageTimeMs) : '0s'}
                       </p>
                       <p className="text-xs text-gray-500">Time to complete quiz</p>
-                      {showComparison && (
-                        <div className="flex items-center mt-2">
-                          <span className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full font-medium">
-                            ▲ +12%
-                          </span>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -828,13 +795,6 @@ export default function AdminDashboard() {
                         {stats.leadsCollected}
                       </p>
                       <p className="text-xs text-gray-500">Completed the full quiz</p>
-                      {showComparison && (
-                        <div className="flex items-center mt-2">
-                          <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full font-medium">
-                            ▲ +15%
-                          </span>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -863,13 +823,6 @@ export default function AdminDashboard() {
                         {stats.completionRate}%
                       </p>
                       <p className="text-xs text-gray-500">Quiz completion rate</p>
-                      {showComparison && (
-                        <div className="flex items-center mt-2">
-                          <span className="text-xs text-red-600 bg-red-50 px-2 py-1 rounded-full font-medium">
-                            ▼ -8%
-                          </span>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
