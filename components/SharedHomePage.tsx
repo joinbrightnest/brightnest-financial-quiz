@@ -289,7 +289,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
             <div className="flex space-x-4 text-sm">
               <Link href={getLink("/book-call")} className="text-gray-400 hover:text-white underline">Contact Us</Link>
               <span className="text-gray-600">|</span>
-              <Link href={getLink("/quiz/financial-profile")} className="text-gray-400 hover:text-white underline">Start Quiz</Link>
+              <Link href="/terms" className="text-gray-400 hover:text-white underline">Terms and Conditions</Link>
             </div>
           </div>
         </div>
