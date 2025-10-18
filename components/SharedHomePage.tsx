@@ -290,6 +290,8 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
               <Link href={getLink("/book-call")} className="text-gray-400 hover:text-white underline">Contact Us</Link>
               <span className="text-gray-600">|</span>
               <Link href="/terms" className="text-gray-400 hover:text-white underline">Terms and Conditions</Link>
+              <span className="text-gray-600">|</span>
+              <Link href="/privacy" className="text-gray-400 hover:text-white underline">Privacy Policy</Link>
             </div>
           </div>
         </div>
