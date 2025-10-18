@@ -49,13 +49,32 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Calculate actual stats from appointments (single source of truth)
+    const appointments = await prisma.appointment.findMany({
+      where: { closerId: decoded.closerId },
+      select: {
+        status: true,
+        outcome: true,
+        saleValue: true,
+        commissionAmount: true
+      }
+    });
+
+    // Calculate real stats from appointments
+    const actualTotalCalls = appointments.length;
+    const actualTotalConversions = appointments.filter(apt => apt.outcome === 'converted').length;
+    const actualTotalRevenue = appointments
+      .filter(apt => apt.outcome === 'converted' && apt.saleValue)
+      .reduce((sum, apt) => sum + (apt.saleValue || 0), 0);
+    const actualConversionRate = actualTotalCalls > 0 ? (actualTotalConversions / actualTotalCalls) * 100 : 0;
+
     // Ensure numeric fields have default values
     const closerWithDefaults = {
       ...closer,
-      totalCalls: closer.totalCalls || 0,
-      totalConversions: closer.totalConversions || 0,
-      totalRevenue: closer.totalRevenue || 0,
-      conversionRate: closer.conversionRate || 0,
+      totalCalls: actualTotalCalls,
+      totalConversions: actualTotalConversions,
+      totalRevenue: actualTotalRevenue,
+      conversionRate: actualConversionRate,
     };
 
     console.log('📊 Fresh closer stats fetched:', {
