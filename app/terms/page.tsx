@@ -39,7 +39,7 @@ export default function TermsPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="px-4 sm:px-6 lg:px-8 py-12">
         {/* Title */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-serif text-gray-900 mb-4">
@@ -49,7 +49,7 @@ export default function TermsPage() {
 
         {/* Content */}
         <div className="prose prose-lg max-w-none">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 md:p-12">
+          <div className="bg-white p-8 md:p-12">
             <div className="space-y-8">
               {/* Introduction */}
               <section>
