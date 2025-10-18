@@ -117,10 +117,7 @@ export default function AdminDashboard() {
     
     try {
       const quizTypeParam = selectedQuizType === 'all' ? '' : `&quizType=${selectedQuizType}`;
-      const customDateParams = dateRange === 'custom' && customStartDate && customEndDate 
-        ? `&startDate=${customStartDate}&endDate=${customEndDate}` 
-        : '';
-      const response = await fetch(`/api/admin/basic-stats?dateRange=${dateRange}${quizTypeParam}${customDateParams}`, {
+      const response = await fetch(`/api/admin/basic-stats?dateRange=${dateRange}${quizTypeParam}`, {
         headers: {
           "Content-Type": "application/json"
         }
@@ -141,7 +138,7 @@ export default function AdminDashboard() {
         setIsLoading(false);
       }
     }
-  }, [dateRange, selectedQuizType, customStartDate, customEndDate]);
+  }, [dateRange, selectedQuizType]);
 
   useEffect(() => {
     fetchStats(true); // Pass true to indicate this is a timeframe change
@@ -307,18 +304,7 @@ export default function AdminDashboard() {
         case '1y':
           return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
         case 'custom':
-          // For custom ranges, show date and time if it's a short range, otherwise just date
-          const startDate = new Date(customStartDate);
-          const endDate = new Date(customEndDate);
-          const diffDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-          
-          if (diffDays <= 7) {
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-          } else if (diffDays <= 30) {
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-          } else {
-            return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-          }
+          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         default:
           return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       }
@@ -571,28 +557,6 @@ export default function AdminDashboard() {
                   <option value="custom">Custom range</option>
                 </select>
                 
-                {dateRange === 'custom' && (
-                  <div className="mt-3 space-y-2">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">Start Date</label>
-                      <input
-                        type="date"
-                        value={customStartDate}
-                        onChange={(e) => setCustomStartDate(e.target.value)}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-600 mb-1">End Date</label>
-                      <input
-                        type="date"
-                        value={customEndDate}
-                        onChange={(e) => setCustomEndDate(e.target.value)}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
-                  </div>
-                )}
               </div>
 
               <div>
