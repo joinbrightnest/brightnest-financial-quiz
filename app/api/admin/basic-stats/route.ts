@@ -166,8 +166,8 @@ export async function GET(request: Request) {
       },
     });
 
-    // Get all leads (completed sessions - anyone who completed the quiz is a lead)
-    const allLeads = await prisma.quizSession.findMany({
+    // Get all completed sessions first
+    const allCompletedSessions = await prisma.quizSession.findMany({
       where: {
         createdAt: dateFilter,
         status: "completed",
@@ -183,6 +183,21 @@ export async function GET(request: Request) {
       },
       orderBy: { createdAt: "desc" },
       take: 50,
+    });
+
+    // Filter to only include sessions that have name and email (actual leads)
+    // A lead is someone who completed the quiz AND provided contact information
+    const allLeads = allCompletedSessions.filter(session => {
+      const nameAnswer = session.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes('name') ||
+        a.question?.text?.toLowerCase().includes('name')
+      );
+      const emailAnswer = session.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes('email') ||
+        a.question?.text?.toLowerCase().includes('email')
+      );
+      
+      return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
     });
 
     // Get affiliate information for leads that have affiliate codes
@@ -249,7 +264,7 @@ export async function GET(request: Request) {
       _count: { archetype: true },
     });
 
-    // Calculate completion rate (using leads as completed sessions)
+    // Calculate completion rate (using actual leads as completed sessions)
     const completedSessions = allLeads.length;
     const completionRate = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;
 

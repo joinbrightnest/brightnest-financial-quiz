@@ -142,10 +142,6 @@ export async function POST(request: NextRequest) {
         a.question?.text?.toLowerCase().includes('email')
       );
       
-      // Handle case where session has no answers (shouldn't happen but safeguard)
-      const name = nameAnswer?.value || (lead.answers.length === 0 ? "No Answers" : "N/A");
-      const email = emailAnswer?.value || (lead.answers.length === 0 ? "No Answers" : "N/A");
-      
       const row: string[] = [];
       
       // Add fields based on export options
@@ -156,10 +152,10 @@ export async function POST(request: NextRequest) {
         row.push(lead.quizType);
       }
       if (exportOptions.selectedFields.includes('name') && exportOptions.includeContactInfo) {
-        row.push(name);
+        row.push(nameAnswer?.value || '');
       }
       if (exportOptions.selectedFields.includes('email') && exportOptions.includeContactInfo) {
-        row.push(email);
+        row.push(emailAnswer?.value || '');
       }
       if (exportOptions.selectedFields.includes('status')) {
         row.push(lead.status);

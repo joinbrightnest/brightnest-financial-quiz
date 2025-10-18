@@ -235,14 +235,10 @@ export default function AdminDashboard() {
           a.question?.text?.toLowerCase().includes('email')
         );
         
-        // Handle case where session has no answers (shouldn't happen but safeguard)
-        const name = nameAnswer?.value || (lead.answers.length === 0 ? "No Answers" : "N/A");
-        const email = emailAnswer?.value || (lead.answers.length === 0 ? "No Answers" : "N/A");
-        
         return [
           lead.id,
-          name,
-          email,
+          nameAnswer?.value || "N/A",
+          emailAnswer?.value || "N/A",
           new Date(lead.createdAt).toLocaleDateString(),
           lead.status === "completed" ? "Completed" : "Partial",
           lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A",
@@ -1375,20 +1371,16 @@ export default function AdminDashboard() {
                           a.question?.text?.toLowerCase().includes('email')
                         );
                         
-                        // Handle case where session has no answers (shouldn't happen but safeguard)
-                        const name = nameAnswer?.value || (lead.answers.length === 0 ? "No Answers" : "N/A");
-                        const email = emailAnswer?.value || (lead.answers.length === 0 ? "No Answers" : "N/A");
-                        
                         return (
                           <tr key={lead.id}>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
                               {lead.id.slice(0, 8)}...
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {name}
+                              {nameAnswer?.value || "N/A"}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {email}
+                              {emailAnswer?.value || "N/A"}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               {new Date(lead.createdAt).toLocaleDateString()}
