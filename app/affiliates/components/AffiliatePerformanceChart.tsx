@@ -98,15 +98,7 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: 'top' as const,
-        onClick: (e: any, legendItem: any) => {
-          const index = legendItem.datasetIndex;
-          const metric = index === 0 ? 'clicks' : index === 1 ? 'leads' : 'bookedCalls';
-          setVisibleMetrics(prev => ({
-            ...prev,
-            [metric]: !prev[metric as keyof typeof prev]
-          }));
-        },
+        display: false, // Hide the default Chart.js legend
       },
       title: {
         display: false,
