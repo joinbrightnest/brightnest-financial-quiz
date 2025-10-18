@@ -369,6 +369,7 @@ export default function AdminDashboard() {
               onClick={() => {
                 setShowMainDashboard(true);
                 setShowCEOAnalytics(false);
+                setShowCloserManagement(false);
               }}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
                 showMainDashboard 
