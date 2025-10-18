@@ -12,6 +12,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { useState } from "react";
 
 // Register Chart.js components
 ChartJS.register(
@@ -28,7 +29,7 @@ interface DailyStats {
   date: string;
   clicks: number;
   leads: number;
-  sales: number;
+  bookedCalls: number;
   commission: number;
 }
 
@@ -38,6 +39,12 @@ interface AffiliatePerformanceChartProps {
 }
 
 export default function AffiliatePerformanceChart({ dailyStats, loading }: AffiliatePerformanceChartProps) {
+  const [visibleMetrics, setVisibleMetrics] = useState({
+    clicks: true,
+    leads: true,
+    bookedCalls: true,
+  });
+
   if (loading) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -63,14 +70,25 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
         tension: 0.4,
         fill: false,
+        hidden: !visibleMetrics.clicks,
       },
       {
-        label: 'Sales',
-        data: dailyStats.map(day => day.sales),
+        label: 'Leads',
+        data: dailyStats.map(day => day.leads),
+        borderColor: 'rgb(168, 85, 247)',
+        backgroundColor: 'rgba(168, 85, 247, 0.1)',
+        tension: 0.4,
+        fill: false,
+        hidden: !visibleMetrics.leads,
+      },
+      {
+        label: 'Booked Calls',
+        data: dailyStats.map(day => day.bookedCalls || 0), // Use bookedCalls field
         borderColor: 'rgb(34, 197, 94)',
         backgroundColor: 'rgba(34, 197, 94, 0.1)',
         tension: 0.4,
         fill: false,
+        hidden: !visibleMetrics.bookedCalls,
       },
     ],
   };
@@ -81,6 +99,14 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
     plugins: {
       legend: {
         position: 'top' as const,
+        onClick: (e: any, legendItem: any) => {
+          const index = legendItem.datasetIndex;
+          const metric = index === 0 ? 'clicks' : index === 1 ? 'leads' : 'bookedCalls';
+          setVisibleMetrics(prev => ({
+            ...prev,
+            [metric]: !prev[metric as keyof typeof prev]
+          }));
+        },
       },
       title: {
         display: false,
@@ -94,6 +120,13 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
         },
       },
     },
+  };
+
+  const toggleMetric = (metric: keyof typeof visibleMetrics) => {
+    setVisibleMetrics(prev => ({
+      ...prev,
+      [metric]: !prev[metric]
+    }));
   };
 
   return (
@@ -112,23 +145,74 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
         </div>
       </div>
 
+      {/* Interactive Legend */}
+      <div className="flex items-center space-x-6 mb-4">
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => toggleMetric('clicks')}
+            className={`flex items-center space-x-2 px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+              visibleMetrics.clicks 
+                ? 'bg-blue-100 text-blue-700 border border-blue-200' 
+                : 'bg-gray-100 text-gray-500 border border-gray-200'
+            }`}
+          >
+            <div className={`w-3 h-3 rounded-full ${visibleMetrics.clicks ? 'bg-blue-500' : 'bg-gray-400'}`}></div>
+            <span>Clicks</span>
+          </button>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => toggleMetric('leads')}
+            className={`flex items-center space-x-2 px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+              visibleMetrics.leads 
+                ? 'bg-purple-100 text-purple-700 border border-purple-200' 
+                : 'bg-gray-100 text-gray-500 border border-gray-200'
+            }`}
+          >
+            <div className={`w-3 h-3 rounded-full ${visibleMetrics.leads ? 'bg-purple-500' : 'bg-gray-400'}`}></div>
+            <span>Leads</span>
+          </button>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => toggleMetric('bookedCalls')}
+            className={`flex items-center space-x-2 px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+              visibleMetrics.bookedCalls 
+                ? 'bg-green-100 text-green-700 border border-green-200' 
+                : 'bg-gray-100 text-gray-500 border border-gray-200'
+            }`}
+          >
+            <div className={`w-3 h-3 rounded-full ${visibleMetrics.bookedCalls ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+            <span>Booked Calls</span>
+          </button>
+        </div>
+      </div>
+
       <div className="h-64">
         <Line data={chartData} options={chartOptions} />
       </div>
 
       {/* Mini Stats */}
-      <div className="mt-6 grid grid-cols-2 gap-4">
+      <div className="mt-6 grid grid-cols-3 gap-4">
         <div className="bg-blue-50 rounded-lg p-4">
           <div className="text-2xl font-bold text-blue-600">
             {dailyStats.reduce((sum, day) => sum + day.clicks, 0)}
           </div>
           <div className="text-sm text-blue-800">Total Clicks</div>
         </div>
+        <div className="bg-purple-50 rounded-lg p-4">
+          <div className="text-2xl font-bold text-purple-600">
+            {dailyStats.reduce((sum, day) => sum + day.leads, 0)}
+          </div>
+          <div className="text-sm text-purple-800">Total Leads</div>
+        </div>
         <div className="bg-green-50 rounded-lg p-4">
           <div className="text-2xl font-bold text-green-600">
-            {dailyStats.reduce((sum, day) => sum + day.sales, 0)}
+            {dailyStats.reduce((sum, day) => sum + (day.bookedCalls || 0), 0)}
           </div>
-          <div className="text-sm text-green-800">Total Sales</div>
+          <div className="text-sm text-green-800">Booked Calls</div>
         </div>
       </div>
     </motion.div>

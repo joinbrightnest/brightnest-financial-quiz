@@ -149,7 +149,7 @@ function generateDailyStatsFromRealData(clicks: any[], conversions: any[], dateR
       date: dateStr,
       clicks: dayClicks.length,
       leads: dayConversions.filter(c => c.status === "confirmed" && c.conversionType === "quiz_completion").length,
-      sales: daySales.length,
+      bookedCalls: dayConversions.filter(c => c.conversionType === "booking").length,
       commission: dayCommission,
     });
   }
