@@ -54,7 +54,7 @@ export default function AffiliatePayoutsPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Payout Method
                 </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm">
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-black">
                   <option>Stripe</option>
                   <option>PayPal</option>
                   <option>Wise</option>
