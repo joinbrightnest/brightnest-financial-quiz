@@ -108,15 +108,10 @@ export default function QuizPage({ params }: QuizPageProps) {
     
     const initializeQuiz = async () => {
       try {
-        // Get affiliate code from URL parameter or cookie
+        // Only use affiliate code if explicitly provided in URL
+        // Don't use cookie-based affiliate codes for direct website visits
         const urlParams = new URLSearchParams(window.location.search);
-        const affiliateFromUrl = urlParams.get('affiliate');
-        const affiliateFromCookie = document.cookie
-          .split('; ')
-          .find(row => row.startsWith('affiliate_ref='))
-          ?.split('=')[1];
-        
-        const affiliateCode = affiliateFromUrl || affiliateFromCookie;
+        const affiliateCode = urlParams.get('affiliate');
         
         // Run initialization in parallel for faster loading
         const [sessionResponse, countResponse] = await Promise.all([

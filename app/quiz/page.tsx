@@ -41,8 +41,17 @@ export default function QuizPage() {
   useEffect(() => {
     const initializeQuiz = async () => {
       try {
+        // Only use affiliate code if explicitly provided in URL
+        // Don't use cookie-based affiliate codes for direct website visits
+        const urlParams = new URLSearchParams(window.location.search);
+        const affiliateCode = urlParams.get('affiliate');
+        
         const response = await fetch("/api/quiz/start", {
           method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            affiliateCode: affiliateCode || undefined
+          }),
         });
         
         if (!response.ok) {
