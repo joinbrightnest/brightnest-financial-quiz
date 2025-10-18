@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     userScalable: false,
   },
   other: {
-    'permissions-policy': 'payment=*',
+    'permissions-policy': 'payment=(self "https://calendly.com" "https://*.calendly.com")',
   },
 };
 
