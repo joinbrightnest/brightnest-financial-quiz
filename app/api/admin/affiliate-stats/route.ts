@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
     console.log("Retrieved clicks:", clicks.length, "conversions:", conversions.length);
 
     const totalClicks = clicks.length;
-    const totalLeads = conversions.filter((c) => c.status === "confirmed").length;
+    const totalLeads = conversions.filter((c) => c.status === "confirmed" && c.conversionType === "quiz_completion").length;
     const totalBookings = conversions.filter((c) => c.conversionType === "booking").length;
     const totalSales = conversions.filter((c) => c.conversionType === "sale").length;
     const totalCommission = conversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
