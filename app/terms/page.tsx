@@ -49,8 +49,7 @@ export default function TermsPage() {
 
         {/* Content */}
         <div className="prose prose-lg max-w-none">
-          <div className="bg-white p-8 md:p-12">
-            <div className="space-y-8">
+          <div className="space-y-8">
               {/* Introduction */}
               <section>
                 <p className="text-gray-800 leading-relaxed mb-4">
@@ -298,7 +297,6 @@ export default function TermsPage() {
                   </p>
                 </div>
               </section>
-            </div>
           </div>
         </div>
 
