@@ -305,18 +305,12 @@ export async function GET(request: Request) {
     });
 
     // Get activity data based on date range
-    const getActivityData = async (dateRange: string, customStartDate?: string, customEndDate?: string) => {
+    const getActivityData = async (dateRange: string) => {
       const now = new Date();
       let startDate = new Date();
       let endDate = new Date();
 
-      if (dateRange === 'custom' && customStartDate && customEndDate) {
-        startDate = new Date(customStartDate);
-        endDate = new Date(customEndDate);
-        // Set end date to end of day
-        endDate.setHours(23, 59, 59, 999);
-      } else {
-        switch (dateRange) {
+      switch (dateRange) {
           case '1d':
             startDate.setHours(now.getHours() - 24);
             break;
@@ -333,16 +327,14 @@ export async function GET(request: Request) {
             startDate.setFullYear(now.getFullYear() - 1);
             break;
           default:
-            startDate.setDate(now.getDate() - 7);
+            startDate = new Date(0); // All time
         }
-      }
 
       // Get all sessions in the timeframe
       const sessions = await prisma.quizSession.findMany({
         where: {
           createdAt: {
             gte: startDate,
-            ...(dateRange === 'custom' && customStartDate && customEndDate ? { lte: endDate } : {})
           },
           ...(quizType ? { quizType } : {})
         },
@@ -427,7 +419,7 @@ export async function GET(request: Request) {
       });
     };
 
-    const dailyActivity = await getActivityData(dateRange, startDate || undefined, endDate || undefined);
+    const dailyActivity = await getActivityData(dateRange);
 
     // Calculate new metrics
     const visitors = totalSessions; // Total unique visitors who started the quiz
