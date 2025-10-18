@@ -94,12 +94,8 @@ export default function AdminDashboard() {
   const hasInitiallyLoaded = useRef(false);
   const [dateRange, setDateRange] = useState('7d');
   const [selectedQuizType, setSelectedQuizType] = useState<string>('financial-profile');
-  const [customStartDate, setCustomStartDate] = useState('');
-  const [customEndDate, setCustomEndDate] = useState('');
   const [showQuickLinks, setShowQuickLinks] = useState(false);
   const [showResetDropdown, setShowResetDropdown] = useState(false);
-  // const [timezone, setTimezone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
-  const [showComparison, setShowComparison] = useState(false);
   const [showCEOAnalytics, setShowCEOAnalytics] = useState(false);
   const [showMainDashboard, setShowMainDashboard] = useState(true);
   const [showCloserManagement, setShowCloserManagement] = useState(false);
