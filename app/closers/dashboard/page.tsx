@@ -45,22 +45,38 @@ export default function CloserDashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem('closerToken');
-    const closerData = localStorage.getItem('closerData');
     
-    if (!token || !closerData) {
+    if (!token) {
       router.push('/closers/login');
       return;
     }
 
-    try {
-      const parsedCloser = JSON.parse(closerData);
-      setCloser(parsedCloser);
-      fetchAppointments(token);
-    } catch (error) {
-      console.error('Error parsing closer data:', error);
-      router.push('/closers/login');
-    }
+    // Fetch fresh closer stats and appointments
+    fetchCloserStats(token);
+    fetchAppointments(token);
   }, [router]);
+
+  const fetchCloserStats = async (token: string) => {
+    try {
+      const response = await fetch('/api/closer/stats', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCloser(data.closer);
+        console.log('📊 Fresh closer stats loaded:', data.closer);
+      } else {
+        setError('Failed to load closer stats');
+      }
+    } catch (error) {
+      console.error('Error fetching closer stats:', error);
+      setError('Network error loading closer stats');
+    }
+  };
 
   const fetchAppointments = async (token: string) => {
     try {
@@ -111,8 +127,9 @@ export default function CloserDashboard() {
       });
 
       if (response.ok) {
-        // Refresh appointments
+        // Refresh both appointments and closer stats
         fetchAppointments(token);
+        fetchCloserStats(token);
         setShowOutcomeModal(false);
         setSelectedAppointment(null);
         setOutcomeData({ outcome: '', notes: '', saleValue: '' });
