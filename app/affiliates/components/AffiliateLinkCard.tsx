@@ -75,7 +75,7 @@ export default function AffiliateLinkCard({ affiliate, loading }: AffiliateLinkC
               type="text"
               value={affiliate.customLink}
               readOnly
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md bg-gray-50 text-sm font-mono text-gray-900"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md bg-gray-50 text-sm font-mono text-black"
             />
             <button
               onClick={copyToClipboard}
@@ -99,17 +99,17 @@ export default function AffiliateLinkCard({ affiliate, loading }: AffiliateLinkC
             <input
               type="text"
               placeholder="utm_source (e.g., youtube)"
-              className="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900"
+              className="px-3 py-2 border border-gray-300 rounded-md text-sm text-black placeholder-gray-500"
             />
             <input
               type="text"
               placeholder="utm_medium (e.g., video)"
-              className="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900"
+              className="px-3 py-2 border border-gray-300 rounded-md text-sm text-black placeholder-gray-500"
             />
             <input
               type="text"
               placeholder="utm_campaign (e.g., jan2024)"
-              className="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900"
+              className="px-3 py-2 border border-gray-300 rounded-md text-sm text-black placeholder-gray-500"
             />
             <button className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
               Generate Link

@@ -436,7 +436,7 @@ export default function CloserDashboard() {
                     step="0.01"
                     value={outcomeData.saleValue}
                     onChange={(e) => setOutcomeData({ ...outcomeData, saleValue: e.target.value })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black placeholder-gray-500"
                     placeholder="0.00"
                   />
                 </div>
@@ -447,7 +447,7 @@ export default function CloserDashboard() {
                     value={outcomeData.notes}
                     onChange={(e) => setOutcomeData({ ...outcomeData, notes: e.target.value })}
                     rows={3}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black placeholder-gray-500"
                     placeholder="Add any notes about the call..."
                   />
                 </div>

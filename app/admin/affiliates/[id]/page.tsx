@@ -292,7 +292,7 @@ export default function AffiliatePerformancePage() {
                 type="text"
                 value={affiliateData.customTrackingLink || affiliateData.customLink}
                 readOnly
-                className="flex-1 px-4 py-3 border border-emerald-300 rounded-xl bg-white text-sm font-mono text-slate-900 shadow-sm"
+                className="flex-1 px-4 py-3 border border-emerald-300 rounded-xl bg-white text-sm font-mono text-black shadow-sm"
               />
               <button
                 onClick={() => navigator.clipboard.writeText(affiliateData.customTrackingLink || affiliateData.customLink)}

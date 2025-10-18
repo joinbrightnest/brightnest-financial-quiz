@@ -362,7 +362,7 @@ export default function NewQuizEditor() {
                       type="text"
                       value={quizLink}
                       onChange={(e) => setQuizLink(e.target.value)}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white shadow-sm"
                       placeholder="Enter custom quiz link..."
                     />
                     <button
@@ -481,7 +481,7 @@ export default function NewQuizEditor() {
                       <textarea
                         value={question.prompt}
                         onChange={(e) => handleQuestionEdit(question.id, "prompt", e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white shadow-sm"
                         rows={3}
                       />
                     </div>
@@ -549,7 +549,7 @@ export default function NewQuizEditor() {
                               type="text"
                               value={question.continueButtonColor || "#09727c"}
                               onChange={(e) => handleQuestionEdit(question.id, "continueButtonColor", e.target.value)}
-                              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-gray-900"
+                              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded text-black"
                               placeholder="#09727c"
                             />
                           </div>
@@ -583,14 +583,14 @@ export default function NewQuizEditor() {
                                   value={option.label}
                                   onChange={(e) => handleOptionEdit(question.id, optIndex, "label", e.target.value)}
                                   placeholder="Option label"
-                                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
+                                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white shadow-sm"
                                 />
                                 <input
                                   type="text"
                                   value={option.value}
                                   onChange={(e) => handleOptionEdit(question.id, optIndex, "value", e.target.value)}
                                   placeholder="Option value"
-                                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
+                                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white shadow-sm"
                                 />
                                 <select
                                   value={option.weightCategory}
@@ -608,7 +608,7 @@ export default function NewQuizEditor() {
                                     type="number"
                                     value={option.weightValue}
                                     onChange={(e) => handleOptionEdit(question.id, optIndex, "weightValue", parseInt(e.target.value))}
-                                    className="w-16 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white shadow-sm"
+                                    className="w-16 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white shadow-sm"
                                     min="0"
                                     max="5"
                                   />

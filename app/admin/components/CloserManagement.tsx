@@ -462,7 +462,7 @@ export default function CloserManagement() {
                                 value={editingCalendlyLink}
                                 onChange={(e) => setEditingCalendlyLink(e.target.value)}
                                 placeholder="https://calendly.com/username"
-                                className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs"
+                                className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs text-black placeholder-gray-500"
                               />
                               <button
                                 onClick={() => handleUpdateCalendlyLink(closer.id)}
@@ -774,7 +774,7 @@ export default function CloserManagement() {
                     type="text"
                     value={newAppointment.customerName}
                     onChange={(e) => setNewAppointment({ ...newAppointment, customerName: e.target.value })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black placeholder-gray-500"
                     placeholder="Enter customer name"
                   />
                 </div>
@@ -785,7 +785,7 @@ export default function CloserManagement() {
                     type="email"
                     value={newAppointment.customerEmail}
                     onChange={(e) => setNewAppointment({ ...newAppointment, customerEmail: e.target.value })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black placeholder-gray-500"
                     placeholder="Enter customer email"
                   />
                 </div>
@@ -796,7 +796,7 @@ export default function CloserManagement() {
                     type="tel"
                     value={newAppointment.customerPhone}
                     onChange={(e) => setNewAppointment({ ...newAppointment, customerPhone: e.target.value })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black placeholder-gray-500"
                     placeholder="Enter customer phone (optional)"
                   />
                 </div>
@@ -807,7 +807,7 @@ export default function CloserManagement() {
                     type="datetime-local"
                     value={newAppointment.scheduledAt}
                     onChange={(e) => setNewAppointment({ ...newAppointment, scheduledAt: e.target.value })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black"
                   />
                 </div>
 
@@ -817,7 +817,7 @@ export default function CloserManagement() {
                     type="number"
                     value={newAppointment.duration}
                     onChange={(e) => setNewAppointment({ ...newAppointment, duration: parseInt(e.target.value) || 30 })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black"
                     min="15"
                     max="120"
                   />
@@ -829,7 +829,7 @@ export default function CloserManagement() {
                     type="text"
                     value={newAppointment.affiliateCode}
                     onChange={(e) => setNewAppointment({ ...newAppointment, affiliateCode: e.target.value })}
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-black placeholder-gray-500"
                     placeholder="Enter affiliate code (optional)"
                   />
                 </div>
