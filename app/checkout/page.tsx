@@ -109,20 +109,12 @@ function CheckoutContent() {
 
   return (
     <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
-        {/* Header */}
-        <div className="bg-[#333333] py-3 px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            {/* Logo */}
-            <div className="mb-2">
-              <Link href="/" className="flex-shrink-0">
-                <div className="inline-flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-teal-600 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">B</span>
-                  </div>
-                  <span className="text-xl font-bold text-white font-serif">BrightNest</span>
-                </div>
-              </Link>
-            </div>
+        {/* Top Header Bar */}
+        <div className="bg-gray-800 w-full py-4">
+          <div className="max-w-md mx-auto px-6">
+            <h1 className="text-white text-xl font-bold text-center tracking-wide">
+              BrightNest
+            </h1>
           </div>
         </div>
 

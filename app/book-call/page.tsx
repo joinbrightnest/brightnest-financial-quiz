@@ -305,17 +305,18 @@ export default function BookCallPage() {
       `}</style>
       
       <div className="min-h-screen bg-[#F8F7F5]">
-        {/* Section 1: Dark Purple Background */}
+        {/* Top Header Bar */}
+        <div className="bg-gray-800 w-full py-4">
+          <div className="max-w-md mx-auto px-6">
+            <h1 className="text-white text-xl font-bold text-center tracking-wide">
+              BrightNest
+            </h1>
+          </div>
+        </div>
+
+        {/* Main Content Section */}
         <div className="bg-[#333333] py-6 px-4">
           <div className="max-w-4xl mx-auto text-center">
-            {/* Logo */}
-            <div className="mb-4">
-              <h1 className="text-white text-3xl font-bold tracking-wide">
-                <span className="font-sans">BRIGHT</span>
-                <span className="font-serif italic ml-2">Nest</span>
-              </h1>
-            </div>
-
             {/* Main Headline */}
             <h2 className="text-3xl lg:text-4xl font-bold text-white mb-3 leading-tight">
               <span className="text-[#4CAF50]">Final Step:</span> Required To Complete Your Application
