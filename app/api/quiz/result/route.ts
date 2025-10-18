@@ -48,8 +48,21 @@ export async function POST(request: NextRequest) {
     // Calculate archetype
     const archetype = calculateArchetype(scores);
 
-    // Determine qualification (≥17 points qualifies for call, <17 points goes to checkout)
-    const qualifiesForCall = totalPoints >= 17;
+    // Get qualification threshold from settings
+    let qualificationThreshold = 17; // Default fallback
+    try {
+      const settingsResult = await prisma.$queryRaw`
+        SELECT value FROM "Settings" WHERE key = 'qualification_threshold'
+      `;
+      if (settingsResult && settingsResult[0]) {
+        qualificationThreshold = parseInt(settingsResult[0].value);
+      }
+    } catch (error) {
+      console.log('Settings table not found, using default threshold:', qualificationThreshold);
+    }
+
+    // Determine qualification based on dynamic threshold
+    const qualifiesForCall = totalPoints >= qualificationThreshold;
 
     // Get the session to calculate duration
     const session = await prisma.quizSession.findUnique({

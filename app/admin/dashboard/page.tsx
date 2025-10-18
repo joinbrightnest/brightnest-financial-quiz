@@ -99,6 +99,9 @@ export default function AdminDashboard() {
   const [showCEOAnalytics, setShowCEOAnalytics] = useState(false);
   const [showMainDashboard, setShowMainDashboard] = useState(true);
   const [showCloserManagement, setShowCloserManagement] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [qualificationThreshold, setQualificationThreshold] = useState(17);
+  const [isUpdatingThreshold, setIsUpdatingThreshold] = useState(false);
 
   // Format duration from milliseconds to human readable format
   const formatDuration = (ms: number): string => {
@@ -106,6 +109,48 @@ export default function AdminDashboard() {
     if (ms < 60000) return `${Math.round(ms / 1000)}s`;
     if (ms < 3600000) return `${Math.round(ms / 60000)}m ${Math.round((ms % 60000) / 1000)}s`;
     return `${Math.round(ms / 3600000)}h ${Math.round((ms % 3600000) / 60000)}m`;
+  };
+
+  // Fetch settings
+  const fetchSettings = async () => {
+    try {
+      const response = await fetch('/api/admin/settings');
+      const data = await response.json();
+      if (data.success && data.settings) {
+        setQualificationThreshold(parseInt(data.settings.value));
+      }
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+    }
+  };
+
+  // Update qualification threshold
+  const updateQualificationThreshold = async (newThreshold: number) => {
+    setIsUpdatingThreshold(true);
+    try {
+      const response = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          qualificationThreshold: newThreshold
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setQualificationThreshold(newThreshold);
+        alert('Qualification threshold updated successfully!');
+      } else {
+        alert('Failed to update threshold: ' + data.error);
+      }
+    } catch (error) {
+      console.error('Error updating threshold:', error);
+      alert('Failed to update threshold. Please try again.');
+    } finally {
+      setIsUpdatingThreshold(false);
+    }
   };
 
   const fetchStats = useCallback(async (isTimeframeChange = false) => {
@@ -142,6 +187,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchStats(true); // Pass true to indicate this is a timeframe change
+    fetchSettings();
   }, [fetchStats]);
 
   // Handle page visibility and focus changes to prevent unnecessary re-fetching
@@ -352,6 +398,7 @@ export default function AdminDashboard() {
                 setShowMainDashboard(true);
                 setShowCEOAnalytics(false);
                 setShowCloserManagement(false);
+                setShowSettings(false);
               }}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
                 showMainDashboard 
@@ -378,6 +425,7 @@ export default function AdminDashboard() {
                 setShowCEOAnalytics(true);
                 setShowMainDashboard(false);
                 setShowCloserManagement(false);
+                setShowSettings(false);
               }}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
                 showCEOAnalytics 
@@ -401,6 +449,7 @@ export default function AdminDashboard() {
                 setShowCloserManagement(true);
                 setShowMainDashboard(false);
                 setShowCEOAnalytics(false);
+                setShowSettings(false);
               }}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
                 showCloserManagement 
@@ -412,6 +461,25 @@ export default function AdminDashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
               <span className="text-sm font-medium">Closer Management</span>
+            </button>
+            <button
+              onClick={() => {
+                setShowSettings(true);
+                setShowMainDashboard(false);
+                setShowCEOAnalytics(false);
+                setShowCloserManagement(false);
+              }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
+                showSettings 
+                  ? 'text-blue-700 bg-blue-50 border-r-2 border-blue-600' 
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <svg className={`w-5 h-5 group-hover:text-gray-600 ${showSettings ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span className="text-sm font-medium">Settings</span>
             </button>
           </div>
 
@@ -695,6 +763,62 @@ export default function AdminDashboard() {
           {showCloserManagement && (
             <div className="mb-8">
               <CloserManagement />
+            </div>
+          )}
+
+          {/* Settings Section */}
+          {showSettings && (
+            <div className="mb-8">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-6">Quiz Settings</h2>
+                
+                <div className="space-y-6">
+                  {/* Qualification Threshold */}
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <h3 className="text-lg font-medium text-gray-900 mb-3">Qualification Threshold</h3>
+                    <p className="text-gray-600 mb-4">
+                      Set the minimum points required for users to qualify for a consultation call. 
+                      Users below this threshold will be directed to the checkout page instead.
+                    </p>
+                    
+                    <div className="flex items-center space-x-4">
+                      <label htmlFor="threshold" className="text-sm font-medium text-gray-700">
+                        Minimum Points:
+                      </label>
+                      <input
+                        type="number"
+                        id="threshold"
+                        min="1"
+                        max="20"
+                        value={qualificationThreshold}
+                        onChange={(e) => setQualificationThreshold(parseInt(e.target.value))}
+                        className="w-20 px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                      <span className="text-sm text-gray-500">out of 20</span>
+                    </div>
+                    
+                    <div className="mt-4">
+                      <button 
+                        onClick={() => updateQualificationThreshold(qualificationThreshold)}
+                        disabled={isUpdatingThreshold}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isUpdatingThreshold ? 'Updating...' : 'Update Threshold'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Current Settings Info */}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="text-sm font-medium text-gray-900 mb-2">Current Settings</h4>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <p>• Qualification Threshold: <span className="font-medium">{qualificationThreshold} points</span></p>
+                      <p>• Users with {qualificationThreshold}+ points → Book consultation call</p>
+                      <p>• Users with &lt;{qualificationThreshold} points → Checkout page</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
