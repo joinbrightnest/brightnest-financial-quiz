@@ -18,6 +18,7 @@ function CheckoutContent() {
   const [userData, setUserData] = useState<UserData>({});
   const [isLoading, setIsLoading] = useState(true);
   const [personalizedCopy, setPersonalizedCopy] = useState<any>(null);
+  const [openFAQ, setOpenFAQ] = useState<number | null>(null);
 
   // Load user data and prefilled information
   useEffect(() => {
@@ -76,6 +77,10 @@ function CheckoutContent() {
     setIsLoading(false);
   }, [searchParams]);
 
+  // Toggle FAQ item
+  const toggleFAQ = (index: number) => {
+    setOpenFAQ(openFAQ === index ? null : index);
+  };
 
   // Use AI-generated copy if available, otherwise fallback
   const copy = personalizedCopy || {
@@ -316,82 +321,132 @@ function CheckoutContent() {
               <div className="space-y-4">
                 {/* FAQ 1 */}
                 <div className="border border-gray-200 rounded-lg">
-                  <button className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 focus:outline-none focus:bg-gray-50">
+                  <button 
+                    onClick={() => toggleFAQ(0)}
+                    className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                  >
                     <span className="font-semibold text-gray-900">How does the Financial Assessment work?</span>
-                    <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg 
+                      className={`w-5 h-5 text-gray-500 transition-transform ${openFAQ === 0 ? 'rotate-180' : ''}`} 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
-                  <div className="px-6 pb-4">
-                    <p className="text-gray-600">
-                      Our assessment analyzes your financial patterns, behaviors, and goals to create a personalized roadmap. 
-                      You'll receive detailed insights and actionable steps tailored to your unique situation.
-                    </p>
-                  </div>
+                  {openFAQ === 0 && (
+                    <div className="px-6 pb-4">
+                      <p className="text-gray-600">
+                        Our assessment analyzes your financial patterns, behaviors, and goals to create a personalized roadmap. 
+                        You'll receive detailed insights and actionable steps tailored to your unique situation.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* FAQ 2 */}
                 <div className="border border-gray-200 rounded-lg">
-                  <button className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 focus:outline-none focus:bg-gray-50">
+                  <button 
+                    onClick={() => toggleFAQ(1)}
+                    className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                  >
                     <span className="font-semibold text-gray-900">What happens after payment?</span>
-                    <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg 
+                      className={`w-5 h-5 text-gray-500 transition-transform ${openFAQ === 1 ? 'rotate-180' : ''}`} 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
-                  <div className="px-6 pb-4">
-                    <p className="text-gray-600">
-                      Immediately after payment, you'll receive access to your personalized financial assessment report. 
-                      If you added the follow-up call, we'll contact you within 24 hours to schedule your consultation.
-                    </p>
-                  </div>
+                  {openFAQ === 1 && (
+                    <div className="px-6 pb-4">
+                      <p className="text-gray-600">
+                        Immediately after payment, you'll receive access to your personalized financial assessment report. 
+                        If you added the follow-up call, we'll contact you within 24 hours to schedule your consultation.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* FAQ 3 */}
                 <div className="border border-gray-200 rounded-lg">
-                  <button className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 focus:outline-none focus:bg-gray-50">
+                  <button 
+                    onClick={() => toggleFAQ(2)}
+                    className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                  >
                     <span className="font-semibold text-gray-900">Is my information secure?</span>
-                    <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg 
+                      className={`w-5 h-5 text-gray-500 transition-transform ${openFAQ === 2 ? 'rotate-180' : ''}`} 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
-                  <div className="px-6 pb-4">
-                    <p className="text-gray-600">
-                      Yes, absolutely. We use bank-level encryption and never share your personal information. 
-                      Your data is processed securely through Whop's PCI-compliant payment system.
-                    </p>
-                  </div>
+                  {openFAQ === 2 && (
+                    <div className="px-6 pb-4">
+                      <p className="text-gray-600">
+                        Yes, absolutely. We use bank-level encryption and never share your personal information. 
+                        Your data is processed securely through Whop's PCI-compliant payment system.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* FAQ 4 */}
                 <div className="border border-gray-200 rounded-lg">
-                  <button className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 focus:outline-none focus:bg-gray-50">
+                  <button 
+                    onClick={() => toggleFAQ(3)}
+                    className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                  >
                     <span className="font-semibold text-gray-900">Can I get a refund?</span>
-                    <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg 
+                      className={`w-5 h-5 text-gray-500 transition-transform ${openFAQ === 3 ? 'rotate-180' : ''}`} 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
-                  <div className="px-6 pb-4">
-                    <p className="text-gray-600">
-                      We offer a 30-day money-back guarantee. If you're not completely satisfied with your assessment, 
-                      contact us within 30 days for a full refund.
-                    </p>
-                  </div>
+                  {openFAQ === 3 && (
+                    <div className="px-6 pb-4">
+                      <p className="text-gray-600">
+                        We offer a 30-day money-back guarantee. If you're not completely satisfied with your assessment, 
+                        contact us within 30 days for a full refund.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* FAQ 5 */}
                 <div className="border border-gray-200 rounded-lg">
-                  <button className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 focus:outline-none focus:bg-gray-50">
+                  <button 
+                    onClick={() => toggleFAQ(4)}
+                    className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 focus:outline-none focus:bg-gray-50"
+                  >
                     <span className="font-semibold text-gray-900">What if I have more questions?</span>
-                    <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg 
+                      className={`w-5 h-5 text-gray-500 transition-transform ${openFAQ === 4 ? 'rotate-180' : ''}`} 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
-                  <div className="px-6 pb-4">
-                    <p className="text-gray-600">
-                      Our support team is here to help! You can reach us at support@brightnest.com or through our 
-                      live chat. We typically respond within 2 hours during business hours.
-                    </p>
-                  </div>
+                  {openFAQ === 4 && (
+                    <div className="px-6 pb-4">
+                      <p className="text-gray-600">
+                        Our support team is here to help! You can reach us at support@brightnest.com or through our 
+                        live chat. We typically respond within 2 hours during business hours.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
