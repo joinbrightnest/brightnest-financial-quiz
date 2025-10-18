@@ -205,114 +205,124 @@ function CheckoutContent() {
               <hr className="my-8 border-gray-200" />
 
               {/* Checkout Section */}
-              <div className="text-center">
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                  Complete Your Financial Assessment
-                </h2>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                  Get your personalized financial roadmap and start building lasting wealth today.
-                </p>
-              </div>
+              <div className="bg-black rounded-xl p-8 -mx-6">
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold text-white mb-4">
+                    Complete Your Financial Assessment
+                  </h2>
+                  <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+                    Get your personalized financial roadmap and start building lasting wealth today.
+                  </p>
+                </div>
 
-            {/* Package Options */}
-            <div className="grid md:grid-cols-2 gap-8 mb-12">
-              {/* Basic Package */}
-              <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-gray-200">
-                <div className="text-center">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Basic Assessment</h3>
-                  <div className="mb-6">
-                    <span className="text-4xl font-bold text-blue-600">$100</span>
-                    <span className="text-gray-500 ml-2">one-time</span>
+                {/* Package Options */}
+                <div className="grid md:grid-cols-2 gap-8">
+                  {/* Basic Package */}
+                  <div className="bg-gray-900 rounded-xl p-8 border border-gray-700">
+                    <div className="text-center">
+                      <h3 className="text-2xl font-bold text-white mb-4">Basic Assessment</h3>
+                      <div className="mb-6">
+                        <span className="text-4xl font-bold text-blue-400">$100</span>
+                        <span className="text-gray-400 ml-2">one-time</span>
+                      </div>
+                      <div className="mb-6">
+                        <h4 className="text-lg font-semibold text-white mb-3">Confirming This Means:</h4>
+                        <ul className="text-left space-y-2">
+                          <li className="flex items-center text-gray-300">
+                            <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-white">Personalized Financial Archetype Report</span>
+                          </li>
+                          <li className="flex items-center text-gray-300">
+                            <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-white">Detailed Financial Patterns Analysis</span>
+                          </li>
+                          <li className="flex items-center text-gray-300">
+                            <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-white">Customized Action Plan</span>
+                          </li>
+                          <li className="flex items-center text-gray-300">
+                            <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-white">Email Support</span>
+                          </li>
+                        </ul>
+                      </div>
+                      <button
+                        onClick={() => {
+                          window.location.href = `https://whop.com/sahila/basic-plan-a5-ad15?email=${encodeURIComponent(userData.email || '')}&name=${encodeURIComponent(userData.name || '')}`;
+                        }}
+                        className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 px-6 rounded-lg font-bold text-lg transition-colors"
+                      >
+                        <div className="text-center">
+                          <div className="text-white font-bold">Yes! Confirm My Upgrade</div>
+                          <div className="text-sm text-orange-100">And Add Only $100 To My Order</div>
+                        </div>
+                      </button>
+                    </div>
                   </div>
-                  <ul className="text-left space-y-3 mb-8">
-                    <li className="flex items-center">
-                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-black">Personalized Financial Archetype Report</span>
-                    </li>
-                    <li className="flex items-center">
-                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-black">Detailed Financial Patterns Analysis</span>
-                    </li>
-                    <li className="flex items-center">
-                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-black">Customized Action Plan</span>
-                    </li>
-                    <li className="flex items-center">
-                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-black">Email Support</span>
-                    </li>
-                  </ul>
-                  <button
-                    onClick={() => {
-                      // Redirect to Whop checkout for basic plan
-                      window.location.href = `https://whop.com/sahila/basic-plan-a5-ad15?email=${encodeURIComponent(userData.email || '')}&name=${encodeURIComponent(userData.name || '')}`;
-                    }}
-                    className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-                  >
-                    Get Basic Assessment
-                  </button>
-                </div>
-              </div>
 
-              {/* Premium Package */}
-              <div className="bg-white rounded-xl shadow-lg p-8 border-2 border-blue-500 relative">
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
-                    Most Popular
-                  </span>
-                </div>
-                <div className="text-center">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Premium Assessment</h3>
-                  <div className="mb-6">
-                    <span className="text-4xl font-bold text-blue-600">$200</span>
-                    <span className="text-gray-500 ml-2">one-time</span>
+                  {/* Premium Package */}
+                  <div className="bg-gray-900 rounded-xl p-8 border-2 border-blue-500 relative">
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                      Most Popular
+                    </div>
+                    <div className="text-center">
+                      <h3 className="text-2xl font-bold text-white mb-4">Premium Assessment</h3>
+                      <div className="mb-6">
+                        <span className="text-4xl font-bold text-blue-400">$200</span>
+                        <span className="text-gray-400 ml-2">one-time</span>
+                      </div>
+                      <div className="mb-6">
+                        <h4 className="text-lg font-semibold text-white mb-3">Confirming This Means:</h4>
+                        <ul className="text-left space-y-2">
+                          <li className="flex items-center text-gray-300">
+                            <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-white">Everything in Basic Assessment</span>
+                          </li>
+                          <li className="flex items-center text-gray-300">
+                            <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-white">30-Minute Personal Consultation Call</span>
+                          </li>
+                          <li className="flex items-center text-gray-300">
+                            <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-white">Priority Support</span>
+                          </li>
+                          <li className="flex items-center text-gray-300">
+                            <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                            <span className="text-white">Follow-up Resources</span>
+                          </li>
+                        </ul>
+                      </div>
+                      <button
+                        onClick={() => {
+                          window.location.href = `https://whop.com/sahila/top-plan-dd?email=${encodeURIComponent(userData.email || '')}&name=${encodeURIComponent(userData.name || '')}`;
+                        }}
+                        className="w-full bg-green-500 hover:bg-green-600 text-white py-4 px-6 rounded-lg font-bold text-lg transition-colors"
+                      >
+                        <div className="text-center">
+                          <div className="text-white font-bold">Yes! Confirm My Upgrade</div>
+                          <div className="text-sm text-green-100">And Add Only $200 To My Order</div>
+                        </div>
+                      </button>
+                    </div>
                   </div>
-                  <ul className="text-left space-y-3 mb-8">
-                    <li className="flex items-center">
-                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-black">Everything in Basic Assessment</span>
-                    </li>
-                    <li className="flex items-center">
-                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-black">30-Minute Personal Consultation Call</span>
-                    </li>
-                    <li className="flex items-center">
-                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-black">Priority Support</span>
-                    </li>
-                    <li className="flex items-center">
-                      <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-black">Follow-up Resources</span>
-                    </li>
-                  </ul>
-                  <button
-                    onClick={() => {
-                      // Redirect to Whop checkout for premium plan
-                      window.location.href = `https://whop.com/sahila/top-plan-dd?email=${encodeURIComponent(userData.email || '')}&name=${encodeURIComponent(userData.name || '')}`;
-                    }}
-                    className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-                  >
-                    Get Premium Assessment
-                  </button>
                 </div>
               </div>
-            </div>
             </div>
 
             {/* FAQ Section */}
