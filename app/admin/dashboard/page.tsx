@@ -164,9 +164,17 @@ export default function AdminDashboard() {
   };
 
   const openLeadModal = (lead: any) => {
-    console.log('Opening lead modal for:', lead);
-    setSelectedLead(lead);
-    setShowLeadModal(true);
+    const details = `Lead Profile:
+
+Name: ${lead.customerName}
+Email: ${lead.customerEmail}
+Phone: ${lead.customerPhone || 'Not provided'}
+Status: ${lead.outcome || 'Pending'}
+Sale Value: ${lead.saleValue ? `$${Number(lead.saleValue).toFixed(2)}` : 'N/A'}
+Date: ${formatDate(lead.appointmentDate)}
+Notes: ${lead.notes || 'No notes'}`;
+    
+    alert(details);
   };
 
   const closeLeadModal = () => {
