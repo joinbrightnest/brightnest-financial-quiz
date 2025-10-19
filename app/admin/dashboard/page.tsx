@@ -2130,9 +2130,53 @@ export default function AdminDashboard() {
 
             {/* Lead Profile Modal */}
             {console.log('Modal state:', { showLeadModal, selectedLead: !!selectedLead })}
+            
+            {/* Simple Test Modal */}
+            {showLeadModal && (
+              <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(255, 0, 0, 0.8)',
+                zIndex: 99999,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <div style={{
+                  backgroundColor: 'white',
+                  padding: '20px',
+                  borderRadius: '8px',
+                  border: '4px solid red',
+                  maxWidth: '500px',
+                  width: '90%'
+                }}>
+                  <h2 style={{color: 'red', fontSize: '24px', marginBottom: '10px'}}>TEST MODAL</h2>
+                  <p>If you can see this, the modal system works!</p>
+                  <p>Selected Lead: {selectedLead?.customerName || 'None'}</p>
+                  <button 
+                    onClick={closeLeadModal}
+                    style={{
+                      backgroundColor: 'red',
+                      color: 'white',
+                      padding: '10px 20px',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      marginTop: '10px'
+                    }}
+                  >
+                    Close Test Modal
+                  </button>
+                </div>
+              </div>
+            )}
+            
             {showLeadModal && selectedLead && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]" style={{zIndex: 9999}}>
-                <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+              <div className="fixed inset-0 bg-red-500 bg-opacity-75 flex items-center justify-center" style={{zIndex: 99999, position: 'fixed', top: 0, left: 0, right: 0, bottom: 0}}>
+                <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto border-4 border-red-500">
                   <div className="p-6">
                     {/* Modal Header */}
                     <div className="flex items-center justify-between mb-6">
