@@ -50,6 +50,13 @@ export async function GET(request: NextRequest) {
         utmCampaign: true,
         createdAt: true,
         updatedAt: true,
+        recordingLinkConverted: true,
+        recordingLinkNotInterested: true,
+        recordingLinkNeedsFollowUp: true,
+        recordingLinkWrongNumber: true,
+        recordingLinkNoAnswer: true,
+        recordingLinkCallbackRequested: true,
+        recordingLinkRescheduled: true,
       }
     });
 
