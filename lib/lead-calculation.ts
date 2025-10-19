@@ -85,6 +85,7 @@ export async function calculateLeads(params: {
         },
       },
     },
+    orderBy: { createdAt: "desc" },
   });
 
   // Filter to only include sessions that have name and email (actual leads)
