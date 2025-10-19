@@ -97,6 +97,10 @@ export async function calculateLeads(params: {
 
   // Filter to only include sessions that have name and email (actual leads)
   const actualLeads = allCompletedSessions.filter(session => {
+    if (!session.answers || !Array.isArray(session.answers)) {
+      return false;
+    }
+    
     const nameAnswer = session.answers.find(a => 
       a.question?.prompt?.toLowerCase().includes('name') ||
       a.question?.text?.toLowerCase().includes('name')
@@ -112,19 +116,24 @@ export async function calculateLeads(params: {
   // Combine quiz session leads and appointments
   const totalLeads = actualLeads.length + allAppointments.length;
   const allLeads = [
-    ...actualLeads.map(session => ({
-      type: 'quiz_session',
-      id: session.id,
-      customerName: session.answers.find(a => 
+    ...actualLeads.map(session => {
+      const nameAnswer = session.answers?.find(a => 
         a.question?.prompt?.toLowerCase().includes('name') ||
         a.question?.text?.toLowerCase().includes('name')
-      )?.value || 'Unknown',
-      customerEmail: session.answers.find(a => 
+      );
+      const emailAnswer = session.answers?.find(a => 
         a.question?.prompt?.toLowerCase().includes('email') ||
         a.question?.text?.toLowerCase().includes('email')
-      )?.value || 'Unknown',
-      createdAt: session.createdAt,
-    })),
+      );
+      
+      return {
+        type: 'quiz_session',
+        id: session.id,
+        customerName: nameAnswer?.value || 'Unknown',
+        customerEmail: emailAnswer?.value || 'Unknown',
+        createdAt: session.createdAt,
+      };
+    }),
     ...allAppointments.map(appointment => ({
       type: 'appointment',
       id: appointment.id,
