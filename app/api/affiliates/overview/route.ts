@@ -116,6 +116,7 @@ export async function GET(request: NextRequest) {
     const totalActiveAffiliates = approvedAffiliates.length;
     const totalPendingAffiliates = pendingAffiliates.length;
     const totalLeadsFromAffiliates = approvedAffiliates.reduce((sum, aff) => sum + aff.totalLeads, 0);
+    const totalBookedCalls = approvedAffiliates.reduce((sum, aff) => sum + aff.conversions.filter(c => c.conversionType === "booking").length, 0);
     const totalSalesValue = approvedAffiliates.reduce((sum, aff) => sum + (aff.totalSales * 200), 0); // Mock $200 per sale
     const totalCommissionsPaid = approvedAffiliates.reduce((sum, aff) => sum + (Number(aff.totalCommission) * 0.7), 0); // 70% paid
     const totalCommissionsPending = approvedAffiliates.reduce((sum, aff) => sum + (Number(aff.totalCommission) * 0.3), 0); // 30% pending
@@ -189,6 +190,7 @@ export async function GET(request: NextRequest) {
       totalActiveAffiliates,
       totalPendingAffiliates,
       totalLeadsFromAffiliates,
+      totalBookedCalls,
       totalSalesValue,
       totalCommissionsPaid,
       totalCommissionsPending,
