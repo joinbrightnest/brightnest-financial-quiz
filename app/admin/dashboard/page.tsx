@@ -337,13 +337,24 @@ export default function AdminDashboard() {
           customerEmail = emailAnswer?.value || "N/A";
         }
         
+        let status = "Partial";
+        let completedAt = "N/A";
+        
+        if (lead.type === 'appointment') {
+          status = "Completed";
+          completedAt = lead.scheduledAt ? new Date(lead.scheduledAt).toLocaleString() : "N/A";
+        } else {
+          status = lead.status === "completed" ? "Completed" : "Partial";
+          completedAt = lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A";
+        }
+        
         return [
           lead.id,
           customerName,
           customerEmail,
           new Date(lead.createdAt).toLocaleDateString(),
-          lead.status === "completed" ? "Completed" : "Partial",
-          lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A",
+          status,
+          completedAt,
           lead.result?.archetype || "N/A"
         ];
       })
@@ -2090,11 +2101,15 @@ export default function AdminDashboard() {
                       {stats.allLeads.map((lead) => {
                         let customerName = "N/A";
                         let customerEmail = "N/A";
+                        let status = "Partial";
+                        let completedAt = "N/A";
                         
                         if (lead.type === 'appointment') {
                           // For appointments, use the direct properties
                           customerName = lead.customerName || "N/A";
                           customerEmail = lead.customerEmail || "N/A";
+                          status = "Completed"; // Appointments are always completed
+                          completedAt = lead.scheduledAt ? new Date(lead.scheduledAt).toLocaleString() : "N/A";
                         } else {
                           // For quiz sessions, extract from answers
                           const nameAnswer = lead.answers?.find(a => 
@@ -2108,6 +2123,8 @@ export default function AdminDashboard() {
                           
                           customerName = nameAnswer?.value || "N/A";
                           customerEmail = emailAnswer?.value || "N/A";
+                          status = lead.status === "completed" ? "Completed" : "Partial";
+                          completedAt = lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A";
                         }
                         
                         return (
@@ -2126,15 +2143,15 @@ export default function AdminDashboard() {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                lead.status === "completed" 
+                                status === "Completed" 
                                   ? "bg-green-100 text-green-800" 
                                   : "bg-orange-100 text-orange-800"
                               }`}>
-                                {lead.status === "completed" ? "Completed" : "Partial"}
+                                {status}
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A"}
+                              {completedAt}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
