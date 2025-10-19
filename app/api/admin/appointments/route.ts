@@ -45,24 +45,35 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Get all quiz sessions that qualified for calls (these are "leads")
+    // Get all quiz sessions that are completed and have name/email (actual leads)
     const quizSessions = await prisma.quizSession.findMany({
       where: {
-        status: 'completed',
-        qualifiesForCall: true
+        status: 'completed'
       },
       orderBy: {
         completedAt: 'desc'
       },
-      select: {
-        id: true,
-        userName: true,
-        userEmail: true,
-        completedAt: true,
-        affiliateCode: true,
-        totalPoints: true,
-        qualifiesForCall: true
+      include: {
+        answers: {
+          include: {
+            question: true
+          }
+        }
       }
+    });
+
+    // Filter quiz sessions to only include those with name and email (actual leads)
+    const actualLeads = quizSessions.filter(session => {
+      const nameAnswer = session.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes('name') ||
+        a.question?.text?.toLowerCase().includes('name')
+      );
+      const emailAnswer = session.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes('email') ||
+        a.question?.text?.toLowerCase().includes('email')
+      );
+      
+      return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
     });
 
     // Combine appointments and quiz sessions into a unified data structure
@@ -90,27 +101,39 @@ export async function GET(request: NextRequest) {
         recordingLinkRescheduled: apt.recordingLinkRescheduled,
       })),
       // Quiz sessions (people who completed quiz but haven't booked calls)
-      ...quizSessions.map(session => ({
-        id: session.id,
-        type: 'quiz_session',
-        customerName: session.userName,
-        customerEmail: session.userEmail,
-        customerPhone: null,
-        scheduledAt: session.completedAt,
-        status: 'completed',
-        outcome: null,
-        saleValue: null,
-        notes: null,
-        affiliateCode: session.affiliateCode,
-        closer: null,
-        recordingLinkConverted: null,
-        recordingLinkNotInterested: null,
-        recordingLinkNeedsFollowUp: null,
-        recordingLinkWrongNumber: null,
-        recordingLinkNoAnswer: null,
-        recordingLinkCallbackRequested: null,
-        recordingLinkRescheduled: null,
-      }))
+      ...actualLeads.map(session => {
+        // Extract name and email from answers
+        const nameAnswer = session.answers.find(a => 
+          a.question?.prompt?.toLowerCase().includes('name') ||
+          a.question?.text?.toLowerCase().includes('name')
+        );
+        const emailAnswer = session.answers.find(a => 
+          a.question?.prompt?.toLowerCase().includes('email') ||
+          a.question?.text?.toLowerCase().includes('email')
+        );
+
+        return {
+          id: session.id,
+          type: 'quiz_session',
+          customerName: nameAnswer?.value || 'Unknown',
+          customerEmail: emailAnswer?.value || 'Unknown',
+          customerPhone: null,
+          scheduledAt: session.completedAt || session.createdAt,
+          status: 'completed',
+          outcome: null,
+          saleValue: null,
+          notes: null,
+          affiliateCode: session.affiliateCode,
+          closer: null,
+          recordingLinkConverted: null,
+          recordingLinkNotInterested: null,
+          recordingLinkNeedsFollowUp: null,
+          recordingLinkWrongNumber: null,
+          recordingLinkNoAnswer: null,
+          recordingLinkCallbackRequested: null,
+          recordingLinkRescheduled: null,
+        };
+      })
     ];
 
     return NextResponse.json(allLeads);
