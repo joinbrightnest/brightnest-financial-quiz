@@ -76,6 +76,41 @@ export async function GET(request: NextRequest) {
       return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
     });
 
+    // Helper function to determine pipeline stage
+    const getPipelineStage = (item: any) => {
+      if (item.type === 'quiz_session') {
+        return 'new_leads'; // Quiz completions start as new leads
+      }
+      
+      if (item.type === 'appointment') {
+        // If appointment has an outcome, it goes to that stage
+        if (item.outcome) {
+          switch (item.outcome) {
+            case 'converted':
+              return 'converted';
+            case 'not_interested':
+              return 'not_interested';
+            case 'needs_follow_up':
+              return 'follow_up';
+            case 'callback_requested':
+              return 'callback_requested';
+            case 'rescheduled':
+              return 'rescheduled';
+            case 'wrong_number':
+            case 'no_answer':
+              return 'not_interested'; // Group these with not interested
+            default:
+              return 'booked_call';
+          }
+        }
+        
+        // If no outcome, it's still in booked call stage
+        return 'booked_call';
+      }
+      
+      return 'new_leads';
+    };
+
     // Combine appointments and quiz sessions into a unified data structure
     const allLeads = [
       // Appointments (people who booked calls)
@@ -99,6 +134,7 @@ export async function GET(request: NextRequest) {
         recordingLinkNoAnswer: apt.recordingLinkNoAnswer,
         recordingLinkCallbackRequested: apt.recordingLinkCallbackRequested,
         recordingLinkRescheduled: apt.recordingLinkRescheduled,
+        pipelineStage: getPipelineStage({ type: 'appointment', outcome: apt.outcome }),
       })),
       // Quiz sessions (people who completed quiz but haven't booked calls)
       ...actualLeads.map(session => {
@@ -132,6 +168,7 @@ export async function GET(request: NextRequest) {
           recordingLinkNoAnswer: null,
           recordingLinkCallbackRequested: null,
           recordingLinkRescheduled: null,
+          pipelineStage: getPipelineStage({ type: 'quiz_session' }),
         };
       })
     ];
