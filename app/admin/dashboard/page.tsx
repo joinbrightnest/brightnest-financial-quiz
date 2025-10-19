@@ -2102,36 +2102,17 @@ export default function AdminDashboard() {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {stats.allLeads.map((lead) => {
-                        let customerName = "N/A";
-                        let customerEmail = "N/A";
-                        let status = "Partial";
-                        let completedAt = "N/A";
-                        let source = "Website";
+                        const nameAnswer = lead.answers.find(a => 
+                          a.question?.prompt?.toLowerCase().includes('name') ||
+                          a.question?.text?.toLowerCase().includes('name')
+                        );
+                        const emailAnswer = lead.answers.find(a => 
+                          a.question?.prompt?.toLowerCase().includes('email') ||
+                          a.question?.text?.toLowerCase().includes('email')
+                        );
                         
-                        if (lead.type === 'appointment') {
-                          // For appointments, use the direct properties
-                          customerName = lead.customerName || "N/A";
-                          customerEmail = lead.customerEmail || "N/A";
-                          status = "Booked"; // Appointments are "Booked" calls
-                          completedAt = lead.scheduledAt ? new Date(lead.scheduledAt).toLocaleString() : "N/A";
-                          source = lead.affiliateCode ? `Affiliate (${lead.affiliateCode})` : "Website";
-                        } else {
-                          // For quiz sessions, extract from answers
-                          const nameAnswer = lead.answers?.find(a => 
-                            a.question?.prompt?.toLowerCase().includes('name') ||
-                            a.question?.text?.toLowerCase().includes('name')
-                          );
-                          const emailAnswer = lead.answers?.find(a => 
-                            a.question?.prompt?.toLowerCase().includes('email') ||
-                            a.question?.text?.toLowerCase().includes('email')
-                          );
-                          
-                          customerName = nameAnswer?.value || "N/A";
-                          customerEmail = emailAnswer?.value || "N/A";
-                          status = lead.status === "completed" ? "Completed" : "Partial";
-                          completedAt = lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A";
-                          source = lead.affiliateCode ? `Affiliate (${lead.affiliateCode})` : "Website";
-                        }
+                        // Determine source based on affiliate code
+                        const source = lead.affiliateCode ? `Affiliate (${lead.affiliateCode})` : "Website";
                         
                         return (
                           <tr key={lead.id}>
@@ -2139,27 +2120,25 @@ export default function AdminDashboard() {
                               {lead.id.slice(0, 8)}...
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {customerName}
+                              {nameAnswer?.value || "N/A"}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {customerEmail}
+                              {emailAnswer?.value || "N/A"}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               {new Date(lead.createdAt).toLocaleDateString()}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                status === "Booked" 
-                                  ? "bg-blue-100 text-blue-800"
-                                  : status === "Completed" 
+                                lead.status === "completed" 
                                   ? "bg-green-100 text-green-800" 
                                   : "bg-orange-100 text-orange-800"
                               }`}>
-                                {status}
+                                {lead.status === "completed" ? "Completed" : "Partial"}
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {completedAt}
+                              {lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A"}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
