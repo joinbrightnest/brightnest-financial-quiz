@@ -315,19 +315,32 @@ export default function AdminDashboard() {
     const csvContent = [
       ["Session ID", "Name", "Email", "Date", "Status", "Completed At", "Archetype"],
       ...stats.allLeads.map(lead => {
-        const nameAnswer = lead.answers.find(a => 
-          a.question?.prompt?.toLowerCase().includes('name') ||
-          a.question?.prompt?.toLowerCase().includes('name')
-        );
-        const emailAnswer = lead.answers.find(a => 
-          a.question?.prompt?.toLowerCase().includes('email') ||
-          a.question?.prompt?.toLowerCase().includes('email')
-        );
+        let customerName = "N/A";
+        let customerEmail = "N/A";
+        
+        if (lead.type === 'appointment') {
+          // For appointments, use the direct properties
+          customerName = lead.customerName || "N/A";
+          customerEmail = lead.customerEmail || "N/A";
+        } else {
+          // For quiz sessions, extract from answers
+          const nameAnswer = lead.answers?.find(a => 
+            a.question?.prompt?.toLowerCase().includes('name') ||
+            a.question?.prompt?.toLowerCase().includes('name')
+          );
+          const emailAnswer = lead.answers?.find(a => 
+            a.question?.prompt?.toLowerCase().includes('email') ||
+            a.question?.prompt?.toLowerCase().includes('email')
+          );
+          
+          customerName = nameAnswer?.value || "N/A";
+          customerEmail = emailAnswer?.value || "N/A";
+        }
         
         return [
           lead.id,
-          nameAnswer?.value || "N/A",
-          emailAnswer?.value || "N/A",
+          customerName,
+          customerEmail,
           new Date(lead.createdAt).toLocaleDateString(),
           lead.status === "completed" ? "Completed" : "Partial",
           lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A",
@@ -2075,14 +2088,27 @@ export default function AdminDashboard() {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {stats.allLeads.map((lead) => {
-                        const nameAnswer = lead.answers.find(a => 
-                          a.question?.prompt?.toLowerCase().includes('name') ||
-                          a.question?.prompt?.toLowerCase().includes('name')
-                        );
-                        const emailAnswer = lead.answers.find(a => 
-                          a.question?.prompt?.toLowerCase().includes('email') ||
-                          a.question?.prompt?.toLowerCase().includes('email')
-                        );
+                        let customerName = "N/A";
+                        let customerEmail = "N/A";
+                        
+                        if (lead.type === 'appointment') {
+                          // For appointments, use the direct properties
+                          customerName = lead.customerName || "N/A";
+                          customerEmail = lead.customerEmail || "N/A";
+                        } else {
+                          // For quiz sessions, extract from answers
+                          const nameAnswer = lead.answers?.find(a => 
+                            a.question?.prompt?.toLowerCase().includes('name') ||
+                            a.question?.prompt?.toLowerCase().includes('name')
+                          );
+                          const emailAnswer = lead.answers?.find(a => 
+                            a.question?.prompt?.toLowerCase().includes('email') ||
+                            a.question?.prompt?.toLowerCase().includes('email')
+                          );
+                          
+                          customerName = nameAnswer?.value || "N/A";
+                          customerEmail = emailAnswer?.value || "N/A";
+                        }
                         
                         return (
                           <tr key={lead.id}>
@@ -2090,10 +2116,10 @@ export default function AdminDashboard() {
                               {lead.id.slice(0, 8)}...
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {nameAnswer?.value || "N/A"}
+                              {customerName}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {emailAnswer?.value || "N/A"}
+                              {customerEmail}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               {new Date(lead.createdAt).toLocaleDateString()}
