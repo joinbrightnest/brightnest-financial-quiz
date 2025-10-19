@@ -668,7 +668,7 @@ export default function CloserManagement() {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {appointment.saleValue ? `$${appointment.saleValue.toFixed(2)}` : '-'}
+                        {appointment.saleValue ? `$${Number(appointment.saleValue).toFixed(2)}` : '-'}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
                         {appointment.notes ? (
@@ -1001,7 +1001,7 @@ export default function CloserManagement() {
                     <dl>
                       <dt className="text-sm font-medium text-gray-500 truncate">Total Revenue</dt>
                       <dd className="text-lg font-medium text-gray-900">
-                        ${appointments.reduce((sum, a) => sum + (a.saleValue || 0), 0).toFixed(2)}
+                        ${appointments.reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
                       </dd>
                     </dl>
                   </div>
@@ -1045,7 +1045,7 @@ export default function CloserManagement() {
                     {closers.map((closer) => {
                       const closerAppointments = appointments.filter(a => a.closer?.id === closer.id);
                       const conversions = closerAppointments.filter(a => a.outcome === 'converted');
-                      const totalRevenue = closerAppointments.reduce((sum, a) => sum + (a.saleValue || 0), 0);
+                      const totalRevenue = closerAppointments.reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0);
                       const conversionRate = closerAppointments.length > 0 ? (conversions.length / closerAppointments.length) * 100 : 0;
                       const avgSaleValue = conversions.length > 0 ? totalRevenue / conversions.length : 0;
 
@@ -1128,7 +1128,7 @@ export default function CloserManagement() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {appointment.saleValue ? `$${appointment.saleValue.toFixed(2)}` : '-'}
+                          {appointment.saleValue ? `$${Number(appointment.saleValue).toFixed(2)}` : '-'}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
                           {appointment.notes ? (
