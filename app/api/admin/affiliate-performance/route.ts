@@ -37,24 +37,36 @@ export async function GET(request: NextRequest) {
           },
         });
 
+        // Get appointments for this affiliate
+        const appointments = await prisma.appointment.findMany({
+          where: {
+            affiliateCode: affiliate.referralCode,
+          },
+        });
+
         // Calculate conversion rates
         const clickCount = clicks.length;
         const conversionCount = conversions.length;
         const quizCount = quizSessions.length;
         const completionCount = quizSessions.filter(session => session.status === "completed").length;
         
-        // Count actual bookings and sales from conversions
-        const bookingCount = conversions.filter(c => c.conversionType === "booking").length;
-        const saleCount = conversions.filter(c => c.conversionType === "sale").length;
+        // Count actual bookings and sales from appointments (more accurate)
+        const bookingCount = appointments.length;
+        const saleCount = appointments.filter(apt => apt.outcome === 'converted').length;
         const leadCount = conversions.filter(c => c.conversionType === "quiz_completion").length;
+
+        // Calculate actual revenue from appointments
+        const actualRevenue = appointments
+          .filter(apt => apt.outcome === 'converted' && apt.saleValue)
+          .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
 
         // Calculate conversion rates
         const clickToQuizRate = clickCount > 0 ? (quizCount / clickCount) * 100 : 0;
         const quizToCompletionRate = quizCount > 0 ? (completionCount / quizCount) * 100 : 0;
         const clickToCompletionRate = clickCount > 0 ? (completionCount / clickCount) * 100 : 0;
 
-        // Calculate revenue (assuming $150 per sale)
-        const totalRevenue = saleCount * 150;
+        // Use actual revenue from appointments instead of mock calculation
+        const totalRevenue = actualRevenue;
         const totalCommission = totalRevenue * Number(affiliate.commissionRate);
 
         return {
