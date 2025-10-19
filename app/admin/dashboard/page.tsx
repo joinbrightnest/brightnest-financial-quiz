@@ -884,7 +884,9 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex items-center space-x-6">
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-gray-900">$4,300</div>
+                        <div className="text-2xl font-bold text-gray-900">
+                          ${appointments.reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                        </div>
                         <div className="text-sm text-gray-500">Total Value</div>
                       </div>
                       <div className="text-center">
@@ -926,205 +928,441 @@ export default function AdminDashboard() {
                 {pipelineView === 'kanban' && (
                   <div className="p-6">
                     <div className="flex space-x-6 overflow-x-auto pb-6">
-                    {/* New Leads Column */}
-                    <div className="flex-shrink-0 w-80">
-                      <div className="bg-gray-50 rounded-lg border border-gray-200">
-                        <div className="p-4 border-b border-gray-200">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-medium text-gray-900">New Leads</h3>
-                            <span className="text-xs text-gray-500">1</span>
-                          </div>
-                          <div className="text-lg font-bold text-gray-900">$2,500</div>
-                        </div>
-                        <div className="p-4 space-y-3">
-                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
-                            <div className="flex items-start justify-between mb-2">
-                              <div className="flex-1">
-                                <h4 className="text-sm font-medium text-gray-900">John Doe</h4>
-                                <p className="text-xs text-gray-500">john.doe@email.com</p>
-                              </div>
-                              <div className="text-right">
-                                <div className="text-sm font-bold text-gray-900">$2,500</div>
-                                <div className="text-xs text-gray-500">Oct 20</div>
-                              </div>
+                      {/* New Leads Column */}
+                      <div className="flex-shrink-0 w-80">
+                        <div className="bg-gray-50 rounded-lg border border-gray-200">
+                          <div className="p-4 border-b border-gray-200">
+                            <div className="flex items-center justify-between mb-2">
+                              <h3 className="text-sm font-medium text-gray-900">New Leads</h3>
+                              <span className="text-xs text-gray-500">{appointments.filter(a => a.status === 'scheduled' && !a.outcome).length}</span>
                             </div>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-2">
-                                <div className="h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center">
-                                  <span className="text-xs font-medium text-indigo-600">JD</span>
+                            <div className="text-lg font-bold text-gray-900">
+                              ${appointments.filter(a => a.status === 'scheduled' && !a.outcome).reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                            </div>
+                          </div>
+                          <div className="p-4 space-y-3">
+                            {appointments.filter(a => a.status === 'scheduled' && !a.outcome).length === 0 ? (
+                              <div className="text-center py-8 text-gray-500">
+                                <div className="text-sm">No leads in this stage</div>
+                              </div>
+                            ) : (
+                              appointments.filter(a => a.status === 'scheduled' && !a.outcome).map((appointment) => (
+                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                  <div className="flex items-start justify-between mb-2">
+                                    <div className="flex-1">
+                                      <h4 className="text-sm font-medium text-gray-900">{appointment.customerName}</h4>
+                                      <p className="text-xs text-gray-500">{appointment.customerEmail}</p>
+                                    </div>
+                                    <div className="text-right">
+                                      <div className="text-sm font-bold text-gray-900">
+                                        {appointment.saleValue ? `$${Number(appointment.saleValue).toFixed(2)}` : '$0'}
+                                      </div>
+                                      <div className="text-xs text-gray-500">
+                                        {new Date(appointment.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-2">
+                                      <div className="h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center">
+                                        <span className="text-xs font-medium text-indigo-600">
+                                          {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                        </span>
+                                      </div>
+                                      <span className="text-xs text-gray-600">{appointment.customerPhone}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                      <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                                      <span className="text-xs text-gray-500">
+                                        {new Date(appointment.scheduledAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  {appointment.notes && (
+                                    <div className="mt-2 text-xs text-gray-600 bg-gray-50 rounded p-2">
+                                      {appointment.notes}
+                                    </div>
+                                  )}
                                 </div>
-                                <span className="text-xs text-gray-600">+1 (555) 123-4567</span>
-                              </div>
-                              <div className="flex items-center space-x-1">
-                                <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                                <span className="text-xs text-gray-500">2:00 PM</span>
-                              </div>
-                            </div>
-                            <div className="mt-2 text-xs text-gray-600 bg-gray-50 rounded p-2">
-                              Interested in premium package, follow up next week
-                            </div>
+                              ))
+                            )}
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Booked Call Column */}
-                    <div className="flex-shrink-0 w-80">
-                      <div className="bg-gray-50 rounded-lg border border-gray-200">
-                        <div className="p-4 border-b border-gray-200">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-medium text-gray-900">Booked Call</h3>
-                            <span className="text-xs text-gray-500">1</span>
-                          </div>
-                          <div className="text-lg font-bold text-gray-900">$1,800</div>
-                        </div>
-                        <div className="p-4 space-y-3">
-                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
-                            <div className="flex items-start justify-between mb-2">
-                              <div className="flex-1">
-                                <h4 className="text-sm font-medium text-gray-900">Mary Johnson</h4>
-                                <p className="text-xs text-gray-500">mary.j@company.com</p>
-                              </div>
-                              <div className="text-right">
-                                <div className="text-sm font-bold text-gray-900">$1,800</div>
-                                <div className="text-xs text-gray-500">Oct 22</div>
-                              </div>
+                      {/* Booked Call Column */}
+                      <div className="flex-shrink-0 w-80">
+                        <div className="bg-gray-50 rounded-lg border border-gray-200">
+                          <div className="p-4 border-b border-gray-200">
+                            <div className="flex items-center justify-between mb-2">
+                              <h3 className="text-sm font-medium text-gray-900">Booked Call</h3>
+                              <span className="text-xs text-gray-500">{appointments.filter(a => a.status === 'confirmed').length}</span>
                             </div>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-2">
-                                <div className="h-6 w-6 rounded-full bg-green-100 flex items-center justify-center">
-                                  <span className="text-xs font-medium text-green-600">MJ</span>
+                            <div className="text-lg font-bold text-gray-900">
+                              ${appointments.filter(a => a.status === 'confirmed').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                            </div>
+                          </div>
+                          <div className="p-4 space-y-3">
+                            {appointments.filter(a => a.status === 'confirmed').length === 0 ? (
+                              <div className="text-center py-8 text-gray-500">
+                                <div className="text-sm">No leads in this stage</div>
+                              </div>
+                            ) : (
+                              appointments.filter(a => a.status === 'confirmed').map((appointment) => (
+                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                  <div className="flex items-start justify-between mb-2">
+                                    <div className="flex-1">
+                                      <h4 className="text-sm font-medium text-gray-900">{appointment.customerName}</h4>
+                                      <p className="text-xs text-gray-500">{appointment.customerEmail}</p>
+                                    </div>
+                                    <div className="text-right">
+                                      <div className="text-sm font-bold text-gray-900">
+                                        {appointment.saleValue ? `$${Number(appointment.saleValue).toFixed(2)}` : '$0'}
+                                      </div>
+                                      <div className="text-xs text-gray-500">
+                                        {new Date(appointment.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-2">
+                                      <div className="h-6 w-6 rounded-full bg-green-100 flex items-center justify-center">
+                                        <span className="text-xs font-medium text-green-600">
+                                          {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                        </span>
+                                      </div>
+                                      <span className="text-xs text-gray-600">{appointment.customerPhone}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                                      <span className="text-xs text-gray-500">
+                                        {new Date(appointment.scheduledAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  {appointment.notes && (
+                                    <div className="mt-2 text-xs text-gray-600 bg-gray-50 rounded p-2">
+                                      {appointment.notes}
+                                    </div>
+                                  )}
                                 </div>
-                                <span className="text-xs text-gray-600">+1 (555) 987-6543</span>
-                              </div>
-                              <div className="flex items-center space-x-1">
-                                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                                <span className="text-xs text-gray-500">10:30 AM</span>
-                              </div>
-                            </div>
-                            <div className="mt-2 text-xs text-gray-600 bg-gray-50 rounded p-2">
-                              Needs more information about pricing
-                            </div>
+                              ))
+                            )}
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Follow Up Column */}
-                    <div className="flex-shrink-0 w-80">
-                      <div className="bg-gray-50 rounded-lg border border-gray-200">
-                        <div className="p-4 border-b border-gray-200">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-medium text-gray-900">Follow Up</h3>
-                            <span className="text-xs text-gray-500">1</span>
-                          </div>
-                          <div className="text-lg font-bold text-gray-900">$0</div>
-                        </div>
-                        <div className="p-4 space-y-3">
-                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
-                            <div className="flex items-start justify-between mb-2">
-                              <div className="flex-1">
-                                <h4 className="text-sm font-medium text-gray-900">Robert Brown</h4>
-                                <p className="text-xs text-gray-500">robert.brown@email.com</p>
-                              </div>
-                              <div className="text-right">
-                                <div className="text-sm font-bold text-gray-900">$0</div>
-                                <div className="text-xs text-gray-500">Oct 18</div>
-                              </div>
+                      {/* Follow Up Column */}
+                      <div className="flex-shrink-0 w-80">
+                        <div className="bg-gray-50 rounded-lg border border-gray-200">
+                          <div className="p-4 border-b border-gray-200">
+                            <div className="flex items-center justify-between mb-2">
+                              <h3 className="text-sm font-medium text-gray-900">Follow Up</h3>
+                              <span className="text-xs text-gray-500">{appointments.filter(a => a.outcome === 'needs_follow_up').length}</span>
                             </div>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center space-x-2">
-                                <div className="h-6 w-6 rounded-full bg-red-100 flex items-center justify-center">
-                                  <span className="text-xs font-medium text-red-600">RB</span>
+                            <div className="text-lg font-bold text-gray-900">
+                              ${appointments.filter(a => a.outcome === 'needs_follow_up').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                            </div>
+                          </div>
+                          <div className="p-4 space-y-3">
+                            {appointments.filter(a => a.outcome === 'needs_follow_up').length === 0 ? (
+                              <div className="text-center py-8 text-gray-500">
+                                <div className="text-sm">No leads in this stage</div>
+                              </div>
+                            ) : (
+                              appointments.filter(a => a.outcome === 'needs_follow_up').map((appointment) => (
+                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                  <div className="flex items-start justify-between mb-2">
+                                    <div className="flex-1">
+                                      <h4 className="text-sm font-medium text-gray-900">{appointment.customerName}</h4>
+                                      <p className="text-xs text-gray-500">{appointment.customerEmail}</p>
+                                    </div>
+                                    <div className="text-right">
+                                      <div className="text-sm font-bold text-gray-900">
+                                        {appointment.saleValue ? `$${Number(appointment.saleValue).toFixed(2)}` : '$0'}
+                                      </div>
+                                      <div className="text-xs text-gray-500">
+                                        {new Date(appointment.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-2">
+                                      <div className="h-6 w-6 rounded-full bg-yellow-100 flex items-center justify-center">
+                                        <span className="text-xs font-medium text-yellow-600">
+                                          {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                        </span>
+                                      </div>
+                                      <span className="text-xs text-gray-600">{appointment.customerPhone}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                      <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                                      <span className="text-xs text-gray-500">
+                                        {new Date(appointment.scheduledAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  {appointment.notes && (
+                                    <div className="mt-2 text-xs text-gray-600 bg-gray-50 rounded p-2">
+                                      {appointment.notes}
+                                    </div>
+                                  )}
                                 </div>
-                                <span className="text-xs text-gray-600">+1 (555) 456-7890</span>
-                              </div>
-                              <div className="flex items-center space-x-1">
-                                <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                                <span className="text-xs text-gray-500">3:15 PM</span>
-                              </div>
+                              ))
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Callback Requested Column */}
+                      <div className="flex-shrink-0 w-80">
+                        <div className="bg-gray-50 rounded-lg border border-gray-200">
+                          <div className="p-4 border-b border-gray-200">
+                            <div className="flex items-center justify-between mb-2">
+                              <h3 className="text-sm font-medium text-gray-900">Callback Requested</h3>
+                              <span className="text-xs text-gray-500">{appointments.filter(a => a.outcome === 'callback_requested').length}</span>
                             </div>
-                            <div className="mt-2 text-xs text-gray-600 bg-gray-50 rounded p-2">
-                              Budget constraints, not ready to invest
+                            <div className="text-lg font-bold text-gray-900">
+                              ${appointments.filter(a => a.outcome === 'callback_requested').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Callback Requested Column */}
-                    <div className="flex-shrink-0 w-80">
-                      <div className="bg-gray-50 rounded-lg border border-gray-200">
-                        <div className="p-4 border-b border-gray-200">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-medium text-gray-900">Callback Requested</h3>
-                            <span className="text-xs text-gray-500">0</span>
-                          </div>
-                          <div className="text-lg font-bold text-gray-900">$0</div>
-                        </div>
-                        <div className="p-4">
-                          <div className="text-center py-8 text-gray-500">
-                            <div className="text-sm">No leads in this stage</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Converted Column */}
-                    <div className="flex-shrink-0 w-80">
-                      <div className="bg-gray-50 rounded-lg border border-gray-200">
-                        <div className="p-4 border-b border-gray-200">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-medium text-gray-900">Converted</h3>
-                            <span className="text-xs text-gray-500">0</span>
-                          </div>
-                          <div className="text-lg font-bold text-gray-900">$0</div>
-                        </div>
-                        <div className="p-4">
-                          <div className="text-center py-8 text-gray-500">
-                            <div className="text-sm">No leads in this stage</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Not Interested Column */}
-                    <div className="flex-shrink-0 w-80">
-                      <div className="bg-gray-50 rounded-lg border border-gray-200">
-                        <div className="p-4 border-b border-gray-200">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-medium text-gray-900">Not Interested</h3>
-                            <span className="text-xs text-gray-500">0</span>
-                          </div>
-                          <div className="text-lg font-bold text-gray-900">$0</div>
-                        </div>
-                        <div className="p-4">
-                          <div className="text-center py-8 text-gray-500">
-                            <div className="text-sm">No leads in this stage</div>
+                          <div className="p-4 space-y-3">
+                            {appointments.filter(a => a.outcome === 'callback_requested').length === 0 ? (
+                              <div className="text-center py-8 text-gray-500">
+                                <div className="text-sm">No leads in this stage</div>
+                              </div>
+                            ) : (
+                              appointments.filter(a => a.outcome === 'callback_requested').map((appointment) => (
+                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                  <div className="flex items-start justify-between mb-2">
+                                    <div className="flex-1">
+                                      <h4 className="text-sm font-medium text-gray-900">{appointment.customerName}</h4>
+                                      <p className="text-xs text-gray-500">{appointment.customerEmail}</p>
+                                    </div>
+                                    <div className="text-right">
+                                      <div className="text-sm font-bold text-gray-900">
+                                        {appointment.saleValue ? `$${Number(appointment.saleValue).toFixed(2)}` : '$0'}
+                                      </div>
+                                      <div className="text-xs text-gray-500">
+                                        {new Date(appointment.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-2">
+                                      <div className="h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center">
+                                        <span className="text-xs font-medium text-purple-600">
+                                          {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                        </span>
+                                      </div>
+                                      <span className="text-xs text-gray-600">{appointment.customerPhone}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                      <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                                      <span className="text-xs text-gray-500">
+                                        {new Date(appointment.scheduledAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  {appointment.notes && (
+                                    <div className="mt-2 text-xs text-gray-600 bg-gray-50 rounded p-2">
+                                      {appointment.notes}
+                                    </div>
+                                  )}
+                                </div>
+                              ))
+                            )}
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Rescheduled Column */}
-                    <div className="flex-shrink-0 w-80">
-                      <div className="bg-gray-50 rounded-lg border border-gray-200">
-                        <div className="p-4 border-b border-gray-200">
-                          <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-medium text-gray-900">Rescheduled</h3>
-                            <span className="text-xs text-gray-500">0</span>
+                      {/* Converted Column */}
+                      <div className="flex-shrink-0 w-80">
+                        <div className="bg-gray-50 rounded-lg border border-gray-200">
+                          <div className="p-4 border-b border-gray-200">
+                            <div className="flex items-center justify-between mb-2">
+                              <h3 className="text-sm font-medium text-gray-900">Converted</h3>
+                              <span className="text-xs text-gray-500">{appointments.filter(a => a.outcome === 'converted').length}</span>
+                            </div>
+                            <div className="text-lg font-bold text-gray-900">
+                              ${appointments.filter(a => a.outcome === 'converted').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                            </div>
                           </div>
-                          <div className="text-lg font-bold text-gray-900">$0</div>
+                          <div className="p-4 space-y-3">
+                            {appointments.filter(a => a.outcome === 'converted').length === 0 ? (
+                              <div className="text-center py-8 text-gray-500">
+                                <div className="text-sm">No leads in this stage</div>
+                              </div>
+                            ) : (
+                              appointments.filter(a => a.outcome === 'converted').map((appointment) => (
+                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                  <div className="flex items-start justify-between mb-2">
+                                    <div className="flex-1">
+                                      <h4 className="text-sm font-medium text-gray-900">{appointment.customerName}</h4>
+                                      <p className="text-xs text-gray-500">{appointment.customerEmail}</p>
+                                    </div>
+                                    <div className="text-right">
+                                      <div className="text-sm font-bold text-gray-900">
+                                        {appointment.saleValue ? `$${Number(appointment.saleValue).toFixed(2)}` : '$0'}
+                                      </div>
+                                      <div className="text-xs text-gray-500">
+                                        {new Date(appointment.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-2">
+                                      <div className="h-6 w-6 rounded-full bg-emerald-100 flex items-center justify-center">
+                                        <span className="text-xs font-medium text-emerald-600">
+                                          {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                        </span>
+                                      </div>
+                                      <span className="text-xs text-gray-600">{appointment.customerPhone}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                      <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                                      <span className="text-xs text-gray-500">
+                                        {new Date(appointment.scheduledAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  {appointment.notes && (
+                                    <div className="mt-2 text-xs text-gray-600 bg-gray-50 rounded p-2">
+                                      {appointment.notes}
+                                    </div>
+                                  )}
+                                </div>
+                              ))
+                            )}
+                          </div>
                         </div>
-                        <div className="p-4">
-                          <div className="text-center py-8 text-gray-500">
-                            <div className="text-sm">No leads in this stage</div>
+                      </div>
+
+                      {/* Not Interested Column */}
+                      <div className="flex-shrink-0 w-80">
+                        <div className="bg-gray-50 rounded-lg border border-gray-200">
+                          <div className="p-4 border-b border-gray-200">
+                            <div className="flex items-center justify-between mb-2">
+                              <h3 className="text-sm font-medium text-gray-900">Not Interested</h3>
+                              <span className="text-xs text-gray-500">{appointments.filter(a => a.outcome === 'not_interested').length}</span>
+                            </div>
+                            <div className="text-lg font-bold text-gray-900">
+                              ${appointments.filter(a => a.outcome === 'not_interested').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                            </div>
+                          </div>
+                          <div className="p-4 space-y-3">
+                            {appointments.filter(a => a.outcome === 'not_interested').length === 0 ? (
+                              <div className="text-center py-8 text-gray-500">
+                                <div className="text-sm">No leads in this stage</div>
+                              </div>
+                            ) : (
+                              appointments.filter(a => a.outcome === 'not_interested').map((appointment) => (
+                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                  <div className="flex items-start justify-between mb-2">
+                                    <div className="flex-1">
+                                      <h4 className="text-sm font-medium text-gray-900">{appointment.customerName}</h4>
+                                      <p className="text-xs text-gray-500">{appointment.customerEmail}</p>
+                                    </div>
+                                    <div className="text-right">
+                                      <div className="text-sm font-bold text-gray-900">
+                                        {appointment.saleValue ? `$${Number(appointment.saleValue).toFixed(2)}` : '$0'}
+                                      </div>
+                                      <div className="text-xs text-gray-500">
+                                        {new Date(appointment.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-2">
+                                      <div className="h-6 w-6 rounded-full bg-red-100 flex items-center justify-center">
+                                        <span className="text-xs font-medium text-red-600">
+                                          {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                        </span>
+                                      </div>
+                                      <span className="text-xs text-gray-600">{appointment.customerPhone}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                      <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                                      <span className="text-xs text-gray-500">
+                                        {new Date(appointment.scheduledAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  {appointment.notes && (
+                                    <div className="mt-2 text-xs text-gray-600 bg-gray-50 rounded p-2">
+                                      {appointment.notes}
+                                    </div>
+                                  )}
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Rescheduled Column */}
+                      <div className="flex-shrink-0 w-80">
+                        <div className="bg-gray-50 rounded-lg border border-gray-200">
+                          <div className="p-4 border-b border-gray-200">
+                            <div className="flex items-center justify-between mb-2">
+                              <h3 className="text-sm font-medium text-gray-900">Rescheduled</h3>
+                              <span className="text-xs text-gray-500">{appointments.filter(a => a.outcome === 'rescheduled').length}</span>
+                            </div>
+                            <div className="text-lg font-bold text-gray-900">
+                              ${appointments.filter(a => a.outcome === 'rescheduled').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                            </div>
+                          </div>
+                          <div className="p-4 space-y-3">
+                            {appointments.filter(a => a.outcome === 'rescheduled').length === 0 ? (
+                              <div className="text-center py-8 text-gray-500">
+                                <div className="text-sm">No leads in this stage</div>
+                              </div>
+                            ) : (
+                              appointments.filter(a => a.outcome === 'rescheduled').map((appointment) => (
+                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                  <div className="flex items-start justify-between mb-2">
+                                    <div className="flex-1">
+                                      <h4 className="text-sm font-medium text-gray-900">{appointment.customerName}</h4>
+                                      <p className="text-xs text-gray-500">{appointment.customerEmail}</p>
+                                    </div>
+                                    <div className="text-right">
+                                      <div className="text-sm font-bold text-gray-900">
+                                        {appointment.saleValue ? `$${Number(appointment.saleValue).toFixed(2)}` : '$0'}
+                                      </div>
+                                      <div className="text-xs text-gray-500">
+                                        {new Date(appointment.scheduledAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center space-x-2">
+                                      <div className="h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center">
+                                        <span className="text-xs font-medium text-gray-600">
+                                          {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                        </span>
+                                      </div>
+                                      <span className="text-xs text-gray-600">{appointment.customerPhone}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                      <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                                      <span className="text-xs text-gray-500">
+                                        {new Date(appointment.scheduledAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  {appointment.notes && (
+                                    <div className="mt-2 text-xs text-gray-600 bg-gray-50 rounded p-2">
+                                      {appointment.notes}
+                                    </div>
+                                  )}
+                                </div>
+                              ))
+                            )}
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
                 )}
 
                 {/* Appointments Table View */}
