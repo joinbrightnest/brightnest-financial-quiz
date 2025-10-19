@@ -934,19 +934,19 @@ export default function AdminDashboard() {
                           <div className="p-4 border-b border-gray-200">
                             <div className="flex items-center justify-between mb-2">
                             <h3 className="text-sm font-medium text-gray-900">New Leads</h3>
-                            <span className="text-xs text-gray-500">{appointments.filter(a => a.status === 'scheduled').length}</span>
+                            <span className="text-xs text-gray-500">{appointments.filter(a => a.type === 'quiz_session').length}</span>
                             </div>
                             <div className="text-lg font-bold text-gray-900">
-                              ${appointments.filter(a => a.status === 'scheduled').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                              ${appointments.filter(a => a.type === 'quiz_session').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
                             </div>
                           </div>
                           <div className="p-4 space-y-3">
-                            {appointments.filter(a => a.status === 'scheduled').length === 0 ? (
+                            {appointments.filter(a => a.type === 'quiz_session').length === 0 ? (
                               <div className="text-center py-8 text-gray-500">
                                 <div className="text-sm">No leads in this stage</div>
                               </div>
                             ) : (
-                              appointments.filter(a => a.status === 'scheduled').map((appointment) => (
+                              appointments.filter(a => a.type === 'quiz_session').map((appointment) => (
                                 <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
                                   <div className="flex items-start justify-between mb-2">
                                     <div className="flex-1">
@@ -969,7 +969,7 @@ export default function AdminDashboard() {
                                           {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
                                         </span>
                                       </div>
-                                      <span className="text-xs text-gray-600">{appointment.customerPhone}</span>
+                                      <span className="text-xs text-gray-600">{appointment.customerPhone || 'No phone'}</span>
                                     </div>
                                     <div className="flex items-center space-x-1">
                                       <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
@@ -995,20 +995,20 @@ export default function AdminDashboard() {
                         <div className="bg-gray-50 rounded-lg border border-gray-200">
                           <div className="p-4 border-b border-gray-200">
                             <div className="flex items-center justify-between mb-2">
-                              <h3 className="text-sm font-medium text-gray-900">Booked Call</h3>
-                              <span className="text-xs text-gray-500">{appointments.filter(a => a.status === 'completed' && !a.outcome).length}</span>
+                            <h3 className="text-sm font-medium text-gray-900">Booked Call</h3>
+                            <span className="text-xs text-gray-500">{appointments.filter(a => a.type === 'appointment').length}</span>
                             </div>
                             <div className="text-lg font-bold text-gray-900">
-                              ${appointments.filter(a => a.status === 'completed' && !a.outcome).reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                              ${appointments.filter(a => a.type === 'appointment').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
                             </div>
                           </div>
                           <div className="p-4 space-y-3">
-                            {appointments.filter(a => a.status === 'completed' && !a.outcome).length === 0 ? (
+                            {appointments.filter(a => a.type === 'appointment').length === 0 ? (
                               <div className="text-center py-8 text-gray-500">
                                 <div className="text-sm">No leads in this stage</div>
                               </div>
                             ) : (
-                              appointments.filter(a => a.status === 'completed' && !a.outcome).map((appointment) => (
+                              appointments.filter(a => a.type === 'appointment').map((appointment) => (
                                 <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
                                   <div className="flex items-start justify-between mb-2">
                                     <div className="flex-1">
@@ -1058,19 +1058,19 @@ export default function AdminDashboard() {
                           <div className="p-4 border-b border-gray-200">
                             <div className="flex items-center justify-between mb-2">
                               <h3 className="text-sm font-medium text-gray-900">Follow Up</h3>
-                              <span className="text-xs text-gray-500">{appointments.filter(a => a.outcome === 'needs_follow_up').length}</span>
+                              <span className="text-xs text-gray-500">{appointments.filter(a => a.type === 'appointment' && a.outcome === 'needs_follow_up').length}</span>
                             </div>
                             <div className="text-lg font-bold text-gray-900">
-                              ${appointments.filter(a => a.outcome === 'needs_follow_up').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                              ${appointments.filter(a => a.type === 'appointment' && a.outcome === 'needs_follow_up').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
                             </div>
                           </div>
                           <div className="p-4 space-y-3">
-                            {appointments.filter(a => a.outcome === 'needs_follow_up').length === 0 ? (
+                            {appointments.filter(a => a.type === 'appointment' && a.outcome === 'needs_follow_up').length === 0 ? (
                               <div className="text-center py-8 text-gray-500">
                                 <div className="text-sm">No leads in this stage</div>
                               </div>
                             ) : (
-                              appointments.filter(a => a.outcome === 'needs_follow_up').map((appointment) => (
+                              appointments.filter(a => a.type === 'appointment' && a.outcome === 'needs_follow_up').map((appointment) => (
                                 <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
                                   <div className="flex items-start justify-between mb-2">
                                     <div className="flex-1">
@@ -1120,19 +1120,19 @@ export default function AdminDashboard() {
                           <div className="p-4 border-b border-gray-200">
                             <div className="flex items-center justify-between mb-2">
                               <h3 className="text-sm font-medium text-gray-900">Callback Requested</h3>
-                              <span className="text-xs text-gray-500">{appointments.filter(a => a.outcome === 'callback_requested').length}</span>
+                              <span className="text-xs text-gray-500">{appointments.filter(a => a.type === 'appointment' && a.outcome === 'callback_requested').length}</span>
                             </div>
                             <div className="text-lg font-bold text-gray-900">
-                              ${appointments.filter(a => a.outcome === 'callback_requested').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                              ${appointments.filter(a => a.type === 'appointment' && a.outcome === 'callback_requested').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
                             </div>
                           </div>
                           <div className="p-4 space-y-3">
-                            {appointments.filter(a => a.outcome === 'callback_requested').length === 0 ? (
+                            {appointments.filter(a => a.type === 'appointment' && a.outcome === 'callback_requested').length === 0 ? (
                               <div className="text-center py-8 text-gray-500">
                                 <div className="text-sm">No leads in this stage</div>
                               </div>
                             ) : (
-                              appointments.filter(a => a.outcome === 'callback_requested').map((appointment) => (
+                              appointments.filter(a => a.type === 'appointment' && a.outcome === 'callback_requested').map((appointment) => (
                                 <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
                                   <div className="flex items-start justify-between mb-2">
                                     <div className="flex-1">
@@ -1182,19 +1182,19 @@ export default function AdminDashboard() {
                           <div className="p-4 border-b border-gray-200">
                             <div className="flex items-center justify-between mb-2">
                               <h3 className="text-sm font-medium text-gray-900">Converted</h3>
-                              <span className="text-xs text-gray-500">{appointments.filter(a => a.outcome === 'converted').length}</span>
+                              <span className="text-xs text-gray-500">{appointments.filter(a => a.type === 'appointment' && a.outcome === 'converted').length}</span>
                             </div>
                             <div className="text-lg font-bold text-gray-900">
-                              ${appointments.filter(a => a.outcome === 'converted').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                              ${appointments.filter(a => a.type === 'appointment' && a.outcome === 'converted').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
                             </div>
                           </div>
                           <div className="p-4 space-y-3">
-                            {appointments.filter(a => a.outcome === 'converted').length === 0 ? (
+                            {appointments.filter(a => a.type === 'appointment' && a.outcome === 'converted').length === 0 ? (
                               <div className="text-center py-8 text-gray-500">
                                 <div className="text-sm">No leads in this stage</div>
                               </div>
                             ) : (
-                              appointments.filter(a => a.outcome === 'converted').map((appointment) => (
+                              appointments.filter(a => a.type === 'appointment' && a.outcome === 'converted').map((appointment) => (
                                 <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
                                   <div className="flex items-start justify-between mb-2">
                                     <div className="flex-1">
@@ -1244,19 +1244,19 @@ export default function AdminDashboard() {
                           <div className="p-4 border-b border-gray-200">
                             <div className="flex items-center justify-between mb-2">
                               <h3 className="text-sm font-medium text-gray-900">Not Interested</h3>
-                              <span className="text-xs text-gray-500">{appointments.filter(a => a.outcome === 'not_interested').length}</span>
+                              <span className="text-xs text-gray-500">{appointments.filter(a => a.type === 'appointment' && a.outcome === 'not_interested').length}</span>
                             </div>
                             <div className="text-lg font-bold text-gray-900">
-                              ${appointments.filter(a => a.outcome === 'not_interested').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                              ${appointments.filter(a => a.type === 'appointment' && a.outcome === 'not_interested').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
                             </div>
                           </div>
                           <div className="p-4 space-y-3">
-                            {appointments.filter(a => a.outcome === 'not_interested').length === 0 ? (
+                            {appointments.filter(a => a.type === 'appointment' && a.outcome === 'not_interested').length === 0 ? (
                               <div className="text-center py-8 text-gray-500">
                                 <div className="text-sm">No leads in this stage</div>
                               </div>
                             ) : (
-                              appointments.filter(a => a.outcome === 'not_interested').map((appointment) => (
+                              appointments.filter(a => a.type === 'appointment' && a.outcome === 'not_interested').map((appointment) => (
                                 <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
                                   <div className="flex items-start justify-between mb-2">
                                     <div className="flex-1">
@@ -1306,19 +1306,19 @@ export default function AdminDashboard() {
                           <div className="p-4 border-b border-gray-200">
                             <div className="flex items-center justify-between mb-2">
                               <h3 className="text-sm font-medium text-gray-900">Rescheduled</h3>
-                              <span className="text-xs text-gray-500">{appointments.filter(a => a.outcome === 'rescheduled').length}</span>
+                              <span className="text-xs text-gray-500">{appointments.filter(a => a.type === 'appointment' && a.outcome === 'rescheduled').length}</span>
                             </div>
                             <div className="text-lg font-bold text-gray-900">
-                              ${appointments.filter(a => a.outcome === 'rescheduled').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                              ${appointments.filter(a => a.type === 'appointment' && a.outcome === 'rescheduled').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
                             </div>
                           </div>
                           <div className="p-4 space-y-3">
-                            {appointments.filter(a => a.outcome === 'rescheduled').length === 0 ? (
+                            {appointments.filter(a => a.type === 'appointment' && a.outcome === 'rescheduled').length === 0 ? (
                               <div className="text-center py-8 text-gray-500">
                                 <div className="text-sm">No leads in this stage</div>
                               </div>
                             ) : (
-                              appointments.filter(a => a.outcome === 'rescheduled').map((appointment) => (
+                              appointments.filter(a => a.type === 'appointment' && a.outcome === 'rescheduled').map((appointment) => (
                                 <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
                                   <div className="flex items-start justify-between mb-2">
                                     <div className="flex-1">

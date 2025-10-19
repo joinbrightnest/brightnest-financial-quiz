@@ -45,7 +45,75 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    return NextResponse.json(appointments);
+    // Get all quiz sessions that qualified for calls (these are "leads")
+    const quizSessions = await prisma.quizSession.findMany({
+      where: {
+        status: 'completed',
+        qualifiesForCall: true
+      },
+      orderBy: {
+        completedAt: 'desc'
+      },
+      select: {
+        id: true,
+        userName: true,
+        userEmail: true,
+        completedAt: true,
+        affiliateCode: true,
+        totalPoints: true,
+        qualifiesForCall: true
+      }
+    });
+
+    // Combine appointments and quiz sessions into a unified data structure
+    const allLeads = [
+      // Appointments (people who booked calls)
+      ...appointments.map(apt => ({
+        id: apt.id,
+        type: 'appointment',
+        customerName: apt.customerName,
+        customerEmail: apt.customerEmail,
+        customerPhone: apt.customerPhone,
+        scheduledAt: apt.scheduledAt,
+        status: apt.status,
+        outcome: apt.outcome,
+        saleValue: apt.saleValue,
+        notes: apt.notes,
+        affiliateCode: apt.affiliateCode,
+        closer: apt.closer,
+        recordingLinkConverted: apt.recordingLinkConverted,
+        recordingLinkNotInterested: apt.recordingLinkNotInterested,
+        recordingLinkNeedsFollowUp: apt.recordingLinkNeedsFollowUp,
+        recordingLinkWrongNumber: apt.recordingLinkWrongNumber,
+        recordingLinkNoAnswer: apt.recordingLinkNoAnswer,
+        recordingLinkCallbackRequested: apt.recordingLinkCallbackRequested,
+        recordingLinkRescheduled: apt.recordingLinkRescheduled,
+      })),
+      // Quiz sessions (people who completed quiz but haven't booked calls)
+      ...quizSessions.map(session => ({
+        id: session.id,
+        type: 'quiz_session',
+        customerName: session.userName,
+        customerEmail: session.userEmail,
+        customerPhone: null,
+        scheduledAt: session.completedAt,
+        status: 'completed',
+        outcome: null,
+        saleValue: null,
+        notes: null,
+        affiliateCode: session.affiliateCode,
+        closer: null,
+        recordingLinkConverted: null,
+        recordingLinkNotInterested: null,
+        recordingLinkNeedsFollowUp: null,
+        recordingLinkWrongNumber: null,
+        recordingLinkNoAnswer: null,
+        recordingLinkCallbackRequested: null,
+        recordingLinkRescheduled: null,
+      }))
+    ];
+
+    return NextResponse.json(allLeads);
 
   } catch (error) {
     console.error('❌ Error fetching admin appointments:', error);
