@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Affiliate not found" }, { status: 404 });
     }
     
-    const [clicks, conversions] = await Promise.all([
+    const [clicks, conversions, quizSessions] = await Promise.all([
       prisma.affiliateClick.findMany({
         where: { affiliateId: affiliate.id },
         orderBy: { createdAt: "desc" },
@@ -46,10 +46,16 @@ export async function GET(request: NextRequest) {
         where: { affiliateId: affiliate.id },
         orderBy: { createdAt: "desc" },
         take: 10
+      }),
+      prisma.quizSession.findMany({
+        where: { affiliateCode: affiliateCode },
+        orderBy: { createdAt: "desc" },
+        take: 10
       })
     ]);
 
     const totalClicks = clicks.length;
+    const totalQuizStarts = quizSessions.length;
     const leadData = await calculateLeadsByCode(affiliateCode, dateRange);
     const totalLeads = leadData.totalLeads;
     const totalBookings = conversions.filter((c) => c.conversionType === "booking").length;
@@ -80,6 +86,7 @@ export async function GET(request: NextRequest) {
       },
       stats: {
         totalClicks,
+        totalQuizStarts,
         totalLeads,
         totalBookings,
         totalSales,

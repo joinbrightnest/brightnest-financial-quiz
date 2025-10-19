@@ -25,6 +25,7 @@ interface AffiliateData {
 
 interface AffiliateStats {
   totalClicks: number;
+  totalQuizStarts: number;
   totalLeads: number;
   totalBookings: number;
   totalSales: number;
@@ -419,8 +420,8 @@ export default function AffiliateDashboard() {
                       <span className="text-sm font-semibold text-slate-900">Quiz Starts</span>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-slate-900">{stats.totalClicks.toLocaleString()}</p>
-                      <p className="text-xs text-slate-600 font-medium">100.0%</p>
+                      <p className="text-lg font-bold text-slate-900">{stats.totalQuizStarts.toLocaleString()}</p>
+                      <p className="text-xs text-slate-600 font-medium">{stats.totalClicks > 0 ? ((stats.totalQuizStarts / stats.totalClicks) * 100).toFixed(1) : 0}%</p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
