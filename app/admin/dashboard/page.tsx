@@ -99,6 +99,7 @@ export default function AdminDashboard() {
   const [showCEOAnalytics, setShowCEOAnalytics] = useState(false);
   const [showMainDashboard, setShowMainDashboard] = useState(true);
   const [showCloserManagement, setShowCloserManagement] = useState(false);
+  const [showPipeline, setShowPipeline] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [qualificationThreshold, setQualificationThreshold] = useState(17);
   const [isUpdatingThreshold, setIsUpdatingThreshold] = useState(false);
@@ -456,6 +457,7 @@ export default function AdminDashboard() {
                 setShowCloserManagement(true);
                 setShowMainDashboard(false);
                 setShowCEOAnalytics(false);
+                setShowPipeline(false);
                 setShowSettings(false);
               }}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
@@ -471,10 +473,30 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => {
+                setShowPipeline(true);
+                setShowMainDashboard(false);
+                setShowCEOAnalytics(false);
+                setShowCloserManagement(false);
+                setShowSettings(false);
+              }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
+                showPipeline 
+                  ? 'text-blue-700 bg-blue-50 border-r-2 border-blue-600' 
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <svg className={`w-5 h-5 group-hover:text-gray-600 ${showPipeline ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+              <span className="text-sm font-medium">Pipeline Management</span>
+            </button>
+            <button
+              onClick={() => {
                 setShowSettings(true);
                 setShowMainDashboard(false);
                 setShowCEOAnalytics(false);
                 setShowCloserManagement(false);
+                setShowPipeline(false);
               }}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
                 showSettings 
@@ -770,6 +792,62 @@ export default function AdminDashboard() {
           {showCloserManagement && (
             <div className="mb-8">
               <CloserManagement />
+            </div>
+          )}
+
+          {/* Pipeline Management Section */}
+          {showPipeline && (
+            <div className="mb-8">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                <div className="p-6">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-4">Lead Pipeline</h2>
+                  <p className="text-gray-600 mb-6">
+                    Manage and track leads through your sales pipeline with drag-and-drop functionality.
+                  </p>
+                  
+                  {/* Pipeline Board */}
+                  <div className="flex space-x-6 overflow-x-auto pb-6">
+                    {[
+                      { id: 'new', title: 'New Leads', color: 'bg-blue-100 border-blue-200', count: 0 },
+                      { id: 'booked_call', title: 'Booked Call', color: 'bg-green-100 border-green-200', count: 0 },
+                      { id: 'follow_up', title: 'Follow Up', color: 'bg-yellow-100 border-yellow-200', count: 0 },
+                      { id: 'callback_requested', title: 'Callback Requested', color: 'bg-purple-100 border-purple-200', count: 0 },
+                      { id: 'converted', title: 'Converted', color: 'bg-emerald-100 border-emerald-200', count: 0 },
+                      { id: 'not_interested', title: 'Not Interested', color: 'bg-red-100 border-red-200', count: 0 },
+                      { id: 'rescheduled', title: 'Rescheduled', color: 'bg-gray-100 border-gray-200', count: 0 },
+                    ].map((column) => (
+                      <div
+                        key={column.id}
+                        className={`flex-shrink-0 w-80 rounded-lg border-2 ${column.color}`}
+                      >
+                        <div className="p-4">
+                          <h3 className="text-sm font-medium text-gray-900 mb-3">
+                            {column.title} ({column.count})
+                          </h3>
+                          
+                          <div className="space-y-3">
+                            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-center text-gray-500">
+                              <p className="text-sm">No leads in this stage</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <div className="mt-6 text-center">
+                    <p className="text-gray-500 text-sm">
+                      This is a preview of the pipeline interface. The full drag-and-drop functionality will be available in the dedicated pipeline page.
+                    </p>
+                    <button
+                      onClick={() => window.open('/admin/pipeline', '_blank')}
+                      className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                    >
+                      Open Full Pipeline View
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
