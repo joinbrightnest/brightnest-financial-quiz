@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { calculateLeadsByCode } from "@/lib/lead-calculation";
+import { calculateLeadsByCode, calculateLeadsWithDateRange } from "@/lib/lead-calculation";
 
 const prisma = new PrismaClient();
 
@@ -184,8 +184,8 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
       },
     });
 
-    // Calculate real leads for this day
-    const dayLeadData = await calculateLeadsByCode(affiliateCode, '1d');
+    // Calculate real leads for this specific day
+    const dayLeadData = await calculateLeadsWithDateRange(dayStart, dayEnd, undefined, affiliateCode);
     
     data.push({
       date: date.toISOString().split('T')[0],

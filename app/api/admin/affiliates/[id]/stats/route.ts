@@ -105,7 +105,7 @@ export async function GET(
     const trafficSources = generateTrafficSourcesFromRealData(clicks);
 
     // Generate conversion funnel from real data
-    const conversionFunnel = generateConversionFunnelFromRealData(clicks, conversions, quizSessions);
+    const conversionFunnel = generateConversionFunnelFromRealData(clicks, conversions, quizSessions, leadData);
 
     // Generate recent activity from real data
     const recentActivity = generateRecentActivityFromRealData(clicks, conversions);
@@ -206,10 +206,10 @@ function generateTrafficSourcesFromRealData(clicks: any[]) {
   }));
 }
 
-function generateConversionFunnelFromRealData(clicks: any[], conversions: any[], quizSessions: any[]) {
+function generateConversionFunnelFromRealData(clicks: any[], conversions: any[], quizSessions: any[], leadData: any) {
   const totalClicks = clicks.length;
   const quizStarts = quizSessions.length; // All quiz sessions represent quiz starts
-  const quizCompletions = conversions.filter(c => c.status === "confirmed").length;
+  const quizCompletions = leadData.totalLeads; // Use centralized lead calculation
   const bookings = conversions.filter(c => c.conversionType === "booking").length;
   
   return [
