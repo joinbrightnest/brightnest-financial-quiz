@@ -425,7 +425,7 @@ export default function CloserDashboard() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           {getRecordingLink(appointment) ? (
                             <a
-                              href={getRecordingLink(appointment)}
+                              href={getRecordingLink(appointment) || '#'}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-indigo-600 hover:text-indigo-900 underline"

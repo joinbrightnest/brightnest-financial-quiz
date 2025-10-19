@@ -317,11 +317,11 @@ export default function AdminDashboard() {
       ...stats.allLeads.map(lead => {
         const nameAnswer = lead.answers.find(a => 
           a.question?.prompt?.toLowerCase().includes('name') ||
-          a.question?.text?.toLowerCase().includes('name')
+          a.question?.prompt?.toLowerCase().includes('name')
         );
         const emailAnswer = lead.answers.find(a => 
           a.question?.prompt?.toLowerCase().includes('email') ||
-          a.question?.text?.toLowerCase().includes('email')
+          a.question?.prompt?.toLowerCase().includes('email')
         );
         
         return [
@@ -2075,11 +2075,11 @@ export default function AdminDashboard() {
                       {stats.allLeads.map((lead) => {
                         const nameAnswer = lead.answers.find(a => 
                           a.question?.prompt?.toLowerCase().includes('name') ||
-                          a.question?.text?.toLowerCase().includes('name')
+                          a.question?.prompt?.toLowerCase().includes('name')
                         );
                         const emailAnswer = lead.answers.find(a => 
                           a.question?.prompt?.toLowerCase().includes('email') ||
-                          a.question?.text?.toLowerCase().includes('email')
+                          a.question?.prompt?.toLowerCase().includes('email')
                         );
                         
                         return (

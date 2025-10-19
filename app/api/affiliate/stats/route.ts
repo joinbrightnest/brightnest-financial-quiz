@@ -162,7 +162,7 @@ function generateDailyStats(dateRange: string, totalClicks: number, totalSales: 
       date: date.toISOString().split('T')[0],
       clicks: Math.floor(Math.random() * 10) + 1,
       leads: Math.floor(Math.random() * 3) + 1,
-      sales: Math.floor(Math.random() * 2),
+      bookedCalls: Math.floor(Math.random() * 2),
       commission: Math.floor(Math.random() * 100) + 20,
     });
   }
