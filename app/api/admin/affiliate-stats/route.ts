@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { calculateLeadsByCode } from "@/lib/lead-calculation";
+import { calculateLeadsByCode, calculateLeadsWithDateRange } from "@/lib/lead-calculation";
 
 const prisma = new PrismaClient();
 
@@ -66,8 +66,8 @@ export async function GET(request: NextRequest) {
     const totalCommission = affiliate.totalCommission || 0; // Use database field instead of calculating from conversions
     const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
 
-    // Generate daily stats from real data
-    const dailyStats = generateDailyStatsFromRealData(clicks, conversions, dateRange);
+    // Generate daily stats from real data using centralized lead calculation
+    const dailyStats = await generateDailyStatsFromRealData(clicks, conversions, dateRange, affiliateCode);
     
     const affiliateData = {
       affiliate: {
@@ -127,7 +127,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-function generateDailyStatsFromRealData(clicks: any[], conversions: any[], dateRange: string) {
+async function generateDailyStatsFromRealData(clicks: any[], conversions: any[], dateRange: string, affiliateCode: string) {
   const stats = [];
   
   if (dateRange === "1d") {
@@ -150,10 +150,18 @@ function generateDailyStatsFromRealData(clicks: any[], conversions: any[], dateR
         return convDate === dateStr && convHour === hourStr;
       });
       
+      // Calculate real leads for this hour using centralized function
+      const hourStart = new Date(date);
+      hourStart.setHours(date.getHours(), 0, 0, 0);
+      const hourEnd = new Date(date);
+      hourEnd.setHours(date.getHours(), 59, 59, 999);
+      
+      const hourLeadData = await calculateLeadsWithDateRange(hourStart, hourEnd, undefined, affiliateCode);
+      
       stats.push({
         date: `${dateStr}T${hourStr}:00:00.000Z`, // Include hour for proper sorting
         clicks: hourClicks.length,
-        leads: hourConversions.filter(c => c.status === "confirmed" && c.conversionType === "quiz_completion").length,
+        leads: hourLeadData.totalLeads,
         bookedCalls: hourConversions.filter(c => c.conversionType === "booking").length,
         commission: hourConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0),
       });
@@ -173,10 +181,18 @@ function generateDailyStatsFromRealData(clicks: any[], conversions: any[], dateR
       const daySales = dayConversions.filter(c => c.conversionType === "sale");
       const dayCommission = dayConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
       
+      // Calculate real leads for this day using centralized function
+      const dayStart = new Date(date);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(date);
+      dayEnd.setHours(23, 59, 59, 999);
+      
+      const dayLeadData = await calculateLeadsWithDateRange(dayStart, dayEnd, undefined, affiliateCode);
+      
       stats.push({
         date: dateStr,
         clicks: dayClicks.length,
-        leads: dayConversions.filter(c => c.status === "confirmed" && c.conversionType === "quiz_completion").length,
+        leads: dayLeadData.totalLeads,
         bookedCalls: dayConversions.filter(c => c.conversionType === "booking").length,
         commission: dayCommission,
       });
