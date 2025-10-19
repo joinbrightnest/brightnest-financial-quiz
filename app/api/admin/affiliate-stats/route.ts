@@ -14,8 +14,6 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    console.log("Looking for affiliate with code:", affiliateCode);
-    
     // First try to find by referral code
     let affiliate = await prisma.affiliate.findUnique({
       where: { referralCode: affiliateCode },
@@ -23,7 +21,6 @@ export async function GET(request: NextRequest) {
 
     // If not found, try to find by custom tracking link
     if (!affiliate) {
-      console.log("Not found by referral code, trying custom tracking link...");
       const affiliateResult = await prisma.$queryRaw`
         SELECT * FROM "affiliates" 
         WHERE "custom_tracking_link" = ${`/${affiliateCode}`}
@@ -35,13 +32,9 @@ export async function GET(request: NextRequest) {
         : null;
     }
 
-    console.log("Affiliate lookup result:", affiliate ? "Found" : "Not found");
-    
     if (!affiliate) {
       return NextResponse.json({ error: "Affiliate not found" }, { status: 404 });
     }
-
-    console.log("Found affiliate:", affiliate.id, affiliate.referralCode, affiliate.name);
     
     const [clicks, conversions] = await Promise.all([
       prisma.affiliateClick.findMany({
@@ -55,8 +48,6 @@ export async function GET(request: NextRequest) {
         take: 10
       })
     ]);
-    
-    console.log("Retrieved clicks:", clicks.length, "conversions:", conversions.length);
 
     const totalClicks = clicks.length;
     const leadData = await calculateLeadsByCode(affiliateCode, dateRange);
@@ -114,7 +105,6 @@ export async function GET(request: NextRequest) {
       }))
     };
 
-    console.log("✅ Affiliate data created successfully");
     return NextResponse.json(affiliateData);
 
   } catch (error) {

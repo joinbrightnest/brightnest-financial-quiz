@@ -119,14 +119,6 @@ export async function GET(request: NextRequest) {
 
     // Generate daily stats based on actual data
     const dailyStats = await generateDailyStatsWithRealData(affiliate.referralCode, dateRange);
-    
-    console.log("Stats calculated:", {
-      totalClicks,
-      totalLeads,
-      totalSales,
-      totalCommission,
-      dailyStatsLength: dailyStats.length
-    });
 
     const stats = {
       totalClicks,
