@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
       .reduce((sum, p) => sum + Number(p.amount), 0);
 
     // Generate daily stats based on actual data
-    const dailyStats = generateDailyStats(dateRange, totalClicks, totalSales, Number(totalCommission));
+    const dailyStats = await generateDailyStatsWithRealData(affiliate.referralCode, dateRange);
     
     console.log("Stats calculated:", {
       totalClicks,
@@ -151,19 +151,48 @@ export async function GET(request: NextRequest) {
   }
 }
 
-function generateDailyStats(dateRange: string, totalClicks: number, totalSales: number, totalCommission: number) {
+async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: string) {
   const now = new Date();
   const days = dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : dateRange === "90d" ? 90 : 365;
   const data = [];
 
   for (let i = days - 1; i >= 0; i--) {
     const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+    const dayStart = new Date(date);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(date);
+    dayEnd.setHours(23, 59, 59, 999);
+    
+    // Get real data for this day
+    const dayClicks = await prisma.affiliateClick.findMany({
+      where: {
+        affiliate: { referralCode: affiliateCode },
+        createdAt: {
+          gte: dayStart,
+          lte: dayEnd,
+        },
+      },
+    });
+
+    const dayConversions = await prisma.affiliateConversion.findMany({
+      where: {
+        affiliate: { referralCode: affiliateCode },
+        createdAt: {
+          gte: dayStart,
+          lte: dayEnd,
+        },
+      },
+    });
+
+    // Calculate real leads for this day
+    const dayLeadData = await calculateLeadsByCode(affiliateCode, '1d');
+    
     data.push({
       date: date.toISOString().split('T')[0],
-      clicks: Math.floor(Math.random() * 10) + 1,
-      leads: Math.floor(Math.random() * 3) + 1,
-      bookedCalls: Math.floor(Math.random() * 2),
-      commission: Math.floor(Math.random() * 100) + 20,
+      clicks: dayClicks.length,
+      leads: dayLeadData.totalLeads,
+      bookedCalls: dayConversions.filter(c => c.conversionType === "booking").length,
+      commission: dayConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0),
     });
   }
 
