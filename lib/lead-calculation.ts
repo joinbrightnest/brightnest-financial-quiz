@@ -90,12 +90,10 @@ export async function calculateLeads(params: {
   // Filter to only include sessions that have name and email (actual leads)
   const actualLeads = allCompletedSessions.filter(session => {
     const nameAnswer = session.answers.find(a => 
-      a.question?.prompt?.toLowerCase().includes('name') ||
-      a.question?.text?.toLowerCase().includes('name')
+      a.question?.prompt?.toLowerCase().includes('name')
     );
     const emailAnswer = session.answers.find(a => 
-      a.question?.prompt?.toLowerCase().includes('email') ||
-      a.question?.text?.toLowerCase().includes('email')
+      a.question?.prompt?.toLowerCase().includes('email')
     );
     
     return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;

@@ -315,49 +315,23 @@ export default function AdminDashboard() {
     const csvContent = [
       ["Session ID", "Name", "Email", "Date", "Status", "Completed At", "Source"],
       ...stats.allLeads.map(lead => {
-        let customerName = "N/A";
-        let customerEmail = "N/A";
+        const nameAnswer = lead.answers.find(a => 
+          a.question?.prompt?.toLowerCase().includes('name')
+        );
+        const emailAnswer = lead.answers.find(a => 
+          a.question?.prompt?.toLowerCase().includes('email')
+        );
         
-        if (lead.type === 'appointment') {
-          // For appointments, use the direct properties
-          customerName = lead.customerName || "N/A";
-          customerEmail = lead.customerEmail || "N/A";
-        } else {
-          // For quiz sessions, extract from answers
-          const nameAnswer = lead.answers?.find(a => 
-            a.question?.prompt?.toLowerCase().includes('name') ||
-            a.question?.prompt?.toLowerCase().includes('name')
-          );
-          const emailAnswer = lead.answers?.find(a => 
-            a.question?.prompt?.toLowerCase().includes('email') ||
-            a.question?.prompt?.toLowerCase().includes('email')
-          );
-          
-          customerName = nameAnswer?.value || "N/A";
-          customerEmail = emailAnswer?.value || "N/A";
-        }
-        
-        let status = "Partial";
-        let completedAt = "N/A";
-        let source = "Website";
-        
-        if (lead.type === 'appointment') {
-          status = "Booked";
-          completedAt = lead.scheduledAt ? new Date(lead.scheduledAt).toLocaleString() : "N/A";
-          source = lead.affiliateCode ? `Affiliate (${lead.affiliateCode})` : "Website";
-        } else {
-          status = lead.status === "completed" ? "Completed" : "Partial";
-          completedAt = lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A";
-          source = lead.affiliateCode ? `Affiliate (${lead.affiliateCode})` : "Website";
-        }
+        // Determine source based on affiliate code
+        const source = (lead as any).affiliateCode ? `Affiliate (${(lead as any).affiliateCode})` : "Website";
         
         return [
           lead.id,
-          customerName,
-          customerEmail,
+          nameAnswer?.value || "N/A",
+          emailAnswer?.value || "N/A",
           new Date(lead.createdAt).toLocaleDateString(),
-          status,
-          completedAt,
+          lead.status === "completed" ? "Completed" : "Partial",
+          lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A",
           source
         ];
       })
@@ -2103,16 +2077,14 @@ export default function AdminDashboard() {
                     <tbody className="bg-white divide-y divide-gray-200">
                       {stats.allLeads.map((lead) => {
                         const nameAnswer = lead.answers.find(a => 
-                          a.question?.prompt?.toLowerCase().includes('name') ||
-                          a.question?.text?.toLowerCase().includes('name')
+                          a.question?.prompt?.toLowerCase().includes('name')
                         );
                         const emailAnswer = lead.answers.find(a => 
-                          a.question?.prompt?.toLowerCase().includes('email') ||
-                          a.question?.text?.toLowerCase().includes('email')
+                          a.question?.prompt?.toLowerCase().includes('email')
                         );
                         
                         // Determine source based on affiliate code
-                        const source = lead.affiliateCode ? `Affiliate (${lead.affiliateCode})` : "Website";
+                        const source = (lead as any).affiliateCode ? `Affiliate (${(lead as any).affiliateCode})` : "Website";
                         
                         return (
                           <tr key={lead.id}>
