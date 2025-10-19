@@ -30,6 +30,13 @@ interface Appointment {
   saleValue: number | null;
   commissionAmount: number | null;
   affiliateCode: string | null;
+  recordingLinkConverted?: string | null;
+  recordingLinkNotInterested?: string | null;
+  recordingLinkNeedsFollowUp?: string | null;
+  recordingLinkWrongNumber?: string | null;
+  recordingLinkNoAnswer?: string | null;
+  recordingLinkCallbackRequested?: string | null;
+  recordingLinkRescheduled?: string | null;
   closer: {
     id: string;
     name: string;
@@ -41,7 +48,7 @@ export default function CloserManagement() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState<'closers' | 'appointments' | 'assignments'>('closers');
+  const [activeTab, setActiveTab] = useState<'closers' | 'appointments' | 'assignments' | 'performance'>('closers');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [selectedCloser, setSelectedCloser] = useState<string>('');
   const [showAssignmentModal, setShowAssignmentModal] = useState(false);
@@ -306,6 +313,29 @@ export default function CloserManagement() {
     }
   };
 
+  const getRecordingLink = (appointment: Appointment) => {
+    if (!appointment.outcome) return null;
+    
+    switch (appointment.outcome) {
+      case 'converted':
+        return appointment.recordingLinkConverted;
+      case 'not_interested':
+        return appointment.recordingLinkNotInterested;
+      case 'needs_follow_up':
+        return appointment.recordingLinkNeedsFollowUp;
+      case 'wrong_number':
+        return appointment.recordingLinkWrongNumber;
+      case 'no_answer':
+        return appointment.recordingLinkNoAnswer;
+      case 'callback_requested':
+        return appointment.recordingLinkCallbackRequested;
+      case 'rescheduled':
+        return appointment.recordingLinkRescheduled;
+      default:
+        return null;
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -382,6 +412,16 @@ export default function CloserManagement() {
             }`}
           >
             Unassigned ({appointments.filter(a => !a.closer).length})
+          </button>
+          <button
+            onClick={() => setActiveTab('performance')}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'performance'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Performance Analytics
           </button>
         </nav>
       </div>
@@ -588,6 +628,12 @@ export default function CloserManagement() {
                       Sale Value
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Notes
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Recording
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -623,6 +669,29 @@ export default function CloserManagement() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {appointment.saleValue ? `$${appointment.saleValue.toFixed(2)}` : '-'}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
+                        {appointment.notes ? (
+                          <div className="truncate" title={appointment.notes}>
+                            {appointment.notes}
+                          </div>
+                        ) : (
+                          <span className="text-gray-500">-</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {getRecordingLink(appointment) ? (
+                          <a
+                            href={getRecordingLink(appointment)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-indigo-600 hover:text-indigo-900 underline"
+                          >
+                            View Recording
+                          </a>
+                        ) : (
+                          <span className="text-gray-500">-</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button
@@ -849,6 +918,245 @@ export default function CloserManagement() {
                 >
                   Create Appointment
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Performance Analytics Tab */}
+      {activeTab === 'performance' && (
+        <div className="space-y-6">
+          {/* Performance Overview Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">Total Conversions</dt>
+                      <dd className="text-lg font-medium text-gray-900">
+                        {appointments.filter(a => a.outcome === 'converted').length}
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">Not Interested</dt>
+                      <dd className="text-lg font-medium text-gray-900">
+                        {appointments.filter(a => a.outcome === 'not_interested').length}
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">Follow-ups Needed</dt>
+                      <dd className="text-lg font-medium text-gray-900">
+                        {appointments.filter(a => a.outcome === 'needs_follow_up').length}
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <svg className="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                    </svg>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">Total Revenue</dt>
+                      <dd className="text-lg font-medium text-gray-900">
+                        ${appointments.reduce((sum, a) => sum + (a.saleValue || 0), 0).toFixed(2)}
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Closer Performance Table */}
+          <div className="bg-white shadow overflow-hidden sm:rounded-md">
+            <div className="px-4 py-5 sm:px-6">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Closer Performance</h3>
+              <p className="mt-1 max-w-2xl text-sm text-gray-500">Detailed performance metrics for each closer</p>
+            </div>
+            <div className="border-t border-gray-200">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Closer
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Total Calls
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Conversions
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Conversion Rate
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Revenue
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Avg Sale Value
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {closers.map((closer) => {
+                      const closerAppointments = appointments.filter(a => a.closer?.id === closer.id);
+                      const conversions = closerAppointments.filter(a => a.outcome === 'converted');
+                      const totalRevenue = closerAppointments.reduce((sum, a) => sum + (a.saleValue || 0), 0);
+                      const conversionRate = closerAppointments.length > 0 ? (conversions.length / closerAppointments.length) * 100 : 0;
+                      const avgSaleValue = conversions.length > 0 ? totalRevenue / conversions.length : 0;
+
+                      return (
+                        <tr key={closer.id}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium text-gray-900">{closer.name}</div>
+                            <div className="text-sm text-gray-500">{closer.email}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {closerAppointments.length}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {conversions.length}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {conversionRate.toFixed(1)}%
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            ${totalRevenue.toFixed(2)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            ${avgSaleValue.toFixed(2)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          {/* Detailed Call Outcomes */}
+          <div className="bg-white shadow overflow-hidden sm:rounded-md">
+            <div className="px-4 py-5 sm:px-6">
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Call Outcomes Breakdown</h3>
+              <p className="mt-1 max-w-2xl text-sm text-gray-500">Detailed breakdown of all call outcomes with notes and recordings</p>
+            </div>
+            <div className="border-t border-gray-200">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Customer
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Closer
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Outcome
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Sale Value
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Notes
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Recording
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {appointments.filter(a => a.outcome).map((appointment) => (
+                      <tr key={appointment.id}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">{appointment.customerName}</div>
+                            <div className="text-sm text-gray-500">{appointment.customerEmail}</div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {appointment.closer ? appointment.closer.name : 'Unassigned'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getOutcomeColor(appointment.outcome)}`}>
+                            {appointment.outcome?.replace('_', ' ')}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {appointment.saleValue ? `$${appointment.saleValue.toFixed(2)}` : '-'}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
+                          {appointment.notes ? (
+                            <div className="truncate" title={appointment.notes}>
+                              {appointment.notes}
+                            </div>
+                          ) : (
+                            <span className="text-gray-500">-</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {getRecordingLink(appointment) ? (
+                            <a
+                              href={getRecordingLink(appointment)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-indigo-600 hover:text-indigo-900 underline"
+                            >
+                              View Recording
+                            </a>
+                          ) : (
+                            <span className="text-gray-500">-</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
