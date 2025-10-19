@@ -804,217 +804,185 @@ export default function AdminDashboard() {
                   <p className="mt-1 text-sm text-gray-500">Track and manage leads through your sales pipeline</p>
                 </div>
                 
-                {/* Professional Pipeline Table */}
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Lead
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Contact Info
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Scheduled
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Status
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Assigned To
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Value
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Notes
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {/* Sample data - replace with real data */}
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10">
-                              <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                                <span className="text-sm font-medium text-indigo-600">JD</span>
+                {/* Pipeline Columns */}
+                <div className="p-6">
+                  <div className="flex space-x-6 overflow-x-auto pb-6">
+                    {/* New Leads Column */}
+                    <div className="flex-shrink-0 w-80">
+                      <div className="bg-blue-50 border-2 border-blue-200 rounded-lg">
+                        <div className="p-4 border-b border-blue-200">
+                          <h3 className="text-sm font-medium text-blue-900">New Leads</h3>
+                          <p className="text-xs text-blue-600">Fresh leads that need attention</p>
+                        </div>
+                        <div className="p-4 space-y-3">
+                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center">
+                                <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                                  <span className="text-xs font-medium text-indigo-600">JD</span>
+                                </div>
+                                <div className="ml-3">
+                                  <div className="text-sm font-medium text-gray-900">John Doe</div>
+                                  <div className="text-xs text-gray-500">Lead #001</div>
+                                </div>
                               </div>
+                              <button className="text-gray-400 hover:text-gray-600">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                </svg>
+                              </button>
                             </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">John Doe</div>
-                              <div className="text-sm text-gray-500">Lead #001</div>
+                            <div className="text-xs text-gray-600 mb-2">john.doe@email.com</div>
+                            <div className="text-xs text-gray-600 mb-2">+1 (555) 123-4567</div>
+                            <div className="text-xs text-gray-500 mb-3">Oct 20, 2024 - 2:00 PM</div>
+                            <div className="text-xs text-gray-600 bg-gray-50 rounded p-2">
+                              Interested in premium package, follow up next week
                             </div>
                           </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">john.doe@email.com</div>
-                          <div className="text-sm text-gray-500">+1 (555) 123-4567</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          Oct 20, 2024
-                          <div className="text-xs text-gray-500">2:00 PM</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                            Booked Call
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          <div className="flex items-center">
-                            <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                              <span className="text-xs font-medium text-blue-600">SM</span>
-                            </div>
-                            <span className="ml-2">Sarah Miller</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          $2,500
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
-                          <div className="truncate" title="Interested in premium package, follow up next week">
-                            Interested in premium package, follow up next week
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex space-x-2">
-                            <button className="text-indigo-600 hover:text-indigo-900">
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                            </button>
-                            <button className="text-gray-400 hover:text-gray-600">
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                              </svg>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                      
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10">
-                              <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
-                                <span className="text-sm font-medium text-green-600">MJ</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Booked Call Column */}
+                    <div className="flex-shrink-0 w-80">
+                      <div className="bg-green-50 border-2 border-green-200 rounded-lg">
+                        <div className="p-4 border-b border-green-200">
+                          <h3 className="text-sm font-medium text-green-900">Booked Call</h3>
+                          <p className="text-xs text-green-600">Leads with scheduled appointments</p>
+                        </div>
+                        <div className="p-4 space-y-3">
+                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center">
+                                <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                                  <span className="text-xs font-medium text-green-600">MJ</span>
+                                </div>
+                                <div className="ml-3">
+                                  <div className="text-sm font-medium text-gray-900">Mary Johnson</div>
+                                  <div className="text-xs text-gray-500">Lead #002</div>
+                                </div>
                               </div>
+                              <button className="text-gray-400 hover:text-gray-600">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                </svg>
+                              </button>
                             </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">Mary Johnson</div>
-                              <div className="text-sm text-gray-500">Lead #002</div>
+                            <div className="text-xs text-gray-600 mb-2">mary.j@company.com</div>
+                            <div className="text-xs text-gray-600 mb-2">+1 (555) 987-6543</div>
+                            <div className="text-xs text-gray-500 mb-3">Oct 22, 2024 - 10:30 AM</div>
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="text-xs text-gray-600">Assigned: David Kim</div>
+                              <div className="text-xs font-medium text-green-600">$1,800</div>
+                            </div>
+                            <div className="text-xs text-gray-600 bg-gray-50 rounded p-2">
+                              Needs more information about pricing
                             </div>
                           </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">mary.j@company.com</div>
-                          <div className="text-sm text-gray-500">+1 (555) 987-6543</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          Oct 22, 2024
-                          <div className="text-xs text-gray-500">10:30 AM</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                            Follow Up
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          <div className="flex items-center">
-                            <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
-                              <span className="text-xs font-medium text-purple-600">DK</span>
-                            </div>
-                            <span className="ml-2">David Kim</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          $1,800
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
-                          <div className="truncate" title="Needs more information about pricing">
-                            Needs more information about pricing
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex space-x-2">
-                            <button className="text-indigo-600 hover:text-indigo-900">
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                            </button>
-                            <button className="text-gray-400 hover:text-gray-600">
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                              </svg>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                      
-                      <tr className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10">
-                              <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
-                                <span className="text-sm font-medium text-red-600">RB</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Follow Up Column */}
+                    <div className="flex-shrink-0 w-80">
+                      <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg">
+                        <div className="p-4 border-b border-yellow-200">
+                          <h3 className="text-sm font-medium text-yellow-900">Follow Up</h3>
+                          <p className="text-xs text-yellow-600">Leads requiring follow-up calls</p>
+                        </div>
+                        <div className="p-4 space-y-3">
+                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center">
+                                <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
+                                  <span className="text-xs font-medium text-purple-600">RB</span>
+                                </div>
+                                <div className="ml-3">
+                                  <div className="text-sm font-medium text-gray-900">Robert Brown</div>
+                                  <div className="text-xs text-gray-500">Lead #003</div>
+                                </div>
                               </div>
+                              <button className="text-gray-400 hover:text-gray-600">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                                </svg>
+                              </button>
                             </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">Robert Brown</div>
-                              <div className="text-sm text-gray-500">Lead #003</div>
+                            <div className="text-xs text-gray-600 mb-2">robert.brown@email.com</div>
+                            <div className="text-xs text-gray-600 mb-2">+1 (555) 456-7890</div>
+                            <div className="text-xs text-gray-500 mb-3">Oct 18, 2024 - 3:15 PM</div>
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="text-xs text-gray-600">Assigned: Alex Lee</div>
+                              <div className="text-xs font-medium text-gray-500">-</div>
+                            </div>
+                            <div className="text-xs text-gray-600 bg-gray-50 rounded p-2">
+                              Budget constraints, not ready to invest
                             </div>
                           </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">robert.brown@email.com</div>
-                          <div className="text-sm text-gray-500">+1 (555) 456-7890</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          Oct 18, 2024
-                          <div className="text-xs text-gray-500">3:15 PM</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                            Not Interested
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          <div className="flex items-center">
-                            <div className="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center">
-                              <span className="text-xs font-medium text-orange-600">AL</span>
-                            </div>
-                            <span className="ml-2">Alex Lee</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Callback Requested Column */}
+                    <div className="flex-shrink-0 w-80">
+                      <div className="bg-purple-50 border-2 border-purple-200 rounded-lg">
+                        <div className="p-4 border-b border-purple-200">
+                          <h3 className="text-sm font-medium text-purple-900">Callback Requested</h3>
+                          <p className="text-xs text-purple-600">Leads who requested callbacks</p>
+                        </div>
+                        <div className="p-4 space-y-3">
+                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-center text-gray-500">
+                            <p className="text-sm">No leads in this stage</p>
                           </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          -
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
-                          <div className="truncate" title="Budget constraints, not ready to invest">
-                            Budget constraints, not ready to invest
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Converted Column */}
+                    <div className="flex-shrink-0 w-80">
+                      <div className="bg-emerald-50 border-2 border-emerald-200 rounded-lg">
+                        <div className="p-4 border-b border-emerald-200">
+                          <h3 className="text-sm font-medium text-emerald-900">Converted</h3>
+                          <p className="text-xs text-emerald-600">Successfully converted leads</p>
+                        </div>
+                        <div className="p-4 space-y-3">
+                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-center text-gray-500">
+                            <p className="text-sm">No leads in this stage</p>
                           </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex space-x-2">
-                            <button className="text-indigo-600 hover:text-indigo-900">
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                            </button>
-                            <button className="text-gray-400 hover:text-gray-600">
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                              </svg>
-                            </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Not Interested Column */}
+                    <div className="flex-shrink-0 w-80">
+                      <div className="bg-red-50 border-2 border-red-200 rounded-lg">
+                        <div className="p-4 border-b border-red-200">
+                          <h3 className="text-sm font-medium text-red-900">Not Interested</h3>
+                          <p className="text-xs text-red-600">Leads who declined</p>
+                        </div>
+                        <div className="p-4 space-y-3">
+                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-center text-gray-500">
+                            <p className="text-sm">No leads in this stage</p>
                           </div>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Rescheduled Column */}
+                    <div className="flex-shrink-0 w-80">
+                      <div className="bg-gray-50 border-2 border-gray-200 rounded-lg">
+                        <div className="p-4 border-b border-gray-200">
+                          <h3 className="text-sm font-medium text-gray-900">Rescheduled</h3>
+                          <p className="text-xs text-gray-600">Leads who rescheduled appointments</p>
+                        </div>
+                        <div className="p-4 space-y-3">
+                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-center text-gray-500">
+                            <p className="text-sm">No leads in this stage</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 
                 {/* Pipeline Summary Stats */}
@@ -1025,16 +993,16 @@ export default function AdminDashboard() {
                       <div className="text-sm text-gray-500">Total Leads</div>
                     </div>
                     <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">1</div>
+                      <div className="text-sm text-gray-500">New Leads</div>
+                    </div>
+                    <div className="text-center">
                       <div className="text-2xl font-bold text-green-600">1</div>
                       <div className="text-sm text-gray-500">Booked Calls</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-yellow-600">1</div>
                       <div className="text-sm text-gray-500">Follow Ups</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-red-600">1</div>
-                      <div className="text-sm text-gray-500">Not Interested</div>
                     </div>
                   </div>
                 </div>
