@@ -135,7 +135,7 @@ export default async function AffiliatePage({ params, searchParams }: AffiliateP
   // We need to get the request object to access headers for tracking
   // In Next.js App Router, we can use headers() from next/headers
   const { headers } = await import('next/headers');
-  const headersList = headers();
+  const headersList = await headers();
   
   // Create a mock request object with the headers we need
   const mockRequest = {

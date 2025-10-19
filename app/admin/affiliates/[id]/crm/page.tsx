@@ -475,10 +475,10 @@ export default function AffiliateCRMView() {
                           {lead.quizType}
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
-                          {lead.user?.name || "N/A"}
+                          {lead.name || "N/A"}
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
-                          {lead.user?.email || "N/A"}
+                          {lead.email || "N/A"}
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
                           {lead.answers?.length || 0}

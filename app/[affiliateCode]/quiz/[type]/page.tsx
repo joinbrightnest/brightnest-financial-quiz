@@ -132,7 +132,7 @@ export default async function AffiliateQuizPage({ params, searchParams }: Affili
 
   // We need to get the request object to access headers for tracking
   const { headers } = await import('next/headers');
-  const headersList = headers();
+  const headersList = await headers();
   
   // Create a mock request object with the headers we need
   const mockRequest = {
