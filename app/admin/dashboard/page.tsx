@@ -164,17 +164,8 @@ export default function AdminDashboard() {
   };
 
   const openLeadModal = (lead: any) => {
-    const details = `Lead Profile:
-
-Name: ${lead.customerName}
-Email: ${lead.customerEmail}
-Phone: ${lead.customerPhone || 'Not provided'}
-Status: ${lead.outcome || 'Pending'}
-Sale Value: ${lead.saleValue ? `$${Number(lead.saleValue).toFixed(2)}` : 'N/A'}
-Date: ${formatDate(lead.appointmentDate)}
-Notes: ${lead.notes || 'No notes'}`;
-    
-    alert(details);
+    setSelectedLead(lead);
+    setShowLeadModal(true);
   };
 
   const closeLeadModal = () => {
@@ -2266,6 +2257,76 @@ Notes: ${lead.notes || 'No notes'}`;
               </div>
             )}
             </>
+          )}
+
+          {/* Lead Profile Modal */}
+          {showLeadModal && selectedLead && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+                <div className="p-6">
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900">Lead Profile</h3>
+                    <button
+                      onClick={closeLeadModal}
+                      className="text-gray-400 hover:text-gray-600"
+                    >
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Content */}
+                  <div className="space-y-3">
+                    <div>
+                      <span className="font-medium text-gray-700">Name:</span>
+                      <p className="text-gray-900">{selectedLead.customerName}</p>
+                    </div>
+                    
+                    <div>
+                      <span className="font-medium text-gray-700">Email:</span>
+                      <p className="text-gray-900">{selectedLead.customerEmail}</p>
+                    </div>
+                    
+                    <div>
+                      <span className="font-medium text-gray-700">Phone:</span>
+                      <p className="text-gray-900">{selectedLead.customerPhone || 'Not provided'}</p>
+                    </div>
+                    
+                    <div>
+                      <span className="font-medium text-gray-700">Status:</span>
+                      <p className="text-gray-900">{selectedLead.outcome || 'Pending'}</p>
+                    </div>
+                    
+                    <div>
+                      <span className="font-medium text-gray-700">Sale Value:</span>
+                      <p className="text-gray-900">{selectedLead.saleValue ? `$${Number(selectedLead.saleValue).toFixed(2)}` : 'N/A'}</p>
+                    </div>
+                    
+                    <div>
+                      <span className="font-medium text-gray-700">Date:</span>
+                      <p className="text-gray-900">{formatDate(selectedLead.appointmentDate)}</p>
+                    </div>
+                    
+                    <div>
+                      <span className="font-medium text-gray-700">Notes:</span>
+                      <p className="text-gray-900">{selectedLead.notes || 'No notes'}</p>
+                    </div>
+                  </div>
+
+                  {/* Close Button */}
+                  <div className="mt-6 flex justify-end">
+                    <button
+                      onClick={closeLeadModal}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </div>
