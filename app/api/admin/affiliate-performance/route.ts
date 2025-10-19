@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { calculateAffiliateLeads } from "@/lib/lead-calculation";
 
 export async function GET(request: NextRequest) {
   try {
@@ -53,7 +54,10 @@ export async function GET(request: NextRequest) {
         // Count actual bookings and sales from appointments (more accurate)
         const bookingCount = appointments.length;
         const saleCount = appointments.filter(apt => apt.outcome === 'converted').length;
-        const leadCount = conversions.filter(c => c.conversionType === "quiz_completion").length;
+        
+        // Use centralized lead calculation
+        const leadData = await calculateAffiliateLeads(affiliate.id, '30d');
+        const leadCount = leadData.totalLeads;
 
         // Calculate actual revenue from appointments
         const actualRevenue = appointments

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { calculateLeadsByCode } from "@/lib/lead-calculation";
 
 const prisma = new PrismaClient();
 
@@ -39,7 +40,9 @@ export async function GET(request: NextRequest) {
 
     // Calculate stats
     const totalClicks = clicks.length;
-    const totalLeads = conversions.filter(c => c.status === "confirmed").length;
+    // Calculate stats using centralized lead calculation
+    const leadData = await calculateLeadsByCode(referralCode, '30d');
+    const totalLeads = leadData.totalLeads;
     const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
     const totalSales = conversions.filter(c => c.conversionType === "sale").length;
     const totalCommission = conversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);

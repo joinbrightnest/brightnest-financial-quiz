@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { calculateAffiliateLeads } from "@/lib/lead-calculation";
 
 const prisma = new PrismaClient();
 
@@ -122,20 +123,28 @@ export async function GET(request: NextRequest) {
     const totalCommissionsPending = approvedAffiliates.reduce((sum, aff) => sum + (Number(aff.totalCommission) * 0.3), 0); // 30% pending
 
     // Generate top affiliates performance data (only approved ones)
-    const topAffiliates = approvedAffiliates.map(affiliate => ({
-      id: affiliate.id,
-      name: affiliate.name,
-      tier: affiliate.tier,
-      clicks: affiliate.clicks.length,
-      quizStarts: affiliate.quizSessions.length, // Add quiz starts from quiz sessions
-      leads: affiliate.conversions.filter(c => c.status === "confirmed").length,
-      bookedCalls: affiliate.conversions.filter(c => c.conversionType === "booking").length,
-      sales: affiliate.conversions.filter(c => c.conversionType === "sale").length,
-      conversionRate: affiliate.clicks.length > 0 ? (affiliate.conversions.filter(c => c.conversionType === "sale").length / affiliate.clicks.length) * 100 : 0,
-      revenue: affiliate.conversions.filter(c => c.conversionType === "sale").length * 200, // Mock $200 per sale
-      commission: affiliate.totalCommission,
-      lastActive: affiliate.updatedAt.toISOString(),
-    })).sort((a, b) => b.revenue - a.revenue);
+    const topAffiliates = await Promise.all(approvedAffiliates.map(async (affiliate) => {
+      // Use centralized lead calculation
+      const leadData = await calculateAffiliateLeads(affiliate.id, '30d');
+      
+      return {
+        id: affiliate.id,
+        name: affiliate.name,
+        tier: affiliate.tier,
+        clicks: affiliate.clicks.length,
+        quizStarts: affiliate.quizSessions.length, // Add quiz starts from quiz sessions
+        leads: leadData.totalLeads,
+        bookedCalls: affiliate.conversions.filter(c => c.conversionType === "booking").length,
+        sales: affiliate.conversions.filter(c => c.conversionType === "sale").length,
+        conversionRate: affiliate.clicks.length > 0 ? (affiliate.conversions.filter(c => c.conversionType === "sale").length / affiliate.clicks.length) * 100 : 0,
+        revenue: affiliate.conversions.filter(c => c.conversionType === "sale").length * 200, // Mock $200 per sale
+        commission: affiliate.totalCommission,
+        lastActive: affiliate.updatedAt.toISOString(),
+      };
+    }));
+    
+    // Sort by revenue
+    topAffiliates.sort((a, b) => b.revenue - a.revenue);
 
     // Generate pending affiliates data
     const pendingAffiliatesData = pendingAffiliates.map(affiliate => ({

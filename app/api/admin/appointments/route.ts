@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { calculateLeadsByCode } from '@/lib/lead-calculation';
 
 const prisma = new PrismaClient();
 
@@ -62,15 +63,15 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Filter quiz sessions to only include those with name and email (actual leads)
+    // Use centralized lead calculation logic (same as lib/lead-calculation.ts)
     const actualLeads = quizSessions.filter(session => {
       const nameAnswer = session.answers.find(a => 
         a.question?.prompt?.toLowerCase().includes('name') ||
-        a.question?.prompt?.toLowerCase().includes('name')
+        a.question?.text?.toLowerCase().includes('name')
       );
       const emailAnswer = session.answers.find(a => 
         a.question?.prompt?.toLowerCase().includes('email') ||
-        a.question?.prompt?.toLowerCase().includes('email')
+        a.question?.text?.toLowerCase().includes('email')
       );
       
       return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;

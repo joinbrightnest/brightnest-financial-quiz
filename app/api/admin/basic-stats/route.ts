@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { calculateTotalLeads } from "@/lib/lead-calculation";
 
 const prisma = new PrismaClient();
 
@@ -185,20 +186,9 @@ export async function GET(request: Request) {
       take: 50,
     });
 
-    // Filter to only include sessions that have name and email (actual leads)
-    // A lead is someone who completed the quiz AND provided contact information
-    const allLeads = allCompletedSessions.filter(session => {
-      const nameAnswer = session.answers.find(a => 
-        a.question?.prompt?.toLowerCase().includes('name') ||
-        a.question?.text?.toLowerCase().includes('name')
-      );
-      const emailAnswer = session.answers.find(a => 
-        a.question?.prompt?.toLowerCase().includes('email') ||
-        a.question?.text?.toLowerCase().includes('email')
-      );
-      
-      return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
-    });
+    // Use centralized lead calculation instead of duplicate logic
+    const leadData = await calculateTotalLeads(dateRange, quizType);
+    const allLeads = leadData.leads;
 
     // Get affiliate information for leads that have affiliate codes
     let affiliateMap: Record<string, string> = {};
