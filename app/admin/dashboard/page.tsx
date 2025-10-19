@@ -100,9 +100,79 @@ export default function AdminDashboard() {
   const [showMainDashboard, setShowMainDashboard] = useState(true);
   const [showCloserManagement, setShowCloserManagement] = useState(false);
   const [showPipeline, setShowPipeline] = useState(false);
+  const [pipelineView, setPipelineView] = useState<'kanban' | 'appointments'>('kanban');
   const [showSettings, setShowSettings] = useState(false);
   const [qualificationThreshold, setQualificationThreshold] = useState(17);
   const [isUpdatingThreshold, setIsUpdatingThreshold] = useState(false);
+  const [appointments, setAppointments] = useState<any[]>([]);
+
+  // Helper functions for appointments
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'scheduled': return 'bg-blue-100 text-blue-800';
+      case 'confirmed': return 'bg-green-100 text-green-800';
+      case 'completed': return 'bg-gray-100 text-gray-800';
+      case 'no_show': return 'bg-red-100 text-red-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getOutcomeColor = (outcome: string | null) => {
+    switch (outcome) {
+      case 'converted': return 'bg-green-100 text-green-800';
+      case 'not_interested': return 'bg-red-100 text-red-800';
+      case 'needs_follow_up': return 'bg-yellow-100 text-yellow-800';
+      case 'callback_requested': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getRecordingLink = (appointment: any) => {
+    if (!appointment.outcome) return null;
+    
+    switch (appointment.outcome) {
+      case 'converted':
+        return appointment.recordingLinkConverted;
+      case 'not_interested':
+        return appointment.recordingLinkNotInterested;
+      case 'needs_follow_up':
+        return appointment.recordingLinkNeedsFollowUp;
+      case 'wrong_number':
+        return appointment.recordingLinkWrongNumber;
+      case 'no_answer':
+        return appointment.recordingLinkNoAnswer;
+      case 'callback_requested':
+        return appointment.recordingLinkCallbackRequested;
+      case 'rescheduled':
+        return appointment.recordingLinkRescheduled;
+      default:
+        return null;
+    }
+  };
+
+  // Fetch appointments data
+  const fetchAppointments = async () => {
+    try {
+      const response = await fetch('/api/closer/appointments');
+      if (response.ok) {
+        const data = await response.json();
+        setAppointments(data);
+      }
+    } catch (error) {
+      console.error('Error fetching appointments:', error);
+    }
+  };
 
   // Format duration from milliseconds to human readable format
   const formatDuration = (ms: number): string => {
@@ -190,6 +260,12 @@ export default function AdminDashboard() {
     fetchStats(true); // Pass true to indicate this is a timeframe change
     fetchSettings();
   }, [fetchStats]);
+
+  useEffect(() => {
+    if (showPipeline) {
+      fetchAppointments();
+    }
+  }, [showPipeline]);
 
   // Handle page visibility and focus changes to prevent unnecessary re-fetching
   useEffect(() => {
@@ -812,19 +888,44 @@ export default function AdminDashboard() {
                         <div className="text-sm text-gray-500">Total Value</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-gray-900">3</div>
-                        <div className="text-sm text-gray-500">Total Leads</div>
+                        <div className="text-2xl font-bold text-gray-900">{appointments.length}</div>
+                        <div className="text-sm text-gray-500">Total Appointments</div>
                       </div>
                       <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
                         + Add Lead
                       </button>
                     </div>
                   </div>
+                  
+                  {/* View Toggle */}
+                  <div className="mt-4 flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit">
+                    <button
+                      onClick={() => setPipelineView('kanban')}
+                      className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                        pipelineView === 'kanban'
+                          ? 'bg-white text-gray-900 shadow-sm'
+                          : 'text-gray-500 hover:text-gray-700'
+                      }`}
+                    >
+                      Pipeline View
+                    </button>
+                    <button
+                      onClick={() => setPipelineView('appointments')}
+                      className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                        pipelineView === 'appointments'
+                          ? 'bg-white text-gray-900 shadow-sm'
+                          : 'text-gray-500 hover:text-gray-700'
+                      }`}
+                    >
+                      All Appointments ({appointments.length})
+                    </button>
+                  </div>
                 </div>
                 
-                {/* Pipeline Columns */}
-                <div className="p-6">
-                  <div className="flex space-x-6 overflow-x-auto pb-6">
+                {/* Pipeline Content */}
+                {pipelineView === 'kanban' && (
+                  <div className="p-6">
+                    <div className="flex space-x-6 overflow-x-auto pb-6">
                     {/* New Leads Column */}
                     <div className="flex-shrink-0 w-80">
                       <div className="bg-gray-50 rounded-lg border border-gray-200">
@@ -1024,6 +1125,111 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 </div>
+                )}
+
+                {/* Appointments Table View */}
+                {pipelineView === 'appointments' && (
+                  <div className="p-6">
+                    <div className="bg-white shadow overflow-hidden sm:rounded-md">
+                      <div className="px-4 py-5 sm:px-6">
+                        <h3 className="text-lg leading-6 font-medium text-gray-900">All Appointments</h3>
+                        <p className="mt-1 max-w-2xl text-sm text-gray-500">View and manage all scheduled appointments</p>
+                      </div>
+                      <div className="border-t border-gray-200">
+                        <div className="overflow-x-auto">
+                          <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                              <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Customer
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Scheduled
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Assigned Closer
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Status
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Outcome
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Sale Value
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Notes
+                                </th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                  Recording
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                              {appointments.map((appointment) => (
+                                <tr key={appointment.id}>
+                                  <td className="px-6 py-4 whitespace-nowrap">
+                                    <div>
+                                      <div className="text-sm font-medium text-gray-900">{appointment.customerName}</div>
+                                      <div className="text-sm text-gray-500">{appointment.customerEmail}</div>
+                                    </div>
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {formatDate(appointment.scheduledAt)}
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {appointment.closer ? appointment.closer.name : 'Unassigned'}
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap">
+                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(appointment.status)}`}>
+                                      {appointment.status.replace('_', ' ')}
+                                    </span>
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap">
+                                    {appointment.outcome ? (
+                                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getOutcomeColor(appointment.outcome)}`}>
+                                        {appointment.outcome.replace('_', ' ')}
+                                      </span>
+                                    ) : (
+                                      <span className="text-sm text-gray-500">Not set</span>
+                                    )}
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {appointment.saleValue ? `$${Number(appointment.saleValue).toFixed(2)}` : '-'}
+                                  </td>
+                                  <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
+                                    {appointment.notes ? (
+                                      <div className="truncate" title={appointment.notes}>
+                                        {appointment.notes}
+                                      </div>
+                                    ) : (
+                                      <span className="text-gray-500">-</span>
+                                    )}
+                                  </td>
+                                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {getRecordingLink(appointment) ? (
+                                      <a
+                                        href={getRecordingLink(appointment)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-indigo-600 hover:text-indigo-900 underline"
+                                      >
+                                        View Recording
+                                      </a>
+                                    ) : (
+                                      <span className="text-gray-500">-</span>
+                                    )}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}

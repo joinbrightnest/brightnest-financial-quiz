@@ -48,7 +48,7 @@ export default function CloserManagement() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState<'closers' | 'appointments' | 'assignments' | 'performance'>('closers');
+  const [activeTab, setActiveTab] = useState<'closers' | 'assignments' | 'performance'>('closers');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [selectedCloser, setSelectedCloser] = useState<string>('');
   const [showAssignmentModal, setShowAssignmentModal] = useState(false);
@@ -394,16 +394,6 @@ export default function CloserManagement() {
             Closers ({closers.length})
           </button>
           <button
-            onClick={() => setActiveTab('appointments')}
-            className={`py-2 px-1 border-b-2 font-medium text-sm ${
-              activeTab === 'appointments'
-                ? 'border-indigo-500 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            }`}
-          >
-            All Appointments ({appointments.length})
-          </button>
-          <button
             onClick={() => setActiveTab('assignments')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               activeTab === 'assignments'
@@ -597,118 +587,6 @@ export default function CloserManagement() {
         </div>
       )}
 
-      {/* Appointments Tab */}
-      {activeTab === 'appointments' && (
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
-          <div className="px-4 py-5 sm:px-6">
-            <h3 className="text-lg leading-6 font-medium text-gray-900">All Appointments</h3>
-            <p className="mt-1 max-w-2xl text-sm text-gray-500">View and manage all scheduled appointments</p>
-          </div>
-          <div className="border-t border-gray-200">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Customer
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Scheduled
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Assigned Closer
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Outcome
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Sale Value
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Notes
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Recording
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {appointments.map((appointment) => (
-                    <tr key={appointment.id}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{appointment.customerName}</div>
-                          <div className="text-sm text-gray-500">{appointment.customerEmail}</div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {formatDate(appointment.scheduledAt)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {appointment.closer ? appointment.closer.name : 'Unassigned'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(appointment.status)}`}>
-                          {appointment.status.replace('_', ' ')}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {appointment.outcome ? (
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getOutcomeColor(appointment.outcome)}`}>
-                            {appointment.outcome.replace('_', ' ')}
-                          </span>
-                        ) : (
-                          <span className="text-sm text-gray-500">Not set</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {appointment.saleValue ? `$${Number(appointment.saleValue).toFixed(2)}` : '-'}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900 max-w-xs">
-                        {appointment.notes ? (
-                          <div className="truncate" title={appointment.notes}>
-                            {appointment.notes}
-                          </div>
-                        ) : (
-                          <span className="text-gray-500">-</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {getRecordingLink(appointment) ? (
-                          <a
-                            href={getRecordingLink(appointment)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-indigo-600 hover:text-indigo-900 underline"
-                          >
-                            View Recording
-                          </a>
-                        ) : (
-                          <span className="text-gray-500">-</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button
-                          onClick={() => handleDeleteAppointment(appointment.id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Assignments Tab */}
       {activeTab === 'assignments' && (
