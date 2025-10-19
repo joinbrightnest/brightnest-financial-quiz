@@ -69,9 +69,30 @@ export default function LeadsPage() {
     }
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchLeads();
+    }
+  }, [filters]);
+
   const fetchLeads = async () => {
     try {
-      const response = await fetch('/api/admin/basic-stats');
+      const params = new URLSearchParams();
+      if (filters.dateRange !== 'all') {
+        params.append('dateRange', filters.dateRange);
+      }
+      if (filters.startDate && filters.endDate) {
+        params.append('startDate', filters.startDate);
+        params.append('endDate', filters.endDate);
+      }
+      if (filters.quizType !== 'all') {
+        params.append('quizType', filters.quizType);
+      }
+      
+      const queryString = params.toString();
+      const url = queryString ? `/api/admin/basic-stats?${queryString}` : '/api/admin/basic-stats';
+      
+      const response = await fetch(url);
       const data = await response.json();
       setLeads(data.allLeads || []);
     } catch (error) {

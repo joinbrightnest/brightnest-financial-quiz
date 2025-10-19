@@ -110,6 +110,11 @@ export async function GET(request: Request) {
   try {
     // Build date filter
     const buildDateFilter = () => {
+      // If dateRange is 'all', return no filter (show all data)
+      if (dateRange === 'all') {
+        return {};
+      }
+
       const now = new Date();
       let startDate = new Date();
       let endDate = new Date();
@@ -187,7 +192,7 @@ export async function GET(request: Request) {
     });
 
     // Use centralized lead calculation instead of duplicate logic
-    const leadData = await calculateTotalLeads(dateRange, quizType);
+    const leadData = await calculateTotalLeads(dateRange, quizType || undefined);
     const allLeads = leadData.leads;
 
     // Get affiliate information for leads that have affiliate codes
