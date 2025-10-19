@@ -164,7 +164,7 @@ export default function AdminDashboard() {
   // Fetch appointments data
   const fetchAppointments = async () => {
     try {
-      const response = await fetch('/api/closer/appointments');
+      const response = await fetch('/api/admin/appointments');
       if (response.ok) {
         const data = await response.json();
         setAppointments(data);
