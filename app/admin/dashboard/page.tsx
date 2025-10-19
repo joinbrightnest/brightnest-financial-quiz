@@ -165,15 +165,7 @@ export default function AdminDashboard() {
 
   const openLeadModal = (lead: any) => {
     console.log('Opening lead modal for:', lead);
-    console.log('Current modal state before:', { showLeadModal, selectedLead });
-    
-    setSelectedLead(lead);
-    setShowLeadModal(true);
-    
-    // Force a re-render check
-    setTimeout(() => {
-      console.log('Modal state after timeout:', { showLeadModal, selectedLead });
-    }, 100);
+    alert(`Lead clicked: ${lead.customerName} (${lead.customerEmail})`);
   };
 
   const closeLeadModal = () => {
@@ -2135,19 +2127,16 @@ export default function AdminDashboard() {
             </>
           ) : null}
 
-            {/* Debug Test Button */}
-            <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded">
-              <h3 className="text-lg font-semibold text-yellow-800 mb-2">Debug Modal Test</h3>
-              <p className="text-sm text-yellow-700 mb-2">Current state: showLeadModal = {showLeadModal.toString()}, selectedLead = {selectedLead ? 'exists' : 'null'}</p>
+            {/* Simple Test */}
+            <div className="mb-4 p-4 bg-green-100 border border-green-400 rounded">
+              <h3 className="text-lg font-semibold text-green-800 mb-2">Simple Test</h3>
+              <p className="text-sm text-green-700 mb-2">Modal State: {showLeadModal ? 'TRUE' : 'FALSE'}</p>
+              <p className="text-sm text-green-700 mb-2">Selected Lead: {selectedLead ? selectedLead.customerName : 'NONE'}</p>
               <button 
-                onClick={() => {
-                  console.log('Manual test button clicked');
-                  setShowLeadModal(true);
-                  setSelectedLead({ customerName: 'Test Lead', customerEmail: 'test@example.com' });
-                }}
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                onClick={() => alert('Test button works!')}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
               >
-                Force Open Test Modal
+                Test Alert Button
               </button>
             </div>
 
