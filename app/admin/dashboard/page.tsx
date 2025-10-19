@@ -165,7 +165,8 @@ export default function AdminDashboard() {
 
   const openLeadModal = (lead: any) => {
     console.log('Opening lead modal for:', lead);
-    alert(`Lead clicked: ${lead.customerName} (${lead.customerEmail})`);
+    setSelectedLead(lead);
+    setShowLeadModal(true);
   };
 
   const closeLeadModal = () => {
@@ -2140,228 +2141,124 @@ export default function AdminDashboard() {
               </button>
             </div>
 
-            {/* Lead Profile Modal */}
-            {console.log('Modal state:', { showLeadModal, selectedLead: !!selectedLead })}
-            
-            {/* Simple Test Modal */}
-            {showLeadModal && (
-              <div style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundColor: 'rgba(255, 0, 0, 0.8)',
-                zIndex: 99999,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <div style={{
-                  backgroundColor: 'white',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  border: '4px solid red',
-                  maxWidth: '500px',
-                  width: '90%'
-                }}>
-                  <h2 style={{color: 'red', fontSize: '24px', marginBottom: '10px'}}>TEST MODAL</h2>
-                  <p>If you can see this, the modal system works!</p>
-                  <p>Selected Lead: {selectedLead?.customerName || 'None'}</p>
-                  <button 
-                    onClick={closeLeadModal}
-                    style={{
-                      backgroundColor: 'red',
-                      color: 'white',
-                      padding: '10px 20px',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: 'pointer',
-                      marginTop: '10px'
-                    }}
-                  >
-                    Close Test Modal
-                  </button>
-                </div>
-              </div>
-            )}
-            
+            {/* Simple Working Modal */}
             {showLeadModal && selectedLead && (
-              <div className="fixed inset-0 bg-red-500 bg-opacity-75 flex items-center justify-center" style={{zIndex: 99999, position: 'fixed', top: 0, left: 0, right: 0, bottom: 0}}>
-                <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto border-4 border-red-500">
-                  <div className="p-6">
-                    {/* Modal Header */}
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center space-x-3">
-                        <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center">
-                          <span className="text-lg font-medium text-indigo-600">
-                            {selectedLead.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
-                          </span>
-                        </div>
-                        <div>
-                          <h2 className="text-xl font-semibold text-gray-900">{selectedLead.customerName}</h2>
-                          <p className="text-sm text-gray-500">{selectedLead.customerEmail}</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={closeLeadModal}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
-                      >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
+              <div 
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                  zIndex: 999999,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                onClick={closeLeadModal}
+              >
+                <div 
+                  style={{
+                    backgroundColor: 'white',
+                    padding: '30px',
+                    borderRadius: '12px',
+                    maxWidth: '600px',
+                    width: '90%',
+                    maxHeight: '80vh',
+                    overflow: 'auto',
+                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Modal Header */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                    <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', margin: 0 }}>
+                      Lead Profile: {selectedLead.customerName}
+                    </h2>
+                    <button 
+                      onClick={closeLeadModal}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '24px',
+                        cursor: 'pointer',
+                        color: '#6b7280'
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  {/* Lead Details */}
+                  <div style={{ display: 'grid', gap: '16px' }}>
+                    <div>
+                      <strong style={{ color: '#374151' }}>Email:</strong>
+                      <p style={{ margin: '4px 0 0 0', color: '#6b7280' }}>{selectedLead.customerEmail}</p>
                     </div>
-
-                    {/* Lead Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Lead Type</label>
-                          <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                            selectedLead.type === 'quiz_session' 
-                              ? 'bg-blue-100 text-blue-800' 
-                              : 'bg-green-100 text-green-800'
-                          }`}>
-                            {selectedLead.type === 'quiz_session' ? 'Quiz Lead' : 'Appointment'}
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Pipeline Stage</label>
-                          <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                            selectedLead.pipelineStage === 'new_leads' ? 'bg-yellow-100 text-yellow-800' :
-                            selectedLead.pipelineStage === 'booked_call' ? 'bg-green-100 text-green-800' :
-                            selectedLead.pipelineStage === 'converted' ? 'bg-emerald-100 text-emerald-800' :
-                            selectedLead.pipelineStage === 'not_interested' ? 'bg-red-100 text-red-800' :
-                            selectedLead.pipelineStage === 'follow_up' ? 'bg-yellow-100 text-yellow-800' :
-                            selectedLead.pipelineStage === 'callback_requested' ? 'bg-purple-100 text-purple-800' :
-                            selectedLead.pipelineStage === 'rescheduled' ? 'bg-gray-100 text-gray-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {selectedLead.pipelineStage === 'new_leads' ? 'New Lead' :
-                             selectedLead.pipelineStage === 'booked_call' ? 'Booked Call' :
-                             selectedLead.pipelineStage === 'converted' ? 'Converted' :
-                             selectedLead.pipelineStage === 'not_interested' ? 'Not Interested' :
-                             selectedLead.pipelineStage === 'follow_up' ? 'Follow Up' :
-                             selectedLead.pipelineStage === 'callback_requested' ? 'Callback Requested' :
-                             selectedLead.pipelineStage === 'rescheduled' ? 'Rescheduled' :
-                             'Unknown'}
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Contact Info</label>
-                          <div className="text-sm text-gray-900">
-                            <div className="mb-1">
-                              <span className="font-medium">Email:</span> {selectedLead.customerEmail}
-                            </div>
-                            <div>
-                              <span className="font-medium">Phone:</span> {selectedLead.customerPhone || 'Not provided'}
-                            </div>
-                          </div>
-                        </div>
-
-                        {selectedLead.affiliateCode && (
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Affiliate Source</label>
-                            <div className="text-sm text-gray-900">{selectedLead.affiliateCode}</div>
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Date & Time</label>
-                          <div className="text-sm text-gray-900">
-                            {new Date(selectedLead.scheduledAt).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                              hour: 'numeric',
-                              minute: '2-digit'
-                            })}
-                          </div>
-                        </div>
-
-                        {selectedLead.saleValue && (
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Sale Value</label>
-                            <div className="text-lg font-semibold text-green-600">
-                              ${Number(selectedLead.saleValue).toFixed(2)}
-                            </div>
-                          </div>
-                        )}
-
-                        {selectedLead.outcome && (
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Call Outcome</label>
-                            <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${getOutcomeColor(selectedLead.outcome)}`}>
-                              {selectedLead.outcome.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                            </div>
-                          </div>
-                        )}
-
-                        {selectedLead.closer && (
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Assigned Closer</label>
-                            <div className="text-sm text-gray-900">{selectedLead.closer.name}</div>
-                          </div>
-                        )}
-                      </div>
+                    
+                    <div>
+                      <strong style={{ color: '#374151' }}>Phone:</strong>
+                      <p style={{ margin: '4px 0 0 0', color: '#6b7280' }}>{selectedLead.customerPhone || 'Not provided'}</p>
                     </div>
-
-                    {/* Notes Section */}
-                    <div className="mb-6">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Notes</label>
-                      {selectedLead.notes ? (
-                        <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-900">
-                          {selectedLead.notes}
-                        </div>
-                      ) : (
-                        <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-500 italic">
-                          No notes available
-                        </div>
-                      )}
+                    
+                    <div>
+                      <strong style={{ color: '#374151' }}>Status:</strong>
+                      <p style={{ margin: '4px 0 0 0', color: '#6b7280' }}>{selectedLead.outcome || 'Pending'}</p>
                     </div>
-
-                    {/* Recording Link */}
-                    {getRecordingLink(selectedLead) && (
-                      <div className="mb-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Recording Link</label>
-                        <a
-                          href={getRecordingLink(selectedLead)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        >
-                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m-6-8h8a2 2 0 012 2v8a2 2 0 01-2 2H8a2 2 0 01-2-2v-8a2 2 0 012-2z" />
-                          </svg>
-                          View Recording
-                        </a>
+                    
+                    {selectedLead.saleValue && (
+                      <div>
+                        <strong style={{ color: '#374151' }}>Sale Value:</strong>
+                        <p style={{ margin: '4px 0 0 0', color: '#059669', fontWeight: 'bold' }}>
+                          ${Number(selectedLead.saleValue).toFixed(2)}
+                        </p>
                       </div>
                     )}
-
-                    {/* Action Buttons */}
-                    <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                      <button
-                        onClick={closeLeadModal}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      >
-                        Close
-                      </button>
-                      {selectedLead.type === 'quiz_session' && (
-                        <button className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                          Book Call
-                        </button>
-                      )}
+                    
+                    {selectedLead.notes && (
+                      <div>
+                        <strong style={{ color: '#374151' }}>Notes:</strong>
+                        <p style={{ margin: '4px 0 0 0', color: '#6b7280' }}>{selectedLead.notes}</p>
+                      </div>
+                    )}
+                    
+                    <div>
+                      <strong style={{ color: '#374151' }}>Appointment Date:</strong>
+                      <p style={{ margin: '4px 0 0 0', color: '#6b7280' }}>{formatDate(selectedLead.appointmentDate)}</p>
                     </div>
+                    
+                    {selectedLead.closerName && (
+                      <div>
+                        <strong style={{ color: '#374151' }}>Assigned Closer:</strong>
+                        <p style={{ margin: '4px 0 0 0', color: '#6b7280' }}>{selectedLead.closerName}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Close Button */}
+                  <div style={{ marginTop: '24px', textAlign: 'right' }}>
+                    <button 
+                      onClick={closeLeadModal}
+                      style={{
+                        backgroundColor: '#3b82f6',
+                        color: 'white',
+                        padding: '10px 20px',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '500'
+                      }}
+                    >
+                      Close
+                    </button>
                   </div>
                 </div>
               </div>
             )}
-            </>
+            
+            <>
           )}
         </div>
       </div>
