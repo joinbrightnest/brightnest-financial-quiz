@@ -494,6 +494,7 @@ export default function AdminDashboard() {
                 setShowMainDashboard(true);
                 setShowCEOAnalytics(false);
                 setShowCloserManagement(false);
+                setShowPipeline(false);
                 setShowSettings(false);
               }}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
@@ -521,6 +522,7 @@ export default function AdminDashboard() {
                 setShowCEOAnalytics(true);
                 setShowMainDashboard(false);
                 setShowCloserManagement(false);
+                setShowPipeline(false);
                 setShowSettings(false);
               }}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
