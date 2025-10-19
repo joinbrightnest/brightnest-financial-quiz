@@ -799,9 +799,27 @@ export default function AdminDashboard() {
           {showPipeline && (
             <div className="mb-8">
               <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+                {/* Pipeline Header */}
                 <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="text-xl font-semibold text-gray-900">Lead Pipeline</h2>
-                  <p className="mt-1 text-sm text-gray-500">Track and manage leads through your sales pipeline</p>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-xl font-semibold text-gray-900">Lead Pipeline</h2>
+                      <p className="mt-1 text-sm text-gray-500">Track and manage leads through your sales pipeline</p>
+                    </div>
+                    <div className="flex items-center space-x-6">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-gray-900">$4,300</div>
+                        <div className="text-sm text-gray-500">Total Value</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-gray-900">3</div>
+                        <div className="text-sm text-gray-500">Total Leads</div>
+                      </div>
+                      <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                        + Add Lead
+                      </button>
+                    </div>
+                  </div>
                 </div>
                 
                 {/* Pipeline Columns */}
@@ -809,33 +827,39 @@ export default function AdminDashboard() {
                   <div className="flex space-x-6 overflow-x-auto pb-6">
                     {/* New Leads Column */}
                     <div className="flex-shrink-0 w-80">
-                      <div className="bg-blue-50 border-2 border-blue-200 rounded-lg">
-                        <div className="p-4 border-b border-blue-200">
-                          <h3 className="text-sm font-medium text-blue-900">New Leads</h3>
-                          <p className="text-xs text-blue-600">Fresh leads that need attention</p>
+                      <div className="bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="p-4 border-b border-gray-200">
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-medium text-gray-900">New Leads</h3>
+                            <span className="text-xs text-gray-500">1</span>
+                          </div>
+                          <div className="text-lg font-bold text-gray-900">$2,500</div>
                         </div>
                         <div className="p-4 space-y-3">
-                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center">
-                                <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex-1">
+                                <h4 className="text-sm font-medium text-gray-900">John Doe</h4>
+                                <p className="text-xs text-gray-500">john.doe@email.com</p>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-sm font-bold text-gray-900">$2,500</div>
+                                <div className="text-xs text-gray-500">Oct 20</div>
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-2">
+                                <div className="h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center">
                                   <span className="text-xs font-medium text-indigo-600">JD</span>
                                 </div>
-                                <div className="ml-3">
-                                  <div className="text-sm font-medium text-gray-900">John Doe</div>
-                                  <div className="text-xs text-gray-500">Lead #001</div>
-                                </div>
+                                <span className="text-xs text-gray-600">+1 (555) 123-4567</span>
                               </div>
-                              <button className="text-gray-400 hover:text-gray-600">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                                </svg>
-                              </button>
+                              <div className="flex items-center space-x-1">
+                                <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                                <span className="text-xs text-gray-500">2:00 PM</span>
+                              </div>
                             </div>
-                            <div className="text-xs text-gray-600 mb-2">john.doe@email.com</div>
-                            <div className="text-xs text-gray-600 mb-2">+1 (555) 123-4567</div>
-                            <div className="text-xs text-gray-500 mb-3">Oct 20, 2024 - 2:00 PM</div>
-                            <div className="text-xs text-gray-600 bg-gray-50 rounded p-2">
+                            <div className="mt-2 text-xs text-gray-600 bg-gray-50 rounded p-2">
                               Interested in premium package, follow up next week
                             </div>
                           </div>
@@ -845,37 +869,39 @@ export default function AdminDashboard() {
 
                     {/* Booked Call Column */}
                     <div className="flex-shrink-0 w-80">
-                      <div className="bg-green-50 border-2 border-green-200 rounded-lg">
-                        <div className="p-4 border-b border-green-200">
-                          <h3 className="text-sm font-medium text-green-900">Booked Call</h3>
-                          <p className="text-xs text-green-600">Leads with scheduled appointments</p>
+                      <div className="bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="p-4 border-b border-gray-200">
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-medium text-gray-900">Booked Call</h3>
+                            <span className="text-xs text-gray-500">1</span>
+                          </div>
+                          <div className="text-lg font-bold text-gray-900">$1,800</div>
                         </div>
                         <div className="p-4 space-y-3">
-                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center">
-                                <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex-1">
+                                <h4 className="text-sm font-medium text-gray-900">Mary Johnson</h4>
+                                <p className="text-xs text-gray-500">mary.j@company.com</p>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-sm font-bold text-gray-900">$1,800</div>
+                                <div className="text-xs text-gray-500">Oct 22</div>
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-2">
+                                <div className="h-6 w-6 rounded-full bg-green-100 flex items-center justify-center">
                                   <span className="text-xs font-medium text-green-600">MJ</span>
                                 </div>
-                                <div className="ml-3">
-                                  <div className="text-sm font-medium text-gray-900">Mary Johnson</div>
-                                  <div className="text-xs text-gray-500">Lead #002</div>
-                                </div>
+                                <span className="text-xs text-gray-600">+1 (555) 987-6543</span>
                               </div>
-                              <button className="text-gray-400 hover:text-gray-600">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                                </svg>
-                              </button>
+                              <div className="flex items-center space-x-1">
+                                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                                <span className="text-xs text-gray-500">10:30 AM</span>
+                              </div>
                             </div>
-                            <div className="text-xs text-gray-600 mb-2">mary.j@company.com</div>
-                            <div className="text-xs text-gray-600 mb-2">+1 (555) 987-6543</div>
-                            <div className="text-xs text-gray-500 mb-3">Oct 22, 2024 - 10:30 AM</div>
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="text-xs text-gray-600">Assigned: David Kim</div>
-                              <div className="text-xs font-medium text-green-600">$1,800</div>
-                            </div>
-                            <div className="text-xs text-gray-600 bg-gray-50 rounded p-2">
+                            <div className="mt-2 text-xs text-gray-600 bg-gray-50 rounded p-2">
                               Needs more information about pricing
                             </div>
                           </div>
@@ -885,37 +911,39 @@ export default function AdminDashboard() {
 
                     {/* Follow Up Column */}
                     <div className="flex-shrink-0 w-80">
-                      <div className="bg-yellow-50 border-2 border-yellow-200 rounded-lg">
-                        <div className="p-4 border-b border-yellow-200">
-                          <h3 className="text-sm font-medium text-yellow-900">Follow Up</h3>
-                          <p className="text-xs text-yellow-600">Leads requiring follow-up calls</p>
+                      <div className="bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="p-4 border-b border-gray-200">
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-medium text-gray-900">Follow Up</h3>
+                            <span className="text-xs text-gray-500">1</span>
+                          </div>
+                          <div className="text-lg font-bold text-gray-900">$0</div>
                         </div>
                         <div className="p-4 space-y-3">
-                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                            <div className="flex items-center justify-between mb-3">
-                              <div className="flex items-center">
-                                <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
-                                  <span className="text-xs font-medium text-purple-600">RB</span>
-                                </div>
-                                <div className="ml-3">
-                                  <div className="text-sm font-medium text-gray-900">Robert Brown</div>
-                                  <div className="text-xs text-gray-500">Lead #003</div>
-                                </div>
+                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex-1">
+                                <h4 className="text-sm font-medium text-gray-900">Robert Brown</h4>
+                                <p className="text-xs text-gray-500">robert.brown@email.com</p>
                               </div>
-                              <button className="text-gray-400 hover:text-gray-600">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                                </svg>
-                              </button>
+                              <div className="text-right">
+                                <div className="text-sm font-bold text-gray-900">$0</div>
+                                <div className="text-xs text-gray-500">Oct 18</div>
+                              </div>
                             </div>
-                            <div className="text-xs text-gray-600 mb-2">robert.brown@email.com</div>
-                            <div className="text-xs text-gray-600 mb-2">+1 (555) 456-7890</div>
-                            <div className="text-xs text-gray-500 mb-3">Oct 18, 2024 - 3:15 PM</div>
-                            <div className="flex items-center justify-between mb-2">
-                              <div className="text-xs text-gray-600">Assigned: Alex Lee</div>
-                              <div className="text-xs font-medium text-gray-500">-</div>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-2">
+                                <div className="h-6 w-6 rounded-full bg-red-100 flex items-center justify-center">
+                                  <span className="text-xs font-medium text-red-600">RB</span>
+                                </div>
+                                <span className="text-xs text-gray-600">+1 (555) 456-7890</span>
+                              </div>
+                              <div className="flex items-center space-x-1">
+                                <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                                <span className="text-xs text-gray-500">3:15 PM</span>
+                              </div>
                             </div>
-                            <div className="text-xs text-gray-600 bg-gray-50 rounded p-2">
+                            <div className="mt-2 text-xs text-gray-600 bg-gray-50 rounded p-2">
                               Budget constraints, not ready to invest
                             </div>
                           </div>
@@ -925,14 +953,17 @@ export default function AdminDashboard() {
 
                     {/* Callback Requested Column */}
                     <div className="flex-shrink-0 w-80">
-                      <div className="bg-purple-50 border-2 border-purple-200 rounded-lg">
-                        <div className="p-4 border-b border-purple-200">
-                          <h3 className="text-sm font-medium text-purple-900">Callback Requested</h3>
-                          <p className="text-xs text-purple-600">Leads who requested callbacks</p>
+                      <div className="bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="p-4 border-b border-gray-200">
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-medium text-gray-900">Callback Requested</h3>
+                            <span className="text-xs text-gray-500">0</span>
+                          </div>
+                          <div className="text-lg font-bold text-gray-900">$0</div>
                         </div>
-                        <div className="p-4 space-y-3">
-                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-center text-gray-500">
-                            <p className="text-sm">No leads in this stage</p>
+                        <div className="p-4">
+                          <div className="text-center py-8 text-gray-500">
+                            <div className="text-sm">No leads in this stage</div>
                           </div>
                         </div>
                       </div>
@@ -940,14 +971,17 @@ export default function AdminDashboard() {
 
                     {/* Converted Column */}
                     <div className="flex-shrink-0 w-80">
-                      <div className="bg-emerald-50 border-2 border-emerald-200 rounded-lg">
-                        <div className="p-4 border-b border-emerald-200">
-                          <h3 className="text-sm font-medium text-emerald-900">Converted</h3>
-                          <p className="text-xs text-emerald-600">Successfully converted leads</p>
+                      <div className="bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="p-4 border-b border-gray-200">
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-medium text-gray-900">Converted</h3>
+                            <span className="text-xs text-gray-500">0</span>
+                          </div>
+                          <div className="text-lg font-bold text-gray-900">$0</div>
                         </div>
-                        <div className="p-4 space-y-3">
-                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-center text-gray-500">
-                            <p className="text-sm">No leads in this stage</p>
+                        <div className="p-4">
+                          <div className="text-center py-8 text-gray-500">
+                            <div className="text-sm">No leads in this stage</div>
                           </div>
                         </div>
                       </div>
@@ -955,14 +989,17 @@ export default function AdminDashboard() {
 
                     {/* Not Interested Column */}
                     <div className="flex-shrink-0 w-80">
-                      <div className="bg-red-50 border-2 border-red-200 rounded-lg">
-                        <div className="p-4 border-b border-red-200">
-                          <h3 className="text-sm font-medium text-red-900">Not Interested</h3>
-                          <p className="text-xs text-red-600">Leads who declined</p>
+                      <div className="bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="p-4 border-b border-gray-200">
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-medium text-gray-900">Not Interested</h3>
+                            <span className="text-xs text-gray-500">0</span>
+                          </div>
+                          <div className="text-lg font-bold text-gray-900">$0</div>
                         </div>
-                        <div className="p-4 space-y-3">
-                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-center text-gray-500">
-                            <p className="text-sm">No leads in this stage</p>
+                        <div className="p-4">
+                          <div className="text-center py-8 text-gray-500">
+                            <div className="text-sm">No leads in this stage</div>
                           </div>
                         </div>
                       </div>
@@ -970,39 +1007,20 @@ export default function AdminDashboard() {
 
                     {/* Rescheduled Column */}
                     <div className="flex-shrink-0 w-80">
-                      <div className="bg-gray-50 border-2 border-gray-200 rounded-lg">
+                      <div className="bg-gray-50 rounded-lg border border-gray-200">
                         <div className="p-4 border-b border-gray-200">
-                          <h3 className="text-sm font-medium text-gray-900">Rescheduled</h3>
-                          <p className="text-xs text-gray-600">Leads who rescheduled appointments</p>
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-sm font-medium text-gray-900">Rescheduled</h3>
+                            <span className="text-xs text-gray-500">0</span>
+                          </div>
+                          <div className="text-lg font-bold text-gray-900">$0</div>
                         </div>
-                        <div className="p-4 space-y-3">
-                          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-center text-gray-500">
-                            <p className="text-sm">No leads in this stage</p>
+                        <div className="p-4">
+                          <div className="text-center py-8 text-gray-500">
+                            <div className="text-sm">No leads in this stage</div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Pipeline Summary Stats */}
-                <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-gray-900">3</div>
-                      <div className="text-sm text-gray-500">Total Leads</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">1</div>
-                      <div className="text-sm text-gray-500">New Leads</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">1</div>
-                      <div className="text-sm text-gray-500">Booked Calls</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-yellow-600">1</div>
-                      <div className="text-sm text-gray-500">Follow Ups</div>
                     </div>
                   </div>
                 </div>
