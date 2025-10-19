@@ -313,7 +313,7 @@ export default function AdminDashboard() {
     if (!stats) return;
     
     const csvContent = [
-      ["Session ID", "Name", "Email", "Date", "Status", "Completed At", "Archetype"],
+      ["Session ID", "Name", "Email", "Date", "Status", "Completed At", "Source"],
       ...stats.allLeads.map(lead => {
         let customerName = "N/A";
         let customerEmail = "N/A";
@@ -339,13 +339,16 @@ export default function AdminDashboard() {
         
         let status = "Partial";
         let completedAt = "N/A";
+        let source = "Website";
         
         if (lead.type === 'appointment') {
-          status = "Completed";
+          status = "Booked";
           completedAt = lead.scheduledAt ? new Date(lead.scheduledAt).toLocaleString() : "N/A";
+          source = lead.affiliateCode ? `Affiliate (${lead.affiliateCode})` : "Website";
         } else {
           status = lead.status === "completed" ? "Completed" : "Partial";
           completedAt = lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A";
+          source = lead.affiliateCode ? `Affiliate (${lead.affiliateCode})` : "Website";
         }
         
         return [
@@ -355,7 +358,7 @@ export default function AdminDashboard() {
           new Date(lead.createdAt).toLocaleDateString(),
           status,
           completedAt,
-          lead.result?.archetype || "N/A"
+          source
         ];
       })
     ].map(row => row.join(",")).join("\n");
@@ -2103,28 +2106,31 @@ export default function AdminDashboard() {
                         let customerEmail = "N/A";
                         let status = "Partial";
                         let completedAt = "N/A";
+                        let source = "Website";
                         
                         if (lead.type === 'appointment') {
                           // For appointments, use the direct properties
                           customerName = lead.customerName || "N/A";
                           customerEmail = lead.customerEmail || "N/A";
-                          status = "Completed"; // Appointments are always completed
+                          status = "Booked"; // Appointments are "Booked" calls
                           completedAt = lead.scheduledAt ? new Date(lead.scheduledAt).toLocaleString() : "N/A";
+                          source = lead.affiliateCode ? `Affiliate (${lead.affiliateCode})` : "Website";
                         } else {
                           // For quiz sessions, extract from answers
                           const nameAnswer = lead.answers?.find(a => 
                             a.question?.prompt?.toLowerCase().includes('name') ||
-                            a.question?.prompt?.toLowerCase().includes('name')
+                            a.question?.text?.toLowerCase().includes('name')
                           );
                           const emailAnswer = lead.answers?.find(a => 
                             a.question?.prompt?.toLowerCase().includes('email') ||
-                            a.question?.prompt?.toLowerCase().includes('email')
+                            a.question?.text?.toLowerCase().includes('email')
                           );
                           
                           customerName = nameAnswer?.value || "N/A";
                           customerEmail = emailAnswer?.value || "N/A";
                           status = lead.status === "completed" ? "Completed" : "Partial";
                           completedAt = lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A";
+                          source = lead.affiliateCode ? `Affiliate (${lead.affiliateCode})` : "Website";
                         }
                         
                         return (
@@ -2143,7 +2149,9 @@ export default function AdminDashboard() {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                status === "Completed" 
+                                status === "Booked" 
+                                  ? "bg-blue-100 text-blue-800"
+                                  : status === "Completed" 
                                   ? "bg-green-100 text-green-800" 
                                   : "bg-orange-100 text-orange-800"
                               }`}>
@@ -2155,11 +2163,11 @@ export default function AdminDashboard() {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                lead.source?.includes('Affiliate') 
+                                source.includes('Affiliate') 
                                   ? "bg-blue-100 text-blue-800" 
                                   : "bg-gray-100 text-gray-800"
                               }`}>
-                                {lead.source || 'Website'}
+                                {source}
                               </span>
                             </td>
                           </tr>
