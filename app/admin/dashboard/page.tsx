@@ -105,6 +105,8 @@ export default function AdminDashboard() {
   const [qualificationThreshold, setQualificationThreshold] = useState(17);
   const [isUpdatingThreshold, setIsUpdatingThreshold] = useState(false);
   const [appointments, setAppointments] = useState<any[]>([]);
+  const [selectedLead, setSelectedLead] = useState<any>(null);
+  const [showLeadModal, setShowLeadModal] = useState(false);
 
   // Helper functions for appointments
   const formatDate = (dateString: string) => {
@@ -159,6 +161,16 @@ export default function AdminDashboard() {
       default:
         return null;
     }
+  };
+
+  const openLeadModal = (lead: any) => {
+    setSelectedLead(lead);
+    setShowLeadModal(true);
+  };
+
+  const closeLeadModal = () => {
+    setSelectedLead(null);
+    setShowLeadModal(false);
   };
 
   // Fetch appointments data
@@ -947,7 +959,7 @@ export default function AdminDashboard() {
                               </div>
                             ) : (
                               appointments.filter(a => a.pipelineStage === 'new_leads').map((appointment) => (
-                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer" onClick={() => openLeadModal(appointment)}>
                                   <div className="flex items-start justify-between mb-2">
                                     <div className="flex-1">
                                       <h4 className="text-sm font-medium text-gray-900">{appointment.customerName}</h4>
@@ -1009,7 +1021,7 @@ export default function AdminDashboard() {
                               </div>
                             ) : (
                               appointments.filter(a => a.pipelineStage === 'booked_call').map((appointment) => (
-                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer" onClick={() => openLeadModal(appointment)}>
                                   <div className="flex items-start justify-between mb-2">
                                     <div className="flex-1">
                                       <h4 className="text-sm font-medium text-gray-900">{appointment.customerName}</h4>
@@ -1071,7 +1083,7 @@ export default function AdminDashboard() {
                               </div>
                             ) : (
                               appointments.filter(a => a.pipelineStage === 'follow_up').map((appointment) => (
-                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer" onClick={() => openLeadModal(appointment)}>
                                   <div className="flex items-start justify-between mb-2">
                                     <div className="flex-1">
                                       <h4 className="text-sm font-medium text-gray-900">{appointment.customerName}</h4>
@@ -1133,7 +1145,7 @@ export default function AdminDashboard() {
                               </div>
                             ) : (
                               appointments.filter(a => a.pipelineStage === 'callback_requested').map((appointment) => (
-                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer" onClick={() => openLeadModal(appointment)}>
                                   <div className="flex items-start justify-between mb-2">
                                     <div className="flex-1">
                                       <h4 className="text-sm font-medium text-gray-900">{appointment.customerName}</h4>
@@ -1195,7 +1207,7 @@ export default function AdminDashboard() {
                               </div>
                             ) : (
                               appointments.filter(a => a.pipelineStage === 'converted').map((appointment) => (
-                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer" onClick={() => openLeadModal(appointment)}>
                                   <div className="flex items-start justify-between mb-2">
                                     <div className="flex-1">
                                       <h4 className="text-sm font-medium text-gray-900">{appointment.customerName}</h4>
@@ -1257,7 +1269,7 @@ export default function AdminDashboard() {
                               </div>
                             ) : (
                               appointments.filter(a => a.pipelineStage === 'not_interested').map((appointment) => (
-                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer" onClick={() => openLeadModal(appointment)}>
                                   <div className="flex items-start justify-between mb-2">
                                     <div className="flex-1">
                                       <h4 className="text-sm font-medium text-gray-900">{appointment.customerName}</h4>
@@ -1319,7 +1331,7 @@ export default function AdminDashboard() {
                               </div>
                             ) : (
                               appointments.filter(a => a.pipelineStage === 'rescheduled').map((appointment) => (
-                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                                <div key={appointment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer" onClick={() => openLeadModal(appointment)}>
                                   <div className="flex items-start justify-between mb-2">
                                     <div className="flex-1">
                                       <h4 className="text-sm font-medium text-gray-900">{appointment.customerName}</h4>
@@ -2114,6 +2126,183 @@ export default function AdminDashboard() {
               </div>
             </>
           ) : null}
+
+            {/* Lead Profile Modal */}
+            {showLeadModal && selectedLead && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                  <div className="p-6">
+                    {/* Modal Header */}
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center space-x-3">
+                        <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center">
+                          <span className="text-lg font-medium text-indigo-600">
+                            {selectedLead.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                          </span>
+                        </div>
+                        <div>
+                          <h2 className="text-xl font-semibold text-gray-900">{selectedLead.customerName}</h2>
+                          <p className="text-sm text-gray-500">{selectedLead.customerEmail}</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={closeLeadModal}
+                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    {/* Lead Details */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Lead Type</label>
+                          <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                            selectedLead.type === 'quiz_session' 
+                              ? 'bg-blue-100 text-blue-800' 
+                              : 'bg-green-100 text-green-800'
+                          }`}>
+                            {selectedLead.type === 'quiz_session' ? 'Quiz Lead' : 'Appointment'}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Pipeline Stage</label>
+                          <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                            selectedLead.pipelineStage === 'new_leads' ? 'bg-yellow-100 text-yellow-800' :
+                            selectedLead.pipelineStage === 'booked_call' ? 'bg-green-100 text-green-800' :
+                            selectedLead.pipelineStage === 'converted' ? 'bg-emerald-100 text-emerald-800' :
+                            selectedLead.pipelineStage === 'not_interested' ? 'bg-red-100 text-red-800' :
+                            selectedLead.pipelineStage === 'follow_up' ? 'bg-yellow-100 text-yellow-800' :
+                            selectedLead.pipelineStage === 'callback_requested' ? 'bg-purple-100 text-purple-800' :
+                            selectedLead.pipelineStage === 'rescheduled' ? 'bg-gray-100 text-gray-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {selectedLead.pipelineStage === 'new_leads' ? 'New Lead' :
+                             selectedLead.pipelineStage === 'booked_call' ? 'Booked Call' :
+                             selectedLead.pipelineStage === 'converted' ? 'Converted' :
+                             selectedLead.pipelineStage === 'not_interested' ? 'Not Interested' :
+                             selectedLead.pipelineStage === 'follow_up' ? 'Follow Up' :
+                             selectedLead.pipelineStage === 'callback_requested' ? 'Callback Requested' :
+                             selectedLead.pipelineStage === 'rescheduled' ? 'Rescheduled' :
+                             'Unknown'}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Contact Info</label>
+                          <div className="text-sm text-gray-900">
+                            <div className="mb-1">
+                              <span className="font-medium">Email:</span> {selectedLead.customerEmail}
+                            </div>
+                            <div>
+                              <span className="font-medium">Phone:</span> {selectedLead.customerPhone || 'Not provided'}
+                            </div>
+                          </div>
+                        </div>
+
+                        {selectedLead.affiliateCode && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Affiliate Source</label>
+                            <div className="text-sm text-gray-900">{selectedLead.affiliateCode}</div>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Date & Time</label>
+                          <div className="text-sm text-gray-900">
+                            {new Date(selectedLead.scheduledAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                              hour: 'numeric',
+                              minute: '2-digit'
+                            })}
+                          </div>
+                        </div>
+
+                        {selectedLead.saleValue && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Sale Value</label>
+                            <div className="text-lg font-semibold text-green-600">
+                              ${Number(selectedLead.saleValue).toFixed(2)}
+                            </div>
+                          </div>
+                        )}
+
+                        {selectedLead.outcome && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Call Outcome</label>
+                            <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${getOutcomeColor(selectedLead.outcome)}`}>
+                              {selectedLead.outcome.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                            </div>
+                          </div>
+                        )}
+
+                        {selectedLead.closer && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Assigned Closer</label>
+                            <div className="text-sm text-gray-900">{selectedLead.closer.name}</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Notes Section */}
+                    <div className="mb-6">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+                      {selectedLead.notes ? (
+                        <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-900">
+                          {selectedLead.notes}
+                        </div>
+                      ) : (
+                        <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-500 italic">
+                          No notes available
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Recording Link */}
+                    {getRecordingLink(selectedLead) && (
+                      <div className="mb-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Recording Link</label>
+                        <a
+                          href={getRecordingLink(selectedLead)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        >
+                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h1m4 0h1m-6-8h8a2 2 0 012 2v8a2 2 0 01-2 2H8a2 2 0 01-2-2v-8a2 2 0 012-2z" />
+                          </svg>
+                          View Recording
+                        </a>
+                      </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                      <button
+                        onClick={closeLeadModal}
+                        className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      >
+                        Close
+                      </button>
+                      {selectedLead.type === 'quiz_session' && (
+                        <button className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                          Book Call
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             </>
           )}
         </div>
