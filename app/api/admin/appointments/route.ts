@@ -66,11 +66,11 @@ export async function GET(request: NextRequest) {
     const actualLeads = quizSessions.filter(session => {
       const nameAnswer = session.answers.find(a => 
         a.question?.prompt?.toLowerCase().includes('name') ||
-        a.question?.text?.toLowerCase().includes('name')
+        a.question?.prompt?.toLowerCase().includes('name')
       );
       const emailAnswer = session.answers.find(a => 
         a.question?.prompt?.toLowerCase().includes('email') ||
-        a.question?.text?.toLowerCase().includes('email')
+        a.question?.prompt?.toLowerCase().includes('email')
       );
       
       return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
@@ -141,11 +141,11 @@ export async function GET(request: NextRequest) {
         // Extract name and email from answers
         const nameAnswer = session.answers.find(a => 
           a.question?.prompt?.toLowerCase().includes('name') ||
-          a.question?.text?.toLowerCase().includes('name')
+          a.question?.prompt?.toLowerCase().includes('name')
         );
         const emailAnswer = session.answers.find(a => 
           a.question?.prompt?.toLowerCase().includes('email') ||
-          a.question?.text?.toLowerCase().includes('email')
+          a.question?.prompt?.toLowerCase().includes('email')
         );
 
         return {

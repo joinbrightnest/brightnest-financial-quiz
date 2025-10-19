@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate stats
     const totalClicks = clicks.length;
-    const totalLeads = conversions.filter(c => c.status === "completed").length;
+    const totalLeads = conversions.filter(c => c.status === "confirmed").length;
     const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
     const totalSales = conversions.filter(c => c.conversionType === "sale").length;
     const totalCommission = conversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
@@ -87,14 +87,14 @@ export async function GET(request: NextRequest) {
         conversionType: conv.conversionType,
         status: conv.status,
         createdAt: conv.createdAt,
-        value: conv.value
+        value: String(conv.value || '')
       }))
     });
 
   } catch (error) {
     console.error("Error fetching affiliate data:", error);
     return NextResponse.json(
-      { error: "Failed to fetch affiliate data", details: error.message },
+      { error: "Failed to fetch affiliate data", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     const affiliates = await prisma.affiliate.findMany({
       where: {
         isActive: true,
-        ...(tier !== "all" && { tier }),
+        ...(tier !== "all" && tier !== undefined && { tier: tier as any }),
       },
       orderBy: {
         totalCommission: "desc",
@@ -117,8 +117,8 @@ export async function GET(request: NextRequest) {
     const totalPendingAffiliates = pendingAffiliates.length;
     const totalLeadsFromAffiliates = approvedAffiliates.reduce((sum, aff) => sum + aff.totalLeads, 0);
     const totalSalesValue = approvedAffiliates.reduce((sum, aff) => sum + (aff.totalSales * 200), 0); // Mock $200 per sale
-    const totalCommissionsPaid = approvedAffiliates.reduce((sum, aff) => sum + (aff.totalCommission * 0.7), 0); // 70% paid
-    const totalCommissionsPending = approvedAffiliates.reduce((sum, aff) => sum + (aff.totalCommission * 0.3), 0); // 30% pending
+    const totalCommissionsPaid = approvedAffiliates.reduce((sum, aff) => sum + (Number(aff.totalCommission) * 0.7), 0); // 70% paid
+    const totalCommissionsPending = approvedAffiliates.reduce((sum, aff) => sum + (Number(aff.totalCommission) * 0.3), 0); // 30% pending
 
     // Generate top affiliates performance data (only approved ones)
     const topAffiliates = approvedAffiliates.map(affiliate => ({

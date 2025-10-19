@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
     const totalSales = affiliateWithData.conversions.filter(c => c.conversionType === "sale").length;
     const totalCommission = affiliate.totalCommission || 0; // Use database field instead of calculating from conversions
     const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
-    const averageSaleValue = totalSales > 0 ? totalCommission / totalSales : 0;
+    const averageSaleValue = totalSales > 0 ? Number(totalCommission) / totalSales : 0;
 
     // Calculate pending and paid commissions
     const pendingCommission = affiliateWithData.payouts
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
       .reduce((sum, p) => sum + Number(p.amount), 0);
 
     // Generate daily stats based on actual data
-    const dailyStats = generateDailyStats(dateRange, totalClicks, totalSales, totalCommission);
+    const dailyStats = generateDailyStats(dateRange, totalClicks, totalSales, Number(totalCommission));
     
     console.log("Stats calculated:", {
       totalClicks,

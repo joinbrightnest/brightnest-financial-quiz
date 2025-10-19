@@ -61,7 +61,7 @@ export async function PUT(
       });
       
       if (closer) {
-        commissionAmount = parseFloat(saleValue) * closer.commissionRate;
+        commissionAmount = parseFloat(saleValue) * Number(closer.commissionRate);
       }
     }
 
@@ -73,7 +73,7 @@ export async function PUT(
       });
       
       if (affiliate) {
-        affiliateCommissionAmount = parseFloat(saleValue) * affiliate.commissionRate;
+        affiliateCommissionAmount = parseFloat(saleValue) * Number(affiliate.commissionRate);
         
         // Update affiliate's total commission
         await prisma.affiliate.update({

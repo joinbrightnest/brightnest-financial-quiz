@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
 
         // Calculate revenue (assuming $150 per sale)
         const totalRevenue = saleCount * 150;
-        const totalCommission = totalRevenue * affiliate.commissionRate;
+        const totalCommission = totalRevenue * Number(affiliate.commissionRate);
 
         return {
           id: affiliate.id,

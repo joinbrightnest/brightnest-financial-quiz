@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Affiliate not found" }, { status: 404 });
     }
 
-    console.log("Found affiliate:", affiliate.id, affiliate.referral_code || affiliate.referralCode, affiliate.name);
+    console.log("Found affiliate:", affiliate.id, affiliate.referralCode, affiliate.name);
     
     const [clicks, conversions] = await Promise.all([
       prisma.affiliateClick.findMany({
@@ -75,8 +75,8 @@ export async function GET(request: NextRequest) {
         name: affiliate.name,
         email: affiliate.email,
         tier: affiliate.tier,
-        referralCode: affiliate.referral_code || affiliate.referralCode,
-        customLink: affiliate.custom_tracking_link || `https://joinbrightnest.com/${affiliate.referral_code || affiliate.referralCode}`,
+        referralCode: affiliate.referralCode,
+        customLink: affiliate.customLink || `https://joinbrightnest.com/${affiliate.referralCode}`,
         commissionRate: affiliate.commissionRate,
         totalClicks: affiliate.totalClicks,
         totalLeads: affiliate.totalLeads,
@@ -94,7 +94,7 @@ export async function GET(request: NextRequest) {
         totalSales,
         totalCommission,
         conversionRate,
-        averageSaleValue: totalSales > 0 ? totalCommission / totalSales : 0,
+        averageSaleValue: totalSales > 0 ? Number(totalCommission) / totalSales : 0,
         pendingCommission: 0,
         paidCommission: 0,
         dailyStats,
@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error("Error fetching affiliate data:", error);
-    console.error("Error details:", error.message);
+    console.error("Error details:", error instanceof Error ? error.message : String(error));
     return NextResponse.json(
       { error: "Failed to fetch affiliate data" },
       { status: 500 }
