@@ -277,14 +277,32 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         days = Math.ceil((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) + 1;
         break;
       case "all":
-        // Show last 365 days for "all time" to keep it manageable
-        days = 365;
-        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+        // Show last 90 days for "all time" to keep it manageable
+        days = 90;
+        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
         break;
       default:
         days = 30;
         startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     }
+
+    // Fetch all appointments for the entire date range at once for better performance
+    const rangeEnd = new Date(startDate.getTime() + days * 24 * 60 * 60 * 1000);
+    const allAppointments = await prisma.appointment.findMany({
+      where: {
+        affiliateCode: affiliateCode,
+        updatedAt: {
+          gte: startDate,
+          lte: rangeEnd,
+        },
+      },
+    }).catch((error) => {
+      console.error('Error fetching appointments:', error);
+      return [];
+    });
+
+    // Filter for converted appointments
+    const convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
 
     for (let i = 0; i < days; i++) {
       const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
@@ -293,35 +311,23 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       const dayClicks = clicks.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
       const dayConversions = conversions.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
       
-      // Get appointments that were converted on this day
+      // Filter appointments for this specific day
+      const dayAppointments = convertedAppointments.filter(apt => {
+        const aptDate = apt.updatedAt.toISOString().split('T')[0];
+        return aptDate === dateStr;
+      });
+
+      // Calculate commission from appointments (actual sales)
+      const dayCommission = dayAppointments.reduce((sum, apt) => {
+        const saleValue = Number(apt.saleValue || 0);
+        return sum + (saleValue * Number(affiliate.commissionRate));
+      }, 0);
+      
+      // Calculate real leads for this day using centralized function
       const dayStart = new Date(date);
       dayStart.setHours(0, 0, 0, 0);
       const dayEnd = new Date(date);
       dayEnd.setHours(23, 59, 59, 999);
-      
-      const dayAppointments = await prisma.appointment.findMany({
-        where: {
-          affiliateCode: affiliateCode,
-          updatedAt: {
-            gte: dayStart,
-            lte: dayEnd,
-          },
-        },
-      }).catch((error) => {
-        console.error('Error fetching day appointments:', error);
-        return [];
-      });
-
-      // Filter for converted appointments in JavaScript
-      const convertedAppointments = dayAppointments.filter(apt => apt.outcome === 'converted');
-
-    // Calculate commission from appointments (actual sales)
-    const dayCommission = convertedAppointments.reduce((sum, apt) => {
-      const saleValue = Number(apt.saleValue || 0);
-      return sum + (saleValue * Number(affiliate.commissionRate));
-    }, 0);
-      
-      // Calculate real leads for this day using centralized function
       const dayLeadData = await calculateLeadsWithDateRange(dayStart, dayEnd, undefined, affiliateCode);
       
       stats.push({

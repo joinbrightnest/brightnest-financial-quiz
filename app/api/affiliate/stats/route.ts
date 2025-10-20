@@ -184,11 +184,11 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
       startDate = new Date(now.getFullYear(), now.getMonth(), 1);
       days = Math.ceil((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) + 1;
       break;
-    case "all":
-      // Show last 365 days for "all time" to keep it manageable
-      days = 365;
-      startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-      break;
+      case "all":
+        // Show last 90 days for "all time" to keep it manageable
+        days = 90;
+        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+        break;
     default:
       days = 30;
       startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -205,53 +205,60 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
     return [];
   }
 
+  // Fetch all data for the entire date range at once for better performance
+  const rangeEnd = new Date(startDate.getTime() + days * 24 * 60 * 60 * 1000);
+  
+  const [allClicks, allConversions, allAppointments] = await Promise.all([
+    prisma.affiliateClick.findMany({
+      where: {
+        affiliate: { referralCode: affiliateCode },
+        createdAt: {
+          gte: startDate,
+          lte: rangeEnd,
+        },
+      },
+    }),
+    prisma.affiliateConversion.findMany({
+      where: {
+        affiliate: { referralCode: affiliateCode },
+        createdAt: {
+          gte: startDate,
+          lte: rangeEnd,
+        },
+      },
+    }),
+    prisma.appointment.findMany({
+      where: {
+        affiliateCode: affiliateCode,
+        updatedAt: {
+          gte: startDate,
+          lte: rangeEnd,
+        },
+      },
+    }).catch((error) => {
+      console.error('Error fetching appointments:', error);
+      return [];
+    })
+  ]);
+
+  // Filter for converted appointments
+  const convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
+
   for (let i = 0; i < days; i++) {
     const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
     const dayStart = new Date(date);
     dayStart.setHours(0, 0, 0, 0);
     const dayEnd = new Date(date);
     dayEnd.setHours(23, 59, 59, 999);
+    const dateStr = date.toISOString().split('T')[0];
     
-    // Get real data for this day
-    const dayClicks = await prisma.affiliateClick.findMany({
-      where: {
-        affiliate: { referralCode: affiliateCode },
-        createdAt: {
-          gte: dayStart,
-          lte: dayEnd,
-        },
-      },
-    });
-
-    const dayConversions = await prisma.affiliateConversion.findMany({
-      where: {
-        affiliate: { referralCode: affiliateCode },
-        createdAt: {
-          gte: dayStart,
-          lte: dayEnd,
-        },
-      },
-    });
-
-    // Get appointments that were converted on this day
-    const dayAppointments = await prisma.appointment.findMany({
-      where: {
-        affiliateCode: affiliateCode,
-        updatedAt: {
-          gte: dayStart,
-          lte: dayEnd,
-        },
-      },
-    }).catch((error) => {
-      console.error('Error fetching day appointments:', error);
-      return [];
-    });
-
-    // Filter for converted appointments in JavaScript
-    const convertedAppointments = dayAppointments.filter(apt => apt.outcome === 'converted');
+    // Filter data for this specific day
+    const dayClicks = allClicks.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
+    const dayConversions = allConversions.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
+    const dayAppointments = convertedAppointments.filter(apt => apt.updatedAt.toISOString().split('T')[0] === dateStr);
 
     // Calculate commission from appointments (actual sales)
-    const dayCommission = convertedAppointments.reduce((sum, apt) => {
+    const dayCommission = dayAppointments.reduce((sum, apt) => {
       const saleValue = Number(apt.saleValue || 0);
       return sum + (saleValue * Number(affiliate.commissionRate));
     }, 0);
@@ -260,7 +267,7 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
     const dayLeadData = await calculateLeadsWithDateRange(dayStart, dayEnd, undefined, affiliateCode);
     
     data.push({
-      date: date.toISOString().split('T')[0],
+      date: dateStr,
       clicks: dayClicks.length,
       leads: dayLeadData.totalLeads,
       bookedCalls: dayConversions.filter(c => c.conversionType === "booking").length,
