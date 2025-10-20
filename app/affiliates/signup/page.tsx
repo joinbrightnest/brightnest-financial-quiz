@@ -139,20 +139,29 @@ export default function AffiliateSignup() {
               <h1 className="text-4xl font-bold leading-tight text-stone-900">Become an Affiliate</h1>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white/70 backdrop-blur rounded-xl p-4 border border-stone-200">
-                <div className="text-2xl font-bold text-stone-900">Invite-Only Access</div>
-                <div className="text-sm text-stone-500">For early applicants accepted into the program</div>
-              </div>
-              <div className="bg-white/70 backdrop-blur rounded-xl p-4 border border-stone-200">
-                <div className="text-2xl font-bold text-stone-900">Personalized Onboarding</div>
-                <div className="text-sm text-stone-500">Strategy session to align with your audience</div>
-              </div>
-              <div className="bg-white/70 backdrop-blur rounded-xl p-4 border border-stone-200">
-                <div className="text-2xl font-bold text-stone-900">Collaborative Growth</div>
-                <div className="text-sm text-stone-500">Work directly with our team to shape future campaigns</div>
-              </div>
-            </div>
+            <ul className="space-y-4">
+              <li className="flex items-start space-x-3">
+                <span className="mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white">✓</span>
+                <div>
+                  <p className="font-semibold text-stone-900">Invite-Only Access</p>
+                  <p className="text-sm text-stone-600">For early applicants accepted into the program</p>
+                </div>
+              </li>
+              <li className="flex items-start space-x-3">
+                <span className="mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white">✓</span>
+                <div>
+                  <p className="font-semibold text-stone-900">Personalized Onboarding</p>
+                  <p className="text-sm text-stone-600">Strategy session to align with your audience</p>
+                </div>
+              </li>
+              <li className="flex items-start space-x-3">
+                <span className="mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-amber-500 text-white">✓</span>
+                <div>
+                  <p className="font-semibold text-stone-900">Collaborative Growth</p>
+                  <p className="text-sm text-stone-600">Work directly with our team to shape future campaigns</p>
+                </div>
+              </li>
+            </ul>
           </div>
 
           <div>
