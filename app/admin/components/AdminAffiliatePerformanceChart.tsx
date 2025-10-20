@@ -43,6 +43,7 @@ export default function AdminAffiliatePerformanceChart({ dailyStats, loading }: 
     clicks: true,
     leads: true,
     bookedCalls: true,
+    earnings: true,
   });
 
   if (loading) {
@@ -95,6 +96,16 @@ export default function AdminAffiliatePerformanceChart({ dailyStats, loading }: 
         fill: false,
         hidden: !visibleMetrics.bookedCalls,
       },
+      {
+        label: 'Earnings',
+        data: dailyStats.map(day => day.commission || 0),
+        borderColor: 'rgb(245, 158, 11)',
+        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+        tension: 0.4,
+        fill: false,
+        hidden: !visibleMetrics.earnings,
+        yAxisID: 'y1',
+      },
     ],
   };
 
@@ -114,6 +125,20 @@ export default function AdminAffiliatePerformanceChart({ dailyStats, loading }: 
         beginAtZero: true,
         ticks: {
           stepSize: 1,
+        },
+      },
+      y1: {
+        type: 'linear',
+        display: true,
+        position: 'right',
+        beginAtZero: true,
+        grid: {
+          drawOnChartArea: false,
+        },
+        ticks: {
+          callback: function(value) {
+            return '$' + value.toFixed(2);
+          },
         },
       },
     },
@@ -188,6 +213,20 @@ export default function AdminAffiliatePerformanceChart({ dailyStats, loading }: 
             <span>Booked Calls</span>
           </button>
         </div>
+        
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => toggleMetric('earnings')}
+            className={`flex items-center space-x-2 px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+              visibleMetrics.earnings 
+                ? 'bg-amber-100 text-amber-700 border border-amber-200' 
+                : 'bg-gray-100 text-gray-500 border border-gray-200'
+            }`}
+          >
+            <div className={`w-3 h-3 rounded-full ${visibleMetrics.earnings ? 'bg-amber-500' : 'bg-gray-400'}`}></div>
+            <span>Earnings</span>
+          </button>
+        </div>
       </div>
 
       <div className="h-64">
@@ -195,7 +234,7 @@ export default function AdminAffiliatePerformanceChart({ dailyStats, loading }: 
       </div>
 
       {/* Mini Stats */}
-      <div className="mt-6 grid grid-cols-3 gap-4">
+      <div className="mt-6 grid grid-cols-4 gap-4">
         <div className="bg-blue-50 rounded-lg p-4">
           <div className="text-2xl font-bold text-blue-600">
             {dailyStats.reduce((sum, day) => sum + day.clicks, 0)}
@@ -213,6 +252,12 @@ export default function AdminAffiliatePerformanceChart({ dailyStats, loading }: 
             {dailyStats.reduce((sum, day) => sum + (day.bookedCalls || 0), 0)}
           </div>
           <div className="text-sm text-green-800">Booked Calls</div>
+        </div>
+        <div className="bg-amber-50 rounded-lg p-4">
+          <div className="text-2xl font-bold text-amber-600">
+            ${dailyStats.reduce((sum, day) => sum + (day.commission || 0), 0).toFixed(2)}
+          </div>
+          <div className="text-sm text-amber-800">Total Earnings</div>
         </div>
       </div>
     </motion.div>
