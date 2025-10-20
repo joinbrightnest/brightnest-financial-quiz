@@ -140,24 +140,24 @@ export default function AffiliateSignup() {
             </div>
 
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white rounded-xl p-4 border border-stone-200 shadow-sm">
-                <div className="text-2xl font-bold text-stone-900">10%</div>
-                <div className="text-sm text-stone-500">Base Commission</div>
+              <div className="bg-white/70 backdrop-blur rounded-xl p-4 border border-stone-200">
+                <div className="text-2xl font-bold text-stone-900">Invite-Only Access</div>
+                <div className="text-sm text-stone-500">For early applicants accepted into the program</div>
               </div>
-              <div className="bg-white rounded-xl p-4 border border-stone-200 shadow-sm">
-                <div className="text-2xl font-bold text-stone-900">Tiered</div>
-                <div className="text-sm text-stone-500">Up to 20%</div>
+              <div className="bg-white/70 backdrop-blur rounded-xl p-4 border border-stone-200">
+                <div className="text-2xl font-bold text-stone-900">Personalized Onboarding</div>
+                <div className="text-sm text-stone-500">Strategy session to align with your audience</div>
               </div>
-              <div className="bg-white rounded-xl p-4 border border-stone-200 shadow-sm">
-                <div className="text-2xl font-bold text-stone-900">Fast</div>
-                <div className="text-sm text-stone-500">Payouts</div>
+              <div className="bg-white/70 backdrop-blur rounded-xl p-4 border border-stone-200">
+                <div className="text-2xl font-bold text-stone-900">Collaborative Growth</div>
+                <div className="text-sm text-stone-500">Work directly with our team to shape future campaigns</div>
               </div>
             </div>
           </div>
 
           <div>
             <p className="text-lg font-bold text-stone-900 mb-2">Grow with BrightNest</p>
-            <p className="text-stone-700">Earn commissions promoting a product that truly helps.</p>
+            <p className="text-stone-700">Share a mission that changes lives, not just numbers.</p>
           </div>
         </div>
       </div>
