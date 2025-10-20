@@ -131,7 +131,7 @@ export default function AffiliateHeader({ affiliate, onLogout }: AffiliateHeader
             </button>
 
             {showMenu && (
-              <div className="fixed right-4 top-20 w-56 bg-white/95 backdrop-blur-sm rounded-xl shadow-xl ring-1 ring-gray-200/50 border border-gray-100/50 z-[9999] overflow-hidden">
+              <div className="absolute right-0 mt-3 w-56 bg-white/95 backdrop-blur-sm rounded-xl shadow-xl ring-1 ring-gray-200/50 border border-gray-100/50 z-[9999] overflow-hidden">
                 <div className="py-2">
                   <div className="px-4 py-3 border-b border-gray-100/50">
                     <p className="text-sm font-semibold text-gray-900">{affiliate.name}</p>
