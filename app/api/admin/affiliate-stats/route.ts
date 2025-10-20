@@ -136,6 +136,42 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
     return [];
   }
   
+  // Calculate date ranges for optimization
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const startOfWeek = new Date(now);
+  const dayOfWeek = now.getDay();
+  const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  startOfWeek.setDate(now.getDate() - daysToMonday);
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  
+  // Fetch all appointments data once for the entire date range to optimize performance
+  const allAppointments = await prisma.appointment.findMany({
+    where: {
+      affiliateCode: affiliateCode,
+      updatedAt: {
+        gte: new Date(Math.min(...[today, yesterday, startOfWeek, startOfMonth].map(d => d.getTime()))),
+        lte: new Date(Math.max(...[today, yesterday, startOfWeek, startOfMonth].map(d => d.getTime()))),
+      },
+    },
+  }).catch((error) => {
+    console.error('Error fetching appointments:', error);
+    return [];
+  });
+
+  // Filter for converted appointments
+  const convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
+
+  // Fetch all leads data once for the entire date range to optimize performance
+  const allLeadsData = await calculateLeadsWithDateRange(
+    new Date(Math.min(...[today, yesterday, startOfWeek, startOfMonth].map(d => d.getTime()))),
+    new Date(Math.max(...[today, yesterday, startOfWeek, startOfMonth].map(d => d.getTime()))),
+    undefined,
+    affiliateCode
+  );
+
   if (dateRange === "today") {
     // For today, show hourly data for today
     const today = new Date();
@@ -156,49 +192,36 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         return convDate === todayStr && convHour === hourStr;
       });
       
-      // Get appointments that were converted in this hour
-      const hourStart = new Date(today);
-      hourStart.setHours(hour, 0, 0, 0);
-      const hourEnd = new Date(today);
-      hourEnd.setHours(hour, 59, 59, 999);
-      
-      const hourAppointments = await prisma.appointment.findMany({
-        where: {
-          affiliateCode: affiliateCode,
-          updatedAt: {
-            gte: hourStart,
-            lte: hourEnd,
-          },
-        },
-      }).catch((error) => {
-        console.error('Error fetching hour appointments:', error);
-        return [];
+      // Filter appointments for this specific hour
+      const hourAppointments = convertedAppointments.filter(apt => {
+        const aptDate = apt.updatedAt.toISOString().split('T')[0];
+        const aptHour = apt.updatedAt.getHours();
+        return aptDate === todayStr && aptHour === hour;
       });
 
-      // Filter for converted appointments in JavaScript
-      const convertedHourAppointments = hourAppointments.filter(apt => apt.outcome === 'converted');
-
       // Calculate commission from appointments (actual sales)
-      const hourCommission = convertedHourAppointments.reduce((sum, apt) => {
+      const hourCommission = hourAppointments.reduce((sum, apt) => {
         const saleValue = Number(apt.saleValue || 0);
         return sum + (saleValue * Number(affiliate.commissionRate));
       }, 0);
       
-      // Calculate real leads for this hour using centralized function
-      const hourLeadData = await calculateLeadsWithDateRange(hourStart, hourEnd, undefined, affiliateCode);
+      // Filter leads data for this specific hour
+      const hourLeads = allLeadsData.leads.filter(lead => {
+        const leadDate = new Date(lead.createdAt);
+        const leadHour = leadDate.getHours();
+        return leadDate.toISOString().split('T')[0] === todayStr && leadHour === hour;
+      });
       
       stats.push({
         date: `${todayStr}T${hourStr}:00:00.000Z`,
         clicks: hourClicks.length,
-        leads: hourLeadData.totalLeads,
+        leads: hourLeads.length,
         bookedCalls: hourConversions.filter(c => c.conversionType === "booking").length,
         commission: hourCommission,
       });
     }
   } else if (dateRange === "yesterday") {
     // For yesterday, show hourly data for yesterday
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = yesterday.toISOString().split('T')[0];
     
     for (let hour = 0; hour < 24; hour++) {
@@ -216,41 +239,30 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         return convDate === yesterdayStr && convHour === hourStr;
       });
       
-      // Get appointments that were converted in this hour
-      const hourStart = new Date(yesterday);
-      hourStart.setHours(hour, 0, 0, 0);
-      const hourEnd = new Date(yesterday);
-      hourEnd.setHours(hour, 59, 59, 999);
-      
-      const hourAppointments = await prisma.appointment.findMany({
-        where: {
-          affiliateCode: affiliateCode,
-          updatedAt: {
-            gte: hourStart,
-            lte: hourEnd,
-          },
-        },
-      }).catch((error) => {
-        console.error('Error fetching hour appointments:', error);
-        return [];
+      // Filter appointments for this specific hour
+      const hourAppointments = convertedAppointments.filter(apt => {
+        const aptDate = apt.updatedAt.toISOString().split('T')[0];
+        const aptHour = apt.updatedAt.getHours();
+        return aptDate === yesterdayStr && aptHour === hour;
       });
 
-      // Filter for converted appointments in JavaScript
-      const convertedHourAppointments = hourAppointments.filter(apt => apt.outcome === 'converted');
-
       // Calculate commission from appointments (actual sales)
-      const hourCommission = convertedHourAppointments.reduce((sum, apt) => {
+      const hourCommission = hourAppointments.reduce((sum, apt) => {
         const saleValue = Number(apt.saleValue || 0);
         return sum + (saleValue * Number(affiliate.commissionRate));
       }, 0);
       
-      // Calculate real leads for this hour using centralized function
-      const hourLeadData = await calculateLeadsWithDateRange(hourStart, hourEnd, undefined, affiliateCode);
+      // Filter leads data for this specific hour
+      const hourLeads = allLeadsData.leads.filter(lead => {
+        const leadDate = new Date(lead.createdAt);
+        const leadHour = leadDate.getHours();
+        return leadDate.toISOString().split('T')[0] === yesterdayStr && leadHour === hour;
+      });
       
       stats.push({
         date: `${yesterdayStr}T${hourStr}:00:00.000Z`,
         clicks: hourClicks.length,
-        leads: hourLeadData.totalLeads,
+        leads: hourLeads.length,
         bookedCalls: hourConversions.filter(c => c.conversionType === "booking").length,
         commission: hourCommission,
       });
@@ -323,17 +335,16 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         return sum + (saleValue * Number(affiliate.commissionRate));
       }, 0);
       
-      // Calculate real leads for this day using centralized function
-      const dayStart = new Date(date);
-      dayStart.setHours(0, 0, 0, 0);
-      const dayEnd = new Date(date);
-      dayEnd.setHours(23, 59, 59, 999);
-      const dayLeadData = await calculateLeadsWithDateRange(dayStart, dayEnd, undefined, affiliateCode);
+      // Filter leads data for this specific day
+      const dayLeads = allLeadsData.leads.filter(lead => {
+        const leadDate = new Date(lead.createdAt);
+        return leadDate.toISOString().split('T')[0] === dateStr;
+      });
       
       stats.push({
         date: dateStr,
         clicks: dayClicks.length,
-        leads: dayLeadData.totalLeads,
+        leads: dayLeads.length,
         bookedCalls: dayConversions.filter(c => c.conversionType === "booking").length,
         commission: dayCommission,
       });
