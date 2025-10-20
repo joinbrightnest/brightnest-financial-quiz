@@ -195,6 +195,9 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
           lte: dayEnd,
         },
       },
+    }).catch((error) => {
+      console.error('Error fetching day appointments:', error);
+      return [];
     });
 
     // Calculate commission from appointments (actual sales)

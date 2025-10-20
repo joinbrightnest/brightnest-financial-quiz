@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    console.log('Admin affiliate stats request:', { affiliateCode, dateRange });
     // First try to find by referral code
     let affiliate = await prisma.affiliate.findUnique({
       where: { referralCode: affiliateCode },
@@ -171,6 +172,9 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
             lte: hourEnd,
           },
         },
+      }).catch((error) => {
+        console.error('Error fetching hour appointments:', error);
+        return [];
       });
 
       // Calculate commission from appointments (actual sales)
@@ -217,6 +221,9 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
             lte: dayEnd,
           },
         },
+      }).catch((error) => {
+        console.error('Error fetching day appointments:', error);
+        return [];
       });
 
       // Calculate commission from appointments (actual sales)
