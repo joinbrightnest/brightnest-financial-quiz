@@ -154,7 +154,7 @@ export default function AffiliateDashboard() {
 
   if (loading && !affiliate) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading affiliate dashboard...</p>
@@ -169,7 +169,7 @@ export default function AffiliateDashboard() {
 
   if (!affiliate.isApproved) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="text-center">
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 max-w-md">
             <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -194,7 +194,7 @@ export default function AffiliateDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-stone-50">
       <AffiliateHeader 
         affiliate={affiliate} 
         onLogout={handleLogout}
