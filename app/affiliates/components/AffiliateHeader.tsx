@@ -57,7 +57,7 @@ export default function AffiliateHeader({ affiliate, onLogout }: AffiliateHeader
   };
 
   return (
-    <header className="bg-gradient-to-r from-white via-gray-50 to-white shadow-lg border-b border-gray-200/50 backdrop-blur-sm">
+    <header className="bg-gradient-to-r from-white via-gray-50 to-white shadow-lg border-b border-gray-200/50 backdrop-blur-sm relative z-[100]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center py-5">
           {/* Logo */}
@@ -131,7 +131,7 @@ export default function AffiliateHeader({ affiliate, onLogout }: AffiliateHeader
             </button>
 
             {showMenu && (
-              <div className="absolute right-0 mt-3 w-56 bg-white/95 backdrop-blur-sm rounded-xl shadow-xl ring-1 ring-gray-200/50 border border-gray-100/50 z-[9999] overflow-hidden">
+              <div className="fixed right-4 top-20 w-56 bg-white/95 backdrop-blur-sm rounded-xl shadow-xl ring-1 ring-gray-200/50 border border-gray-100/50 z-[9999] overflow-hidden">
                 <div className="py-2">
                   <div className="px-4 py-3 border-b border-gray-100/50">
                     <p className="text-sm font-semibold text-gray-900">{affiliate.name}</p>
