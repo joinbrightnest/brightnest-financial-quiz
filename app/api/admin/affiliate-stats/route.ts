@@ -54,17 +54,17 @@ export async function GET(request: NextRequest) {
       })
     ]);
 
-    const totalClicks = clicks.length;
-    const totalQuizStarts = quizSessions.length;
-    const leadData = await calculateLeadsByCode(affiliateCode, dateRange);
-    const totalLeads = leadData.totalLeads;
-    const totalBookings = conversions.filter((c) => c.conversionType === "booking").length;
-    const totalSales = conversions.filter((c) => c.conversionType === "sale").length;
-    const totalCommission = affiliate.totalCommission || 0; // Use database field instead of calculating from conversions
-    const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
-
     // Generate daily stats from real data using centralized lead calculation
     const dailyStats = await generateDailyStatsFromRealData(clicks, conversions, dateRange, affiliateCode);
+    
+    // Calculate totals from dailyStats to ensure timeframe consistency
+    const totalClicks = dailyStats.reduce((sum, day) => sum + day.clicks, 0);
+    const totalLeads = dailyStats.reduce((sum, day) => sum + day.leads, 0);
+    const totalBookings = dailyStats.reduce((sum, day) => sum + day.bookedCalls, 0);
+    const totalCommission = dailyStats.reduce((sum, day) => sum + day.commission, 0);
+    const totalQuizStarts = totalLeads; // Using leads as quiz starts for consistency
+    const totalSales = totalBookings; // Using bookings as sales for consistency
+    const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
     
     const affiliateData = {
       affiliate: {
