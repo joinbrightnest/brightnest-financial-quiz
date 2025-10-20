@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, CallOutcome } from "@prisma/client";
 import { calculateLeadsByCode, calculateLeadsWithDateRange } from "@/lib/lead-calculation";
 
 const prisma = new PrismaClient();
@@ -165,7 +165,7 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       const hourAppointments = await prisma.appointment.findMany({
         where: {
           affiliateCode: affiliateCode,
-          outcome: 'converted',
+          outcome: CallOutcome.converted,
           updatedAt: {
             gte: hourStart,
             lte: hourEnd,
@@ -214,7 +214,7 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       const dayAppointments = await prisma.appointment.findMany({
         where: {
           affiliateCode: affiliateCode,
-          outcome: 'converted',
+          outcome: CallOutcome.converted,
           updatedAt: {
             gte: dayStart,
             lte: dayEnd,
