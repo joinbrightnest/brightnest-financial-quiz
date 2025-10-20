@@ -25,15 +25,20 @@ interface AffiliateData {
 
 interface AffiliateStats {
   totalClicks: number;
+  totalQuizStarts: number;
   totalLeads: number;
   totalBookings: number;
+  totalSales: number;
   totalCommission: number;
   conversionRate: number;
+  averageSaleValue: number;
+  pendingCommission: number;
+  paidCommission: number;
   dailyStats: Array<{
     date: string;
     clicks: number;
     leads: number;
-    bookings: number;
+    bookedCalls: number;
     commission: number;
   }>;
   trafficSources: Array<{
@@ -94,13 +99,20 @@ export default function AffiliatePerformancePage() {
       const affiliate = await affiliateResponse.json();
       setAffiliateData(affiliate);
 
-      // Fetch affiliate stats
-      const statsResponse = await fetch(`/api/admin/affiliates/${affiliateId}/stats?dateRange=${dateRange}`);
+      // Fetch affiliate stats using the same API as affiliate dashboard
+      const affiliateCode = affiliate.referralCode;
+      const statsResponse = await fetch(`/api/admin/affiliate-stats?affiliateCode=${affiliateCode}&dateRange=${dateRange}`);
       if (!statsResponse.ok) {
         throw new Error("Failed to fetch affiliate stats");
       }
       const statsData = await statsResponse.json();
-      setStats(statsData);
+      
+      // Extract stats from the response (same structure as affiliate dashboard)
+      if (statsData.stats) {
+        setStats(statsData.stats);
+      } else {
+        throw new Error("No stats data found in response");
+      }
 
     } catch (err) {
       console.error("Error fetching affiliate data:", err);
