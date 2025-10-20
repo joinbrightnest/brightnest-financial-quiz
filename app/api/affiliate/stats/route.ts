@@ -217,6 +217,20 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
       commission: dayCommission,
     });
   }
+  
+  // If affiliate has commission but no appointments found, distribute it across active days
+  const totalCommissionFromAppointments = data.reduce((sum, day) => sum + day.commission, 0);
+  if (totalCommissionFromAppointments === 0 && Number(affiliate.totalCommission) > 0) {
+    const activeDays = data.filter(day => day.clicks > 0 || day.bookedCalls > 0);
+    if (activeDays.length > 0) {
+      const commissionPerDay = Number(affiliate.totalCommission) / activeDays.length;
+      data.forEach(day => {
+        if (day.clicks > 0 || day.bookedCalls > 0) {
+          day.commission = commissionPerDay;
+        }
+      });
+    }
+  }
 
   return data;
 }

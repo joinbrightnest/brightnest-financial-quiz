@@ -225,11 +225,11 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         return [];
       });
 
-      // Calculate commission from appointments (actual sales)
-      const dayCommission = dayAppointments.reduce((sum, apt) => {
-        const saleValue = Number(apt.saleValue || 0);
-        return sum + (saleValue * Number(affiliate.commissionRate));
-      }, 0);
+    // Calculate commission from appointments (actual sales)
+    const dayCommission = dayAppointments.reduce((sum, apt) => {
+      const saleValue = Number(apt.saleValue || 0);
+      return sum + (saleValue * Number(affiliate.commissionRate));
+    }, 0);
       
       // Calculate real leads for this day using centralized function
       const dayLeadData = await calculateLeadsWithDateRange(dayStart, dayEnd, undefined, affiliateCode);
@@ -240,6 +240,20 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         leads: dayLeadData.totalLeads,
         bookedCalls: dayConversions.filter(c => c.conversionType === "booking").length,
         commission: dayCommission,
+      });
+    }
+  }
+  
+  // If affiliate has commission but no appointments found, distribute it across active days
+  const totalCommissionFromAppointments = stats.reduce((sum, stat) => sum + stat.commission, 0);
+  if (totalCommissionFromAppointments === 0 && Number(affiliate.totalCommission) > 0) {
+    const activeDays = stats.filter(stat => stat.clicks > 0 || stat.bookedCalls > 0);
+    if (activeDays.length > 0) {
+      const commissionPerDay = Number(affiliate.totalCommission) / activeDays.length;
+      stats.forEach(stat => {
+        if (stat.clicks > 0 || stat.bookedCalls > 0) {
+          stat.commission = commissionPerDay;
+        }
       });
     }
   }
