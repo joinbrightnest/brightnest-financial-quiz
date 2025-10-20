@@ -1,8 +1,17 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let openai: OpenAI | null = null;
+
+function getOpenAI(): OpenAI {
+  if (!openai) {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error('Missing credentials. Please pass an `apiKey`, or set the `OPENAI_API_KEY` environment variable.');
+    }
+    openai = new OpenAI({ apiKey });
+  }
+  return openai;
+}
 
 export interface ArticleGenerationRequest {
   questionPrompt: string;
@@ -38,7 +47,7 @@ export class AIContentService {
     const userPrompt = this.buildUserPrompt(request);
 
     try {
-      const completion = await openai.chat.completions.create({
+      const completion = await getOpenAI().chat.completions.create({
         model: "gpt-4",
         messages: [
           { role: "system", content: systemPrompt },
@@ -62,7 +71,7 @@ export class AIContentService {
 
   async generateFromTemplate(template: string, variables: Record<string, any>): Promise<string> {
     try {
-      const completion = await openai.chat.completions.create({
+      const completion = await getOpenAI().chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: [
           {
@@ -162,7 +171,7 @@ Format your response as JSON:
 
   async validateContent(content: string): Promise<{ isValid: boolean; issues: string[] }> {
     try {
-      const completion = await openai.chat.completions.create({
+      const completion = await getOpenAI().chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: [
           {
@@ -235,7 +244,7 @@ export class ArchetypeCopyService {
     const userPrompt = this.buildUserPrompt(request);
 
     try {
-      const completion = await openai.chat.completions.create({
+      const completion = await getOpenAI().chat.completions.create({
         model: "gpt-4",
         messages: [
           { role: "system", content: systemPrompt },
