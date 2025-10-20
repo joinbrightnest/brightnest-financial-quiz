@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, CallOutcome } from "@prisma/client";
 import { calculateAffiliateLeads, calculateLeadsWithDateRange } from "@/lib/lead-calculation";
 
 const prisma = new PrismaClient();
@@ -95,7 +95,23 @@ export async function GET(
     const leadData = await calculateAffiliateLeads(affiliateId, dateRange);
     const totalLeads = leadData.totalLeads;
     const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
-    const totalCommission = conversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
+    
+    // Calculate commission from appointments (same method as other APIs)
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        affiliateCode: affiliate.referralCode,
+        outcome: 'converted',
+        updatedAt: {
+          gte: startDate,
+        },
+      },
+    }).catch(() => []);
+    
+    const totalCommission = appointments.reduce((sum, apt) => {
+      const saleValue = Number(apt.saleValue || 0);
+      return sum + (saleValue * Number(affiliate.commissionRate));
+    }, 0);
+    
     const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
 
     // Generate daily stats from real data using centralized lead calculation
