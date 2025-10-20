@@ -15,7 +15,9 @@ export async function GET(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
+    console.log("Token received:", token);
     const decoded = JSON.parse(Buffer.from(token, 'base64').toString());
+    console.log("Decoded token:", decoded);
 
     const { searchParams } = new URL(request.url);
     const dateRange = searchParams.get("dateRange") || "month";
@@ -53,9 +55,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Get affiliate data (without includes to avoid issues)
+    console.log("Looking for affiliate with ID:", decoded.affiliateId);
     const affiliate = await prisma.affiliate.findUnique({
       where: { id: decoded.affiliateId },
     });
+    console.log("Affiliate found:", affiliate ? "Yes" : "No");
 
     if (!affiliate) {
       return NextResponse.json(
