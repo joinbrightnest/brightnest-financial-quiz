@@ -238,7 +238,7 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
         </div>
       </div>
 
-      <div className="h-96">
+      <div className="h-80">
         <Line data={chartData} options={chartOptions} />
       </div>
     </motion.div>
