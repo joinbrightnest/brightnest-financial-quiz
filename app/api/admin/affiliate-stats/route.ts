@@ -62,6 +62,14 @@ export async function GET(request: NextRequest) {
     const totalLeads = dailyStats.reduce((sum, day) => sum + day.leads, 0);
     const totalBookings = dailyStats.reduce((sum, day) => sum + day.bookedCalls, 0);
     const totalCommission = dailyStats.reduce((sum, day) => sum + day.commission, 0);
+    
+    console.log("Admin API Commission Debug:", {
+      affiliateCode,
+      dateRange,
+      dailyStatsLength: dailyStats.length,
+      dailyStatsCommissions: dailyStats.map(d => ({ date: d.date, commission: d.commission })),
+      totalCommission
+    });
     const totalQuizStarts = totalLeads; // Using leads as quiz starts for consistency
     const totalSales = totalBookings; // Using bookings as sales for consistency
     const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
