@@ -170,4 +170,4 @@ Edit `lib/scoring.ts` to modify:
 
 ## License
 
-MIT License - see LICENSE file for details
+MIT License - see LICENSE file for details# Deployment fix
