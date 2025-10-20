@@ -42,25 +42,27 @@ export default function AffiliateLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-black flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-black flex">
       {/* Left Section - Marketing Content */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         {/* Background Pattern */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-gray-900 to-black">
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-10 left-10 w-2 h-2 bg-white rounded-full"></div>
-            <div className="absolute top-20 left-32 w-1 h-1 bg-white rounded-full"></div>
-            <div className="absolute top-40 left-16 w-1.5 h-1.5 bg-white rounded-full"></div>
-            <div className="absolute top-60 left-24 w-1 h-1 bg-white rounded-full"></div>
-            <div className="absolute top-80 left-40 w-2 h-2 bg-white rounded-full"></div>
-            <div className="absolute top-32 left-48 w-1 h-1 bg-white rounded-full"></div>
-            <div className="absolute top-52 left-56 w-1.5 h-1.5 bg-white rounded-full"></div>
-            <div className="absolute top-72 left-64 w-1 h-1 bg-white rounded-full"></div>
-            <div className="absolute top-96 left-72 w-2 h-2 bg-white rounded-full"></div>
-            <div className="absolute top-16 left-80 w-1 h-1 bg-white rounded-full"></div>
-            <div className="absolute top-36 left-88 w-1.5 h-1.5 bg-white rounded-full"></div>
-            <div className="absolute top-56 left-96 w-1 h-1 bg-white rounded-full"></div>
-            <div className="absolute top-76 left-104 w-2 h-2 bg-white rounded-full"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-black">
+          <div className="absolute inset-0 opacity-30">
+            {/* Star field pattern */}
+            {Array.from({ length: 50 }).map((_, i) => (
+              <div
+                key={i}
+                className="absolute bg-white rounded-full animate-pulse"
+                style={{
+                  width: `${Math.random() * 3 + 1}px`,
+                  height: `${Math.random() * 3 + 1}px`,
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 3}s`,
+                  animationDuration: `${Math.random() * 2 + 2}s`,
+                }}
+              />
+            ))}
           </div>
         </div>
 
@@ -81,7 +83,7 @@ export default function AffiliateLogin() {
             <div>
               <p className="text-sm text-gray-400 uppercase tracking-wider mb-2">THE PLATFORM FOR</p>
               <h1 className="text-4xl font-bold leading-tight">
-                Financial Success
+                Affiliate Success
               </h1>
             </div>
 
@@ -89,11 +91,11 @@ export default function AffiliateLogin() {
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
                 <div className="text-2xl font-bold text-white">10K+</div>
-                <div className="text-sm text-gray-400">Active Users</div>
+                <div className="text-sm text-gray-400">Active Affiliates</div>
               </div>
               <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
                 <div className="text-2xl font-bold text-white">$5M</div>
-                <div className="text-sm text-gray-400">Generated Revenue</div>
+                <div className="text-sm text-gray-400">Paid Since 2024</div>
               </div>
               <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
                 <div className="text-2xl font-bold text-white">Free</div>
@@ -178,12 +180,12 @@ export default function AffiliateLogin() {
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
                 Email
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                   </svg>
                 </div>
@@ -194,19 +196,22 @@ export default function AffiliateLogin() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   placeholder="Enter your email"
                 />
               </div>
+              {error && error.includes("email") && (
+                <p className="text-red-400 text-sm mt-1">Please enter a valid email address</p>
+              )}
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
                 Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                 </div>
@@ -217,11 +222,11 @@ export default function AffiliateLogin() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-12 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="block w-full pl-10 pr-12 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   placeholder="Enter your password"
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
@@ -230,7 +235,7 @@ export default function AffiliateLogin() {
             </div>
 
             <div className="text-right">
-              <Link href="/affiliates/forgot-password" className="text-sm text-blue-400 hover:text-blue-300">
+              <Link href="/affiliates/forgot-password" className="text-sm text-purple-400 hover:text-purple-300">
                 Forgot password?
               </Link>
             </div>
@@ -238,7 +243,7 @@ export default function AffiliateLogin() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+              className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold py-3 px-4 rounded-lg hover:from-purple-700 hover:to-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               {loading ? (
                 <div className="flex items-center justify-center">
@@ -253,7 +258,7 @@ export default function AffiliateLogin() {
             <div className="text-center">
               <p className="text-gray-400">
                 Don't have an account?{" "}
-                <Link href="/affiliates/signup" className="text-blue-400 hover:text-blue-300 font-medium">
+                <Link href="/affiliates/signup" className="text-purple-400 hover:text-purple-300 font-medium">
                   Join Today
                 </Link>
               </p>
