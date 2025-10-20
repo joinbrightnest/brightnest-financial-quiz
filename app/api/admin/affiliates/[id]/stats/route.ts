@@ -18,23 +18,29 @@ export async function GET(
     let startDate: Date;
     
     switch (dateRange) {
-      case "1d":
-        startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      case "today":
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         break;
-      case "7d":
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      case "yesterday":
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        startDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
         break;
-      case "30d":
-        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      case "week":
+        const startOfWeek = new Date(now);
+        const dayOfWeek = now.getDay();
+        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        startOfWeek.setDate(now.getDate() - daysToMonday);
+        startDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate());
         break;
-      case "90d":
-        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+      case "month":
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
         break;
-      case "1y":
-        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+      case "all":
+        startDate = new Date(0); // All time
         break;
       default:
-        startDate = new Date(0); // All time
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // Default to 30 days
     }
 
     // Get affiliate data
