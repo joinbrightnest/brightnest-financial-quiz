@@ -15,9 +15,22 @@ export async function GET(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    console.log("Token received:", token);
-    const decoded = JSON.parse(Buffer.from(token, 'base64').toString());
-    console.log("Decoded token:", decoded);
+    let decoded;
+    try {
+      decoded = JSON.parse(Buffer.from(token, 'base64').toString());
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Invalid token format" },
+        { status: 401 }
+      );
+    }
+
+    if (!decoded || !decoded.affiliateId) {
+      return NextResponse.json(
+        { error: "Invalid token: missing affiliateId" },
+        { status: 401 }
+      );
+    }
 
     const { searchParams } = new URL(request.url);
     const dateRange = searchParams.get("dateRange") || "month";
@@ -55,11 +68,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Get affiliate data (without includes to avoid issues)
-    console.log("Looking for affiliate with ID:", decoded.affiliateId);
     const affiliate = await prisma.affiliate.findUnique({
       where: { id: decoded.affiliateId },
     });
-    console.log("Affiliate found:", affiliate ? "Yes" : "No");
 
     if (!affiliate) {
       return NextResponse.json(
@@ -69,9 +80,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Get related data separately with error handling
-    let clicks = [];
-    let conversions = [];
-    let payouts = [];
+    let clicks: any[] = [];
+    let conversions: any[] = [];
+    let payouts: any[] = [];
     
     try {
       [clicks, conversions, payouts] = await Promise.all([
