@@ -46,6 +46,18 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
     earnings: true,
   });
 
+  // Add safety check for dailyStats
+  if (!dailyStats || !Array.isArray(dailyStats)) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="animate-pulse">
+          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">

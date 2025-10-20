@@ -338,7 +338,7 @@ export default function AffiliateDashboard() {
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Total Clicks</p>
-                    <p className="text-3xl font-bold text-slate-900 mt-1">{stats.totalClicks.toLocaleString()}</p>
+                    <p className="text-3xl font-bold text-slate-900 mt-1">{(stats.totalClicks || 0).toLocaleString()}</p>
                   </div>
                 </div>
               </div>
@@ -351,7 +351,7 @@ export default function AffiliateDashboard() {
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Total Leads</p>
-                    <p className="text-3xl font-bold text-slate-900 mt-1">{stats.totalLeads.toLocaleString()}</p>
+                    <p className="text-3xl font-bold text-slate-900 mt-1">{(stats.totalLeads || 0).toLocaleString()}</p>
                   </div>
                 </div>
               </div>
@@ -364,7 +364,7 @@ export default function AffiliateDashboard() {
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Booked Calls</p>
-                    <p className="text-3xl font-bold text-slate-900 mt-1">{stats.totalBookings.toLocaleString()}</p>
+                    <p className="text-3xl font-bold text-slate-900 mt-1">{(stats.totalBookings || 0).toLocaleString()}</p>
                   </div>
                 </div>
               </div>
@@ -377,7 +377,7 @@ export default function AffiliateDashboard() {
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Total Commission</p>
-                    <p className="text-3xl font-bold text-slate-900 mt-1">${stats.totalCommission.toLocaleString()}</p>
+                    <p className="text-3xl font-bold text-slate-900 mt-1">${(stats.totalCommission || 0).toLocaleString()}</p>
                   </div>
                 </div>
               </div>
@@ -410,7 +410,7 @@ export default function AffiliateDashboard() {
                       <span className="text-sm font-semibold text-slate-900">Clicks</span>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-slate-900">{stats.totalClicks.toLocaleString()}</p>
+                      <p className="text-lg font-bold text-slate-900">{(stats.totalClicks || 0).toLocaleString()}</p>
                       <p className="text-xs text-slate-600 font-medium">100.0%</p>
                     </div>
                   </div>
@@ -422,8 +422,8 @@ export default function AffiliateDashboard() {
                       <span className="text-sm font-semibold text-slate-900">Quiz Starts</span>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-slate-900">{stats.totalQuizStarts.toLocaleString()}</p>
-                      <p className="text-xs text-slate-600 font-medium">{stats.totalClicks > 0 ? ((stats.totalQuizStarts / stats.totalClicks) * 100).toFixed(1) : 0}%</p>
+                      <p className="text-lg font-bold text-slate-900">{(stats.totalQuizStarts || 0).toLocaleString()}</p>
+                      <p className="text-xs text-slate-600 font-medium">{(stats.totalClicks || 0) > 0 ? (((stats.totalQuizStarts || 0) / (stats.totalClicks || 1)) * 100).toFixed(1) : 0}%</p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
@@ -434,8 +434,8 @@ export default function AffiliateDashboard() {
                       <span className="text-sm font-semibold text-slate-900">Quiz Completions</span>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-slate-900">{stats.totalLeads.toLocaleString()}</p>
-                      <p className="text-xs text-slate-600 font-medium">{stats.totalClicks > 0 ? ((stats.totalLeads / stats.totalClicks) * 100).toFixed(1) : 0}%</p>
+                      <p className="text-lg font-bold text-slate-900">{(stats.totalLeads || 0).toLocaleString()}</p>
+                      <p className="text-xs text-slate-600 font-medium">{(stats.totalClicks || 0) > 0 ? (((stats.totalLeads || 0) / (stats.totalClicks || 1)) * 100).toFixed(1) : 0}%</p>
                     </div>
                   </div>
                   <div className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
@@ -446,8 +446,8 @@ export default function AffiliateDashboard() {
                       <span className="text-sm font-semibold text-slate-900">Booked Calls</span>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-slate-900">{stats.totalBookings.toLocaleString()}</p>
-                      <p className="text-xs text-slate-600 font-medium">{stats.totalClicks > 0 ? ((stats.totalBookings / stats.totalClicks) * 100).toFixed(1) : 0}%</p>
+                      <p className="text-lg font-bold text-slate-900">{(stats.totalBookings || 0).toLocaleString()}</p>
+                      <p className="text-xs text-slate-600 font-medium">{(stats.totalClicks || 0) > 0 ? (((stats.totalBookings || 0) / (stats.totalClicks || 1)) * 100).toFixed(1) : 0}%</p>
                     </div>
                   </div>
                 </div>
