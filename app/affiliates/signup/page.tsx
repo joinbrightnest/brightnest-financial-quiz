@@ -123,8 +123,7 @@ export default function AffiliateSignup() {
           </div>
         </div>
 
-        <div className="relative z-10 w-full max-w-xl mx-auto p-6">
-          <div className="bg-white/80 backdrop-blur-sm border border-stone-200 shadow-xl rounded-2xl p-8 flex flex-col justify-between min-h-[70vh] text-stone-800">
+        <div className="relative z-10 flex flex-col justify-between p-12 text-stone-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
@@ -160,12 +159,11 @@ export default function AffiliateSignup() {
             <p className="text-lg font-bold text-stone-900 mb-2">Grow with BrightNest</p>
             <p className="text-stone-700">Earn commissions promoting a product that truly helps.</p>
           </div>
-          </div>
         </div>
       </div>
 
       {/* Divider */}
-      <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-stone-200 to-transparent" />
+      <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-orange-200 to-transparent shadow-[0_0_0_1px_rgba(255,255,255,0.4)]" />
 
       {/* Right Section - Signup Form */}
       <div className="w-full lg:w-1/2 bg-stone-50 flex items-center justify-center p-8">
@@ -176,8 +174,7 @@ export default function AffiliateSignup() {
           className="w-full max-w-md space-y-6"
           onSubmit={handleSubmit}
         >
-          <div className="bg-white border border-stone-200 shadow-xl rounded-2xl p-8">
-          <div className="text-center mb-6">
+          <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-stone-900 mb-2">Create Your Account</h2>
             <p className="text-stone-600">Join our affiliate program and start earning</p>
           </div>
@@ -306,7 +303,6 @@ export default function AffiliateSignup() {
               and{" "}
               <Link href="/privacy" className="text-orange-600 hover:text-orange-500">Privacy Policy</Link>
             </p>
-          </div>
           </div>
         </motion.form>
       </div>

@@ -47,8 +47,7 @@ export default function AffiliateLogin() {
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-rose-50 via-amber-50 to-stone-100" />
 
-        <div className="relative z-10 w-full max-w-xl mx-auto p-6">
-          <div className="bg-white/80 backdrop-blur-sm border border-stone-200 shadow-xl rounded-2xl p-8 flex flex-col justify-between min-h-[70vh] text-stone-800">
+        <div className="relative z-10 flex flex-col justify-between p-12 text-stone-800">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -68,24 +67,24 @@ export default function AffiliateLogin() {
               </h1>
             </div>
 
-            {/* Key Metrics Cards */}
+            {/* Key Metrics */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white rounded-xl p-4 border border-stone-200 shadow-sm">
+              <div className="bg-white/70 backdrop-blur rounded-xl p-4 border border-stone-200">
                 <div className="text-2xl font-bold text-stone-900">10K+</div>
                 <div className="text-sm text-stone-500">Active Affiliates</div>
               </div>
-              <div className="bg-white rounded-xl p-4 border border-stone-200 shadow-sm">
+              <div className="bg-white/70 backdrop-blur rounded-xl p-4 border border-stone-200">
                 <div className="text-2xl font-bold text-stone-900">$5M</div>
                 <div className="text-sm text-stone-500">Paid Since 2024</div>
               </div>
-              <div className="bg-white rounded-xl p-4 border border-stone-200 shadow-sm">
+              <div className="bg-white/70 backdrop-blur rounded-xl p-4 border border-stone-200">
                 <div className="text-2xl font-bold text-stone-900">Free</div>
                 <div className="text-sm text-stone-500">To Join</div>
               </div>
             </div>
 
             {/* Tier System */}
-            <div className="bg-white rounded-xl p-6 border border-stone-200 shadow-sm">
+            <div className="bg-white/70 backdrop-blur rounded-xl p-6 border border-stone-200">
               <h3 className="text-lg font-bold text-stone-900 mb-3">Tier System</h3>
               <p className="text-stone-700 text-sm leading-relaxed">
                 From zero to hero. We gradually introduce you to more resources, guides and opportunities.
@@ -98,12 +97,11 @@ export default function AffiliateLogin() {
             <p className="text-lg font-bold text-stone-900 mb-2">Ready to start your journey?</p>
             <p className="text-stone-700">Join thousands of successful affiliates today.</p>
           </div>
-          </div>
         </div>
       </div>
 
-      {/* Subtle divider between halves */}
-      <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-stone-200 to-transparent" />
+      {/* Stylish divider */}
+      <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-orange-200 to-transparent shadow-[0_0_0_1px_rgba(255,255,255,0.4)]" />
 
       {/* Right Section - Login Form */}
       <div className="w-full lg:w-1/2 bg-stone-50 flex items-center justify-center p-8">
@@ -113,8 +111,7 @@ export default function AffiliateLogin() {
           transition={{ duration: 0.5 }}
           className="w-full max-w-md"
         >
-          <div className="bg-white border border-stone-200 shadow-xl rounded-2xl p-8">
-          <div className="text-center mb-6">
+          <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-stone-900 mb-2">Welcome Back</h2>
             <p className="text-stone-600">Sign in to your affiliate account to continue</p>
           </div>
@@ -219,7 +216,6 @@ export default function AffiliateLogin() {
               </svg>
               <span className="text-sm">Trusted by thousands of affiliates worldwide</span>
             </div>
-          </div>
           </div>
         </motion.div>
       </div>
