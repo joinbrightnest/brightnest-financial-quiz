@@ -14,7 +14,6 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    console.log('Admin affiliate stats request:', { affiliateCode, dateRange });
     // First try to find by referral code
     let affiliate = await prisma.affiliate.findUnique({
       where: { referralCode: affiliateCode },
