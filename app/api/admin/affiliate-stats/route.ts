@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const affiliateCode = searchParams.get('affiliateCode');
-  const dateRange = searchParams.get('dateRange') || '30d';
+  const dateRange = searchParams.get('dateRange') || 'month';
 
   if (!affiliateCode) {
     return NextResponse.json({ error: "Affiliate code is required" }, { status: 400 });
@@ -136,31 +136,31 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
     return [];
   }
   
-  if (dateRange === "1d") {
-    // For 24 hours, show hourly data for the last 24 hours
-    for (let i = 23; i >= 0; i--) {
-      const date = new Date();
-      date.setHours(date.getHours() - i);
-      const dateStr = date.toISOString().split('T')[0];
-      const hourStr = date.getHours().toString().padStart(2, '0');
+  if (dateRange === "today") {
+    // For today, show hourly data for today
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    
+    for (let hour = 0; hour < 24; hour++) {
+      const hourStr = hour.toString().padStart(2, '0');
       
       const hourClicks = clicks.filter(c => {
         const clickDate = c.createdAt.toISOString().split('T')[0];
         const clickHour = c.createdAt.getHours().toString().padStart(2, '0');
-        return clickDate === dateStr && clickHour === hourStr;
+        return clickDate === todayStr && clickHour === hourStr;
       });
       
       const hourConversions = conversions.filter(c => {
         const convDate = c.createdAt.toISOString().split('T')[0];
         const convHour = c.createdAt.getHours().toString().padStart(2, '0');
-        return convDate === dateStr && convHour === hourStr;
+        return convDate === todayStr && convHour === hourStr;
       });
       
       // Get appointments that were converted in this hour
-      const hourStart = new Date(date);
-      hourStart.setHours(date.getHours(), 0, 0, 0);
-      const hourEnd = new Date(date);
-      hourEnd.setHours(date.getHours(), 59, 59, 999);
+      const hourStart = new Date(today);
+      hourStart.setHours(hour, 0, 0, 0);
+      const hourEnd = new Date(today);
+      hourEnd.setHours(hour, 59, 59, 999);
       
       const hourAppointments = await prisma.appointment.findMany({
         where: {
@@ -186,7 +186,65 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       const hourLeadData = await calculateLeadsWithDateRange(hourStart, hourEnd, undefined, affiliateCode);
       
       stats.push({
-        date: `${dateStr}T${hourStr}:00:00.000Z`, // Include hour for proper sorting
+        date: `${todayStr}T${hourStr}:00:00.000Z`,
+        clicks: hourClicks.length,
+        leads: hourLeadData.totalLeads,
+        bookedCalls: hourConversions.filter(c => c.conversionType === "booking").length,
+        commission: hourCommission,
+      });
+    }
+  } else if (dateRange === "yesterday") {
+    // For yesterday, show hourly data for yesterday
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    
+    for (let hour = 0; hour < 24; hour++) {
+      const hourStr = hour.toString().padStart(2, '0');
+      
+      const hourClicks = clicks.filter(c => {
+        const clickDate = c.createdAt.toISOString().split('T')[0];
+        const clickHour = c.createdAt.getHours().toString().padStart(2, '0');
+        return clickDate === yesterdayStr && clickHour === hourStr;
+      });
+      
+      const hourConversions = conversions.filter(c => {
+        const convDate = c.createdAt.toISOString().split('T')[0];
+        const convHour = c.createdAt.getHours().toString().padStart(2, '0');
+        return convDate === yesterdayStr && convHour === hourStr;
+      });
+      
+      // Get appointments that were converted in this hour
+      const hourStart = new Date(yesterday);
+      hourStart.setHours(hour, 0, 0, 0);
+      const hourEnd = new Date(yesterday);
+      hourEnd.setHours(hour, 59, 59, 999);
+      
+      const hourAppointments = await prisma.appointment.findMany({
+        where: {
+          affiliateCode: affiliateCode,
+          outcome: CallOutcome.converted,
+          updatedAt: {
+            gte: hourStart,
+            lte: hourEnd,
+          },
+        },
+      }).catch((error) => {
+        console.error('Error fetching hour appointments:', error);
+        return [];
+      });
+
+      // Calculate commission from appointments (actual sales)
+      const hourCommission = hourAppointments.reduce((sum, apt) => {
+        const saleValue = Number(apt.saleValue || 0);
+        return sum + (saleValue * Number(affiliate.commissionRate));
+      }, 0);
+      
+      // Calculate real leads for this hour using centralized function
+      const hourLeadData = await calculateLeadsWithDateRange(hourStart, hourEnd, undefined, affiliateCode);
+      
+      stats.push({
+        date: `${yesterdayStr}T${hourStr}:00:00.000Z`,
         clicks: hourClicks.length,
         leads: hourLeadData.totalLeads,
         bookedCalls: hourConversions.filter(c => c.conversionType === "booking").length,
@@ -194,12 +252,38 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       });
     }
   } else {
-    // For other timeframes, show daily data
-    const days = dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : dateRange === "90d" ? 90 : 365;
+    // For week, month, all time - show daily data
+    const now = new Date();
+    let days: number;
+    let startDate: Date;
     
-    for (let i = days - 1; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
+    switch (dateRange) {
+      case "week":
+        // Calculate days from start of week to today
+        const startOfWeek = new Date(now);
+        const dayOfWeek = now.getDay();
+        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        startOfWeek.setDate(now.getDate() - daysToMonday);
+        startDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate());
+        days = Math.ceil((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+        break;
+      case "month":
+        // Calculate days from start of month to today
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        days = Math.ceil((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+        break;
+      case "all":
+        // Show last 365 days for "all time" to keep it manageable
+        days = 365;
+        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+        break;
+      default:
+        days = 30;
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    }
+
+    for (let i = 0; i < days; i++) {
+      const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
       const dateStr = date.toISOString().split('T')[0];
       
       const dayClicks = clicks.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);

@@ -18,27 +18,38 @@ export async function GET(request: NextRequest) {
     const decoded = JSON.parse(Buffer.from(token, 'base64').toString());
 
     const { searchParams } = new URL(request.url);
-    const dateRange = searchParams.get("dateRange") || "30d";
+    const dateRange = searchParams.get("dateRange") || "month";
 
     // Calculate date filter
     const now = new Date();
     let startDate: Date;
     
     switch (dateRange) {
-      case "7d":
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      case "today":
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         break;
-      case "30d":
-        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      case "yesterday":
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        startDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
         break;
-      case "90d":
-        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+      case "week":
+        // Start of this week (Monday)
+        const startOfWeek = new Date(now);
+        const dayOfWeek = now.getDay();
+        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        startOfWeek.setDate(now.getDate() - daysToMonday);
+        startDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate());
         break;
-      case "1y":
-        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+      case "month":
+        // Start of this month
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        break;
+      case "all":
+        startDate = new Date(0); // All time
         break;
       default:
-        startDate = new Date(0); // All time
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // Default to 30 days
     }
 
     // Get affiliate data (without includes to avoid issues)
@@ -145,7 +156,44 @@ export async function GET(request: NextRequest) {
 
 async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: string) {
   const now = new Date();
-  const days = dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : dateRange === "90d" ? 90 : 365;
+  let days: number;
+  let startDate: Date;
+  
+  switch (dateRange) {
+    case "today":
+      days = 1;
+      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      break;
+    case "yesterday":
+      days = 1;
+      const yesterday = new Date(now);
+      yesterday.setDate(yesterday.getDate() - 1);
+      startDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+      break;
+    case "week":
+      // Calculate days from start of week to today
+      const startOfWeek = new Date(now);
+      const dayOfWeek = now.getDay();
+      const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      startOfWeek.setDate(now.getDate() - daysToMonday);
+      startDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate());
+      days = Math.ceil((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+      break;
+    case "month":
+      // Calculate days from start of month to today
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      days = Math.ceil((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+      break;
+    case "all":
+      // Show last 365 days for "all time" to keep it manageable
+      days = 365;
+      startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+      break;
+    default:
+      days = 30;
+      startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  }
+  
   const data = [];
 
   // Get affiliate info for commission rate
@@ -157,8 +205,8 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
     return [];
   }
 
-  for (let i = days - 1; i >= 0; i--) {
-    const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+  for (let i = 0; i < days; i++) {
+    const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
     const dayStart = new Date(date);
     dayStart.setHours(0, 0, 0, 0);
     const dayEnd = new Date(date);

@@ -49,7 +49,7 @@ export default function AffiliateDashboard() {
   const [stats, setStats] = useState<AffiliateStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [dateRange, setDateRange] = useState("30d");
+  const [dateRange, setDateRange] = useState("month");
 
   useEffect(() => {
     checkAuth();
@@ -232,10 +232,12 @@ export default function AffiliateDashboard() {
             onChange={(e) => setDateRange(e.target.value)}
                   className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
           >
-                  <option value="1d">24 hours</option>
-            <option value="7d">Last 7 days</option>
-            <option value="30d">Last 30 days</option>
-                  <option value="custom">Custom</option>
+                  <option value="today">Today</option>
+            <option value="yesterday">Yesterday</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+            <option value="all">All Time</option>
+                  <option value="custom">Custom Range</option>
           </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                   <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
