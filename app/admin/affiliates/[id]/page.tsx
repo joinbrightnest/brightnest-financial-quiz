@@ -564,7 +564,7 @@ export default function AffiliatePerformancePage() {
                   <h4 className="text-xl font-bold text-slate-900">Conversion Funnel</h4>
                 </div>
                 <div className="space-y-4">
-                  {stats.conversionFunnel.map((stage, index) => (
+                  {(stats.conversionFunnel || []).map((stage, index) => (
                     <div key={stage.stage} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
                       <div className="flex items-center space-x-4">
                         <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
@@ -595,7 +595,7 @@ export default function AffiliatePerformancePage() {
                   <h4 className="text-xl font-bold text-slate-900">Traffic Sources</h4>
                 </div>
                 <div className="space-y-4">
-                  {stats.trafficSources.map((source) => (
+                  {(stats.trafficSources || []).map((source) => (
                     <div key={source.source} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
                       <span className="text-sm font-semibold text-slate-900">{source.source}</span>
                       <div className="text-right">
@@ -618,7 +618,7 @@ export default function AffiliatePerformancePage() {
                   <h4 className="text-xl font-bold text-slate-900">Recent Activity</h4>
                 </div>
                 <div className="space-y-4">
-                  {stats.recentActivity.map((activity, index) => (
+                  {(stats.recentActivity || []).map((activity, index) => (
                     <div key={index} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
                       <div>
                         <p className="text-sm font-semibold text-slate-900">{activity.action}</p>
