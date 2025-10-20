@@ -100,17 +100,17 @@ export default function AffiliateLogin() {
 
             {/* Tier System */}
             <div className="bg-white/70 backdrop-blur rounded-xl p-6 border border-stone-200">
-              <h3 className="text-lg font-bold text-stone-900 mb-3">Grow with BrightNest</h3>
+              <h3 className="text-lg font-bold text-stone-900 mb-3">Tier System</h3>
               <p className="text-stone-700 text-sm leading-relaxed">
-                Share a mission that changes lives, not just numbers.
+                From zero to hero. We gradually introduce you to more resources, guides and opportunities.
               </p>
             </div>
           </div>
 
           {/* Bottom CTA */}
           <div>
-            <p className="text-lg font-bold text-stone-900 mb-2">Ready to start your journey?</p>
-            <p className="text-stone-700">Join early partners shaping the future of BrightNest.</p>
+            <p className="text-lg font-bold text-stone-900 mb-2">Grow with BrightNest</p>
+            <p className="text-stone-700">Share a mission that changes lives, not just numbers.</p>
           </div>
         </div>
       </div>
