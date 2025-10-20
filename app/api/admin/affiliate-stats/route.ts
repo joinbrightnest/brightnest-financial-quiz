@@ -165,7 +165,6 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       const hourAppointments = await prisma.appointment.findMany({
         where: {
           affiliateCode: affiliateCode,
-          outcome: CallOutcome.converted,
           updatedAt: {
             gte: hourStart,
             lte: hourEnd,
@@ -176,8 +175,11 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         return [];
       });
 
+      // Filter for converted appointments in JavaScript
+      const convertedHourAppointments = hourAppointments.filter(apt => apt.outcome === 'converted');
+
       // Calculate commission from appointments (actual sales)
-      const hourCommission = hourAppointments.reduce((sum, apt) => {
+      const hourCommission = convertedHourAppointments.reduce((sum, apt) => {
         const saleValue = Number(apt.saleValue || 0);
         return sum + (saleValue * Number(affiliate.commissionRate));
       }, 0);
@@ -223,7 +225,6 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       const hourAppointments = await prisma.appointment.findMany({
         where: {
           affiliateCode: affiliateCode,
-          outcome: CallOutcome.converted,
           updatedAt: {
             gte: hourStart,
             lte: hourEnd,
@@ -234,8 +235,11 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         return [];
       });
 
+      // Filter for converted appointments in JavaScript
+      const convertedHourAppointments = hourAppointments.filter(apt => apt.outcome === 'converted');
+
       // Calculate commission from appointments (actual sales)
-      const hourCommission = hourAppointments.reduce((sum, apt) => {
+      const hourCommission = convertedHourAppointments.reduce((sum, apt) => {
         const saleValue = Number(apt.saleValue || 0);
         return sum + (saleValue * Number(affiliate.commissionRate));
       }, 0);
@@ -298,7 +302,6 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       const dayAppointments = await prisma.appointment.findMany({
         where: {
           affiliateCode: affiliateCode,
-          outcome: CallOutcome.converted,
           updatedAt: {
             gte: dayStart,
             lte: dayEnd,
@@ -309,8 +312,11 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         return [];
       });
 
+      // Filter for converted appointments in JavaScript
+      const convertedAppointments = dayAppointments.filter(apt => apt.outcome === 'converted');
+
     // Calculate commission from appointments (actual sales)
-    const dayCommission = dayAppointments.reduce((sum, apt) => {
+    const dayCommission = convertedAppointments.reduce((sum, apt) => {
       const saleValue = Number(apt.saleValue || 0);
       return sum + (saleValue * Number(affiliate.commissionRate));
     }, 0);
