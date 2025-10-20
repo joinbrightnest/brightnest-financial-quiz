@@ -127,6 +127,15 @@ export async function GET(request: NextRequest) {
 async function generateDailyStatsFromRealData(clicks: any[], conversions: any[], dateRange: string, affiliateCode: string) {
   const stats = [];
   
+  // Get affiliate info for commission rate
+  const affiliate = await prisma.affiliate.findUnique({
+    where: { referralCode: affiliateCode },
+  });
+
+  if (!affiliate) {
+    return [];
+  }
+  
   if (dateRange === "1d") {
     // For 24 hours, show hourly data for the last 24 hours
     for (let i = 23; i >= 0; i--) {
@@ -147,12 +156,30 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         return convDate === dateStr && convHour === hourStr;
       });
       
-      // Calculate real leads for this hour using centralized function
+      // Get appointments that were converted in this hour
       const hourStart = new Date(date);
       hourStart.setHours(date.getHours(), 0, 0, 0);
       const hourEnd = new Date(date);
       hourEnd.setHours(date.getHours(), 59, 59, 999);
       
+      const hourAppointments = await prisma.appointment.findMany({
+        where: {
+          affiliateCode: affiliateCode,
+          outcome: 'converted',
+          updatedAt: {
+            gte: hourStart,
+            lte: hourEnd,
+          },
+        },
+      });
+
+      // Calculate commission from appointments (actual sales)
+      const hourCommission = hourAppointments.reduce((sum, apt) => {
+        const saleValue = Number(apt.saleValue || 0);
+        return sum + (saleValue * Number(affiliate.commissionRate));
+      }, 0);
+      
+      // Calculate real leads for this hour using centralized function
       const hourLeadData = await calculateLeadsWithDateRange(hourStart, hourEnd, undefined, affiliateCode);
       
       stats.push({
@@ -160,7 +187,7 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         clicks: hourClicks.length,
         leads: hourLeadData.totalLeads,
         bookedCalls: hourConversions.filter(c => c.conversionType === "booking").length,
-        commission: hourConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0),
+        commission: hourCommission,
       });
     }
   } else {
@@ -174,16 +201,31 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       
       const dayClicks = clicks.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
       const dayConversions = conversions.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
-      const dayBookings = dayConversions.filter(c => c.conversionType === "booking");
-      const daySales = dayConversions.filter(c => c.conversionType === "sale");
-      const dayCommission = dayConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
       
-      // Calculate real leads for this day using centralized function
+      // Get appointments that were converted on this day
       const dayStart = new Date(date);
       dayStart.setHours(0, 0, 0, 0);
       const dayEnd = new Date(date);
       dayEnd.setHours(23, 59, 59, 999);
       
+      const dayAppointments = await prisma.appointment.findMany({
+        where: {
+          affiliateCode: affiliateCode,
+          outcome: 'converted',
+          updatedAt: {
+            gte: dayStart,
+            lte: dayEnd,
+          },
+        },
+      });
+
+      // Calculate commission from appointments (actual sales)
+      const dayCommission = dayAppointments.reduce((sum, apt) => {
+        const saleValue = Number(apt.saleValue || 0);
+        return sum + (saleValue * Number(affiliate.commissionRate));
+      }, 0);
+      
+      // Calculate real leads for this day using centralized function
       const dayLeadData = await calculateLeadsWithDateRange(dayStart, dayEnd, undefined, affiliateCode);
       
       stats.push({
