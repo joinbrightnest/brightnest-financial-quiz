@@ -118,6 +118,22 @@ export async function GET(
       return sum + (saleValue * Number(affiliate.commissionRate));
     }, 0);
     
+    console.log("Admin Individual API Commission Debug:", {
+      affiliateId,
+      affiliateCode: affiliate.referralCode,
+      dateRange,
+      startDate: startDate.toISOString(),
+      appointmentsFound: appointments.length,
+      appointments: appointments.map(apt => ({
+        id: apt.id,
+        outcome: apt.outcome,
+        saleValue: apt.saleValue,
+        updatedAt: apt.updatedAt,
+        commissionRate: affiliate.commissionRate
+      })),
+      totalCommission
+    });
+    
     const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
 
     // Generate daily stats from real data using centralized lead calculation
