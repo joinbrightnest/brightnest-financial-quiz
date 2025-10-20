@@ -47,7 +47,8 @@ export default function AffiliateLogin() {
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-rose-50 via-amber-50 to-stone-100" />
 
-        <div className="relative z-10 flex flex-col justify-between p-12 text-stone-800">
+        <div className="relative z-10 w-full max-w-xl mx-auto p-6">
+          <div className="bg-white/80 backdrop-blur-sm border border-stone-200 shadow-xl rounded-2xl p-8 flex flex-col justify-between min-h-[70vh] text-stone-800">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -97,8 +98,12 @@ export default function AffiliateLogin() {
             <p className="text-lg font-bold text-stone-900 mb-2">Ready to start your journey?</p>
             <p className="text-stone-700">Join thousands of successful affiliates today.</p>
           </div>
+          </div>
         </div>
       </div>
+
+      {/* Subtle divider between halves */}
+      <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-stone-200 to-transparent" />
 
       {/* Right Section - Login Form */}
       <div className="w-full lg:w-1/2 bg-stone-50 flex items-center justify-center p-8">
@@ -108,7 +113,8 @@ export default function AffiliateLogin() {
           transition={{ duration: 0.5 }}
           className="w-full max-w-md"
         >
-          <div className="text-center mb-8">
+          <div className="bg-white border border-stone-200 shadow-xl rounded-2xl p-8">
+          <div className="text-center mb-6">
             <h2 className="text-3xl font-bold text-stone-900 mb-2">Welcome Back</h2>
             <p className="text-stone-600">Sign in to your affiliate account to continue</p>
           </div>
@@ -206,13 +212,14 @@ export default function AffiliateLogin() {
             </div>
           </form>
 
-          <div className="mt-8 text-center">
+          <div className="mt-6 text-center">
             <div className="flex items-center justify-center space-x-2 text-gray-500">
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
               <span className="text-sm">Trusted by thousands of affiliates worldwide</span>
             </div>
+          </div>
           </div>
         </motion.div>
       </div>
