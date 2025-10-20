@@ -101,10 +101,10 @@ export default function AffiliateSignup() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-black flex">
+    <div className="min-h-screen bg-stone-50 flex">
       {/* Left Section - Brand/Marketing to mirror login page */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-black">
+        <div className="absolute inset-0 bg-gradient-to-br from-rose-50 via-amber-50 to-stone-100">
           <div className="absolute inset-0 opacity-30">
             {Array.from({ length: 50 }).map((_, i) => (
               <div
@@ -123,48 +123,47 @@ export default function AffiliateSignup() {
           </div>
         </div>
 
-        <div className="relative z-10 flex flex-col justify-between p-12 text-white">
+        <div className="relative z-10 flex flex-col justify-between p-12 text-stone-800">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">B</span>
               </div>
               <span className="text-xl font-bold">BRIGHTNEST</span>
             </div>
-            <div className="text-sm text-gray-400">EST. 2024</div>
           </div>
 
           <div className="space-y-8">
             <div>
-              <p className="text-sm text-gray-400 uppercase tracking-wider mb-2">JOIN THE COMMUNITY</p>
-              <h1 className="text-4xl font-bold leading-tight">Become an Affiliate</h1>
+              <p className="text-sm text-stone-500 uppercase tracking-wider mb-2">Join the community</p>
+              <h1 className="text-4xl font-bold leading-tight text-stone-900">Become an Affiliate</h1>
             </div>
 
             <div className="grid grid-cols-3 gap-4">
-              <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-                <div className="text-2xl font-bold text-white">10%</div>
-                <div className="text-sm text-gray-400">Base Commission</div>
+              <div className="bg-white rounded-xl p-4 border border-stone-200 shadow-sm">
+                <div className="text-2xl font-bold text-stone-900">10%</div>
+                <div className="text-sm text-stone-500">Base Commission</div>
               </div>
-              <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-                <div className="text-2xl font-bold text-white">Tiered</div>
-                <div className="text-sm text-gray-400">Up to 20%</div>
+              <div className="bg-white rounded-xl p-4 border border-stone-200 shadow-sm">
+                <div className="text-2xl font-bold text-stone-900">Tiered</div>
+                <div className="text-sm text-stone-500">Up to 20%</div>
               </div>
-              <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-4 border border-gray-700">
-                <div className="text-2xl font-bold text-white">Fast</div>
-                <div className="text-sm text-gray-400">Payouts</div>
+              <div className="bg-white rounded-xl p-4 border border-stone-200 shadow-sm">
+                <div className="text-2xl font-bold text-stone-900">Fast</div>
+                <div className="text-sm text-stone-500">Payouts</div>
               </div>
             </div>
           </div>
 
           <div>
-            <p className="text-lg font-bold text-white mb-2">Grow with BrightNest</p>
-            <p className="text-white">Earn commissions promoting a product that truly helps.</p>
+            <p className="text-lg font-bold text-stone-900 mb-2">Grow with BrightNest</p>
+            <p className="text-stone-700">Earn commissions promoting a product that truly helps.</p>
           </div>
         </div>
       </div>
 
       {/* Right Section - Signup Form */}
-      <div className="w-full lg:w-1/2 bg-black flex items-center justify-center p-8">
+      <div className="w-full lg:w-1/2 bg-stone-50 flex items-center justify-center p-8">
         <motion.form
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -173,8 +172,8 @@ export default function AffiliateSignup() {
           onSubmit={handleSubmit}
         >
           <div className="text-center mb-2">
-            <h2 className="text-3xl font-bold text-white mb-2">Create Your Account</h2>
-            <p className="text-gray-400">Join our affiliate program and start earning</p>
+            <h2 className="text-3xl font-bold text-stone-900 mb-2">Create Your Account</h2>
+            <p className="text-stone-600">Join our affiliate program and start earning</p>
           </div>
 
           {error && (
@@ -184,7 +183,7 @@ export default function AffiliateSignup() {
           )}
 
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-white mb-2">Full Name</label>
+            <label htmlFor="name" className="block text-sm font-medium text-stone-900 mb-2">Full Name</label>
             <input
               id="name"
               name="name"
@@ -192,13 +191,13 @@ export default function AffiliateSignup() {
               required
               value={formData.name}
               onChange={handleChange}
-              className="block w-full px-3 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               placeholder="Enter your full name"
             />
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-white mb-2">Email Address</label>
+            <label htmlFor="email" className="block text-sm font-medium text-stone-900 mb-2">Email Address</label>
             <input
               id="email"
               name="email"
@@ -206,13 +205,13 @@ export default function AffiliateSignup() {
               required
               value={formData.email}
               onChange={handleChange}
-              className="block w-full px-3 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               placeholder="Enter your email"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-white mb-2">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium text-stone-900 mb-2">Password</label>
             <input
               id="password"
               name="password"
@@ -220,13 +219,13 @@ export default function AffiliateSignup() {
               required
               value={formData.password}
               onChange={handleChange}
-              className="block w-full px-3 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               placeholder="Create a password (min 8 characters)"
             />
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-white mb-2">Confirm Password</label>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-stone-900 mb-2">Confirm Password</label>
             <input
               id="confirmPassword"
               name="confirmPassword"
@@ -234,19 +233,19 @@ export default function AffiliateSignup() {
               required
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="block w-full px-3 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               placeholder="Confirm your password"
             />
           </div>
 
           <div>
-            <label htmlFor="tier" className="block text-sm font-medium text-white mb-2">Affiliate Tier</label>
+            <label htmlFor="tier" className="block text-sm font-medium text-stone-900 mb-2">Affiliate Tier</label>
             <select
               id="tier"
               name="tier"
               value={formData.tier}
               onChange={handleChange}
-              className="block w-full px-3 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-stone-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
               <option value="quiz">Quiz Affiliate (10% commission)</option>
               <option value="creator">Creator Partner (15% commission)</option>
@@ -256,13 +255,13 @@ export default function AffiliateSignup() {
           </div>
 
           <div>
-            <label htmlFor="payoutMethod" className="block text-sm font-medium text-white mb-2">Preferred Payout Method</label>
+            <label htmlFor="payoutMethod" className="block text-sm font-medium text-stone-900 mb-2">Preferred Payout Method</label>
             <select
               id="payoutMethod"
               name="payoutMethod"
               value={formData.payoutMethod}
               onChange={handleChange}
-              className="block w-full px-3 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-stone-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
               <option value="stripe">Stripe (Recommended)</option>
               <option value="paypal">PayPal</option>
@@ -273,7 +272,7 @@ export default function AffiliateSignup() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold py-3 px-4 rounded-lg hover:from-purple-700 hover:to-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="w-full bg-gradient-to-r from-orange-600 to-orange-500 text-white font-semibold py-3 px-4 rounded-lg hover:from-orange-700 hover:to-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-stone-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
           >
             {loading ? (
               <div className="flex items-center justify-center">
@@ -286,20 +285,20 @@ export default function AffiliateSignup() {
           </button>
 
           <div className="text-center">
-            <p className="text-gray-400">
+            <p className="text-stone-600">
               Already have an account?{" "}
-              <Link href="/affiliates/login" className="text-purple-400 hover:text-purple-300 font-medium">
+              <Link href="/affiliates/login" className="text-orange-600 hover:text-orange-500 font-medium">
                 Sign in here
               </Link>
             </p>
           </div>
 
           <div className="text-center">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-stone-500">
               By signing up, you agree to our{" "}
-              <Link href="/terms" className="text-purple-400 hover:text-purple-300">Terms of Service</Link>{" "}
+              <Link href="/terms" className="text-orange-600 hover:text-orange-500">Terms of Service</Link>{" "}
               and{" "}
-              <Link href="/privacy" className="text-purple-400 hover:text-purple-300">Privacy Policy</Link>
+              <Link href="/privacy" className="text-orange-600 hover:text-orange-500">Privacy Policy</Link>
             </p>
           </div>
         </motion.form>
