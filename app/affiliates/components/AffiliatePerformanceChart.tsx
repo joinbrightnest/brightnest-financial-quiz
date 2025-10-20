@@ -93,8 +93,8 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
       {
         label: 'Leads',
         data: dailyStats.map(day => day.leads),
-        borderColor: 'rgb(168, 85, 247)',
-        backgroundColor: 'rgba(168, 85, 247, 0.1)',
+        borderColor: 'rgb(34, 197, 94)',
+        backgroundColor: 'rgba(34, 197, 94, 0.1)',
         tension: 0.4,
         fill: false,
         hidden: !visibleMetrics.leads,
@@ -102,8 +102,8 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
       {
         label: 'Booked Calls',
         data: dailyStats.map(day => day.bookedCalls || 0), // Use bookedCalls field
-        borderColor: 'rgb(34, 197, 94)',
-        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+        borderColor: 'rgb(168, 85, 247)',
+        backgroundColor: 'rgba(168, 85, 247, 0.1)',
         tension: 0.4,
         fill: false,
         hidden: !visibleMetrics.bookedCalls,
@@ -200,11 +200,11 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
             onClick={() => toggleMetric('leads')}
             className={`flex items-center space-x-2 px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
               visibleMetrics.leads 
-                ? 'bg-purple-100 text-purple-700 border border-purple-200' 
+                ? 'bg-green-100 text-green-700 border border-green-200' 
                 : 'bg-gray-100 text-gray-500 border border-gray-200'
             }`}
           >
-            <div className={`w-3 h-3 rounded-full ${visibleMetrics.leads ? 'bg-purple-500' : 'bg-gray-400'}`}></div>
+            <div className={`w-3 h-3 rounded-full ${visibleMetrics.leads ? 'bg-green-500' : 'bg-gray-400'}`}></div>
             <span>Leads</span>
           </button>
         </div>
@@ -214,11 +214,11 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
             onClick={() => toggleMetric('bookedCalls')}
             className={`flex items-center space-x-2 px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
               visibleMetrics.bookedCalls 
-                ? 'bg-green-100 text-green-700 border border-green-200' 
+                ? 'bg-purple-100 text-purple-700 border border-purple-200' 
                 : 'bg-gray-100 text-gray-500 border border-gray-200'
             }`}
           >
-            <div className={`w-3 h-3 rounded-full ${visibleMetrics.bookedCalls ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+            <div className={`w-3 h-3 rounded-full ${visibleMetrics.bookedCalls ? 'bg-purple-500' : 'bg-gray-400'}`}></div>
             <span>Booked Calls</span>
           </button>
         </div>
