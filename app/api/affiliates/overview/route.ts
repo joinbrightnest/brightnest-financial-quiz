@@ -118,11 +118,6 @@ export async function GET(request: NextRequest) {
     
     const totalActiveAffiliates = approvedAffiliates.length;
     const totalPendingAffiliates = pendingAffiliates.length;
-    const totalLeadsFromAffiliates = approvedAffiliates.reduce((sum, aff) => sum + aff.totalLeads, 0);
-    const totalBookedCalls = approvedAffiliates.reduce((sum, aff) => sum + aff.conversions.filter(c => c.conversionType === "booking").length, 0);
-    const totalSalesValue = approvedAffiliates.reduce((sum, aff) => sum + Number(aff.totalCommission || 0), 0); // Use stored commission as proxy for sales value
-    const totalCommissionsPaid = approvedAffiliates.reduce((sum, aff) => sum + (Number(aff.totalCommission) * 0.7), 0); // 70% paid
-    const totalCommissionsPending = approvedAffiliates.reduce((sum, aff) => sum + (Number(aff.totalCommission) * 0.3), 0); // 30% pending
 
     // Copy the working logic from affiliate-performance API directly
     const topAffiliates = await Promise.all(approvedAffiliates.map(async (affiliate) => {
@@ -200,6 +195,13 @@ export async function GET(request: NextRequest) {
     
     // Sort by revenue
     topAffiliates.sort((a, b) => b.revenue - a.revenue);
+    
+    // Calculate correct overview metrics from topAffiliates data
+    const totalLeadsFromAffiliates = topAffiliates.reduce((sum, aff) => sum + aff.leads, 0);
+    const totalBookedCalls = topAffiliates.reduce((sum, aff) => sum + aff.bookedCalls, 0);
+    const totalSalesValue = topAffiliates.reduce((sum, aff) => sum + aff.revenue, 0); // Use actual revenue, not commission
+    const totalCommissionsPaid = topAffiliates.reduce((sum, aff) => sum + (Number(aff.commission) * 0.7), 0); // 70% paid
+    const totalCommissionsPending = topAffiliates.reduce((sum, aff) => sum + (Number(aff.commission) * 0.3), 0); // 30% pending
 
     // Generate pending affiliates data
     const pendingAffiliatesData = pendingAffiliates.map(affiliate => ({
