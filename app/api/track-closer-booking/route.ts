@@ -102,22 +102,49 @@ export async function POST(request: NextRequest) {
 
     console.log("✅ Found closer:", closer.name);
 
-    // Create appointment
-    const appointment = await prisma.appointment.create({
-      data: {
-        closerId: closer.id,
-        calendlyEventId,
-        customerName,
-        customerEmail,
-        customerPhone,
-        scheduledAt,
-        duration: 30,
-        status: 'scheduled',
-        affiliateCode: affiliateCode || null,
-      },
-    });
+    // Try to find existing appointment by Calendly event ID first
+    let appointment = null;
+    if (calendlyEventId && calendlyEventId !== `manual-${Date.now()}`) {
+      appointment = await prisma.appointment.findUnique({
+        where: { calendlyEventId }
+      });
+      
+      if (appointment) {
+        console.log("✅ Found existing appointment:", appointment.id);
+        
+        // Update the existing appointment with closer assignment
+        appointment = await prisma.appointment.update({
+          where: { id: appointment.id },
+          data: {
+            closerId: closer.id,
+            affiliateCode: affiliateCode || appointment.affiliateCode,
+          }
+        });
+        
+        console.log("✅ Updated existing appointment with closer assignment");
+      }
+    }
 
-    console.log("✅ Appointment created:", appointment.id);
+    // If no existing appointment found, create a new one
+    if (!appointment) {
+      console.log("📝 Creating new appointment (no existing appointment found)");
+      
+      appointment = await prisma.appointment.create({
+        data: {
+          closerId: closer.id,
+          calendlyEventId,
+          customerName,
+          customerEmail,
+          customerPhone,
+          scheduledAt,
+          duration: 30,
+          status: 'scheduled',
+          affiliateCode: affiliateCode || null,
+        },
+      });
+
+      console.log("✅ New appointment created:", appointment.id);
+    }
     
     // Track affiliate conversion using existing logic if affiliate code is provided
     if (affiliateCode) {
