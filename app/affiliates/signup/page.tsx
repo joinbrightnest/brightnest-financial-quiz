@@ -103,7 +103,7 @@ export default function AffiliateSignup() {
   }
 
   return (
-    <div className="min-h-screen bg-stone-50 flex">
+    <div className="min-h-screen bg-stone-50 flex flex-col lg:flex-row">
       {/* Left Section - Brand/Marketing to mirror login page */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-rose-50 via-amber-50 to-stone-100">
@@ -173,21 +173,33 @@ export default function AffiliateSignup() {
         </div>
       </div>
 
+      {/* Mobile Header */}
+      <div className="lg:hidden bg-white shadow-sm border-b border-gray-200 px-4 py-4">
+        <div className="flex items-center justify-center">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg">B</span>
+            </div>
+            <span className="text-xl font-bold text-stone-900">BRIGHTNEST</span>
+          </div>
+        </div>
+      </div>
+
       {/* Divider */}
       <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-orange-200 to-transparent shadow-[0_0_0_1px_rgba(255,255,255,0.4)]" />
 
       {/* Right Section - Signup Form */}
-      <div className="w-full lg:w-1/2 bg-stone-50 flex items-center justify-center p-8">
+      <div className="w-full lg:w-1/2 bg-stone-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
         <motion.form
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full max-w-md space-y-6"
+          className="w-full max-w-md space-y-4 sm:space-y-6"
           onSubmit={handleSubmit}
         >
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-stone-900 mb-2">Create Your Account</h2>
-            <p className="text-stone-600">Join our affiliate program and start earning</p>
+          <div className="text-center mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-stone-900 mb-2">Create Your Account</h2>
+            <p className="text-sm sm:text-base text-stone-600">Join our affiliate program and start earning</p>
           </div>
 
           {error && (
@@ -205,7 +217,7 @@ export default function AffiliateSignup() {
               required
               value={formData.name}
               onChange={handleChange}
-              className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-sm sm:text-base text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               placeholder="Enter your full name"
             />
           </div>
@@ -219,7 +231,7 @@ export default function AffiliateSignup() {
               required
               value={formData.email}
               onChange={handleChange}
-              className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-sm sm:text-base text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               placeholder="Enter your email"
             />
           </div>
@@ -234,20 +246,20 @@ export default function AffiliateSignup() {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-sm sm:text-base text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="Create a password (min 8 characters)"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-stone-700 transition-colors"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-stone-700 transition-colors p-2"
               >
                 {showPassword ? (
-                  <svg className="h-5 w-5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4 sm:h-5 sm:w-5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
                   </svg>
                 ) : (
-                  <svg className="h-5 w-5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4 sm:h-5 sm:w-5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
@@ -266,20 +278,20 @@ export default function AffiliateSignup() {
                 required
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-sm sm:text-base text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 placeholder="Confirm your password"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-stone-700 transition-colors"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-stone-700 transition-colors p-2"
               >
                 {showConfirmPassword ? (
-                  <svg className="h-5 w-5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4 sm:h-5 sm:w-5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
                   </svg>
                 ) : (
-                  <svg className="h-5 w-5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4 sm:h-5 sm:w-5 text-stone-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
@@ -295,7 +307,7 @@ export default function AffiliateSignup() {
               name="tier"
               value={formData.tier}
               onChange={handleChange}
-              className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-stone-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-sm sm:text-base text-stone-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
               <option value="quiz">Quiz Affiliate (10% commission)</option>
               <option value="creator">Creator Partner (15% commission)</option>
@@ -311,7 +323,7 @@ export default function AffiliateSignup() {
               name="payoutMethod"
               value={formData.payoutMethod}
               onChange={handleChange}
-              className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-stone-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              className="block w-full px-3 py-3 bg-white border border-stone-300 rounded-lg text-sm sm:text-base text-stone-900 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
             >
               <option value="stripe">Stripe (Recommended)</option>
               <option value="paypal">PayPal</option>
@@ -322,11 +334,11 @@ export default function AffiliateSignup() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-orange-600 to-orange-500 text-white font-semibold py-3 px-4 rounded-lg hover:from-orange-700 hover:to-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-stone-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="w-full bg-gradient-to-r from-orange-600 to-orange-500 text-white font-semibold py-3 px-4 rounded-lg hover:from-orange-700 hover:to-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-stone-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-sm sm:text-base"
           >
             {loading ? (
               <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-white mr-2"></div>
                 Creating Account...
               </div>
             ) : (
@@ -335,7 +347,7 @@ export default function AffiliateSignup() {
           </button>
 
           <div className="text-center">
-            <p className="text-stone-600">
+            <p className="text-sm sm:text-base text-stone-600">
               Already have an account?{" "}
               <Link href="/affiliates/login" className="text-orange-600 hover:text-orange-500 font-medium">
                 Sign in here
@@ -344,7 +356,7 @@ export default function AffiliateSignup() {
           </div>
 
           <div className="text-center">
-            <p className="text-sm text-stone-500">
+            <p className="text-xs sm:text-sm text-stone-500">
               By signing up, you agree to our{" "}
               <Link href="/terms" className="text-orange-600 hover:text-orange-500">Terms of Service</Link>{" "}
               and{" "}
