@@ -207,60 +207,61 @@ export default function AffiliateDashboard() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8 sm:mb-12"
         >
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-            <div className="space-y-2">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                    Welcome back, {affiliate.name}!
-                  </h1>
-                  <p className="text-sm sm:text-base text-slate-600 font-medium">
-                    Track your performance and earnings as a {affiliate.tier} affiliate
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-row items-center justify-end space-x-3 sm:space-x-4">
-              <div className="relative">
-                <select
-                  value={dateRange}
-                  onChange={(e) => setDateRange(e.target.value)}
-                  className="w-full sm:w-auto appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
-                >
-                  <option value="today">Today</option>
-                  <option value="yesterday">Yesterday</option>
-                  <option value="week">This Week</option>
-                  <option value="month">This Month</option>
-                  <option value="all">All Time</option>
-                  <option value="custom">Custom Range</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </div>
-              <button
-                onClick={() => fetchStats(true)}
-                disabled={loading}
-                className="inline-flex items-center justify-center px-4 sm:px-5 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-semibold hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <svg 
-                  className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          {/* Welcome Message */}
+          <div className="mb-4 sm:mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                {loading ? 'Refreshing...' : 'Refresh Data'}
-              </button>
+              </div>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                  Welcome back, {affiliate.name}!
+                </h1>
+                <p className="text-sm sm:text-base text-slate-600 font-medium">
+                  Track your performance and earnings as a {affiliate.tier} affiliate
+                </p>
+              </div>
             </div>
+          </div>
+
+          {/* Controls - Top Right */}
+          <div className="flex flex-row items-center justify-end space-x-3 sm:space-x-4">
+            <div className="relative">
+              <select
+                value={dateRange}
+                onChange={(e) => setDateRange(e.target.value)}
+                className="w-auto appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
+              >
+                <option value="today">Today</option>
+                <option value="yesterday">Yesterday</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+                <option value="all">All Time</option>
+                <option value="custom">Custom Range</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+            <button
+              onClick={() => fetchStats(true)}
+              disabled={loading}
+              className="inline-flex items-center justify-center px-4 sm:px-5 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-semibold hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg 
+                className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              {loading ? 'Refreshing...' : 'Refresh Data'}
+            </button>
           </div>
         </motion.div>
 
