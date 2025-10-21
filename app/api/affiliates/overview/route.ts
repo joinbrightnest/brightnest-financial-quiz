@@ -202,6 +202,21 @@ export async function GET(request: NextRequest) {
     const totalSalesValue = topAffiliates.reduce((sum, aff) => sum + aff.revenue, 0); // Use actual revenue, not commission
     const totalCommissionsPaid = topAffiliates.reduce((sum, aff) => sum + (Number(aff.commission) * 0.7), 0); // 70% paid
     const totalCommissionsPending = topAffiliates.reduce((sum, aff) => sum + (Number(aff.commission) * 0.3), 0); // 30% pending
+    
+    // Debug logging for overview metrics
+    console.log("Overview Metrics Debug:", {
+      totalLeadsFromAffiliates,
+      totalBookedCalls,
+      totalSalesValue,
+      totalCommissionsPaid,
+      totalCommissionsPending,
+      topAffiliatesSummary: topAffiliates.map(aff => ({
+        name: aff.name,
+        leads: aff.leads,
+        revenue: aff.revenue,
+        commission: aff.commission
+      }))
+    });
 
     // Generate pending affiliates data
     const pendingAffiliatesData = pendingAffiliates.map(affiliate => ({
