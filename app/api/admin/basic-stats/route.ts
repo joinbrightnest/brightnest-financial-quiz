@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { calculateTotalLeads, calculateLeadsByCode } from "@/lib/lead-calculation";
+import { getLeadStatuses } from "@/lib/lead-status";
 
 const prisma = new PrismaClient();
 
@@ -251,13 +252,23 @@ export async function GET(request: Request) {
       }
     }
 
-    // Add source information to each lead
-    const leadsWithSource = allLeads.map(lead => ({
-      ...lead,
-      source: lead.affiliateCode 
-        ? (affiliateMap[lead.affiliateCode] || 'Unknown Affiliate')
-        : 'Website'
-    }));
+    // Get accurate lead statuses (completed vs booked) using existing function
+    const leadIds = allLeads.map(lead => lead.id);
+    const leadStatuses = await getLeadStatuses(leadIds);
+
+    // Add source information and update status for each lead
+    const leadsWithSource = allLeads.map(lead => {
+      const statusInfo = leadStatuses[lead.id];
+      const status = statusInfo?.label || lead.status;
+      
+      return {
+        ...lead,
+        status,
+        source: lead.affiliateCode 
+          ? (affiliateMap[lead.affiliateCode] || 'Unknown Affiliate')
+          : 'Website'
+      };
+    });
 
     // Get archetype distribution
     const archetypeStats = await prisma.result.groupBy({
