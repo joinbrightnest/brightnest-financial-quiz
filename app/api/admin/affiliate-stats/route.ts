@@ -74,29 +74,8 @@ export async function GET(request: NextRequest) {
     const totalSales = totalBookings; // Using bookings as sales for consistency
     const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
     
-    // Generate conversion funnel data
-    const conversionFunnel = [
-      {
-        stage: "Clicks",
-        count: totalClicks,
-        percentage: 100
-      },
-      {
-        stage: "Leads",
-        count: totalLeads,
-        percentage: totalClicks > 0 ? (totalLeads / totalClicks) * 100 : 0
-      },
-      {
-        stage: "Booked Calls",
-        count: totalBookings,
-        percentage: totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0
-      },
-      {
-        stage: "Sales",
-        count: totalSales,
-        percentage: totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0
-      }
-    ];
+    // Generate conversion funnel data using the same logic as individual affiliate dashboard
+    const conversionFunnel = generateConversionFunnelFromRealData(clicks, conversions, quizSessions, { totalLeads });
 
     // Generate traffic sources from real UTM data
     const trafficSources = generateTrafficSourcesFromRealData(clicks);
@@ -436,15 +415,29 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
 function generateTrafficSourcesFromRealData(clicks: any[]) {
   const sourceCounts: { [key: string]: number } = {};
   const totalClicks = clicks.length;
-  
+
   clicks.forEach(click => {
     const source = click.utmSource || "Direct";
     sourceCounts[source] = (sourceCounts[source] || 0) + 1;
   });
-  
+
   return Object.entries(sourceCounts).map(([source, count]) => ({
     source,
     clicks: count,
     percentage: totalClicks > 0 ? (count / totalClicks) * 100 : 0,
   }));
+}
+
+function generateConversionFunnelFromRealData(clicks: any[], conversions: any[], quizSessions: any[], leadData: any) {
+  const totalClicks = clicks.length;
+  const quizStarts = quizSessions.length; // All quiz sessions represent quiz starts
+  const quizCompletions = leadData.totalLeads; // Use centralized lead calculation
+  const bookings = conversions.filter(c => c.conversionType === "booking").length;
+  
+  return [
+    { stage: "Clicks", count: totalClicks, percentage: 100 },
+    { stage: "Quiz Starts", count: quizStarts, percentage: totalClicks > 0 ? (quizStarts / totalClicks) * 100 : 0 },
+    { stage: "Quiz Completions", count: quizCompletions, percentage: totalClicks > 0 ? (quizCompletions / totalClicks) * 100 : 0 },
+    { stage: "Booked Calls", count: bookings, percentage: totalClicks > 0 ? (bookings / totalClicks) * 100 : 0 },
+  ];
 }
