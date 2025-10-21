@@ -59,19 +59,35 @@ export async function GET(request: NextRequest) {
         const leadData = await calculateAffiliateLeads(affiliate.id, '30d');
         const leadCount = leadData.totalLeads;
 
-        // Calculate actual revenue from appointments
-        const actualRevenue = appointments
+        // Calculate actual revenue from converted appointments (total sale values)
+        const totalRevenue = appointments
           .filter(apt => apt.outcome === 'converted' && apt.saleValue)
           .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
+
+        // Use stored commission from database (consistent with other APIs)
+        const totalCommission = Number(affiliate.totalCommission || 0);
+
+        // Debug logging for revenue calculation
+        console.log(`Affiliate Performance Debug - ${affiliate.name}:`, {
+          affiliateCode: affiliate.referralCode,
+          totalAppointments: appointments.length,
+          convertedAppointments: appointments.filter(apt => apt.outcome === 'converted').length,
+          appointmentsWithSaleValue: appointments.filter(apt => apt.outcome === 'converted' && apt.saleValue).length,
+          appointments: appointments.filter(apt => apt.outcome === 'converted').map(apt => ({
+            id: apt.id,
+            saleValue: apt.saleValue,
+            outcome: apt.outcome,
+            updatedAt: apt.updatedAt
+          })),
+          totalRevenue,
+          totalCommission,
+          commissionRate: affiliate.commissionRate
+        });
 
         // Calculate conversion rates
         const clickToQuizRate = clickCount > 0 ? (quizCount / clickCount) * 100 : 0;
         const quizToCompletionRate = quizCount > 0 ? (completionCount / quizCount) * 100 : 0;
         const clickToCompletionRate = clickCount > 0 ? (completionCount / clickCount) * 100 : 0;
-
-        // Use actual revenue from appointments instead of mock calculation
-        const totalRevenue = actualRevenue;
-        const totalCommission = totalRevenue * Number(affiliate.commissionRate);
 
         return {
           id: affiliate.id,
