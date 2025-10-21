@@ -68,32 +68,40 @@ export default function AffiliateBookCallPage() {
         const sessionId = localStorage.getItem('quizSessionId');
         console.log("🔍 Session ID from localStorage:", sessionId);
         
-        if (sessionId) {
-          try {
-            // Fetch customer data from the quiz session
-            const response = await fetch('/api/quiz/user-name', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ sessionId })
-            });
-            
-            if (response.ok) {
-              const data = await response.json();
-              if (data.name) {
-                customerName = data.name;
-                console.log("✅ Found customer name from quiz session:", customerName);
+          if (sessionId) {
+            try {
+              // Fetch customer data from the admin API (which has the correct contact info)
+              const response = await fetch('/api/admin/basic-stats');
+              
+              if (response.ok) {
+                const data = await response.json();
+                const lead = data.allLeads.find((l: any) => l.id === sessionId);
+                
+                if (lead) {
+                  // Extract name and email from the lead's answers
+                  const nameAnswer = lead.answers.find((a: any) => 
+                    a.question?.prompt?.toLowerCase().includes('name')
+                  );
+                  const emailAnswer = lead.answers.find((a: any) => 
+                    a.question?.prompt?.toLowerCase().includes('email')
+                  );
+                  
+                  if (nameAnswer?.value) {
+                    customerName = nameAnswer.value;
+                    console.log("✅ Found customer name from admin API:", customerName);
+                  }
+                  if (emailAnswer?.value) {
+                    customerEmail = emailAnswer.value;
+                    console.log("✅ Found customer email from admin API:", customerEmail);
+                  }
+                }
               }
-              if (data.email) {
-                customerEmail = data.email;
-                console.log("✅ Found customer email from quiz session:", customerEmail);
-              }
+            } catch (error) {
+              console.error("❌ Error fetching customer data from admin API:", error);
             }
-          } catch (error) {
-            console.error("❌ Error fetching customer data from quiz session:", error);
+          } else {
+            console.log("⚠️ No session ID found in localStorage");
           }
-        } else {
-          console.log("⚠️ No session ID found in localStorage");
-        }
         
         console.log("📝 Final customer data from quiz:", {
           customerName,
