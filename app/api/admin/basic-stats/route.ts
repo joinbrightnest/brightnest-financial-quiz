@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { calculateTotalLeads } from "@/lib/lead-calculation";
+import { calculateTotalLeads, calculateLeadsByCode } from "@/lib/lead-calculation";
 
 const prisma = new PrismaClient();
 
@@ -192,7 +192,13 @@ export async function GET(request: Request) {
     });
 
     // Use centralized lead calculation instead of duplicate logic
-    const leadData = await calculateTotalLeads(dateRange, quizType || undefined);
+    // If affiliateCode is provided, filter leads for that specific affiliate
+    let leadData;
+    if (affiliateCode) {
+      leadData = await calculateLeadsByCode(affiliateCode, dateRange);
+    } else {
+      leadData = await calculateTotalLeads(dateRange, quizType || undefined);
+    }
     const allLeads = leadData.leads;
 
     // Get affiliate information for leads that have affiliate codes
@@ -621,6 +627,7 @@ export async function GET(request: Request) {
       completedSessions,
       completionRate: Math.round(completionRate * 100) / 100,
       avgDurationMs: avgDurationResult._avg.durationMs || 0,
+      totalLeads: leadData.totalLeads,
       allLeads: leadsWithSource,
       archetypeStats,
       questionAnalytics: questionAnalytics.filter(Boolean),
