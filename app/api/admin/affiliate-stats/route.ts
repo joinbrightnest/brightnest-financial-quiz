@@ -271,12 +271,8 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
   const convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
 
   // Fetch all leads data once for the entire date range to optimize performance
-  const allLeadsData = await calculateLeadsWithDateRange(
-    new Date(Math.min(...[today, yesterday, startOfWeek, startOfMonth].map(d => d.getTime()))),
-    new Date(Math.max(...[today, yesterday, startOfWeek, startOfMonth].map(d => d.getTime()))),
-    undefined,
-    affiliateCode
-  );
+  // Use the same date range as the total leads calculation for consistency
+  const allLeadsData = await calculateLeadsByCode(affiliateCode, dateRange);
 
   if (dateRange === "today") {
     // For today, show hourly data for today
