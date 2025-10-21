@@ -36,32 +36,83 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Affiliate not found" }, { status: 404 });
     }
     
+    // Calculate date filter for consistency with individual affiliate API
+    const now = new Date();
+    let startDate: Date;
+    
+    switch (dateRange) {
+      case "today":
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        break;
+      case "yesterday":
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        startDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+        break;
+      case "week":
+        const startOfWeek = new Date(now);
+        const dayOfWeek = now.getDay();
+        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        startOfWeek.setDate(now.getDate() - daysToMonday);
+        startDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate());
+        break;
+      case "month":
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        break;
+      case "all":
+        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+        break;
+      default:
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    }
+
     const [clicks, conversions, quizSessions] = await Promise.all([
       prisma.affiliateClick.findMany({
-        where: { affiliateId: affiliate.id },
-        orderBy: { createdAt: "desc" },
-        take: 10
+        where: { 
+          affiliateId: affiliate.id,
+          createdAt: { gte: startDate }
+        },
+        orderBy: { createdAt: "desc" }
       }),
       prisma.affiliateConversion.findMany({
-        where: { affiliateId: affiliate.id },
-        orderBy: { createdAt: "desc" },
-        take: 10
+        where: { 
+          affiliateId: affiliate.id,
+          createdAt: { gte: startDate }
+        },
+        orderBy: { createdAt: "desc" }
       }),
       prisma.quizSession.findMany({
-        where: { affiliateCode: affiliateCode },
-        orderBy: { createdAt: "desc" },
-        take: 10
+        where: { 
+          affiliateCode: affiliateCode,
+          createdAt: { gte: startDate }
+        },
+        orderBy: { createdAt: "desc" }
       })
     ]);
 
+    // Calculate stats using the SAME logic as individual affiliate API for consistency
+    const totalClicks = clicks.length;
+    const leadData = await calculateLeadsByCode(affiliate.referralCode, dateRange);
+    const totalLeads = leadData.totalLeads;
+    const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
+    const totalSales = conversions.filter(c => c.conversionType === "sale").length;
+    
+    // Calculate commission from actual converted appointments (same as individual affiliate API)
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        affiliateCode: affiliate.referralCode,
+        outcome: CallOutcome.converted,
+        updatedAt: { gte: startDate },
+      },
+    }).catch(() => []);
+    
+    const totalCommission = appointments.reduce((sum, apt) => {
+      const saleValue = Number(apt.saleValue || 0);
+      return sum + (saleValue * Number(affiliate.commissionRate));
+    }, 0);
+    
     // Generate daily stats from real data using centralized lead calculation
     const dailyStats = await generateDailyStatsFromRealData(clicks, conversions, dateRange, affiliateCode);
-    
-    // Calculate totals from dailyStats to ensure timeframe consistency
-    const totalClicks = dailyStats.reduce((sum, day) => sum + day.clicks, 0);
-    const totalLeads = dailyStats.reduce((sum, day) => sum + day.leads, 0);
-    const totalBookings = dailyStats.reduce((sum, day) => sum + day.bookedCalls, 0);
-    const totalCommission = dailyStats.reduce((sum, day) => sum + day.commission, 0);
     
     console.log("Admin API Commission Debug:", {
       affiliateCode,
@@ -70,12 +121,11 @@ export async function GET(request: NextRequest) {
       dailyStatsCommissions: dailyStats.map(d => ({ date: d.date, commission: d.commission })),
       totalCommission
     });
-    const totalQuizStarts = totalLeads; // Using leads as quiz starts for consistency
-    const totalSales = totalBookings; // Using bookings as sales for consistency
+    const totalQuizStarts = quizSessions.length; // Use actual quiz sessions count
     const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
     
     // Generate conversion funnel data using the same logic as individual affiliate dashboard
-    const conversionFunnel = generateConversionFunnelFromRealData(clicks, conversions, quizSessions, { totalLeads });
+    const conversionFunnel = generateConversionFunnelFromRealData(clicks, conversions, quizSessions, leadData);
 
     // Generate traffic sources from real UTM data
     const trafficSources = generateTrafficSourcesFromRealData(clicks);
