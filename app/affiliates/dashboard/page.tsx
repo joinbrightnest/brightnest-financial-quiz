@@ -225,7 +225,7 @@ export default function AffiliateDashboard() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+            <div className="flex flex-row items-center justify-end space-x-3 sm:space-x-4">
               <div className="relative">
                 <select
                   value={dateRange}
