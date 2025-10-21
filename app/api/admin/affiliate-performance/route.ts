@@ -68,22 +68,6 @@ export async function GET(request: NextRequest) {
         // Use stored commission from database (consistent with other APIs)
         const totalCommission = Number(affiliate.totalCommission || 0);
 
-        // Debug logging for revenue calculation
-        console.log(`Affiliate Performance Debug - ${affiliate.name}:`, {
-          affiliateCode: affiliate.referralCode,
-          totalAppointments: appointments.length,
-          convertedAppointments: appointments.filter(apt => apt.outcome === CallOutcome.converted).length,
-          appointmentsWithSaleValue: appointments.filter(apt => apt.outcome === CallOutcome.converted && apt.saleValue).length,
-          appointments: appointments.filter(apt => apt.outcome === CallOutcome.converted).map(apt => ({
-            id: apt.id,
-            saleValue: apt.saleValue,
-            outcome: apt.outcome,
-            updatedAt: apt.updatedAt
-          })),
-          totalRevenue,
-          totalCommission,
-          commissionRate: affiliate.commissionRate
-        });
 
         // Calculate conversion rates
         const clickToQuizRate = clickCount > 0 ? (quizCount / clickCount) * 100 : 0;
