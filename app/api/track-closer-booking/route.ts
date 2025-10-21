@@ -91,6 +91,49 @@ export async function POST(request: NextRequest) {
 
     console.log("✅ Appointment created:", appointment.id);
     
+    // Track affiliate conversion using existing logic if affiliate code is provided
+    if (affiliateCode) {
+      try {
+        console.log("🎯 Tracking affiliate conversion for booking:", affiliateCode);
+        
+        // Find the affiliate
+        const affiliate = await prisma.affiliate.findUnique({
+          where: { referralCode: affiliateCode },
+        });
+
+        if (affiliate && affiliate.isActive) {
+          // Record the booking conversion (same logic as track-booking API)
+          await prisma.affiliateConversion.create({
+            data: {
+              affiliateId: affiliate.id,
+              referralCode: affiliateCode,
+              conversionType: "booking",
+              status: "confirmed",
+              commissionAmount: 0.00, // No commission for booking, only for sales
+              saleValue: 0.00,
+            },
+          });
+
+          // Update affiliate's total bookings
+          await prisma.affiliate.update({
+            where: { id: affiliate.id },
+            data: {
+              totalBookings: {
+                increment: 1,
+              },
+            },
+          });
+
+          console.log("✅ Affiliate booking conversion tracked:", affiliateCode);
+        } else {
+          console.log("⚠️ Affiliate not found or inactive:", affiliateCode);
+        }
+      } catch (error) {
+        console.error("❌ Error tracking affiliate conversion:", error);
+        // Don't fail the whole booking if affiliate tracking fails
+      }
+    }
+    
     // Try to link to quiz session if sessionId is provided
     if (sessionId) {
       try {

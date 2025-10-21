@@ -5,6 +5,8 @@ export interface LeadStatusInfo {
   label: string;
   color: string;
   description: string;
+  affiliateCode?: string | null;
+  appointmentId?: string | null;
 }
 
 /**
@@ -28,7 +30,9 @@ export async function getLeadStatus(sessionId: string): Promise<LeadStatusInfo> 
         status: 'booked',
         label: 'Booked',
         color: 'bg-blue-100 text-blue-800 border border-blue-200',
-        description: 'Booked a call'
+        description: 'Booked a call',
+        affiliateCode: appointment.affiliateCode,
+        appointmentId: appointment.id
       };
     }
 
@@ -97,14 +101,18 @@ export async function getLeadStatuses(sessionIds: string[]): Promise<Record<stri
           status: 'booked',
           label: 'Booked',
           color: 'bg-blue-100 text-blue-800 border border-blue-200',
-          description: 'Booked a call'
+          description: 'Booked a call',
+          affiliateCode: appointment.affiliateCode,
+          appointmentId: appointment.id
         };
       } else {
         statuses[sessionId] = {
           status: 'completed',
           label: 'Completed',
           color: 'bg-green-100 text-green-800 border border-green-200',
-          description: 'Completed quiz with contact info'
+          description: 'Completed quiz with contact info',
+          affiliateCode: null,
+          appointmentId: null
         };
       }
     }
@@ -120,7 +128,9 @@ export async function getLeadStatuses(sessionIds: string[]): Promise<Record<stri
         status: 'completed',
         label: 'Completed',
         color: 'bg-green-100 text-green-800 border border-green-200',
-        description: 'Completed quiz with contact info'
+        description: 'Completed quiz with contact info',
+        affiliateCode: null,
+        appointmentId: null
       };
     }
     return statuses;
