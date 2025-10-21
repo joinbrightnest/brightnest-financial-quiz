@@ -94,6 +94,7 @@ export default function LeadsPage() {
       
       const response = await fetch(url);
       const data = await response.json();
+      console.log('🔍 API Response - First 3 leads:', data.allLeads?.slice(0, 3).map((lead: any) => ({ id: lead.id, status: lead.status })));
       setLeads(data.allLeads || []);
     } catch (error) {
       console.error('Error fetching leads:', error);
@@ -562,7 +563,7 @@ export default function LeadsPage() {
                           ? "bg-blue-100 text-blue-800 border border-blue-200"
                           : "bg-orange-100 text-orange-800 border border-orange-200"
                       }`}>
-                        {lead.status}
+                        {lead.status} {/* DEBUG: {lead.id.slice(0,8)} */}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
