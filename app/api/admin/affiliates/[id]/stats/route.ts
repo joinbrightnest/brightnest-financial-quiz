@@ -102,7 +102,10 @@ export async function GET(
     const totalLeads = leadData.totalLeads;
     const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
     
-    // Calculate commission from appointments (same method as other APIs)
+    // Use stored commission for main display (consistent with database)
+    const totalCommission = Number(affiliate.totalCommission || 0);
+    
+    // Calculate date-filtered commission for analysis
     const appointments = await prisma.appointment.findMany({
       where: {
         affiliateCode: affiliate.referralCode,
@@ -113,7 +116,7 @@ export async function GET(
       },
     }).catch(() => []);
     
-    const totalCommission = appointments.reduce((sum, apt) => {
+    const dateFilteredCommission = appointments.reduce((sum, apt) => {
       const saleValue = Number(apt.saleValue || 0);
       return sum + (saleValue * Number(affiliate.commissionRate));
     }, 0);
@@ -123,6 +126,8 @@ export async function GET(
       affiliateCode: affiliate.referralCode,
       dateRange,
       startDate: startDate.toISOString(),
+      storedCommission: Number(affiliate.totalCommission || 0),
+      dateFilteredCommission,
       appointmentsFound: appointments.length,
       appointments: appointments.map(apt => ({
         id: apt.id,

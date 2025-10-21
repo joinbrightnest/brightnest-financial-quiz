@@ -97,8 +97,11 @@ export async function GET(request: NextRequest) {
     const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
     const totalSales = conversions.filter(c => c.conversionType === "sale").length;
     
-    // Calculate commission from actual converted appointments (same as individual affiliate API)
-    const appointments = await prisma.appointment.findMany({
+    // Use stored commission for main display (consistent with database)
+    const totalCommission = Number(affiliate.totalCommission || 0);
+    
+    // Calculate date-filtered commission for daily stats (for timeframe analysis)
+    const dateFilteredAppointments = await prisma.appointment.findMany({
       where: {
         affiliateCode: affiliate.referralCode,
         outcome: CallOutcome.converted,
@@ -106,7 +109,7 @@ export async function GET(request: NextRequest) {
       },
     }).catch(() => []);
     
-    const totalCommission = appointments.reduce((sum, apt) => {
+    const dateFilteredCommission = dateFilteredAppointments.reduce((sum, apt) => {
       const saleValue = Number(apt.saleValue || 0);
       return sum + (saleValue * Number(affiliate.commissionRate));
     }, 0);
@@ -117,6 +120,15 @@ export async function GET(request: NextRequest) {
     console.log("Admin API Commission Debug:", {
       affiliateCode,
       dateRange,
+      storedCommission: Number(affiliate.totalCommission || 0),
+      dateFilteredCommission,
+      appointmentsFound: dateFilteredAppointments.length,
+      appointments: dateFilteredAppointments.map(apt => ({
+        id: apt.id,
+        saleValue: apt.saleValue,
+        updatedAt: apt.updatedAt,
+        outcome: apt.outcome
+      })),
       dailyStatsLength: dailyStats.length,
       dailyStatsCommissions: dailyStats.map(d => ({ date: d.date, commission: d.commission })),
       totalCommission

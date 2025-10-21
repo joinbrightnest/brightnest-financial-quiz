@@ -144,7 +144,10 @@ export async function GET(request: NextRequest) {
     // Generate daily stats based on actual data
     const dailyStats = await generateDailyStatsWithRealData(affiliate.referralCode, dateRange);
     
-    // Calculate totalCommission from dailyStats to ensure consistency with admin dashboard
+    // Use stored commission for main display (consistent with database)
+    const totalCommission = Number(affiliate.totalCommission || 0);
+    
+    // Calculate date-filtered commission for daily stats (for timeframe analysis)
     const calculatedTotalCommission = dailyStats.reduce((sum, day) => sum + day.commission, 0);
 
     const stats = {
@@ -152,7 +155,7 @@ export async function GET(request: NextRequest) {
       totalLeads,
       totalBookings,
       totalSales,
-      totalCommission: calculatedTotalCommission, // Use calculated commission instead of database field
+      totalCommission, // Use stored commission from database
       conversionRate,
       averageSaleValue: totalSales > 0 ? calculatedTotalCommission / totalSales : 0,
       pendingCommission,
