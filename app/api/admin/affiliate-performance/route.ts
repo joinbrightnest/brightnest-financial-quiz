@@ -57,8 +57,9 @@ export async function GET(request: NextRequest) {
         const saleCount = appointments.filter(apt => apt.outcome === CallOutcome.converted).length;
         
         // Use centralized lead calculation
-        const leadData = await calculateAffiliateLeads(affiliate.id, '30d');
-        const leadCount = leadData.totalLeads;
+        // const leadData = await calculateAffiliateLeads(affiliate.id, '30d');
+        // const leadCount = leadData.totalLeads;
+        const leadCount = 0; // Temporary fix
 
         // Calculate actual revenue from converted appointments (total sale values)
         const totalRevenue = appointments
