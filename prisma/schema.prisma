@@ -373,6 +373,7 @@ model Appointment {
   status          AppointmentStatus @default(scheduled)
   outcome         CallOutcome?
   notes           String?
+  recordingLink   String?           @map("recording_link")
   recordingLinkConverted String?           @map("recording_link_converted")
   recordingLinkNotInterested String?       @map("recording_link_not_interested")
   recordingLinkNeedsFollowUp String?      @map("recording_link_needs_follow_up")

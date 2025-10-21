@@ -40,10 +40,48 @@ async function handleInviteeCreated(payload: any) {
   try {
     const { event, invitee, questions_and_answers } = payload;
     
-    // Extract customer information
-    const customerName = invitee.name || 'Unknown';
-    const customerEmail = invitee.email;
-    const customerPhone = invitee.phone_number || null;
+    console.log('🔍 Calendly webhook payload analysis:', {
+      event: event ? 'present' : 'missing',
+      invitee: invitee ? 'present' : 'missing',
+      questions_and_answers: questions_and_answers ? 'present' : 'missing'
+    });
+    
+    console.log('🔍 Full invitee data:', JSON.stringify(invitee, null, 2));
+    console.log('🔍 Full event data:', JSON.stringify(event, null, 2));
+    
+    // Extract customer information with better fallbacks
+    let customerName = 'Unknown';
+    let customerEmail = 'unknown@example.com';
+    let customerPhone = null;
+    
+    // Try multiple sources for customer name
+    if (invitee?.name) {
+      customerName = invitee.name;
+      console.log('✅ Found customer name in invitee.name:', customerName);
+    } else if (invitee?.first_name && invitee?.last_name) {
+      customerName = `${invitee.first_name} ${invitee.last_name}`;
+      console.log('✅ Found customer name from first_name + last_name:', customerName);
+    } else if (invitee?.first_name) {
+      customerName = invitee.first_name;
+      console.log('✅ Found customer name from first_name:', customerName);
+    } else {
+      console.log('⚠️ No customer name found in invitee data');
+    }
+    
+    // Extract email
+    if (invitee?.email) {
+      customerEmail = invitee.email;
+      console.log('✅ Found customer email:', customerEmail);
+    } else {
+      console.log('⚠️ No customer email found in invitee data');
+    }
+    
+    // Extract phone
+    if (invitee?.phone_number) {
+      customerPhone = invitee.phone_number;
+      console.log('✅ Found customer phone:', customerPhone);
+    }
+    
     const scheduledAt = new Date(event.start_time);
     const duration = Math.round((new Date(event.end_time).getTime() - new Date(event.start_time).getTime()) / (1000 * 60));
     
@@ -54,6 +92,7 @@ async function handleInviteeCreated(payload: any) {
     let utmCampaign = null;
     
     if (questions_and_answers) {
+      console.log('🔍 Questions and answers:', JSON.stringify(questions_and_answers, null, 2));
       for (const qa of questions_and_answers) {
         const question = qa.question?.toLowerCase() || '';
         const answer = qa.answer || '';

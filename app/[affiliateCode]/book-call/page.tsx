@@ -60,6 +60,40 @@ export default function AffiliateBookCallPage() {
       if (e.data.event === 'calendly.event_scheduled') {
         console.log("🎯 Calendly booking completed:", e.data);
         
+        // Try to extract customer data from the Calendly event payload first
+        let customerName = 'Unknown';
+        let customerEmail = 'unknown@example.com';
+        
+        console.log("🔍 Full Calendly event data:", JSON.stringify(e.data, null, 2));
+        
+        // Check if customer data is in the event payload
+        if (e.data.payload?.invitee) {
+          console.log("🔍 Invitee data found:", e.data.payload.invitee);
+          
+          // Extract customer name from invitee
+          if (e.data.payload.invitee.name) {
+            customerName = e.data.payload.invitee.name;
+            console.log("✅ Found customer name in payload:", customerName);
+          } else if (e.data.payload.invitee.first_name && e.data.payload.invitee.last_name) {
+            customerName = `${e.data.payload.invitee.first_name} ${e.data.payload.invitee.last_name}`;
+            console.log("✅ Found customer name from first_name + last_name:", customerName);
+          } else if (e.data.payload.invitee.first_name) {
+            customerName = e.data.payload.invitee.first_name;
+            console.log("✅ Found customer name from first_name:", customerName);
+          }
+          
+          // Extract customer email from invitee
+          if (e.data.payload.invitee.email) {
+            customerEmail = e.data.payload.invitee.email;
+            console.log("✅ Found customer email in payload:", customerEmail);
+          }
+        }
+        
+        console.log("📝 Final extracted customer data:", {
+          customerName,
+          customerEmail
+        });
+        
         // Track the booking for this affiliate
         if (affiliateCode) {
           try {
@@ -92,8 +126,12 @@ export default function AffiliateBookCallPage() {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 closerId: activeCloser.id,
-                calendlyEvent: e.data.payload?.event || null,
+                calendlyEvent: e.data.payload || null,
                 affiliateCode: affiliateCode || null,
+                customerData: {
+                  name: customerName,
+                  email: customerEmail,
+                },
               }),
             });
             console.log("✅ Booking auto-assigned to closer successfully");

@@ -101,62 +101,95 @@ export default function BookCallPage() {
       if (e.data.event === 'calendly.event_scheduled') {
         console.log("🎯 Calendly booking completed:", e.data);
         
-        // Try to extract customer data from the Calendly form
+        // Try to extract customer data from the Calendly event payload first
         let customerName = 'Unknown';
         let customerEmail = 'unknown@example.com';
         
-        console.log("🔍 Searching for customer data in Calendly form...");
+        console.log("🔍 Full Calendly event data:", JSON.stringify(e.data, null, 2));
         
-        // Look for customer data in the Calendly form with multiple selectors
-        const nameInputs = document.querySelectorAll('input[name="name"], input[placeholder*="name" i], input[placeholder*="Name" i], input[data-testid*="name" i]');
-        const emailInputs = document.querySelectorAll('input[name="email"], input[type="email"], input[placeholder*="email" i], input[placeholder*="Email" i], input[data-testid*="email" i]');
-        
-        console.log("🔍 Found name inputs:", nameInputs.length);
-        console.log("🔍 Found email inputs:", emailInputs.length);
-        
-        // Try each name input
-        for (let i = 0; i < nameInputs.length; i++) {
-          const input = nameInputs[i] as HTMLInputElement;
-          console.log(`🔍 Name input ${i}:`, input.value, input.name, input.placeholder);
-          if (input.value && input.value.trim()) {
-            customerName = input.value.trim();
-            console.log("✅ Found customer name in form:", customerName);
-            break;
+        // Check if customer data is in the event payload
+        if (e.data.payload?.invitee) {
+          console.log("🔍 Invitee data found:", e.data.payload.invitee);
+          
+          // Extract customer name from invitee
+          if (e.data.payload.invitee.name) {
+            customerName = e.data.payload.invitee.name;
+            console.log("✅ Found customer name in payload:", customerName);
+          } else if (e.data.payload.invitee.first_name && e.data.payload.invitee.last_name) {
+            customerName = `${e.data.payload.invitee.first_name} ${e.data.payload.invitee.last_name}`;
+            console.log("✅ Found customer name from first_name + last_name:", customerName);
+          } else if (e.data.payload.invitee.first_name) {
+            customerName = e.data.payload.invitee.first_name;
+            console.log("✅ Found customer name from first_name:", customerName);
+          }
+          
+          // Extract customer email from invitee
+          if (e.data.payload.invitee.email) {
+            customerEmail = e.data.payload.invitee.email;
+            console.log("✅ Found customer email in payload:", customerEmail);
           }
         }
         
-        // Try each email input
-        for (let i = 0; i < emailInputs.length; i++) {
-          const input = emailInputs[i] as HTMLInputElement;
-          console.log(`🔍 Email input ${i}:`, input.value, input.name, input.placeholder);
-          if (input.value && input.value.trim()) {
-            customerEmail = input.value.trim();
-            console.log("✅ Found customer email in form:", customerEmail);
-            break;
-          }
-        }
-        
-        // If still not found, try to get from all inputs
+        // If still not found, try to extract from Calendly form DOM (fallback)
         if (customerName === 'Unknown' || customerEmail === 'unknown@example.com') {
-          console.log("🔍 Searching all inputs for customer data...");
-          const allInputs = document.querySelectorAll('input');
-          for (let i = 0; i < allInputs.length; i++) {
-            const input = allInputs[i] as HTMLInputElement;
+          console.log("🔍 Trying to extract from Calendly form DOM as fallback...");
+          
+          // Look for customer data in the Calendly form with multiple selectors
+          const nameInputs = document.querySelectorAll('input[name="name"], input[placeholder*="name" i], input[placeholder*="Name" i], input[data-testid*="name" i]');
+          const emailInputs = document.querySelectorAll('input[name="email"], input[type="email"], input[placeholder*="email" i], input[placeholder*="Email" i], input[data-testid*="email" i]');
+          
+          console.log("🔍 Found name inputs:", nameInputs.length);
+          console.log("🔍 Found email inputs:", emailInputs.length);
+          
+          // Try each name input
+          for (let i = 0; i < nameInputs.length; i++) {
+            const input = nameInputs[i] as HTMLInputElement;
+            console.log(`🔍 Name input ${i}:`, input.value, input.name, input.placeholder);
             if (input.value && input.value.trim()) {
-              console.log(`🔍 Input ${i}:`, input.value, input.name, input.placeholder, input.type);
-              // Check if it looks like a name (no @ symbol)
-              if (customerName === 'Unknown' && !input.value.includes('@') && input.value.length > 2) {
-                customerName = input.value.trim();
-                console.log("✅ Found potential name:", customerName);
-              }
-              // Check if it looks like an email (has @ symbol)
-              if (customerEmail === 'unknown@example.com' && input.value.includes('@')) {
-                customerEmail = input.value.trim();
-                console.log("✅ Found potential email:", customerEmail);
+              customerName = input.value.trim();
+              console.log("✅ Found customer name in form:", customerName);
+              break;
+            }
+          }
+          
+          // Try each email input
+          for (let i = 0; i < emailInputs.length; i++) {
+            const input = emailInputs[i] as HTMLInputElement;
+            console.log(`🔍 Email input ${i}:`, input.value, input.name, input.placeholder);
+            if (input.value && input.value.trim()) {
+              customerEmail = input.value.trim();
+              console.log("✅ Found customer email in form:", customerEmail);
+              break;
+            }
+          }
+          
+          // If still not found, try to get from all inputs
+          if (customerName === 'Unknown' || customerEmail === 'unknown@example.com') {
+            console.log("🔍 Searching all inputs for customer data...");
+            const allInputs = document.querySelectorAll('input');
+            for (let i = 0; i < allInputs.length; i++) {
+              const input = allInputs[i] as HTMLInputElement;
+              if (input.value && input.value.trim()) {
+                console.log(`🔍 Input ${i}:`, input.value, input.name, input.placeholder, input.type);
+                // Check if it looks like a name (no @ symbol)
+                if (customerName === 'Unknown' && !input.value.includes('@') && input.value.length > 2) {
+                  customerName = input.value.trim();
+                  console.log("✅ Found potential name:", customerName);
+                }
+                // Check if it looks like an email (has @ symbol)
+                if (customerEmail === 'unknown@example.com' && input.value.includes('@')) {
+                  customerEmail = input.value.trim();
+                  console.log("✅ Found potential email:", customerEmail);
+                }
               }
             }
           }
         }
+        
+        console.log("📝 Final extracted customer data:", {
+          customerName,
+          customerEmail
+        });
         
         // Get affiliate code from cookie
         const affiliateCode = document.cookie
@@ -191,16 +224,6 @@ export default function BookCallPage() {
 
         // Also track the booking for closer assignment (even without affiliate)
         console.log("🔍 Active closer check:", activeCloser);
-        console.log("🔍 Full Calendly event data:", JSON.stringify(e.data, null, 2));
-        
-        // Check if customer data is in the event itself
-        console.log("🔍 Checking for customer data in event...");
-        if (e.data.payload?.invitee) {
-          console.log("🔍 Invitee data:", e.data.payload.invitee);
-        }
-        if (e.data.payload?.event) {
-          console.log("🔍 Event data:", e.data.payload.event);
-        }
         
         // If activeCloser is null, try to fetch it again
         let closerToUse = activeCloser;
