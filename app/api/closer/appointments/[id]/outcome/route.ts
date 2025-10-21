@@ -64,8 +64,9 @@ export async function PUT(
     }
 
     // Calculate affiliate commission if appointment has affiliate code
+    // Only calculate commission if this is a NEW conversion (not already converted)
     let affiliateCommissionAmount = null;
-    if (saleValue && outcome === 'converted' && appointment.affiliateCode) {
+    if (saleValue && outcome === 'converted' && appointment.affiliateCode && appointment.outcome !== 'converted') {
       const affiliate = await prisma.affiliate.findUnique({
         where: { referralCode: appointment.affiliateCode }
       });
@@ -82,13 +83,23 @@ export async function PUT(
         });
         
         console.log('💰 Affiliate commission calculated:', {
+          appointmentId: id,
           affiliateCode: appointment.affiliateCode,
           affiliateName: affiliate.name,
           saleValue: parseFloat(saleValue),
           commissionRate: affiliate.commissionRate,
-          commissionAmount: affiliateCommissionAmount
+          commissionAmount: affiliateCommissionAmount,
+          previousOutcome: appointment.outcome
         });
       }
+    } else if (saleValue && outcome === 'converted' && appointment.affiliateCode && appointment.outcome === 'converted') {
+      console.log('⚠️ Commission already calculated for this appointment:', {
+        appointmentId: id,
+        affiliateCode: appointment.affiliateCode,
+        saleValue: parseFloat(saleValue),
+        previousOutcome: appointment.outcome,
+        newOutcome: outcome
+      });
     }
 
     // Prepare recording link data based on outcome
