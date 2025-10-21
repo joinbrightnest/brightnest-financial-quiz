@@ -619,18 +619,10 @@ export default function AffiliatePerformancePage() {
                 </div>
                 <div className="space-y-4">
                   {(stats.recentActivity || []).map((activity, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
+                    <div key={index} className="flex items-center p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
                       <div>
                         <p className="text-sm font-semibold text-slate-900">{activity.action}</p>
                         <p className="text-xs text-slate-600 font-medium">{new Date(activity.date).toLocaleDateString()}</p>
-                      </div>
-                      <div className="text-right">
-                        {activity.amount && activity.amount > 0 && (
-                          <p className="text-lg font-bold text-slate-900">${activity.amount}</p>
-                        )}
-                        {activity.commission && activity.commission > 0 && (
-                          <p className="text-xs text-emerald-600 font-semibold">+${activity.commission}</p>
-                        )}
                       </div>
                     </div>
                   ))}
