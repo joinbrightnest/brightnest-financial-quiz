@@ -232,34 +232,6 @@ export default function AdminAffiliatePerformanceChart({ dailyStats, loading }: 
       <div className="h-64">
         <Line data={chartData} options={chartOptions} />
       </div>
-
-      {/* Mini Stats */}
-      <div className="mt-6 grid grid-cols-4 gap-4">
-        <div className="bg-blue-50 rounded-lg p-4">
-          <div className="text-2xl font-bold text-blue-600">
-            {dailyStats.reduce((sum, day) => sum + day.clicks, 0)}
-          </div>
-          <div className="text-sm text-blue-800">Total Clicks</div>
-        </div>
-        <div className="bg-purple-50 rounded-lg p-4">
-          <div className="text-2xl font-bold text-purple-600">
-            {dailyStats.reduce((sum, day) => sum + day.leads, 0)}
-          </div>
-          <div className="text-sm text-purple-800">Total Leads</div>
-        </div>
-        <div className="bg-green-50 rounded-lg p-4">
-          <div className="text-2xl font-bold text-green-600">
-            {dailyStats.reduce((sum, day) => sum + (day.bookedCalls || 0), 0)}
-          </div>
-          <div className="text-sm text-green-800">Booked Calls</div>
-        </div>
-        <div className="bg-amber-50 rounded-lg p-4">
-          <div className="text-2xl font-bold text-amber-600">
-            ${dailyStats.reduce((sum, day) => sum + (day.commission || 0), 0).toFixed(2)}
-          </div>
-          <div className="text-sm text-amber-800">Total Earnings</div>
-        </div>
-      </div>
     </motion.div>
   );
 }
