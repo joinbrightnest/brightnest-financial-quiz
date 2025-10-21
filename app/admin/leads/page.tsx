@@ -298,7 +298,7 @@ export default function LeadsPage() {
     const archetypeStats = getArchetypeStats();
     const quizTypeStats = getQuizTypeStats();
     const totalLeads = leads.length;
-    const completedLeads = leads.filter(l => l.status === 'completed').length;
+    const completedLeads = leads.filter(l => l.status === 'Completed' || l.status === 'Booked').length;
     const completionRate = totalLeads > 0 ? Math.round((completedLeads / totalLeads) * 100) : 0;
 
     return (
@@ -556,11 +556,13 @@ export default function LeadsPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                        lead.status === "completed" 
+                        lead.status === "Completed" 
                           ? "bg-green-100 text-green-800 border border-green-200" 
+                          : lead.status === "Booked"
+                          ? "bg-blue-100 text-blue-800 border border-blue-200"
                           : "bg-orange-100 text-orange-800 border border-orange-200"
                       }`}>
-                        {lead.status === "completed" ? "Completed" : "In Progress"}
+                        {lead.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -735,11 +737,13 @@ export default function LeadsPage() {
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        lead.status === "completed" 
+                        lead.status === "Completed" 
                           ? "bg-green-100 text-green-800" 
+                          : lead.status === "Booked"
+                          ? "bg-blue-100 text-blue-800"
                           : "bg-orange-100 text-orange-800"
                       }`}>
-                        {lead.status === "completed" ? "Completed" : "Partial"}
+                        {lead.status}
                       </span>
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
