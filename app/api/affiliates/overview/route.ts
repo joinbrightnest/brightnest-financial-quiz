@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, CallOutcome } from "@prisma/client";
 import { calculateAffiliateLeads } from "@/lib/lead-calculation";
 
 const prisma = new PrismaClient();
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
     const totalPendingAffiliates = pendingAffiliates.length;
     const totalLeadsFromAffiliates = approvedAffiliates.reduce((sum, aff) => sum + aff.totalLeads, 0);
     const totalBookedCalls = approvedAffiliates.reduce((sum, aff) => sum + aff.conversions.filter(c => c.conversionType === "booking").length, 0);
-    const totalSalesValue = approvedAffiliates.reduce((sum, aff) => sum + (aff.totalSales * 200), 0); // Mock $200 per sale
+    const totalSalesValue = approvedAffiliates.reduce((sum, aff) => sum + Number(aff.totalCommission || 0), 0); // Use stored commission as proxy for sales value
     const totalCommissionsPaid = approvedAffiliates.reduce((sum, aff) => sum + (Number(aff.totalCommission) * 0.7), 0); // 70% paid
     const totalCommissionsPending = approvedAffiliates.reduce((sum, aff) => sum + (Number(aff.totalCommission) * 0.3), 0); // 30% pending
 
@@ -126,6 +126,19 @@ export async function GET(request: NextRequest) {
     const topAffiliates = await Promise.all(approvedAffiliates.map(async (affiliate) => {
       // Use centralized lead calculation
       const leadData = await calculateAffiliateLeads(affiliate.id, '30d');
+      
+      // Get appointments for this affiliate to calculate real revenue
+      const appointments = await prisma.appointment.findMany({
+        where: {
+          affiliateCode: affiliate.referralCode,
+          outcome: CallOutcome.converted,
+        },
+      }).catch(() => []);
+      
+      // Calculate real revenue from converted appointments
+      const revenue = appointments
+        .filter(apt => apt.outcome === CallOutcome.converted && apt.saleValue)
+        .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
       
       return {
         id: affiliate.id,
@@ -135,9 +148,9 @@ export async function GET(request: NextRequest) {
         quizStarts: affiliate.quizSessions.length, // Add quiz starts from quiz sessions
         leads: leadData.totalLeads,
         bookedCalls: affiliate.conversions.filter(c => c.conversionType === "booking").length,
-        sales: affiliate.conversions.filter(c => c.conversionType === "sale").length,
-        conversionRate: affiliate.clicks.length > 0 ? (affiliate.conversions.filter(c => c.conversionType === "sale").length / affiliate.clicks.length) * 100 : 0,
-        revenue: affiliate.conversions.filter(c => c.conversionType === "sale").length * 200, // Mock $200 per sale
+        sales: appointments.filter(apt => apt.outcome === CallOutcome.converted).length,
+        conversionRate: affiliate.clicks.length > 0 ? (appointments.filter(apt => apt.outcome === CallOutcome.converted).length / affiliate.clicks.length) * 100 : 0,
+        revenue: revenue, // Real revenue from appointment sale values
         commission: affiliate.totalCommission,
         lastActive: affiliate.updatedAt.toISOString(),
       };
