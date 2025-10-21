@@ -55,6 +55,8 @@ export async function GET(request: NextRequest) {
     });
     
     console.log(`Found ${affiliates.length} affiliates without includes`);
+    console.log("Sample affiliate fields:", affiliates[0] ? Object.keys(affiliates[0]) : "No affiliates found");
+    console.log("Sample affiliate referralCode:", affiliates[0]?.referralCode);
     
     // Now get the related data separately to avoid potential issues
     const affiliatesWithData = await Promise.all(
@@ -131,7 +133,6 @@ export async function GET(request: NextRequest) {
       const appointments = await prisma.appointment.findMany({
         where: {
           affiliateCode: affiliate.referralCode,
-          outcome: CallOutcome.converted,
         },
       }).catch(() => []);
       
@@ -140,10 +141,27 @@ export async function GET(request: NextRequest) {
         .filter(apt => apt.outcome === CallOutcome.converted && apt.saleValue)
         .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
       
+      // Debug logging for revenue calculation
+      console.log(`Overview API Debug - ${affiliate.name}:`, {
+        affiliateCode: affiliate.referralCode,
+        totalAppointments: appointments.length,
+        convertedAppointments: appointments.filter(apt => apt.outcome === CallOutcome.converted).length,
+        appointmentsWithSaleValue: appointments.filter(apt => apt.outcome === CallOutcome.converted && apt.saleValue).length,
+        appointments: appointments.filter(apt => apt.outcome === CallOutcome.converted).map(apt => ({
+          id: apt.id,
+          saleValue: apt.saleValue,
+          outcome: apt.outcome,
+          updatedAt: apt.updatedAt
+        })),
+        revenue,
+        commission: affiliate.totalCommission
+      });
+      
       return {
         id: affiliate.id,
         name: affiliate.name,
         tier: affiliate.tier,
+        referralCode: affiliate.referralCode,
         clicks: affiliate.clicks.length,
         quizStarts: affiliate.quizSessions.length, // Add quiz starts from quiz sessions
         leads: leadData.totalLeads,
