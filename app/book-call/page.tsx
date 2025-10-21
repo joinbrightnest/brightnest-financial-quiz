@@ -22,6 +22,33 @@ export default function BookCallPage() {
   const [calendlyUrl, setCalendlyUrl] = useState("https://calendly.com/privatepublish/30min?hide_event_type_details=1&hide_gdpr_banner=1&hide_landing_page_details=1&embed_domain=joinbrightnest.com&embed_type=Inline");
   const [activeCloser, setActiveCloser] = useState<{id: string, name: string, calendlyLink: string} | null>(null);
 
+  // Test function to simulate Calendly event
+  const testCalendlyEvent = () => {
+    console.log("🧪 Testing Calendly event simulation...");
+    
+    const testEvent = {
+      data: {
+        event: 'calendly.event_scheduled',
+        payload: {
+          invitee: {
+            name: 'Test User',
+            email: 'test@example.com',
+            first_name: 'Test',
+            last_name: 'User'
+          },
+          event: {
+            uuid: 'test-uuid-123',
+            start_time: new Date().toISOString(),
+            end_time: new Date(Date.now() + 30 * 60 * 1000).toISOString()
+          }
+        }
+      }
+    };
+    
+    // Simulate the event
+    window.dispatchEvent(new MessageEvent('message', testEvent));
+  };
+
   // Fetch active closer's Calendly link
   useEffect(() => {
     const fetchActiveCloser = async () => {
@@ -98,97 +125,56 @@ export default function BookCallPage() {
   useEffect(() => {
     const handleCalendlyEvent = async (e: any) => {
       console.log("🔍 Calendly event received:", e.data);
+      console.log("🔍 Event type:", e.data?.event);
+      console.log("🔍 Full event object:", e);
+      
+      // Log all Calendly events, not just event_scheduled
+      if (e.data?.event && e.data.event.includes('calendly')) {
+        console.log("🎯 Calendly event detected:", e.data.event);
+      }
+      
       if (e.data.event === 'calendly.event_scheduled') {
         console.log("🎯 Calendly booking completed:", e.data);
         
-        // Try to extract customer data from the Calendly event payload first
+        // Get customer data from quiz session instead of Calendly
         let customerName = 'Unknown';
         let customerEmail = 'unknown@example.com';
         
-        console.log("🔍 Full Calendly event data:", JSON.stringify(e.data, null, 2));
+        // Get session ID from localStorage (set when quiz was completed)
+        const sessionId = localStorage.getItem('quizSessionId');
+        console.log("🔍 Session ID from localStorage:", sessionId);
         
-        // Check if customer data is in the event payload
-        if (e.data.payload?.invitee) {
-          console.log("🔍 Invitee data found:", e.data.payload.invitee);
-          
-          // Extract customer name from invitee
-          if (e.data.payload.invitee.name) {
-            customerName = e.data.payload.invitee.name;
-            console.log("✅ Found customer name in payload:", customerName);
-          } else if (e.data.payload.invitee.first_name && e.data.payload.invitee.last_name) {
-            customerName = `${e.data.payload.invitee.first_name} ${e.data.payload.invitee.last_name}`;
-            console.log("✅ Found customer name from first_name + last_name:", customerName);
-          } else if (e.data.payload.invitee.first_name) {
-            customerName = e.data.payload.invitee.first_name;
-            console.log("✅ Found customer name from first_name:", customerName);
-          }
-          
-          // Extract customer email from invitee
-          if (e.data.payload.invitee.email) {
-            customerEmail = e.data.payload.invitee.email;
-            console.log("✅ Found customer email in payload:", customerEmail);
-          }
-        }
-        
-        // If still not found, try to extract from Calendly form DOM (fallback)
-        if (customerName === 'Unknown' || customerEmail === 'unknown@example.com') {
-          console.log("🔍 Trying to extract from Calendly form DOM as fallback...");
-          
-          // Look for customer data in the Calendly form with multiple selectors
-          const nameInputs = document.querySelectorAll('input[name="name"], input[placeholder*="name" i], input[placeholder*="Name" i], input[data-testid*="name" i]');
-          const emailInputs = document.querySelectorAll('input[name="email"], input[type="email"], input[placeholder*="email" i], input[placeholder*="Email" i], input[data-testid*="email" i]');
-          
-          console.log("🔍 Found name inputs:", nameInputs.length);
-          console.log("🔍 Found email inputs:", emailInputs.length);
-          
-          // Try each name input
-          for (let i = 0; i < nameInputs.length; i++) {
-            const input = nameInputs[i] as HTMLInputElement;
-            console.log(`🔍 Name input ${i}:`, input.value, input.name, input.placeholder);
-            if (input.value && input.value.trim()) {
-              customerName = input.value.trim();
-              console.log("✅ Found customer name in form:", customerName);
-              break;
-            }
-          }
-          
-          // Try each email input
-          for (let i = 0; i < emailInputs.length; i++) {
-            const input = emailInputs[i] as HTMLInputElement;
-            console.log(`🔍 Email input ${i}:`, input.value, input.name, input.placeholder);
-            if (input.value && input.value.trim()) {
-              customerEmail = input.value.trim();
-              console.log("✅ Found customer email in form:", customerEmail);
-              break;
-            }
-          }
-          
-          // If still not found, try to get from all inputs
-          if (customerName === 'Unknown' || customerEmail === 'unknown@example.com') {
-            console.log("🔍 Searching all inputs for customer data...");
-            const allInputs = document.querySelectorAll('input');
-            for (let i = 0; i < allInputs.length; i++) {
-              const input = allInputs[i] as HTMLInputElement;
-              if (input.value && input.value.trim()) {
-                console.log(`🔍 Input ${i}:`, input.value, input.name, input.placeholder, input.type);
-                // Check if it looks like a name (no @ symbol)
-                if (customerName === 'Unknown' && !input.value.includes('@') && input.value.length > 2) {
-                  customerName = input.value.trim();
-                  console.log("✅ Found potential name:", customerName);
-                }
-                // Check if it looks like an email (has @ symbol)
-                if (customerEmail === 'unknown@example.com' && input.value.includes('@')) {
-                  customerEmail = input.value.trim();
-                  console.log("✅ Found potential email:", customerEmail);
-                }
+        if (sessionId) {
+          try {
+            // Fetch customer data from the quiz session
+            const response = await fetch('/api/quiz/user-name', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ sessionId })
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              if (data.name) {
+                customerName = data.name;
+                console.log("✅ Found customer name from quiz session:", customerName);
+              }
+              if (data.email) {
+                customerEmail = data.email;
+                console.log("✅ Found customer email from quiz session:", customerEmail);
               }
             }
+          } catch (error) {
+            console.error("❌ Error fetching customer data from quiz session:", error);
           }
+        } else {
+          console.log("⚠️ No session ID found in localStorage");
         }
         
-        console.log("📝 Final extracted customer data:", {
+        console.log("📝 Final customer data from quiz:", {
           customerName,
-          customerEmail
+          customerEmail,
+          sessionId
         });
         
         // Get affiliate code from cookie
@@ -244,19 +230,20 @@ export default function BookCallPage() {
         if (closerToUse) {
           try {
             console.log("🎯 Auto-assigning booking to closer:", closerToUse.name);
-            const response = await fetch('/api/track-closer-booking', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                closerId: closerToUse.id,
-                calendlyEvent: e.data.payload || null, // Pass the full payload, not just the event
-                affiliateCode: affiliateCode || null,
-                customerData: {
-                  name: customerName,
-                  email: customerEmail,
-                },
-              }),
-            });
+              const response = await fetch('/api/track-closer-booking', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  closerId: closerToUse.id,
+                  calendlyEvent: e.data.payload || null, // Pass the full payload, not just the event
+                  affiliateCode: affiliateCode || null,
+                  customerData: {
+                    name: customerName,
+                    email: customerEmail,
+                  },
+                  sessionId: sessionId || null, // Pass the session ID to link the appointment
+                }),
+              });
             const result = await response.json();
             console.log("✅ Booking auto-assigned to closer successfully:", result);
           } catch (error) {

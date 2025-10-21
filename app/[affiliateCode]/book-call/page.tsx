@@ -60,38 +60,45 @@ export default function AffiliateBookCallPage() {
       if (e.data.event === 'calendly.event_scheduled') {
         console.log("🎯 Calendly booking completed:", e.data);
         
-        // Try to extract customer data from the Calendly event payload first
+        // Get customer data from quiz session instead of Calendly
         let customerName = 'Unknown';
         let customerEmail = 'unknown@example.com';
         
-        console.log("🔍 Full Calendly event data:", JSON.stringify(e.data, null, 2));
+        // Get session ID from localStorage (set when quiz was completed)
+        const sessionId = localStorage.getItem('quizSessionId');
+        console.log("🔍 Session ID from localStorage:", sessionId);
         
-        // Check if customer data is in the event payload
-        if (e.data.payload?.invitee) {
-          console.log("🔍 Invitee data found:", e.data.payload.invitee);
-          
-          // Extract customer name from invitee
-          if (e.data.payload.invitee.name) {
-            customerName = e.data.payload.invitee.name;
-            console.log("✅ Found customer name in payload:", customerName);
-          } else if (e.data.payload.invitee.first_name && e.data.payload.invitee.last_name) {
-            customerName = `${e.data.payload.invitee.first_name} ${e.data.payload.invitee.last_name}`;
-            console.log("✅ Found customer name from first_name + last_name:", customerName);
-          } else if (e.data.payload.invitee.first_name) {
-            customerName = e.data.payload.invitee.first_name;
-            console.log("✅ Found customer name from first_name:", customerName);
+        if (sessionId) {
+          try {
+            // Fetch customer data from the quiz session
+            const response = await fetch('/api/quiz/user-name', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ sessionId })
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              if (data.name) {
+                customerName = data.name;
+                console.log("✅ Found customer name from quiz session:", customerName);
+              }
+              if (data.email) {
+                customerEmail = data.email;
+                console.log("✅ Found customer email from quiz session:", customerEmail);
+              }
+            }
+          } catch (error) {
+            console.error("❌ Error fetching customer data from quiz session:", error);
           }
-          
-          // Extract customer email from invitee
-          if (e.data.payload.invitee.email) {
-            customerEmail = e.data.payload.invitee.email;
-            console.log("✅ Found customer email in payload:", customerEmail);
-          }
+        } else {
+          console.log("⚠️ No session ID found in localStorage");
         }
         
-        console.log("📝 Final extracted customer data:", {
+        console.log("📝 Final customer data from quiz:", {
           customerName,
-          customerEmail
+          customerEmail,
+          sessionId
         });
         
         // Track the booking for this affiliate
@@ -121,19 +128,20 @@ export default function AffiliateBookCallPage() {
         if (activeCloser) {
           try {
             console.log("🎯 Auto-assigning booking to closer:", activeCloser.name);
-            await fetch('/api/track-closer-booking', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                closerId: activeCloser.id,
-                calendlyEvent: e.data.payload || null,
-                affiliateCode: affiliateCode || null,
-                customerData: {
-                  name: customerName,
-                  email: customerEmail,
-                },
-              }),
-            });
+              await fetch('/api/track-closer-booking', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  closerId: activeCloser.id,
+                  calendlyEvent: e.data.payload || null,
+                  affiliateCode: affiliateCode || null,
+                  customerData: {
+                    name: customerName,
+                    email: customerEmail,
+                  },
+                  sessionId: sessionId || null, // Pass the session ID to link the appointment
+                }),
+              });
             console.log("✅ Booking auto-assigned to closer successfully");
           } catch (error) {
             console.error("❌ Error auto-assigning booking to closer:", error);

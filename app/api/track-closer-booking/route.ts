@@ -189,23 +189,9 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    // Try to link to quiz session if sessionId is provided
+    // Session linking is handled by email matching in the lead status system
     if (sessionId) {
-      try {
-        const quizSession = await prisma.quizSession.findUnique({
-          where: { id: sessionId }
-        });
-        
-        if (quizSession && quizSession.status === 'completed') {
-          console.log("✅ Found quiz session for linking:", quizSession.id);
-          // Note: We'll link by email matching since direct sessionId relation needs schema update
-          console.log("✅ Session linking will be handled by email matching");
-        } else {
-          console.log("⚠️ Session not found or not completed:", sessionId);
-        }
-      } catch (error) {
-        console.error("❌ Error linking to session:", error);
-      }
+      console.log("✅ Session ID provided for potential linking:", sessionId);
     }
 
     // Update closer's total calls
