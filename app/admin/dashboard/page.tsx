@@ -330,7 +330,7 @@ export default function AdminDashboard() {
           nameAnswer?.value || "N/A",
           emailAnswer?.value || "N/A",
           new Date(lead.createdAt).toLocaleDateString(),
-          lead.status === "completed" ? "Completed" : "Partial",
+          lead.status,
           lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A",
           source
         ];
@@ -2102,11 +2102,13 @@ export default function AdminDashboard() {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                lead.status === "completed" 
+                                lead.status === "Completed" 
                                   ? "bg-green-100 text-green-800" 
+                                  : lead.status === "Booked"
+                                  ? "bg-blue-100 text-blue-800"
                                   : "bg-orange-100 text-orange-800"
                               }`}>
-                                {lead.status === "completed" ? "Completed" : "Partial"}
+                                {lead.status}
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
