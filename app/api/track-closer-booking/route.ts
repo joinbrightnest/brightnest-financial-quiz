@@ -34,14 +34,42 @@ export async function POST(request: NextRequest) {
       console.log("✅ Using customer email from form:", customerEmail);
     }
 
-    // Try to extract customer data from Calendly event
-    if (calendlyEvent?.invitee?.name && customerName === 'Unknown') {
-      customerName = calendlyEvent.invitee.name;
-      console.log("✅ Found customer name in event:", customerName);
-    }
-    if (calendlyEvent?.invitee?.email && customerEmail === 'unknown@example.com') {
-      customerEmail = calendlyEvent.invitee.email;
-      console.log("✅ Found customer email in event:", customerEmail);
+    // Try to extract customer data from Calendly event payload
+    console.log("🔍 Calendly event structure:", JSON.stringify(calendlyEvent, null, 2));
+    
+    if (calendlyEvent) {
+      // Try different possible locations for customer data
+      const invitee = calendlyEvent.invitee || calendlyEvent.payload?.invitee;
+      const event = calendlyEvent.event || calendlyEvent.payload?.event;
+      
+      console.log("🔍 Invitee data:", invitee);
+      console.log("🔍 Event data:", event);
+      
+      if (invitee) {
+        if (invitee.name && customerName === 'Unknown') {
+          customerName = invitee.name;
+          console.log("✅ Found customer name in invitee:", customerName);
+        }
+        if (invitee.email && customerEmail === 'unknown@example.com') {
+          customerEmail = invitee.email;
+          console.log("✅ Found customer email in invitee:", customerEmail);
+        }
+        if (invitee.phone_number) {
+          customerPhone = invitee.phone_number;
+          console.log("✅ Found customer phone in invitee:", customerPhone);
+        }
+      }
+      
+      if (event) {
+        if (event.start_time) {
+          scheduledAt = new Date(event.start_time);
+          console.log("✅ Found scheduled time:", scheduledAt);
+        }
+        if (event.uri) {
+          calendlyEventId = event.uri.split('/').pop() || `manual-${Date.now()}`;
+          console.log("✅ Found Calendly event ID:", calendlyEventId);
+        }
+      }
     }
 
     console.log("📝 Final booking details:", {
