@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { calculateAffiliateLeads } from "@/lib/lead-calculation";
+import { CallOutcome } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -53,7 +54,7 @@ export async function GET(request: NextRequest) {
         
         // Count actual bookings and sales from appointments (more accurate)
         const bookingCount = appointments.length;
-        const saleCount = appointments.filter(apt => apt.outcome === 'converted').length;
+        const saleCount = appointments.filter(apt => apt.outcome === CallOutcome.converted).length;
         
         // Use centralized lead calculation
         const leadData = await calculateAffiliateLeads(affiliate.id, '30d');
@@ -61,7 +62,7 @@ export async function GET(request: NextRequest) {
 
         // Calculate actual revenue from converted appointments (total sale values)
         const totalRevenue = appointments
-          .filter(apt => apt.outcome === 'converted' && apt.saleValue)
+          .filter(apt => apt.outcome === CallOutcome.converted && apt.saleValue)
           .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
 
         // Use stored commission from database (consistent with other APIs)
@@ -71,9 +72,9 @@ export async function GET(request: NextRequest) {
         console.log(`Affiliate Performance Debug - ${affiliate.name}:`, {
           affiliateCode: affiliate.referralCode,
           totalAppointments: appointments.length,
-          convertedAppointments: appointments.filter(apt => apt.outcome === 'converted').length,
-          appointmentsWithSaleValue: appointments.filter(apt => apt.outcome === 'converted' && apt.saleValue).length,
-          appointments: appointments.filter(apt => apt.outcome === 'converted').map(apt => ({
+          convertedAppointments: appointments.filter(apt => apt.outcome === CallOutcome.converted).length,
+          appointmentsWithSaleValue: appointments.filter(apt => apt.outcome === CallOutcome.converted && apt.saleValue).length,
+          appointments: appointments.filter(apt => apt.outcome === CallOutcome.converted).map(apt => ({
             id: apt.id,
             saleValue: apt.saleValue,
             outcome: apt.outcome,
