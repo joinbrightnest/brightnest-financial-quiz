@@ -124,52 +124,76 @@ export async function GET(request: NextRequest) {
     const totalCommissionsPaid = approvedAffiliates.reduce((sum, aff) => sum + (Number(aff.totalCommission) * 0.7), 0); // 70% paid
     const totalCommissionsPending = approvedAffiliates.reduce((sum, aff) => sum + (Number(aff.totalCommission) * 0.3), 0); // 30% pending
 
-    // Generate top affiliates performance data (only approved ones)
+    // Copy the working logic from affiliate-performance API directly
     const topAffiliates = await Promise.all(approvedAffiliates.map(async (affiliate) => {
-      // Use centralized lead calculation
-      const leadData = await calculateAffiliateLeads(affiliate.id, '30d');
-      
-      // Get appointments for this affiliate to calculate real revenue
+      // Get clicks for this affiliate
+      const clicks = await prisma.affiliateClick.findMany({
+        where: {
+          affiliateId: affiliate.id,
+        },
+      });
+
+      // Get conversions for this affiliate
+      const conversions = await prisma.affiliateConversion.findMany({
+        where: {
+          affiliateId: affiliate.id,
+        },
+      });
+
+      // Get quiz sessions for this affiliate
+      const quizSessions = await prisma.quizSession.findMany({
+        where: {
+          affiliateCode: affiliate.referralCode,
+        },
+      });
+
+      // Get appointments for this affiliate
       const appointments = await prisma.appointment.findMany({
         where: {
           affiliateCode: affiliate.referralCode,
         },
-      }).catch(() => []);
+      });
+
+      // Calculate conversion rates
+      const clickCount = clicks.length;
+      const conversionCount = conversions.length;
+      const quizCount = quizSessions.length;
+      const completionCount = quizSessions.filter(session => session.status === "completed").length;
       
-      // Calculate real revenue from converted appointments
-      const revenue = appointments
+      // Count actual bookings and sales from appointments (more accurate)
+      const bookingCount = appointments.length;
+      const saleCount = appointments.filter(apt => apt.outcome === CallOutcome.converted).length;
+      
+      // Use centralized lead calculation
+      const leadData = await calculateAffiliateLeads(affiliate.id, '30d');
+      const leadCount = leadData.totalLeads;
+
+      // Calculate actual revenue from converted appointments (total sale values)
+      const totalRevenue = appointments
         .filter(apt => apt.outcome === CallOutcome.converted && apt.saleValue)
         .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
-      
-      // Debug logging for revenue calculation
-      console.log(`Overview API Debug - ${affiliate.name}:`, {
-        affiliateCode: affiliate.referralCode,
-        totalAppointments: appointments.length,
-        convertedAppointments: appointments.filter(apt => apt.outcome === CallOutcome.converted).length,
-        appointmentsWithSaleValue: appointments.filter(apt => apt.outcome === CallOutcome.converted && apt.saleValue).length,
-        appointments: appointments.filter(apt => apt.outcome === CallOutcome.converted).map(apt => ({
-          id: apt.id,
-          saleValue: apt.saleValue,
-          outcome: apt.outcome,
-          updatedAt: apt.updatedAt
-        })),
-        revenue,
-        commission: affiliate.totalCommission
-      });
-      
+
+      // Use stored commission from database (consistent with other APIs)
+      const totalCommission = Number(affiliate.totalCommission || 0);
+
+      // Calculate conversion rates
+      const clickToQuizRate = clickCount > 0 ? (quizCount / clickCount) * 100 : 0;
+      const quizToCompletionRate = quizCount > 0 ? (completionCount / quizCount) * 100 : 0;
+      const clickToCompletionRate = clickCount > 0 ? (completionCount / clickCount) * 100 : 0;
+
       return {
         id: affiliate.id,
         name: affiliate.name,
         tier: affiliate.tier,
         referralCode: affiliate.referralCode,
-        clicks: affiliate.clicks.length,
-        quizStarts: affiliate.quizSessions.length, // Add quiz starts from quiz sessions
-        leads: leadData.totalLeads,
-        bookedCalls: affiliate.conversions.filter(c => c.conversionType === "booking").length,
-        sales: appointments.filter(apt => apt.outcome === CallOutcome.converted).length,
-        conversionRate: affiliate.clicks.length > 0 ? (appointments.filter(apt => apt.outcome === CallOutcome.converted).length / affiliate.clicks.length) * 100 : 0,
-        revenue: revenue, // Real revenue from appointment sale values
-        commission: affiliate.totalCommission,
+        clicks: clickCount,
+        quizStarts: quizCount,
+        leads: leadCount,
+        bookedCalls: bookingCount,
+        sales: saleCount,
+        conversionRate: clickToCompletionRate,
+        revenue: totalRevenue,
+        commission: totalCommission,
         lastActive: affiliate.updatedAt.toISOString(),
       };
     }));
