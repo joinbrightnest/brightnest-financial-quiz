@@ -1,27 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
-    const { closerId, calendlyEvent, affiliateCode, customerData } = await request.json();
+    const { closerId, calendlyEvent, affiliateCode, customerData, sessionId } = await request.json();
 
     console.log("🎯 Closer booking tracked:", {
       closerId,
       calendlyEvent,
-      affiliateCode
+      affiliateCode,
+      sessionId
     });
-
-    // Debug: Log the full Calendly event structure
-    console.log("🔍 Full Calendly event structure:", JSON.stringify(calendlyEvent, null, 2));
 
     if (!closerId) {
       console.log("No closer ID provided for booking");
       return NextResponse.json({ success: true, message: "Booking tracked (no closer)" });
     }
 
-    // Extract customer details from Calendly event
+    // Extract customer details
     let customerName = 'Unknown';
     let customerEmail = 'unknown@example.com';
     let customerPhone = null;
@@ -38,67 +34,7 @@ export async function POST(request: NextRequest) {
       console.log("✅ Using customer email from form:", customerEmail);
     }
 
-    // If we still don't have customer data, try to get it from quiz session
-    if ((customerName === 'Unknown' || customerEmail === 'unknown@example.com') && affiliateCode) {
-      try {
-        console.log("🔍 Looking for customer data in quiz session for affiliate:", affiliateCode);
-        
-        // Find the most recent quiz session for this affiliate
-        const recentSession = await prisma.quizSession.findFirst({
-          where: {
-            affiliateCode: affiliateCode,
-            status: 'completed'
-          },
-          include: {
-            answers: {
-              include: {
-                question: true
-              }
-            }
-          },
-          orderBy: {
-            completedAt: 'desc'
-          }
-        });
-
-        if (recentSession) {
-          console.log("✅ Found recent quiz session:", recentSession.id);
-          
-          // Look for name in quiz answers
-          if (customerName === 'Unknown') {
-            const nameAnswer = recentSession.answers.find(answer => 
-              answer.question.type === 'text' && 
-              answer.question.prompt.toLowerCase().includes('name')
-            );
-            if (nameAnswer) {
-              customerName = nameAnswer.value as string;
-              console.log("✅ Found customer name in quiz:", customerName);
-            }
-          }
-
-          // Look for email in quiz answers
-          if (customerEmail === 'unknown@example.com') {
-            const emailAnswer = recentSession.answers.find(answer => 
-              answer.question.type === 'email' && 
-              answer.question.prompt.toLowerCase().includes('email')
-            );
-            if (emailAnswer) {
-              customerEmail = emailAnswer.value as string;
-              console.log("✅ Found customer email in quiz:", customerEmail);
-            }
-          }
-        } else {
-          console.log("❌ No recent quiz session found for affiliate:", affiliateCode);
-        }
-      } catch (error) {
-        console.error("❌ Error fetching quiz session data:", error);
-      }
-    }
-    
-    // Try to extract customer data from different possible locations as fallback
-    console.log("🔍 Looking for customer data in Calendly event...");
-    
-    // Check if customer data is directly in the event
+    // Try to extract customer data from Calendly event
     if (calendlyEvent?.invitee?.name && customerName === 'Unknown') {
       customerName = calendlyEvent.invitee.name;
       console.log("✅ Found customer name in event:", customerName);
@@ -107,91 +43,23 @@ export async function POST(request: NextRequest) {
       customerEmail = calendlyEvent.invitee.email;
       console.log("✅ Found customer email in event:", customerEmail);
     }
-    
-    // Check if customer data is in a different location
-    if (calendlyEvent?.payload?.invitee?.name && customerName === 'Unknown') {
-      customerName = calendlyEvent.payload.invitee.name;
-      console.log("✅ Found customer name in payload:", customerName);
-    }
-    if (calendlyEvent?.payload?.invitee?.email && customerEmail === 'unknown@example.com') {
-      customerEmail = calendlyEvent.payload.invitee.email;
-      console.log("✅ Found customer email in payload:", customerEmail);
-    }
-    
-    // If we have URIs, try to fetch the actual data (but this might not work due to CORS/auth)
-    if (calendlyEvent?.invitee?.uri && customerName === 'Unknown') {
-      try {
-        console.log("🔍 Attempting to fetch invitee data from:", calendlyEvent.invitee.uri);
-        const inviteeResponse = await fetch(calendlyEvent.invitee.uri);
-        if (inviteeResponse.ok) {
-          const inviteeData = await inviteeResponse.json();
-          customerName = inviteeData.resource?.name || customerName;
-          customerEmail = inviteeData.resource?.email || customerEmail;
-          customerPhone = inviteeData.resource?.phone_number || customerPhone;
-          console.log("✅ Fetched invitee data from API:", { customerName, customerEmail });
-        } else {
-          console.log("❌ Calendly API call failed:", inviteeResponse.status);
-        }
-      } catch (error) {
-        console.error("❌ Error fetching invitee data:", error);
-      }
-    }
 
-    // If we have scheduled event URI, try to fetch the scheduled time
-    if (calendlyEvent?.event?.uri) {
-      try {
-        console.log("🔍 Fetching scheduled event data from:", calendlyEvent.event.uri);
-        const eventResponse = await fetch(calendlyEvent.event.uri);
-        if (eventResponse.ok) {
-          const eventData = await eventResponse.json();
-          scheduledAt = eventData.resource?.start_time ? 
-            new Date(eventData.resource.start_time) : 
-            new Date();
-          calendlyEventId = eventData.resource?.uri?.split('/').pop() || `manual-${Date.now()}`;
-          console.log("✅ Fetched event data:", { scheduledAt, calendlyEventId });
-        }
-      } catch (error) {
-        console.error("❌ Error fetching event data:", error);
-      }
-    }
-
-    console.log("📝 Extracted booking details:", {
+    console.log("📝 Final booking details:", {
       customerName,
       customerEmail,
       scheduledAt,
       calendlyEventId
     });
 
-    // Try to find the closer with timeout
-    let closer;
-    try {
-      const closerPromise = prisma.closer.findUnique({
-        where: { id: closerId },
-        select: {
-          id: true,
-          name: true,
-          isActive: true,
-        }
-      });
-
-      // Add timeout to prevent hanging
-      closer = await Promise.race([
-        closerPromise,
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Database timeout')), 5000)
-        )
-      ]);
-    } catch (dbError) {
-      console.error("❌ Database error finding closer:", dbError);
-      // Return success even if database fails - we don't want to break the booking
-      return NextResponse.json({ 
-        success: true, 
-        message: "Booking tracked (database temporarily unavailable)",
-        closerId,
-        customerName,
-        scheduledAt: scheduledAt.toISOString()
-      });
-    }
+    // Find the closer
+    const closer = await prisma.closer.findUnique({
+      where: { id: closerId },
+      select: {
+        id: true,
+        name: true,
+        isActive: true,
+      }
+    });
 
     if (!closer || !closer.isActive) {
       console.log("Closer not found or inactive for booking:", closerId);
@@ -206,75 +74,57 @@ export async function POST(request: NextRequest) {
 
     console.log("✅ Found closer:", closer.name);
 
-    // Try to create appointment with timeout
-    let appointment;
-    try {
-      const appointmentPromise = prisma.appointment.create({
-        data: {
-          closerId: closer.id,
-          calendlyEventId,
-          customerName,
-          customerEmail,
-          customerPhone,
-          scheduledAt,
-          duration: 30,
-          status: 'scheduled',
-          affiliateCode: affiliateCode || null,
-        },
-      });
-
-      appointment = await Promise.race([
-        appointmentPromise,
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Database timeout')), 5000)
-        )
-      ]);
-
-      console.log("✅ Appointment created:", appointment.id);
-    } catch (dbError) {
-      console.error("❌ Database error creating appointment:", dbError);
-      // Return success even if appointment creation fails
-      return NextResponse.json({ 
-        success: true, 
-        message: "Booking tracked (appointment creation failed)",
-        closer: {
-          name: closer.name,
-          id: closer.id,
-        },
+    // Create appointment
+    const appointment = await prisma.appointment.create({
+      data: {
+        closerId: closer.id,
+        calendlyEventId,
         customerName,
-        scheduledAt: scheduledAt.toISOString()
-      });
+        customerEmail,
+        customerPhone,
+        scheduledAt,
+        duration: 30,
+        status: 'scheduled',
+        affiliateCode: affiliateCode || null,
+      },
+    });
+
+    console.log("✅ Appointment created:", appointment.id);
+    
+    // Try to link to quiz session if sessionId is provided
+    if (sessionId) {
+      try {
+        const quizSession = await prisma.quizSession.findUnique({
+          where: { id: sessionId }
+        });
+        
+        if (quizSession && quizSession.status === 'completed') {
+          console.log("✅ Found quiz session for linking:", quizSession.id);
+          // Note: We'll link by email matching since direct sessionId relation needs schema update
+          console.log("✅ Session linking will be handled by email matching");
+        } else {
+          console.log("⚠️ Session not found or not completed:", sessionId);
+        }
+      } catch (error) {
+        console.error("❌ Error linking to session:", error);
+      }
     }
 
-    // Try to update closer's total calls with timeout
-    try {
-      const updatePromise = prisma.closer.update({
-        where: { id: closer.id },
-        data: {
-          totalCalls: {
-            increment: 1,
-          },
+    // Update closer's total calls
+    await prisma.closer.update({
+      where: { id: closer.id },
+      data: {
+        totalCalls: {
+          increment: 1,
         },
-      });
+      },
+    });
 
-      await Promise.race([
-        updatePromise,
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Database timeout')), 5000)
-        )
-      ]);
-
-      console.log("✅ Closer total calls updated");
-    } catch (dbError) {
-      console.error("❌ Database error updating closer calls:", dbError);
-      // Don't fail the whole request for this
-    }
-
-    console.log("✅ Booking auto-assigned to closer:", closer.name);
+    console.log("✅ Closer total calls updated");
 
     return NextResponse.json({ 
       success: true, 
-      message: "Booking auto-assigned to closer successfully",
+      message: "Booking tracked successfully",
       appointment: {
         id: appointment.id,
         customerName: appointment.customerName,
@@ -290,7 +140,7 @@ export async function POST(request: NextRequest) {
     console.error("❌ Error tracking closer booking:", error);
     return NextResponse.json({ 
       success: true, // Return success to not break the booking flow
-      message: "Booking tracked (closer assignment failed)",
+      message: "Booking tracked (error occurred)",
       error: error instanceof Error ? error.message : String(error)
     });
   }
