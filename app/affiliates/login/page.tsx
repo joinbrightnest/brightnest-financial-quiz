@@ -125,7 +125,7 @@ export default function AffiliateLogin() {
       <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-orange-200 to-transparent shadow-[0_0_0_1px_rgba(255,255,255,0.4)]" />
 
       {/* Right Section - Login Form */}
-      <div className="w-full lg:w-1/2 bg-stone-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+      <div className="w-full lg:w-1/2 bg-stone-50 flex items-center justify-center p-4 sm:p-6 lg:p-8 min-h-screen lg:min-h-0">
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
