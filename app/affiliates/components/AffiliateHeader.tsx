@@ -100,7 +100,7 @@ export default function AffiliateHeader({ affiliate, onLogout }: AffiliateHeader
           </nav>
 
           {/* User Menu */}
-          <div className="relative">
+          <div className="relative ml-auto">
             <button
               onClick={() => setShowMenu(!showMenu)}
               className="flex items-center space-x-3 text-sm rounded-xl bg-white/80 hover:bg-white border border-gray-200/50 hover:border-gray-300 px-4 py-2 shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
