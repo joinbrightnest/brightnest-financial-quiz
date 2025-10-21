@@ -98,29 +98,8 @@ export async function GET(request: NextRequest) {
       }
     ];
 
-    // Generate traffic sources data (simplified - could be enhanced with actual referrer data)
-    const trafficSources = [
-      {
-        source: "Direct",
-        clicks: Math.floor(totalClicks * 0.4),
-        percentage: 40
-      },
-      {
-        source: "Social Media",
-        clicks: Math.floor(totalClicks * 0.3),
-        percentage: 30
-      },
-      {
-        source: "Email",
-        clicks: Math.floor(totalClicks * 0.2),
-        percentage: 20
-      },
-      {
-        source: "Other",
-        clicks: Math.floor(totalClicks * 0.1),
-        percentage: 10
-      }
-    ];
+    // Generate traffic sources from real UTM data
+    const trafficSources = generateTrafficSourcesFromRealData(clicks);
 
     // Generate recent activity data from conversions and appointments
     const recentActivity = [];
@@ -452,4 +431,20 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
   }
   
   return stats;
+}
+
+function generateTrafficSourcesFromRealData(clicks: any[]) {
+  const sourceCounts: { [key: string]: number } = {};
+  const totalClicks = clicks.length;
+  
+  clicks.forEach(click => {
+    const source = click.utmSource || "Direct";
+    sourceCounts[source] = (sourceCounts[source] || 0) + 1;
+  });
+  
+  return Object.entries(sourceCounts).map(([source, count]) => ({
+    source,
+    clicks: count,
+    percentage: totalClicks > 0 ? (count / totalClicks) * 100 : 0,
+  }));
 }
