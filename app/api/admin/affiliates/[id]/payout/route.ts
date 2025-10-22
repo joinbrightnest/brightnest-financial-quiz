@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { PayoutStatus } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime/library";
 
 export async function POST(
   request: NextRequest,
@@ -43,7 +44,7 @@ export async function POST(
     const payout = await prisma.affiliatePayout.create({
       data: {
         affiliateId: id,
-        amountDue: amount,
+        amountDue: new Decimal(amount),
         status: status as PayoutStatus,
         paidAt: status === "completed" ? new Date() : null,
         notes: notes || `Manual payout of $${amount}`,
