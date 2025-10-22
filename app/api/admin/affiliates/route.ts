@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { PayoutStatus } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -24,11 +25,7 @@ export async function GET(request: NextRequest) {
     const affiliates = await prisma.affiliate.findMany({
       where: whereClause,
       include: {
-        payouts: {
-          where: {
-            status: "completed",
-          },
-        },
+        payouts: true,
       },
       orderBy: {
         totalCommission: "desc",
