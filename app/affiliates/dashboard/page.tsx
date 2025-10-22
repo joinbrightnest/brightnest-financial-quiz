@@ -72,7 +72,7 @@ export default function AffiliateDashboard() {
 
     // For now, use the affiliate profile API to get basic affiliate data
     try {
-      const response = await fetch("/api/affiliate/profile", {
+      const response = await fetch(`/api/affiliate/profile?_t=${Date.now()}`, {
         headers: {
           "Authorization": `Bearer ${token}`,
         },
@@ -117,7 +117,7 @@ export default function AffiliateDashboard() {
       console.log("Fetching affiliate data for:", affiliateCode);
       
       // Add cache-busting parameter to ensure fresh data
-      const cacheBuster = forceRefresh ? `&_t=${Date.now()}` : '';
+      const cacheBuster = `&_t=${Date.now()}`;
       const response = await fetch(`/api/admin/affiliate-stats?affiliateCode=${affiliateCode}&dateRange=${dateRange}${cacheBuster}`);
 
       if (response.ok) {

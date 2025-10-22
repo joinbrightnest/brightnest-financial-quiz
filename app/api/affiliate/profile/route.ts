@@ -63,6 +63,12 @@ export async function GET(request: NextRequest) {
       isApproved: affiliate.isApproved,
       payoutMethod: affiliate.payoutMethod,
       createdAt: affiliate.createdAt,
+    }, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
     });
   } catch (error) {
     console.error("Affiliate profile error:", error);

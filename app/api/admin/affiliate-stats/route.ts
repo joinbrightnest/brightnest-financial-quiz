@@ -218,7 +218,13 @@ export async function GET(request: NextRequest) {
       }))
     };
 
-    return NextResponse.json(affiliateData);
+    return NextResponse.json(affiliateData, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
 
   } catch (error) {
     console.error("Error fetching affiliate data:", error);
