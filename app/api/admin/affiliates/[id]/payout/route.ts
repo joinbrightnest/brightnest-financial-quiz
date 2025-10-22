@@ -40,12 +40,13 @@ export async function POST(
       );
     }
 
-    // Create payout record with minimal required fields
+    // Create payout record with correct field names
     const payout = await prisma.affiliatePayout.create({
       data: {
         affiliateId: id,
-        amount: amount,
-        status: "completed",
+        amountDue: new Decimal(amount),
+        status: status as PayoutStatus,
+        paidAt: status === "completed" ? new Date() : null,
         notes: notes || `Manual payout of $${amount}`,
       },
     });
