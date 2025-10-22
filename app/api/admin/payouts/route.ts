@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { PayoutStatus } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,63 +13,69 @@ export async function GET(request: NextRequest) {
     // Build where clause
     const whereClause: any = {};
     if (status && status !== "all") {
-      whereClause.status = status as PayoutStatus;
+      whereClause.status = status;
     }
     if (affiliateId) {
       whereClause.affiliateId = affiliateId;
     }
 
-    // Get payouts with affiliate info
-    const [payouts, totalCount] = await Promise.all([
-      prisma.affiliatePayout.findMany({
-        where: whereClause,
-        include: {
-          affiliate: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              referralCode: true,
-            },
-          },
-        },
-        orderBy: { createdAt: "desc" },
-        skip: offset,
-        take: limit,
-      }),
-      prisma.affiliatePayout.count({ where: whereClause }),
-    ]);
+    // Build SQL query conditions
+    let statusCondition = "";
+    let affiliateCondition = "";
+    if (status && status !== "all") {
+      statusCondition = `AND status = '${status}'`;
+    }
+    if (affiliateId) {
+      affiliateCondition = `AND affiliate_id = '${affiliateId}'`;
+    }
 
-    // Calculate summary stats
-    const summaryStats = await prisma.affiliatePayout.aggregate({
-      where: whereClause,
-      _sum: {
-        amountDue: true,
-      },
-      _count: {
-        id: true,
-      },
-    });
+    // Get payouts with affiliate info using raw SQL
+    const payouts = await prisma.$queryRawUnsafe(`
+      SELECT 
+        p.*,
+        a.id as affiliate_id,
+        a.name as affiliate_name,
+        a.email as affiliate_email,
+        a.referral_code as affiliate_referral_code
+      FROM affiliate_payouts p
+      JOIN affiliates a ON p.affiliate_id = a.id
+      WHERE 1=1 ${statusCondition} ${affiliateCondition}
+      ORDER BY p.created_at DESC
+      LIMIT ${limit} OFFSET ${offset}
+    `);
 
-    const completedStats = await prisma.affiliatePayout.aggregate({
-      where: { ...whereClause, status: "completed" },
-      _sum: {
-        amountDue: true,
-      },
-      _count: {
-        id: true,
-      },
-    });
+    // Get total count
+    const totalCountResult = await prisma.$queryRawUnsafe(`
+      SELECT COUNT(*) as count
+      FROM affiliate_payouts p
+      WHERE 1=1 ${statusCondition} ${affiliateCondition}
+    `);
+    const totalCount = Number(totalCountResult[0].count);
 
-    const pendingStats = await prisma.affiliatePayout.aggregate({
-      where: { ...whereClause, status: "pending" },
-      _sum: {
-        amountDue: true,
-      },
-      _count: {
-        id: true,
-      },
-    });
+    // Calculate summary stats using raw SQL
+    const summaryStats = await prisma.$queryRawUnsafe(`
+      SELECT 
+        COALESCE(SUM(amount_due), 0) as total_amount,
+        COUNT(*) as total_count
+      FROM affiliate_payouts p
+      WHERE 1=1 ${statusCondition} ${affiliateCondition}
+    `);
+
+    const completedStats = await prisma.$queryRawUnsafe(`
+      SELECT 
+        COALESCE(SUM(amount_due), 0) as total_amount,
+        COUNT(*) as total_count
+      FROM affiliate_payouts p
+      WHERE 1=1 ${statusCondition} ${affiliateCondition} AND status = 'completed'
+    `);
+
+    const pendingStats = await prisma.$queryRawUnsafe(`
+      SELECT 
+        COALESCE(SUM(amount_due), 0) as total_amount,
+        COUNT(*) as total_count
+      FROM affiliate_payouts p
+      WHERE 1=1 ${statusCondition} ${affiliateCondition} AND status = 'pending'
+    `);
 
     return NextResponse.json({
       success: true,
@@ -83,12 +88,12 @@ export async function GET(request: NextRequest) {
           totalPages: Math.ceil(totalCount / limit),
         },
         summary: {
-          totalAmount: summaryStats._sum.amountDue || 0,
-          totalCount: summaryStats._count.id,
-          completedAmount: completedStats._sum.amountDue || 0,
-          completedCount: completedStats._count.id,
-          pendingAmount: pendingStats._sum.amountDue || 0,
-          pendingCount: pendingStats._count.id,
+          totalAmount: Number(summaryStats[0].total_amount) || 0,
+          totalCount: Number(summaryStats[0].total_count) || 0,
+          completedAmount: Number(completedStats[0].total_amount) || 0,
+          completedCount: Number(completedStats[0].total_count) || 0,
+          pendingAmount: Number(pendingStats[0].total_amount) || 0,
+          pendingCount: Number(pendingStats[0].total_count) || 0,
         },
       },
     });
@@ -138,26 +143,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create payout record
-    const payout = await prisma.affiliatePayout.create({
-      data: {
-        affiliateId,
-        amountDue: amount,
-        status: status as PayoutStatus,
-        paidAt: status === "completed" ? new Date() : null,
-        notes: notes || `Manual payout of $${amount}`,
-      },
-      include: {
-        affiliate: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            referralCode: true,
-          },
-        },
-      },
-    });
+    // Create payout record using raw SQL to avoid enum issues
+    const payout = await prisma.$queryRaw`
+      INSERT INTO affiliate_payouts (id, affiliate_id, amount_due, status, notes, created_at, updated_at, paid_at)
+      VALUES (gen_random_uuid(), ${affiliateId}, ${amount}, ${status}, ${notes || `Manual payout of $${amount}`}, NOW(), NOW(), ${status === "completed" ? "NOW()" : "NULL"})
+      RETURNING *
+    `;
 
     // Update affiliate's total commission (subtract the paid amount)
     const updatedAffiliate = await prisma.affiliate.update({

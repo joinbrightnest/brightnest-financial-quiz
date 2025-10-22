@@ -40,16 +40,12 @@ export async function POST(
       );
     }
 
-    // Create payout record with correct field names
-    const payout = await prisma.affiliatePayout.create({
-      data: {
-        affiliateId: id,
-        amountDue: new Decimal(amount),
-        status: status as PayoutStatus,
-        paidAt: status === "completed" ? new Date() : null,
-        notes: notes || `Manual payout of $${amount}`,
-      },
-    });
+    // Create payout record using raw SQL to avoid enum issues
+    const payout = await prisma.$queryRaw`
+      INSERT INTO affiliate_payouts (id, affiliate_id, amount_due, status, notes, created_at, updated_at)
+      VALUES (gen_random_uuid(), ${id}, ${amount}, 'completed', ${notes || `Manual payout of $${amount}`}, NOW(), NOW())
+      RETURNING *
+    `;
 
     // Update affiliate's total commission (subtract the paid amount)
     const updatedAffiliate = await prisma.affiliate.update({
@@ -68,14 +64,6 @@ export async function POST(
     });
   } catch (error) {
     console.error("Error creating payout:", error);
-    console.error("Error details:", {
-      message: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
-      affiliateId: id,
-      amount,
-      notes,
-      status
-    });
     return NextResponse.json(
       { 
         error: "Failed to create payout",
