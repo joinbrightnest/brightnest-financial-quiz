@@ -287,40 +287,15 @@ export default function CloserDashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
-                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">Welcome back, {closer.name}!</h1>
-                <p className="text-gray-600 mt-1">Manage your appointments and track your performance</p>
-              </div>
+          <div className="flex items-center">
+            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
             </div>
-            <div className="flex items-center space-x-3">
-              <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                This Month
-                <svg className="w-4 h-4 ml-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              <button 
-                onClick={() => {
-                  const token = localStorage.getItem('closerToken');
-                  if (token) {
-                    fetchCloserStats(token);
-                    fetchAppointments(token);
-                  }
-                }}
-                className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center"
-              >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                Refresh Data
-              </button>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Welcome back, {closer.name}!</h1>
+              <p className="text-gray-600 mt-1">Manage your appointments and track your performance</p>
             </div>
           </div>
         </div>
