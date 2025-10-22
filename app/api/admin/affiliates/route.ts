@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
         tier: affiliate.tier,
         totalCommission: Number(affiliate.totalCommission || 0),
         totalPaid,
-        pendingPayouts: 0, // We'll calculate this separately if needed
+        pendingPayouts: 0,
         availableCommission,
         isApproved: affiliate.isApproved,
         createdAt: affiliate.createdAt,
