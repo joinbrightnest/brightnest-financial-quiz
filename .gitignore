@@ -43,3 +43,10 @@ next-env.d.ts
 /app/generated/prisma
 .env
 .env.*
+
+# Prisma
+/prisma/migrations/dev.db*
+/prisma/migrations/dev.db-journal
+/prisma/dev.db
+/prisma/dev.db-journal
+/prisma/migrations/migration_lock.toml
