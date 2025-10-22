@@ -35,7 +35,8 @@ export async function GET(request: NextRequest) {
     // Calculate payout summaries for each affiliate
     const affiliatesWithPayouts = affiliates.map(affiliate => {
       const totalPaid = affiliate.payouts?.reduce((sum, payout) => sum + Number(payout.amountDue), 0) || 0;
-      const availableCommission = Number(affiliate.totalCommission || 0) - totalPaid;
+      // totalCommission is already the current available balance (reduced by payouts)
+      const availableCommission = Number(affiliate.totalCommission || 0);
 
       return {
         id: affiliate.id,
