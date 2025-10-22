@@ -37,8 +37,8 @@ export async function GET(request: NextRequest) {
 
     // Calculate payout summaries for each affiliate
     const affiliatesWithPayouts = affiliates.map(affiliate => {
-      const totalPaid = affiliate.payouts.reduce((sum, payout) => sum + Number(payout.amountDue), 0);
-      const availableCommission = Number(affiliate.totalCommission) - totalPaid;
+      const totalPaid = affiliate.payouts?.reduce((sum, payout) => sum + Number(payout.amountDue), 0) || 0;
+      const availableCommission = Number(affiliate.totalCommission || 0) - totalPaid;
 
       return {
         id: affiliate.id,
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
         email: affiliate.email,
         referralCode: affiliate.referralCode,
         tier: affiliate.tier,
-        totalCommission: Number(affiliate.totalCommission),
+        totalCommission: Number(affiliate.totalCommission || 0),
         totalPaid,
         pendingPayouts: 0, // We'll calculate this separately if needed
         availableCommission,
@@ -64,7 +64,11 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching affiliates:", error);
     return NextResponse.json(
-      { error: "Failed to fetch affiliates" },
+      { 
+        success: false,
+        error: "Failed to fetch affiliates",
+        details: error instanceof Error ? error.message : "Unknown error"
+      },
       { status: 500 }
     );
   }
