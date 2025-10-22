@@ -238,7 +238,7 @@ export default function CloserDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
       {/* Top Bar */}
       <header className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -284,12 +284,12 @@ export default function CloserDashboard() {
                 </svg>
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-white">Welcome back, {closer.name}!</h1>
-                <p className="text-gray-300 mt-1">Manage your appointments and track your performance</p>
+                <h1 className="text-3xl font-bold text-gray-900">Welcome back, {closer.name}!</h1>
+                <p className="text-gray-600 mt-1">Manage your appointments and track your performance</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <button className="bg-gray-800 hover:bg-gray-700 text-gray-200 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+              <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                 This Month
                 <svg className="w-4 h-4 ml-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
