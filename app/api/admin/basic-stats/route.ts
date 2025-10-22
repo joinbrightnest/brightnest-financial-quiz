@@ -252,14 +252,42 @@ export async function GET(request: Request) {
       }
     }
 
-    // Get accurate lead statuses (completed vs booked) using existing function
+    // Get accurate lead statuses (completed vs booked) using contact info from CRM
     const leadIds = allLeads.map(lead => lead.id);
-    const leadStatuses = await getLeadStatuses(leadIds);
+    
+    // Extract emails from the leads data (which comes from CRM contact info)
+    const leadEmails: Record<string, string> = {};
+    allLeads.forEach(lead => {
+      const emailAnswer = lead.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes('email') ||
+        a.question?.type === 'email'
+      );
+      if (emailAnswer?.value) {
+        leadEmails[lead.id] = emailAnswer.value as string;
+      }
+    });
+
+    // Get all appointments for these emails
+    const emails = Object.values(leadEmails);
+    const appointments = await prisma.appointment.findMany({
+      where: { 
+        customerEmail: { in: emails }
+      }
+    });
+
+    // Group appointments by email
+    const appointmentsByEmail = appointments.reduce((acc, appointment) => {
+      acc[appointment.customerEmail] = appointment;
+      return acc;
+    }, {} as Record<string, any>);
 
     // Add source information and update status for each lead
     const leadsWithSource = allLeads.map(lead => {
-      const statusInfo = leadStatuses[lead.id];
-      const status = statusInfo?.label || lead.status;
+      const email = leadEmails[lead.id];
+      const appointment = email ? appointmentsByEmail[email] : null;
+      
+      // Determine status: if appointment exists, show "Booked", otherwise "Completed"
+      const status = appointment ? 'Booked' : 'Completed';
       
       return {
         ...lead,

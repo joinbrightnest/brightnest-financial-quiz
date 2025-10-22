@@ -139,6 +139,7 @@ export async function getLeadStatuses(sessionIds: string[]): Promise<Record<stri
 
 /**
  * Helper function to get email from a quiz session
+ * Uses the contact information that's already available in the CRM
  */
 async function getSessionEmail(sessionId: string): Promise<string | null> {
   try {
@@ -155,13 +156,26 @@ async function getSessionEmail(sessionId: string): Promise<string | null> {
 
     if (!session) return null;
 
-    // Find email answer
+    // First try to find email in quiz answers
     const emailAnswer = session.answers.find(a => 
       a.question?.prompt?.toLowerCase().includes('email') ||
       a.question?.type === 'email'
     );
 
-    return emailAnswer?.value as string || null;
+    if (emailAnswer?.value) {
+      return emailAnswer.value as string;
+    }
+
+    // Fallback: look for any answer that looks like an email
+    for (const answer of session.answers) {
+      if (answer.value && typeof answer.value === 'string' && answer.value.includes('@')) {
+        return answer.value;
+      }
+    }
+
+    // If no email found in answers, return null
+    // The CRM will show the contact info but we can't match it to appointments
+    return null;
   } catch (error) {
     console.error('Error getting session email:', error);
     return null;
