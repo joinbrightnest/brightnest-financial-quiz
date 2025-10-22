@@ -230,42 +230,92 @@ export async function GET(request: NextRequest) {
       createdAt: affiliate.createdAt.toISOString(),
     }));
 
-    // Generate traffic source breakdown
-    const trafficSourceBreakdown = [
-      { source: "YouTube", count: 1250, percentage: 35.2 },
-      { source: "TikTok", count: 980, percentage: 27.6 },
-      { source: "Instagram", count: 750, percentage: 21.1 },
-      { source: "Facebook", count: 420, percentage: 11.8 },
-      { source: "Direct", count: 150, percentage: 4.2 },
-    ];
+    // Calculate real traffic source breakdown from affiliate clicks
+    const allClicks = await prisma.affiliateClick.findMany({
+      where: {
+        createdAt: {
+          gte: startDate,
+        },
+      },
+      include: {
+        affiliate: true,
+      },
+    });
 
-    // Generate conversion funnel by tier
-    const conversionFunnelByTier = [
-      {
-        tier: "creator",
-        clicks: 2000,
-        quizStarts: 134,
-        completed: 89,
-        booked: 35,
-        closed: 18,
-      },
-      {
-        tier: "quiz", 
-        clicks: 1990,
-        quizStarts: 145,
-        completed: 67,
-        booked: 40,
-        closed: 19,
-      },
-      {
-        tier: "agency",
-        clicks: 2100,
-        quizStarts: 156,
-        completed: 156,
-        booked: 45,
-        closed: 28,
-      },
-    ];
+    // Group clicks by source (you may need to add a source field to affiliateClick table)
+    const sourceCounts = allClicks.reduce((acc, click) => {
+      // For now, we'll use affiliate tier as source since there's no source field
+      // You should add a 'source' field to the affiliateClick table for proper tracking
+      const source = click.affiliate?.tier || 'Unknown';
+      acc[source] = (acc[source] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const totalClicks = allClicks.length;
+    const trafficSourceBreakdown = Object.entries(sourceCounts).map(([source, count]) => ({
+      source: source.charAt(0).toUpperCase() + source.slice(1),
+      count,
+      percentage: totalClicks > 0 ? (count / totalClicks) * 100 : 0,
+    })).sort((a, b) => b.count - a.count);
+
+    // Calculate real conversion funnel by tier from actual data
+    const conversionFunnelByTier = await Promise.all(
+      ['quiz', 'creator', 'agency'].map(async (tier) => {
+        // Get affiliates of this tier
+        const tierAffiliates = affiliatesWithData.filter(aff => aff.tier === tier && aff.isApproved);
+        
+        if (tierAffiliates.length === 0) {
+          return {
+            tier,
+            clicks: 0,
+            quizStarts: 0,
+            completed: 0,
+            booked: 0,
+            closed: 0,
+          };
+        }
+
+        // Calculate aggregated metrics for this tier
+        const tierClicks = tierAffiliates.reduce((sum, aff) => {
+          return sum + (aff.clicks?.length || 0);
+        }, 0);
+
+        const tierQuizStarts = tierAffiliates.reduce((sum, aff) => {
+          return sum + (aff.quizSessions?.length || 0);
+        }, 0);
+
+        const tierCompleted = tierAffiliates.reduce((sum, aff) => {
+          const completed = aff.quizSessions?.filter(session => session.status === "completed").length || 0;
+          return sum + completed;
+        }, 0);
+
+        // Get appointments for this tier
+        const tierAppointments = await Promise.all(
+          tierAffiliates.map(async (aff) => {
+            return prisma.appointment.findMany({
+              where: {
+                affiliateCode: aff.referralCode,
+                createdAt: {
+                  gte: startDate,
+                },
+              },
+            });
+          })
+        );
+
+        const tierBooked = tierAppointments.flat().length;
+        const tierClosed = tierAppointments.flat().filter(apt => apt.outcome === CallOutcome.converted).length;
+
+        return {
+          tier,
+          clicks: tierClicks,
+          quizStarts: tierQuizStarts,
+          completed: tierCompleted,
+          booked: tierBooked,
+          closed: tierClosed,
+        };
+      })
+    );
 
     const affiliateData = {
       totalActiveAffiliates,
