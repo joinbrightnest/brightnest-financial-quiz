@@ -60,21 +60,6 @@ export async function POST(
       },
     });
 
-    // Create audit log
-    await prisma.affiliateAuditLog.create({
-      data: {
-        affiliateId: id,
-        action: "COMMISSION_PAID",
-        details: {
-          amount: amount,
-          payoutId: payout.id,
-          previousCommission: affiliate.totalCommission,
-          newCommission: updatedAffiliate.totalCommission,
-          notes: notes,
-        },
-      },
-    });
-
     return NextResponse.json({
       success: true,
       payout,
@@ -82,8 +67,19 @@ export async function POST(
     });
   } catch (error) {
     console.error("Error creating payout:", error);
+    console.error("Error details:", {
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+      affiliateId: id,
+      amount,
+      notes,
+      status
+    });
     return NextResponse.json(
-      { error: "Failed to create payout" },
+      { 
+        error: "Failed to create payout",
+        details: error instanceof Error ? error.message : "Unknown error"
+      },
       { status: 500 }
     );
   }
