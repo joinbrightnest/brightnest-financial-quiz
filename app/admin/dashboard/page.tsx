@@ -97,13 +97,8 @@ export default function AdminDashboard() {
   const [selectedQuizType, setSelectedQuizType] = useState<string>('financial-profile');
   const [showQuickLinks, setShowQuickLinks] = useState(false);
   const [showResetDropdown, setShowResetDropdown] = useState(false);
-  const [showCEOAnalytics, setShowCEOAnalytics] = useState(false);
-  const [showMainDashboard, setShowMainDashboard] = useState(true);
-  const [showCloserManagement, setShowCloserManagement] = useState(false);
-  const [showPayoutManager, setShowPayoutManager] = useState(false);
-  const [showPipeline, setShowPipeline] = useState(false);
+  const [activeSection, setActiveSection] = useState<'dashboard' | 'ceo-analytics' | 'closer-management' | 'payout-manager' | 'pipeline' | 'settings'>('dashboard');
   const [pipelineView, setPipelineView] = useState<'kanban' | 'appointments'>('kanban');
-  const [showSettings, setShowSettings] = useState(false);
   const [qualificationThreshold, setQualificationThreshold] = useState(17);
   const [isUpdatingThreshold, setIsUpdatingThreshold] = useState(false);
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -276,10 +271,10 @@ export default function AdminDashboard() {
   }, [fetchStats]);
 
   useEffect(() => {
-    if (showPipeline) {
+    if (activeSection === 'pipeline') {
       fetchAppointments();
     }
-  }, [showPipeline]);
+  }, [activeSection]);
 
   // Handle page visibility and focus changes to prevent unnecessary re-fetching
   useEffect(() => {
@@ -493,20 +488,14 @@ export default function AdminDashboard() {
               Analytics
             </div>
             <button 
-              onClick={() => {
-                setShowMainDashboard(true);
-                setShowCEOAnalytics(false);
-                setShowCloserManagement(false);
-                setShowPipeline(false);
-                setShowSettings(false);
-              }}
+              onClick={() => setActiveSection('dashboard')}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
-                showMainDashboard 
+                activeSection === 'dashboard'
                   ? 'text-blue-700 bg-blue-50 border-r-2 border-blue-600' 
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <svg className={`w-5 h-5 group-hover:text-gray-600 ${showMainDashboard ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`w-5 h-5 group-hover:text-gray-600 ${activeSection === 'dashboard' ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
               <span className="text-sm font-medium">Dashboard</span>
@@ -521,20 +510,14 @@ export default function AdminDashboard() {
               <span className="text-sm font-medium">Quiz Management</span>
             </button>
             <button
-              onClick={() => {
-                setShowCEOAnalytics(true);
-                setShowMainDashboard(false);
-                setShowCloserManagement(false);
-                setShowPipeline(false);
-                setShowSettings(false);
-              }}
+              onClick={() => setActiveSection('ceo-analytics')}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
-                showCEOAnalytics 
+                activeSection === 'ceo-analytics'
                   ? 'text-blue-700 bg-blue-50 border-r-2 border-blue-600' 
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <svg className={`w-5 h-5 group-hover:text-gray-600 ${showCEOAnalytics ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`w-5 h-5 group-hover:text-gray-600 ${activeSection === 'ceo-analytics' ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
               <span className="text-sm font-medium">Affiliate Analytics</span>
@@ -546,60 +529,40 @@ export default function AdminDashboard() {
               Management
             </div>
             <button
-              onClick={() => {
-                setShowCloserManagement(true);
-                setShowMainDashboard(false);
-                setShowCEOAnalytics(false);
-                setShowPipeline(false);
-                setShowSettings(false);
-              }}
+              onClick={() => setActiveSection('closer-management')}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
-                showCloserManagement 
+                activeSection === 'closer-management'
                   ? 'text-blue-700 bg-blue-50 border-r-2 border-blue-600' 
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <svg className={`w-5 h-5 group-hover:text-gray-600 ${showCloserManagement ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`w-5 h-5 group-hover:text-gray-600 ${activeSection === 'closer-management' ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
               <span className="text-sm font-medium">Closer Management</span>
             </button>
             <button
-              onClick={() => {
-                setShowPayoutManager(true);
-                setShowMainDashboard(false);
-                setShowCEOAnalytics(false);
-                setShowCloserManagement(false);
-                setShowPipeline(false);
-                setShowSettings(false);
-              }}
+              onClick={() => setActiveSection('payout-manager')}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
-                showPayoutManager 
+                activeSection === 'payout-manager'
                   ? 'text-blue-700 bg-blue-50 border-r-2 border-blue-600' 
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <svg className={`w-5 h-5 group-hover:text-gray-600 ${showPayoutManager ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`w-5 h-5 group-hover:text-gray-600 ${activeSection === 'payout-manager' ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
               </svg>
               <span className="text-sm font-medium">Commission Payouts</span>
             </button>
             <button
-              onClick={() => {
-                setShowSettings(true);
-                setShowMainDashboard(false);
-                setShowCEOAnalytics(false);
-                setShowCloserManagement(false);
-                setShowPayoutManager(false);
-                setShowPipeline(false);
-              }}
+              onClick={() => setActiveSection('settings')}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
-                showSettings 
+                activeSection === 'settings'
                   ? 'text-blue-700 bg-blue-50 border-r-2 border-blue-600' 
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
             >
-              <svg className={`w-5 h-5 group-hover:text-gray-600 ${showSettings ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`w-5 h-5 group-hover:text-gray-600 ${activeSection === 'settings' ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
@@ -877,28 +840,28 @@ export default function AdminDashboard() {
           </div>
 
           {/* CEO Analytics Section */}
-          {showCEOAnalytics && (
+          {activeSection === 'ceo-analytics' && (
             <div className="mb-8">
               <CEOAnalytics />
             </div>
           )}
 
           {/* Closer Management Section */}
-          {showCloserManagement && (
+          {activeSection === 'closer-management' && (
             <div className="mb-8">
               <CloserManagement />
             </div>
           )}
 
           {/* Commission Payout Manager Section */}
-          {showPayoutManager && (
+          {activeSection === 'payout-manager' && (
             <div className="mb-8">
               <CommissionPayoutManager />
             </div>
           )}
 
           {/* Pipeline Management Section */}
-          {showPipeline && (
+          {activeSection === 'pipeline' && (
             <div className="mb-8">
               <div className="bg-white rounded-lg shadow-sm border border-gray-200">
                 {/* Pipeline Header */}
