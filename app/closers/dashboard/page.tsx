@@ -43,6 +43,7 @@ export default function CloserDashboard() {
   const [error, setError] = useState('');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [showOutcomeModal, setShowOutcomeModal] = useState(false);
+  const [showAllAppointments, setShowAllAppointments] = useState(false);
   const [outcomeData, setOutcomeData] = useState({
     outcome: '',
     notes: '',
@@ -163,6 +164,16 @@ export default function CloserDashboard() {
       recordingLink: existingRecordingLink || ''
     });
     setShowOutcomeModal(true);
+  };
+
+  const getDisplayedAppointments = () => {
+    // Sort appointments by scheduled date (newest first)
+    const sortedAppointments = [...appointments].sort((a, b) => 
+      new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime()
+    );
+    
+    // Return latest 6 if not showing all, otherwise return all
+    return showAllAppointments ? sortedAppointments : sortedAppointments.slice(0, 6);
   };
 
   const formatDate = (dateString: string) => {
@@ -385,8 +396,26 @@ export default function CloserDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-xl font-bold text-gray-900">Your Appointments</h3>
-                <p className="text-gray-600 mt-1">Manage your scheduled calls and update outcomes</p>
+                <p className="text-gray-600 mt-1">
+                  {showAllAppointments ? `Showing all ${appointments.length} appointments` : `Showing latest 6 of ${appointments.length} appointments`}
+                </p>
               </div>
+              {appointments.length > 6 && (
+                <button
+                  onClick={() => setShowAllAppointments(!showAllAppointments)}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
+                >
+                  <span>{showAllAppointments ? 'Show Less' : 'Show All'}</span>
+                  <svg 
+                    className={`w-4 h-4 transition-transform ${showAllAppointments ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              )}
             </div>
           </div>
           <div className="overflow-x-auto">
@@ -428,7 +457,7 @@ export default function CloserDashboard() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-100">
-                  {appointments.map((appointment) => (
+                  {getDisplayedAppointments().map((appointment) => (
                     <tr key={appointment.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
