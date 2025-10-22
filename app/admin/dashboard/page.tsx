@@ -1462,7 +1462,7 @@ export default function AdminDashboard() {
           )}
 
           {/* Settings Section */}
-          {showSettings && (
+          {activeSection === 'settings' && (
             <div className="mb-8">
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h2 className="text-xl font-semibold text-gray-900 mb-6">Quiz Settings</h2>
@@ -1518,7 +1518,7 @@ export default function AdminDashboard() {
           )}
 
           {/* Main Dashboard Content */}
-          {showMainDashboard && (
+          {activeSection === 'dashboard' && (
             <>
               {/* Stats Cards */}
               {isLoading && !hasInitiallyLoaded.current ? (
