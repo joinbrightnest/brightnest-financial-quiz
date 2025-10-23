@@ -18,9 +18,13 @@ export async function POST(request: NextRequest) {
     cutoffDate.setDate(cutoffDate.getDate() - holdDays);
     
     // Find all conversions that should be released from hold
+    // ONLY include conversions with actual commission amounts > 0
     const conversionsToRelease = await prisma.affiliateConversion.findMany({
       where: {
         commissionStatus: 'held',
+        commissionAmount: {
+          gt: 0 // Only conversions with actual commission amounts
+        },
         createdAt: {
           lte: cutoffDate
         }
@@ -126,9 +130,13 @@ export async function GET() {
     }
     
     // Count commissions ready for release
+    // ONLY include conversions with actual commission amounts > 0
     const readyForRelease = await prisma.affiliateConversion.count({
       where: {
         commissionStatus: 'held',
+        commissionAmount: {
+          gt: 0 // Only conversions with actual commission amounts
+        },
         createdAt: {
           lte: cutoffDate
         }
@@ -136,23 +144,35 @@ export async function GET() {
     });
     
     // Count total held commissions
+    // ONLY include conversions with actual commission amounts > 0
     const totalHeld = await prisma.affiliateConversion.count({
       where: {
-        commissionStatus: 'held'
+        commissionStatus: 'held',
+        commissionAmount: {
+          gt: 0 // Only conversions with actual commission amounts
+        }
       }
     });
     
     // Count total available commissions
+    // ONLY include conversions with actual commission amounts > 0
     const totalAvailable = await prisma.affiliateConversion.count({
       where: {
-        commissionStatus: 'available'
+        commissionStatus: 'available',
+        commissionAmount: {
+          gt: 0 // Only conversions with actual commission amounts
+        }
       }
     });
     
     // Calculate total amounts
+    // ONLY include conversions with actual commission amounts > 0
     const heldAmount = await prisma.affiliateConversion.aggregate({
       where: {
-        commissionStatus: 'held'
+        commissionStatus: 'held',
+        commissionAmount: {
+          gt: 0 // Only conversions with actual commission amounts
+        }
       },
       _sum: {
         commissionAmount: true
@@ -161,7 +181,10 @@ export async function GET() {
     
     const availableAmount = await prisma.affiliateConversion.aggregate({
       where: {
-        commissionStatus: 'available'
+        commissionStatus: 'available',
+        commissionAmount: {
+          gt: 0 // Only conversions with actual commission amounts
+        }
       },
       _sum: {
         commissionAmount: true

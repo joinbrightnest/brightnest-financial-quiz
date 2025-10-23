@@ -26,9 +26,13 @@ export async function GET(request: NextRequest) {
     console.log(`⏰ Hold period: ${commissionHoldDays} days`);
 
     // Find commissions ready for release
+    // ONLY include conversions with actual commission amounts > 0
     const readyCommissions = await prisma.affiliateConversion.findMany({
       where: {
         commissionStatus: 'held',
+        commissionAmount: {
+          gt: 0 // Only conversions with actual commission amounts
+        },
         holdUntil: {
           lte: cutoffDate
         }

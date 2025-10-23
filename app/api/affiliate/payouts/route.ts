@@ -66,21 +66,24 @@ export async function GET(request: NextRequest) {
     let heldCommissions: any[], availableCommissions: any[], heldAmount: number, availableAmount: number;
     
     if (hasCommissionStatusField) {
-      // New system: filter by commission status
-      heldCommissions = affiliate.conversions.filter(c => c.commissionStatus === 'held');
+      // New system: filter by commission status AND only include actual commissions
+      heldCommissions = affiliate.conversions.filter(c => 
+        c.commissionStatus === 'held' && Number(c.commissionAmount) > 0
+      );
       availableCommissions = affiliate.conversions.filter(c => 
-        c.commissionStatus === 'available' || 
-        c.commissionStatus === null || 
-        c.commissionStatus === undefined
+        (c.commissionStatus === 'available' || 
+         c.commissionStatus === null || 
+         c.commissionStatus === undefined) &&
+        Number(c.commissionAmount) > 0
       );
       heldAmount = heldCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
       availableAmount = availableCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
     } else {
-      // Legacy system: treat all conversions as available
+      // Legacy system: treat all conversions as available, but only include actual commissions
       heldCommissions = [];
-      availableCommissions = affiliate.conversions;
+      availableCommissions = affiliate.conversions.filter(c => Number(c.commissionAmount) > 0);
       heldAmount = 0;
-      availableAmount = affiliate.conversions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
+      availableAmount = availableCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
     }
     
     // Calculate total paid and earned first
