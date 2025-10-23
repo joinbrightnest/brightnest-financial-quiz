@@ -1707,7 +1707,7 @@ export default function AdminDashboard() {
                     <div className="border border-gray-200 rounded-lg p-4">
                       <h3 className="text-lg font-medium text-gray-900 mb-3">Commission Release Management</h3>
                       <p className="text-gray-600 mb-4">
-                        Process commissions that are ready to be released from hold based on the current hold period.
+                        Commissions are automatically released after the hold period expires. Manual release is available for immediate processing.
                       </p>
                       
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
