@@ -148,7 +148,7 @@ export default function AffiliatePayoutsPage() {
     }
 
     try {
-      const response = await fetch("/api/affiliate/payouts", {
+      const response = await fetch("/api/affiliate/payouts-simple", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -323,8 +323,8 @@ export default function AffiliatePayoutsPage() {
                     ${payoutData?.summary.availableCommission.toLocaleString() || "0"}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">Ready for payout</p>
-                </div>
-              </div>
+            </div>
+          </div>
               
               <div className="bg-orange-50/30 border border-orange-200 rounded-lg p-3 sm:p-6 hover:border-orange-300 hover:bg-orange-50/50 transition-all">
                 <div className="flex items-center justify-between mb-2 sm:mb-4">

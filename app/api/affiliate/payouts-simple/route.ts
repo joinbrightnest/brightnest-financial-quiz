@@ -49,6 +49,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Get commission hold period from settings
+    const settingsResult = await prisma.$queryRaw`
+      SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
+    ` as any[];
+    
+    const holdDays = settingsResult.length > 0 ? parseInt(settingsResult[0].value) : 30;
+
     // Calculate payout summary (simple version)
     const totalPaid = affiliate.payouts
       .filter(p => p.status === "completed")
@@ -91,13 +98,13 @@ export async function GET(request: NextRequest) {
           pendingPayouts,
           availableCommission,
           heldCommission: 0,
-          holdDays: 30,
+          holdDays,
         },
         commissionHoldInfo: {
           heldCommissions: [],
           totalHeldAmount: 0,
           totalAvailableAmount: availableCommission,
-          holdDays: 30,
+          holdDays,
           readyForRelease: 0,
           existingCommissions: 0,
         }
