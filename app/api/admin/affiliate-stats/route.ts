@@ -268,7 +268,26 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
   startOfWeek.setDate(now.getDate() - daysToMonday);
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   
-  // Fetch appointments data for the correct date range (will be calculated below)
+  // Fetch appointments data for the correct date range
+  const allAppointments = await prisma.appointment.findMany({
+    where: {
+      affiliateCode: affiliateCode,
+      updatedAt: {
+        gte: dateRange === "today" ? today : 
+             dateRange === "yesterday" ? yesterday :
+             dateRange === "week" ? startOfWeek :
+             dateRange === "month" ? startOfMonth :
+             new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000), // all time
+        lte: now,
+      },
+    },
+  }).catch((error) => {
+    console.error('Error fetching appointments:', error);
+    return [];
+  });
+
+  // Filter for converted appointments
+  const convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
 
   // Fetch all leads data once for the entire date range to optimize performance
   // Use the same date range as the total leads calculation for consistency
