@@ -200,9 +200,11 @@ export default function AdminDashboard() {
     try {
       const response = await fetch('/api/admin/settings');
       const data = await response.json();
+      console.log('Settings API response:', data); // Debug log
       if (data.success && data.settings) {
         setQualificationThreshold(data.settings.qualificationThreshold || 17);
         setCommissionHoldDays(data.settings.commissionHoldDays || 30);
+        console.log('Commission hold days set to:', data.settings.commissionHoldDays); // Debug log
       }
     } catch (error) {
       console.error('Error fetching settings:', error);
@@ -1027,7 +1029,7 @@ export default function AdminDashboard() {
                                     <div className="flex items-center space-x-2">
                                       <div className="h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center">
                                         <span className="text-xs font-medium text-indigo-600">
-                                          {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                          {appointment.customerName.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
                                         </span>
                                       </div>
                                       <span className="text-xs text-gray-600">{appointment.customerPhone || 'No phone'}</span>
@@ -1089,7 +1091,7 @@ export default function AdminDashboard() {
                                     <div className="flex items-center space-x-2">
                                       <div className="h-6 w-6 rounded-full bg-green-100 flex items-center justify-center">
                                         <span className="text-xs font-medium text-green-600">
-                                          {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                          {appointment.customerName.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
                                         </span>
                                       </div>
                                       <span className="text-xs text-gray-600">{appointment.customerPhone}</span>
@@ -1151,7 +1153,7 @@ export default function AdminDashboard() {
                                     <div className="flex items-center space-x-2">
                                       <div className="h-6 w-6 rounded-full bg-yellow-100 flex items-center justify-center">
                                         <span className="text-xs font-medium text-yellow-600">
-                                          {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                          {appointment.customerName.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
                                         </span>
                                       </div>
                                       <span className="text-xs text-gray-600">{appointment.customerPhone}</span>
@@ -1213,7 +1215,7 @@ export default function AdminDashboard() {
                                     <div className="flex items-center space-x-2">
                                       <div className="h-6 w-6 rounded-full bg-purple-100 flex items-center justify-center">
                                         <span className="text-xs font-medium text-purple-600">
-                                          {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                          {appointment.customerName.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
                                         </span>
                                       </div>
                                       <span className="text-xs text-gray-600">{appointment.customerPhone}</span>
@@ -1275,7 +1277,7 @@ export default function AdminDashboard() {
                                     <div className="flex items-center space-x-2">
                                       <div className="h-6 w-6 rounded-full bg-emerald-100 flex items-center justify-center">
                                         <span className="text-xs font-medium text-emerald-600">
-                                          {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                          {appointment.customerName.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
                                         </span>
                                       </div>
                                       <span className="text-xs text-gray-600">{appointment.customerPhone}</span>
@@ -1337,7 +1339,7 @@ export default function AdminDashboard() {
                                     <div className="flex items-center space-x-2">
                                       <div className="h-6 w-6 rounded-full bg-red-100 flex items-center justify-center">
                                         <span className="text-xs font-medium text-red-600">
-                                          {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                          {appointment.customerName.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
                                         </span>
                                       </div>
                                       <span className="text-xs text-gray-600">{appointment.customerPhone}</span>
@@ -1399,7 +1401,7 @@ export default function AdminDashboard() {
                                     <div className="flex items-center space-x-2">
                                       <div className="h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center">
                                         <span className="text-xs font-medium text-gray-600">
-                                          {appointment.customerName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                          {appointment.customerName.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
                                         </span>
                                       </div>
                                       <span className="text-xs text-gray-600">{appointment.customerPhone}</span>
