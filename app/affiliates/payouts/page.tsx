@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import AffiliateHeader from "../components/AffiliateHeader";
-import EarningsTrendChart from "@/components/EarningsTrendChart";
 
 interface AffiliateData {
   id: string;
@@ -48,10 +47,6 @@ interface PayoutData {
     pendingPayouts: number;
     availableCommission: number;
   };
-  monthlyEarnings: Array<{
-    month: string;
-    earnings: number;
-  }>;
 }
 
 export default function AffiliatePayoutsPage() {
@@ -240,33 +235,122 @@ export default function AffiliatePayoutsPage() {
               </div>
               Earnings Summary
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200/50 hover:shadow-md transition-all duration-200">
-                <div className="text-3xl font-bold text-blue-600 mb-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl border border-blue-200/50 hover:shadow-lg transition-all duration-300 group">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-blue-500 rounded-lg group-hover:scale-110 transition-transform duration-200">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                    </svg>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs text-blue-600 font-medium uppercase tracking-wide">Total</div>
+                    <div className="text-xs text-blue-500">All Time</div>
+                  </div>
+                </div>
+                <div className="text-4xl font-bold text-blue-600 mb-2">
                   ${payoutData?.summary.totalEarned.toLocaleString() || "0"}
                 </div>
                 <div className="text-sm font-medium text-blue-700">Total Earned</div>
+                <div className="mt-3 text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full inline-block">
+                  Lifetime earnings
+                </div>
               </div>
-              <div className="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border border-green-200/50 hover:shadow-md transition-all duration-200">
-                <div className="text-3xl font-bold text-green-600 mb-2">
+              
+              <div className="bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-xl border border-green-200/50 hover:shadow-lg transition-all duration-300 group">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-green-500 rounded-lg group-hover:scale-110 transition-transform duration-200">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs text-green-600 font-medium uppercase tracking-wide">Paid</div>
+                    <div className="text-xs text-green-500">Completed</div>
+                  </div>
+                </div>
+                <div className="text-4xl font-bold text-green-600 mb-2">
                   ${payoutData?.summary.totalPaid.toLocaleString() || "0"}
                 </div>
                 <div className="text-sm font-medium text-green-700">Paid Out</div>
+                <div className="mt-3 text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full inline-block">
+                  Successfully paid
+                </div>
               </div>
-              <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-xl border border-yellow-200/50 hover:shadow-md transition-all duration-200">
-                <div className="text-3xl font-bold text-yellow-600 mb-2">
+              
+              <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-8 rounded-xl border border-yellow-200/50 hover:shadow-lg transition-all duration-300 group">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-yellow-500 rounded-lg group-hover:scale-110 transition-transform duration-200">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs text-yellow-600 font-medium uppercase tracking-wide">Pending</div>
+                    <div className="text-xs text-yellow-500">Awaiting</div>
+                  </div>
+                </div>
+                <div className="text-4xl font-bold text-yellow-600 mb-2">
                   ${payoutData?.summary.pendingPayouts.toLocaleString() || "0"}
                 </div>
                 <div className="text-sm font-medium text-yellow-700">Pending</div>
+                <div className="mt-3 text-xs text-yellow-600 bg-yellow-100 px-2 py-1 rounded-full inline-block">
+                  Processing
+                </div>
               </div>
             </div>
             
-            {/* Earnings Trend Chart */}
-            <div className="bg-gradient-to-r from-gray-50 to-white border border-gray-200/50 rounded-xl p-6">
-              <EarningsTrendChart 
-                monthlyEarnings={payoutData?.monthlyEarnings || []} 
-                loading={loading}
-              />
+            {/* Additional Stats Row */}
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-200/50">
+                <div className="flex items-center space-x-3 mb-3">
+                  <div className="p-2 bg-indigo-500 rounded-lg">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-800">Performance</h3>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Conversion Rate</span>
+                    <span className="text-sm font-semibold text-indigo-600">12.5%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Avg. per Sale</span>
+                    <span className="text-sm font-semibold text-indigo-600">$45.20</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Best Month</span>
+                    <span className="text-sm font-semibold text-indigo-600">Oct 2024</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-r from-emerald-50 to-teal-50 p-6 rounded-xl border border-emerald-200/50">
+                <div className="flex items-center space-x-3 mb-3">
+                  <div className="p-2 bg-emerald-500 rounded-lg">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-800">Quick Stats</h3>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Total Referrals</span>
+                    <span className="text-sm font-semibold text-emerald-600">247</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Active Links</span>
+                    <span className="text-sm font-semibold text-emerald-600">3</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">Commission Rate</span>
+                    <span className="text-sm font-semibold text-emerald-600">10%</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </motion.div>
 
