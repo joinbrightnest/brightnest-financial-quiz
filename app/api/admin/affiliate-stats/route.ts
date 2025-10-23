@@ -116,7 +116,7 @@ export async function GET(request: NextRequest) {
       },
     }).catch(() => []);
     
-    const dateFilteredCommission = dateFilteredAppointments.reduce((sum, apt) => {
+    const appointmentBasedCommission = dateFilteredAppointments.reduce((sum, apt) => {
       const saleValue = Number(apt.saleValue || 0);
       return sum + (saleValue * Number(affiliate.commissionRate));
     }, 0);
@@ -128,7 +128,7 @@ export async function GET(request: NextRequest) {
       affiliateCode,
       dateRange,
       storedCommission: Number(affiliate.totalCommission || 0),
-      dateFilteredCommission,
+      appointmentBasedCommission,
       appointmentsFound: dateFilteredAppointments.length,
       appointments: dateFilteredAppointments.map(apt => ({
         id: apt.id,
