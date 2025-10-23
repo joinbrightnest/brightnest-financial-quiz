@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import AffiliateHeader from "../components/AffiliateHeader";
 
+// Prevent prerendering since this page requires authentication
+export const dynamic = 'force-dynamic';
+
 interface AffiliateData {
   id: string;
   name: string;
@@ -156,7 +159,7 @@ export default function AffiliateProfilePage() {
                   </label>
                   <input
                     type="text"
-                    value={formData.name}
+                    value={formData.name || ""}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black bg-white/50 backdrop-blur-sm transition-all duration-200"
                     placeholder="Enter your full name"
@@ -169,7 +172,7 @@ export default function AffiliateProfilePage() {
                   </label>
                   <input
                     type="email"
-                    value={formData.email}
+                    value={formData.email || ""}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black bg-white/50 backdrop-blur-sm transition-all duration-200"
                     placeholder="Enter your email"
