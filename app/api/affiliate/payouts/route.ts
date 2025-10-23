@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
+    console.log("Affiliate payouts API called");
     const authHeader = request.headers.get("authorization");
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return NextResponse.json(
@@ -30,6 +31,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get affiliate with payouts and conversions
+    console.log("Fetching affiliate:", decoded.affiliateId);
     const affiliate = await prisma.affiliate.findUnique({
       where: { id: decoded.affiliateId },
       include: {
@@ -41,6 +43,7 @@ export async function GET(request: NextRequest) {
         },
       },
     });
+    console.log("Affiliate found:", !!affiliate);
 
     if (!affiliate) {
       return NextResponse.json(
