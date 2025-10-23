@@ -274,7 +274,7 @@ export default function AffiliatePayoutsPage() {
               </div>
               Earnings Summary
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <div className="bg-blue-50/30 border border-blue-200 rounded-lg p-3 sm:p-6 hover:border-blue-300 hover:bg-blue-50/50 transition-all">
                 <div className="flex items-center justify-between mb-2 sm:mb-4">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-lg flex items-center justify-center">
