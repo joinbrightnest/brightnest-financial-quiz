@@ -29,11 +29,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get affiliate with payouts
+    // Get affiliate with payouts and conversions
     const affiliate = await prisma.affiliate.findUnique({
       where: { id: decoded.affiliateId },
       include: {
         payouts: {
+          orderBy: { createdAt: "desc" },
+        },
+        conversions: {
           orderBy: { createdAt: "desc" },
         },
       },
@@ -45,6 +48,37 @@ export async function GET(request: NextRequest) {
         { status: 404 }
       );
     }
+
+    // Get commission hold period from settings
+    const settingsResult = await prisma.$queryRaw`
+      SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
+    ` as any[];
+    
+    const holdDays = settingsResult.length > 0 ? parseInt(settingsResult[0].value) : 30;
+
+    // Calculate commission hold information
+    const heldCommissions = affiliate.conversions.filter(c => c.commissionStatus === 'held');
+    const availableCommissions = affiliate.conversions.filter(c => c.commissionStatus === 'available');
+    
+    const heldAmount = heldCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
+    const availableAmount = availableCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
+    
+    // Calculate days until release for held commissions
+    const commissionsWithHoldInfo = heldCommissions.map(conversion => {
+      const holdUntil = new Date(conversion.createdAt);
+      holdUntil.setDate(holdUntil.getDate() + holdDays);
+      const now = new Date();
+      const daysLeft = Math.max(0, Math.ceil((holdUntil.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+      
+      return {
+        id: conversion.id,
+        amount: Number(conversion.commissionAmount),
+        createdAt: conversion.createdAt,
+        holdUntil: holdUntil.toISOString(),
+        daysLeft,
+        isReadyForRelease: daysLeft === 0
+      };
+    });
 
     // Calculate payout summary
     const totalPaid = affiliate.payouts
@@ -83,7 +117,16 @@ export async function GET(request: NextRequest) {
           totalEarned,
           totalPaid,
           pendingPayouts,
-          availableCommission: Number(affiliate.totalCommission || 0),
+          availableCommission: availableAmount,
+          heldCommission: heldAmount,
+          holdDays,
+        },
+        commissionHoldInfo: {
+          heldCommissions: commissionsWithHoldInfo,
+          totalHeldAmount: heldAmount,
+          totalAvailableAmount: availableAmount,
+          holdDays,
+          readyForRelease: commissionsWithHoldInfo.filter(c => c.isReadyForRelease).length,
         }
       }
     }, {
