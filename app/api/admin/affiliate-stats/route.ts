@@ -117,7 +117,8 @@ export async function GET(request: NextRequest) {
     const totalCommission = appointmentBasedCommission;
     
     // Generate daily stats from real data using centralized lead calculation
-    const dailyStats = await generateDailyStatsFromRealData(clicks, conversions, dateRange, affiliateCode);
+    // Pass the same appointment data to ensure consistency between card and graph
+    const dailyStats = await generateDailyStatsFromRealData(clicks, conversions, dateRange, affiliateCode, dateFilteredAppointments);
     
     console.log("Admin API Commission Debug:", {
       affiliateCode,
@@ -244,7 +245,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-async function generateDailyStatsFromRealData(clicks: any[], conversions: any[], dateRange: string, affiliateCode: string) {
+async function generateDailyStatsFromRealData(clicks: any[], conversions: any[], dateRange: string, affiliateCode: string, cardAppointments?: any[]) {
   const stats = [];
   
   // Get affiliate info for commission rate
@@ -267,26 +268,35 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
   startOfWeek.setDate(now.getDate() - daysToMonday);
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   
-  // Fetch appointments data for the correct date range
-  const allAppointments = await prisma.appointment.findMany({
-    where: {
-      affiliateCode: affiliateCode,
-      updatedAt: {
-        gte: dateRange === "today" ? today : 
-             dateRange === "yesterday" ? yesterday :
-             dateRange === "week" ? startOfWeek :
-             dateRange === "month" ? startOfMonth :
-             new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000), // all time
-        lte: now,
+  // Use appointments passed from card calculation, or fetch if not provided
+  let allAppointments, convertedAppointments;
+  
+  if (cardAppointments) {
+    // Use the same appointments data as the card for consistency
+    allAppointments = cardAppointments;
+    convertedAppointments = cardAppointments.filter(apt => apt.outcome === 'converted');
+  } else {
+    // Fallback: fetch appointments data for the correct date range
+    allAppointments = await prisma.appointment.findMany({
+      where: {
+        affiliateCode: affiliateCode,
+        updatedAt: {
+          gte: dateRange === "today" ? today : 
+               dateRange === "yesterday" ? yesterday :
+               dateRange === "week" ? startOfWeek :
+               dateRange === "month" ? startOfMonth :
+               new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000), // all time
+          lte: now,
+        },
       },
-    },
-  }).catch((error) => {
-    console.error('Error fetching appointments:', error);
-    return [];
-  });
+    }).catch((error) => {
+      console.error('Error fetching appointments:', error);
+      return [];
+    });
 
-  // Filter for converted appointments
-  const convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
+    // Filter for converted appointments
+    convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
+  }
 
   // Fetch all leads data once for the entire date range to optimize performance
   // Use the same date range as the total leads calculation for consistency
@@ -421,23 +431,7 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     }
 
-    // Fetch all appointments for the entire date range at once for better performance
-    const rangeEnd = new Date(startDate.getTime() + days * 24 * 60 * 60 * 1000);
-    const allAppointments = await prisma.appointment.findMany({
-      where: {
-        affiliateCode: affiliateCode,
-        updatedAt: {
-          gte: startDate,
-          lte: rangeEnd,
-        },
-      },
-    }).catch((error) => {
-      console.error('Error fetching appointments:', error);
-      return [];
-    });
-
-    // Filter for converted appointments
-    const convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
+    // Use the appointments already fetched above (passed from card calculation)
 
     for (let i = 0; i < days; i++) {
       const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
