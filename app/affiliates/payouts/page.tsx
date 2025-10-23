@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import AffiliateHeader from "../components/AffiliateHeader";
+import EarningsTrendChart from "@/components/EarningsTrendChart";
 
 interface AffiliateData {
   id: string;
@@ -47,6 +48,10 @@ interface PayoutData {
     pendingPayouts: number;
     availableCommission: number;
   };
+  monthlyEarnings: Array<{
+    month: string;
+    earnings: number;
+  }>;
 }
 
 export default function AffiliatePayoutsPage() {
@@ -235,7 +240,7 @@ export default function AffiliatePayoutsPage() {
               </div>
               Earnings Summary
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200/50 hover:shadow-md transition-all duration-200">
                 <div className="text-3xl font-bold text-blue-600 mb-2">
                   ${payoutData?.summary.totalEarned.toLocaleString() || "0"}
@@ -254,6 +259,14 @@ export default function AffiliatePayoutsPage() {
                 </div>
                 <div className="text-sm font-medium text-yellow-700">Pending</div>
               </div>
+            </div>
+            
+            {/* Earnings Trend Chart */}
+            <div className="bg-gradient-to-r from-gray-50 to-white border border-gray-200/50 rounded-xl p-6">
+              <EarningsTrendChart 
+                monthlyEarnings={payoutData?.monthlyEarnings || []} 
+                loading={loading}
+              />
             </div>
           </motion.div>
 
