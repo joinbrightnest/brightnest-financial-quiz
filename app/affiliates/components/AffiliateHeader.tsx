@@ -175,24 +175,61 @@ export default function AffiliateHeader({ affiliate, onLogout }: AffiliateHeader
                     <p className="text-xs text-gray-600">{affiliate.email}</p>
                   </div>
                   <Link
-                    href="/affiliates/profile"
-                    className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-200 group"
+                    href="/affiliates/dashboard"
+                    className={`flex items-center px-4 py-3 text-sm transition-all duration-200 group ${
+                      isActive('/affiliates/dashboard')
+                        ? 'text-indigo-600 bg-indigo-50 border-l-4 border-indigo-500'
+                        : 'text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50'
+                    }`}
                     onClick={() => setShowMenu(false)}
                   >
-                    <svg className="w-4 h-4 mr-3 text-gray-500 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    <svg className={`w-4 h-4 mr-3 ${isActive('/affiliates/dashboard') ? 'text-indigo-600' : 'text-gray-500 group-hover:text-indigo-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z" />
                     </svg>
-                    Profile Settings
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/affiliates/links"
+                    className={`flex items-center px-4 py-3 text-sm transition-all duration-200 group ${
+                      isActive('/affiliates/links')
+                        ? 'text-indigo-600 bg-indigo-50 border-l-4 border-indigo-500'
+                        : 'text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50'
+                    }`}
+                    onClick={() => setShowMenu(false)}
+                  >
+                    <svg className={`w-4 h-4 mr-3 ${isActive('/affiliates/links') ? 'text-indigo-600' : 'text-gray-500 group-hover:text-indigo-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                    Links & Assets
                   </Link>
                   <Link
                     href="/affiliates/payouts"
-                    className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-200 group"
+                    className={`flex items-center px-4 py-3 text-sm transition-all duration-200 group ${
+                      isActive('/affiliates/payouts')
+                        ? 'text-indigo-600 bg-indigo-50 border-l-4 border-indigo-500'
+                        : 'text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50'
+                    }`}
                     onClick={() => setShowMenu(false)}
                   >
-                    <svg className="w-4 h-4 mr-3 text-gray-500 group-hover:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className={`w-4 h-4 mr-3 ${isActive('/affiliates/payouts') ? 'text-indigo-600' : 'text-gray-500 group-hover:text-indigo-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                     </svg>
                     Payouts
+                  </Link>
+                  <Link
+                    href="/affiliates/profile"
+                    className={`flex items-center px-4 py-3 text-sm transition-all duration-200 group ${
+                      isActive('/affiliates/profile')
+                        ? 'text-indigo-600 bg-indigo-50 border-l-4 border-indigo-500'
+                        : 'text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50'
+                    }`}
+                    onClick={() => setShowMenu(false)}
+                  >
+                    <svg className={`w-4 h-4 mr-3 ${isActive('/affiliates/profile') ? 'text-indigo-600' : 'text-gray-500 group-hover:text-indigo-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Profile Settings
                   </Link>
                   <div className="border-t border-gray-100/50 my-1"></div>
                   <button
