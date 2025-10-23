@@ -225,7 +225,7 @@ export default function AffiliatePayoutsPage() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-2 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-all duration-300"
+            className="lg:col-span-2 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 hover:shadow-xl transition-all duration-300"
           >
             <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
               <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg mr-3">
@@ -262,7 +262,7 @@ export default function AffiliatePayoutsPage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 hover:shadow-xl transition-all duration-300"
+            className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 hover:shadow-xl transition-all duration-300"
           >
             <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
               <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg mr-3">
@@ -273,7 +273,7 @@ export default function AffiliatePayoutsPage() {
               </div>
               Payout Settings
             </h2>
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Payout Method</label>
                 <div className="text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200 capitalize">
@@ -288,9 +288,9 @@ export default function AffiliatePayoutsPage() {
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Payout Schedule</label>
                 <div className="text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">Monthly (1st of each month)</div>
               </div>
-              <div className="pt-4 border-t border-gray-200">
+              <div className="pt-3 border-t border-gray-200">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Available Balance</label>
-                <div className="text-2xl font-bold text-indigo-600 bg-indigo-50 px-3 py-2 rounded-lg border border-indigo-200">
+                <div className="text-xl font-bold text-indigo-600 bg-indigo-50 px-3 py-2 rounded-lg border border-indigo-200">
                   ${payoutData?.summary.availableCommission.toLocaleString() || "0"}
                 </div>
               </div>
