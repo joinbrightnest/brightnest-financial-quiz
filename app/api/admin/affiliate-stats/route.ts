@@ -267,44 +267,7 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
   startOfWeek.setDate(now.getDate() - daysToMonday);
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   
-  // Calculate the correct start date based on the actual dateRange parameter
-  let startDate: Date;
-  switch (dateRange) {
-    case "today":
-      startDate = today;
-      break;
-    case "yesterday":
-      startDate = yesterday;
-      break;
-    case "week":
-      startDate = startOfWeek;
-      break;
-    case "month":
-      startDate = startOfMonth;
-      break;
-    case "90days":
-      startDate = new Date(now.getTime() - (90 * 24 * 60 * 60 * 1000));
-      break;
-    default:
-      startDate = startOfMonth;
-  }
-
-  // Fetch appointments data for the correct date range
-  const allAppointments = await prisma.appointment.findMany({
-    where: {
-      affiliateCode: affiliateCode,
-      updatedAt: {
-        gte: startDate,
-        lte: now,
-      },
-    },
-  }).catch((error) => {
-    console.error('Error fetching appointments:', error);
-    return [];
-  });
-
-  // Filter for converted appointments
-  const convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
+  // Fetch appointments data for the correct date range (will be calculated below)
 
   // Fetch all leads data once for the entire date range to optimize performance
   // Use the same date range as the total leads calculation for consistency
@@ -424,7 +387,10 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       case "month":
         // Calculate days from start of month to today
         startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        // Set to start of day to avoid timezone issues
+        startDate.setHours(0, 0, 0, 0);
         days = Math.ceil((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+        console.log("Month calculation:", { startDate, now, days });
         break;
       case "all":
         // Show last 90 days for "all time" to keep it manageable
