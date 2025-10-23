@@ -93,12 +93,14 @@ export async function GET(request: NextRequest) {
     // Calculate stats using the SAME logic as individual affiliate API for consistency
     const totalClicks = clicks.length;
     
-    // Calculate end date (end of today)
-    const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
-    
-    // Use calculateLeadsWithDateRange for precise date filtering
-    const leadData = await calculateLeadsWithDateRange(startDate, endDate, undefined, affiliate.referralCode);
-    const totalLeads = leadData.totalLeads;
+    // Calculate Total Leads directly from quizSessions (same method as other cards)
+    // A lead is a completed quiz session with both name AND email answers
+    const totalLeads = quizSessions.filter(session => 
+      session.name && 
+      session.email && 
+      session.name.trim() !== '' && 
+      session.email.trim() !== ''
+    ).length;
     const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
     const totalSales = conversions.filter(c => c.conversionType === "sale").length;
     
