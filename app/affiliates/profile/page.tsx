@@ -6,7 +6,6 @@ import AffiliateHeader from "../components/AffiliateHeader";
 
 // Prevent prerendering since this page requires authentication
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 export default function AffiliateProfilePage() {
   const [loading, setLoading] = useState(true);
