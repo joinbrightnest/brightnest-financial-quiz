@@ -193,7 +193,7 @@ export default function AffiliateLinksPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Custom UTM Parameters */}
           <motion.div 
