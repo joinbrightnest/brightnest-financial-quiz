@@ -253,31 +253,31 @@ export default function AffiliatePayoutsPage() {
               Earnings Summary
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 sm:p-6 rounded-xl border border-blue-200/50 hover:shadow-md transition-all duration-200">
-                <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1 sm:mb-2">
+              <div className="bg-white border border-gray-200 p-4 sm:p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
                   ${payoutData?.summary.totalEarned.toLocaleString() || "0"}
                 </div>
-                <div className="text-xs sm:text-sm font-medium text-blue-700">Total Earned</div>
+                <div className="text-xs sm:text-sm font-medium text-gray-600 uppercase tracking-wide">Total Earned</div>
               </div>
-              <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 sm:p-6 rounded-xl border border-green-200/50 hover:shadow-md transition-all duration-200">
-                <div className="text-2xl sm:text-3xl font-bold text-green-600 mb-1 sm:mb-2">
+              <div className="bg-white border border-gray-200 p-4 sm:p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
                   ${payoutData?.summary.totalPaid.toLocaleString() || "0"}
                 </div>
-                <div className="text-xs sm:text-sm font-medium text-green-700">Paid Out</div>
+                <div className="text-xs sm:text-sm font-medium text-gray-600 uppercase tracking-wide">Paid Out</div>
               </div>
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 sm:p-6 rounded-xl border border-purple-200/50 hover:shadow-md transition-all duration-200">
-                <div className="text-2xl sm:text-3xl font-bold text-purple-600 mb-1 sm:mb-2">
+              <div className="bg-white border border-gray-200 p-4 sm:p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
                   ${payoutData?.summary.availableCommission.toLocaleString() || "0"}
                 </div>
-                <div className="text-xs sm:text-sm font-medium text-purple-700">Available</div>
+                <div className="text-xs sm:text-sm font-medium text-gray-600 uppercase tracking-wide">Available</div>
               </div>
-              <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 sm:p-6 rounded-xl border border-orange-200/50 hover:shadow-md transition-all duration-200">
-                <div className="text-2xl sm:text-3xl font-bold text-orange-600 mb-1 sm:mb-2">
+              <div className="bg-white border border-gray-200 p-4 sm:p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200">
+                <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">
                   ${payoutData?.summary.heldCommission.toLocaleString() || "0"}
                 </div>
-                <div className="text-xs sm:text-sm font-medium text-orange-700">On Hold</div>
+                <div className="text-xs sm:text-sm font-medium text-gray-600 uppercase tracking-wide">On Hold</div>
                 {payoutData?.commissionHoldInfo && (
-                  <div className="text-xs text-orange-600 mt-1">
+                  <div className="text-xs text-gray-500 mt-1">
                     {payoutData.commissionHoldInfo.holdDays} day hold
                   </div>
                 )}
