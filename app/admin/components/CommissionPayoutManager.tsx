@@ -11,6 +11,7 @@ interface Affiliate {
   totalCommission: number;
   totalPaid: number;
   pendingPayouts: number;
+  pendingCommissions: number;
   availableCommission: number;
 }
 
@@ -354,6 +355,12 @@ export default function CommissionPayoutManager() {
                       <p className="text-sm font-semibold text-slate-600">Total Paid</p>
                       <p className="text-lg font-bold text-emerald-600">
                         ${affiliate.totalPaid.toLocaleString()}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-slate-600">Pending</p>
+                      <p className="text-lg font-bold text-orange-600">
+                        ${affiliate.pendingCommissions.toLocaleString()}
                       </p>
                     </div>
                     <button

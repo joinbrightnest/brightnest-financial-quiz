@@ -21,11 +21,18 @@ export async function GET(request: NextRequest) {
       whereClause.tier = tier;
     }
 
-    // Get affiliates with payout data
+    // Get affiliates with payout data and conversions
     const affiliates = await prisma.affiliate.findMany({
       where: whereClause,
       include: {
         payouts: true,
+        conversions: {
+          where: {
+            commissionAmount: {
+              gt: 0 // Only conversions with actual commission amounts
+            }
+          }
+        },
       },
       orderBy: {
         totalCommission: "desc",
@@ -35,8 +42,23 @@ export async function GET(request: NextRequest) {
     // Calculate payout summaries for each affiliate
     const affiliatesWithPayouts = affiliates.map(affiliate => {
       const totalPaid = affiliate.payouts?.reduce((sum, payout) => sum + Number(payout.amountDue), 0) || 0;
-      // totalCommission is already the current available balance (reduced by payouts)
-      const availableCommission = Number(affiliate.totalCommission || 0);
+      
+      // Calculate pending commissions (held commissions)
+      const pendingCommissions = affiliate.conversions
+        .filter(conv => conv.commissionStatus === 'held')
+        .reduce((sum, conv) => sum + Number(conv.commissionAmount), 0);
+      
+      // Calculate available commissions (available status or null/undefined)
+      const availableCommissions = affiliate.conversions
+        .filter(conv => conv.commissionStatus === 'available' || 
+                       conv.commissionStatus === null || 
+                       conv.commissionStatus === undefined)
+        .reduce((sum, conv) => sum + Number(conv.commissionAmount), 0);
+      
+      // Calculate pending payouts (payouts with pending status)
+      const pendingPayouts = affiliate.payouts
+        ?.filter(payout => payout.status === 'pending')
+        .reduce((sum, payout) => sum + Number(payout.amountDue), 0) || 0;
 
       return {
         id: affiliate.id,
@@ -46,8 +68,9 @@ export async function GET(request: NextRequest) {
         tier: affiliate.tier,
         totalCommission: Number(affiliate.totalCommission || 0),
         totalPaid,
-        pendingPayouts: 0,
-        availableCommission,
+        pendingPayouts,
+        pendingCommissions,
+        availableCommission: availableCommissions,
         isApproved: affiliate.isApproved,
         createdAt: affiliate.createdAt,
         updatedAt: affiliate.updatedAt,
