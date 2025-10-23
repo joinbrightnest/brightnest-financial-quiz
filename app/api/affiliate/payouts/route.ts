@@ -68,6 +68,9 @@ export async function GET(request: NextRequest) {
     const heldAmount = heldCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
     const availableAmount = availableCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
     
+    // Calculate the actual available commission (total earned - paid out)
+    const actualAvailableCommission = totalEarned - totalPaid;
+    
     // Calculate days until release for held commissions
     const commissionsWithHoldInfo = heldCommissions.map(conversion => {
       const holdUntil = new Date(conversion.createdAt);
@@ -94,7 +97,7 @@ export async function GET(request: NextRequest) {
       .filter(p => p.status === "pending")
       .reduce((sum, p) => sum + Number(p.amountDue), 0);
 
-    const totalEarned = Number(affiliate.totalCommission || 0) + totalPaid;
+    const totalEarned = Number(affiliate.totalCommission || 0);
 
     return NextResponse.json({
       success: true,
@@ -107,7 +110,7 @@ export async function GET(request: NextRequest) {
           totalEarned,
           totalPaid,
           pendingPayouts,
-          availableCommission: Number(affiliate.totalCommission || 0),
+          availableCommission: actualAvailableCommission,
           payoutMethod: affiliate.payoutMethod || "stripe",
         },
         payouts: affiliate.payouts.map(payout => ({
@@ -122,7 +125,7 @@ export async function GET(request: NextRequest) {
           totalEarned,
           totalPaid,
           pendingPayouts,
-          availableCommission: availableAmount,
+          availableCommission: actualAvailableCommission,
           heldCommission: heldAmount,
           holdDays,
         },
