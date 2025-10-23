@@ -57,36 +57,54 @@ export async function GET(request: NextRequest) {
     const holdDays = settingsResult.length > 0 ? parseInt(settingsResult[0].value) : 30;
 
     // Calculate commission hold information
-    // For existing conversions without commissionStatus, treat them as available
-    const heldCommissions = affiliate.conversions.filter(c => c.commissionStatus === 'held');
-    const availableCommissions = affiliate.conversions.filter(c => 
-      c.commissionStatus === 'available' || 
-      c.commissionStatus === null || 
-      c.commissionStatus === undefined
-    );
+    // Check if commissionStatus field exists, if not treat all as available
+    const hasCommissionStatusField = affiliate.conversions.some(c => c.commissionStatus !== undefined);
     
-    const heldAmount = heldCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
-    const availableAmount = availableCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
+    let heldCommissions, availableCommissions, heldAmount, availableAmount;
+    
+    if (hasCommissionStatusField) {
+      // New system: filter by commission status
+      heldCommissions = affiliate.conversions.filter(c => c.commissionStatus === 'held');
+      availableCommissions = affiliate.conversions.filter(c => 
+        c.commissionStatus === 'available' || 
+        c.commissionStatus === null || 
+        c.commissionStatus === undefined
+      );
+      heldAmount = heldCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
+      availableAmount = availableCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
+    } else {
+      // Legacy system: treat all conversions as available
+      heldCommissions = [];
+      availableCommissions = affiliate.conversions;
+      heldAmount = 0;
+      availableAmount = affiliate.conversions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
+    }
     
     // Calculate the actual available commission (total earned - paid out)
     const actualAvailableCommission = totalEarned - totalPaid;
     
     // Calculate days until release for held commissions
-    const commissionsWithHoldInfo = heldCommissions.map(conversion => {
-      const holdUntil = new Date(conversion.createdAt);
-      holdUntil.setDate(holdUntil.getDate() + holdDays);
-      const now = new Date();
-      const daysLeft = Math.max(0, Math.ceil((holdUntil.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
-      
-      return {
-        id: conversion.id,
-        amount: Number(conversion.commissionAmount),
-        createdAt: conversion.createdAt,
-        holdUntil: holdUntil.toISOString(),
-        daysLeft,
-        isReadyForRelease: daysLeft === 0
-      };
-    });
+    let commissionsWithHoldInfo = [];
+    try {
+      commissionsWithHoldInfo = heldCommissions.map(conversion => {
+        const holdUntil = new Date(conversion.createdAt);
+        holdUntil.setDate(holdUntil.getDate() + holdDays);
+        const now = new Date();
+        const daysLeft = Math.max(0, Math.ceil((holdUntil.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+        
+        return {
+          id: conversion.id,
+          amount: Number(conversion.commissionAmount),
+          createdAt: conversion.createdAt,
+          holdUntil: holdUntil.toISOString(),
+          daysLeft,
+          isReadyForRelease: daysLeft === 0
+        };
+      });
+    } catch (error) {
+      console.error('Error calculating commission hold info:', error);
+      commissionsWithHoldInfo = [];
+    }
 
     // Calculate payout summary
     const totalPaid = affiliate.payouts
