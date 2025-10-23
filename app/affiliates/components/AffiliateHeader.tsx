@@ -62,7 +62,7 @@ export default function AffiliateHeader({ affiliate, onLogout }: AffiliateHeader
         <div className="flex items-center py-5">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/" className="flex-shrink-0 group">
+            <Link href="/affiliates/dashboard" className="flex-shrink-0 group">
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-200">
                   <span className="text-white font-bold text-sm">B</span>
