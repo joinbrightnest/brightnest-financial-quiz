@@ -65,9 +65,16 @@ interface PayoutData {
   };
 }
 
+interface PayoutSettings {
+  minimumPayout: number;
+  payoutSchedule: string;
+  payoutScheduleDisplay: string;
+}
+
 export default function AffiliatePayoutsPage() {
   const [affiliate, setAffiliate] = useState<AffiliateData | null>(null);
   const [payoutData, setPayoutData] = useState<PayoutData | null>(null);
+  const [payoutSettings, setPayoutSettings] = useState<PayoutSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [showAllPayouts, setShowAllPayouts] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -82,6 +89,20 @@ export default function AffiliatePayoutsPage() {
       fetchPayoutData();
     }
   }, [affiliate]);
+
+  const fetchPayoutSettings = async () => {
+    try {
+      const response = await fetch("/api/affiliate/payout-settings");
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setPayoutSettings(data.settings);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching payout settings:", error);
+    }
+  };
 
   const checkAuth = async () => {
     const token = localStorage.getItem("affiliate_token");
@@ -102,6 +123,7 @@ export default function AffiliatePayoutsPage() {
       if (response.ok) {
         const affiliateData = await response.json();
         setAffiliate(affiliateData);
+        await fetchPayoutSettings(); // Fetch payout settings
       } else {
         localStorage.removeItem("affiliate_token");
         localStorage.removeItem("affiliate_id");
@@ -361,11 +383,15 @@ export default function AffiliatePayoutsPage() {
               </div>
               <div>
                 <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">Minimum Payout</label>
-                <div className="text-xs sm:text-sm text-gray-600 bg-gray-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-gray-200">$50.00</div>
+                <div className="text-xs sm:text-sm text-gray-600 bg-gray-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-gray-200">
+                  ${payoutSettings?.minimumPayout.toFixed(2) || "50.00"}
+                </div>
               </div>
               <div>
                 <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">Payout Schedule</label>
-                <div className="text-xs sm:text-sm text-gray-600 bg-gray-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-gray-200">Monthly (1st of each month)</div>
+                <div className="text-xs sm:text-sm text-gray-600 bg-gray-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-gray-200">
+                  {payoutSettings?.payoutScheduleDisplay || "Monthly (1st of each month)"}
+                </div>
               </div>
               <div className="pt-2 sm:pt-3 border-t border-gray-200">
                 <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">Available Balance</label>

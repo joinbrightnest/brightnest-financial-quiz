@@ -102,7 +102,10 @@ export default function AdminDashboard() {
   const [qualificationThreshold, setQualificationThreshold] = useState(17);
   const [isUpdatingThreshold, setIsUpdatingThreshold] = useState(false);
   const [commissionHoldDays, setCommissionHoldDays] = useState(30);
+  const [minimumPayout, setMinimumPayout] = useState(50);
+  const [payoutSchedule, setPayoutSchedule] = useState("monthly");
   const [isUpdatingHoldDays, setIsUpdatingHoldDays] = useState(false);
+  const [isUpdatingPayoutSettings, setIsUpdatingPayoutSettings] = useState(false);
   const [commissionReleaseStatus, setCommissionReleaseStatus] = useState<any>(null);
   const [isProcessingReleases, setIsProcessingReleases] = useState(false);
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -204,7 +207,9 @@ export default function AdminDashboard() {
       if (data.success && data.settings) {
         setQualificationThreshold(data.settings.qualificationThreshold || 17);
         setCommissionHoldDays(data.settings.commissionHoldDays || 30);
-        console.log('Commission hold days set to:', data.settings.commissionHoldDays); // Debug log
+        setMinimumPayout(data.settings.minimumPayout || 50);
+        setPayoutSchedule(data.settings.payoutSchedule || "monthly");
+        console.log('Settings loaded:', data.settings); // Debug log
       }
     } catch (error) {
       console.error('Error fetching settings:', error);
@@ -267,6 +272,34 @@ export default function AdminDashboard() {
       alert('Failed to update hold period. Please try again.');
     } finally {
       setIsUpdatingHoldDays(false);
+    }
+  };
+
+  const updatePayoutSettings = async () => {
+    setIsUpdatingPayoutSettings(true);
+    try {
+      const response = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          minimumPayout: minimumPayout,
+          payoutSchedule: payoutSchedule
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        console.log('Payout settings updated successfully');
+        await fetchSettings(); // Refresh settings
+      } else {
+        console.error('Failed to update payout settings:', data.error);
+      }
+    } catch (error) {
+      console.error('Error updating payout settings:', error);
+    } finally {
+      setIsUpdatingPayoutSettings(false);
     }
   };
 
@@ -1612,6 +1645,61 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
+                  {/* Payout Settings */}
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <h3 className="text-lg font-medium text-gray-900 mb-3">Payout Settings</h3>
+                    <p className="text-gray-600 mb-4">
+                      Configure minimum payout amounts and payout schedules for all affiliates.
+                    </p>
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-4">
+                        <label htmlFor="minimumPayout" className="text-sm font-medium text-gray-700 w-32">
+                          Minimum Payout:
+                        </label>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm text-gray-500">$</span>
+                          <input
+                            type="number"
+                            id="minimumPayout"
+                            min="0"
+                            step="0.01"
+                            value={minimumPayout}
+                            onChange={(e) => setMinimumPayout(parseFloat(e.target.value))}
+                            className="w-24 px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-4">
+                        <label htmlFor="payoutSchedule" className="text-sm font-medium text-gray-700 w-32">
+                          Payout Schedule:
+                        </label>
+                        <select
+                          id="payoutSchedule"
+                          value={payoutSchedule}
+                          onChange={(e) => setPayoutSchedule(e.target.value)}
+                          className="px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                          <option value="weekly">Weekly (Every Monday)</option>
+                          <option value="biweekly">Bi-weekly (Every 2 weeks)</option>
+                          <option value="monthly">Monthly (1st of each month)</option>
+                          <option value="quarterly">Quarterly (Every 3 months)</option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4">
+                      <button 
+                        onClick={updatePayoutSettings}
+                        disabled={isUpdatingPayoutSettings}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isUpdatingPayoutSettings ? 'Updating...' : 'Update Payout Settings'}
+                      </button>
+                    </div>
+                  </div>
+
                   {/* Commission Release Management */}
                   {commissionReleaseStatus && (
                     <div className="border border-gray-200 rounded-lg p-4">
@@ -1664,6 +1752,8 @@ export default function AdminDashboard() {
                       <p>• Users with {qualificationThreshold}+ points → Book consultation call</p>
                       <p>• Users with &lt;{qualificationThreshold} points → Checkout page</p>
                       <p>• Commission Hold Period: <span className="font-medium">{commissionHoldDays} days</span></p>
+                      <p>• Minimum Payout: <span className="font-medium">${minimumPayout}</span></p>
+                      <p>• Payout Schedule: <span className="font-medium">{payoutSchedule.charAt(0).toUpperCase() + payoutSchedule.slice(1)}</span></p>
                       <p>• Commissions held for {commissionHoldDays} days before becoming available</p>
                     </div>
                   </div>

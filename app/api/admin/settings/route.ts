@@ -9,7 +9,7 @@ export async function GET() {
     // Get current settings from database
     // If settings table doesn't exist, create it and insert default values
     const settings = await prisma.$queryRaw`
-      SELECT * FROM "Settings" WHERE key IN ('qualification_threshold', 'commission_hold_days')
+      SELECT * FROM "Settings" WHERE key IN ('qualification_threshold', 'commission_hold_days', 'minimum_payout', 'payout_schedule')
     `.catch(async () => {
       // If Settings table doesn't exist, create it and insert default values
       await prisma.$executeRaw`
@@ -26,13 +26,17 @@ export async function GET() {
         INSERT INTO "Settings" (key, value) 
         VALUES 
           ('qualification_threshold', '17'),
-          ('commission_hold_days', '30')
+          ('commission_hold_days', '30'),
+          ('minimum_payout', '50'),
+          ('payout_schedule', 'monthly')
         ON CONFLICT (key) DO NOTHING
       `;
       
       return [
         { key: 'qualification_threshold', value: '17' },
-        { key: 'commission_hold_days', value: '30' }
+        { key: 'commission_hold_days', value: '30' },
+        { key: 'minimum_payout', value: '50' },
+        { key: 'payout_schedule', value: 'monthly' }
       ];
     });
 
@@ -46,7 +50,9 @@ export async function GET() {
       success: true,
       settings: {
         qualificationThreshold: parseInt(settingsObj.qualification_threshold || '17'),
-        commissionHoldDays: parseInt(settingsObj.commission_hold_days || '30')
+        commissionHoldDays: parseInt(settingsObj.commission_hold_days || '30'),
+        minimumPayout: parseFloat(settingsObj.minimum_payout || '50'),
+        payoutSchedule: settingsObj.payout_schedule || 'monthly'
       }
     });
   } catch (error) {
@@ -61,7 +67,7 @@ export async function GET() {
 // POST settings (update)
 export async function POST(request: NextRequest) {
   try {
-    const { qualificationThreshold, commissionHoldDays } = await request.json();
+    const { qualificationThreshold, commissionHoldDays, minimumPayout, payoutSchedule } = await request.json();
 
     // Validate qualification threshold
     if (qualificationThreshold !== undefined && (qualificationThreshold < 1 || qualificationThreshold > 20)) {
@@ -76,6 +82,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: 'Invalid commission hold days. Must be between 0 and 365.'
+      }, { status: 400 });
+    }
+
+    // Validate minimum payout
+    if (minimumPayout !== undefined && (minimumPayout < 0 || minimumPayout > 10000)) {
+      return NextResponse.json({
+        success: false,
+        error: 'Invalid minimum payout. Must be between 0 and 10000.'
+      }, { status: 400 });
+    }
+
+    // Validate payout schedule
+    if (payoutSchedule !== undefined && !['weekly', 'biweekly', 'monthly', 'quarterly'].includes(payoutSchedule)) {
+      return NextResponse.json({
+        success: false,
+        error: 'Invalid payout schedule. Must be weekly, biweekly, monthly, or quarterly.'
       }, { status: 400 });
     }
 
@@ -118,11 +140,39 @@ export async function POST(request: NextRequest) {
       updates.push('commission hold period');
     }
 
+    // Update minimum payout if provided
+    if (minimumPayout !== undefined) {
+      await prisma.$executeRaw`
+        INSERT INTO "Settings" (key, value) 
+        VALUES ('minimum_payout', ${minimumPayout.toString()})
+        ON CONFLICT (key) 
+        DO UPDATE SET 
+          value = ${minimumPayout.toString()},
+          updated_at = CURRENT_TIMESTAMP
+      `;
+      updates.push('minimum payout');
+    }
+
+    // Update payout schedule if provided
+    if (payoutSchedule !== undefined) {
+      await prisma.$executeRaw`
+        INSERT INTO "Settings" (key, value) 
+        VALUES ('payout_schedule', ${payoutSchedule})
+        ON CONFLICT (key) 
+        DO UPDATE SET 
+          value = ${payoutSchedule},
+          updated_at = CURRENT_TIMESTAMP
+      `;
+      updates.push('payout schedule');
+    }
+
     return NextResponse.json({
       success: true,
       message: `${updates.join(' and ')} updated successfully`,
       qualificationThreshold,
-      commissionHoldDays
+      commissionHoldDays,
+      minimumPayout,
+      payoutSchedule
     });
   } catch (error) {
     console.error('Error updating settings:', error);
