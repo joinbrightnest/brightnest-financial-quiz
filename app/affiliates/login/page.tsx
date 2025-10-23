@@ -115,7 +115,7 @@ export default function AffiliateLogin() {
       {/* Right Section - Login Form */}
       <div className="w-full lg:w-1/2 bg-stone-50 flex flex-col lg:flex-row lg:items-center lg:justify-center p-4 sm:p-6 lg:p-8 min-h-screen lg:min-h-0">
         {/* Mobile Header - Only on mobile */}
-        <div className="lg:hidden bg-white shadow-sm border-b border-gray-200 px-4 py-4 mb-8">
+        <div className="lg:hidden bg-white shadow-sm border-b border-gray-200 px-4 py-3 mb-4">
           <div className="flex items-center justify-center">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
@@ -127,7 +127,7 @@ export default function AffiliateLogin() {
         </div>
 
         {/* Login Form Container */}
-        <div className="flex-1 flex items-center justify-center">
+        <div className="flex-1 flex items-start justify-center pt-8 lg:pt-0 lg:items-center">
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
