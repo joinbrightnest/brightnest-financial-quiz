@@ -404,33 +404,37 @@ export default function CommissionPayoutManager() {
                   key={payout.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-300"
+                  className="p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-300"
                 >
-                  <div className="flex items-center space-x-4">
-                    <div className={`w-3 h-3 rounded-full ${
-                      payout.status === "completed" ? "bg-emerald-500" : 
-                      payout.status === "pending" ? "bg-orange-500" : 
-                      "bg-slate-500"
-                    }`} />
-                    <div>
-                      <h3 className="font-bold text-slate-900">{payout.affiliate?.name || 'Unknown Affiliate'}</h3>
-                      <p className="text-sm text-slate-600">{payout.affiliate?.email || 'No email'}</p>
-                      <p className="text-xs text-slate-500">
-                        {new Date(payout.createdAt).toLocaleDateString()}
-                      </p>
+                  <div className="grid grid-cols-12 gap-4 items-center">
+                    {/* Affiliate Info */}
+                    <div className="col-span-4 flex items-center space-x-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        payout.status === "completed" ? "bg-emerald-500" : 
+                        payout.status === "pending" ? "bg-orange-500" : 
+                        "bg-slate-500"
+                      }`} />
+                      <div>
+                        <h3 className="font-bold text-slate-900">{payout.affiliate?.name || 'Unknown Affiliate'}</h3>
+                        <p className="text-sm text-slate-600">{payout.affiliate?.email || 'No email'}</p>
+                        <p className="text-xs text-slate-500">
+                          {new Date(payout.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-6">
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-slate-600">Amount</p>
-                      <p className="text-xl font-bold text-slate-900">
+                    
+                    {/* Amount */}
+                    <div className="col-span-2 text-center">
+                      <p className="text-sm font-semibold text-slate-600 mb-1">Amount</p>
+                      <p className="text-lg font-bold text-slate-900">
                         ${payout.amountDue.toLocaleString()}
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-slate-600">Status</p>
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    
+                    {/* Status */}
+                    <div className="col-span-2 text-center">
+                      <p className="text-sm font-semibold text-slate-600 mb-1">Status</p>
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
                         payout.status === "completed" 
                           ? "bg-emerald-100 text-emerald-700"
                           : payout.status === "pending"
@@ -440,12 +444,12 @@ export default function CommissionPayoutManager() {
                         {payout.status.toUpperCase()}
                       </span>
                     </div>
-                    {payout.notes && (
-                      <div className="text-right max-w-xs">
-                        <p className="text-sm font-semibold text-slate-600">Notes</p>
-                        <p className="text-sm text-slate-500 truncate">{payout.notes}</p>
-                      </div>
-                    )}
+                    
+                    {/* Notes */}
+                    <div className="col-span-4">
+                      <p className="text-sm font-semibold text-slate-600 mb-1">Notes</p>
+                      <p className="text-sm text-slate-500">{payout.notes || 'No notes'}</p>
+                    </div>
                   </div>
                 </motion.div>
               ))
