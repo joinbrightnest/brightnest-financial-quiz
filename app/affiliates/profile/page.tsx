@@ -301,43 +301,43 @@ export default function AffiliateProfilePage() {
                 Quick Stats
               </h2>
               
-              <div className="space-y-4">
-                <div className="bg-gradient-to-r from-blue-50 to-white p-4 rounded-xl border border-blue-200/50">
+              <div className="grid grid-cols-2 sm:grid-cols-1 gap-3 sm:gap-4">
+                <div className="bg-gradient-to-r from-blue-50 to-white p-3 sm:p-4 rounded-xl border border-blue-200/50">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-blue-700">Total Clicks</p>
-                      <p className="text-2xl font-bold text-blue-900">{affiliate?.totalClicks || 0}</p>
+                      <p className="text-xs sm:text-sm font-medium text-blue-700">Total Clicks</p>
+                      <p className="text-lg sm:text-2xl font-bold text-blue-900">{affiliate?.totalClicks || 0}</p>
                     </div>
-                    <div className="p-2 bg-blue-100 rounded-lg">
-                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="p-1.5 sm:p-2 bg-blue-100 rounded-lg">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
                       </svg>
                     </div>
                   </div>
                 </div>
                 
-                <div className="bg-gradient-to-r from-green-50 to-white p-4 rounded-xl border border-green-200/50">
+                <div className="bg-gradient-to-r from-green-50 to-white p-3 sm:p-4 rounded-xl border border-green-200/50">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-green-700">Total Leads</p>
-                      <p className="text-2xl font-bold text-green-900">{affiliate?.totalLeads || 0}</p>
+                      <p className="text-xs sm:text-sm font-medium text-green-700">Total Leads</p>
+                      <p className="text-lg sm:text-2xl font-bold text-green-900">{affiliate?.totalLeads || 0}</p>
                     </div>
-                    <div className="p-2 bg-green-100 rounded-lg">
-                      <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="p-1.5 sm:p-2 bg-green-100 rounded-lg">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                       </svg>
                     </div>
                   </div>
                 </div>
                 
-                <div className="bg-gradient-to-r from-purple-50 to-white p-4 rounded-xl border border-purple-200/50">
+                <div className="bg-gradient-to-r from-purple-50 to-white p-3 sm:p-4 rounded-xl border border-purple-200/50 col-span-2 sm:col-span-1">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-purple-700">Total Earnings</p>
-                      <p className="text-2xl font-bold text-purple-900">${(affiliate?.totalCommission || 0).toLocaleString()}</p>
+                      <p className="text-xs sm:text-sm font-medium text-purple-700">Total Earnings</p>
+                      <p className="text-lg sm:text-2xl font-bold text-purple-900">${(affiliate?.totalCommission || 0).toLocaleString()}</p>
                     </div>
-                    <div className="p-2 bg-purple-100 rounded-lg">
-                      <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="p-1.5 sm:p-2 bg-purple-100 rounded-lg">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                       </svg>
                     </div>
