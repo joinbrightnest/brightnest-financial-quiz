@@ -213,18 +213,18 @@ export default function CommissionPayoutManager() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
-                  Completed
+                  Available Commission
                 </p>
-                <p className="text-3xl font-bold text-emerald-600 mt-1">
-                  ${summary.completedAmount.toLocaleString()}
+                <p className="text-3xl font-bold text-indigo-600 mt-1">
+                  ${affiliates.reduce((sum, affiliate) => sum + affiliate.availableCommission, 0).toLocaleString()}
                 </p>
                 <p className="text-xs text-slate-500 mt-1">
-                  {summary.completedCount} paid
+                  {affiliates.filter(a => a.availableCommission > 0).length} affiliates
                 </p>
               </div>
-              <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center">
                 <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
               </div>
             </div>
