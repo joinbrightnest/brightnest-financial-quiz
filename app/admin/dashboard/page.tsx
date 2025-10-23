@@ -101,6 +101,10 @@ export default function AdminDashboard() {
   const [pipelineView, setPipelineView] = useState<'kanban' | 'appointments'>('kanban');
   const [qualificationThreshold, setQualificationThreshold] = useState(17);
   const [isUpdatingThreshold, setIsUpdatingThreshold] = useState(false);
+  const [commissionHoldDays, setCommissionHoldDays] = useState(30);
+  const [isUpdatingHoldDays, setIsUpdatingHoldDays] = useState(false);
+  const [commissionReleaseStatus, setCommissionReleaseStatus] = useState<any>(null);
+  const [isProcessingReleases, setIsProcessingReleases] = useState(false);
   const [appointments, setAppointments] = useState<any[]>([]);
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [showLeadModal, setShowLeadModal] = useState(false);
@@ -197,7 +201,8 @@ export default function AdminDashboard() {
       const response = await fetch('/api/admin/settings');
       const data = await response.json();
       if (data.success && data.settings) {
-        setQualificationThreshold(parseInt(data.settings.value));
+        setQualificationThreshold(data.settings.qualificationThreshold || 17);
+        setCommissionHoldDays(data.settings.commissionHoldDays || 30);
       }
     } catch (error) {
       console.error('Error fetching settings:', error);
@@ -230,6 +235,72 @@ export default function AdminDashboard() {
       alert('Failed to update threshold. Please try again.');
     } finally {
       setIsUpdatingThreshold(false);
+    }
+  };
+
+  // Update commission hold days
+  const updateCommissionHoldDays = async (newHoldDays: number) => {
+    setIsUpdatingHoldDays(true);
+    try {
+      const response = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          commissionHoldDays: newHoldDays
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setCommissionHoldDays(newHoldDays);
+        alert('Commission hold period updated successfully!');
+        fetchCommissionReleaseStatus(); // Refresh status
+      } else {
+        alert('Failed to update hold period: ' + data.error);
+      }
+    } catch (error) {
+      console.error('Error updating hold period:', error);
+      alert('Failed to update hold period. Please try again.');
+    } finally {
+      setIsUpdatingHoldDays(false);
+    }
+  };
+
+  // Fetch commission release status
+  const fetchCommissionReleaseStatus = async () => {
+    try {
+      const response = await fetch('/api/admin/process-commission-releases');
+      const data = await response.json();
+      if (data.success) {
+        setCommissionReleaseStatus(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching commission release status:', error);
+    }
+  };
+
+  // Process commission releases
+  const processCommissionReleases = async () => {
+    setIsProcessingReleases(true);
+    try {
+      const response = await fetch('/api/admin/process-commission-releases', {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        alert(`Successfully released ${data.releasedCount} commissions worth $${data.releasedAmount.toLocaleString()}`);
+        fetchCommissionReleaseStatus(); // Refresh status
+      } else {
+        alert('Failed to process releases: ' + data.error);
+      }
+    } catch (error) {
+      console.error('Error processing releases:', error);
+      alert('Failed to process releases. Please try again.');
+    } finally {
+      setIsProcessingReleases(false);
     }
   };
 
@@ -268,6 +339,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetchStats(true); // Pass true to indicate this is a timeframe change
     fetchSettings();
+    fetchCommissionReleaseStatus();
   }, [fetchStats]);
 
   useEffect(() => {
@@ -1465,7 +1537,7 @@ export default function AdminDashboard() {
           {activeSection === 'settings' && (
             <div className="mb-8">
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">Quiz Settings</h2>
+                <h2 className="text-xl font-semibold text-gray-900 mb-6">System Settings</h2>
                 
                 <div className="space-y-6">
                   {/* Qualification Threshold */}
@@ -1503,6 +1575,85 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
+                  {/* Commission Hold Period */}
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <h3 className="text-lg font-medium text-gray-900 mb-3">Commission Hold Period</h3>
+                    <p className="text-gray-600 mb-4">
+                      Set how many days commissions should be held before becoming available for payout. 
+                      This helps prevent chargebacks and ensures payment stability.
+                    </p>
+                    
+                    <div className="flex items-center space-x-4">
+                      <label htmlFor="holdDays" className="text-sm font-medium text-gray-700">
+                        Hold Period:
+                      </label>
+                      <input
+                        type="number"
+                        id="holdDays"
+                        min="0"
+                        max="365"
+                        value={commissionHoldDays}
+                        onChange={(e) => setCommissionHoldDays(parseInt(e.target.value))}
+                        className="w-20 px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                      <span className="text-sm text-gray-500">days</span>
+                    </div>
+                    
+                    <div className="mt-4">
+                      <button 
+                        onClick={() => updateCommissionHoldDays(commissionHoldDays)}
+                        disabled={isUpdatingHoldDays}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isUpdatingHoldDays ? 'Updating...' : 'Update Hold Period'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Commission Release Management */}
+                  {commissionReleaseStatus && (
+                    <div className="border border-gray-200 rounded-lg p-4">
+                      <h3 className="text-lg font-medium text-gray-900 mb-3">Commission Release Management</h3>
+                      <p className="text-gray-600 mb-4">
+                        Process commissions that are ready to be released from hold based on the current hold period.
+                      </p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div className="bg-blue-50 rounded-lg p-3">
+                          <div className="text-sm font-medium text-blue-700">Ready for Release</div>
+                          <div className="text-2xl font-bold text-blue-900">{commissionReleaseStatus.readyForRelease}</div>
+                          <div className="text-xs text-blue-600">commissions</div>
+                        </div>
+                        <div className="bg-orange-50 rounded-lg p-3">
+                          <div className="text-sm font-medium text-orange-700">Currently Held</div>
+                          <div className="text-2xl font-bold text-orange-900">{commissionReleaseStatus.totalHeld}</div>
+                          <div className="text-xs text-orange-600">commissions</div>
+                        </div>
+                        <div className="bg-green-50 rounded-lg p-3">
+                          <div className="text-sm font-medium text-green-700">Available</div>
+                          <div className="text-2xl font-bold text-green-900">{commissionReleaseStatus.totalAvailable}</div>
+                          <div className="text-xs text-green-600">commissions</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center space-x-4">
+                        <button 
+                          onClick={processCommissionReleases}
+                          disabled={isProcessingReleases || commissionReleaseStatus.readyForRelease === 0}
+                          className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isProcessingReleases ? 'Processing...' : `Release ${commissionReleaseStatus.readyForRelease} Commissions`}
+                        </button>
+                        <button 
+                          onClick={fetchCommissionReleaseStatus}
+                          className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
+                        >
+                          Refresh Status
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Current Settings Info */}
                   <div className="bg-gray-50 rounded-lg p-4">
                     <h4 className="text-sm font-medium text-gray-900 mb-2">Current Settings</h4>
@@ -1510,6 +1661,8 @@ export default function AdminDashboard() {
                       <p>• Qualification Threshold: <span className="font-medium">{qualificationThreshold} points</span></p>
                       <p>• Users with {qualificationThreshold}+ points → Book consultation call</p>
                       <p>• Users with &lt;{qualificationThreshold} points → Checkout page</p>
+                      <p>• Commission Hold Period: <span className="font-medium">{commissionHoldDays} days</span></p>
+                      <p>• Commissions held for {commissionHoldDays} days before becoming available</p>
                     </div>
                   </div>
                 </div>
