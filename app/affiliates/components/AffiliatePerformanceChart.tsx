@@ -121,6 +121,16 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
     ],
   };
 
+  // Calculate max values for proper scaling
+  const maxClicks = Math.max(...dailyStats.map(day => day.clicks), 1);
+  const maxLeads = Math.max(...dailyStats.map(day => day.leads), 1);
+  const maxBookedCalls = Math.max(...dailyStats.map(day => day.bookedCalls || 0), 1);
+  const maxCommission = Math.max(...dailyStats.map(day => day.commission || 0), 1);
+  
+  // Calculate appropriate step sizes
+  const leftAxisMax = Math.max(maxClicks, maxLeads, maxBookedCalls);
+  const rightAxisMax = maxCommission;
+
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -135,8 +145,12 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
     scales: {
       y: {
         beginAtZero: true,
+        max: Math.ceil(leftAxisMax * 1.1), // Add 10% padding
         ticks: {
-          stepSize: 1,
+          stepSize: Math.ceil(leftAxisMax / 10), // Dynamic step size
+          callback: function(value) {
+            return Number.isInteger(value) ? value : '';
+          },
         },
       },
       y1: {
@@ -144,12 +158,14 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
         display: true,
         position: 'right',
         beginAtZero: true,
+        max: Math.ceil(rightAxisMax * 1.1), // Add 10% padding
         grid: {
           drawOnChartArea: false,
         },
         ticks: {
+          stepSize: Math.ceil(rightAxisMax / 10), // Dynamic step size
           callback: function(value) {
-            return '$' + value.toFixed(2);
+            return '$' + value.toFixed(0);
           },
         },
       },
@@ -168,29 +184,29 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+      className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 p-3 sm:p-4 lg:p-6"
     >
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">
+      <div className="flex items-center justify-between mb-3 sm:mb-4 lg:mb-6">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900">
           Performance Over Time
         </h3>
-        <div className="text-sm text-gray-900">
+        <div className="text-xs sm:text-sm text-gray-900">
           {dailyStats.length === 24 ? '24 hours' : `${dailyStats.length} days`}
         </div>
       </div>
 
       {/* Interactive Legend */}
-      <div className="flex items-center space-x-6 mb-4">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-4 lg:gap-6 mb-3 sm:mb-4">
         <div className="flex items-center space-x-2">
           <button
             onClick={() => toggleMetric('clicks')}
-            className={`flex items-center space-x-2 px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               visibleMetrics.clicks 
                 ? 'bg-blue-100 text-blue-700 border border-blue-200' 
                 : 'bg-gray-100 text-gray-500 border border-gray-200'
             }`}
           >
-            <div className={`w-3 h-3 rounded-full ${visibleMetrics.clicks ? 'bg-blue-500' : 'bg-gray-400'}`}></div>
+            <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${visibleMetrics.clicks ? 'bg-blue-500' : 'bg-gray-400'}`}></div>
             <span>Clicks</span>
           </button>
         </div>
@@ -198,13 +214,13 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
         <div className="flex items-center space-x-2">
           <button
             onClick={() => toggleMetric('leads')}
-            className={`flex items-center space-x-2 px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               visibleMetrics.leads 
                 ? 'bg-green-100 text-green-700 border border-green-200' 
                 : 'bg-gray-100 text-gray-500 border border-gray-200'
             }`}
           >
-            <div className={`w-3 h-3 rounded-full ${visibleMetrics.leads ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+            <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${visibleMetrics.leads ? 'bg-green-500' : 'bg-gray-400'}`}></div>
             <span>Leads</span>
           </button>
         </div>
@@ -212,13 +228,13 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
         <div className="flex items-center space-x-2">
           <button
             onClick={() => toggleMetric('bookedCalls')}
-            className={`flex items-center space-x-2 px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               visibleMetrics.bookedCalls 
                 ? 'bg-purple-100 text-purple-700 border border-purple-200' 
                 : 'bg-gray-100 text-gray-500 border border-gray-200'
             }`}
           >
-            <div className={`w-3 h-3 rounded-full ${visibleMetrics.bookedCalls ? 'bg-purple-500' : 'bg-gray-400'}`}></div>
+            <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${visibleMetrics.bookedCalls ? 'bg-purple-500' : 'bg-gray-400'}`}></div>
             <span>Booked Calls</span>
           </button>
         </div>
@@ -226,19 +242,19 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
         <div className="flex items-center space-x-2">
           <button
             onClick={() => toggleMetric('earnings')}
-            className={`flex items-center space-x-2 px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-3 py-1 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               visibleMetrics.earnings 
                 ? 'bg-amber-100 text-amber-700 border border-amber-200' 
                 : 'bg-gray-100 text-gray-500 border border-gray-200'
             }`}
           >
-            <div className={`w-3 h-3 rounded-full ${visibleMetrics.earnings ? 'bg-amber-500' : 'bg-gray-400'}`}></div>
+            <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${visibleMetrics.earnings ? 'bg-amber-500' : 'bg-gray-400'}`}></div>
             <span>Earnings</span>
           </button>
         </div>
       </div>
 
-      <div className="h-80">
+      <div className="h-64 sm:h-72 lg:h-80">
         <Line data={chartData} options={chartOptions} />
       </div>
     </motion.div>
