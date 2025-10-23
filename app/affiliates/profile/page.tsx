@@ -84,6 +84,12 @@ export default function AffiliateProfilePage() {
     console.log("Profile updated:", formData);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("affiliate_token");
+    localStorage.removeItem("affiliate_id");
+    router.push("/affiliates/login");
+  };
+
   // Don't render anything until mounted to prevent SSR issues
   if (!mounted) {
     return (
@@ -101,8 +107,7 @@ export default function AffiliateProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <AffiliateHeader />
-        <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
             <p className="mt-4 text-gray-600">Loading profile...</p>
@@ -115,8 +120,7 @@ export default function AffiliateProfilePage() {
   if (!affiliate) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <AffiliateHeader />
-        <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
             <p className="text-gray-600">Please log in to access this page.</p>
           </div>
@@ -127,7 +131,7 @@ export default function AffiliateProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-      <AffiliateHeader />
+      <AffiliateHeader affiliate={affiliate} onLogout={handleLogout} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Page Header */}
