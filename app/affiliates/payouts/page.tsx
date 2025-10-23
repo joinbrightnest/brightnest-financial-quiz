@@ -384,7 +384,7 @@ export default function AffiliatePayoutsPage() {
               <div>
                 <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1 sm:mb-2">Minimum Payout</label>
                 <div className="text-xs sm:text-sm text-gray-600 bg-gray-50 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-gray-200">
-                  ${payoutSettings?.minimumPayout.toFixed(2) || "50.00"}
+                  ${payoutSettings?.minimumPayout ? payoutSettings.minimumPayout.toFixed(2) : "50.00"}
                 </div>
               </div>
               <div>
