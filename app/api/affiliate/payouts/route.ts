@@ -57,8 +57,13 @@ export async function GET(request: NextRequest) {
     const holdDays = settingsResult.length > 0 ? parseInt(settingsResult[0].value) : 30;
 
     // Calculate commission hold information
+    // For existing conversions without commissionStatus, treat them as available
     const heldCommissions = affiliate.conversions.filter(c => c.commissionStatus === 'held');
-    const availableCommissions = affiliate.conversions.filter(c => c.commissionStatus === 'available');
+    const availableCommissions = affiliate.conversions.filter(c => 
+      c.commissionStatus === 'available' || 
+      c.commissionStatus === null || 
+      c.commissionStatus === undefined
+    );
     
     const heldAmount = heldCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
     const availableAmount = availableCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
@@ -127,6 +132,7 @@ export async function GET(request: NextRequest) {
           totalAvailableAmount: availableAmount,
           holdDays,
           readyForRelease: commissionsWithHoldInfo.filter(c => c.isReadyForRelease).length,
+          existingCommissions: availableCommissions.length, // Count of existing commissions treated as available
         }
       }
     }, {
