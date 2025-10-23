@@ -268,7 +268,7 @@ export default function CommissionPayoutManager() {
                   Total Earned
                 </p>
                 <p className="text-3xl font-bold text-green-600 mt-1">
-                  ${affiliates.reduce((sum, affiliate) => sum + affiliate.totalCommission, 0).toLocaleString()}
+                  ${(summary.totalAmount + affiliates.reduce((sum, affiliate) => sum + affiliate.availableCommission, 0) + summary.pendingAmount).toLocaleString()}
                 </p>
                 <p className="text-xs text-slate-500 mt-1">
                   {affiliates.length} affiliates
