@@ -93,14 +93,9 @@ export async function GET(request: NextRequest) {
     // Calculate stats using the SAME logic as individual affiliate API for consistency
     const totalClicks = clicks.length;
     
-    // Calculate Total Leads directly from quizSessions (same method as other cards)
-    // A lead is a completed quiz session with both name AND email answers
-    const totalLeads = quizSessions.filter(session => 
-      session.name && 
-      session.email && 
-      session.name.trim() !== '' && 
-      session.email.trim() !== ''
-    ).length;
+    // Calculate Total Leads from conversions (same method as other cards)
+    // A lead is a quiz_completion conversion
+    const totalLeads = conversions.filter(c => c.conversionType === "quiz_completion").length;
     const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
     const totalSales = conversions.filter(c => c.conversionType === "sale").length;
     
@@ -144,7 +139,7 @@ export async function GET(request: NextRequest) {
     const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
     
     // Generate conversion funnel data using the same logic as individual affiliate dashboard
-    const conversionFunnel = generateConversionFunnelFromRealData(clicks, conversions, quizSessions, leadData);
+    const conversionFunnel = generateConversionFunnelFromRealData(clicks, conversions, quizSessions, totalLeads);
 
     // Generate traffic sources from real UTM data
     const trafficSources = generateTrafficSourcesFromRealData(clicks);
@@ -236,8 +231,9 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching affiliate data:", error);
     console.error("Error details:", error instanceof Error ? error.message : String(error));
+    console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace');
     return NextResponse.json(
-      { error: "Failed to fetch affiliate data" },
+      { error: "Failed to fetch affiliate data", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
@@ -499,10 +495,10 @@ function generateTrafficSourcesFromRealData(clicks: any[]) {
   }));
 }
 
-function generateConversionFunnelFromRealData(clicks: any[], conversions: any[], quizSessions: any[], leadData: any) {
+function generateConversionFunnelFromRealData(clicks: any[], conversions: any[], quizSessions: any[], totalLeads: number) {
   const totalClicks = clicks.length;
   const quizStarts = quizSessions.length; // All quiz sessions represent quiz starts
-  const quizCompletions = leadData.totalLeads; // Use centralized lead calculation
+  const quizCompletions = totalLeads; // Use the calculated total leads
   const bookings = conversions.filter(c => c.conversionType === "booking").length;
   
   return [
