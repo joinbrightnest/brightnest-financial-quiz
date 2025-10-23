@@ -271,7 +271,7 @@ export default function AffiliateLinksPage() {
                 </motion.div>
               )}
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>
