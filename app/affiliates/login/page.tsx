@@ -109,23 +109,25 @@ export default function AffiliateLogin() {
         </div>
       </div>
 
-      {/* Mobile Header */}
-      <div className="lg:hidden bg-white shadow-sm border-b border-gray-200 px-4 py-4">
-        <div className="flex items-center justify-center">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">B</span>
-            </div>
-            <span className="text-xl font-bold text-stone-900">BRIGHTNEST</span>
-          </div>
-        </div>
-      </div>
-
       {/* Stylish divider */}
       <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-orange-200 to-transparent shadow-[0_0_0_1px_rgba(255,255,255,0.4)]" />
 
       {/* Right Section - Login Form */}
-      <div className="w-full lg:w-1/2 bg-stone-50 flex items-center justify-center p-4 sm:p-6 lg:p-8 min-h-screen lg:min-h-0">
+      <div className="w-full lg:w-1/2 bg-stone-50 flex flex-col lg:flex-row lg:items-center lg:justify-center p-4 sm:p-6 lg:p-8 min-h-screen lg:min-h-0">
+        {/* Mobile Header - Only on mobile */}
+        <div className="lg:hidden bg-white shadow-sm border-b border-gray-200 px-4 py-4 mb-8">
+          <div className="flex items-center justify-center">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-amber-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">B</span>
+              </div>
+              <span className="text-xl font-bold text-stone-900">BRIGHTNEST</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Login Form Container */}
+        <div className="flex-1 flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -244,6 +246,7 @@ export default function AffiliateLogin() {
             </div>
           </div>
         </motion.div>
+        </div>
       </div>
     </div>
   );
