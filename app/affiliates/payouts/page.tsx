@@ -148,7 +148,7 @@ export default function AffiliatePayoutsPage() {
     }
 
     try {
-      const response = await fetch("/api/affiliate/payouts-simple", {
+      const response = await fetch("/api/affiliate/payouts", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
