@@ -99,8 +99,13 @@ export async function GET(request: NextRequest) {
     const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
     const totalSales = conversions.filter(c => c.conversionType === "sale").length;
     
-    // Use stored commission for main display (consistent with database)
-    const totalCommission = Number(affiliate.totalCommission || 0);
+    // Calculate date-filtered commission based on conversions within the date range
+    const dateFilteredCommission = conversions
+      .filter(c => c.commissionAmount > 0) // Only conversions with actual commission amounts
+      .reduce((sum, c) => sum + Number(c.commissionAmount), 0);
+    
+    // Use date-filtered commission for consistent timeframe behavior
+    const totalCommission = dateFilteredCommission;
     
     // Calculate date-filtered commission for daily stats (for timeframe analysis)
     const dateFilteredAppointments = await prisma.appointment.findMany({
