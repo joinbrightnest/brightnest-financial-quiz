@@ -103,7 +103,7 @@ export default function AdminDashboard() {
   const [isUpdatingThreshold, setIsUpdatingThreshold] = useState(false);
   const [commissionHoldDays, setCommissionHoldDays] = useState(30);
   const [minimumPayout, setMinimumPayout] = useState(50);
-  const [payoutSchedule, setPayoutSchedule] = useState("monthly");
+  const [payoutSchedule, setPayoutSchedule] = useState("monthly-1st");
   const [isUpdatingHoldDays, setIsUpdatingHoldDays] = useState(false);
   const [isUpdatingPayoutSettings, setIsUpdatingPayoutSettings] = useState(false);
   const [commissionReleaseStatus, setCommissionReleaseStatus] = useState<any>(null);
@@ -208,7 +208,7 @@ export default function AdminDashboard() {
         setQualificationThreshold(data.settings.qualificationThreshold || 17);
         setCommissionHoldDays(data.settings.commissionHoldDays || 30);
         setMinimumPayout(data.settings.minimumPayout || 50);
-        setPayoutSchedule(data.settings.payoutSchedule || "monthly");
+        setPayoutSchedule(data.settings.payoutSchedule || "monthly-1st");
         console.log('Settings loaded:', data.settings); // Debug log
       }
     } catch (error) {
@@ -1683,8 +1683,10 @@ export default function AdminDashboard() {
                         >
                           <option value="weekly">Weekly (Every Monday)</option>
                           <option value="biweekly">Bi-weekly (Every 2 weeks)</option>
-                          <option value="monthly">Monthly (1st of each month)</option>
-                          <option value="quarterly">Quarterly (Every 3 months)</option>
+                          <option value="monthly-1st">Monthly (1st of each month)</option>
+                          <option value="monthly-15th">Monthly (15th of each month)</option>
+                          <option value="monthly-last">Monthly (Last day of each month)</option>
+                          <option value="quarterly">Quarterly (1st of Jan, Apr, Jul, Oct)</option>
                         </select>
                       </div>
                     </div>

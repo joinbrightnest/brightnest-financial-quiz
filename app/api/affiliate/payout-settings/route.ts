@@ -42,16 +42,18 @@ export async function GET(request: NextRequest) {
     const scheduleMap: { [key: string]: string } = {
       'weekly': 'Weekly (Every Monday)',
       'biweekly': 'Bi-weekly (Every 2 weeks)',
-      'monthly': 'Monthly (1st of each month)',
-      'quarterly': 'Quarterly (Every 3 months)'
+      'monthly-1st': 'Monthly (1st of each month)',
+      'monthly-15th': 'Monthly (15th of each month)',
+      'monthly-last': 'Monthly (Last day of each month)',
+      'quarterly': 'Quarterly (1st of Jan, Apr, Jul, Oct)'
     };
 
     return NextResponse.json({
       success: true,
       settings: {
         minimumPayout: parseFloat(settingsObj.minimum_payout || '50'),
-        payoutSchedule: settingsObj.payout_schedule || 'monthly',
-        payoutScheduleDisplay: scheduleMap[settingsObj.payout_schedule || 'monthly']
+        payoutSchedule: settingsObj.payout_schedule || 'monthly-1st',
+        payoutScheduleDisplay: scheduleMap[settingsObj.payout_schedule || 'monthly-1st']
       }
     });
   } catch (error) {

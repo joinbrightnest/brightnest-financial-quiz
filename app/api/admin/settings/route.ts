@@ -28,7 +28,7 @@ export async function GET() {
           ('qualification_threshold', '17'),
           ('commission_hold_days', '30'),
           ('minimum_payout', '50'),
-          ('payout_schedule', 'monthly')
+          ('payout_schedule', 'monthly-1st')
         ON CONFLICT (key) DO NOTHING
       `;
       
@@ -36,7 +36,7 @@ export async function GET() {
         { key: 'qualification_threshold', value: '17' },
         { key: 'commission_hold_days', value: '30' },
         { key: 'minimum_payout', value: '50' },
-        { key: 'payout_schedule', value: 'monthly' }
+        { key: 'payout_schedule', value: 'monthly-1st' }
       ];
     });
 
@@ -52,7 +52,7 @@ export async function GET() {
         qualificationThreshold: parseInt(settingsObj.qualification_threshold || '17'),
         commissionHoldDays: parseInt(settingsObj.commission_hold_days || '30'),
         minimumPayout: parseFloat(settingsObj.minimum_payout || '50'),
-        payoutSchedule: settingsObj.payout_schedule || 'monthly'
+        payoutSchedule: settingsObj.payout_schedule || 'monthly-1st'
       }
     });
   } catch (error) {
@@ -94,10 +94,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate payout schedule
-    if (payoutSchedule !== undefined && !['weekly', 'biweekly', 'monthly', 'quarterly'].includes(payoutSchedule)) {
+    if (payoutSchedule !== undefined && !['weekly', 'biweekly', 'monthly-1st', 'monthly-15th', 'monthly-last', 'quarterly'].includes(payoutSchedule)) {
       return NextResponse.json({
         success: false,
-        error: 'Invalid payout schedule. Must be weekly, biweekly, monthly, or quarterly.'
+        error: 'Invalid payout schedule. Must be weekly, biweekly, monthly-1st, monthly-15th, monthly-last, or quarterly.'
       }, { status: 400 });
     }
 
