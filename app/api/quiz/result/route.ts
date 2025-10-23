@@ -103,6 +103,23 @@ export async function POST(request: NextRequest) {
         });
 
         if (affiliate && affiliate.isActive) {
+          // Get commission hold days from settings
+          let commissionHoldDays = 30; // Default fallback
+          try {
+            const holdDaysResult = await prisma.$queryRaw`
+              SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
+            ` as any[];
+            if (holdDaysResult.length > 0) {
+              commissionHoldDays = parseInt(holdDaysResult[0].value);
+            }
+          } catch (error) {
+            console.log('Using default commission hold days:', commissionHoldDays);
+          }
+
+          // Calculate hold until date
+          const holdUntil = new Date();
+          holdUntil.setDate(holdUntil.getDate() + commissionHoldDays);
+
           // Record the conversion (lead)
           await prisma.affiliateConversion.create({
             data: {
@@ -113,6 +130,8 @@ export async function POST(request: NextRequest) {
               status: "confirmed",
               commissionAmount: 0.00,
               saleValue: 0.00,
+              commissionStatus: "held",
+              holdUntil: holdUntil,
             },
           });
 
