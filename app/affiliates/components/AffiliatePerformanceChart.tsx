@@ -191,7 +191,7 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
           Performance Over Time
         </h3>
         <div className="text-xs sm:text-sm text-gray-900">
-          {dailyStats.length === 24 ? '24 hours' : `${dailyStats.length} days`}
+          {dailyStats.length === 24 && dailyStats[0]?.date.includes('T') ? '24 hours' : `${dailyStats.length} days`}
         </div>
       </div>
 

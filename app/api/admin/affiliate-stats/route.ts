@@ -113,8 +113,9 @@ export async function GET(request: NextRequest) {
       return sum + (saleValue * Number(affiliate.commissionRate));
     }, 0);
     
-    // Use appointment-based commission for consistent timeframe behavior (same as graph)
-    const totalCommission = appointmentBasedCommission;
+    // Use stored commission from database for consistency with other APIs
+    // This ensures the card shows the same value as stored in the database
+    const totalCommission = Number(affiliate.totalCommission || 0);
     
     // Generate daily stats from real data using centralized lead calculation
     const dailyStats = await generateDailyStatsFromRealData(clicks, conversions, dateRange, affiliateCode);
@@ -455,12 +456,16 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
     }
   }
   
-  // If affiliate has commission but no appointments found, distribute it across active days
+  // Ensure graph commission matches stored commission for consistency
   const totalCommissionFromAppointments = stats.reduce((sum, stat) => sum + stat.commission, 0);
-  if (totalCommissionFromAppointments === 0 && Number(affiliate.totalCommission) > 0) {
+  const storedCommission = Number(affiliate.totalCommission || 0);
+  
+  // If there's a discrepancy, adjust the graph to match the stored commission
+  if (totalCommissionFromAppointments !== storedCommission && storedCommission > 0) {
     const activeDays = stats.filter(stat => stat.clicks > 0 || stat.bookedCalls > 0);
     if (activeDays.length > 0) {
-      const commissionPerDay = Number(affiliate.totalCommission) / activeDays.length;
+      // Distribute stored commission proportionally across active days
+      const commissionPerDay = storedCommission / activeDays.length;
       stats.forEach(stat => {
         if (stat.clicks > 0 || stat.bookedCalls > 0) {
           stat.commission = commissionPerDay;
