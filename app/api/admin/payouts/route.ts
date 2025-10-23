@@ -42,14 +42,14 @@ export async function GET(request: NextRequest) {
       WHERE 1=1 ${statusCondition} ${affiliateCondition}
       ORDER BY p.created_at DESC
       LIMIT ${limit} OFFSET ${offset}
-    `);
+    `) as any[];
 
     // Get total count
     const totalCountResult = await prisma.$queryRawUnsafe(`
       SELECT COUNT(*) as count
       FROM affiliate_payouts p
       WHERE 1=1 ${statusCondition} ${affiliateCondition}
-    `);
+    `) as any[];
     const totalCount = Number(totalCountResult[0].count);
 
     // Calculate summary stats using raw SQL
@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
         COUNT(*) as total_count
       FROM affiliate_payouts p
       WHERE 1=1 ${statusCondition} ${affiliateCondition}
-    `);
+    `) as any[];
 
     const completedStats = await prisma.$queryRawUnsafe(`
       SELECT 
@@ -67,7 +67,7 @@ export async function GET(request: NextRequest) {
         COUNT(*) as total_count
       FROM affiliate_payouts p
       WHERE 1=1 ${statusCondition} ${affiliateCondition} AND status = 'completed'
-    `);
+    `) as any[];
 
     const pendingStats = await prisma.$queryRawUnsafe(`
       SELECT 
@@ -75,12 +75,28 @@ export async function GET(request: NextRequest) {
         COUNT(*) as total_count
       FROM affiliate_payouts p
       WHERE 1=1 ${statusCondition} ${affiliateCondition} AND status = 'pending'
-    `);
+    `) as any[];
+
+    // Transform payouts data to match expected frontend structure
+    const transformedPayouts = payouts.map((payout: any) => ({
+      id: payout.id,
+      amountDue: Number(payout.amount_due),
+      status: payout.status,
+      paidAt: payout.paid_at,
+      notes: payout.notes,
+      createdAt: payout.created_at,
+      affiliate: {
+        id: payout.affiliate_id,
+        name: payout.affiliate_name,
+        email: payout.affiliate_email,
+        referralCode: payout.affiliate_referral_code,
+      },
+    }));
 
     return NextResponse.json({
       success: true,
       data: {
-        payouts,
+        payouts: transformedPayouts,
         pagination: {
           page,
           limit,

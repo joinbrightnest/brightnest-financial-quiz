@@ -414,8 +414,8 @@ export default function CommissionPayoutManager() {
                       "bg-slate-500"
                     }`} />
                     <div>
-                      <h3 className="font-bold text-slate-900">{payout.affiliate.name}</h3>
-                      <p className="text-sm text-slate-600">{payout.affiliate.email}</p>
+                      <h3 className="font-bold text-slate-900">{payout.affiliate?.name || 'Unknown Affiliate'}</h3>
+                      <p className="text-sm text-slate-600">{payout.affiliate?.email || 'No email'}</p>
                       <p className="text-xs text-slate-500">
                         {new Date(payout.createdAt).toLocaleDateString()}
                       </p>
