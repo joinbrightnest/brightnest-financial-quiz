@@ -32,9 +32,11 @@ export default function AffiliateProfilePage() {
   const [affiliate, setAffiliate] = useState<AffiliateData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    setMounted(true);
     const checkAuth = async () => {
       const token = localStorage.getItem("affiliate_token");
       const affiliateId = localStorage.getItem("affiliate_id");
@@ -81,6 +83,20 @@ export default function AffiliateProfilePage() {
     // Handle form submission
     console.log("Profile updated:", formData);
   };
+
+  // Don't render anything until mounted to prevent SSR issues
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
