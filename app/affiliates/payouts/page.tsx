@@ -274,82 +274,82 @@ export default function AffiliatePayoutsPage() {
               </div>
               Earnings Summary
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+              <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-8 sm:p-10 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wider mb-3">
                       Total Earned
                     </p>
-                    <p className="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">
+                    <p className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
                       ${payoutData?.summary.totalEarned.toLocaleString() || "0"}
                     </p>
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-sm text-slate-500">
                       All time earnings
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                     </svg>
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+              <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-8 sm:p-10 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wider mb-3">
                       Paid Out
                     </p>
-                    <p className="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">
+                    <p className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
                       ${payoutData?.summary.totalPaid.toLocaleString() || "0"}
                     </p>
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-sm text-slate-500">
                       Completed payouts
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+              <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-8 sm:p-10 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wider mb-3">
                       Available
                     </p>
-                    <p className="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">
+                    <p className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
                       ${payoutData?.summary.availableCommission.toLocaleString() || "0"}
                     </p>
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-sm text-slate-500">
                       Ready for payout
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     </svg>
                   </div>
                 </div>
               </div>
-              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+              <div className="bg-white rounded-3xl shadow-lg border border-slate-200 p-8 sm:p-10 hover:shadow-xl transition-all duration-300">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wider mb-3">
                       On Hold
                     </p>
-                    <p className="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">
+                    <p className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
                       ${payoutData?.summary.heldCommission.toLocaleString() || "0"}
                     </p>
-                    <p className="text-xs text-slate-500 mt-1">
+                    <p className="text-sm text-slate-500">
                       {payoutData?.commissionHoldInfo ? `${payoutData.commissionHoldInfo.holdDays} day hold` : "Pending release"}
                     </p>
                   </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
