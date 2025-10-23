@@ -69,6 +69,7 @@ export default function AffiliatePayoutsPage() {
   const [affiliate, setAffiliate] = useState<AffiliateData | null>(null);
   const [payoutData, setPayoutData] = useState<PayoutData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showAllPayouts, setShowAllPayouts] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -342,7 +343,7 @@ export default function AffiliatePayoutsPage() {
           </h2>
           {payoutData?.payouts && payoutData.payouts.length > 0 ? (
             <div className="space-y-4">
-              {payoutData.payouts.map((payout, index) => (
+              {(showAllPayouts ? payoutData.payouts : payoutData.payouts.slice(0, 3)).map((payout, index) => (
                 <motion.div 
                   key={payout.id}
                   initial={{ opacity: 0, y: 10 }}
@@ -393,6 +394,37 @@ export default function AffiliatePayoutsPage() {
                   </div>
                 </motion.div>
               ))}
+              
+              {/* Show More/Less Button */}
+              {payoutData.payouts.length > 3 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex justify-center pt-4"
+                >
+                  <button
+                    onClick={() => setShowAllPayouts(!showAllPayouts)}
+                    className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-medium rounded-lg hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg"
+                  >
+                    {showAllPayouts ? (
+                      <>
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                        </svg>
+                        Show Less
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                        Show {payoutData.payouts.length - 3} More
+                      </>
+                    )}
+                  </button>
+                </motion.div>
+              )}
             </div>
           ) : (
             <div className="text-center py-12">
