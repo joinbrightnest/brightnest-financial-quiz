@@ -99,15 +99,7 @@ export async function GET(request: NextRequest) {
     const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
     const totalSales = conversions.filter(c => c.conversionType === "sale").length;
     
-    // Calculate date-filtered commission based on conversions within the date range
-    const dateFilteredCommission = conversions
-      .filter(c => c.commissionAmount > 0) // Only conversions with actual commission amounts
-      .reduce((sum, c) => sum + Number(c.commissionAmount), 0);
-    
-    // Use date-filtered commission for consistent timeframe behavior
-    const totalCommission = dateFilteredCommission;
-    
-    // Calculate date-filtered commission for daily stats (for timeframe analysis)
+    // Calculate date-filtered commission based on appointments (same as graph logic)
     const dateFilteredAppointments = await prisma.appointment.findMany({
       where: {
         affiliateCode: affiliate.referralCode,
@@ -120,6 +112,9 @@ export async function GET(request: NextRequest) {
       const saleValue = Number(apt.saleValue || 0);
       return sum + (saleValue * Number(affiliate.commissionRate));
     }, 0);
+    
+    // Use appointment-based commission for consistent timeframe behavior (same as graph)
+    const totalCommission = appointmentBasedCommission;
     
     // Generate daily stats from real data using centralized lead calculation
     const dailyStats = await generateDailyStatsFromRealData(clicks, conversions, dateRange, affiliateCode);
