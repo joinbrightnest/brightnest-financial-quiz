@@ -200,26 +200,26 @@ export default function AffiliateDashboard() {
         onLogout={handleLogout}
       />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         {/* Premium Header - Mobile Optimized */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 sm:mb-12"
+          className="mb-4 sm:mb-6 lg:mb-8"
         >
           {/* Welcome Message */}
-          <div className="mb-4 sm:mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="mb-3 sm:mb-4 lg:mb-6">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg">
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 lg:w-6 lg:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
                   Welcome back, {affiliate.name}!
                 </h1>
-                <p className="text-sm sm:text-base text-slate-600 font-medium">
+                <p className="text-xs sm:text-sm lg:text-base text-slate-600 font-medium">
                   Track your performance and earnings as a {affiliate.tier} affiliate
                 </p>
               </div>
@@ -227,12 +227,12 @@ export default function AffiliateDashboard() {
           </div>
 
           {/* Controls - Top Right */}
-          <div className="flex flex-row items-center justify-end space-x-3 sm:space-x-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-4">
             <div className="relative">
               <select
                 value={dateRange}
                 onChange={(e) => setDateRange(e.target.value)}
-                className="w-auto appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
+                className="w-full sm:w-auto appearance-none bg-white border border-slate-200 rounded-lg sm:rounded-xl px-3 sm:px-4 py-2 sm:py-3 pr-8 sm:pr-10 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
               >
                 <option value="today">Today</option>
                 <option value="yesterday">Yesterday</option>
@@ -241,8 +241,8 @@ export default function AffiliateDashboard() {
                 <option value="all">All Time</option>
                 <option value="custom">Custom Range</option>
               </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:pr-3 pointer-events-none">
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </div>
@@ -250,10 +250,10 @@ export default function AffiliateDashboard() {
             <button
               onClick={() => fetchStats(true)}
               disabled={loading}
-              className="inline-flex items-center justify-center px-4 sm:px-5 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-semibold hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center px-3 sm:px-4 lg:px-5 py-2 sm:py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg 
-                className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} 
+                className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${loading ? 'animate-spin' : ''}`} 
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -270,46 +270,46 @@ export default function AffiliateDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-8 hover:shadow-lg transition-all duration-300 mb-6 sm:mb-8"
+          className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 p-3 sm:p-6 lg:p-8 hover:shadow-lg transition-all duration-300 mb-4 sm:mb-6 lg:mb-8"
         >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 space-y-3 sm:space-y-0">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-gradient-to-r from-emerald-500 to-green-600 rounded-lg">
-                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4 lg:mb-6 space-y-2 sm:space-y-0">
+            <div className="flex items-center space-x-2 sm:space-x-3">
+              <div className="p-1.5 sm:p-2 bg-gradient-to-r from-emerald-500 to-green-600 rounded-lg">
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                 </svg>
               </div>
-              <h2 className="text-lg sm:text-xl font-bold text-slate-900">Your Affiliate Link</h2>
+              <h2 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900">Your Affiliate Link</h2>
             </div>
             <div className="flex items-center space-x-2">
-              <span className="px-3 py-1 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-full text-xs font-semibold">
+              <span className="px-2 sm:px-3 py-1 bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-full text-xs font-semibold">
                 Active
               </span>
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-xl p-4 sm:p-6">
-            <h3 className="text-sm font-bold text-emerald-900 mb-3 sm:mb-4">Your Tracking Link</h3>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-3">
+          <div className="bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6">
+            <h3 className="text-xs sm:text-sm font-bold text-emerald-900 mb-2 sm:mb-3 lg:mb-4">Your Tracking Link</h3>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-3">
               <input
                 type="text"
                 value={affiliate.customTrackingLink || `https://joinbrightnest.com/${affiliate.referralCode}`}
                 readOnly
-                className="flex-1 px-3 sm:px-4 py-3 border border-emerald-300 rounded-xl bg-white text-xs sm:text-sm font-mono text-black shadow-sm"
+                className="flex-1 px-2 sm:px-3 lg:px-4 py-2 sm:py-3 border border-emerald-300 rounded-lg sm:rounded-xl bg-white text-xs sm:text-sm font-mono text-black shadow-sm"
               />
               <button
                 onClick={() => navigator.clipboard.writeText(affiliate.customTrackingLink || `https://joinbrightnest.com/${affiliate.referralCode}`)}
-                className="inline-flex items-center justify-center px-4 sm:px-5 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl text-sm font-semibold hover:from-emerald-700 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200"
+                className="inline-flex items-center justify-center px-3 sm:px-4 lg:px-5 py-2 sm:py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold hover:from-emerald-700 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200"
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
                 Copy
               </button>
             </div>
-            <div className="flex items-start mt-4 p-3 bg-white rounded-lg border border-emerald-200">
-              <div className="w-5 h-5 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
-                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="flex items-start mt-3 sm:mt-4 p-2 sm:p-3 bg-white rounded-lg border border-emerald-200">
+              <div className="w-4 h-4 sm:w-5 sm:h-5 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0 mt-0.5">
+                <svg className="w-2 h-2 sm:w-3 sm:h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
@@ -325,21 +325,21 @@ export default function AffiliateDashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="space-y-6 sm:space-y-8"
+            className="space-y-4 sm:space-y-6 lg:space-y-8"
           >
             {/* Premium Key Metrics - Mobile Optimized */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-              <div className="group bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 p-3 sm:p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 lg:gap-6">
+              <div className="group bg-white rounded-lg sm:rounded-xl lg:rounded-2xl shadow-sm border border-slate-200 p-2 sm:p-4 lg:p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
                 <div className="flex items-center">
-                  <div className="p-2 sm:p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg sm:rounded-xl shadow-lg">
-                    <svg className="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="p-1.5 sm:p-2 lg:p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-md sm:rounded-lg lg:rounded-xl shadow-lg">
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 lg:w-6 lg:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
                   </div>
-                  <div className="ml-2 sm:ml-4">
+                  <div className="ml-1.5 sm:ml-2 lg:ml-4">
                     <p className="text-xs sm:text-sm font-semibold text-slate-600 uppercase tracking-wide">Total Clicks</p>
-                    <p className="text-xl sm:text-3xl font-bold text-slate-900 mt-0.5 sm:mt-1">{(stats.totalClicks || 0).toLocaleString()}</p>
+                    <p className="text-lg sm:text-xl lg:text-3xl font-bold text-slate-900 mt-0.5 sm:mt-1">{(stats.totalClicks || 0).toLocaleString()}</p>
                   </div>
                 </div>
               </div>
