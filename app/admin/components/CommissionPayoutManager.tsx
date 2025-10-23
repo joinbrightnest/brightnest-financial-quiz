@@ -56,7 +56,7 @@ export default function CommissionPayoutManager() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [filterStatus]);
 
   const fetchData = async () => {
     try {
@@ -140,7 +140,6 @@ export default function CommissionPayoutManager() {
 
   const handleFilterChange = (status: string) => {
     setFilterStatus(status);
-    fetchData();
   };
 
   if (loading) {
