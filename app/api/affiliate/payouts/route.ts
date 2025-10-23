@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
     // Check if commissionStatus field exists, if not treat all as available
     const hasCommissionStatusField = affiliate.conversions.some(c => c.commissionStatus !== undefined);
     
-    let heldCommissions, availableCommissions, heldAmount, availableAmount;
+    let heldCommissions: any[], availableCommissions: any[], heldAmount: number, availableAmount: number;
     
     if (hasCommissionStatusField) {
       // New system: filter by commission status
@@ -83,11 +83,22 @@ export async function GET(request: NextRequest) {
       availableAmount = affiliate.conversions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
     }
     
+    // Calculate total paid and earned first
+    const totalPaid = affiliate.payouts
+      .filter(p => p.status === "completed")
+      .reduce((sum, p) => sum + Number(p.amountDue), 0);
+
+    const pendingPayouts = affiliate.payouts
+      .filter(p => p.status === "pending")
+      .reduce((sum, p) => sum + Number(p.amountDue), 0);
+
+    const totalEarned = Number(affiliate.totalCommission || 0);
+    
     // Calculate the actual available commission (total earned - paid out)
     const actualAvailableCommission = totalEarned - totalPaid;
     
     // Calculate days until release for held commissions
-    let commissionsWithHoldInfo = [];
+    let commissionsWithHoldInfo: any[] = [];
     try {
       commissionsWithHoldInfo = heldCommissions.map(conversion => {
         const holdUntil = new Date(conversion.createdAt);
@@ -110,15 +121,6 @@ export async function GET(request: NextRequest) {
     }
 
     // Calculate payout summary
-    const totalPaid = affiliate.payouts
-      .filter(p => p.status === "completed")
-      .reduce((sum, p) => sum + Number(p.amountDue), 0);
-
-    const pendingPayouts = affiliate.payouts
-      .filter(p => p.status === "pending")
-      .reduce((sum, p) => sum + Number(p.amountDue), 0);
-
-    const totalEarned = Number(affiliate.totalCommission || 0);
 
     return NextResponse.json({
       success: true,

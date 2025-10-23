@@ -145,7 +145,12 @@ export async function GET(request: NextRequest) {
     const trafficSources = generateTrafficSourcesFromRealData(clicks);
 
     // Generate recent activity data from conversions and appointments
-    const recentActivity = [];
+    const recentActivity: Array<{
+      date: string;
+      action: string;
+      amount: number;
+      commission: number;
+    }> = [];
     
     // Add recent conversions
     conversions.slice(0, 5).forEach(conv => {
