@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface AffiliateData {
   id: string;
@@ -26,6 +27,11 @@ interface AffiliateHeaderProps {
 
 export default function AffiliateHeader({ affiliate, onLogout }: AffiliateHeaderProps) {
   const [showMenu, setShowMenu] = useState(false);
+  const pathname = usePathname();
+
+  const isActive = (path: string) => {
+    return pathname === path;
+  };
 
   const getTierBadge = (tier: string) => {
     const tierConfig = {
@@ -77,25 +83,56 @@ export default function AffiliateHeader({ affiliate, onLogout }: AffiliateHeader
           {/* Navigation - Centered */}
           <nav className="hidden md:flex space-x-1 flex-1 justify-center">
             <Link
+              href="/affiliates/dashboard"
+              className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 group ${
+                isActive('/affiliates/dashboard')
+                  ? 'text-indigo-600 bg-indigo-50 border border-indigo-200'
+                  : 'text-gray-700 hover:text-indigo-600 hover:bg-indigo-50'
+              }`}
+            >
+              <span className="relative z-10">Dashboard</span>
+              {!isActive('/affiliates/dashboard') && (
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+              )}
+            </Link>
+            <Link
               href="/affiliates/links"
-              className="relative text-gray-700 hover:text-indigo-600 px-4 py-2 text-sm font-medium rounded-lg hover:bg-indigo-50 transition-all duration-200 group"
+              className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 group ${
+                isActive('/affiliates/links')
+                  ? 'text-indigo-600 bg-indigo-50 border border-indigo-200'
+                  : 'text-gray-700 hover:text-indigo-600 hover:bg-indigo-50'
+              }`}
             >
               <span className="relative z-10">Links & Assets</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+              {!isActive('/affiliates/links') && (
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+              )}
             </Link>
             <Link
               href="/affiliates/payouts"
-              className="relative text-gray-700 hover:text-indigo-600 px-4 py-2 text-sm font-medium rounded-lg hover:bg-indigo-50 transition-all duration-200 group"
+              className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 group ${
+                isActive('/affiliates/payouts')
+                  ? 'text-indigo-600 bg-indigo-50 border border-indigo-200'
+                  : 'text-gray-700 hover:text-indigo-600 hover:bg-indigo-50'
+              }`}
             >
               <span className="relative z-10">Payouts</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+              {!isActive('/affiliates/payouts') && (
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+              )}
             </Link>
             <Link
               href="/affiliates/profile"
-              className="relative text-gray-700 hover:text-indigo-600 px-4 py-2 text-sm font-medium rounded-lg hover:bg-indigo-50 transition-all duration-200 group"
+              className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 group ${
+                isActive('/affiliates/profile')
+                  ? 'text-indigo-600 bg-indigo-50 border border-indigo-200'
+                  : 'text-gray-700 hover:text-indigo-600 hover:bg-indigo-50'
+              }`}
             >
               <span className="relative z-10">Profile</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+              {!isActive('/affiliates/profile') && (
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+              )}
             </Link>
           </nav>
 
