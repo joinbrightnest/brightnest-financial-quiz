@@ -101,6 +101,30 @@ export async function GET() {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - holdDays);
     
+    // Check if commission_status column exists
+    const columnCheck = await prisma.$queryRaw`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'affiliate_conversions' 
+      AND column_name = 'commission_status'
+    ` as any[];
+    
+    if (columnCheck.length === 0) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          holdDays,
+          cutoffDate: cutoffDate.toISOString(),
+          readyForRelease: 0,
+          totalHeld: 0,
+          totalAvailable: 0,
+          heldAmount: 0,
+          availableAmount: 0,
+          message: 'Commission hold system not yet initialized'
+        }
+      });
+    }
+    
     // Count commissions ready for release
     const readyForRelease = await prisma.affiliateConversion.count({
       where: {
@@ -161,7 +185,8 @@ export async function GET() {
     console.error('Error fetching commission release status:', error);
     return NextResponse.json({
       success: false,
-      error: 'Failed to fetch commission release status'
+      error: 'Failed to fetch commission release status',
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 }
