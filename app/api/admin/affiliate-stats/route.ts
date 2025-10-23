@@ -267,13 +267,35 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
   startOfWeek.setDate(now.getDate() - daysToMonday);
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   
-  // Fetch all appointments data once for the entire date range to optimize performance
+  // Calculate the correct start date based on the actual dateRange parameter
+  let startDate: Date;
+  switch (dateRange) {
+    case "today":
+      startDate = today;
+      break;
+    case "yesterday":
+      startDate = yesterday;
+      break;
+    case "week":
+      startDate = startOfWeek;
+      break;
+    case "month":
+      startDate = startOfMonth;
+      break;
+    case "90days":
+      startDate = new Date(now.getTime() - (90 * 24 * 60 * 60 * 1000));
+      break;
+    default:
+      startDate = startOfMonth;
+  }
+
+  // Fetch appointments data for the correct date range
   const allAppointments = await prisma.appointment.findMany({
     where: {
       affiliateCode: affiliateCode,
       updatedAt: {
-        gte: new Date(Math.min(...[today, yesterday, startOfWeek, startOfMonth].map(d => d.getTime()))),
-        lte: new Date(Math.max(...[today, yesterday, startOfWeek, startOfMonth].map(d => d.getTime()))),
+        gte: startDate,
+        lte: now,
       },
     },
   }).catch((error) => {
