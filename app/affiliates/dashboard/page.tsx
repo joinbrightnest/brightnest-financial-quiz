@@ -135,8 +135,15 @@ export default function AffiliateDashboard() {
           
           if (data.debug) {
             console.log("🐛 DEBUG INFO:", data.debug);
+            console.log("🐛 ALL appointments for affiliate:", data.debug.allAppointments);
             console.log("🐛 All converted appointments:", data.debug.allConvertedDates);
             console.log("🐛 Date filtered appointments:", data.debug.dateFilteredDates);
+            console.log("🐛 Summary:", {
+              affiliateCode: data.debug.affiliateCode,
+              totalAppointments: data.debug.allAppointmentsCount,
+              convertedCount: data.debug.allConvertedCount,
+              dateFilteredCount: data.debug.dateFilteredCount
+            });
           }
           setStats(data.stats);
           setError(null);

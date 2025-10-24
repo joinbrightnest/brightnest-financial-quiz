@@ -108,6 +108,13 @@ export async function GET(request: NextRequest) {
       },
     }).catch(() => []);
     
+    // Debug: Fetch ALL appointments for this affiliate (not just converted)
+    const allAffiliateAppointments = await prisma.appointment.findMany({
+      where: {
+        affiliateCode: affiliate.referralCode,
+      },
+    }).catch(() => []);
+    
     // Debug: Fetch ALL converted appointments to see dates
     const allConvertedAppointments = await prisma.appointment.findMany({
       where: {
@@ -115,6 +122,19 @@ export async function GET(request: NextRequest) {
         outcome: CallOutcome.converted,
       },
     }).catch(() => []);
+    
+    console.log('🔍 ALL appointments for affiliate (any outcome):', {
+      affiliateCode: affiliate.referralCode,
+      totalCount: allAffiliateAppointments.length,
+      allAppointments: allAffiliateAppointments.map(apt => ({
+        id: apt.id,
+        outcome: apt.outcome,
+        saleValue: apt.saleValue,
+        affiliateCode: apt.affiliateCode,
+        createdAt: new Date(apt.createdAt).toISOString().split('T')[0],
+        updatedAt: new Date(apt.updatedAt).toISOString().split('T')[0]
+      }))
+    });
     
     console.log('🔍 ALL converted appointments for affiliate:', {
       affiliateCode: affiliate.referralCode,
@@ -273,6 +293,16 @@ export async function GET(request: NextRequest) {
 
     // Add debug info to response
     affiliateData.debug = {
+      affiliateCode: affiliate.referralCode,
+      allAppointmentsCount: allAffiliateAppointments.length,
+      allAppointments: allAffiliateAppointments.map(apt => ({
+        id: apt.id,
+        outcome: apt.outcome,
+        affiliateCode: apt.affiliateCode,
+        saleValue: apt.saleValue ? Number(apt.saleValue) : null,
+        createdAt: new Date(apt.createdAt).toISOString().split('T')[0],
+        updatedAt: new Date(apt.updatedAt).toISOString().split('T')[0]
+      })),
       allConvertedCount: allConvertedAppointments.length,
       dateFilteredCount: dateFilteredAppointments.length,
       allConvertedDates: allConvertedAppointments.map(apt => ({
