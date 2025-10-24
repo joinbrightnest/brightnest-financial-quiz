@@ -99,29 +99,23 @@ export async function GET(request: NextRequest) {
     const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
     const totalSales = conversions.filter(c => c.conversionType === "sale").length;
     
-    // Get ALL converted appointments (not date-filtered) since we show total commission
-    const dateFilteredAppointments = await prisma.appointment.findMany({
-      where: {
-        affiliateCode: affiliate.referralCode,
-        outcome: 'converted' as any,
-      },
-    }).catch(() => []);
-    
-    // Debug: Fetch ALL appointments for this affiliate (not just converted)
+    // Fetch ALL appointments for this affiliate once
     const allAffiliateAppointments = await prisma.appointment.findMany({
       where: {
         affiliateCode: affiliate.referralCode,
       },
     }).catch(() => []);
     
-    // Debug: Fetch ALL converted appointments to see dates
-    // Try querying with string 'converted' directly instead of enum
-    const allConvertedAppointments = await prisma.appointment.findMany({
-      where: {
-        affiliateCode: affiliate.referralCode,
-        outcome: 'converted' as any,
-      },
-    }).catch(() => []);
+    // Filter for converted appointments in JavaScript
+    const dateFilteredAppointments = allAffiliateAppointments.filter(apt => 
+      apt.outcome === 'converted'
+    );
+    
+    // Fetch all converted appointments by filtering in JavaScript
+    // Filter the appointments we already fetched to get only converted ones
+    const allConvertedAppointments = allAffiliateAppointments.filter(apt => 
+      apt.outcome === 'converted'
+    );
     
     console.log('🔍 ALL appointments for affiliate (any outcome):', {
       affiliateCode: affiliate.referralCode,
