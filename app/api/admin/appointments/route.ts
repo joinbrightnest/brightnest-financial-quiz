@@ -175,7 +175,10 @@ export async function GET(request: NextRequest) {
       })
     ];
 
-    return NextResponse.json(allLeads);
+    return NextResponse.json({
+      success: true,
+      appointments: allLeads
+    });
 
   } catch (error) {
     console.error('❌ Error fetching admin appointments:', error);
