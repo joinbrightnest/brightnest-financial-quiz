@@ -35,7 +35,8 @@ interface CEOAnalyticsData {
   totalBookedCalls: number;
   totalSales: number;
   totalRevenue: number;
-  totalCommission: number;
+  totalCommission: number; // Total earned (all time)
+  totalPaidCommission: number; // Actually paid out
   overallClickToQuizRate: number;
   overallQuizToCompletionRate: number;
   overallClickToCompletionRate: number;
@@ -520,7 +521,7 @@ export default function CEOAnalytics() {
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-slate-900">
-                      ${data.totalCommission.toLocaleString()}
+                      ${data.totalPaidCommission.toLocaleString()}
                     </p>
                   </div>
                 </div>

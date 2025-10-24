@@ -65,8 +65,17 @@ export async function GET(request: NextRequest) {
           .filter(apt => apt.outcome === CallOutcome.converted && apt.saleValue)
           .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
 
-        // Use stored commission from database (consistent with other APIs)
-        const totalCommission = Number(affiliate.totalCommission || 0);
+        // Get actually PAID commissions (from completed payouts)
+        const payouts = await prisma.affiliatePayout.findMany({
+          where: {
+            affiliateId: affiliate.id,
+            status: 'completed'
+          }
+        });
+        const totalPaidCommission = payouts.reduce((sum, payout) => sum + Number(payout.amount), 0);
+
+        // Use stored commission from database for total earned (held + available + paid)
+        const totalEarnedCommission = Number(affiliate.totalCommission || 0);
 
 
         // Calculate conversion rates
@@ -94,7 +103,8 @@ export async function GET(request: NextRequest) {
           clickToCompletionRate: clickToCompletionRate,
           // Revenue
           totalRevenue: totalRevenue,
-          totalCommission: totalCommission,
+          totalCommission: totalEarnedCommission, // Total earned (all time)
+          totalPaidCommission: totalPaidCommission, // Actually paid out
           // Dates
           createdAt: affiliate.createdAt,
           updatedAt: affiliate.updatedAt,
@@ -110,7 +120,8 @@ export async function GET(request: NextRequest) {
     const totalBookedCalls = affiliatePerformance.reduce((sum, aff) => sum + aff.bookedCall, 0);
     const totalSales = affiliatePerformance.reduce((sum, aff) => sum + aff.sales, 0);
     const totalRevenue = affiliatePerformance.reduce((sum, aff) => sum + aff.totalRevenue, 0);
-    const totalCommission = affiliatePerformance.reduce((sum, aff) => sum + aff.totalCommission, 0);
+    const totalCommission = affiliatePerformance.reduce((sum, aff) => sum + aff.totalCommission, 0); // Total earned
+    const totalPaidCommission = affiliatePerformance.reduce((sum, aff) => sum + aff.totalPaidCommission, 0); // Actually paid
 
     // Calculate overall conversion rates
     const overallClickToQuizRate = totalVisitors > 0 ? (totalQuizStarts / totalVisitors) * 100 : 0;
@@ -133,7 +144,8 @@ export async function GET(request: NextRequest) {
         totalBookedCalls,
         totalSales,
         totalRevenue,
-        totalCommission,
+        totalCommission, // Total earned commissions (all time)
+        totalPaidCommission, // Actually paid commissions
         overallClickToQuizRate,
         overallQuizToCompletionRate,
         overallClickToCompletionRate,
