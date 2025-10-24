@@ -314,7 +314,7 @@ export default function CommissionPayoutManager() {
 
         {/* Affiliates Tab */}
         {activeTab === "affiliates" && (
-          <div className="space-y-4">
+          <div>
             {affiliates.length === 0 ? (
               <div className="text-center py-12">
                 <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -326,59 +326,88 @@ export default function CommissionPayoutManager() {
                 <p className="text-slate-600">No approved affiliates available for payout management.</p>
               </div>
             ) : (
-              affiliates.map((affiliate) => (
-                <motion.div
-                  key={affiliate.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-300"
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
-                      <span className="text-white font-bold text-lg">
-                        {affiliate.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-slate-900 text-lg">{affiliate.name}</h3>
-                      <p className="text-sm text-slate-600">{affiliate.email}</p>
-                      <p className="text-xs text-slate-500">Code: {affiliate.referralCode}</p>
-                    </div>
+              <>
+                {/* Table Header */}
+                <div className="grid grid-cols-12 gap-4 px-4 py-3 bg-slate-100 rounded-t-xl border-b border-slate-200">
+                  <div className="col-span-4 text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                    Affiliate
                   </div>
-                  
-                  <div className="flex items-center space-x-6">
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-slate-600">Available Commission</p>
-                      <p className="text-xl font-bold text-slate-900">
-                        ${affiliate.availableCommission.toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-slate-600">Total Paid</p>
-                      <p className="text-lg font-bold text-emerald-600">
-                        ${affiliate.totalPaid.toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-slate-600">Pending</p>
-                      <p className="text-lg font-bold text-orange-600">
-                        ${affiliate.pendingCommissions.toLocaleString()}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => openPayoutModal(affiliate)}
-                      disabled={affiliate.availableCommission <= 0}
-                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                        affiliate.availableCommission > 0
-                          ? "bg-blue-600 text-white hover:bg-blue-700"
-                          : "bg-slate-300 text-slate-500 cursor-not-allowed"
-                      }`}
+                  <div className="col-span-2 text-center text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                    Available Commission
+                  </div>
+                  <div className="col-span-2 text-center text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                    Total Paid
+                  </div>
+                  <div className="col-span-2 text-center text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                    Pending
+                  </div>
+                  <div className="col-span-2 text-center text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                    Action
+                  </div>
+                </div>
+
+                {/* Table Rows */}
+                <div className="divide-y divide-slate-200">
+                  {affiliates.map((affiliate) => (
+                    <motion.div
+                      key={affiliate.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="grid grid-cols-12 gap-4 p-4 bg-gradient-to-r from-slate-50 to-white hover:from-slate-100 hover:to-slate-50 transition-all duration-300"
                     >
-                      {affiliate.availableCommission > 0 ? "Pay Out" : "No Balance"}
-                    </button>
-                  </div>
-                </motion.div>
-              ))
+                      {/* Affiliate Info */}
+                      <div className="col-span-4 flex items-center space-x-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                          <span className="text-white font-bold text-lg">
+                            {affiliate.name.charAt(0).toUpperCase()}
+                          </span>
+                        </div>
+                        <div className="min-w-0">
+                          <h3 className="font-bold text-slate-900 text-base truncate">{affiliate.name}</h3>
+                          <p className="text-sm text-slate-600 truncate">{affiliate.email}</p>
+                          <p className="text-xs text-slate-500">Code: {affiliate.referralCode}</p>
+                        </div>
+                      </div>
+                      
+                      {/* Available Commission */}
+                      <div className="col-span-2 flex items-center justify-center">
+                        <p className="text-xl font-bold text-slate-900">
+                          ${affiliate.availableCommission.toLocaleString()}
+                        </p>
+                      </div>
+
+                      {/* Total Paid */}
+                      <div className="col-span-2 flex items-center justify-center">
+                        <p className="text-xl font-bold text-emerald-600">
+                          ${affiliate.totalPaid.toLocaleString()}
+                        </p>
+                      </div>
+
+                      {/* Pending */}
+                      <div className="col-span-2 flex items-center justify-center">
+                        <p className="text-xl font-bold text-orange-600">
+                          ${affiliate.pendingCommissions.toLocaleString()}
+                        </p>
+                      </div>
+
+                      {/* Action */}
+                      <div className="col-span-2 flex items-center justify-center">
+                        <button
+                          onClick={() => openPayoutModal(affiliate)}
+                          disabled={affiliate.availableCommission <= 0}
+                          className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
+                            affiliate.availableCommission > 0
+                              ? "bg-blue-600 text-white hover:bg-blue-700"
+                              : "bg-slate-300 text-slate-500 cursor-not-allowed"
+                          }`}
+                        >
+                          {affiliate.availableCommission > 0 ? "Pay Out" : "No Balance"}
+                        </button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         )}
