@@ -25,7 +25,6 @@ interface AffiliateData {
 
 interface AffiliateStats {
   totalClicks: number;
-  totalQuizStarts: number;
   totalLeads: number;
   totalBookings: number;
   totalSales: number;
@@ -38,7 +37,7 @@ interface AffiliateStats {
     date: string;
     clicks: number;
     leads: number;
-    sales: number;
+    bookedCalls: number;
     commission: number;
   }>;
 }
@@ -105,33 +104,28 @@ export default function AffiliateDashboard() {
     try {
       setLoading(true);
       
-      // Fetch affiliate stats using the simplified API
+      const token = localStorage.getItem("affiliate_token");
+      if (!token) {
+        router.push("/affiliates/login");
+        return;
+      }
+      
+      // Fetch affiliate stats using the affiliate-specific API
       console.log("Fetching affiliate stats...");
-      
-      // Use the new simplified affiliate stats API
-      // Use custom tracking link if it exists, otherwise use referral code
-      const affiliateCode = affiliate.customTrackingLink 
-        ? affiliate.customTrackingLink.replace('/', '') 
-        : affiliate.referralCode;
-      
-      console.log("Fetching affiliate data for:", affiliateCode);
       
       // Add cache-busting parameter to ensure fresh data
       const cacheBuster = `&_t=${Date.now()}`;
-      const response = await fetch(`/api/admin/affiliate-stats?affiliateCode=${affiliateCode}&dateRange=${dateRange}${cacheBuster}`);
+      const response = await fetch(`/api/affiliate/stats?dateRange=${dateRange}${cacheBuster}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Full API response:", data);
-        
-        if (data.stats) {
-          console.log("Using real affiliate data:", data.stats);
-          setStats(data.stats);
-          setError(null);
-        } else {
-          console.log("No affiliate data found in response");
-          setError("No affiliate data available");
-        }
+        console.log("Affiliate stats loaded:", data);
+        setStats(data);
+        setError(null);
       } else {
         console.log("API failed with status:", response.status);
         const errorText = await response.text();
@@ -420,18 +414,6 @@ export default function AffiliateDashboard() {
                       <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg text-sm sm:text-base">
                         2
                       </div>
-                      <span className="text-xs sm:text-sm font-semibold text-slate-900">Quiz Starts</span>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm sm:text-lg font-bold text-slate-900">{(stats.totalQuizStarts || 0).toLocaleString()}</p>
-                      <p className="text-xs text-slate-600 font-medium">{(stats.totalClicks || 0) > 0 ? (((stats.totalQuizStarts || 0) / (stats.totalClicks || 1)) * 100).toFixed(1) : 0}%</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between p-2 sm:p-3 bg-gradient-to-r from-slate-50 to-white rounded-lg sm:rounded-xl border border-slate-200">
-                    <div className="flex items-center space-x-2 sm:space-x-4">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg text-sm sm:text-base">
-                        3
-                      </div>
                       <span className="text-xs sm:text-sm font-semibold text-slate-900">Quiz Completions</span>
                     </div>
                     <div className="text-right">
@@ -442,7 +424,7 @@ export default function AffiliateDashboard() {
                   <div className="flex items-center justify-between p-2 sm:p-3 bg-gradient-to-r from-slate-50 to-white rounded-lg sm:rounded-xl border border-slate-200">
                     <div className="flex items-center space-x-2 sm:space-x-4">
                       <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg text-sm sm:text-base">
-                        4
+                        3
                       </div>
                       <span className="text-xs sm:text-sm font-semibold text-slate-900">Booked Calls</span>
                     </div>
