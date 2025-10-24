@@ -93,9 +93,9 @@ export async function GET(request: NextRequest) {
     // Calculate stats using the SAME logic as individual affiliate API for consistency
     const totalClicks = clicks.length;
     
-    // Calculate Total Leads from conversions (same method as other cards)
-    // A lead is a quiz_completion conversion
-    const totalLeads = conversions.filter(c => c.conversionType === "quiz_completion").length;
+    // Calculate Total Leads using centralized lead calculation (same as graph)
+    const leadData = await calculateLeadsByCode(affiliateCode, dateRange);
+    const totalLeads = leadData.totalLeads;
     const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
     const totalSales = conversions.filter(c => c.conversionType === "sale").length;
     
@@ -127,8 +127,8 @@ export async function GET(request: NextRequest) {
     const dateFilteredCommission = appointmentBasedCommission;
     
     // Generate daily stats from real data using centralized lead calculation
-    // Pass the same appointment data to ensure consistency between card and graph
-    const dailyStats = await generateDailyStatsFromRealData(clicks, conversions, dateRange, affiliateCode, dateFilteredAppointments);
+    // Pass the same appointment data and lead data to ensure consistency between card and graph
+    const dailyStats = await generateDailyStatsFromRealData(clicks, conversions, dateRange, affiliateCode, dateFilteredAppointments, leadData);
     
     const totalQuizStarts = quizSessions.length; // Use actual quiz sessions count
     const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
@@ -239,7 +239,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-async function generateDailyStatsFromRealData(clicks: any[], conversions: any[], dateRange: string, affiliateCode: string, cardAppointments?: any[]) {
+async function generateDailyStatsFromRealData(clicks: any[], conversions: any[], dateRange: string, affiliateCode: string, cardAppointments?: any[], preCalculatedLeadData?: any) {
   const stats = [];
   
   // Get affiliate info for commission rate
@@ -292,9 +292,8 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
     convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
   }
 
-  // Fetch all leads data once for the entire date range to optimize performance
-  // Use the same date range as the total leads calculation for consistency
-  const allLeadsData = await calculateLeadsByCode(affiliateCode, dateRange);
+  // Use pre-calculated lead data if provided, otherwise fetch it
+  const allLeadsData = preCalculatedLeadData || await calculateLeadsByCode(affiliateCode, dateRange);
 
   if (dateRange === "today") {
     // For today, show hourly data for today
