@@ -511,7 +511,7 @@ export default function CloserDashboard() {
                 <select
                   value={outcomeData.outcome}
                   onChange={(e) => setOutcomeData({ ...outcomeData, outcome: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-900"
                   required
                 >
                   <option value="">Select outcome</option>
@@ -532,7 +532,7 @@ export default function CloserDashboard() {
                   step="0.01"
                   value={outcomeData.saleValue}
                   onChange={(e) => setOutcomeData({ ...outcomeData, saleValue: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-900 placeholder-gray-400"
                   placeholder="0.00"
                 />
               </div>
@@ -543,7 +543,7 @@ export default function CloserDashboard() {
                   value={outcomeData.notes}
                   onChange={(e) => setOutcomeData({ ...outcomeData, notes: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none text-gray-900 placeholder-gray-400"
                   placeholder="Add any notes about the call..."
                 />
               </div>
@@ -554,7 +554,7 @@ export default function CloserDashboard() {
                   type="url"
                   value={outcomeData.recordingLink}
                   onChange={(e) => setOutcomeData({ ...outcomeData, recordingLink: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-900 placeholder-gray-400"
                   placeholder="https://example.com/recording-link"
                 />
                 <p className="mt-2 text-xs text-gray-500">Optional: Add a link to the call recording for review</p>
