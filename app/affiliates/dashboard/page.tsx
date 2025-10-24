@@ -126,6 +126,12 @@ export default function AffiliateDashboard() {
         
         if (data.stats) {
           console.log("Using real affiliate data:", data.stats);
+          console.log("📊 Commission data:", {
+            totalCommission: data.stats.totalCommission,
+            dailyStatsCount: data.stats.dailyStats?.length,
+            dailyStatsWithCommission: data.stats.dailyStats?.filter((d: any) => d.commission > 0),
+            allDailyStats: data.stats.dailyStats
+          });
           setStats(data.stats);
           setError(null);
         } else {

@@ -108,6 +108,20 @@ export async function GET(request: NextRequest) {
       },
     }).catch(() => []);
     
+    console.log('🔍 Fetched appointments for graph:', {
+      affiliateCode: affiliate.referralCode,
+      dateRange,
+      startDate: startDate.toISOString(),
+      foundCount: dateFilteredAppointments.length,
+      appointments: dateFilteredAppointments.map(apt => ({
+        id: apt.id,
+        outcome: apt.outcome,
+        saleValue: apt.saleValue,
+        updatedAt: apt.updatedAt,
+        updatedAtDate: new Date(apt.updatedAt).toISOString().split('T')[0]
+      }))
+    });
+    
     const appointmentBasedCommission = dateFilteredAppointments.reduce((sum, apt) => {
       const saleValue = Number(apt.saleValue || 0);
       return sum + (saleValue * Number(affiliate.commissionRate));
