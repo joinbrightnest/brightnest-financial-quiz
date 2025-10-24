@@ -547,27 +547,48 @@ export async function GET(request: Request) {
 
     const dailyActivity = await getActivityData(dateRange);
 
-    // Calculate clicks - SIMPLE LOGIC:
-    // For specific quiz: Count ALL clicks (affiliate + normal) for that quiz
-    // For "all quizzes": Sum up clicks from all quiz types
+    // Calculate clicks - CORRECT LOGIC:
+    // Clicks = Affiliate clicks (from affiliateClick table) + Quiz sessions (from quizSession table)
+    // For specific quiz: Count affiliate clicks + quiz sessions for that quiz
+    // For "all quizzes": Count all affiliate clicks + all quiz sessions
     
     let totalClicks = 0;
     
     if (quizType && quizType !== 'all') {
-      // For specific quiz type: Count ALL quiz sessions for that quiz (affiliate + normal)
-      totalClicks = await prisma.quizSession.count({
+      // For specific quiz type:
+      // 1. Count affiliate clicks (these are clicks on affiliate links, regardless of which quiz they led to)
+      const affiliateClicks = await prisma.affiliateClick.count({
+        where: {
+          createdAt: dateFilter
+        }
+      });
+      
+      // 2. Count quiz sessions for this specific quiz type
+      const quizSessions = await prisma.quizSession.count({
         where: {
           createdAt: dateFilter,
           quizType: quizType
         }
       });
+      
+      totalClicks = affiliateClicks + quizSessions;
     } else {
-      // For "all quizzes": Count ALL quiz sessions (affiliate + normal) across all quiz types
-      totalClicks = await prisma.quizSession.count({
+      // For "all quizzes":
+      // 1. Count ALL affiliate clicks
+      const affiliateClicks = await prisma.affiliateClick.count({
         where: {
           createdAt: dateFilter
         }
       });
+      
+      // 2. Count ALL quiz sessions
+      const quizSessions = await prisma.quizSession.count({
+        where: {
+          createdAt: dateFilter
+        }
+      });
+      
+      totalClicks = affiliateClicks + quizSessions;
     }
     
     const clicks = totalClicks; // Total clicks for the selected quiz type(s)
