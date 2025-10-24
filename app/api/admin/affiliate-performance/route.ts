@@ -61,9 +61,21 @@ export async function GET(request: NextRequest) {
         const leadCount = leadData.totalLeads;
 
         // Calculate actual revenue from converted appointments (total sale values)
-        const totalRevenue = appointments
-          .filter(apt => apt.outcome === CallOutcome.converted && apt.saleValue)
-          .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
+        const convertedAppointments = appointments.filter(apt => apt.outcome === CallOutcome.converted && apt.saleValue);
+        const totalRevenue = convertedAppointments.reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
+        
+        // Debug logging
+        console.log('🔍 Revenue calculation for affiliate:', affiliate.name, {
+          totalAppointments: appointments.length,
+          convertedAppointments: convertedAppointments.length,
+          saleValues: convertedAppointments.map(apt => ({
+            id: apt.id,
+            saleValue: apt.saleValue,
+            saleValueNumber: Number(apt.saleValue),
+            outcome: apt.outcome
+          })),
+          totalRevenue
+        });
 
         // Get actually PAID commissions (from completed payouts)
         let totalPaidCommission = 0;
