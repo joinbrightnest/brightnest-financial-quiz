@@ -150,6 +150,21 @@ export async function GET(request: NextRequest) {
       .sort((a, b) => b.totalRevenue - a.totalRevenue)
       .slice(0, 10);
 
+    // Debug info for console
+    const debugInfo = affiliatePerformance.map(aff => ({
+      name: aff.name,
+      revenue: aff.totalRevenue,
+      commission: aff.totalCommission,
+      paidCommission: aff.totalPaidCommission,
+    }));
+
+    console.log('💰 Revenue Debug Info:', {
+      totalAffiliates,
+      totalRevenue,
+      avgRevenuePerAffiliate: totalAffiliates > 0 ? totalRevenue / totalAffiliates : 0,
+      affiliates: debugInfo
+    });
+
     return NextResponse.json({
       success: true,
       data: {
@@ -170,6 +185,12 @@ export async function GET(request: NextRequest) {
         affiliatePerformance,
         topAffiliates,
       },
+      // Debug info visible in response
+      debug: {
+        totalRevenue,
+        avgRevenuePerAffiliate: totalAffiliates > 0 ? Math.round(totalRevenue / totalAffiliates) : 0,
+        affiliates: debugInfo
+      }
     });
   } catch (error) {
     console.error("Error fetching affiliate performance:", error);
