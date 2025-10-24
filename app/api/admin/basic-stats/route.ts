@@ -320,8 +320,67 @@ export async function GET(request: Request) {
     });
 
     // Get all questions ordered by their order field
-    // Default to financial-profile if no quiz type specified to avoid mixing different quiz types
-    const defaultQuizType = quizType || 'financial-profile';
+    // Handle "all" quiz types by finding the quiz with biggest drop-offs
+    let defaultQuizType = quizType || 'financial-profile';
+    
+    if (quizType === 'all') {
+      // Find the quiz type with the highest drop-off rate
+      const quizTypes = await prisma.quizQuestion.groupBy({
+        by: ['quizType'],
+        where: { active: true }
+      });
+      
+      let maxDropOffRate = 0;
+      let problematicQuizType = 'financial-profile';
+      
+      for (const qt of quizTypes) {
+        // Get questions for this quiz type
+        const questions = await prisma.quizQuestion.findMany({
+          where: { 
+            active: true,
+            quizType: qt.quizType
+          },
+          orderBy: { order: 'asc' }
+        });
+        
+        // Get total sessions for this quiz type
+        const quizSessions = await prisma.quizSession.count({
+          where: {
+            createdAt: dateFilter,
+            quizType: qt.quizType
+          }
+        });
+        
+        if (quizSessions > 0) {
+          // Get first question answers for this quiz type
+          const firstQuestion = questions[0];
+          if (firstQuestion) {
+            const firstQuestionAnswers = await prisma.quizAnswer.count({
+              where: {
+                questionId: firstQuestion.id,
+                createdAt: dateFilter
+              }
+            });
+            
+            const dropOffRate = ((quizSessions - firstQuestionAnswers) / quizSessions) * 100;
+            
+            console.log(`🔍 Quiz Type Analysis: ${qt.quizType}`);
+            console.log(`   Sessions: ${quizSessions}, First Question Answers: ${firstQuestionAnswers}`);
+            console.log(`   Drop-off Rate: ${dropOffRate.toFixed(1)}%`);
+            
+            if (dropOffRate > maxDropOffRate) {
+              maxDropOffRate = dropOffRate;
+              problematicQuizType = qt.quizType;
+              console.log(`   ✅ New most problematic quiz: ${qt.quizType} (${dropOffRate.toFixed(1)}% drop-off)`);
+            }
+          }
+        }
+      }
+      
+      defaultQuizType = problematicQuizType;
+      console.log(`🎯 Selected most problematic quiz: ${defaultQuizType} (${maxDropOffRate.toFixed(1)}% drop-off)`);
+    }
+    
     const allQuestions = await prisma.quizQuestion.findMany({
       where: { 
         active: true,
@@ -352,15 +411,22 @@ export async function GET(request: Request) {
       const answeredCount = questionCountMap.get(question.id) || 0;
       const retentionRate = totalSessions > 0 ? (answeredCount / totalSessions) * 100 : 0;
 
-      console.log(`📊 Question ${question.order} (DB order: ${question.order}): ${question.prompt}`);
+      // Show quiz type in question text when "all" was selected
+      const questionText = quizType === 'all' 
+        ? `${question.prompt} (${question.quizType})` 
+        : question.prompt;
+
+      console.log(`📊 Question ${question.order} (DB order: ${question.order}): ${questionText}`);
       console.log(`   Answers: ${answeredCount}/${totalSessions} (${retentionRate.toFixed(1)}% retention)`);
 
       return {
-        questionNumber: question.order, // Use database order directly (now sequential: 1, 2, 3, 4, 5...)
-        questionText: question.prompt,
+        questionNumber: question.order,
+        questionText: questionText,
         answeredCount,
         retentionRate: Math.round(retentionRate * 100) / 100,
-        originalOrder: question.order, // Same as questionNumber now
+        originalOrder: question.order,
+        quizType: question.quizType,
+        selectedQuizType: quizType === 'all' ? defaultQuizType : quizType, // Show which quiz was selected
       };
     });
 
