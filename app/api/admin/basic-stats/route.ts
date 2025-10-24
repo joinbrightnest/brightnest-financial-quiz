@@ -548,30 +548,29 @@ export async function GET(request: Request) {
     const dailyActivity = await getActivityData(dateRange);
 
     // Calculate clicks - CORRECT LOGIC:
-    // Clicks = All quiz sessions (people who started quizzes, affiliate or normal)
-    // For specific quiz: Count quiz sessions for that quiz only
-    // For "all quizzes": Count all quiz sessions across all quiz types
+    // Clicks = Affiliate clicks + Normal website clicks
+    // For specific quiz: Count all affiliate clicks + all normal website clicks
+    // For "all quizzes": Count all affiliate clicks + all normal website clicks
     
     let totalClicks = 0;
     
-    if (quizType && quizType !== 'all') {
-      // For specific quiz type: Count quiz sessions for that quiz only
-      totalClicks = await prisma.quizSession.count({
-        where: {
-          createdAt: dateFilter,
-          quizType: quizType
-        }
-      });
-    } else {
-      // For "all quizzes": Count all quiz sessions across all quiz types
-      totalClicks = await prisma.quizSession.count({
-        where: {
-          createdAt: dateFilter
-        }
-      });
-    }
+    // Count affiliate clicks
+    const affiliateClicks = await prisma.affiliateClick.count({
+      where: {
+        createdAt: dateFilter
+      }
+    });
     
-    const clicks = totalClicks; // Total quiz sessions (includes both affiliate and normal website visits)
+    // Count normal website clicks
+    const normalWebsiteClicks = await prisma.normalWebsiteClick.count({
+      where: {
+        createdAt: dateFilter
+      }
+    });
+    
+    totalClicks = affiliateClicks + normalWebsiteClicks;
+    
+    const clicks = totalClicks; // Total clicks (affiliate clicks + normal website clicks)
     const partialSubmissions = totalSessions - completedSessions; // Started but didn't complete
     const leadsCollected = allLeads.length; // Count completed sessions (all completed quizzes are leads)
     const averageTimeMs = avgDurationResult._avg.durationMs || 0; // Average time in milliseconds
