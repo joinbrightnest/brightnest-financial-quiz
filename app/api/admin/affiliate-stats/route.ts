@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { calculateLeadsByCode, calculateLeadsWithDateRange } from "@/lib/lead-calculation";
+import { verifyAdminAuth } from "@/lib/admin-auth-server";
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin authentication required" },
+      { status: 401 }
+    );
+  }
+  
   const { searchParams } = new URL(request.url);
   const affiliateCode = searchParams.get('affiliateCode');
   const dateRange = searchParams.get('dateRange') || 'month';

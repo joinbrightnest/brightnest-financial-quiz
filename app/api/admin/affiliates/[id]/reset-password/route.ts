@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { verifyAdminAuth } from '@/lib/admin-auth-server';
 
 const prisma = new PrismaClient();
 
@@ -8,6 +9,14 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin authentication required" },
+      { status: 401 }
+    );
+  }
+  
   try {
     const { id } = await params;
     const { newPassword } = await request.json();

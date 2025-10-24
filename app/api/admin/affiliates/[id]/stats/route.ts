@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient, CallOutcome } from "@prisma/client";
 import { calculateAffiliateLeads, calculateLeadsWithDateRange } from "@/lib/lead-calculation";
+import { verifyAdminAuth } from "@/lib/admin-auth-server";
 
 const prisma = new PrismaClient();
 
@@ -8,6 +9,14 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin authentication required" },
+      { status: 401 }
+    );
+  }
+  
   try {
     const { id: affiliateId } = await params;
     const { searchParams } = new URL(request.url);
