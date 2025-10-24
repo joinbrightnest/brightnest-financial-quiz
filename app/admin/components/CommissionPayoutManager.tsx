@@ -15,6 +15,13 @@ interface Affiliate {
   availableCommission: number;
 }
 
+interface HeldCommission {
+  id: string;
+  amount: number;
+  createdAt: string;
+  holdUntil: string;
+}
+
 interface Payout {
   id: string;
   amountDue: number;
@@ -56,6 +63,8 @@ export default function CommissionPayoutManager() {
   const [submitting, setSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState<"affiliates" | "payouts">("affiliates");
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [expandedAffiliates, setExpandedAffiliates] = useState<Set<string>>(new Set());
+  const [holdDetails, setHoldDetails] = useState<Record<string, { heldCommissions: HeldCommission[], holdDays: number }>>({});
 
   useEffect(() => {
     fetchData();
@@ -143,6 +152,31 @@ export default function CommissionPayoutManager() {
 
   const handleFilterChange = (status: string) => {
     setFilterStatus(status);
+  };
+
+  const toggleAffiliateExpand = async (affiliateId: string) => {
+    const newExpanded = new Set(expandedAffiliates);
+    if (expandedAffiliates.has(affiliateId)) {
+      newExpanded.delete(affiliateId);
+    } else {
+      newExpanded.add(affiliateId);
+      // Fetch hold details if not already loaded
+      if (!holdDetails[affiliateId]) {
+        try {
+          const response = await fetch(`/api/admin/payouts?affiliateId=${affiliateId}`);
+          const data = await response.json();
+          if (data.success && data.commissionHoldInfo) {
+            setHoldDetails(prev => ({
+              ...prev,
+              [affiliateId]: data.commissionHoldInfo
+            }));
+          }
+        } catch (error) {
+          console.error("Error fetching hold details:", error);
+        }
+      }
+    }
+    setExpandedAffiliates(newExpanded);
   };
 
   if (loading) {
@@ -348,64 +382,173 @@ export default function CommissionPayoutManager() {
 
                 {/* Table Rows */}
                 <div className="divide-y divide-slate-200">
-                  {affiliates.map((affiliate) => (
-                    <motion.div
-                      key={affiliate.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="grid grid-cols-12 gap-4 p-4 bg-gradient-to-r from-slate-50 to-white hover:from-slate-100 hover:to-slate-50 transition-all duration-300"
-                    >
-                      {/* Affiliate Info */}
-                      <div className="col-span-4 flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
-                          <span className="text-white font-bold text-lg">
-                            {affiliate.name.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                        <div className="min-w-0">
-                          <h3 className="font-bold text-slate-900 text-base truncate">{affiliate.name}</h3>
-                          <p className="text-sm text-slate-600 truncate">{affiliate.email}</p>
-                          <p className="text-xs text-slate-500">Code: {affiliate.referralCode}</p>
-                        </div>
-                      </div>
-                      
-                      {/* Available Commission */}
-                      <div className="col-span-2 flex items-center justify-center">
-                        <p className="text-xl font-bold text-slate-900">
-                          ${affiliate.availableCommission.toLocaleString()}
-                        </p>
-                      </div>
-
-                      {/* Total Paid */}
-                      <div className="col-span-2 flex items-center justify-center">
-                        <p className="text-xl font-bold text-emerald-600">
-                          ${affiliate.totalPaid.toLocaleString()}
-                        </p>
-                      </div>
-
-                      {/* Pending */}
-                      <div className="col-span-2 flex items-center justify-center">
-                        <p className="text-xl font-bold text-orange-600">
-                          ${affiliate.pendingCommissions.toLocaleString()}
-                        </p>
-                      </div>
-
-                      {/* Action */}
-                      <div className="col-span-2 flex items-center justify-center">
-                        <button
-                          onClick={() => openPayoutModal(affiliate)}
-                          disabled={affiliate.availableCommission <= 0}
-                          className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                            affiliate.availableCommission > 0
-                              ? "bg-blue-600 text-white hover:bg-blue-700"
-                              : "bg-slate-300 text-slate-500 cursor-not-allowed"
-                          }`}
+                  {affiliates.map((affiliate) => {
+                    const isExpanded = expandedAffiliates.has(affiliate.id);
+                    const affiliateHoldInfo = holdDetails[affiliate.id];
+                    
+                    return (
+                      <div key={affiliate.id}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                          className="grid grid-cols-12 gap-4 p-4 bg-gradient-to-r from-slate-50 to-white hover:from-slate-100 hover:to-slate-50 transition-all duration-300"
                         >
-                          {affiliate.availableCommission > 0 ? "Pay Out" : "No Balance"}
-                        </button>
+                          {/* Affiliate Info */}
+                          <div className="col-span-4 flex items-center space-x-4">
+                            {/* Expand/Collapse Button */}
+                            {affiliate.pendingCommissions > 0 && (
+                              <button
+                                onClick={() => toggleAffiliateExpand(affiliate.id)}
+                                className="flex-shrink-0 p-1 hover:bg-slate-200 rounded-lg transition-colors"
+                              >
+                                <svg
+                                  className={`w-5 h-5 text-slate-600 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                              </button>
+                            )}
+                            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                      <span className="text-white font-bold text-lg">
+                        {affiliate.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                            <div className="min-w-0">
+                              <h3 className="font-bold text-slate-900 text-base truncate">{affiliate.name}</h3>
+                              <p className="text-sm text-slate-600 truncate">{affiliate.email}</p>
+                      <p className="text-xs text-slate-500">Code: {affiliate.referralCode}</p>
+                    </div>
+                  </div>
+                  
+                          {/* Available Commission */}
+                          <div className="col-span-2 flex items-center justify-center">
+                      <p className="text-xl font-bold text-slate-900">
+                        ${affiliate.availableCommission.toLocaleString()}
+                      </p>
+                    </div>
+
+                          {/* Total Paid */}
+                          <div className="col-span-2 flex items-center justify-center">
+                            <p className="text-xl font-bold text-emerald-600">
+                        ${affiliate.totalPaid.toLocaleString()}
+                      </p>
+                    </div>
+
+                          {/* Pending */}
+                          <div className="col-span-2 flex items-center justify-center">
+                            <p className="text-xl font-bold text-orange-600">
+                        ${affiliate.pendingCommissions.toLocaleString()}
+                      </p>
+                    </div>
+
+                          {/* Action */}
+                          <div className="col-span-2 flex items-center justify-center">
+                    <button
+                      onClick={() => openPayoutModal(affiliate)}
+                      disabled={affiliate.availableCommission <= 0}
+                              className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
+                        affiliate.availableCommission > 0
+                          ? "bg-blue-600 text-white hover:bg-blue-700"
+                          : "bg-slate-300 text-slate-500 cursor-not-allowed"
+                      }`}
+                    >
+                      {affiliate.availableCommission > 0 ? "Pay Out" : "No Balance"}
+                    </button>
+                  </div>
+                </motion.div>
+
+                        {/* Expanded Commission Hold Details */}
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="bg-orange-50 border-t border-orange-100 p-6"
+                          >
+                            <div className="max-w-5xl">
+                              <div className="flex items-center space-x-2 mb-4">
+                                <div className="p-2 bg-orange-500 rounded-lg">
+                                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                  </svg>
+                                </div>
+                                <h3 className="text-lg font-semibold text-slate-900">Commission Hold Details</h3>
+                              </div>
+
+                              {affiliateHoldInfo ? (
+                                <>
+                                  <div className="mb-4 p-4 bg-orange-100 rounded-xl border border-orange-200">
+                                    <div className="flex items-center space-x-2 mb-2">
+                                      <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                      </svg>
+                                      <span className="text-sm font-semibold text-orange-800">Hold Period Information</span>
+                                    </div>
+                                    <p className="text-sm text-orange-700">
+                                      Commissions are held for <strong>{affiliateHoldInfo.holdDays} days</strong> after earning to ensure payment stability and prevent chargebacks.
+                                    </p>
+                                  </div>
+
+                                  {affiliateHoldInfo.heldCommissions.length > 0 ? (
+                                    <div className="space-y-3">
+                                      {affiliateHoldInfo.heldCommissions.map((commission, index) => (
+                                        <div
+                                          key={commission.id}
+                                          className="bg-white border border-orange-200 rounded-xl p-4 flex items-center justify-between"
+                                        >
+                                          <div className="flex items-center space-x-3">
+                                            <div className="p-2 bg-orange-100 rounded-lg">
+                                              <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                                              </svg>
+                                            </div>
+                                            <div>
+                                              <p className="text-lg font-bold text-slate-900">
+                                                ${commission.amount.toLocaleString()}
+                                              </p>
+                                              <p className="text-sm text-slate-500">
+                                                Earned: {new Date(commission.createdAt).toLocaleDateString('en-US', {
+                                                  year: 'numeric',
+                                                  month: 'long',
+                                                  day: 'numeric'
+                                                })}
+                                              </p>
+                                            </div>
+                                          </div>
+                                          <div className="text-right">
+                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700 border border-orange-200">
+                                              <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                              </svg>
+                                              Available: {new Date(commission.holdUntil).toLocaleDateString('en-US', {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric'
+                                              })}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    <p className="text-slate-600 text-center py-4">No held commissions</p>
+                                  )}
+                                </>
+                              ) : (
+                                <div className="text-center py-4">
+                                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto"></div>
+                                  <p className="text-slate-600 mt-2">Loading hold details...</p>
+                                </div>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
                       </div>
-                    </motion.div>
-                  ))}
+                    );
+                  })}
                 </div>
               </>
             )}
