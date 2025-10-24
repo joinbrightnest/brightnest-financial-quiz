@@ -46,6 +46,7 @@ export async function DELETE(request: Request) {
     if (resetType === 'affiliate' || resetType === 'all') {
       // Delete affiliate-related data
       await prisma.affiliateClick.deleteMany();
+      await prisma.normalWebsiteClick.deleteMany(); // Delete normal website clicks
       await prisma.affiliateConversion.deleteMany();
       await prisma.affiliatePayout.deleteMany();
       await prisma.affiliateAuditLog.deleteMany();
