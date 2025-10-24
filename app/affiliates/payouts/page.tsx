@@ -463,7 +463,7 @@ export default function AffiliatePayoutsPage() {
                             <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            {commission.daysLeft > 0 ? `${commission.daysLeft} days left` : '< 1 day left'}
+                            {commission.daysLeft} {commission.daysLeft === 1 ? 'day' : 'days'} left
                           </span>
                           <p className="text-xs text-gray-500 mt-1">
                             Available: {new Date(commission.holdUntil).toLocaleDateString('en-US', {
