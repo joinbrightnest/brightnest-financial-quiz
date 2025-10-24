@@ -791,11 +791,12 @@ export default function CloserManagement() {
               <p className="text-sm font-semibold text-blue-900">Debug Info:</p>
               <p className="text-xs text-blue-700 mt-1">Total Appointments: {appointments.length}</p>
               <p className="text-xs text-blue-700">Appointments with closerId: {appointments.filter(a => a.closerId).length}</p>
+              <p className="text-xs text-blue-700">Appointments with closer object: {appointments.filter(a => a.closer).length}</p>
               <p className="text-xs text-blue-700">Appointments with outcome: {appointments.filter(a => a.outcome).length}</p>
               <p className="text-xs text-blue-700">Converted: {appointments.filter(a => a.outcome === 'converted').length}</p>
               {appointments.map((apt, idx) => (
                 <p key={idx} className="text-xs text-blue-600 mt-1">
-                  Apt {idx + 1}: closerId={apt.closerId || 'null'}, outcome={apt.outcome || 'null'}, customer={apt.customerName}
+                  Apt {idx + 1}: closerId={apt.closerId || 'null'}, closer={apt.closer?.name || 'null'}, outcome={apt.outcome || 'null'}, customer={apt.customerName}
                 </p>
               ))}
             </div>
@@ -901,7 +902,8 @@ export default function CloserManagement() {
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {closers.map((closer) => {
-                      const closerAppointments = appointments.filter(a => a.closerId === closer.id);
+                      // Use closer object instead of closerId to match Call Outcomes logic
+                      const closerAppointments = appointments.filter(a => a.closer?.id === closer.id);
                       const conversions = closerAppointments.filter(a => a.outcome === 'converted');
                       const totalRevenue = conversions.reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0);
                       const conversionRate = closerAppointments.length > 0 ? (conversions.length / closerAppointments.length) * 100 : 0;
