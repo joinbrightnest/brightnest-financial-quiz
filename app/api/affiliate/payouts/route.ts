@@ -105,10 +105,23 @@ export async function GET(request: NextRequest) {
     let commissionsWithHoldInfo: any[] = [];
     try {
       commissionsWithHoldInfo = heldCommissions.map(conversion => {
+        console.log('🔍 Processing conversion:', {
+          id: conversion.id,
+          holdUntil: conversion.holdUntil,
+          createdAt: conversion.createdAt,
+          commissionAmount: conversion.commissionAmount
+        });
+        
         // Use the stored holdUntil date from the database (already set when conversion was created)
         const holdUntil = new Date(conversion.holdUntil);
         const now = new Date();
         const daysLeft = Math.max(0, Math.ceil((holdUntil.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+        
+        console.log('📅 Calculated days left:', {
+          holdUntil: holdUntil.toISOString(),
+          now: now.toISOString(),
+          daysLeft
+        });
         
         return {
           id: conversion.id,
