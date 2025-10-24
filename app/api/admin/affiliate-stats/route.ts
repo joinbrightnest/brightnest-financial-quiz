@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient, CallOutcome } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { calculateLeadsByCode, calculateLeadsWithDateRange } from "@/lib/lead-calculation";
 
 const prisma = new PrismaClient();
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
     const dateFilteredAppointments = await prisma.appointment.findMany({
       where: {
         affiliateCode: affiliate.referralCode,
-        outcome: CallOutcome.converted,
+        outcome: 'converted' as any,
         updatedAt: { gte: startDate },
       },
     }).catch(() => []);
@@ -116,10 +116,11 @@ export async function GET(request: NextRequest) {
     }).catch(() => []);
     
     // Debug: Fetch ALL converted appointments to see dates
+    // Try querying with string 'converted' directly instead of enum
     const allConvertedAppointments = await prisma.appointment.findMany({
       where: {
         affiliateCode: affiliate.referralCode,
-        outcome: CallOutcome.converted,
+        outcome: 'converted' as any,
       },
     }).catch(() => []);
     
