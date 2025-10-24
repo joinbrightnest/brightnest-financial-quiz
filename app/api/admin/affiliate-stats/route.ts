@@ -108,14 +108,33 @@ export async function GET(request: NextRequest) {
       },
     }).catch(() => []);
     
-    console.log('🔍 Fetched appointments for graph:', {
+    // Debug: Fetch ALL converted appointments to see dates
+    const allConvertedAppointments = await prisma.appointment.findMany({
+      where: {
+        affiliateCode: affiliate.referralCode,
+        outcome: CallOutcome.converted,
+      },
+    }).catch(() => []);
+    
+    console.log('🔍 ALL converted appointments for affiliate:', {
       affiliateCode: affiliate.referralCode,
+      totalConverted: allConvertedAppointments.length,
+      allAppointments: allConvertedAppointments.map(apt => ({
+        id: apt.id,
+        saleValue: apt.saleValue,
+        createdAt: apt.createdAt,
+        updatedAt: apt.updatedAt,
+        createdAtDate: new Date(apt.createdAt).toISOString().split('T')[0],
+        updatedAtDate: new Date(apt.updatedAt).toISOString().split('T')[0]
+      }))
+    });
+    
+    console.log('🔍 Date-filtered appointments for graph:', {
       dateRange,
       startDate: startDate.toISOString(),
       foundCount: dateFilteredAppointments.length,
       appointments: dateFilteredAppointments.map(apt => ({
         id: apt.id,
-        outcome: apt.outcome,
         saleValue: apt.saleValue,
         updatedAt: apt.updatedAt,
         updatedAtDate: new Date(apt.updatedAt).toISOString().split('T')[0]
