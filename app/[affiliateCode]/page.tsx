@@ -4,6 +4,20 @@ import SharedHomePage from "../../components/SharedHomePage";
 
 const prisma = new PrismaClient();
 
+// In-memory cache to prevent duplicate requests within 30 seconds
+const requestCache = new Map<string, number>();
+const CACHE_DURATION = 30 * 1000; // 30 seconds
+
+// Clean up expired cache entries periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, timestamp] of requestCache.entries()) {
+    if (now - timestamp > CACHE_DURATION) {
+      requestCache.delete(key);
+    }
+  }
+}, CACHE_DURATION);
+
 interface AffiliatePageProps {
   params: Promise<{ affiliateCode: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -15,11 +29,16 @@ async function validateAndTrackAffiliate(affiliateCode: string, searchParams: { 
     const utm_medium = typeof searchParams.utm_medium === 'string' ? searchParams.utm_medium : undefined;
     const utm_campaign = typeof searchParams.utm_campaign === 'string' ? searchParams.utm_campaign : undefined;
 
+    // Generate a unique request ID for debugging
+    const requestId = Math.random().toString(36).substring(2, 15);
+    
     console.log("🎯 Server-side affiliate validation:", {
+      requestId,
       affiliateCode,
       utm_source,
       utm_medium,
-      utm_campaign
+      utm_campaign,
+      timestamp: new Date().toISOString()
     });
 
     // Find affiliate by referral code
@@ -45,6 +64,7 @@ async function validateAndTrackAffiliate(affiliateCode: string, searchParams: { 
       }
 
       console.log("✅ Valid affiliate found:", {
+        requestId,
         id: affiliate.id,
         name: affiliate.name,
         referralCode: affiliate.referralCode,
@@ -57,64 +77,107 @@ async function validateAndTrackAffiliate(affiliateCode: string, searchParams: { 
                        request.headers.get("x-real-ip") || 
                        "unknown";
       const userAgent = request.headers.get("user-agent") || "unknown";
+      
+      // Create a more robust fingerprint for duplicate detection
+      const fingerprint = `${affiliate.id}-${ipAddress}-${userAgent}`;
+      console.log("🔍 Request fingerprint:", {
+        requestId,
+        fingerprint: fingerprint.substring(0, 50) + "...",
+        ipAddress,
+        userAgent: userAgent.substring(0, 50) + "..."
+      });
 
-      // Check if we already tracked this browser recently (within 1 hour) to avoid duplicate clicks
-      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+      // Check in-memory cache first (fastest duplicate detection)
+      const now = Date.now();
+      const cachedTime = requestCache.get(fingerprint);
+      if (cachedTime && (now - cachedTime) < CACHE_DURATION) {
+        console.log("🚫 Duplicate request blocked by cache:", {
+          requestId,
+          affiliate: affiliate.referralCode,
+          timeSinceLastRequest: now - cachedTime
+        });
+        return true; // Valid affiliate, but skip tracking
+      }
+
+      // Check if we already tracked this browser recently (within 2 minutes) to avoid duplicate clicks
+      // Use a more robust duplicate detection with IP + user agent + very short time window
+      const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
       const existingClick = await prisma.affiliateClick.findFirst({
         where: {
           affiliateId: affiliate.id,
+          ipAddress: ipAddress,
           userAgent: userAgent,
           createdAt: {
-            gte: oneHourAgo
+            gte: twoMinutesAgo
           }
         }
       });
 
       if (existingClick) {
         console.log("🔄 Duplicate click detected for same browser, skipping:", {
+          requestId,
           affiliate: affiliate.referralCode,
           userAgent: userAgent.substring(0, 50) + "...",
           existingClickTime: existingClick.createdAt
         });
       } else {
-        // Record the click with error handling
+        // Record the click and update total clicks in a single transaction to prevent race conditions
         try {
-          await prisma.affiliateClick.create({
-            data: {
-              affiliateId: affiliate.id,
-              referralCode: affiliate.referralCode,
-              ipAddress,
-              userAgent,
-              utmSource: utm_source,
-              utmMedium: utm_medium,
-              utmCampaign: utm_campaign,
-            },
+          await prisma.$transaction(async (tx) => {
+            // Double-check for duplicates within the transaction
+            const duplicateCheck = await tx.affiliateClick.findFirst({
+              where: {
+                affiliateId: affiliate.id,
+                ipAddress: ipAddress,
+                userAgent: userAgent,
+                createdAt: {
+                  gte: twoMinutesAgo
+                }
+              }
+            });
+
+            if (!duplicateCheck) {
+              // Record the click
+              await tx.affiliateClick.create({
+                data: {
+                  affiliateId: affiliate.id,
+                  referralCode: affiliate.referralCode,
+                  ipAddress,
+                  userAgent,
+                  utmSource: utm_source,
+                  utmMedium: utm_medium,
+                  utmCampaign: utm_campaign,
+                },
+              });
+
+              // Update affiliate's total clicks
+              await tx.affiliate.update({
+                where: { id: affiliate.id },
+                data: {
+                  totalClicks: {
+                    increment: 1,
+                  },
+                },
+              });
+
+              // Update cache to prevent future duplicates
+              requestCache.set(fingerprint, now);
+              
+              console.log("✅ Affiliate click recorded and total updated successfully for:", {
+                requestId,
+                affiliate: affiliate.referralCode
+              });
+            } else {
+              console.log("🔄 Duplicate click detected within transaction, skipping:", {
+                requestId,
+                affiliate: affiliate.referralCode
+              });
+            }
           });
-          console.log("✅ Affiliate click recorded successfully for:", affiliate.referralCode);
-        } catch (clickError) {
-          console.error("Error recording affiliate click:", clickError);
+        } catch (transactionError) {
+          console.error("Error in affiliate click transaction:", transactionError);
           // Continue anyway - still set cookie
         }
-      }
-
-      // Update affiliate's total clicks only if we recorded a unique click
-      if (!existingClick) {
-        try {
-          await prisma.affiliate.update({
-            where: { id: affiliate.id },
-            data: {
-              totalClicks: {
-                increment: 1,
-              },
-            },
-          });
-          console.log("✅ Affiliate total clicks updated successfully");
-        } catch (updateError) {
-          console.error("Error updating affiliate clicks:", updateError);
-          // Continue anyway - click was recorded
-        }
-      } else {
-        console.log("🔄 Skipping total clicks update - duplicate click");
       }
 
       return true;

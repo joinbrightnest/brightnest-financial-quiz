@@ -10,11 +10,9 @@ export function middleware(request: NextRequest) {
   if (affiliateQuizMatch) {
     const [, affiliateCode, quizType] = affiliateQuizMatch
     
-    // Track the affiliate redirect (async, don't wait for it)
-    fetch(`${url.origin}/api/track-affiliate-redirect?affiliate=${affiliateCode}&utm_source=${url.searchParams.get('utm_source') || ''}&utm_medium=${url.searchParams.get('utm_medium') || ''}&utm_campaign=${url.searchParams.get('utm_campaign') || ''}`)
-      .catch(error => console.error('Error tracking affiliate redirect:', error));
-    
     // Redirect to quiz with affiliate parameter
+    // Note: Affiliate tracking is handled by the page-level validateAndTrackAffiliate function
+    // to avoid duplicate clicks from middleware + page tracking
     url.pathname = `/quiz/${quizType}`
     url.searchParams.set('affiliate', affiliateCode)
     
