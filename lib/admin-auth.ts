@@ -14,9 +14,13 @@ export function useAdminAuth() {
 
   const checkAuth = async () => {
     try {
+      // Token is stored in httpOnly cookie, server will validate it
       const response = await fetch('/api/admin/basic-stats', {
         method: 'GET',
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
       });
       
       if (response.ok) {
@@ -39,8 +43,8 @@ export function useAdminAuth() {
 
   const logout = async () => {
     try {
-      // Clear the authentication cookie by setting it to expire
-      document.cookie = 'admin_authenticated=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      // Clear the JWT token cookie by setting it to expire
+      document.cookie = 'admin_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
       setIsAuthenticated(false);
       router.push('/admin');
     } catch (error) {

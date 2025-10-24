@@ -34,6 +34,10 @@ model QuizSession {
   result        Result?
   articleViews  ArticleView[]
 
+  @@index([affiliateCode])
+  @@index([completedAt])
+  @@index([status, quizType])
+  @@index([createdAt])
   @@map("quiz_sessions")
 }
 
@@ -246,6 +250,8 @@ model Affiliate {
   payouts         AffiliatePayout[]
   auditLogs       AffiliateAuditLog[]
 
+  @@index([isApproved, isActive])
+  @@index([createdAt])
   @@map("affiliates")
 }
 
@@ -262,6 +268,8 @@ model AffiliateClick {
   
   affiliate    Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
 
+  @@index([affiliateId, createdAt])
+  @@index([createdAt])
   @@map("affiliate_clicks")
 }
 
@@ -292,6 +300,9 @@ model AffiliateConversion {
   
   affiliate       Affiliate         @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
 
+  @@index([affiliateId])
+  @@index([commissionStatus, holdUntil])
+  @@index([createdAt])
   @@map("affiliate_conversions")
 }
 
@@ -411,6 +422,11 @@ model Appointment {
   
   closer          Closer?           @relation(fields: [closerId], references: [id], onDelete: SetNull)
 
+  @@index([closerId, outcome])
+  @@index([affiliateCode])
+  @@index([scheduledAt])
+  @@index([outcome])
+  @@index([createdAt])
   @@map("appointments")
 }
 

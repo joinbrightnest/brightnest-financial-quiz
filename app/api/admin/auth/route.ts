@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { generateAdminToken } from "@/lib/admin-auth-server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,15 +14,24 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+    
     if (code === adminCode) {
-      // Set a simple session cookie (you can make this more secure later)
-      const response = NextResponse.json({ success: true });
-      response.cookies.set("admin_authenticated", "true", {
+      // Generate JWT token for secure authentication
+      const token = generateAdminToken();
+      
+      const response = NextResponse.json({ 
+        success: true,
+        token // Return token to client
+      });
+      
+      // Also set as httpOnly cookie for browser-based requests
+      response.cookies.set("admin_token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         maxAge: 60 * 60 * 24 // 24 hours
       });
+      
       return response;
     } else {
       return NextResponse.json(

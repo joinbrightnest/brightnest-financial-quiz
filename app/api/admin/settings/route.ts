@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { verifyAdminAuth } from '@/lib/admin-auth-server';
 
 const prisma = new PrismaClient();
 
 // GET settings
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin authentication required" },
+      { status: 401 }
+    );
+  }
+  
   try {
     // Get current settings from database
     // If settings table doesn't exist, create it and insert default values
@@ -66,6 +75,14 @@ export async function GET() {
 
 // POST settings (update)
 export async function POST(request: NextRequest) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin authentication required" },
+      { status: 401 }
+    );
+  }
+  
   try {
     const { qualificationThreshold, commissionHoldDays, minimumPayout, payoutSchedule } = await request.json();
 

@@ -1,11 +1,20 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { calculateTotalLeads, calculateLeadsByCode } from "@/lib/lead-calculation";
 import { getLeadStatuses } from "@/lib/lead-status";
+import { verifyAdminAuth } from "@/lib/admin-auth-server";
 
 const prisma = new PrismaClient();
 
-export async function DELETE(request: Request) {
+export async function DELETE(request: NextRequest) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin authentication required" },
+      { status: 401 }
+    );
+  }
+  
   try {
     const { searchParams } = new URL(request.url);
     const resetType = searchParams.get('type') || 'quiz'; // 'quiz', 'affiliate', 'closer', 'all'
@@ -101,7 +110,15 @@ export async function DELETE(request: Request) {
   }
 }
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin authentication required" },
+      { status: 401 }
+    );
+  }
+  
   const { searchParams } = new URL(request.url);
   const dateRange = searchParams.get('dateRange') || '7d';
   const startDate = searchParams.get('startDate');
