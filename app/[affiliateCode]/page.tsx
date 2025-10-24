@@ -78,6 +78,13 @@ async function validateAndTrackAffiliate(affiliateCode: string, searchParams: { 
                        "unknown";
       const userAgent = request.headers.get("user-agent") || "unknown";
       
+      // Ignore bots, crawlers, and deployment checks
+      const botPatterns = /bot|crawler|spider|prerender|vercel|headless|lighthouse/i;
+      if (botPatterns.test(userAgent)) {
+        console.log("🤖 Bot/crawler detected, skipping affiliate click tracking");
+        return true; // Valid affiliate, but skip tracking
+      }
+      
       // Create a more robust fingerprint for duplicate detection
       const fingerprint = `${affiliate.id}-${ipAddress}-${userAgent}`;
       console.log("🔍 Request fingerprint:", {

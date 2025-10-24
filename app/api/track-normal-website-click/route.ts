@@ -23,6 +23,13 @@ export async function POST(request: NextRequest) {
                      "unknown";
     const userAgent = request.headers.get("user-agent") || "unknown";
     
+    // Ignore bots, crawlers, and deployment checks
+    const botPatterns = /bot|crawler|spider|prerender|vercel|headless|lighthouse/i;
+    if (botPatterns.test(userAgent)) {
+      console.log("🤖 Bot/crawler detected, skipping click tracking");
+      return NextResponse.json({ success: true, bot: true });
+    }
+    
     // Create a fingerprint for duplicate detection
     const fingerprint = `normal-${ipAddress}-${userAgent}`;
     

@@ -28,6 +28,13 @@ async function trackNormalWebsiteClick() {
                      "unknown";
     const userAgent = headersList.get("user-agent") || "unknown";
     
+    // Ignore bots, crawlers, and deployment checks
+    const botPatterns = /bot|crawler|spider|prerender|vercel|headless|lighthouse/i;
+    if (botPatterns.test(userAgent)) {
+      console.log("🤖 Bot/crawler detected, skipping click tracking:", userAgent.substring(0, 50));
+      return;
+    }
+    
     // Create a fingerprint for duplicate detection
     const fingerprint = `normal-${ipAddress}-${userAgent}`;
     
