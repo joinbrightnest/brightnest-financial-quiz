@@ -37,6 +37,8 @@ interface PayoutSummary {
   completedCount: number;
   pendingAmount: number;
   pendingCount: number;
+  totalEarned: number;
+  totalAffiliates: number;
 }
 
 export default function CommissionPayoutManager() {
@@ -269,10 +271,10 @@ export default function CommissionPayoutManager() {
                   Total Earned
                 </p>
                 <p className="text-3xl font-bold text-green-600 mt-1">
-                  ${(summary.totalAmount + affiliates.reduce((sum, affiliate) => sum + affiliate.availableCommission, 0) + summary.pendingAmount).toLocaleString()}
+                  ${summary.totalEarned.toLocaleString()}
                 </p>
                 <p className="text-xs text-slate-500 mt-1">
-                  {affiliates.length} affiliates
+                  {summary.totalAffiliates} affiliates
                 </p>
               </div>
               <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center">

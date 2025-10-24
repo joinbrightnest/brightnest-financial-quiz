@@ -69,6 +69,27 @@ export async function GET(request: NextRequest) {
       WHERE 1=1 ${statusCondition} ${affiliateCondition} AND status = 'completed'
     `) as any[];
 
+    // Get pending/held commissions from conversions table (not from payouts)
+    // These are commissions that are held and waiting to become available
+    const heldCommissionsStats = await prisma.$queryRawUnsafe(`
+      SELECT 
+        COALESCE(SUM(commission_amount), 0) as total_amount,
+        COUNT(DISTINCT affiliate_id) as affiliate_count
+      FROM affiliate_conversions
+      WHERE commission_status = 'held'
+      ${affiliateId ? `AND affiliate_id = '${affiliateId}'` : ''}
+    `) as any[];
+    
+    // Get total earned commissions (all affiliates)
+    const totalEarnedStats = await prisma.$queryRawUnsafe(`
+      SELECT 
+        COALESCE(SUM(total_commission), 0) as total_earned,
+        COUNT(*) as affiliate_count
+      FROM affiliates
+      WHERE is_approved = true
+      ${affiliateId ? `AND id = '${affiliateId}'` : ''}
+    `) as any[];
+    
     const pendingStats = await prisma.$queryRawUnsafe(`
       SELECT 
         COALESCE(SUM(amount_due), 0) as total_amount,
@@ -108,8 +129,12 @@ export async function GET(request: NextRequest) {
           totalCount: Number(summaryStats[0].total_count) || 0,
           completedAmount: Number(completedStats[0].total_amount) || 0,
           completedCount: Number(completedStats[0].total_count) || 0,
-          pendingAmount: Number(pendingStats[0].total_amount) || 0,
-          pendingCount: Number(pendingStats[0].total_count) || 0,
+          // Use held commissions for pending (commissions waiting for hold period)
+          pendingAmount: Number(heldCommissionsStats[0].total_amount) || 0,
+          pendingCount: Number(heldCommissionsStats[0].affiliate_count) || 0,
+          // Total earned by all affiliates
+          totalEarned: Number(totalEarnedStats[0].total_earned) || 0,
+          totalAffiliates: Number(totalEarnedStats[0].affiliate_count) || 0,
         },
       },
     });
