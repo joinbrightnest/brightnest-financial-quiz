@@ -86,7 +86,6 @@ export async function GET(request: NextRequest) {
       
       return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
     });
-    };
 
     // Combine appointments and quiz sessions into a unified data structure
     const allLeads = [
