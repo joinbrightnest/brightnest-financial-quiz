@@ -42,6 +42,23 @@ export async function POST(request: NextRequest) {
     const holdUntil = new Date();
     holdUntil.setDate(holdUntil.getDate() + commissionHoldDays);
 
+    // Check if a booking conversion already exists for this affiliate (prevent duplicates)
+    const thirtySecondsAgo = new Date(Date.now() - 30 * 1000);
+    const existingBookingConversion = await prisma.affiliateConversion.findFirst({
+      where: {
+        affiliateId: affiliate.id,
+        conversionType: "booking",
+        createdAt: {
+          gte: thirtySecondsAgo
+        }
+      }
+    });
+
+    if (existingBookingConversion) {
+      console.log("⚠️ Booking conversion already exists, skipping duplicate:", existingBookingConversion.id);
+      return NextResponse.json({ success: true, message: "Booking already tracked (duplicate)" });
+    }
+
     // Record the booking conversion
     await prisma.affiliateConversion.create({
       data: {

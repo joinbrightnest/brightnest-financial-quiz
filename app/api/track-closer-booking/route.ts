@@ -174,29 +174,46 @@ export async function POST(request: NextRequest) {
           const holdUntil = new Date();
           holdUntil.setDate(holdUntil.getDate() + commissionHoldDays);
 
-          // Record the booking conversion (same logic as track-booking API)
-          await prisma.affiliateConversion.create({
-            data: {
+          // Check if a booking conversion already exists for this affiliate (prevent duplicates)
+          const thirtySecondsAgo = new Date(Date.now() - 30 * 1000);
+          const existingBookingConversion = await prisma.affiliateConversion.findFirst({
+            where: {
               affiliateId: affiliate.id,
-              referralCode: affiliateCode,
               conversionType: "booking",
-              status: "confirmed",
-              commissionAmount: 0.00, // No commission for booking, only for sales
-              saleValue: 0.00,
-              commissionStatus: "held",
-              holdUntil: holdUntil,
-            },
+              createdAt: {
+                gte: thirtySecondsAgo
+              }
+            }
           });
 
-          // Update affiliate's total bookings
-          await prisma.affiliate.update({
-            where: { id: affiliate.id },
-            data: {
-              totalBookings: {
-                increment: 1,
+          if (existingBookingConversion) {
+            console.log("⚠️ Booking conversion already exists, skipping duplicate:", existingBookingConversion.id);
+          } else {
+            // Record the booking conversion (same logic as track-booking API)
+            await prisma.affiliateConversion.create({
+              data: {
+                affiliateId: affiliate.id,
+                referralCode: affiliateCode,
+                conversionType: "booking",
+                status: "confirmed",
+                commissionAmount: 0.00, // No commission for booking, only for sales
+                saleValue: 0.00,
+                commissionStatus: "held",
+                holdUntil: holdUntil,
               },
-            },
-          });
+            });
+            console.log("✅ Booking conversion created");
+
+            // Update affiliate's total bookings (only when creating new conversion)
+            await prisma.affiliate.update({
+              where: { id: affiliate.id },
+              data: {
+                totalBookings: {
+                  increment: 1,
+                },
+              },
+            });
+          }
 
           console.log("✅ Affiliate booking conversion tracked:", affiliateCode);
         } else {
