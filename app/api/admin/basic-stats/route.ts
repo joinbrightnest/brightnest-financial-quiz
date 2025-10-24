@@ -548,29 +548,50 @@ export async function GET(request: Request) {
     const dailyActivity = await getActivityData(dateRange);
 
     // Calculate clicks - CORRECT LOGIC:
-    // For specific quiz: Count quiz sessions for that quiz only
-    // For "all quizzes": Count all quiz sessions across all quiz types
+    // Clicks = Affiliate clicks + Quiz sessions
+    // For specific quiz: Count affiliate clicks + quiz sessions for that quiz
+    // For "all quizzes": Count all affiliate clicks + all quiz sessions
     
     let totalClicks = 0;
     
     if (quizType && quizType !== 'all') {
-      // For specific quiz type: Count quiz sessions for that quiz only
-      totalClicks = await prisma.quizSession.count({
+      // For specific quiz type:
+      // 1. Count ALL affiliate clicks (affiliate clicks can lead to any quiz)
+      const affiliateClicks = await prisma.affiliateClick.count({
+        where: {
+          createdAt: dateFilter
+        }
+      });
+      
+      // 2. Count quiz sessions for this specific quiz type
+      const quizSessions = await prisma.quizSession.count({
         where: {
           createdAt: dateFilter,
           quizType: quizType
         }
       });
+      
+      totalClicks = affiliateClicks + quizSessions;
     } else {
-      // For "all quizzes": Count all quiz sessions across all quiz types
-      totalClicks = await prisma.quizSession.count({
+      // For "all quizzes":
+      // 1. Count ALL affiliate clicks
+      const affiliateClicks = await prisma.affiliateClick.count({
         where: {
           createdAt: dateFilter
         }
       });
+      
+      // 2. Count ALL quiz sessions
+      const quizSessions = await prisma.quizSession.count({
+        where: {
+          createdAt: dateFilter
+        }
+      });
+      
+      totalClicks = affiliateClicks + quizSessions;
     }
     
-    const clicks = totalClicks; // Total quiz sessions (affiliate + normal)
+    const clicks = totalClicks; // Total clicks (affiliate clicks + quiz sessions)
     const partialSubmissions = totalSessions - completedSessions; // Started but didn't complete
     const leadsCollected = allLeads.length; // Count completed sessions (all completed quizzes are leads)
     const averageTimeMs = avgDurationResult._avg.durationMs || 0; // Average time in milliseconds
