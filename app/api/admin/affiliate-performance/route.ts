@@ -66,13 +66,19 @@ export async function GET(request: NextRequest) {
           .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
 
         // Get actually PAID commissions (from completed payouts)
-        const payouts = await prisma.affiliatePayout.findMany({
-          where: {
-            affiliateId: affiliate.id,
-            status: 'completed'
-          }
-        });
-        const totalPaidCommission = payouts.reduce((sum, payout) => sum + Number(payout.amount), 0);
+        let totalPaidCommission = 0;
+        try {
+          const payouts = await prisma.affiliatePayout.findMany({
+            where: {
+              affiliateId: affiliate.id,
+              status: 'completed'
+            }
+          });
+          totalPaidCommission = payouts.reduce((sum, payout) => sum + Number(payout.amount || 0), 0);
+        } catch (error) {
+          console.log('No payouts found for affiliate:', affiliate.id);
+          totalPaidCommission = 0;
+        }
 
         // Use stored commission from database for total earned (held + available + paid)
         const totalEarnedCommission = Number(affiliate.totalCommission || 0);
@@ -156,8 +162,13 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Error fetching affiliate performance:", error);
+    console.error("Error details:", error instanceof Error ? error.message : 'Unknown error');
+    console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace');
     return NextResponse.json(
-      { error: "Failed to fetch affiliate performance data" },
+      { 
+        error: "Failed to fetch affiliate performance data",
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }
