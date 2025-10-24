@@ -74,6 +74,42 @@ export async function PUT(
       if (affiliate) {
         affiliateCommissionAmount = parseFloat(saleValue) * Number(affiliate.commissionRate);
         
+        // Get commission hold days from settings
+        let commissionHoldDays = 30; // Default fallback
+        try {
+          const holdDaysResult = await prisma.$queryRaw`
+            SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
+          ` as any[];
+          if (holdDaysResult.length > 0) {
+            commissionHoldDays = parseInt(holdDaysResult[0].value);
+          }
+        } catch (error) {
+          console.log('Using default commission hold days:', commissionHoldDays);
+        }
+
+        // Calculate hold until date
+        const holdUntil = new Date();
+        holdUntil.setDate(holdUntil.getDate() + commissionHoldDays);
+        
+        // Create AffiliateConversion record with held status
+        await prisma.affiliateConversion.create({
+          data: {
+            affiliateId: affiliate.id,
+            referralCode: appointment.affiliateCode,
+            conversionType: "sale",
+            status: "confirmed",
+            commissionAmount: affiliateCommissionAmount,
+            saleValue: parseFloat(saleValue),
+            commissionStatus: "held",
+            holdUntil: holdUntil,
+            metadata: {
+              appointmentId: id,
+              closerId: decoded.closerId,
+              convertedAt: new Date().toISOString()
+            }
+          }
+        });
+        
         // Update affiliate's total commission
         await prisma.affiliate.update({
           where: { id: affiliate.id },
@@ -82,14 +118,22 @@ export async function PUT(
           }
         });
         
-        console.log('💰 Affiliate commission calculated:', {
+        console.log('💰 Affiliate commission calculated and held:', {
           appointmentId: id,
           affiliateCode: appointment.affiliateCode,
+          affiliateId: affiliate.id,
+          affiliateReferralCode: affiliate.referralCode,
           affiliateName: affiliate.name,
           saleValue: parseFloat(saleValue),
           commissionRate: affiliate.commissionRate,
           commissionAmount: affiliateCommissionAmount,
-          previousOutcome: appointment.outcome
+          commissionStatus: 'held',
+          holdUntil: holdUntil.toISOString(),
+          holdDays: commissionHoldDays,
+          previousOutcome: appointment.outcome,
+          newOutcome: outcome,
+          previousTotalCommission: Number(affiliate.totalCommission || 0),
+          newTotalCommission: Number(affiliate.totalCommission || 0) + affiliateCommissionAmount
         });
       }
     } else if (saleValue && outcome === 'converted' && appointment.affiliateCode && appointment.outcome === 'converted') {
@@ -197,7 +241,16 @@ export async function PUT(
       appointmentId: id,
       closerId: decoded.closerId,
       outcome,
-      saleValue
+      saleValue,
+      affiliateCode: appointment.affiliateCode,
+      affiliateCommission: affiliateCommissionAmount,
+      updatedAppointmentData: {
+        id: updatedAppointment.id,
+        outcome: updatedAppointment.outcome,
+        saleValue: updatedAppointment.saleValue,
+        affiliateCode: updatedAppointment.affiliateCode,
+        updatedAt: updatedAppointment.updatedAt?.toISOString()
+      }
     });
 
     return NextResponse.json({

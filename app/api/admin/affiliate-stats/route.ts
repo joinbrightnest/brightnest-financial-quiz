@@ -122,16 +122,22 @@ export async function GET(request: NextRequest) {
     
     console.log("Admin API Commission Debug:", {
       affiliateCode,
+      affiliateId: affiliate.id,
+      affiliateReferralCode: affiliate.referralCode,
       dateRange,
+      startDate: startDate.toISOString(),
       storedCommission: Number(affiliate.totalCommission || 0),
       appointmentBasedCommission,
       appointmentsFound: dateFilteredAppointments.length,
       appointments: dateFilteredAppointments.map(apt => ({
         id: apt.id,
+        affiliateCode: apt.affiliateCode,
         saleValue: apt.saleValue,
-        updatedAt: apt.updatedAt,
-        outcome: apt.outcome
+        outcome: apt.outcome,
+        updatedAt: apt.updatedAt?.toISOString(),
+        calculatedCommission: Number(apt.saleValue || 0) * Number(affiliate.commissionRate)
       })),
+      commissionRate: affiliate.commissionRate,
       dailyStatsLength: dailyStats.length,
       dailyStatsCommissions: dailyStats.map(d => ({ date: d.date, commission: d.commission })),
       totalCommission
