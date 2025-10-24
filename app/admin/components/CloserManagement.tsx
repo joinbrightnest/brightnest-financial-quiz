@@ -433,154 +433,127 @@ export default function CloserManagement() {
                 <p className="mt-1 text-sm text-gray-500">Get started by adding your first closer.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Closer
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Calendly Link
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Performance
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Revenue
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {closers.map((closer) => (
-                      <tr key={closer.id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">{closer.name}</div>
-                            <div className="text-sm text-gray-500">{closer.email}</div>
-                            {closer.phone && (
-                              <div className="text-sm text-gray-500">{closer.phone}</div>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="space-y-1">
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                              closer.isApproved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+              <div className="grid grid-cols-1 gap-4">
+                {closers.map((closer) => (
+                  <div key={closer.id} className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between">
+                      {/* Closer Info */}
+                      <div className="flex items-start space-x-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                          {closer.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-bold text-slate-900">{closer.name}</h3>
+                          <p className="text-sm text-slate-600">{closer.email}</p>
+                          {closer.phone && (
+                            <p className="text-sm text-slate-500">{closer.phone}</p>
+                          )}
+                          
+                          {/* Status Badges */}
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                              closer.isApproved ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
                             }`}>
                               {closer.isApproved ? 'Approved' : 'Pending'}
                             </span>
-                            <br />
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                              closer.isActive ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'
+                            <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                              closer.isActive ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700'
                             }`}>
                               {closer.isActive ? 'Active' : 'Inactive'}
                             </span>
                           </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {editingCloserId === closer.id ? (
-                            <div className="flex space-x-2">
-                              <input
-                                type="text"
-                                value={editingCalendlyLink}
-                                onChange={(e) => setEditingCalendlyLink(e.target.value)}
-                                placeholder="https://calendly.com/username"
-                                className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs text-black placeholder-gray-500"
-                              />
-                              <button
-                                onClick={() => handleUpdateCalendlyLink(closer.id)}
-                                className="text-green-600 hover:text-green-900 text-xs"
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-2">
+                        {!closer.isApproved && (
+                          <button
+                            onClick={() => handleApproveCloser(closer.id)}
+                            className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                          >
+                            Approve
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleDeactivateCloser(closer.id)}
+                          className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                            closer.isActive 
+                              ? 'bg-red-100 text-red-700 hover:bg-red-200' 
+                              : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                          }`}
+                        >
+                          {closer.isActive ? 'Deactivate' : 'Activate'}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Calendly Link Section */}
+                    <div className="mt-4 pt-4 border-t border-slate-200">
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">Calendly Link</label>
+                      {editingCloserId === closer.id ? (
+                        <div className="flex space-x-2">
+                          <input
+                            type="text"
+                            value={editingCalendlyLink}
+                            onChange={(e) => setEditingCalendlyLink(e.target.value)}
+                            placeholder="https://calendly.com/username"
+                            className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                          <button
+                            onClick={() => handleUpdateCalendlyLink(closer.id)}
+                            className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => {
+                              setEditingCloserId(null);
+                              setEditingCalendlyLink('');
+                            }}
+                            className="px-4 py-2 bg-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-300"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <div>
+                          {closer.calendlyLink ? (
+                            <div className="flex items-center justify-between bg-slate-50 px-4 py-2 rounded-lg border border-slate-200">
+                              <a
+                                href={closer.calendlyLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 text-sm font-medium break-all"
                               >
-                                ✓
-                              </button>
+                                {closer.calendlyLink}
+                              </a>
                               <button
                                 onClick={() => {
-                                  setEditingCloserId(null);
-                                  setEditingCalendlyLink('');
+                                  setEditingCloserId(closer.id);
+                                  setEditingCalendlyLink(closer.calendlyLink || '');
                                 }}
-                                className="text-red-600 hover:text-red-900 text-xs"
+                                className="ml-4 text-slate-600 hover:text-slate-900 text-sm font-medium"
                               >
-                                ✕
+                                Edit
                               </button>
                             </div>
                           ) : (
-                            <div>
-                              {closer.calendlyLink ? (
-                                <div>
-                                  <a
-                                    href={closer.calendlyLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-600 hover:text-blue-800 text-xs break-all"
-                                  >
-                                    {closer.calendlyLink}
-                                  </a>
-                                  <br />
-                                  <button
-                                    onClick={() => {
-                                      setEditingCloserId(closer.id);
-                                      setEditingCalendlyLink(closer.calendlyLink || '');
-                                    }}
-                                    className="text-gray-500 hover:text-gray-700 text-xs mt-1"
-                                  >
-                                    Edit
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
-                                  onClick={() => {
-                                    setEditingCloserId(closer.id);
-                                    setEditingCalendlyLink('');
-                                  }}
-                                  className="text-blue-600 hover:text-blue-800 text-xs"
-                                >
-                                  + Add Calendly Link
-                                </button>
-                              )}
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          <div>
-                            <div>{closer.totalCalls} calls</div>
-                            <div>{closer.totalConversions} conversions</div>
-                            <div className="text-xs text-gray-500">
-                              {typeof closer.conversionRate === 'number' ? (closer.conversionRate * 100).toFixed(1) : '0.0'}% rate
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          ${typeof closer.totalRevenue === 'number' ? closer.totalRevenue.toFixed(2) : '0.00'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex space-x-2">
-                            {!closer.isApproved && (
-                              <button
-                                onClick={() => handleApproveCloser(closer.id)}
-                                className="text-green-600 hover:text-green-900"
-                              >
-                                Approve
-                              </button>
-                            )}
                             <button
-                              onClick={() => handleDeactivateCloser(closer.id)}
-                              className="text-red-600 hover:text-red-900"
+                              onClick={() => {
+                                setEditingCloserId(closer.id);
+                                setEditingCalendlyLink('');
+                              }}
+                              className="px-4 py-2 bg-blue-100 text-blue-700 text-sm font-medium rounded-lg hover:bg-blue-200"
                             >
-                              {closer.isActive ? 'Deactivate' : 'Activate'}
+                              + Add Calendly Link
                             </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
