@@ -101,12 +101,7 @@ export async function PUT(
             commissionAmount: affiliateCommissionAmount,
             saleValue: parseFloat(saleValue),
             commissionStatus: "held",
-            holdUntil: holdUntil,
-            metadata: {
-              appointmentId: id,
-              closerId: decoded.closerId,
-              convertedAt: new Date().toISOString()
-            }
+            holdUntil: holdUntil
           }
         });
         
