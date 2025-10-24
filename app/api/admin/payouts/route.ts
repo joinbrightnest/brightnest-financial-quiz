@@ -114,6 +114,42 @@ export async function GET(request: NextRequest) {
       },
     }));
 
+    // If affiliateId is provided, also fetch commission hold details
+    let commissionHoldInfo = null;
+    if (affiliateId) {
+      try {
+        // Get commission hold period from settings
+        const holdDaysResult = await prisma.$queryRaw`
+          SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
+        ` as any[];
+        const holdDays = holdDaysResult.length > 0 ? parseInt(holdDaysResult[0].value) : 30;
+
+        // Get held commissions for this affiliate
+        const heldCommissions = await prisma.affiliateConversion.findMany({
+          where: {
+            affiliateId: affiliateId,
+            commissionStatus: 'held',
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        });
+
+        commissionHoldInfo = {
+          holdDays,
+          heldCommissions: heldCommissions.map((conv: any) => ({
+            id: conv.id,
+            amount: Number(conv.commissionAmount),
+            createdAt: conv.createdAt,
+            holdUntil: conv.holdUntil,
+          })),
+        };
+      } catch (error) {
+        console.error("Error fetching commission hold info:", error);
+        commissionHoldInfo = null;
+      }
+    }
+
     return NextResponse.json({
       success: true,
       data: {
@@ -137,6 +173,7 @@ export async function GET(request: NextRequest) {
           totalAffiliates: Number(totalEarnedStats[0].affiliate_count) || 0,
         },
       },
+      commissionHoldInfo,
     });
   } catch (error) {
     console.error("Error fetching payouts:", error);
