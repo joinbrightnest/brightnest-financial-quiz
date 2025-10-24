@@ -265,6 +265,16 @@ model AffiliateClick {
   @@map("affiliate_clicks")
 }
 
+model NormalWebsiteClick {
+  id           String    @id @default(cuid())
+  ipAddress    String?   @map("ip_address")
+  userAgent    String?   @map("user_agent")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  
+  @@index([createdAt])
+  @@map("normal_website_clicks")
+}
+
 model AffiliateConversion {
   id              String            @id @default(cuid())
   affiliateId     String            @map("affiliate_id")

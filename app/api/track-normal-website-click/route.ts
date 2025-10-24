@@ -1,6 +1,5 @@
-import { headers } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import SharedHomePage from "../components/SharedHomePage";
 
 // In-memory cache to prevent duplicate requests within 30 seconds
 const requestCache = new Map<string, number>();
@@ -16,14 +15,13 @@ setInterval(() => {
   }
 }, CACHE_DURATION);
 
-async function trackNormalWebsiteClick() {
+export async function POST(request: NextRequest) {
   try {
     // Get client IP and user agent for tracking
-    const headersList = await headers();
-    const ipAddress = headersList.get("x-forwarded-for") || 
-                     headersList.get("x-real-ip") || 
+    const ipAddress = request.headers.get("x-forwarded-for") || 
+                     request.headers.get("x-real-ip") || 
                      "unknown";
-    const userAgent = headersList.get("user-agent") || "unknown";
+    const userAgent = request.headers.get("user-agent") || "unknown";
     
     // Create a fingerprint for duplicate detection
     const fingerprint = `normal-${ipAddress}-${userAgent}`;
@@ -33,7 +31,7 @@ async function trackNormalWebsiteClick() {
     const cachedTime = requestCache.get(fingerprint);
     if (cachedTime && (now - cachedTime) < CACHE_DURATION) {
       console.log("🚫 Duplicate normal website click blocked by cache");
-      return;
+      return NextResponse.json({ success: true, duplicate: true });
     }
 
     // Check if we already tracked this browser recently (within 2 minutes) to avoid duplicate clicks
@@ -50,7 +48,7 @@ async function trackNormalWebsiteClick() {
 
     if (existingClick) {
       console.log("🔄 Duplicate normal website click detected, skipping");
-      return;
+      return NextResponse.json({ success: true, duplicate: true });
     }
 
     // Record the click in a transaction
@@ -86,17 +84,19 @@ async function trackNormalWebsiteClick() {
       });
     } catch (transactionError) {
       console.error("Error in normal website click transaction:", transactionError);
+      return NextResponse.json(
+        { success: false, error: "Failed to record click" },
+        { status: 500 }
+      );
     }
+
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error tracking normal website click:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to track click" },
+      { status: 500 }
+    );
   }
-}
-
-export default async function HomePage() {
-  // Track normal website click server-side
-  await trackNormalWebsiteClick();
-
-  // Use the shared homepage component without affiliate code
-  return <SharedHomePage />;
 }
 
