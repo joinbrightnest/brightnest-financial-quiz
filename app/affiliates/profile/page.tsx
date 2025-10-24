@@ -218,7 +218,7 @@ export default function AffiliateProfilePage() {
                     Commission Rate
                   </label>
                   <div className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm bg-gray-50/80 backdrop-blur-sm text-gray-700 font-semibold">
-                    {affiliate?.commissionRate || 10}%
+                    {(affiliate?.commissionRate ? affiliate.commissionRate * 100 : 10)}%
                   </div>
                   <p className="mt-2 text-xs text-gray-500">
                     Your commission rate is set by your tier
