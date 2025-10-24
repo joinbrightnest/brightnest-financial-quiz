@@ -73,7 +73,7 @@ interface AdminStats {
     createdAt: string;
     _count: { id: number };
   }>;
-  visitors: number;
+  clicks: number;
   partialSubmissions: number;
   leadsCollected: number;
   averageTimeMs: number;
@@ -94,7 +94,7 @@ export default function AdminDashboard() {
   const [error, setError] = useState<string | null>(null);
   const hasInitiallyLoaded = useRef(false);
   const [dateRange, setDateRange] = useState('7d');
-  const [selectedQuizType, setSelectedQuizType] = useState<string>('financial-profile');
+  const [selectedQuizType, setSelectedQuizType] = useState<string>('all');
   const [showQuickLinks, setShowQuickLinks] = useState(false);
   const [showResetDropdown, setShowResetDropdown] = useState(false);
   const [activeSection, setActiveSection] = useState<'dashboard' | 'ceo-analytics' | 'closer-management' | 'payout-manager' | 'pipeline' | 'settings'>('dashboard');
@@ -1796,12 +1796,12 @@ export default function AdminDashboard() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                           </svg>
                         </div>
-                        <h3 className="text-sm font-semibold text-gray-700">Visitors</h3>
+                        <h3 className="text-sm font-semibold text-gray-700">Clicks</h3>
                       </div>
                       <p className="text-3xl font-bold text-gray-900 mb-1">
-                        {stats.visitors}
+                        {stats.clicks}
                       </p>
-                      <p className="text-xs text-gray-500">Total quiz starters</p>
+                      <p className="text-xs text-gray-500">Total clicks</p>
                     </div>
                   </div>
                 </div>
