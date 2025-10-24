@@ -102,7 +102,8 @@ export async function GET(
     const totalLeads = leadData.totalLeads;
     const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
     
-    // Use stored commission for main display (consistent with database)
+    // Use stored commission for main display (all-time total, consistent with database)
+    // This ensures commission shows immediately when deals are closed
     const totalCommission = Number(affiliate.totalCommission || 0);
     
     // Calculate date-filtered commission for analysis

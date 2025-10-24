@@ -113,8 +113,12 @@ export async function GET(request: NextRequest) {
       return sum + (saleValue * Number(affiliate.commissionRate));
     }, 0);
     
-    // Use appointment-based commission for timeframe consistency (same as other cards)
-    const totalCommission = appointmentBasedCommission;
+    // For the main dashboard card, use the stored total commission (all-time)
+    // This ensures commission shows immediately when deals are closed
+    const totalCommission = Number(affiliate.totalCommission || 0);
+    
+    // Keep the date-filtered commission for the graph
+    const dateFilteredCommission = appointmentBasedCommission;
     
     // Generate daily stats from real data using centralized lead calculation
     // Pass the same appointment data to ensure consistency between card and graph
@@ -127,6 +131,7 @@ export async function GET(request: NextRequest) {
       dateRange,
       startDate: startDate.toISOString(),
       storedCommission: Number(affiliate.totalCommission || 0),
+      dateFilteredCommission,
       appointmentBasedCommission,
       appointmentsFound: dateFilteredAppointments.length,
       appointments: dateFilteredAppointments.map(apt => ({
@@ -140,7 +145,8 @@ export async function GET(request: NextRequest) {
       commissionRate: affiliate.commissionRate,
       dailyStatsLength: dailyStats.length,
       dailyStatsCommissions: dailyStats.map(d => ({ date: d.date, commission: d.commission })),
-      totalCommission
+      totalCommission: totalCommission,
+      usingStoredTotal: true
     });
     const totalQuizStarts = quizSessions.length; // Use actual quiz sessions count
     const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
