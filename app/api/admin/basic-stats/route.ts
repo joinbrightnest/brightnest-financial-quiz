@@ -131,22 +131,25 @@ export async function GET(request: Request) {
       } else {
         switch (dateRange) {
           case '1d':
-            startDate.setHours(now.getHours() - 24);
+            startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
             break;
           case '7d':
-            startDate.setDate(now.getDate() - 7);
+            startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
             break;
           case '30d':
-            startDate.setDate(now.getDate() - 30);
+            startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            break;
+          case 'month':
+            startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
             break;
           case '90d':
-            startDate.setDate(now.getDate() - 90);
+            startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
             break;
           case '1y':
-            startDate.setFullYear(now.getFullYear() - 1);
+            startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
             break;
           default:
-            startDate.setDate(now.getDate() - 7);
+            startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         }
         return { gte: startDate };
       }
@@ -477,7 +480,26 @@ export async function GET(request: Request) {
     const dailyActivity = await getActivityData(dateRange);
 
     // Calculate new metrics
-    const visitors = totalSessions; // Total unique visitors who started the quiz
+    // Get total clicks (affiliate clicks + normal website visits)
+    const totalAffiliateClicks = await prisma.affiliateClick.count({
+      where: {
+        createdAt: dateFilter
+      }
+    });
+    
+    // Get normal website visits (quiz sessions without affiliate code)
+    const normalWebsiteVisits = await prisma.quizSession.count({
+      where: {
+        createdAt: dateFilter,
+        affiliateCode: null,
+        ...(quizType ? { quizType } : {})
+      }
+    });
+    
+    // Total visitors = affiliate clicks + normal website visits
+    const totalVisitors = totalAffiliateClicks + normalWebsiteVisits;
+    
+    const visitors = totalVisitors; // Total clicks (affiliate clicks + normal website visits)
     const partialSubmissions = totalSessions - completedSessions; // Started but didn't complete
     const leadsCollected = allLeads.length; // Count completed sessions (all completed quizzes are leads)
     const averageTimeMs = avgDurationResult._avg.durationMs || 0; // Average time in milliseconds
