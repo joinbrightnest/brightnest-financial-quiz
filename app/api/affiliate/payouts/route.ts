@@ -97,8 +97,9 @@ export async function GET(request: NextRequest) {
 
     const totalEarned = Number(affiliate.totalCommission || 0);
     
-    // Calculate the actual available commission (total earned - paid out)
-    const actualAvailableCommission = totalEarned - totalPaid;
+    // Calculate the actual available commission using the hold system
+    // Available = commission with 'available' status (after hold period) - already paid out
+    const actualAvailableCommission = Math.max(0, availableAmount - totalPaid);
     
     // Calculate days until release for held commissions
     let commissionsWithHoldInfo: any[] = [];

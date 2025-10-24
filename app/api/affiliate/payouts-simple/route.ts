@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get affiliate with payouts only (no conversions to avoid commissionStatus issues)
+    // Get affiliate with payouts and conversions to properly calculate hold amounts
     console.log("Fetching affiliate:", decoded.affiliateId);
     const affiliate = await prisma.affiliate.findUnique({
       where: { id: decoded.affiliateId },
@@ -38,6 +38,7 @@ export async function GET(request: NextRequest) {
         payouts: {
           orderBy: { createdAt: "desc" },
         },
+        conversions: true,
       },
     });
     console.log("Affiliate found:", !!affiliate);
@@ -56,7 +57,18 @@ export async function GET(request: NextRequest) {
     
     const holdDays = settingsResult.length > 0 ? parseInt(settingsResult[0].value) : 30;
 
-    // Calculate payout summary (simple version)
+    // Calculate held and available commissions based on conversion status
+    const heldCommissions = affiliate.conversions.filter(c => 
+      c.commissionStatus === 'held' && Number(c.commissionAmount) > 0
+    );
+    const availableConversions = affiliate.conversions.filter(c => 
+      c.commissionStatus === 'available' && Number(c.commissionAmount) > 0
+    );
+    
+    const heldAmount = heldCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
+    const availableAmount = availableConversions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
+
+    // Calculate payout summary
     const totalPaid = affiliate.payouts
       .filter(p => p.status === "completed")
       .reduce((sum, p) => sum + Number(p.amountDue), 0);
@@ -66,9 +78,10 @@ export async function GET(request: NextRequest) {
       .reduce((sum, p) => sum + Number(p.amountDue), 0);
 
     const totalEarned = Number(affiliate.totalCommission || 0);
-    const availableCommission = totalEarned - totalPaid;
+    // Available commission = available conversions - already paid out
+    const availableCommission = Math.max(0, availableAmount - totalPaid);
 
-    console.log("Calculations:", { totalEarned, totalPaid, availableCommission });
+    console.log("Calculations:", { totalEarned, totalPaid, heldAmount, availableAmount, availableCommission });
 
     return NextResponse.json({
       success: true,
@@ -97,16 +110,21 @@ export async function GET(request: NextRequest) {
           totalPaid,
           pendingPayouts,
           availableCommission,
-          heldCommission: 0,
+          heldCommission: heldAmount,
           holdDays,
         },
         commissionHoldInfo: {
-          heldCommissions: [],
-          totalHeldAmount: 0,
-          totalAvailableAmount: availableCommission,
+          heldCommissions: heldCommissions.map(c => ({
+            id: c.id,
+            amount: Number(c.commissionAmount),
+            createdAt: c.createdAt,
+            holdUntil: c.holdUntil
+          })),
+          totalHeldAmount: heldAmount,
+          totalAvailableAmount: availableAmount,
           holdDays,
-          readyForRelease: 0,
-          existingCommissions: 0,
+          readyForRelease: heldCommissions.filter(c => c.holdUntil && new Date(c.holdUntil) <= new Date()).length,
+          existingCommissions: availableConversions.length,
         }
       }
     }, {
