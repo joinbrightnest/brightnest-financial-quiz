@@ -549,18 +549,34 @@ export async function GET(request: Request) {
 
     // Calculate new metrics
     // Get total clicks (affiliate clicks + normal website visits)
-    const totalAffiliateClicks = await prisma.affiliateClick.count({
-      where: {
-        createdAt: dateFilter
-      }
-    });
+    // For affiliate clicks, we need to count clicks that led to the specific quiz type
+    let totalAffiliateClicks = 0;
+    
+    if (quizType && quizType !== 'all') {
+      // For specific quiz types, count affiliate clicks that led to quiz sessions of that type
+      const affiliateClicksForQuiz = await prisma.quizSession.count({
+        where: {
+          createdAt: dateFilter,
+          quizType: quizType,
+          affiliateCode: { not: null } // Only sessions that came from affiliate links
+        }
+      });
+      totalAffiliateClicks = affiliateClicksForQuiz;
+    } else {
+      // For "all" or no filter, count all affiliate clicks
+      totalAffiliateClicks = await prisma.affiliateClick.count({
+        where: {
+          createdAt: dateFilter
+        }
+      });
+    }
     
     // Get normal website visits (quiz sessions without affiliate code)
     const normalWebsiteVisits = await prisma.quizSession.count({
       where: {
         createdAt: dateFilter,
         affiliateCode: null,
-        ...(quizType ? { quizType } : {})
+        ...(quizType && quizType !== 'all' ? { quizType } : {})
       }
     });
     
