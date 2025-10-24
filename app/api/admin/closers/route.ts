@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { verifyAdminAuth } from '@/lib/admin-auth-server';
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: 'Unauthorized - Admin authentication required' },
+      { status: 401 }
+    );
+  }
+  
   try {
     // Get all closers with their appointments
     const closers = await prisma.closer.findMany({
