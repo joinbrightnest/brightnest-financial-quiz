@@ -271,6 +271,25 @@ export async function GET(request: NextRequest) {
       }))
     };
 
+    // Add debug info to response
+    affiliateData.debug = {
+      allConvertedCount: allConvertedAppointments.length,
+      dateFilteredCount: dateFilteredAppointments.length,
+      allConvertedDates: allConvertedAppointments.map(apt => ({
+        id: apt.id,
+        createdAt: new Date(apt.createdAt).toISOString().split('T')[0],
+        updatedAt: new Date(apt.updatedAt).toISOString().split('T')[0],
+        saleValue: apt.saleValue
+      })),
+      dateFilteredDates: dateFilteredAppointments.map(apt => ({
+        id: apt.id,
+        updatedAt: new Date(apt.updatedAt).toISOString().split('T')[0],
+        saleValue: apt.saleValue
+      })),
+      dateRange,
+      startDate: startDate.toISOString().split('T')[0]
+    };
+    
     return NextResponse.json(affiliateData, {
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
