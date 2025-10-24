@@ -99,12 +99,11 @@ export async function GET(request: NextRequest) {
     const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
     const totalSales = conversions.filter(c => c.conversionType === "sale").length;
     
-    // Calculate date-filtered commission based on appointments (same as graph logic)
+    // Get ALL converted appointments (not date-filtered) since we show total commission
     const dateFilteredAppointments = await prisma.appointment.findMany({
       where: {
         affiliateCode: affiliate.referralCode,
         outcome: 'converted' as any,
-        updatedAt: { gte: startDate },
       },
     }).catch(() => []);
     
