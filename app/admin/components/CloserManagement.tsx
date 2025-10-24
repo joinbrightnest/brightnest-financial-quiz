@@ -806,93 +806,77 @@ export default function CloserManagement() {
       {activeTab === 'performance' && (
         <div className="space-y-6">
           {/* Performance Overview Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <svg className="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">Total Conversions</dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        {appointments.filter(a => a.outcome === 'converted').length}
-                      </dd>
-                    </dl>
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-green-700 uppercase tracking-wide">Total Conversions</p>
+                  <p className="text-3xl font-bold text-green-900 mt-1">
+                    {appointments.filter(a => a.outcome === 'converted').length}
+                  </p>
+                </div>
+                <div className="p-3 bg-green-200 rounded-lg">
+                  <svg className="h-6 w-6 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <svg className="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">Not Interested</dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        {appointments.filter(a => a.outcome === 'not_interested').length}
-                      </dd>
-                    </dl>
-                  </div>
+            <div className="bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-xl p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-red-700 uppercase tracking-wide">Not Interested</p>
+                  <p className="text-3xl font-bold text-red-900 mt-1">
+                    {appointments.filter(a => a.outcome === 'not_interested').length}
+                  </p>
+                </div>
+                <div className="p-3 bg-red-200 rounded-lg">
+                  <svg className="h-6 w-6 text-red-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <svg className="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">Follow-ups Needed</dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        {appointments.filter(a => a.outcome === 'needs_follow_up').length}
-                      </dd>
-                    </dl>
-                  </div>
+            <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 border border-yellow-200 rounded-xl p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-yellow-700 uppercase tracking-wide">Follow-ups Needed</p>
+                  <p className="text-3xl font-bold text-yellow-900 mt-1">
+                    {appointments.filter(a => a.outcome === 'needs_follow_up').length}
+                  </p>
+                </div>
+                <div className="p-3 bg-yellow-200 rounded-lg">
+                  <svg className="h-6 w-6 text-yellow-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <svg className="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                    </svg>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dt className="text-sm font-medium text-gray-500 truncate">Total Revenue</dt>
-                      <dd className="text-lg font-medium text-gray-900">
-                        ${appointments.reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
-                      </dd>
-                    </dl>
-                  </div>
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-blue-700 uppercase tracking-wide">Total Revenue</p>
+                  <p className="text-3xl font-bold text-blue-900 mt-1">
+                    ${appointments.filter(a => a.outcome === 'converted').reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                  </p>
+                </div>
+                <div className="p-3 bg-blue-200 rounded-lg">
+                  <svg className="h-6 w-6 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                  </svg>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Closer Performance Table */}
-          <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">Closer Performance</h3>
-              <p className="mt-1 max-w-2xl text-sm text-gray-500">Detailed performance metrics for each closer</p>
+          <div className="bg-white shadow-lg rounded-xl border border-slate-200 overflow-hidden">
+            <div className="px-6 py-5 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+              <h3 className="text-xl font-bold text-slate-900">Closer Performance</h3>
+              <p className="mt-1 text-sm text-slate-600">Detailed performance metrics for each closer</p>
             </div>
             <div className="border-t border-gray-200">
               <div className="overflow-x-auto">
@@ -921,9 +905,9 @@ export default function CloserManagement() {
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {closers.map((closer) => {
-                      const closerAppointments = appointments.filter(a => a.closer?.id === closer.id);
+                      const closerAppointments = appointments.filter(a => a.closerId === closer.id);
                       const conversions = closerAppointments.filter(a => a.outcome === 'converted');
-                      const totalRevenue = closerAppointments.reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0);
+                      const totalRevenue = conversions.reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0);
                       const conversionRate = closerAppointments.length > 0 ? (conversions.length / closerAppointments.length) * 100 : 0;
                       const avgSaleValue = conversions.length > 0 ? totalRevenue / conversions.length : 0;
 
@@ -958,10 +942,10 @@ export default function CloserManagement() {
           </div>
 
           {/* Detailed Call Outcomes */}
-          <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <div className="px-4 py-5 sm:px-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">Call Outcomes Breakdown</h3>
-              <p className="mt-1 max-w-2xl text-sm text-gray-500">Detailed breakdown of all call outcomes with notes and recordings</p>
+          <div className="bg-white shadow-lg rounded-xl border border-slate-200 overflow-hidden">
+            <div className="px-6 py-5 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+              <h3 className="text-xl font-bold text-slate-900">Call Outcomes Breakdown</h3>
+              <p className="mt-1 text-sm text-slate-600">Detailed breakdown of all call outcomes with notes and recordings</p>
             </div>
             <div className="border-t border-gray-200">
               <div className="overflow-x-auto">
