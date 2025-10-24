@@ -548,31 +548,21 @@ export async function GET(request: Request) {
     const dailyActivity = await getActivityData(dateRange);
 
     // Calculate clicks - CORRECT LOGIC:
-    // Clicks = Affiliate clicks that led to quiz sessions
-    // For specific quiz: Count affiliate clicks that led to quiz sessions for that quiz
-    // For "all quizzes": Count all affiliate clicks that led to any quiz sessions
+    // Clicks = Affiliate clicks (people who opened affiliate links)
+    // For specific quiz: Count all affiliate clicks (affiliate clicks don't have quiz types)
+    // For "all quizzes": Count all affiliate clicks
     
     let totalClicks = 0;
     
-    if (quizType && quizType !== 'all') {
-      // For specific quiz type: Count quiz sessions for that quiz
-      // This includes both affiliate-driven and direct visits
-      totalClicks = await prisma.quizSession.count({
-        where: {
-          createdAt: dateFilter,
-          quizType: quizType
-        }
-      });
-    } else {
-      // For "all quizzes": Count all quiz sessions across all quiz types
-      totalClicks = await prisma.quizSession.count({
-        where: {
-          createdAt: dateFilter
-        }
-      });
-    }
+    // Count affiliate clicks - these don't have specific quiz types
+    // Affiliate clicks are just clicks on affiliate links, regardless of which quiz they lead to
+    totalClicks = await prisma.affiliateClick.count({
+      where: {
+        createdAt: dateFilter
+      }
+    });
     
-    const clicks = totalClicks; // Total quiz sessions (clicks that led to quiz starts)
+    const clicks = totalClicks; // Total affiliate clicks only
     const partialSubmissions = totalSessions - completedSessions; // Started but didn't complete
     const leadsCollected = allLeads.length; // Count completed sessions (all completed quizzes are leads)
     const averageTimeMs = avgDurationResult._avg.durationMs || 0; // Average time in milliseconds
