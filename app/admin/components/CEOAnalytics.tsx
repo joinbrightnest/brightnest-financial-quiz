@@ -74,18 +74,6 @@ export default function CEOAnalytics() {
       if (result.success) {
         setData(result.data);
         setError(null);
-        
-        // Log debug info to console
-        if (result.debug) {
-          console.log('🔍 REVENUE DEBUG INFO:', result.debug);
-          console.log('📊 Raw affiliate data:', result.data.affiliatePerformance?.map((aff: any) => ({
-            name: aff.name,
-            totalRevenue: aff.totalRevenue,
-            totalCommission: aff.totalCommission,
-            paidCommission: aff.totalPaidCommission,
-            sales: aff.sales
-          })));
-        }
       } else {
         throw new Error(result.error || "Failed to load affiliate performance data");
       }

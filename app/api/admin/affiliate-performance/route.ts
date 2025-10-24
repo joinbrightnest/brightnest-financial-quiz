@@ -62,19 +62,6 @@ export async function GET(request: NextRequest) {
         // Calculate actual revenue from converted appointments (total sale values)
         const convertedAppointments = appointments.filter(apt => apt.outcome === 'converted' && apt.saleValue);
         const totalRevenue = convertedAppointments.reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
-        
-        // Debug logging
-        console.log('🔍 Revenue calculation for affiliate:', affiliate.name, {
-          totalAppointments: appointments.length,
-          convertedAppointments: convertedAppointments.length,
-          saleValues: convertedAppointments.map(apt => ({
-            id: apt.id,
-            saleValue: apt.saleValue,
-            saleValueNumber: Number(apt.saleValue),
-            outcome: apt.outcome
-          })),
-          totalRevenue
-        });
 
         // Get actually PAID commissions (from completed payouts)
         let totalPaidCommission = 0;
@@ -150,21 +137,6 @@ export async function GET(request: NextRequest) {
       .sort((a, b) => b.totalRevenue - a.totalRevenue)
       .slice(0, 10);
 
-    // Debug info for console
-    const debugInfo = affiliatePerformance.map(aff => ({
-      name: aff.name,
-      revenue: aff.totalRevenue,
-      commission: aff.totalCommission,
-      paidCommission: aff.totalPaidCommission,
-    }));
-
-    console.log('💰 Revenue Debug Info:', {
-      totalAffiliates,
-      totalRevenue,
-      avgRevenuePerAffiliate: totalAffiliates > 0 ? totalRevenue / totalAffiliates : 0,
-      affiliates: debugInfo
-    });
-
     return NextResponse.json({
       success: true,
       data: {
@@ -185,12 +157,6 @@ export async function GET(request: NextRequest) {
         affiliatePerformance,
         topAffiliates,
       },
-      // Debug info visible in response
-      debug: {
-        totalRevenue,
-        avgRevenuePerAffiliate: totalAffiliates > 0 ? Math.round(totalRevenue / totalAffiliates) : 0,
-        affiliates: debugInfo
-      }
     });
   } catch (error) {
     console.error("Error fetching affiliate performance:", error);
