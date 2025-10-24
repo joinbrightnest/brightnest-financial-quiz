@@ -2,6 +2,9 @@ import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import SharedHomePage from "../components/SharedHomePage";
 
+// Force dynamic rendering for this page (needed for headers() tracking)
+export const dynamic = 'force-dynamic';
+
 // In-memory cache to prevent duplicate requests within 30 seconds
 const requestCache = new Map<string, number>();
 const CACHE_DURATION = 30 * 1000; // 30 seconds
