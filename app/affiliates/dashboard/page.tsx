@@ -132,6 +132,12 @@ export default function AffiliateDashboard() {
             dailyStatsWithCommission: data.stats.dailyStats?.filter((d: any) => d.commission > 0),
             allDailyStats: data.stats.dailyStats
           });
+          
+          if (data.debug) {
+            console.log("🐛 DEBUG INFO:", data.debug);
+            console.log("🐛 All converted appointments:", data.debug.allConvertedDates);
+            console.log("🐛 Date filtered appointments:", data.debug.dateFilteredDates);
+          }
           setStats(data.stats);
           setError(null);
         } else {
