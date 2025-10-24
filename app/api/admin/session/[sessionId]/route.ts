@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { verifyAdminAuth } from '@/lib/admin-auth-server';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ sessionId: string }> }
 ) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: 'Unauthorized - Admin authentication required' },
+      { status: 401 }
+    );
+  }
+  
   try {
     const { sessionId } = await params;
     

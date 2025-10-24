@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifyAdminAuth } from "@/lib/admin-auth-server";
 
 export async function POST(request: NextRequest) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin authentication required" },
+      { status: 401 }
+    );
+  }
+  
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File;

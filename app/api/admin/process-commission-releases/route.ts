@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { verifyAdminAuth } from '@/lib/admin-auth-server';
 
 const prisma = new PrismaClient();
 
 // POST - Process commission releases (move from held to available)
 export async function POST(request: NextRequest) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: 'Unauthorized - Admin authentication required' },
+      { status: 401 }
+    );
+  }
+  
   try {
     // Get commission hold period from settings
     const settingsResult = await prisma.$queryRaw`

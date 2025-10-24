@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verifyAdminAuth } from "@/lib/admin-auth-server";
 
 export async function POST(request: NextRequest) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin authentication required" },
+      { status: 401 }
+    );
+  }
+  
   try {
     // Create a test affiliate for demonstration
     const testAffiliate = await prisma.affiliate.create({

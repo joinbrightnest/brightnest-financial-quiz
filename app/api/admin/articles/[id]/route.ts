@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { verifyAdminAuth } from "@/lib/admin-auth-server";
 
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin authentication required" },
+      { status: 401 }
+    );
+  }
+  
   try {
     const { id } = await params;
 
@@ -37,6 +46,14 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin authentication required" },
+      { status: 401 }
+    );
+  }
+  
   try {
     const { id } = await params;
     const body = await request.json();
