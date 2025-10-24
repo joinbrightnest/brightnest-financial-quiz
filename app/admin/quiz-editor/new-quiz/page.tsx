@@ -84,7 +84,7 @@ export default function NewQuizEditor() {
     setDraggedQuestion(null);
   };
 
-  const handleQuestionEdit = (questionId: string, field: string, value: string | number) => {
+  const handleQuestionEdit = (questionId: string, field: string, value: string | number | boolean) => {
     setQuestions(prev => prev.map(q => 
       q.id === questionId ? { ...q, [field]: value } : q
     ));
