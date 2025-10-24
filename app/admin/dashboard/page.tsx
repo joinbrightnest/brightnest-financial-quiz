@@ -97,8 +97,7 @@ export default function AdminDashboard() {
   const [selectedQuizType, setSelectedQuizType] = useState<string>('all');
   const [showQuickLinks, setShowQuickLinks] = useState(false);
   const [showResetDropdown, setShowResetDropdown] = useState(false);
-  const [activeSection, setActiveSection] = useState<'dashboard' | 'ceo-analytics' | 'closer-management' | 'payout-manager' | 'pipeline' | 'settings'>('dashboard');
-  const [pipelineView, setPipelineView] = useState<'kanban' | 'appointments'>('kanban');
+  const [activeSection, setActiveSection] = useState<'dashboard' | 'ceo-analytics' | 'closer-management' | 'payout-manager' | 'settings'>('dashboard');
   const [qualificationThreshold, setQualificationThreshold] = useState(17);
   const [isUpdatingThreshold, setIsUpdatingThreshold] = useState(false);
   const [commissionHoldDays, setCommissionHoldDays] = useState(30);
@@ -377,11 +376,6 @@ export default function AdminDashboard() {
     fetchCommissionReleaseStatus();
   }, [fetchStats]);
 
-  useEffect(() => {
-    if (activeSection === 'pipeline') {
-      fetchAppointments();
-    }
-  }, [activeSection]);
 
   // Handle page visibility and focus changes to prevent unnecessary re-fetching
   useEffect(() => {
@@ -967,17 +961,6 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {/* Pipeline Management Section */}
-          {activeSection === 'pipeline' && (
-            <div className="mb-8">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-                {/* Pipeline Header */}
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h2 className="text-xl font-semibold text-gray-900">Lead Pipeline</h2>
-                      <p className="mt-1 text-sm text-gray-500">Track and manage leads through your sales pipeline</p>
-                    </div>
                     <div className="flex items-center space-x-6">
                       <div className="text-center">
                         <div className="text-2xl font-bold text-gray-900">
