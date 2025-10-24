@@ -785,23 +785,6 @@ export default function CloserManagement() {
       {/* Performance Analytics Tab */}
       {activeTab === 'performance' && (
         <div className="space-y-6">
-          {/* Debug Info */}
-          {appointments.length > 0 && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm font-semibold text-blue-900">Debug Info:</p>
-              <p className="text-xs text-blue-700 mt-1">Total Appointments: {appointments.length}</p>
-              <p className="text-xs text-blue-700">Appointments with closerId: {appointments.filter(a => a.closerId).length}</p>
-              <p className="text-xs text-blue-700">Appointments with closer object: {appointments.filter(a => a.closer).length}</p>
-              <p className="text-xs text-blue-700">Appointments with outcome: {appointments.filter(a => a.outcome).length}</p>
-              <p className="text-xs text-blue-700">Converted: {appointments.filter(a => a.outcome === 'converted').length}</p>
-              {appointments.map((apt, idx) => (
-                <p key={idx} className="text-xs text-blue-600 mt-1">
-                  Apt {idx + 1}: closerId={apt.closerId || 'null'}, closer={apt.closer?.name || 'null'}, outcome={apt.outcome || 'null'}, customer={apt.customerName}
-                </p>
-              ))}
-            </div>
-          )}
-          
           {/* Performance Overview Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-5">
