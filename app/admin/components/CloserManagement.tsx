@@ -85,14 +85,21 @@ export default function CloserManagement() {
 
   const fetchAppointments = async () => {
     try {
+      console.log('🔍 Fetching appointments...');
       const response = await fetch('/api/admin/appointments');
+      console.log('📡 Response status:', response.status);
       if (response.ok) {
         const data = await response.json();
+        console.log('📊 Appointments data:', data);
+        console.log('📊 Appointments array:', data.appointments);
+        console.log('📊 Appointments count:', data.appointments?.length || 0);
         setAppointments(data.appointments || []);
       } else {
+        console.error('❌ Failed to load appointments:', response.status);
         setError('Failed to load appointments');
       }
     } catch (error) {
+      console.error('❌ Network error loading appointments:', error);
       setError('Network error loading appointments');
     } finally {
       setIsLoading(false);
