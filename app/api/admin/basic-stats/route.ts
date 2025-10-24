@@ -320,10 +320,12 @@ export async function GET(request: Request) {
     });
 
     // Get all questions ordered by their order field
+    // Default to financial-profile if no quiz type specified to avoid mixing different quiz types
+    const defaultQuizType = quizType || 'financial-profile';
     const allQuestions = await prisma.quizQuestion.findMany({
       where: { 
         active: true,
-        ...(quizType ? { quizType } : {})
+        quizType: defaultQuizType
       },
       orderBy: { order: 'asc' }
     });
