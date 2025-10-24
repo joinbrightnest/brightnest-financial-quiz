@@ -466,84 +466,55 @@ export default function CommissionPayoutManager() {
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="bg-orange-50 border-t border-orange-100 p-6"
+                            className="bg-slate-50 border-t border-slate-200 px-6 py-4"
                           >
-                            <div className="max-w-5xl">
-                              <div className="flex items-center space-x-2 mb-4">
-                                <div className="p-2 bg-orange-500 rounded-lg">
-                                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                  </svg>
+                            {affiliateHoldInfo ? (
+                              <>
+                                <div className="mb-3 text-xs text-slate-600">
+                                  <span className="font-semibold">Hold Period:</span> Commissions are held for <strong>{affiliateHoldInfo.holdDays} days</strong> after earning.
                                 </div>
-                                <h3 className="text-lg font-semibold text-slate-900">Commission Hold Details</h3>
-                              </div>
 
-                              {affiliateHoldInfo ? (
-                                <>
-                                  <div className="mb-4 p-4 bg-orange-100 rounded-xl border border-orange-200">
-                                    <div className="flex items-center space-x-2 mb-2">
-                                      <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                      </svg>
-                                      <span className="text-sm font-semibold text-orange-800">Hold Period Information</span>
-                                    </div>
-                                    <p className="text-sm text-orange-700">
-                                      Commissions are held for <strong>{affiliateHoldInfo.holdDays} days</strong> after earning to ensure payment stability and prevent chargebacks.
-                                    </p>
-                                  </div>
-
-                                  {affiliateHoldInfo.heldCommissions.length > 0 ? (
-                                    <div className="space-y-3">
-                                      {affiliateHoldInfo.heldCommissions.map((commission, index) => (
-                                        <div
-                                          key={commission.id}
-                                          className="bg-white border border-orange-200 rounded-xl p-4 flex items-center justify-between"
-                                        >
-                                          <div className="flex items-center space-x-3">
-                                            <div className="p-2 bg-orange-100 rounded-lg">
-                                              <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                                              </svg>
-                                            </div>
-                                            <div>
-                                              <p className="text-lg font-bold text-slate-900">
-                                                ${commission.amount.toLocaleString()}
-                                              </p>
-                                              <p className="text-sm text-slate-500">
-                                                Earned: {new Date(commission.createdAt).toLocaleDateString('en-US', {
-                                                  year: 'numeric',
-                                                  month: 'long',
-                                                  day: 'numeric'
-                                                })}
-                                              </p>
-                                            </div>
+                                {affiliateHoldInfo.heldCommissions.length > 0 ? (
+                                  <div className="space-y-2">
+                                    {affiliateHoldInfo.heldCommissions.map((commission, index) => (
+                                      <div
+                                        key={commission.id}
+                                        className="bg-white border border-slate-200 rounded-lg p-3 flex items-center justify-between hover:border-slate-300 transition-colors"
+                                      >
+                                        <div className="flex items-center space-x-3">
+                                          <div className="text-lg font-bold text-slate-900">
+                                            ${commission.amount.toLocaleString()}
                                           </div>
-                                          <div className="text-right">
-                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700 border border-orange-200">
-                                              <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                              </svg>
-                                              Available: {new Date(commission.holdUntil).toLocaleDateString('en-US', {
-                                                year: 'numeric',
-                                                month: 'long',
-                                                day: 'numeric'
-                                              })}
-                                            </span>
+                                          <div className="text-sm text-slate-500">
+                                            Earned: {new Date(commission.createdAt).toLocaleDateString('en-US', {
+                                              month: 'short',
+                                              day: 'numeric',
+                                              year: 'numeric'
+                                            })}
                                           </div>
                                         </div>
-                                      ))}
-                                    </div>
-                                  ) : (
-                                    <p className="text-slate-600 text-center py-4">No held commissions</p>
-                                  )}
-                                </>
-                              ) : (
-                                <div className="text-center py-4">
-                                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto"></div>
-                                  <p className="text-slate-600 mt-2">Loading hold details...</p>
-                                </div>
-                              )}
-                            </div>
+                                        <div className="text-right">
+                                          <span className="text-xs text-slate-600">
+                                            Available: {new Date(commission.holdUntil).toLocaleDateString('en-US', {
+                                              month: 'short',
+                                              day: 'numeric',
+                                              year: 'numeric'
+                                            })}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <p className="text-slate-500 text-sm text-center py-2">No held commissions</p>
+                                )}
+                              </>
+                            ) : (
+                              <div className="text-center py-3">
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-slate-600 mx-auto"></div>
+                                <p className="text-slate-500 text-sm mt-2">Loading...</p>
+                              </div>
+                            )}
                           </motion.div>
                         )}
                       </div>

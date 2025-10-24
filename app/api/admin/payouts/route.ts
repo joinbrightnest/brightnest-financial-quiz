@@ -124,11 +124,14 @@ export async function GET(request: NextRequest) {
         ` as any[];
         const holdDays = holdDaysResult.length > 0 ? parseInt(holdDaysResult[0].value) : 30;
 
-        // Get held commissions for this affiliate
+        // Get held commissions for this affiliate (only those with actual commission amounts > 0)
         const heldCommissions = await prisma.affiliateConversion.findMany({
           where: {
             affiliateId: affiliateId,
             commissionStatus: 'held',
+            commissionAmount: {
+              gt: 0
+            }
           },
           orderBy: {
             createdAt: 'desc',
