@@ -287,6 +287,17 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
     // Use the same appointments data as the card for consistency
     allAppointments = cardAppointments;
     convertedAppointments = cardAppointments.filter(apt => apt.outcome === 'converted');
+    console.log('📊 Graph appointments from card:', {
+      totalPassed: cardAppointments.length,
+      convertedCount: convertedAppointments.length,
+      convertedAppointments: convertedAppointments.map(apt => ({
+        id: apt.id,
+        saleValue: apt.saleValue,
+        outcome: apt.outcome,
+        updatedAt: apt.updatedAt?.toISOString(),
+        updatedAtDate: apt.updatedAt?.toISOString()?.split('T')[0]
+      }))
+    });
   } else {
     // Fallback: fetch appointments data for the correct date range
     allAppointments = await prisma.appointment.findMany({
@@ -463,6 +474,10 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         const saleValue = Number(apt.saleValue || 0);
         return sum + (saleValue * Number(affiliate.commissionRate));
       }, 0);
+      
+      if (dayAppointments.length > 0) {
+        console.log(`📅 Day ${dateStr} has ${dayAppointments.length} appointments with commission $${dayCommission}`);
+      }
       
       // Filter leads data for this specific day
       const dayLeads = allLeadsData.leads.filter(lead => {
