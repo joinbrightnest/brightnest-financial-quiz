@@ -548,10 +548,8 @@ export async function GET(request: Request) {
     const dailyActivity = await getActivityData(dateRange);
 
     // Calculate clicks - CORRECT LOGIC:
-    // Clicks = Quiz sessions (people who started quizzes)
-    // For specific quiz: Count quiz sessions for that quiz type
+    // For specific quiz: Count quiz sessions for that quiz only
     // For "all quizzes": Count all quiz sessions across all quiz types
-    // Note: Affiliate clicks are just clicks on links, not actual quiz starts
     
     let totalClicks = 0;
     
@@ -572,7 +570,7 @@ export async function GET(request: Request) {
       });
     }
     
-    const clicks = totalClicks; // Total quiz sessions (actual quiz starts)
+    const clicks = totalClicks; // Total quiz sessions (affiliate + normal)
     const partialSubmissions = totalSessions - completedSessions; // Started but didn't complete
     const leadsCollected = allLeads.length; // Count completed sessions (all completed quizzes are leads)
     const averageTimeMs = avgDurationResult._avg.durationMs || 0; // Average time in milliseconds
