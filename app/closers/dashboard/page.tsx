@@ -496,8 +496,8 @@ export default function CloserDashboard() {
 
       {/* Outcome Modal */}
       {showOutcomeModal && selectedAppointment && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-20 backdrop-blur-sm overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-gray-200 animate-slideUp">
             <div className="px-6 py-5 border-b border-gray-100">
               <h3 className="text-xl font-bold text-gray-900">
                 Update Call Outcome
