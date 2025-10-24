@@ -111,49 +111,8 @@ export async function GET(request: NextRequest) {
       apt.outcome === 'converted'
     );
     
-    // Fetch all converted appointments by filtering in JavaScript
-    // Filter the appointments we already fetched to get only converted ones
-    const allConvertedAppointments = allAffiliateAppointments.filter(apt => 
-      apt.outcome === 'converted'
-    );
-    
-    console.log('🔍 ALL appointments for affiliate (any outcome):', {
-      affiliateCode: affiliate.referralCode,
-      totalCount: allAffiliateAppointments.length,
-      allAppointments: allAffiliateAppointments.map(apt => ({
-        id: apt.id,
-        outcome: apt.outcome,
-        saleValue: apt.saleValue,
-        affiliateCode: apt.affiliateCode,
-        createdAt: new Date(apt.createdAt).toISOString().split('T')[0],
-        updatedAt: new Date(apt.updatedAt).toISOString().split('T')[0]
-      }))
-    });
-    
-    console.log('🔍 ALL converted appointments for affiliate:', {
-      affiliateCode: affiliate.referralCode,
-      totalConverted: allConvertedAppointments.length,
-      allAppointments: allConvertedAppointments.map(apt => ({
-        id: apt.id,
-        saleValue: apt.saleValue,
-        createdAt: apt.createdAt,
-        updatedAt: apt.updatedAt,
-        createdAtDate: new Date(apt.createdAt).toISOString().split('T')[0],
-        updatedAtDate: new Date(apt.updatedAt).toISOString().split('T')[0]
-      }))
-    });
-    
-    console.log('🔍 Date-filtered appointments for graph:', {
-      dateRange,
-      startDate: startDate.toISOString(),
-      foundCount: dateFilteredAppointments.length,
-      appointments: dateFilteredAppointments.map(apt => ({
-        id: apt.id,
-        saleValue: apt.saleValue,
-        updatedAt: apt.updatedAt,
-        updatedAtDate: new Date(apt.updatedAt).toISOString().split('T')[0]
-      }))
-    });
+    // Get all converted appointments (same as dateFiltered since we removed date filtering)
+    const allConvertedAppointments = dateFilteredAppointments;
     
     const appointmentBasedCommission = dateFilteredAppointments.reduce((sum, apt) => {
       const saleValue = Number(apt.saleValue || 0);
@@ -171,30 +130,6 @@ export async function GET(request: NextRequest) {
     // Pass the same appointment data to ensure consistency between card and graph
     const dailyStats = await generateDailyStatsFromRealData(clicks, conversions, dateRange, affiliateCode, dateFilteredAppointments);
     
-    console.log("Admin API Commission Debug:", {
-      affiliateCode,
-      affiliateId: affiliate.id,
-      affiliateReferralCode: affiliate.referralCode,
-      dateRange,
-      startDate: startDate.toISOString(),
-      storedCommission: Number(affiliate.totalCommission || 0),
-      dateFilteredCommission,
-      appointmentBasedCommission,
-      appointmentsFound: dateFilteredAppointments.length,
-      appointments: dateFilteredAppointments.map(apt => ({
-        id: apt.id,
-        affiliateCode: apt.affiliateCode,
-        saleValue: apt.saleValue,
-        outcome: apt.outcome,
-        updatedAt: apt.updatedAt?.toISOString(),
-        calculatedCommission: Number(apt.saleValue || 0) * Number(affiliate.commissionRate)
-      })),
-      commissionRate: affiliate.commissionRate,
-      dailyStatsLength: dailyStats.length,
-      dailyStatsCommissions: dailyStats.map(d => ({ date: d.date, commission: d.commission })),
-      totalCommission: totalCommission,
-      usingStoredTotal: true
-    });
     const totalQuizStarts = quizSessions.length; // Use actual quiz sessions count
     const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
     
@@ -285,35 +220,6 @@ export async function GET(request: NextRequest) {
       }))
     };
 
-    // Add debug info to response
-    affiliateData.debug = {
-      affiliateCode: affiliate.referralCode,
-      allAppointmentsCount: allAffiliateAppointments.length,
-      allAppointments: allAffiliateAppointments.map(apt => ({
-        id: apt.id,
-        outcome: apt.outcome,
-        affiliateCode: apt.affiliateCode,
-        saleValue: apt.saleValue ? Number(apt.saleValue) : null,
-        createdAt: new Date(apt.createdAt).toISOString().split('T')[0],
-        updatedAt: new Date(apt.updatedAt).toISOString().split('T')[0]
-      })),
-      allConvertedCount: allConvertedAppointments.length,
-      dateFilteredCount: dateFilteredAppointments.length,
-      allConvertedDates: allConvertedAppointments.map(apt => ({
-        id: apt.id,
-        createdAt: new Date(apt.createdAt).toISOString().split('T')[0],
-        updatedAt: new Date(apt.updatedAt).toISOString().split('T')[0],
-        saleValue: apt.saleValue
-      })),
-      dateFilteredDates: dateFilteredAppointments.map(apt => ({
-        id: apt.id,
-        updatedAt: new Date(apt.updatedAt).toISOString().split('T')[0],
-        saleValue: apt.saleValue
-      })),
-      dateRange,
-      startDate: startDate.toISOString().split('T')[0]
-    };
-    
     return NextResponse.json(affiliateData, {
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -363,17 +269,6 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
     // Use the same appointments data as the card for consistency
     allAppointments = cardAppointments;
     convertedAppointments = cardAppointments.filter(apt => apt.outcome === 'converted');
-    console.log('📊 Graph appointments from card:', {
-      totalPassed: cardAppointments.length,
-      convertedCount: convertedAppointments.length,
-      convertedAppointments: convertedAppointments.map(apt => ({
-        id: apt.id,
-        saleValue: apt.saleValue,
-        outcome: apt.outcome,
-        updatedAt: apt.updatedAt?.toISOString(),
-        updatedAtDate: apt.updatedAt?.toISOString()?.split('T')[0]
-      }))
-    });
   } else {
     // Fallback: fetch appointments data for the correct date range
     allAppointments = await prisma.appointment.findMany({
@@ -550,10 +445,6 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         const saleValue = Number(apt.saleValue || 0);
         return sum + (saleValue * Number(affiliate.commissionRate));
       }, 0);
-      
-      if (dayAppointments.length > 0) {
-        console.log(`📅 Day ${dateStr} has ${dayAppointments.length} appointments with commission $${dayCommission}`);
-      }
       
       // Filter leads data for this specific day
       const dayLeads = allLeadsData.leads.filter(lead => {

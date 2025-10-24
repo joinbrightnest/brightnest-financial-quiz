@@ -126,25 +126,6 @@ export default function AffiliateDashboard() {
         
         if (data.stats) {
           console.log("Using real affiliate data:", data.stats);
-          console.log("📊 Commission data:", {
-            totalCommission: data.stats.totalCommission,
-            dailyStatsCount: data.stats.dailyStats?.length,
-            dailyStatsWithCommission: data.stats.dailyStats?.filter((d: any) => d.commission > 0),
-            allDailyStats: data.stats.dailyStats
-          });
-          
-          if (data.debug) {
-            console.log("🐛 DEBUG INFO:", data.debug);
-            console.log("🐛 ALL appointments for affiliate:", data.debug.allAppointments);
-            console.log("🐛 All converted appointments:", data.debug.allConvertedDates);
-            console.log("🐛 Date filtered appointments:", data.debug.dateFilteredDates);
-            console.log("🐛 Summary:", {
-              affiliateCode: data.debug.affiliateCode,
-              totalAppointments: data.debug.allAppointmentsCount,
-              convertedCount: data.debug.allConvertedCount,
-              dateFilteredCount: data.debug.dateFilteredCount
-            });
-          }
           setStats(data.stats);
           setError(null);
         } else {
