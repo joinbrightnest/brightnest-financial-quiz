@@ -55,24 +55,28 @@ export async function PUT(
       }
     });
 
-    // Create audit log
-    await prisma.closerAuditLog.create({
-      data: {
-        closerId: closerId,
-        action: 'appointment_assigned',
-        details: {
-          appointmentId: id,
-          customerName: appointment.customerName,
-          scheduledAt: appointment.scheduledAt,
-          assignedBy: 'admin',
-          assignedAt: new Date().toISOString(),
-        },
-        ipAddress: request.headers.get('x-forwarded-for') || 
-                   request.headers.get('x-real-ip') || 
-                   'unknown',
-        userAgent: request.headers.get('user-agent') || 'unknown',
-      }
-    });
+    // Try to create audit log (optional - don't fail assignment if this fails)
+    try {
+      await prisma.closerAuditLog.create({
+        data: {
+          closerId: closerId,
+          action: 'appointment_assigned',
+          details: {
+            appointmentId: id,
+            customerName: appointment.customerName,
+            scheduledAt: appointment.scheduledAt,
+            assignedBy: 'admin',
+            assignedAt: new Date().toISOString(),
+          },
+          ipAddress: request.headers.get('x-forwarded-for') || 
+                     request.headers.get('x-real-ip') || 
+                     'unknown',
+          userAgent: request.headers.get('user-agent') || 'unknown',
+        }
+      });
+    } catch (auditError) {
+      console.warn('⚠️ Failed to create audit log (continuing anyway):', auditError);
+    }
 
     console.log('✅ Appointment assigned to closer:', {
       appointmentId: id,
@@ -88,8 +92,13 @@ export async function PUT(
 
   } catch (error) {
     console.error('❌ Error assigning appointment:', error);
+    console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
+    console.error('Error stack:', error instanceof Error ? error.stack : '');
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     );
   }
