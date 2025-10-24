@@ -70,30 +70,19 @@ export default function AffiliateBookCallPage() {
         
           if (sessionId) {
             try {
-              // Fetch customer data from the admin API (which has the correct contact info)
-              const response = await fetch('/api/admin/basic-stats');
+              // Fetch customer data from the public session API
+              const response = await fetch(`/api/quiz/session?sessionId=${sessionId}`);
               
               if (response.ok) {
-                const data = await response.json();
-                const lead = data.allLeads.find((l: any) => l.id === sessionId);
+                const session = await response.json();
                 
-                if (lead) {
-                  // Extract name and email from the lead's answers
-                  const nameAnswer = lead.answers.find((a: any) => 
-                    a.question?.prompt?.toLowerCase().includes('name')
-                  );
-                  const emailAnswer = lead.answers.find((a: any) => 
-                    a.question?.prompt?.toLowerCase().includes('email')
-                  );
-                  
-                  if (nameAnswer?.value) {
-                    customerName = nameAnswer.value;
-                    console.log("✅ Found customer name from admin API:", customerName);
-                  }
-                  if (emailAnswer?.value) {
-                    customerEmail = emailAnswer.value;
-                    console.log("✅ Found customer email from admin API:", customerEmail);
-                  }
+                if (session.name) {
+                  customerName = session.name;
+                  console.log("✅ Found customer name from session:", customerName);
+                }
+                if (session.email) {
+                  customerEmail = session.email;
+                  console.log("✅ Found customer email from session:", customerEmail);
                 }
               }
             } catch (error) {
