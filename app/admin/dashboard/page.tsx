@@ -1625,9 +1625,24 @@ export default function AdminDashboard() {
           {/* CRM Section - HubSpot Style */}
           {activeSection === 'crm' && (
             <div className="bg-gray-50 min-h-screen">
-              {/* CRM Filters */}
+              {/* CRM Header with Icon and Filters */}
               <div className="bg-white px-6 py-6 border-b border-gray-200">
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-bold text-gray-900">Lead Pipeline</h2>
+                        <p className="text-gray-600 font-medium">Customer relationship management and lead tracking</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-4">
                   {/* Quiz Type Filter */}
                   <div className="flex items-center space-x-2">
                     <label className="text-sm font-medium text-gray-700">Quiz Type:</label>
@@ -1660,6 +1675,7 @@ export default function AdminDashboard() {
                     </select>
                   </div>
                 </div>
+              </div>
               </div>
 
               {/* Metrics - Clean Text Layout */}
