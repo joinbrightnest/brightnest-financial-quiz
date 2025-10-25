@@ -1345,7 +1345,7 @@ export default function AdminDashboard() {
                                 Q{question.questionNumber}
                               </span>
                               <span className="text-xs text-gray-500 font-medium">
-                                {question.retentionRate.toFixed(1)}% retention
+                                {(question.retentionRate || 0).toFixed(1)}% retention
                               </span>
                             </div>
                             <h4 className="text-sm font-semibold text-gray-900 mb-1 leading-tight truncate">
@@ -1356,7 +1356,7 @@ export default function AdminDashboard() {
                                 <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <span>Previous: {question.previousRetentionRate.toFixed(1)}%</span>
+                                <span>Previous: {(question.previousRetentionRate || 0).toFixed(1)}%</span>
                               </div>
                             </div>
                           </div>
@@ -1364,7 +1364,7 @@ export default function AdminDashboard() {
                         <div className="text-right ml-4 flex-shrink-0">
                           <div className="bg-red-50 rounded-lg p-3 border border-red-100">
                             <div className="text-lg font-bold text-red-600 mb-1">
-                              {question.dropFromPrevious.toFixed(1)}%
+                              {(question.dropFromPrevious || 0).toFixed(1)}%
                             </div>
                             <div className="text-xs text-red-500 font-medium uppercase tracking-wide">
                               Drop-off
@@ -1866,7 +1866,7 @@ export default function AdminDashboard() {
                         </div>
                         <div className="ml-4">
                           <p className="text-sm font-medium text-gray-500">Total Revenue</p>
-                          <p className="text-2xl font-semibold text-gray-900">${stats.totalRevenue.toFixed(2)}</p>
+                          <p className="text-2xl font-semibold text-gray-900">${(stats.totalRevenue || 0).toFixed(2)}</p>
                         </div>
                       </div>
                     </div>
@@ -1991,7 +1991,7 @@ export default function AdminDashboard() {
                       <div>
                         <strong style={{ color: '#374151' }}>Sale Value:</strong>
                         <p style={{ margin: '4px 0 0 0', color: '#059669', fontWeight: 'bold' }}>
-                          ${Number(selectedLead.saleValue).toFixed(2)}
+                          ${Number(selectedLead.saleValue || 0).toFixed(2)}
                         </p>
                       </div>
                     )}
@@ -2080,7 +2080,7 @@ export default function AdminDashboard() {
                     
                     <div>
                       <span className="font-medium text-gray-700">Sale Value:</span>
-                      <p className="text-gray-900">{selectedLead.saleValue ? `$${Number(selectedLead.saleValue).toFixed(2)}` : 'N/A'}</p>
+                      <p className="text-gray-900">{selectedLead.saleValue ? `$${Number(selectedLead.saleValue || 0).toFixed(2)}` : 'N/A'}</p>
                     </div>
                     
                     <div>
