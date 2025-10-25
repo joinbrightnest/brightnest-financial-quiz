@@ -38,7 +38,9 @@ export async function GET(request: NextRequest) {
       where: {
         answers: {
           some: {
-            value: email.toLowerCase()
+            value: {
+              contains: email.toLowerCase()
+            }
           }
         }
       },
@@ -47,8 +49,7 @@ export async function GET(request: NextRequest) {
           include: {
             question: true
           }
-        },
-        appointment: true
+        }
       },
       orderBy: {
         createdAt: 'desc'
@@ -65,12 +66,19 @@ export async function GET(request: NextRequest) {
 
     const lead = quizSessions[0];
 
+    // Get appointment separately if it exists, matching by customer email
+    const appointment = await prisma.appointment.findFirst({
+      where: {
+        customerEmail: email.toLowerCase()
+      }
+    });
+
     return NextResponse.json({
       success: true,
       lead: {
         id: lead.id,
         answers: lead.answers,
-        appointment: lead.appointment,
+        appointment: appointment,
         status: lead.status,
         createdAt: lead.createdAt,
         completedAt: lead.completedAt
