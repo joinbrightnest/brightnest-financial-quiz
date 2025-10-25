@@ -141,7 +141,6 @@ export default function AdminDashboard() {
   const [isUpdatingPayoutSettings, setIsUpdatingPayoutSettings] = useState(false);
   const [commissionReleaseStatus, setCommissionReleaseStatus] = useState<any>(null);
   const [isProcessingReleases, setIsProcessingReleases] = useState(false);
-  const [appointments, setAppointments] = useState<any[]>([]);
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [showLeadModal, setShowLeadModal] = useState(false);
 
@@ -177,29 +176,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const getRecordingLink = (appointment: any) => {
-    if (!appointment.outcome) return null;
-    
-    switch (appointment.outcome) {
-      case 'converted':
-        return appointment.recordingLinkConverted;
-      case 'not_interested':
-        return appointment.recordingLinkNotInterested;
-      case 'needs_follow_up':
-        return appointment.recordingLinkNeedsFollowUp;
-      case 'wrong_number':
-        return appointment.recordingLinkWrongNumber;
-      case 'no_answer':
-        return appointment.recordingLinkNoAnswer;
-      case 'callback_requested':
-        return appointment.recordingLinkCallbackRequested;
-      case 'rescheduled':
-        return appointment.recordingLinkRescheduled;
-      default:
-        return null;
-    }
-  };
-
   const openLeadModal = (lead: any) => {
     setSelectedLead(lead);
     setShowLeadModal(true);
@@ -208,19 +184,6 @@ export default function AdminDashboard() {
   const closeLeadModal = () => {
     setSelectedLead(null);
     setShowLeadModal(false);
-  };
-
-  // Fetch appointments data
-  const fetchAppointments = async () => {
-    try {
-      const response = await fetch('/api/admin/appointments');
-      if (response.ok) {
-        const data = await response.json();
-        setAppointments(data);
-      }
-    } catch (error) {
-      console.error('Error fetching appointments:', error);
-    }
   };
 
   // Format duration from milliseconds to human readable format
