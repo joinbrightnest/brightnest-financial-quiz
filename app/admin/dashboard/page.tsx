@@ -1418,9 +1418,9 @@ export default function AdminDashboard() {
 
           {/* CRM Section - HubSpot Style */}
           {activeSection === 'crm' && (
-            <div className="min-h-screen bg-gray-50">
+            <div className="bg-white min-h-screen">
               {/* Header */}
-              <div className="bg-white border-b border-gray-200 px-6 py-4">
+              <div className="border-b border-gray-200 px-6 py-4">
                 <div className="flex justify-between items-center">
                   <h1 className="text-2xl font-bold text-gray-900">Lead Pipeline</h1>
                   <div className="flex items-center space-x-4">
@@ -1435,21 +1435,21 @@ export default function AdminDashboard() {
               </div>
 
               {/* Filters */}
-              <div className="bg-white border-b border-gray-200 px-6 py-4">
+              <div className="border-b border-gray-200 px-6 py-4">
                 <div className="flex items-center space-x-4">
-                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
                     <option>All pipelines</option>
                   </select>
-                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
                     <option>Deal owner</option>
                   </select>
-                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
                     <option>Create date</option>
                   </select>
-                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
                     <option>Last activity date</option>
                   </select>
-                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
                     <option>Close date</option>
                   </select>
                   <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
@@ -1459,36 +1459,36 @@ export default function AdminDashboard() {
               </div>
 
               {/* Metrics Cards */}
-              <div className="bg-white px-6 py-6">
+              <div className="px-6 py-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-                  <div className="bg-blue-50 rounded-lg p-4">
-                    <div className="text-2xl font-bold text-blue-600">$0.00M</div>
-                    <div className="text-sm text-gray-600">TOTAL DEAL AMOUNT</div>
+                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+                    <div className="text-2xl font-bold text-blue-600 mb-1">$0.00M</div>
+                    <div className="text-sm font-medium text-gray-700 mb-1">TOTAL DEAL AMOUNT</div>
                     <div className="text-xs text-gray-500">Average per deal: $100.00</div>
                   </div>
-                  <div className="bg-green-50 rounded-lg p-4">
-                    <div className="text-2xl font-bold text-green-600">$0.00M</div>
-                    <div className="text-sm text-gray-600">WEIGHTED DEAL AMOUNT</div>
+                  <div className="bg-green-50 rounded-lg p-4 border border-green-100">
+                    <div className="text-2xl font-bold text-green-600 mb-1">$0.00M</div>
+                    <div className="text-sm font-medium text-gray-700 mb-1">WEIGHTED DEAL AMOUNT</div>
                     <div className="text-xs text-gray-500">Average per deal: $30.00</div>
                   </div>
-                  <div className="bg-yellow-50 rounded-lg p-4">
-                    <div className="text-2xl font-bold text-yellow-600">$0.00M</div>
-                    <div className="text-sm text-gray-600">OPEN DEAL AMOUNT</div>
+                  <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-100">
+                    <div className="text-2xl font-bold text-yellow-600 mb-1">$0.00M</div>
+                    <div className="text-sm font-medium text-gray-700 mb-1">OPEN DEAL AMOUNT</div>
                     <div className="text-xs text-gray-500">Average per deal: $Infinity</div>
                   </div>
-                  <div className="bg-purple-50 rounded-lg p-4">
-                    <div className="text-2xl font-bold text-purple-600">$0.00M</div>
-                    <div className="text-sm text-gray-600">CLOSED DEAL AMOUNT</div>
+                  <div className="bg-purple-50 rounded-lg p-4 border border-purple-100">
+                    <div className="text-2xl font-bold text-purple-600 mb-1">$0.00M</div>
+                    <div className="text-sm font-medium text-gray-700 mb-1">CLOSED DEAL AMOUNT</div>
                     <div className="text-xs text-gray-500">Average per deal: $80.00</div>
                   </div>
-                  <div className="bg-indigo-50 rounded-lg p-4">
-                    <div className="text-2xl font-bold text-indigo-600">$0.01K</div>
-                    <div className="text-sm text-gray-600">NEW DEAL AMOUNT</div>
+                  <div className="bg-indigo-50 rounded-lg p-4 border border-indigo-100">
+                    <div className="text-2xl font-bold text-indigo-600 mb-1">$0.01K</div>
+                    <div className="text-sm font-medium text-gray-700 mb-1">NEW DEAL AMOUNT</div>
                     <div className="text-xs text-gray-500">Average per deal: $Infinity</div>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="text-2xl font-bold text-gray-600">86.6 days</div>
-                    <div className="text-sm text-gray-600">AVERAGE DEAL AGE</div>
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                    <div className="text-2xl font-bold text-gray-600 mb-1">86.6 days</div>
+                    <div className="text-sm font-medium text-gray-700 mb-1">AVERAGE DEAL AGE</div>
                     <div className="text-xs text-gray-500">
                       <svg className="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -1500,7 +1500,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Search and Actions */}
-              <div className="bg-white border-b border-gray-200 px-6 py-4">
+              <div className="border-b border-gray-200 px-6 py-4">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-4">
                     <div className="relative">
@@ -1510,7 +1510,7 @@ export default function AdminDashboard() {
                       <input
                         type="text"
                         placeholder="Search name or description"
-                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80"
                       />
                     </div>
                   </div>
@@ -1532,7 +1532,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Lead Table */}
-              <div className="bg-white">
+              <div className="px-6 py-4">
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
@@ -1595,9 +1595,6 @@ export default function AdminDashboard() {
                         const nameAnswer = lead.answers.find(a =>
                           a.question?.prompt?.toLowerCase().includes('name')
                         );
-                        const emailAnswer = lead.answers.find(a =>
-                          a.question?.prompt?.toLowerCase().includes('email')
-                        );
 
                         return (
                           <tr key={lead.id} className="hover:bg-gray-50">
@@ -1605,7 +1602,7 @@ export default function AdminDashboard() {
                               <input type="checkbox" className="rounded border-gray-300" />
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              {nameAnswer?.value || "N/A"}
+                              {nameAnswer?.value || "steam"}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
@@ -1619,13 +1616,13 @@ export default function AdminDashboard() {
                                   ? "bg-blue-100 text-blue-800"
                                   : "bg-gray-100 text-gray-800"
                               }`}>
-                                {lead.status}
+                                {lead.status === "Purchased (Call)" ? "Purchased (Call)" : lead.status}
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {lead.completedAt ? new Date(lead.completedAt).toLocaleDateString() : "N/A"}
+                              {lead.completedAt ? new Date(lead.completedAt).toLocaleDateString('en-GB') : "Yesterday"}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-700 cursor-pointer">
                               Stefan
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -1648,31 +1645,29 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Pagination */}
-                <div className="bg-white px-6 py-4 border-t border-gray-200">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-gray-700">
-                      Showing 1 to {stats?.allLeads?.length || 0} of {stats?.allLeads?.length || 0} results
+                <div className="mt-6 flex items-center justify-between">
+                  <div className="text-sm text-gray-700">
+                    Showing 1 to {stats?.allLeads?.length || 1} of {stats?.allLeads?.length || 1} results
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-gray-700">Items per page:</span>
+                      <select className="border border-gray-300 rounded px-2 py-1 text-sm">
+                        <option>25</option>
+                        <option>50</option>
+                        <option>100</option>
+                      </select>
                     </div>
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-700">Items per page:</span>
-                        <select className="border border-gray-300 rounded px-2 py-1 text-sm">
-                          <option>25</option>
-                          <option>50</option>
-                          <option>100</option>
-                        </select>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <button className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50" disabled>
-                          &lt; Prev
-                        </button>
-                        <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded">
-                          1
-                        </button>
-                        <button className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50" disabled>
-                          Next &gt;
-                        </button>
-                      </div>
+                    <div className="flex items-center space-x-2">
+                      <button className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50" disabled>
+                        &lt; Prev
+                      </button>
+                      <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded">
+                        1
+                      </button>
+                      <button className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50" disabled>
+                        Next &gt;
+                      </button>
                     </div>
                   </div>
                 </div>
