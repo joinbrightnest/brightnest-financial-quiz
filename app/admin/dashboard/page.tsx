@@ -1910,8 +1910,6 @@ export default function AdminDashboard() {
               </div>
             </>
           ) : null}
-            </>
-          )}
 
           {/* Simple Working Modal */}
             {showLeadModal && selectedLead && (
