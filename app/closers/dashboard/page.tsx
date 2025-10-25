@@ -36,6 +36,33 @@ interface Appointment {
   recordingLinkRescheduled?: string | null;
 }
 
+interface LeadDetails {
+  id: string;
+  answers: Array<{
+    questionId: string;
+    value: string;
+    question: {
+      prompt: string;
+    } | null;
+  }>;
+  appointment?: {
+    notes: string | null;
+    outcome: string | null;
+    recordingLinkConverted?: string | null;
+    recordingLinkNotInterested?: string | null;
+    recordingLinkNeedsFollowUp?: string | null;
+    recordingLinkWrongNumber?: string | null;
+    recordingLinkNoAnswer?: string | null;
+    recordingLinkCallbackRequested?: string | null;
+    recordingLinkRescheduled?: string | null;
+    recordingLink?: string | null;
+    saleValue?: number | null;
+  };
+  status: string;
+  createdAt: string;
+  completedAt: string | null;
+}
+
 export default function CloserDashboard() {
   const [closer, setCloser] = useState<Closer | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -50,6 +77,9 @@ export default function CloserDashboard() {
     saleValue: '',
     recordingLink: ''
   });
+  const [showLeadDetailsModal, setShowLeadDetailsModal] = useState(false);
+  const [leadDetails, setLeadDetails] = useState<LeadDetails | null>(null);
+  const [isLoadingLeadDetails, setIsLoadingLeadDetails] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -166,10 +196,31 @@ export default function CloserDashboard() {
     setShowOutcomeModal(true);
   };
 
-  const viewLeadDetails = (appointment: Appointment) => {
-    // Navigate to the admin dashboard with the customer email to open the lead details modal
-    const adminUrl = `/admin/dashboard?leadEmail=${encodeURIComponent(appointment.customerEmail)}`;
-    window.open(adminUrl, '_blank');
+  const viewLeadDetails = async (appointment: Appointment) => {
+    setIsLoadingLeadDetails(true);
+    setShowLeadDetailsModal(true);
+    
+    try {
+      const token = localStorage.getItem('closerToken');
+      const response = await fetch(`/api/leads/by-email?email=${encodeURIComponent(appointment.customerEmail)}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setLeadDetails(data.lead);
+      } else {
+        setError('Failed to load lead details');
+      }
+    } catch (error) {
+      console.error('Error fetching lead details:', error);
+      setError('Network error loading lead details');
+    } finally {
+      setIsLoadingLeadDetails(false);
+    }
   };
 
   const getDisplayedAppointments = () => {
@@ -572,6 +623,206 @@ export default function CloserDashboard() {
               >
                 Update Outcome
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lead Details Modal */}
+      {showLeadDetailsModal && (
+        <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+          <div className="min-h-screen bg-white">
+            {/* Header */}
+            <div className="bg-slate-800 px-6 py-4 border-b border-slate-700">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h1 className="text-xl font-semibold text-white">
+                      {leadDetails?.answers.find((a: any) => 
+                        a.question?.prompt?.toLowerCase().includes('name') || 
+                        a.question?.prompt?.toLowerCase().includes('first name')
+                      )?.value || 'Lead Profile'}
+                    </h1>
+                    <p className="text-slate-300 text-sm">
+                      Session ID: {leadDetails?.id || 'N/A'}
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => {
+                    setShowLeadDetailsModal(false);
+                    setLeadDetails(null);
+                  }}
+                  className="text-slate-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-slate-700"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            
+            {/* Content */}
+            <div className="p-8 space-y-8 max-w-7xl mx-auto">
+              {isLoadingLeadDetails ? (
+                <div className="flex items-center justify-center py-20">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+                </div>
+              ) : leadDetails ? (
+                <>
+                  {/* Personal Information */}
+                  <div className="bg-white rounded-xl border border-slate-200 p-6">
+                    <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
+                      <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      Personal Information
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Full Name</label>
+                        <p className="mt-1 text-sm font-semibold text-slate-900">
+                          {leadDetails.answers.find((a: any) => 
+                            a.question?.prompt?.toLowerCase().includes('name') || 
+                            a.question?.prompt?.toLowerCase().includes('first name')
+                          )?.value || 'N/A'}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Email Address</label>
+                        <p className="mt-1 text-sm font-semibold text-slate-900">
+                          {leadDetails.answers.find((a: any) => a.value.includes('@'))?.value || 'N/A'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Deal Information */}
+                  <div className="bg-white rounded-xl border border-slate-200 p-6">
+                    <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
+                      <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-6m6 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Deal Information
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Status</label>
+                        <p className="mt-1 text-sm font-semibold text-slate-900">{leadDetails.status || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Close Date</label>
+                        <p className="mt-1 text-sm font-semibold text-slate-900">
+                          {leadDetails.completedAt ? new Date(leadDetails.completedAt).toLocaleDateString() : 'N/A'}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Amount</label>
+                        <p className="mt-1 text-sm font-semibold text-slate-900">
+                          {leadDetails.appointment?.saleValue ? `$${Number(leadDetails.appointment.saleValue).toFixed(2)}` : '-'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Call Details */}
+                    <div className="mt-6 pt-6 border-t border-slate-200">
+                      <h4 className="text-sm font-semibold text-slate-700 mb-4">Call Details</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Recording Link</label>
+                          <div className="mt-1">
+                            {(() => {
+                              let recordingLink = null;
+                              if (leadDetails.appointment?.outcome) {
+                                switch (leadDetails.appointment.outcome) {
+                                  case 'converted':
+                                    recordingLink = leadDetails.appointment.recordingLinkConverted;
+                                    break;
+                                  case 'not_interested':
+                                    recordingLink = leadDetails.appointment.recordingLinkNotInterested;
+                                    break;
+                                  case 'needs_follow_up':
+                                    recordingLink = leadDetails.appointment.recordingLinkNeedsFollowUp;
+                                    break;
+                                  case 'wrong_number':
+                                    recordingLink = leadDetails.appointment.recordingLinkWrongNumber;
+                                    break;
+                                  case 'no_answer':
+                                    recordingLink = leadDetails.appointment.recordingLinkNoAnswer;
+                                    break;
+                                  case 'callback_requested':
+                                    recordingLink = leadDetails.appointment.recordingLinkCallbackRequested;
+                                    break;
+                                  case 'rescheduled':
+                                    recordingLink = leadDetails.appointment.recordingLinkRescheduled;
+                                    break;
+                                  default:
+                                    recordingLink = leadDetails.appointment?.recordingLink;
+                                }
+                              } else {
+                                recordingLink = leadDetails.appointment?.recordingLink;
+                              }
+
+                              return recordingLink ? (
+                                <a 
+                                  href={recordingLink} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
+                                >
+                                  {recordingLink}
+                                </a>
+                              ) : (
+                                <p className="text-sm text-slate-400 italic">No recording available</p>
+                              );
+                            })()}
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Call Notes</label>
+                          <div className="mt-1">
+                            {leadDetails.appointment?.notes ? (
+                              <p className="text-sm text-slate-900 bg-slate-50 rounded-lg p-3 border border-slate-200">
+                                {leadDetails.appointment.notes}
+                              </p>
+                            ) : (
+                              <p className="text-sm text-slate-400 italic">No notes available</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quiz Responses */}
+                  <div className="bg-white rounded-xl border border-slate-200 p-6">
+                    <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
+                      <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H9a2 2 0 01-2-2V6a2 2 0 012-2h2m4-2v4m0 4v10m-6-2h10a2 2 0 002-2V6a2 2 0 00-2-2H9a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      Quiz Responses
+                      <span className="ml-2 text-sm text-slate-500 font-normal">({leadDetails.answers.length} Questions)</span>
+                    </h3>
+                    <div className="grid grid-cols-1 gap-4">
+                      {leadDetails.answers.map((answer: any, index: number) => (
+                        <div key={index} className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                          <p className="text-sm font-semibold text-slate-900 mb-2">{answer.question?.prompt || 'Question ' + (index + 1)}</p>
+                          <p className="text-sm text-slate-700">{answer.value || 'No answer provided'}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-20">
+                  <p className="text-slate-600">No lead details available</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
