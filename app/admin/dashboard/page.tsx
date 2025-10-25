@@ -2037,8 +2037,6 @@ export default function AdminDashboard() {
                 </div>
               </div>
             )}
-            </>
-          )}
 
           {/* Lead Profile Modal */}
           {showLeadModal && selectedLead && (
