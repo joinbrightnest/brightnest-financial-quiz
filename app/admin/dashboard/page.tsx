@@ -1641,7 +1641,7 @@ export default function AdminDashboard() {
                   </h3>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => router.push('/admin/leads')}
+                      onClick={() => router.push('/admin/leads-crm')}
                       className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 text-sm"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
