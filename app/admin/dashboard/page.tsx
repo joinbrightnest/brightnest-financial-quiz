@@ -1437,19 +1437,19 @@ export default function AdminDashboard() {
               {/* Filters */}
               <div className="border-b border-gray-200 px-6 py-4">
                 <div className="flex items-center space-x-4">
-                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
+                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black">
                     <option>All pipelines</option>
                   </select>
-                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
+                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black">
                     <option>Deal owner</option>
                   </select>
-                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
+                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black">
                     <option>Create date</option>
                   </select>
-                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
+                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black">
                     <option>Last activity date</option>
                   </select>
-                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white">
+                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black">
                     <option>Close date</option>
                   </select>
                   <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
