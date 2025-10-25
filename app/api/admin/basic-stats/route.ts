@@ -119,27 +119,69 @@ export async function GET(request: NextRequest) {
     );
   }
   
-  // No filters - return all data
+  const { searchParams } = new URL(request.url);
+  const quizType = searchParams.get('quizType') || null;
+  const duration = searchParams.get('duration') || 'all';
   
   try {
-    // No date filtering - get all data
+    // Build date filter based on duration parameter
+    const buildDateFilter = () => {
+      if (duration === 'all') {
+        return {}; // No date filter - show all data
+      }
+
+      const now = new Date();
+      let startDate = new Date();
+
+      switch (duration) {
+        case '24h':
+          startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          break;
+        case '7d':
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case '30d':
+          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          break;
+        case '90d':
+          startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+          break;
+        case '1y':
+          startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+          break;
+        default:
+          return {}; // Default to all data
+      }
+      return { gte: startDate };
+    };
+
+    const dateFilter = buildDateFilter();
 
     // Get total sessions (all quiz attempts)
-    const totalSessions = await prisma.quizSession.count();
+    const totalSessions = await prisma.quizSession.count({
+      where: {
+        createdAt: dateFilter,
+        ...(quizType ? { quizType } : {})
+      }
+    });
     
     // Calculate average duration for completed sessions
     const avgDurationResult = await prisma.quizSession.aggregate({
       _avg: { durationMs: true },
       where: { 
+        createdAt: dateFilter,
         status: "completed",
-        durationMs: { not: null }
+        durationMs: { not: null },
+        ...(quizType ? { quizType } : {})
       },
     });
 
     // Get all completed sessions first
     const allCompletedSessions = await prisma.quizSession.findMany({
       where: {
-        status: "completed"
+        createdAt: dateFilter,
+        status: "completed",
+        ...(quizType ? { quizType } : {})
       },
       include: { 
         result: true,
@@ -153,8 +195,8 @@ export async function GET(request: NextRequest) {
       take: 50,
     });
 
-    // Use centralized lead calculation - get all leads
-    const leadData = await calculateTotalLeads('all');
+    // Use centralized lead calculation with filters
+    const leadData = await calculateTotalLeads(duration, quizType || undefined);
     const allLeads = leadData.leads;
 
     // Get affiliate information for leads that have affiliate codes
@@ -306,8 +348,8 @@ export async function GET(request: NextRequest) {
     });
 
     // Get all questions ordered by their order field
-    // Use default quiz type for analysis
-    let defaultQuizType = 'financial-profile';
+    // Use quiz type filter if specified, otherwise default
+    let defaultQuizType = quizType || 'financial-profile';
     
     const allQuestions = await prisma.quizQuestion.findMany({
       where: { 
@@ -356,17 +398,42 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // Get activity data - last 30 days
+    // Get activity data based on duration filter
     const getActivityData = async () => {
       const now = new Date();
-      const startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // Last 30 days
+      let startDate = new Date();
+      
+      if (duration === 'all') {
+        startDate = new Date(0); // All time
+      } else {
+        switch (duration) {
+          case '24h':
+            startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            break;
+          case '7d':
+            startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            break;
+          case '30d':
+            startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            break;
+          case '90d':
+            startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+            break;
+          case '1y':
+            startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+            break;
+          default:
+            startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // Default to 30 days
+        }
+      }
       
       // Get all sessions in the timeframe
       const sessions = await prisma.quizSession.findMany({
         where: {
           createdAt: {
             gte: startDate,
-          }
+          },
+          ...(quizType ? { quizType } : {})
         },
         select: {
           createdAt: true
@@ -415,7 +482,11 @@ export async function GET(request: NextRequest) {
     const affiliateClicks = affiliateClicksResult._sum.totalClicks || 0;
     
     // Count normal website clicks (these don't have a stored counter)
-    const normalWebsiteClicks = await prisma.normalWebsiteClick.count();
+    const normalWebsiteClicks = await prisma.normalWebsiteClick.count({
+      where: {
+        createdAt: dateFilter
+      }
+    });
     
     totalClicks = affiliateClicks + normalWebsiteClicks;
     

@@ -97,6 +97,12 @@ export default function AdminDashboard() {
   const [showResetDropdown, setShowResetDropdown] = useState(false);
   const [activeSection, setActiveSection] = useState<'quiz-analytics' | 'crm' | 'ceo-analytics' | 'closer-management' | 'settings'>('quiz-analytics');
   
+  // Quiz Analytics Filters
+  const [quizAnalyticsFilters, setQuizAnalyticsFilters] = useState({
+    quizType: 'all',
+    duration: 'all'
+  });
+  
   // CRM State Management
   const [crmSearch, setCrmSearch] = useState('');
   const [crmSortField, setCrmSortField] = useState('date');
@@ -367,7 +373,19 @@ export default function AdminDashboard() {
     setError(null);
     
     try {
-      const response = await fetch(`/api/admin/basic-stats`, {
+      // Build query parameters for filters
+      const params = new URLSearchParams();
+      if (quizAnalyticsFilters.quizType !== 'all') {
+        params.append('quizType', quizAnalyticsFilters.quizType);
+      }
+      if (quizAnalyticsFilters.duration !== 'all') {
+        params.append('duration', quizAnalyticsFilters.duration);
+      }
+      
+      const queryString = params.toString();
+      const url = queryString ? `/api/admin/basic-stats?${queryString}` : '/api/admin/basic-stats';
+      
+      const response = await fetch(url, {
         headers: {
           "Content-Type": "application/json"
         }
@@ -388,13 +406,20 @@ export default function AdminDashboard() {
         setIsLoading(false);
       }
     }
-  }, []);
+  }, [quizAnalyticsFilters]);
 
   useEffect(() => {
     fetchStats(true); // Pass true to indicate this is a timeframe change
     fetchSettings();
     fetchCommissionReleaseStatus();
   }, [fetchStats]);
+
+  // Trigger data fetch when Quiz Analytics filters change
+  useEffect(() => {
+    if (activeSection === 'quiz-analytics') {
+      fetchStats(true);
+    }
+  }, [quizAnalyticsFilters, activeSection, fetchStats]);
 
 
   // Handle page visibility and focus changes to prevent unnecessary re-fetching
@@ -1089,10 +1114,43 @@ export default function AdminDashboard() {
           {/* Quiz Analytics Section */}
           {activeSection === 'quiz-analytics' && (
             <>
-              {/* Quiz Analytics Header */}
+              {/* Quiz Analytics Header with Filters */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold text-gray-900">Quiz Analytics</h2>
+                  <div className="flex items-center space-x-4">
+                    {/* Quiz Type Filter */}
+                    <div className="flex items-center space-x-2">
+                      <label className="text-sm font-medium text-gray-700">Quiz Type:</label>
+                      <select
+                        value={quizAnalyticsFilters.quizType}
+                        onChange={(e) => setQuizAnalyticsFilters(prev => ({ ...prev, quizType: e.target.value }))}
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="all">All Types</option>
+                        <option value="financial-profile">Financial Profile</option>
+                        <option value="health-finance">Health Finance</option>
+                        <option value="marriage-finance">Marriage Finance</option>
+                      </select>
+                    </div>
+                    
+                    {/* Duration Filter */}
+                    <div className="flex items-center space-x-2">
+                      <label className="text-sm font-medium text-gray-700">Duration:</label>
+                      <select
+                        value={quizAnalyticsFilters.duration}
+                        onChange={(e) => setQuizAnalyticsFilters(prev => ({ ...prev, duration: e.target.value }))}
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="all">All Time</option>
+                        <option value="24h">Last 24 hours</option>
+                        <option value="7d">Last 7 days</option>
+                        <option value="30d">Last 30 days</option>
+                        <option value="90d">Last 90 days</option>
+                        <option value="1y">Last year</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </div>
 
