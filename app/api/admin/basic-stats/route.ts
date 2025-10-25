@@ -208,44 +208,54 @@ export async function GET(request: NextRequest) {
         .map(lead => lead.affiliateCode!)
         .filter((code): code is string => code !== null);
       
+      console.log('🔍 Affiliate codes found in leads:', affiliateCodes);
+      
       if (affiliateCodes.length > 0) {
-        // First try to find by referral code
-        const affiliatesByReferralCode = await prisma.affiliate.findMany({
-          where: {
-            referralCode: {
-              in: affiliateCodes
-            }
-          },
+        // Get all affiliates to check against
+        const allAffiliates = await prisma.affiliate.findMany({
           select: {
             referralCode: true,
             name: true,
+            customTrackingLink: true,
           }
         });
 
-        // Then try to find by custom tracking link using raw SQL
-        const affiliatesByCustomLink = await prisma.$queryRaw`
-          SELECT "referral_code", "name", "custom_tracking_link"
-          FROM "affiliates" 
-          WHERE "custom_tracking_link" = ANY(${affiliateCodes.map(code => `/${code}`)})
-        `;
+        console.log('👥 All affiliates:', allAffiliates.map(a => ({ 
+          name: a.name, 
+          referralCode: a.referralCode, 
+          customLink: a.customTrackingLink 
+        })));
 
         // Create a map of affiliate codes to names
         affiliateMap = {};
         
-        // Add affiliates found by referral code
-        affiliatesByReferralCode.forEach(affiliate => {
-          affiliateMap[affiliate.referralCode] = affiliate.name;
+        // Check each affiliate code against all possible matches
+        affiliateCodes.forEach(code => {
+          // Try exact referral code match
+          const exactMatch = allAffiliates.find(affiliate => 
+            affiliate.referralCode === code
+          );
+          
+          if (exactMatch) {
+            affiliateMap[code] = exactMatch.name;
+            console.log(`✅ Found exact match: ${code} -> ${exactMatch.name}`);
+            return;
+          }
+          
+          // Try custom tracking link match (remove leading slash)
+          const customMatch = allAffiliates.find(affiliate => 
+            affiliate.customTrackingLink === `/${code}` || 
+            affiliate.customTrackingLink === code
+          );
+          
+          if (customMatch) {
+            affiliateMap[code] = customMatch.name;
+            console.log(`✅ Found custom link match: ${code} -> ${customMatch.name}`);
+            return;
+          }
+          
+          console.log(`❌ No match found for affiliate code: ${code}`);
         });
-        
-        // Add affiliates found by custom tracking link
-        if (Array.isArray(affiliatesByCustomLink)) {
-          affiliatesByCustomLink.forEach((affiliate: any) => {
-            const customCode = affiliate.custom_tracking_link?.replace('/', '');
-            if (customCode) {
-              affiliateMap[customCode] = affiliate.name;
-            }
-          });
-        }
       }
     }
 
@@ -320,12 +330,24 @@ export async function GET(request: NextRequest) {
         }
       }
       
+      // Determine source with debugging
+      let source = 'Website'; // Default
+      if (lead.affiliateCode) {
+        const mappedName = affiliateMap[lead.affiliateCode];
+        if (mappedName) {
+          source = mappedName;
+          console.log(`✅ Lead ${lead.id} (${email}): affiliateCode=${lead.affiliateCode} -> source=${source}`);
+        } else {
+          console.log(`❌ Lead ${lead.id} (${email}): affiliateCode=${lead.affiliateCode} not found in map, defaulting to Website`);
+        }
+      } else {
+        console.log(`ℹ️ Lead ${lead.id} (${email}): no affiliateCode, defaulting to Website`);
+      }
+      
       return {
         ...lead,
         status,
-        source: lead.affiliateCode 
-          ? (affiliateMap[lead.affiliateCode] || 'Unknown Affiliate')
-          : 'Website',
+        source,
         saleValue: appointment?.saleValue || null, // Include sale value from appointment
         appointment: appointment // Include appointment data
       };

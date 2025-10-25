@@ -72,6 +72,28 @@ export async function GET(request: NextRequest) {
       }
     });
 
+    // Get affiliate information if lead has affiliate code
+    let source = 'Website'; // Default
+    if (lead.affiliateCode) {
+      // Find affiliate by referral code
+      const affiliate = await prisma.affiliate.findFirst({
+        where: {
+          OR: [
+            { referralCode: lead.affiliateCode },
+            { customTrackingLink: `/${lead.affiliateCode}` },
+            { customTrackingLink: lead.affiliateCode }
+          ]
+        },
+        select: {
+          name: true
+        }
+      });
+      
+      if (affiliate) {
+        source = affiliate.name;
+      }
+    }
+
     return NextResponse.json({
       success: true,
       lead: {
@@ -80,7 +102,9 @@ export async function GET(request: NextRequest) {
         appointment: appointment,
         status: lead.status,
         createdAt: lead.createdAt,
-        completedAt: lead.completedAt
+        completedAt: lead.completedAt,
+        affiliateCode: lead.affiliateCode,
+        source: source
       }
     });
 

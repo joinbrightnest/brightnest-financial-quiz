@@ -61,6 +61,8 @@ interface LeadDetails {
   status: string;
   createdAt: string;
   completedAt: string | null;
+  affiliateCode?: string | null;
+  source?: string;
 }
 
 export default function CloserDashboard() {
@@ -743,7 +745,7 @@ export default function CloserDashboard() {
                         <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Lead Source</label>
                         <div className="mt-1">
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            Website
+                            {leadDetails.source || 'Website'}
                           </span>
                         </div>
                       </div>
