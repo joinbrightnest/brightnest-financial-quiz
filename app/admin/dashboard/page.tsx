@@ -124,6 +124,7 @@ export default function AdminDashboard() {
     date: true,
     owner: true,
     amount: true,
+    source: true,
     actions: true
   });
   const [qualificationThreshold, setQualificationThreshold] = useState(17);
@@ -741,6 +742,10 @@ export default function AdminDashboard() {
       case 'amount':
         aValue = 100; // Fixed amount for now
         bValue = 100;
+        break;
+      case 'source':
+        aValue = a.source || 'Direct';
+        bValue = b.source || 'Direct';
         break;
       default:
         aValue = new Date(a.completedAt || a.createdAt).getTime();
@@ -1847,6 +1852,16 @@ export default function AdminDashboard() {
                           </div>
                         </th>
                         )}
+                        {crmVisibleColumns.source && (
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <div className="flex items-center cursor-pointer hover:text-gray-700" onClick={() => handleCrmSort('source')}>
+                            SOURCE
+                            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                            </svg>
+                          </div>
+                        </th>
+                        )}
                         {crmVisibleColumns.actions && (
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           <div className="flex items-center">
@@ -1912,6 +1927,11 @@ export default function AdminDashboard() {
                             {crmVisibleColumns.amount && (
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               $100.00
+                            </td>
+                            )}
+                            {crmVisibleColumns.source && (
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {lead.source || 'Direct'}
                             </td>
                             )}
                             {crmVisibleColumns.actions && (
@@ -2116,6 +2136,15 @@ export default function AdminDashboard() {
                           type="checkbox" 
                           checked={crmVisibleColumns.amount}
                           onChange={() => handleCrmToggleColumn('amount')}
+                          className="rounded border-gray-300"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">Source</span>
+                        <input 
+                          type="checkbox" 
+                          checked={crmVisibleColumns.source}
+                          onChange={() => handleCrmToggleColumn('source')}
                           className="rounded border-gray-300"
                         />
                       </div>
