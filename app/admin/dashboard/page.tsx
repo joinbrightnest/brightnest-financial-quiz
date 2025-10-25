@@ -103,6 +103,12 @@ export default function AdminDashboard() {
     duration: 'all'
   });
   
+  // CRM Filters
+  const [crmFilters, setCrmFilters] = useState({
+    quizType: 'all',
+    dateRange: 'all'
+  });
+  
   // CRM State Management
   const [crmSearch, setCrmSearch] = useState('');
   const [crmSortField, setCrmSortField] = useState('date');
@@ -373,7 +379,7 @@ export default function AdminDashboard() {
     setError(null);
     
     try {
-      // Build query parameters for filters - only apply Quiz Analytics filters when on Quiz Analytics section
+      // Build query parameters for filters - apply appropriate filters based on active section
       const params = new URLSearchParams();
       if (activeSection === 'quiz-analytics') {
         if (quizAnalyticsFilters.quizType !== 'all') {
@@ -381,6 +387,13 @@ export default function AdminDashboard() {
         }
         if (quizAnalyticsFilters.duration !== 'all') {
           params.append('duration', quizAnalyticsFilters.duration);
+        }
+      } else if (activeSection === 'crm') {
+        if (crmFilters.quizType !== 'all') {
+          params.append('quizType', crmFilters.quizType);
+        }
+        if (crmFilters.dateRange !== 'all') {
+          params.append('duration', crmFilters.dateRange);
         }
       }
       
@@ -408,7 +421,7 @@ export default function AdminDashboard() {
         setIsLoading(false);
       }
     }
-  }, [quizAnalyticsFilters, activeSection]);
+  }, [quizAnalyticsFilters, crmFilters, activeSection]);
 
   useEffect(() => {
     fetchStats(true); // Pass true to indicate this is a timeframe change
@@ -416,12 +429,12 @@ export default function AdminDashboard() {
     fetchCommissionReleaseStatus();
   }, [fetchStats]);
 
-  // Trigger data fetch when Quiz Analytics filters change (only when on Quiz Analytics section)
+  // Trigger data fetch when filters change (only when on the respective section)
   useEffect(() => {
-    if (activeSection === 'quiz-analytics') {
+    if (activeSection === 'quiz-analytics' || activeSection === 'crm') {
       fetchStats(true);
     }
-  }, [quizAnalyticsFilters, activeSection, fetchStats]);
+  }, [quizAnalyticsFilters, crmFilters, activeSection, fetchStats]);
 
 
   // Handle page visibility and focus changes to prevent unnecessary re-fetching
@@ -1636,6 +1649,43 @@ export default function AdminDashboard() {
               <div className="bg-white px-6 py-6">
                 <div className="flex justify-between items-center">
                   <h1 className="text-2xl font-bold text-gray-900">Lead Pipeline</h1>
+                </div>
+              </div>
+
+              {/* CRM Filters */}
+              <div className="bg-white px-6 py-4 border-b border-gray-200">
+                <div className="flex items-center space-x-4">
+                  {/* Quiz Type Filter */}
+                  <div className="flex items-center space-x-2">
+                    <label className="text-sm font-medium text-gray-700">Quiz Type:</label>
+                    <select
+                      value={crmFilters.quizType}
+                      onChange={(e) => setCrmFilters(prev => ({ ...prev, quizType: e.target.value }))}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="all">All Types</option>
+                      <option value="financial-profile">Financial Profile</option>
+                      <option value="health-finance">Health Finance</option>
+                      <option value="marriage-finance">Marriage Finance</option>
+                    </select>
+                  </div>
+                  
+                  {/* Date Range Filter */}
+                  <div className="flex items-center space-x-2">
+                    <label className="text-sm font-medium text-gray-700">Date Range:</label>
+                    <select
+                      value={crmFilters.dateRange}
+                      onChange={(e) => setCrmFilters(prev => ({ ...prev, dateRange: e.target.value }))}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="all">All Time</option>
+                      <option value="24h">Last 24 hours</option>
+                      <option value="7d">Last 7 days</option>
+                      <option value="30d">Last 30 days</option>
+                      <option value="90d">Last 90 days</option>
+                      <option value="1y">Last year</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
