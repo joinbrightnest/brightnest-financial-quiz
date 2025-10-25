@@ -2026,30 +2026,30 @@ export default function AdminDashboard() {
                 <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
                   <div className="min-h-screen bg-white">
                     {/* Header */}
-                    <div className="bg-slate-800 px-8 py-6 border-b border-slate-700">
+                    <div className="bg-slate-800 px-6 py-4 border-b border-slate-700">
                       <div className="flex justify-between items-center">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-16 h-16 bg-slate-700 rounded-xl flex items-center justify-center">
-                            <svg className="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center">
+                            <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                           </div>
                           <div>
-                            <h1 className="text-3xl font-bold text-white">
+                            <h1 className="text-xl font-semibold text-white">
                               {crmSelectedLead.answers.find((a: any) => 
                                 a.question?.prompt?.toLowerCase().includes('name')
                               )?.value || 'Lead Profile'}
                             </h1>
-                            <p className="text-slate-300 text-lg mt-1">
+                            <p className="text-slate-300 text-sm">
                               Session ID: {crmSelectedLead.id || crmSelectedLead.sessionId || 'N/A'}
                             </p>
                           </div>
                         </div>
                         <button 
                           onClick={() => setCrmShowLeadModal(false)}
-                          className="text-slate-400 hover:text-white transition-colors p-3 rounded-lg hover:bg-slate-700"
+                          className="text-slate-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-slate-700"
                         >
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                           </svg>
                         </button>
