@@ -116,6 +116,16 @@ export default function AdminDashboard() {
   const [crmShowMetrics, setCrmShowMetrics] = useState(true);
   const [crmSelectedLead, setCrmSelectedLead] = useState<any>(null);
   const [crmShowLeadModal, setCrmShowLeadModal] = useState(false);
+  const [crmShowColumnModal, setCrmShowColumnModal] = useState(false);
+  const [crmVisibleColumns, setCrmVisibleColumns] = useState({
+    checkbox: true,
+    name: true,
+    stage: true,
+    date: true,
+    owner: true,
+    amount: true,
+    actions: true
+  });
   const [qualificationThreshold, setQualificationThreshold] = useState(17);
   const [isUpdatingThreshold, setIsUpdatingThreshold] = useState(false);
   const [commissionHoldDays, setCommissionHoldDays] = useState(30);
@@ -636,6 +646,13 @@ export default function AdminDashboard() {
   const handleCrmViewDetails = (lead: any) => {
     setCrmSelectedLead(lead);
     setCrmShowLeadModal(true);
+  };
+
+  const handleCrmToggleColumn = (column: string) => {
+    setCrmVisibleColumns(prev => ({
+      ...prev,
+      [column]: !prev[column as keyof typeof prev]
+    }));
   };
 
   const handleCrmExport = () => {
@@ -1748,7 +1765,10 @@ export default function AdminDashboard() {
                     >
                       Export
                     </button>
-                    <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+                    <button 
+                      onClick={() => setCrmShowColumnModal(true)}
+                      className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                    >
                       Edit columns
                     </button>
                   </div>
@@ -1761,6 +1781,7 @@ export default function AdminDashboard() {
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
+                        {crmVisibleColumns.checkbox && (
                         <th className="px-6 py-3 text-left">
                           <input 
                             type="checkbox" 
@@ -1769,6 +1790,8 @@ export default function AdminDashboard() {
                             onChange={(e) => handleCrmSelectAll(e.target.checked)}
                           />
                         </th>
+                        )}
+                        {crmVisibleColumns.name && (
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           <div className="flex items-center cursor-pointer hover:text-gray-700" onClick={() => handleCrmSort('name')}>
                             LEAD NAME
@@ -1777,6 +1800,8 @@ export default function AdminDashboard() {
                             </svg>
                           </div>
                         </th>
+                        )}
+                        {crmVisibleColumns.stage && (
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           <div className="flex items-center cursor-pointer hover:text-gray-700" onClick={() => handleCrmSort('status')}>
                             LEAD STAGE
@@ -1785,6 +1810,8 @@ export default function AdminDashboard() {
                             </svg>
                           </div>
                         </th>
+                        )}
+                        {crmVisibleColumns.date && (
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           <div className="flex items-center cursor-pointer hover:text-gray-700" onClick={() => handleCrmSort('date')}>
                             CLOSE DATE (GMT+3)
@@ -1793,6 +1820,8 @@ export default function AdminDashboard() {
                             </svg>
                           </div>
                         </th>
+                        )}
+                        {crmVisibleColumns.owner && (
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           <div className="flex items-center cursor-pointer hover:text-gray-700" onClick={() => handleCrmSort('owner')}>
                             DEAL OWNER
@@ -1801,6 +1830,8 @@ export default function AdminDashboard() {
                             </svg>
                           </div>
                         </th>
+                        )}
+                        {crmVisibleColumns.amount && (
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           <div className="flex items-center cursor-pointer hover:text-gray-700" onClick={() => handleCrmSort('amount')}>
                             AMOUNT
@@ -1809,6 +1840,8 @@ export default function AdminDashboard() {
                             </svg>
                           </div>
                         </th>
+                        )}
+                        {crmVisibleColumns.actions && (
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           <div className="flex items-center">
                             ACTIONS
@@ -1817,6 +1850,7 @@ export default function AdminDashboard() {
                             </svg>
                           </div>
                         </th>
+                        )}
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -1827,6 +1861,7 @@ export default function AdminDashboard() {
                         
                         return (
                           <tr key={lead.id} className="hover:bg-gray-50">
+                            {crmVisibleColumns.checkbox && (
                             <td className="px-6 py-4 whitespace-nowrap">
                               <input 
                                 type="checkbox" 
@@ -1835,9 +1870,13 @@ export default function AdminDashboard() {
                                 onChange={(e) => handleCrmSelectLead(lead.id, e.target.checked)}
                               />
                             </td>
+                            )}
+                            {crmVisibleColumns.name && (
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                               {nameAnswer?.value || "steam"}
                             </td>
+                            )}
+                            {crmVisibleColumns.stage && (
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                                 lead.status === "Purchased (Call)"
@@ -1853,20 +1892,29 @@ export default function AdminDashboard() {
                                 {lead.status === "Purchased (Call)" ? "Purchased (Call)" : lead.status}
                               </span>
                             </td>
+                            )}
+                            {crmVisibleColumns.date && (
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               {lead.completedAt ? new Date(lead.completedAt).toLocaleDateString('en-GB') : "Yesterday"}
                             </td>
+                            )}
+                            {crmVisibleColumns.owner && (
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-700 cursor-pointer">
                               Stefan
                             </td>
+                            )}
+                            {crmVisibleColumns.amount && (
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               $100.00
                             </td>
+                            )}
+                            {crmVisibleColumns.actions && (
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-700 cursor-pointer">
                               <button onClick={() => handleCrmViewDetails(lead)}>
                                 View Details
                               </button>
                             </td>
+                            )}
                           </tr>
                         );
                       })}
@@ -1989,6 +2037,100 @@ export default function AdminDashboard() {
                           ))}
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Edit Columns Modal */}
+              {crmShowColumnModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                  <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                    <div className="flex justify-between items-center mb-4">
+                      <h2 className="text-xl font-bold text-gray-900">Edit Columns</h2>
+                      <button 
+                        onClick={() => setCrmShowColumnModal(false)}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">Checkbox</span>
+                        <input 
+                          type="checkbox" 
+                          checked={crmVisibleColumns.checkbox}
+                          onChange={() => handleCrmToggleColumn('checkbox')}
+                          className="rounded border-gray-300"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">Lead Name</span>
+                        <input 
+                          type="checkbox" 
+                          checked={crmVisibleColumns.name}
+                          onChange={() => handleCrmToggleColumn('name')}
+                          className="rounded border-gray-300"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">Lead Stage</span>
+                        <input 
+                          type="checkbox" 
+                          checked={crmVisibleColumns.stage}
+                          onChange={() => handleCrmToggleColumn('stage')}
+                          className="rounded border-gray-300"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">Close Date</span>
+                        <input 
+                          type="checkbox" 
+                          checked={crmVisibleColumns.date}
+                          onChange={() => handleCrmToggleColumn('date')}
+                          className="rounded border-gray-300"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">Deal Owner</span>
+                        <input 
+                          type="checkbox" 
+                          checked={crmVisibleColumns.owner}
+                          onChange={() => handleCrmToggleColumn('owner')}
+                          className="rounded border-gray-300"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">Amount</span>
+                        <input 
+                          type="checkbox" 
+                          checked={crmVisibleColumns.amount}
+                          onChange={() => handleCrmToggleColumn('amount')}
+                          className="rounded border-gray-300"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">Actions</span>
+                        <input 
+                          type="checkbox" 
+                          checked={crmVisibleColumns.actions}
+                          onChange={() => handleCrmToggleColumn('actions')}
+                          className="rounded border-gray-300"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="mt-6 flex justify-end">
+                      <button 
+                        onClick={() => setCrmShowColumnModal(false)}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        Done
+                      </button>
                     </div>
                   </div>
                 </div>
