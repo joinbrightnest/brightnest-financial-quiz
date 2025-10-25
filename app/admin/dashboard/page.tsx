@@ -93,6 +93,7 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const hasInitiallyLoaded = useRef(false);
+  const currentSectionRef = useRef(activeSection);
   const [showQuickLinks, setShowQuickLinks] = useState(false);
   const [showResetDropdown, setShowResetDropdown] = useState(false);
   const [activeSection, setActiveSection] = useState<'quiz-analytics' | 'crm' | 'ceo-analytics' | 'closer-management' | 'settings'>('quiz-analytics');
@@ -424,17 +425,26 @@ export default function AdminDashboard() {
   }, [quizAnalyticsFilters, crmFilters, activeSection]);
 
   useEffect(() => {
-    fetchStats(true); // Pass true to indicate this is a timeframe change
-    fetchSettings();
-    fetchCommissionReleaseStatus();
+    // Only fetch on initial load, not when switching sections
+    if (!hasInitiallyLoaded.current) {
+      fetchStats(true);
+      fetchSettings();
+      fetchCommissionReleaseStatus();
+    }
   }, [fetchStats]);
 
   // Trigger data fetch when filters change (only when on the respective section)
   useEffect(() => {
-    if (activeSection === 'quiz-analytics' || activeSection === 'crm') {
+    // Only fetch if we're switching to a section that needs data, or if filters changed
+    const needsDataFetch = (activeSection === 'quiz-analytics' || activeSection === 'crm') && 
+                          (currentSectionRef.current !== activeSection || hasInitiallyLoaded.current);
+    
+    if (needsDataFetch) {
+      currentSectionRef.current = activeSection;
+      // Don't show loading spinner when switching filters - just update data silently
       fetchStats(true);
     }
-  }, [quizAnalyticsFilters, crmFilters, activeSection, fetchStats]);
+  }, [quizAnalyticsFilters, crmFilters, activeSection]);
 
 
   // Handle page visibility and focus changes to prevent unnecessary re-fetching
