@@ -98,6 +98,24 @@ export default function AdminDashboard() {
   const [showQuickLinks, setShowQuickLinks] = useState(false);
   const [showResetDropdown, setShowResetDropdown] = useState(false);
   const [activeSection, setActiveSection] = useState<'quiz-analytics' | 'crm' | 'ceo-analytics' | 'closer-management' | 'settings'>('quiz-analytics');
+  
+  // CRM State Management
+  const [crmFilters, setCrmFilters] = useState({
+    pipeline: 'all',
+    dealOwner: 'all',
+    createDate: 'all',
+    lastActivity: 'all',
+    closeDate: 'all'
+  });
+  const [crmSearch, setCrmSearch] = useState('');
+  const [crmSortField, setCrmSortField] = useState('date');
+  const [crmSortDirection, setCrmSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [crmCurrentPage, setCrmCurrentPage] = useState(1);
+  const [crmItemsPerPage, setCrmItemsPerPage] = useState(25);
+  const [crmSelectedLeads, setCrmSelectedLeads] = useState<Set<string>>(new Set());
+  const [crmShowMetrics, setCrmShowMetrics] = useState(true);
+  const [crmSelectedLead, setCrmSelectedLead] = useState<any>(null);
+  const [crmShowLeadModal, setCrmShowLeadModal] = useState(false);
   const [qualificationThreshold, setQualificationThreshold] = useState(17);
   const [isUpdatingThreshold, setIsUpdatingThreshold] = useState(false);
   const [commissionHoldDays, setCommissionHoldDays] = useState(30);
@@ -566,6 +584,166 @@ export default function AdminDashboard() {
   };
 
   const dailyActivityData = getActivityChartData();
+
+  // CRM Helper Functions
+  const handleCrmFilterChange = (filterType: string, value: string) => {
+    setCrmFilters(prev => ({ ...prev, [filterType]: value }));
+    setCrmCurrentPage(1); // Reset to first page when filtering
+  };
+
+  const handleCrmSearch = (value: string) => {
+    setCrmSearch(value);
+    setCrmCurrentPage(1); // Reset to first page when searching
+  };
+
+  const handleCrmSort = (field: string) => {
+    if (crmSortField === field) {
+      setCrmSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setCrmSortField(field);
+      setCrmSortDirection('asc');
+    }
+  };
+
+  const handleCrmPageChange = (page: number) => {
+    setCrmCurrentPage(page);
+  };
+
+  const handleCrmItemsPerPageChange = (itemsPerPage: number) => {
+    setCrmItemsPerPage(itemsPerPage);
+    setCrmCurrentPage(1); // Reset to first page
+  };
+
+  const handleCrmSelectAll = (checked: boolean) => {
+    if (checked) {
+      const allLeadIds = new Set(filteredCrmLeads.map(lead => lead.id));
+      setCrmSelectedLeads(allLeadIds);
+    } else {
+      setCrmSelectedLeads(new Set());
+    }
+  };
+
+  const handleCrmSelectLead = (leadId: string, checked: boolean) => {
+    const newSelected = new Set(crmSelectedLeads);
+    if (checked) {
+      newSelected.add(leadId);
+    } else {
+      newSelected.delete(leadId);
+    }
+    setCrmSelectedLeads(newSelected);
+  };
+
+  const handleCrmViewDetails = (lead: any) => {
+    setCrmSelectedLead(lead);
+    setCrmShowLeadModal(true);
+  };
+
+  const handleCrmExport = () => {
+    // Create CSV content
+    const csvContent = [
+      ['Name', 'Email', 'Status', 'Date', 'Deal Owner', 'Amount', 'Source'].join(','),
+      ...filteredCrmLeads.map(lead => {
+        const nameAnswer = lead.answers.find((a: any) => 
+          a.question?.prompt?.toLowerCase().includes('name')
+        );
+        const emailAnswer = lead.answers.find((a: any) => 
+          a.question?.prompt?.toLowerCase().includes('email')
+        );
+        return [
+          nameAnswer?.value || 'N/A',
+          emailAnswer?.value || 'N/A',
+          lead.status,
+          lead.completedAt ? new Date(lead.completedAt).toLocaleDateString() : 'N/A',
+          'Stefan',
+          '$100.00',
+          lead.source || 'Direct'
+        ].join(',');
+      })
+    ].join('\n');
+
+    // Download CSV
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `leads-export-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
+
+  // Filter and sort CRM leads
+  const filteredCrmLeads = stats?.allLeads ? stats.allLeads.filter(lead => {
+    // Search filter
+    if (crmSearch) {
+      const nameAnswer = lead.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes('name')
+      );
+      const emailAnswer = lead.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes('email')
+      );
+      const searchText = `${nameAnswer?.value || ''} ${emailAnswer?.value || ''}`.toLowerCase();
+      if (!searchText.includes(crmSearch.toLowerCase())) {
+        return false;
+      }
+    }
+
+    // Status filter
+    if (crmFilters.pipeline !== 'all') {
+      if (crmFilters.pipeline === 'purchased' && lead.status !== 'Purchased (Call)') return false;
+      if (crmFilters.pipeline === 'booked' && lead.status !== 'Booked') return false;
+      if (crmFilters.pipeline === 'not_interested' && lead.status !== 'Not Interested') return false;
+    }
+
+    // Deal owner filter
+    if (crmFilters.dealOwner !== 'all') {
+      // For now, all leads are assigned to Stefan
+      if (crmFilters.dealOwner !== 'stefan') return false;
+    }
+
+    return true;
+  }).sort((a, b) => {
+    let aValue, bValue;
+    
+    switch (crmSortField) {
+      case 'name':
+        const aNameAnswer = a.answers.find(ans => ans.question?.prompt?.toLowerCase().includes('name'));
+        const bNameAnswer = b.answers.find(ans => ans.question?.prompt?.toLowerCase().includes('name'));
+        aValue = aNameAnswer?.value || '';
+        bValue = bNameAnswer?.value || '';
+        break;
+      case 'status':
+        aValue = a.status;
+        bValue = b.status;
+        break;
+      case 'date':
+        aValue = new Date(a.completedAt || a.createdAt).getTime();
+        bValue = new Date(b.completedAt || b.createdAt).getTime();
+        break;
+      case 'amount':
+        aValue = 100; // Fixed amount for now
+        bValue = 100;
+        break;
+      default:
+        aValue = new Date(a.completedAt || a.createdAt).getTime();
+        bValue = new Date(b.completedAt || b.createdAt).getTime();
+    }
+
+    if (crmSortDirection === 'asc') {
+      return aValue > bValue ? 1 : -1;
+    } else {
+      return aValue < bValue ? 1 : -1;
+    }
+  }) : [];
+
+  // Paginate CRM leads
+  const paginatedCrmLeads = filteredCrmLeads.slice(
+    (crmCurrentPage - 1) * crmItemsPerPage,
+    crmCurrentPage * crmItemsPerPage
+  );
+
+  const totalCrmPages = Math.ceil(filteredCrmLeads.length / crmItemsPerPage);
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -1421,36 +1599,72 @@ export default function AdminDashboard() {
             <div className="bg-white min-h-screen">
               {/* Header */}
               <div className="border-b border-gray-200 px-6 py-4">
-                <div className="flex justify-between items-center">
-                  <h1 className="text-2xl font-bold text-gray-900">Lead Pipeline</h1>
-                  <div className="flex items-center space-x-4">
-                    <button
-                      onClick={logout}
-                      className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                </div>
+              <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold text-gray-900">Lead Pipeline</h1>
+              </div>
               </div>
 
               {/* Filters */}
               <div className="border-b border-gray-200 px-6 py-4">
                 <div className="flex items-center space-x-4">
-                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black">
-                    <option>All pipelines</option>
+                  <select 
+                    value={crmFilters.pipeline}
+                    onChange={(e) => handleCrmFilterChange('pipeline', e.target.value)}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black"
+                  >
+                    <option value="all">All pipelines</option>
+                    <option value="purchased">Purchased</option>
+                    <option value="booked">Booked</option>
+                    <option value="not_interested">Not Interested</option>
+                    <option value="needs_follow_up">Needs Follow Up</option>
                   </select>
-                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black">
-                    <option>Deal owner</option>
+                  <select 
+                    value={crmFilters.dealOwner}
+                    onChange={(e) => handleCrmFilterChange('dealOwner', e.target.value)}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black"
+                  >
+                    <option value="all">Deal owner</option>
+                    <option value="stefan">Stefan</option>
+                    <option value="unassigned">Unassigned</option>
                   </select>
-                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black">
-                    <option>Create date</option>
+                  <select 
+                    value={crmFilters.createDate}
+                    onChange={(e) => handleCrmFilterChange('createDate', e.target.value)}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black"
+                  >
+                    <option value="all">Create date</option>
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="this_week">This week</option>
+                    <option value="last_week">Last week</option>
+                    <option value="this_month">This month</option>
+                    <option value="last_month">Last month</option>
                   </select>
-                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black">
-                    <option>Last activity date</option>
+                  <select 
+                    value={crmFilters.lastActivity}
+                    onChange={(e) => handleCrmFilterChange('lastActivity', e.target.value)}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black"
+                  >
+                    <option value="all">Last activity date</option>
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="this_week">This week</option>
+                    <option value="last_week">Last week</option>
+                    <option value="this_month">This month</option>
+                    <option value="last_month">Last month</option>
                   </select>
-                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black">
-                    <option>Close date</option>
+                  <select 
+                    value={crmFilters.closeDate}
+                    onChange={(e) => handleCrmFilterChange('closeDate', e.target.value)}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black"
+                  >
+                    <option value="all">Close date</option>
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="this_week">This week</option>
+                    <option value="last_week">Last week</option>
+                    <option value="this_month">This month</option>
+                    <option value="last_month">Last month</option>
                   </select>
                   <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
                     + More Advanced filters
@@ -1459,6 +1673,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Metrics - Clean Text Layout */}
+              {crmShowMetrics && (
               <div className="px-6 py-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
                   <div className="text-center">
@@ -1498,6 +1713,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               </div>
+              )}
 
               {/* Search and Actions */}
               <div className="border-b border-gray-200 px-6 py-4">
@@ -1510,18 +1726,26 @@ export default function AdminDashboard() {
                   <input
                     type="text"
                     placeholder="Search name or description"
+                    value={crmSearch}
+                    onChange={(e) => handleCrmSearch(e.target.value)}
                     className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80 text-black placeholder-black"
                   />
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <button className="text-gray-600 text-sm font-medium hover:text-gray-700 flex items-center">
+                    <button 
+                      onClick={() => setCrmShowMetrics(!crmShowMetrics)}
+                      className="text-gray-600 text-sm font-medium hover:text-gray-700 flex items-center"
+                    >
                       <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      Hide Metrics
+                      {crmShowMetrics ? 'Hide Metrics' : 'Show Metrics'}
                     </button>
-                    <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                    <button 
+                      onClick={handleCrmExport}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                    >
                       Export
                     </button>
                     <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors text-sm">
@@ -1538,10 +1762,15 @@ export default function AdminDashboard() {
                     <thead className="bg-gray-50">
                       <tr>
                         <th className="px-6 py-3 text-left">
-                          <input type="checkbox" className="rounded border-gray-300" />
+                          <input 
+                            type="checkbox" 
+                            className="rounded border-gray-300"
+                            checked={crmSelectedLeads.size === paginatedCrmLeads.length && paginatedCrmLeads.length > 0}
+                            onChange={(e) => handleCrmSelectAll(e.target.checked)}
+                          />
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          <div className="flex items-center">
+                          <div className="flex items-center cursor-pointer hover:text-gray-700" onClick={() => handleCrmSort('name')}>
                             LEAD NAME
                             <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
@@ -1549,7 +1778,7 @@ export default function AdminDashboard() {
                           </div>
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          <div className="flex items-center">
+                          <div className="flex items-center cursor-pointer hover:text-gray-700" onClick={() => handleCrmSort('status')}>
                             LEAD STAGE
                             <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
@@ -1557,7 +1786,7 @@ export default function AdminDashboard() {
                           </div>
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          <div className="flex items-center">
+                          <div className="flex items-center cursor-pointer hover:text-gray-700" onClick={() => handleCrmSort('date')}>
                             CLOSE DATE (GMT+3)
                             <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
@@ -1565,7 +1794,7 @@ export default function AdminDashboard() {
                           </div>
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          <div className="flex items-center">
+                          <div className="flex items-center cursor-pointer hover:text-gray-700" onClick={() => handleCrmSort('owner')}>
                             DEAL OWNER
                             <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
@@ -1573,7 +1802,7 @@ export default function AdminDashboard() {
                           </div>
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          <div className="flex items-center">
+                          <div className="flex items-center cursor-pointer hover:text-gray-700" onClick={() => handleCrmSort('amount')}>
                             AMOUNT
                             <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
@@ -1591,7 +1820,7 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {stats?.allLeads?.map((lead) => {
+                      {paginatedCrmLeads.map((lead) => {
                         const nameAnswer = lead.answers.find(a => 
                           a.question?.prompt?.toLowerCase().includes('name')
                         );
@@ -1599,7 +1828,12 @@ export default function AdminDashboard() {
                         return (
                           <tr key={lead.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <input type="checkbox" className="rounded border-gray-300" />
+                              <input 
+                                type="checkbox" 
+                                className="rounded border-gray-300"
+                                checked={crmSelectedLeads.has(lead.id)}
+                                onChange={(e) => handleCrmSelectLead(lead.id, e.target.checked)}
+                              />
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                               {nameAnswer?.value || "steam"}
@@ -1629,11 +1863,14 @@ export default function AdminDashboard() {
                               $100.00
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-700 cursor-pointer">
-                              View Details
+                              <button onClick={() => handleCrmViewDetails(lead)}>
+                                View Details
+                              </button>
                             </td>
                           </tr>
                         );
-                      }) || (
+                      })}
+                      {paginatedCrmLeads.length === 0 && (
                         <tr>
                           <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
                             No leads found
@@ -1647,31 +1884,115 @@ export default function AdminDashboard() {
                 {/* Pagination */}
                 <div className="mt-6 flex items-center justify-between">
                   <div className="text-sm text-black">
-                    Showing 1 to {stats?.allLeads?.length || 1} of {stats?.allLeads?.length || 1} results
-              </div>
+                    Showing {(crmCurrentPage - 1) * crmItemsPerPage + 1} to {Math.min(crmCurrentPage * crmItemsPerPage, filteredCrmLeads.length)} of {filteredCrmLeads.length} results
+                  </div>
                   <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-black">Items per page:</span>
-                  <select className="border border-gray-300 rounded px-2 py-1 text-sm text-black">
-                    <option>25</option>
-                    <option>50</option>
-                    <option>100</option>
-                  </select>
-                </div>
                     <div className="flex items-center space-x-2">
-                      <button className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50" disabled>
+                      <span className="text-sm text-black">Items per page:</span>
+                      <select 
+                        value={crmItemsPerPage}
+                        onChange={(e) => handleCrmItemsPerPageChange(Number(e.target.value))}
+                        className="border border-gray-300 rounded px-2 py-1 text-sm text-black"
+                      >
+                        <option value={25}>25</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                      </select>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <button 
+                        onClick={() => handleCrmPageChange(crmCurrentPage - 1)}
+                        disabled={crmCurrentPage === 1}
+                        className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
                         &lt; Prev
                       </button>
                       <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded">
-                        1
+                        {crmCurrentPage}
                       </button>
-                      <button className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50" disabled>
+                      <button 
+                        onClick={() => handleCrmPageChange(crmCurrentPage + 1)}
+                        disabled={crmCurrentPage === totalCrmPages}
+                        className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
                         Next &gt;
                       </button>
                     </div>
                   </div>
                 </div>
               </div>
+
+              {/* Lead Details Modal */}
+              {crmShowLeadModal && crmSelectedLead && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                  <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+                    <div className="flex justify-between items-center mb-4">
+                      <h2 className="text-xl font-bold text-gray-900">Lead Details</h2>
+                      <button 
+                        onClick={() => setCrmShowLeadModal(false)}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-sm font-medium text-gray-700">Name</label>
+                          <p className="text-sm text-gray-900">
+                            {crmSelectedLead.answers.find((a: any) => 
+                              a.question?.prompt?.toLowerCase().includes('name')
+                            )?.value || 'N/A'}
+                          </p>
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium text-gray-700">Email</label>
+                          <p className="text-sm text-gray-900">
+                            {crmSelectedLead.answers.find((a: any) => 
+                              a.question?.prompt?.toLowerCase().includes('email')
+                            )?.value || 'N/A'}
+                          </p>
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium text-gray-700">Status</label>
+                          <p className="text-sm text-gray-900">{crmSelectedLead.status}</p>
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium text-gray-700">Date</label>
+                          <p className="text-sm text-gray-900">
+                            {crmSelectedLead.completedAt ? new Date(crmSelectedLead.completedAt).toLocaleDateString() : 'N/A'}
+                          </p>
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium text-gray-700">Deal Owner</label>
+                          <p className="text-sm text-gray-900">Stefan</p>
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium text-gray-700">Amount</label>
+                          <p className="text-sm text-gray-900">$100.00</p>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium text-gray-700">Quiz Answers</label>
+                        <div className="mt-2 space-y-2">
+                          {crmSelectedLead.answers.map((answer: any, index: number) => (
+                            <div key={index} className="p-3 bg-gray-50 rounded">
+                              <p className="text-sm font-medium text-gray-900">
+                                {answer.question?.prompt || 'Question'}
+                              </p>
+                              <p className="text-sm text-gray-600">{answer.value}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
