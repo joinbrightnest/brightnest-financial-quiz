@@ -97,7 +97,7 @@ export default function AdminDashboard() {
   const [selectedQuizType, setSelectedQuizType] = useState<string>('all');
   const [showQuickLinks, setShowQuickLinks] = useState(false);
   const [showResetDropdown, setShowResetDropdown] = useState(false);
-  const [activeSection, setActiveSection] = useState<'dashboard' | 'quiz-analytics' | 'ceo-analytics' | 'closer-management' | 'settings'>('dashboard');
+  const [activeSection, setActiveSection] = useState<'dashboard' | 'quiz-analytics' | 'crm' | 'ceo-analytics' | 'closer-management' | 'settings'>('dashboard');
   const [qualificationThreshold, setQualificationThreshold] = useState(17);
   const [isUpdatingThreshold, setIsUpdatingThreshold] = useState(false);
   const [commissionHoldDays, setCommissionHoldDays] = useState(30);
@@ -613,6 +613,19 @@ export default function AdminDashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
               <span className="text-sm font-medium">Quiz Analytics</span>
+            </button>
+            <button
+              onClick={() => setActiveSection('crm')}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
+                activeSection === 'crm'
+                  ? 'text-blue-700 bg-blue-50 border-r-2 border-blue-600' 
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <svg className={`w-5 h-5 group-hover:text-gray-600 ${activeSection === 'crm' ? 'text-blue-600' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <span className="text-sm font-medium">CRM</span>
             </button>
             <button
               onClick={() => setActiveSection('ceo-analytics')}
@@ -1416,6 +1429,158 @@ export default function AdminDashboard() {
             </>
           )}
 
+          {/* CRM Section */}
+          {activeSection === 'crm' && (
+            <>
+              {/* Lead List */}
+              {isLoading && !hasInitiallyLoaded.current ? (
+                <div className="text-center py-8 opacity-50 transition-opacity duration-300">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                  <p className="text-sm text-gray-500">Loading leads...</p>
+                </div>
+              ) : error ? (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+                  <h3 className="text-lg font-semibold text-red-800 mb-2">Error</h3>
+                  <p className="text-red-600 mb-4">{error}</p>
+                  <button
+                    onClick={() => fetchStats()}
+                    className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : stats ? (
+                <div className="bg-white rounded-lg shadow-lg p-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                      <svg className="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      Lead List
+                    </h3>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => router.push('/admin/leads-crm')}
+                        className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 text-sm"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        <span>CRM View</span>
+                      </button>
+                      <button
+                        onClick={exportLeads}
+                        className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2 text-sm"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span>Export Leads</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Session ID
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Name
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Email
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Date
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Completed At
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Source
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {stats.allLeads.map((lead) => {
+                          const nameAnswer = lead.answers.find(a =>
+                            a.question?.prompt?.toLowerCase().includes('name')
+                          );
+                          const emailAnswer = lead.answers.find(a =>
+                            a.question?.prompt?.toLowerCase().includes('email')
+                          );
+
+                          // Determine source based on affiliate code
+                          const source = (lead as any).affiliateCode ? `Affiliate (${(lead as any).affiliateCode})` : "Website";
+
+                          return (
+                            <tr key={lead.id}>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
+                                {lead.id.slice(0, 8)}...
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {nameAnswer?.value || "N/A"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {emailAnswer?.value || "N/A"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {new Date(lead.createdAt).toLocaleDateString()}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                  lead.status === "Completed"
+                                    ? "bg-green-100 text-green-800"
+                                    : lead.status === "Booked"
+                                    ? "bg-blue-100 text-blue-800"
+                                    : lead.status === "Purchased (Call)"
+                                    ? "bg-emerald-100 text-emerald-800"
+                                    : lead.status === "Not Interested"
+                                    ? "bg-red-100 text-red-800"
+                                    : lead.status === "Needs Follow Up"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : lead.status === "Wrong Number"
+                                    ? "bg-gray-100 text-gray-800"
+                                    : lead.status === "No Answer"
+                                    ? "bg-orange-100 text-orange-800"
+                                    : lead.status === "Callback Requested"
+                                    ? "bg-purple-100 text-purple-800"
+                                    : lead.status === "Rescheduled"
+                                    ? "bg-indigo-100 text-indigo-800"
+                                    : "bg-orange-100 text-orange-800"
+                                }`}>
+                                  {lead.status}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                  source.includes('Affiliate')
+                                    ? "bg-blue-100 text-blue-800"
+                                    : "bg-gray-100 text-gray-800"
+                                }`}>
+                                  {source}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ) : null}
+            </>
+          )}
+
           {/* CEO Analytics Section */}
           {activeSection === 'ceo-analytics' && (
             <div className="mb-8">
@@ -1629,155 +1794,130 @@ export default function AdminDashboard() {
           {/* Main Dashboard Content */}
           {activeSection === 'dashboard' && (
             <>
-              {/* Lead List */}
+              {/* Overview Cards */}
               {isLoading && !hasInitiallyLoaded.current ? (
-            <div className="text-center py-8 opacity-50 transition-opacity duration-300">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
-              <p className="text-sm text-gray-500">Loading stats...</p>
-            </div>
-          ) : error ? (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
-              <h3 className="text-lg font-semibold text-red-800 mb-2">Error</h3>
-              <p className="text-red-600 mb-4">{error}</p>
-              <button
-                onClick={() => fetchStats()}
-                className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
-              >
-                Retry
-              </button>
-            </div>
-          ) : stats ? (
-            <>
-              {/* Lead List */}
-              <div className="bg-white rounded-lg shadow-lg p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                    <svg className="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    Lead List
-                  </h3>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => router.push('/admin/leads-crm')}
-                      className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 text-sm"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                      </svg>
-                      <span>CRM View</span>
-                    </button>
-                    <button
-                      onClick={exportLeads}
-                      className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2 text-sm"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      <span>Export Leads</span>
-                    </button>
+                <div className="text-center py-8 opacity-50 transition-opacity duration-300">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                  <p className="text-sm text-gray-500">Loading stats...</p>
+                </div>
+              ) : error ? (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+                  <h3 className="text-lg font-semibold text-red-800 mb-2">Error</h3>
+                  <p className="text-red-600 mb-4">{error}</p>
+                  <button
+                    onClick={() => fetchStats()}
+                    className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : stats ? (
+                <>
+                  {/* Quick Stats Overview */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div className="bg-white rounded-lg shadow-lg p-6">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                          <svg className="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                        </div>
+                        <div className="ml-4">
+                          <p className="text-sm font-medium text-gray-500">Total Leads</p>
+                          <p className="text-2xl font-semibold text-gray-900">{stats.allLeads.length}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white rounded-lg shadow-lg p-6">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                          <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </div>
+                        <div className="ml-4">
+                          <p className="text-sm font-medium text-gray-500">Completed Quizzes</p>
+                          <p className="text-2xl font-semibold text-gray-900">{stats.completedQuizzes}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white rounded-lg shadow-lg p-6">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                          <svg className="h-8 w-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                          </svg>
+                        </div>
+                        <div className="ml-4">
+                          <p className="text-sm font-medium text-gray-500">Total Clicks</p>
+                          <p className="text-2xl font-semibold text-gray-900">{stats.clicks}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white rounded-lg shadow-lg p-6">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                          <svg className="h-8 w-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                          </svg>
+                        </div>
+                        <div className="ml-4">
+                          <p className="text-sm font-medium text-gray-500">Total Revenue</p>
+                          <p className="text-2xl font-semibold text-gray-900">${stats.totalRevenue.toFixed(2)}</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Session ID
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Name
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Email
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Date
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Status
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Completed At
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Source
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {stats.allLeads.map((lead) => {
-                        const nameAnswer = lead.answers.find(a => 
-                          a.question?.prompt?.toLowerCase().includes('name')
-                        );
-                        const emailAnswer = lead.answers.find(a => 
-                          a.question?.prompt?.toLowerCase().includes('email')
-                        );
-                        
-                        // Determine source based on affiliate code
-                        const source = (lead as any).affiliateCode ? `Affiliate (${(lead as any).affiliateCode})` : "Website";
-                        
-                        return (
-                          <tr key={lead.id}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
-                              {lead.id.slice(0, 8)}...
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {nameAnswer?.value || "N/A"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {emailAnswer?.value || "N/A"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {new Date(lead.createdAt).toLocaleDateString()}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                lead.status === "Completed" 
-                                  ? "bg-green-100 text-green-800" 
-                                  : lead.status === "Booked"
-                                  ? "bg-blue-100 text-blue-800"
-                                  : lead.status === "Purchased (Call)"
-                                  ? "bg-emerald-100 text-emerald-800"
-                                  : lead.status === "Not Interested"
-                                  ? "bg-red-100 text-red-800"
-                                  : lead.status === "Needs Follow Up"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : lead.status === "Wrong Number"
-                                  ? "bg-gray-100 text-gray-800"
-                                  : lead.status === "No Answer"
-                                  ? "bg-orange-100 text-orange-800"
-                                  : lead.status === "Callback Requested"
-                                  ? "bg-purple-100 text-purple-800"
-                                  : lead.status === "Rescheduled"
-                                  ? "bg-indigo-100 text-indigo-800"
-                                  : "bg-orange-100 text-orange-800"
-                              }`}>
-                                {lead.status}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                source.includes('Affiliate') 
-                                  ? "bg-blue-100 text-blue-800" 
-                                  : "bg-gray-100 text-gray-800"
-                              }`}>
-                                {source}
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </>
-          ) : null}
+
+                  {/* Quick Links */}
+                  <div className="bg-white rounded-lg shadow-lg p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <button
+                        onClick={() => setActiveSection('crm')}
+                        className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        <svg className="w-6 h-6 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <div className="text-left">
+                          <p className="font-medium text-gray-900">View CRM</p>
+                          <p className="text-sm text-gray-500">Manage leads and contacts</p>
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={() => setActiveSection('quiz-analytics')}
+                        className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        <svg className="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        <div className="text-left">
+                          <p className="font-medium text-gray-900">Quiz Analytics</p>
+                          <p className="text-sm text-gray-500">View quiz performance metrics</p>
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={() => setActiveSection('ceo-analytics')}
+                        className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        <svg className="w-6 h-6 text-purple-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                        <div className="text-left">
+                          <p className="font-medium text-gray-900">Affiliate Analytics</p>
+                          <p className="text-sm text-gray-500">Track affiliate performance</p>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                </>
+              ) : null}
             </>
           )}
               {/* Lead List */}
