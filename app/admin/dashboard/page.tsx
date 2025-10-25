@@ -1698,9 +1698,37 @@ export default function AdminDashboard() {
                     <div className="text-xs text-black">Average per deal: ${((stats?.totalRevenue || 0) * 0.4 / (stats?.allLeads?.length || 1)).toFixed(2)}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${((stats?.totalRevenue || 0) * 0.6 / 1000000).toFixed(2)}M</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">
+                      ${(() => {
+                        const closedLeads = stats?.allLeads?.filter(lead => 
+                          lead.status === 'completed' || lead.status === 'purchased' || lead.status === 'converted'
+                        ) || [];
+                        const totalClosedAmount = closedLeads.reduce((sum, lead) => {
+                          const saleValue = parseFloat(lead.saleValue || '0');
+                          return sum + saleValue;
+                        }, 0);
+                        return totalClosedAmount >= 1000000 
+                          ? (totalClosedAmount / 1000000).toFixed(2) + 'M'
+                          : totalClosedAmount >= 1000 
+                            ? (totalClosedAmount / 1000).toFixed(2) + 'K'
+                            : totalClosedAmount.toFixed(2);
+                      })()}
+                    </div>
                     <div className="text-sm font-medium text-black mb-1">CLOSED DEAL AMOUNT</div>
-                    <div className="text-xs text-black">Average per deal: ${((stats?.totalRevenue || 0) * 0.6 / (stats?.allLeads?.length || 1)).toFixed(2)}</div>
+                    <div className="text-xs text-black">
+                      Average per deal: ${(() => {
+                        const closedLeads = stats?.allLeads?.filter(lead => 
+                          lead.status === 'completed' || lead.status === 'purchased' || lead.status === 'converted'
+                        ) || [];
+                        const totalClosedAmount = closedLeads.reduce((sum, lead) => {
+                          const saleValue = parseFloat(lead.saleValue || '0');
+                          return sum + saleValue;
+                        }, 0);
+                        return closedLeads.length > 0 
+                          ? (totalClosedAmount / closedLeads.length).toFixed(2)
+                          : '0.00';
+                      })()}
+                    </div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600 mb-1">${((stats?.totalRevenue || 0) * 0.1 / 1000).toFixed(2)}K</div>
