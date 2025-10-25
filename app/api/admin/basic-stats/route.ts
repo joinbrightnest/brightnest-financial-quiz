@@ -349,7 +349,8 @@ export async function GET(request: NextRequest) {
         status,
         source: lead.affiliateCode 
           ? (affiliateMap[lead.affiliateCode] || 'Unknown Affiliate')
-          : 'Website'
+          : 'Website',
+        appointment: appointment // Include appointment data
       };
     });
 
