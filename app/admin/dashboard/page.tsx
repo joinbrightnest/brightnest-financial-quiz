@@ -1078,26 +1078,20 @@ export default function AdminDashboard() {
       {/* Main Content - Scrollable */}
       <div className={`flex-1 overflow-y-auto transition-all duration-300 ${sidebarCollapsed ? 'ml-0' : 'ml-64'}`}>
         <div className="p-8">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between">
-              <div>
-            <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-            <p className="text-gray-600 mt-1">BrightNest Quiz Analytics</p>
-          </div>
-              {sidebarCollapsed && (
-                    <button
-                  onClick={() => setSidebarCollapsed(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  title="Show sidebar"
-                >
-                  <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                    </button>
-              )}
-                        </div>
-                      </div>
+          {/* Expand Sidebar Button */}
+          {sidebarCollapsed && (
+            <div className="mb-8 flex justify-start">
+              <button
+                onClick={() => setSidebarCollapsed(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Show sidebar"
+              >
+                <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          )}
 
           {/* Quiz Analytics Section */}
           {activeSection === 'quiz-analytics' && (
