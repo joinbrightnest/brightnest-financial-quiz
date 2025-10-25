@@ -93,8 +93,6 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const hasInitiallyLoaded = useRef(false);
-  const [dateRange, setDateRange] = useState('7d');
-  const [selectedQuizType, setSelectedQuizType] = useState<string>('all');
   const [showQuickLinks, setShowQuickLinks] = useState(false);
   const [showResetDropdown, setShowResetDropdown] = useState(false);
   const [activeSection, setActiveSection] = useState<'quiz-analytics' | 'crm' | 'ceo-analytics' | 'closer-management' | 'settings'>('quiz-analytics');
@@ -369,8 +367,7 @@ export default function AdminDashboard() {
     setError(null);
     
     try {
-      const quizTypeParam = selectedQuizType === 'all' ? '' : `&quizType=${selectedQuizType}`;
-      const response = await fetch(`/api/admin/basic-stats?dateRange=${dateRange}${quizTypeParam}`, {
+      const response = await fetch(`/api/admin/basic-stats`, {
         headers: {
           "Content-Type": "application/json"
         }
@@ -391,7 +388,7 @@ export default function AdminDashboard() {
         setIsLoading(false);
       }
     }
-  }, [dateRange, selectedQuizType]);
+  }, []);
 
   useEffect(() => {
     fetchStats(true); // Pass true to indicate this is a timeframe change
@@ -546,36 +543,21 @@ export default function AdminDashboard() {
     ],
   } : null;
 
-  // Chart data for activity based on timeframe
+  // Chart data for activity
   const getActivityChartData = () => {
     if (!stats) return null;
 
-    const formatLabel = (dateStr: string, dateRange: string) => {
+    const formatLabel = (dateStr: string) => {
       const date = new Date(dateStr);
       if (isNaN(date.getTime())) {
         return 'Invalid Date';
       }
       
-      switch (dateRange) {
-        case '1d':
-          return date.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
-        case '7d':
-          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        case '30d':
-          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        case '90d':
-          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        case '1y':
-          return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-        case 'custom':
-          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        default:
-          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      }
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     };
 
     return {
-      labels: stats.dailyActivity.map(day => formatLabel(day.createdAt, dateRange)),
+      labels: stats.dailyActivity.map(day => formatLabel(day.createdAt)),
       datasets: [
         {
           label: 'Sessions',
@@ -1107,42 +1089,12 @@ export default function AdminDashboard() {
           {/* Quiz Analytics Section */}
           {activeSection === 'quiz-analytics' && (
             <>
-              {/* Quiz Analytics Filters */}
+              {/* Quiz Analytics Header */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-                                  <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold text-gray-900">Quiz Analytics</h2>
-                  <div className="flex items-center space-x-4">
-                                    <div className="flex items-center space-x-2">
-                      <label className="text-sm font-medium text-gray-700">Quiz Type:</label>
-                      <select
-                        value={selectedQuizType}
-                        onChange={(e) => setSelectedQuizType(e.target.value)}
-                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      >
-                        <option value="all">All Types</option>
-                        <option value="health">Health Finance</option>
-                        <option value="investment">Investment</option>
-                        <option value="retirement">Retirement</option>
-                        <option value="debt">Debt Management</option>
-                      </select>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                      <label className="text-sm font-medium text-gray-700">Period:</label>
-                        <select
-                        value={dateRange}
-                        onChange={(e) => setDateRange(e.target.value)}
-                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      >
-                        <option value="24h">Last 24 hours</option>
-                        <option value="7d">Last 7 days</option>
-                        <option value="30d">Last 30 days</option>
-                        <option value="90d">Last 90 days</option>
-                        <option value="all">All time</option>
-                        </select>
-                      </div>
-                    </div>
-                    </div>
-                  </div>
+                </div>
+              </div>
 
               {/* Stats Cards */}
               {isLoading && !hasInitiallyLoaded.current ? (
