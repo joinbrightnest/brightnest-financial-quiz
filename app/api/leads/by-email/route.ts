@@ -33,17 +33,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Find the lead by email in quiz answers
+    // Find the lead by email in quiz answers - use simpler search
+    const emailLower = email.toLowerCase();
+    
     const quizSessions = await prisma.quizSession.findMany({
-      where: {
-        answers: {
-          some: {
-            value: {
-              contains: email.toLowerCase()
-            }
-          }
-        }
-      },
       include: {
         answers: {
           include: {
@@ -53,18 +46,24 @@ export async function GET(request: NextRequest) {
       },
       orderBy: {
         createdAt: 'desc'
-      },
-      take: 1
+      }
     });
 
-    if (quizSessions.length === 0) {
+    // Filter sessions that have the email in their answers
+    const matchingSession = quizSessions.find(session => {
+      return session.answers.some(answer => 
+        answer.value.toLowerCase().includes(emailLower)
+      );
+    });
+
+    if (!matchingSession) {
       return NextResponse.json(
         { error: 'Lead not found' },
         { status: 404 }
       );
     }
 
-    const lead = quizSessions[0];
+    const lead = matchingSession;
 
     // Get appointment separately if it exists, matching by customer email
     const appointment = await prisma.appointment.findFirst({
