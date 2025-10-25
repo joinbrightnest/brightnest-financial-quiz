@@ -166,6 +166,13 @@ export default function CloserDashboard() {
     setShowOutcomeModal(true);
   };
 
+  const viewLeadDetails = (appointment: Appointment) => {
+    // Navigate to the admin dashboard with the lead details modal
+    // We'll use the customer email to find the lead in the admin system
+    const adminUrl = `/admin/dashboard?leadEmail=${encodeURIComponent(appointment.customerEmail)}`;
+    window.open(adminUrl, '_blank');
+  };
+
   const getDisplayedAppointments = () => {
     // Sort appointments by scheduled date (newest first)
     const sortedAppointments = [...appointments].sort((a, b) => 
@@ -424,9 +431,6 @@ export default function CloserDashboard() {
                       Sale Value
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Recording
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
@@ -463,27 +467,21 @@ export default function CloserDashboard() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
                         {appointment.saleValue ? `$${Number(appointment.saleValue).toFixed(2)}` : '-'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {getRecordingLink(appointment) ? (
-                          <a
-                            href={getRecordingLink(appointment) || '#'}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-3">
+                          <button
+                            onClick={() => openOutcomeModal(appointment)}
                             className="text-purple-600 hover:text-purple-800 font-medium transition-colors"
                           >
-                            View Recording
-                          </a>
-                        ) : (
-                          <span className="text-gray-400">-</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button
-                          onClick={() => openOutcomeModal(appointment)}
-                          className="text-purple-600 hover:text-purple-800 font-medium transition-colors"
-                        >
-                          Update Outcome
-                        </button>
+                            Update Outcome
+                          </button>
+                          <button
+                            onClick={() => viewLeadDetails(appointment)}
+                            className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                          >
+                            View Details
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
