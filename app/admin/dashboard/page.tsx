@@ -2041,7 +2041,7 @@ export default function AdminDashboard() {
                               )?.value || 'Lead Profile'}
                             </h2>
                             <p className="text-slate-300 text-sm">
-                              Session ID: {crmSelectedLead.sessionId || 'N/A'}
+                              Session ID: {crmSelectedLead.id || crmSelectedLead.sessionId || 'N/A'}
                             </p>
                           </div>
                         </div>
