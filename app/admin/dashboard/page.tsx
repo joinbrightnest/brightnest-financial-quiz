@@ -588,7 +588,7 @@ export default function AdminDashboard() {
             <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
               Analytics
             </div>
-            <button
+            <button 
               onClick={() => setActiveSection('quiz-analytics')}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors group ${
                 activeSection === 'quiz-analytics'
@@ -1458,47 +1458,6 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Metrics Cards */}
-              <div className="px-6 py-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">$0.00M</div>
-                    <div className="text-sm font-medium text-gray-700 mb-1">TOTAL DEAL AMOUNT</div>
-                    <div className="text-xs text-gray-500">Average per deal: $100.00</div>
-                  </div>
-                  <div className="bg-green-50 rounded-lg p-4 border border-green-100">
-                    <div className="text-2xl font-bold text-green-600 mb-1">$0.00M</div>
-                    <div className="text-sm font-medium text-gray-700 mb-1">WEIGHTED DEAL AMOUNT</div>
-                    <div className="text-xs text-gray-500">Average per deal: $30.00</div>
-                  </div>
-                  <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-100">
-                    <div className="text-2xl font-bold text-yellow-600 mb-1">$0.00M</div>
-                    <div className="text-sm font-medium text-gray-700 mb-1">OPEN DEAL AMOUNT</div>
-                    <div className="text-xs text-gray-500">Average per deal: $Infinity</div>
-                  </div>
-                  <div className="bg-purple-50 rounded-lg p-4 border border-purple-100">
-                    <div className="text-2xl font-bold text-purple-600 mb-1">$0.00M</div>
-                    <div className="text-sm font-medium text-gray-700 mb-1">CLOSED DEAL AMOUNT</div>
-                    <div className="text-xs text-gray-500">Average per deal: $80.00</div>
-                  </div>
-                  <div className="bg-indigo-50 rounded-lg p-4 border border-indigo-100">
-                    <div className="text-2xl font-bold text-indigo-600 mb-1">$0.01K</div>
-                    <div className="text-sm font-medium text-gray-700 mb-1">NEW DEAL AMOUNT</div>
-                    <div className="text-xs text-gray-500">Average per deal: $Infinity</div>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
-                    <div className="text-2xl font-bold text-gray-600 mb-1">86.6 days</div>
-                    <div className="text-sm font-medium text-gray-700 mb-1">AVERAGE DEAL AGE</div>
-                    <div className="text-xs text-gray-500">
-                      <svg className="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               {/* Search and Actions */}
               <div className="border-b border-gray-200 px-6 py-4">
                 <div className="flex justify-between items-center">
@@ -1528,9 +1487,9 @@ export default function AdminDashboard() {
                       Edit columns
                     </button>
                   </div>
+                  </div>
                 </div>
-              </div>
-
+                
               {/* Lead Table */}
               <div className="px-6 py-4">
                 <div className="overflow-x-auto">
@@ -1592,10 +1551,10 @@ export default function AdminDashboard() {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {stats?.allLeads?.map((lead) => {
-                        const nameAnswer = lead.answers.find(a =>
+                        const nameAnswer = lead.answers.find(a => 
                           a.question?.prompt?.toLowerCase().includes('name')
                         );
-
+                        
                         return (
                           <tr key={lead.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-nowrap">
@@ -1607,7 +1566,7 @@ export default function AdminDashboard() {
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                                 lead.status === "Purchased (Call)"
-                                  ? "bg-green-100 text-green-800"
+                                  ? "bg-green-100 text-green-800" 
                                   : lead.status === "Not Interested"
                                   ? "bg-red-100 text-red-800"
                                   : lead.status === "Needs Follow Up"
@@ -1648,7 +1607,7 @@ export default function AdminDashboard() {
                 <div className="mt-6 flex items-center justify-between">
                   <div className="text-sm text-gray-700">
                     Showing 1 to {stats?.allLeads?.length || 1} of {stats?.allLeads?.length || 1} results
-                  </div>
+              </div>
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-gray-700">Items per page:</span>
@@ -1886,7 +1845,7 @@ export default function AdminDashboard() {
           )}
 
 
-          {/* Simple Working Modal */}
+            {/* Simple Working Modal */}
             {showLeadModal && selectedLead && (
               <div 
                 style={{
@@ -2001,7 +1960,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               </div>
-            )}
+          )}
 
           {/* Lead Profile Modal */}
           {showLeadModal && selectedLead && (
