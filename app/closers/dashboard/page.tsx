@@ -27,7 +27,6 @@ interface Appointment {
   saleValue: number | null;
   commissionAmount: number | null;
   affiliateCode: string | null;
-  quizSessionId?: string | null;
   recordingLinkConverted?: string | null;
   recordingLinkNotInterested?: string | null;
   recordingLinkNeedsFollowUp?: string | null;
@@ -168,13 +167,9 @@ export default function CloserDashboard() {
   };
 
   const viewLeadDetails = (appointment: Appointment) => {
-    // Navigate to the admin dashboard with the quizSessionId to open the lead details modal
-    if (appointment.quizSessionId) {
-      const adminUrl = `/admin/dashboard?quizSessionId=${encodeURIComponent(appointment.quizSessionId)}`;
-      window.open(adminUrl, '_blank');
-    } else {
-      alert('Lead ID not available.');
-    }
+    // Navigate to the admin dashboard with the customer email to open the lead details modal
+    const adminUrl = `/admin/dashboard?leadEmail=${encodeURIComponent(appointment.customerEmail)}`;
+    window.open(adminUrl, '_blank');
   };
 
   const getDisplayedAppointments = () => {

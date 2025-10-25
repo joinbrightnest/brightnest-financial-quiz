@@ -43,7 +43,6 @@ export async function GET(request: NextRequest) {
         saleValue: true,
         commissionAmount: true,
         affiliateCode: true,
-        quizSessionId: true,
         utmSource: true,
         utmMedium: true,
         utmCampaign: true,

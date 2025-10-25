@@ -389,21 +389,27 @@ export default function AdminDashboard() {
   }, [quizAnalyticsFilters, crmFilters, activeSection]);
 
   useEffect(() => {
-    // Check for quizSessionId in URL and open lead modal
+    // Check for leadEmail in URL and open lead modal
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
-      const quizSessionId = params.get('quizSessionId');
+      const leadEmail = params.get('leadEmail');
       
-      if (quizSessionId && stats?.allLeads) {
-        // Find the lead by quizSessionId
-        const lead = stats.allLeads.find((l: any) => l.id === quizSessionId);
+      if (leadEmail && stats?.allLeads) {
+        // Find the lead by email - search in answers for email or name match
+        const lead = stats.allLeads.find((l: any) => {
+          const email = l.answers?.find((a: any) => 
+            a.value?.toLowerCase() === leadEmail.toLowerCase()
+          );
+          return email;
+        });
+        
         if (lead) {
           setCrmSelectedLead(lead);
           setCrmShowLeadModal(true);
           setActiveSection('crm'); // Switch to CRM section to show the lead
           
           // Clear the URL parameter
-          params.delete('quizSessionId');
+          params.delete('leadEmail');
           const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
           window.history.replaceState({}, '', newUrl);
         }
