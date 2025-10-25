@@ -1618,16 +1618,16 @@ export default function AdminDashboard() {
 
           {/* CRM Section - HubSpot Style */}
           {activeSection === 'crm' && (
-            <div className="bg-white min-h-screen">
+            <div className="bg-gray-50 min-h-screen">
               {/* Header */}
-              <div className="border-b border-gray-200 px-6 py-4">
-              <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold text-gray-900">Lead Pipeline</h1>
-              </div>
+              <div className="bg-white px-6 py-6">
+                <div className="flex justify-between items-center">
+                  <h1 className="text-2xl font-bold text-gray-900">Lead Pipeline</h1>
+                </div>
               </div>
 
               {/* Filters */}
-              <div className="border-b border-gray-200 px-6 py-4">
+              <div className="bg-white px-6 py-4">
                 <div className="flex items-center space-x-4">
                   <select 
                     value={crmFilters.pipeline}
@@ -1696,8 +1696,8 @@ export default function AdminDashboard() {
 
               {/* Metrics - Clean Text Layout */}
               {crmShowMetrics && (
-              <div className="px-6 py-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+              <div className="bg-white px-6 py-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600 mb-1">${((stats?.totalRevenue || 0) / 1000000).toFixed(2)}M</div>
                     <div className="text-sm font-medium text-black mb-1">TOTAL DEAL AMOUNT</div>
@@ -1738,7 +1738,7 @@ export default function AdminDashboard() {
               )}
 
               {/* Search and Actions */}
-              <div className="border-b border-gray-200 px-6 py-4">
+              <div className="bg-white px-6 py-4">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-4">
                     <div className="relative">
@@ -1766,19 +1766,19 @@ export default function AdminDashboard() {
                     </button>
                     <button 
                       onClick={handleCrmExport}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                      className="bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200 transition-colors text-sm"
                     >
                       Export
                     </button>
                     <button 
                       onClick={() => setCrmShowColumnModal(true)}
-                      className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                      className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-50 transition-colors text-sm"
                     >
                       Edit columns
                     </button>
                     <button 
                       onClick={() => router.push('/admin/leads')}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm"
+                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors text-sm"
                     >
                       Lead Analytics
                     </button>
@@ -1787,10 +1787,10 @@ export default function AdminDashboard() {
                 </div>
                 
               {/* Lead Table */}
-              <div className="px-6 py-4">
+              <div className="bg-white px-6 py-4">
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                  <table className="min-w-full">
+                    <thead className="bg-white">
                       <tr>
                         {crmVisibleColumns.checkbox && (
                         <th className="px-6 py-3 text-left">
@@ -1874,14 +1874,14 @@ export default function AdminDashboard() {
                         )}
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white">
                       {paginatedCrmLeads.map((lead) => {
                         const nameAnswer = lead.answers.find(a => 
                           a.question?.prompt?.toLowerCase().includes('name')
                         );
                         
                         return (
-                          <tr key={lead.id} className="hover:bg-gray-50">
+                          <tr key={lead.id} className="border-b border-gray-100 hover:bg-gray-50">
                             {crmVisibleColumns.checkbox && (
                             <td className="px-6 py-4 whitespace-nowrap">
                               <input 
@@ -1958,7 +1958,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Pagination */}
-                <div className="mt-6 flex items-center justify-between">
+                <div className="mt-8 flex items-center justify-between">
                   <div className="text-sm text-black">
                     Showing {(crmCurrentPage - 1) * crmItemsPerPage + 1} to {Math.min(crmCurrentPage * crmItemsPerPage, filteredCrmLeads.length)} of {filteredCrmLeads.length} results
                   </div>
