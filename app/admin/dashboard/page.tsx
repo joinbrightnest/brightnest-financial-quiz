@@ -2150,18 +2150,53 @@ export default function AdminDashboard() {
                               <div>
                                 <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Recording Link</label>
                                 <div className="mt-1">
-                                  {crmSelectedLead.appointment.recordingLink ? (
-                                    <a 
-                                      href={crmSelectedLead.appointment.recordingLink} 
-                                      target="_blank" 
-                                      rel="noopener noreferrer"
-                                      className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
-                                    >
-                                      {crmSelectedLead.appointment.recordingLink}
-                                    </a>
-                                  ) : (
-                                    <p className="text-sm text-slate-400 italic">No recording available</p>
-                                  )}
+                                  {(() => {
+                                    // Get the appropriate recording link based on outcome
+                                    let recordingLink = null;
+                                    if (crmSelectedLead.appointment.outcome) {
+                                      switch (crmSelectedLead.appointment.outcome) {
+                                        case 'converted':
+                                          recordingLink = crmSelectedLead.appointment.recordingLinkConverted;
+                                          break;
+                                        case 'not_interested':
+                                          recordingLink = crmSelectedLead.appointment.recordingLinkNotInterested;
+                                          break;
+                                        case 'needs_follow_up':
+                                          recordingLink = crmSelectedLead.appointment.recordingLinkNeedsFollowUp;
+                                          break;
+                                        case 'wrong_number':
+                                          recordingLink = crmSelectedLead.appointment.recordingLinkWrongNumber;
+                                          break;
+                                        case 'no_answer':
+                                          recordingLink = crmSelectedLead.appointment.recordingLinkNoAnswer;
+                                          break;
+                                        case 'callback_requested':
+                                          recordingLink = crmSelectedLead.appointment.recordingLinkCallbackRequested;
+                                          break;
+                                        case 'rescheduled':
+                                          recordingLink = crmSelectedLead.appointment.recordingLinkRescheduled;
+                                          break;
+                                        default:
+                                          recordingLink = crmSelectedLead.appointment.recordingLink;
+                                      }
+                                    } else {
+                                      // Fallback to general recording link if no outcome
+                                      recordingLink = crmSelectedLead.appointment.recordingLink;
+                                    }
+
+                                    return recordingLink ? (
+                                      <a 
+                                        href={recordingLink} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
+                                      >
+                                        {recordingLink}
+                                      </a>
+                                    ) : (
+                                      <p className="text-sm text-slate-400 italic">No recording available</p>
+                                    );
+                                  })()}
                                 </div>
                               </div>
                               <div>
