@@ -1702,7 +1702,10 @@ export default function AdminDashboard() {
                     <div className="text-2xl font-bold text-blue-600 mb-1">
                       ${(() => {
                         const closedLeads = stats?.allLeads?.filter(lead => 
-                          lead.status === 'completed' || lead.status === 'purchased' || lead.status === 'converted'
+                          lead.status === 'Completed' || 
+                          lead.status === 'Purchased (Call)' || 
+                          lead.status === 'converted' ||
+                          lead.status === 'purchased'
                         ) || [];
                         const totalClosedAmount = closedLeads.reduce((sum, lead) => {
                           const saleValue = parseFloat(lead.saleValue || '0');
@@ -1719,7 +1722,10 @@ export default function AdminDashboard() {
                     <div className="text-xs text-black">
                       Average per deal: ${(() => {
                         const closedLeads = stats?.allLeads?.filter(lead => 
-                          lead.status === 'completed' || lead.status === 'purchased' || lead.status === 'converted'
+                          lead.status === 'Completed' || 
+                          lead.status === 'Purchased (Call)' || 
+                          lead.status === 'converted' ||
+                          lead.status === 'purchased'
                         ) || [];
                         const closedLeadsWithValue = closedLeads.filter(lead => {
                           const saleValue = parseFloat(lead.saleValue || '0');
