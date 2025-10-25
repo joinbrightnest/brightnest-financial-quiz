@@ -566,20 +566,21 @@ export async function GET(request: NextRequest) {
     const dailyActivity = await getActivityData(dateRange);
 
     // Calculate clicks - CORRECT LOGIC:
-    // Clicks = Affiliate clicks + Normal website clicks
-    // For specific quiz: Count all affiliate clicks + all normal website clicks
-    // For "all quizzes": Count all affiliate clicks + all normal website clicks
+    // Use stored totalClicks from affiliate records + normal website clicks
+    // This matches what the tracking system actually increments
     
     let totalClicks = 0;
     
-    // Count affiliate clicks
-    const affiliateClicks = await prisma.affiliateClick.count({
-      where: {
-        createdAt: dateFilter
+    // Sum up stored totalClicks from all affiliates (this is what gets incremented when clicks are tracked)
+    const affiliateClicksResult = await prisma.affiliate.aggregate({
+      _sum: {
+        totalClicks: true
       }
     });
     
-    // Count normal website clicks
+    const affiliateClicks = affiliateClicksResult._sum.totalClicks || 0;
+    
+    // Count normal website clicks (these don't have a stored counter)
     const normalWebsiteClicks = await prisma.normalWebsiteClick.count({
       where: {
         createdAt: dateFilter
