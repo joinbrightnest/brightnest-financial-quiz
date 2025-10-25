@@ -1930,8 +1930,10 @@ export default function AdminDashboard() {
                             </td>
                             )}
                             {crmVisibleColumns.source && (
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {lead.source || 'Direct'}
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                {lead.source || 'Direct'}
+                              </span>
                             </td>
                             )}
                             {crmVisibleColumns.actions && (
@@ -2047,6 +2049,14 @@ export default function AdminDashboard() {
                         <div>
                           <label className="text-sm font-medium text-gray-700">Amount</label>
                           <p className="text-sm text-gray-900">$100.00</p>
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium text-gray-700">Source</label>
+                          <div className="mt-1">
+                            <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                              {crmSelectedLead.source || 'Direct'}
+                            </span>
+                          </div>
                         </div>
                       </div>
                       
