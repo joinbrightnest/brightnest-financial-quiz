@@ -710,22 +710,46 @@ export default function CloserDashboard() {
                       </svg>
                       Deal Information
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       <div>
                         <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Status</label>
-                        <p className="mt-1 text-sm font-semibold text-slate-900">{leadDetails.status || 'N/A'}</p>
+                        <div className="mt-1">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            leadDetails.status === 'Completed' || leadDetails.status === 'completed' 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-gray-100 text-gray-800'
+                          }`}>
+                            {leadDetails.status || 'N/A'}
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Owner</label>
+                        <p className="mt-1 text-sm font-semibold text-slate-900">Stefan</p>
                       </div>
                       <div>
                         <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Close Date</label>
                         <p className="mt-1 text-sm font-semibold text-slate-900">
-                          {leadDetails.completedAt ? new Date(leadDetails.completedAt).toLocaleDateString() : 'N/A'}
+                          {leadDetails.completedAt ? new Date(leadDetails.completedAt).toLocaleDateString('en-GB') : 'N/A'}
                         </p>
                       </div>
                       <div>
                         <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Amount</label>
                         <p className="mt-1 text-sm font-semibold text-slate-900">
-                          {leadDetails.appointment?.saleValue ? `$${Number(leadDetails.appointment.saleValue).toFixed(2)}` : '-'}
+                          {leadDetails.appointment?.saleValue ? `$${Number(leadDetails.appointment.saleValue).toFixed(2)}` : '--'}
                         </p>
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Lead Source</label>
+                        <div className="mt-1">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            Website
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Quiz Type</label>
+                        <p className="mt-1 text-sm font-semibold text-slate-900">Financial-Profile</p>
                       </div>
                     </div>
                     
@@ -808,7 +832,7 @@ export default function CloserDashboard() {
                       Quiz Responses
                       <span className="ml-2 text-sm text-slate-500 font-normal">({leadDetails.answers.length} Questions)</span>
                     </h3>
-                    <div className="grid grid-cols-1 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {leadDetails.answers.map((answer: any, index: number) => (
                         <div key={index} className="bg-slate-50 rounded-lg p-4 border border-slate-200">
                           <p className="text-sm font-semibold text-slate-900 mb-2">{answer.question?.prompt || 'Question ' + (index + 1)}</p>
