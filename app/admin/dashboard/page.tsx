@@ -1416,156 +1416,268 @@ export default function AdminDashboard() {
             </>
           )}
 
-          {/* CRM Section */}
+          {/* CRM Section - HubSpot Style */}
           {activeSection === 'crm' && (
-            <>
-              {/* Lead List */}
-              {isLoading && !hasInitiallyLoaded.current ? (
-                <div className="text-center py-8 opacity-50 transition-opacity duration-300">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                  <p className="text-sm text-gray-500">Loading leads...</p>
+            <div className="min-h-screen bg-gray-50">
+              {/* Header */}
+              <div className="bg-white border-b border-gray-200 px-6 py-4">
+                <div className="flex justify-between items-center">
+                  <h1 className="text-2xl font-bold text-gray-900">Lead Pipeline</h1>
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={logout}
+                      className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                    >
+                      Logout
+                    </button>
+                  </div>
                 </div>
-              ) : error ? (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
-                  <h3 className="text-lg font-semibold text-red-800 mb-2">Error</h3>
-                  <p className="text-red-600 mb-4">{error}</p>
-                  <button
-                    onClick={() => fetchStats()}
-                    className="bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
-                  >
-                    Retry
+              </div>
+
+              {/* Filters */}
+              <div className="bg-white border-b border-gray-200 px-6 py-4">
+                <div className="flex items-center space-x-4">
+                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option>All pipelines</option>
+                  </select>
+                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option>Deal owner</option>
+                  </select>
+                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option>Create date</option>
+                  </select>
+                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option>Last activity date</option>
+                  </select>
+                  <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option>Close date</option>
+                  </select>
+                  <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
+                    + More Advanced filters
                   </button>
                 </div>
-              ) : stats ? (
-                <div className="bg-white rounded-lg shadow-lg p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
-                      <svg className="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </div>
+
+              {/* Metrics Cards */}
+              <div className="bg-white px-6 py-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-blue-600">$0.00M</div>
+                    <div className="text-sm text-gray-600">TOTAL DEAL AMOUNT</div>
+                    <div className="text-xs text-gray-500">Average per deal: $100.00</div>
+                  </div>
+                  <div className="bg-green-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-green-600">$0.00M</div>
+                    <div className="text-sm text-gray-600">WEIGHTED DEAL AMOUNT</div>
+                    <div className="text-xs text-gray-500">Average per deal: $30.00</div>
+                  </div>
+                  <div className="bg-yellow-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-yellow-600">$0.00M</div>
+                    <div className="text-sm text-gray-600">OPEN DEAL AMOUNT</div>
+                    <div className="text-xs text-gray-500">Average per deal: $Infinity</div>
+                  </div>
+                  <div className="bg-purple-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-purple-600">$0.00M</div>
+                    <div className="text-sm text-gray-600">CLOSED DEAL AMOUNT</div>
+                    <div className="text-xs text-gray-500">Average per deal: $80.00</div>
+                  </div>
+                  <div className="bg-indigo-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-indigo-600">$0.01K</div>
+                    <div className="text-sm text-gray-600">NEW DEAL AMOUNT</div>
+                    <div className="text-xs text-gray-500">Average per deal: $Infinity</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="text-2xl font-bold text-gray-600">86.6 days</div>
+                    <div className="text-sm text-gray-600">AVERAGE DEAL AGE</div>
+                    <div className="text-xs text-gray-500">
+                      <svg className="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
-                      Lead List
-                    </h3>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => router.push('/admin/leads-crm')}
-                        className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 text-sm"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                        <span>CRM View</span>
-                      </button>
-                      <button
-                        onClick={exportLeads}
-                        className="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2 text-sm"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <span>Export Leads</span>
-                      </button>
                     </div>
                   </div>
+                </div>
+              </div>
 
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Session ID
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Name
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Email
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Date
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Status
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Completed At
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Source
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {stats.allLeads.map((lead) => {
-                          const nameAnswer = lead.answers.find(a =>
-                            a.question?.prompt?.toLowerCase().includes('name')
-                          );
-                          const emailAnswer = lead.answers.find(a =>
-                            a.question?.prompt?.toLowerCase().includes('email')
-                          );
-
-                          // Determine source based on affiliate code
-                          const source = (lead as any).affiliateCode ? `Affiliate (${(lead as any).affiliateCode})` : "Website";
-
-                          return (
-                            <tr key={lead.id}>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
-                                {lead.id.slice(0, 8)}...
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {nameAnswer?.value || "N/A"}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {emailAnswer?.value || "N/A"}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {new Date(lead.createdAt).toLocaleDateString()}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                  lead.status === "Completed"
-                                    ? "bg-green-100 text-green-800"
-                                    : lead.status === "Booked"
-                                    ? "bg-blue-100 text-blue-800"
-                                    : lead.status === "Purchased (Call)"
-                                    ? "bg-emerald-100 text-emerald-800"
-                                    : lead.status === "Not Interested"
-                                    ? "bg-red-100 text-red-800"
-                                    : lead.status === "Needs Follow Up"
-                                    ? "bg-yellow-100 text-yellow-800"
-                                    : lead.status === "Wrong Number"
-                                    ? "bg-gray-100 text-gray-800"
-                                    : lead.status === "No Answer"
-                                    ? "bg-orange-100 text-orange-800"
-                                    : lead.status === "Callback Requested"
-                                    ? "bg-purple-100 text-purple-800"
-                                    : lead.status === "Rescheduled"
-                                    ? "bg-indigo-100 text-indigo-800"
-                                    : "bg-orange-100 text-orange-800"
-                                }`}>
-                                  {lead.status}
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {lead.completedAt ? new Date(lead.completedAt).toLocaleString() : "N/A"}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                  source.includes('Affiliate')
-                                    ? "bg-blue-100 text-blue-800"
-                                    : "bg-gray-100 text-gray-800"
-                                }`}>
-                                  {source}
-                                </span>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+              {/* Search and Actions */}
+              <div className="bg-white border-b border-gray-200 px-6 py-4">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center space-x-4">
+                    <div className="relative">
+                      <svg className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      <input
+                        type="text"
+                        placeholder="Search name or description"
+                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <button className="text-gray-600 text-sm font-medium hover:text-gray-700 flex items-center">
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Hide Metrics
+                    </button>
+                    <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                      Export
+                    </button>
+                    <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+                      Edit columns
+                    </button>
                   </div>
                 </div>
-              ) : null}
-            </>
+              </div>
+
+              {/* Lead Table */}
+              <div className="bg-white">
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left">
+                          <input type="checkbox" className="rounded border-gray-300" />
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <div className="flex items-center">
+                            LEAD NAME
+                            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                            </svg>
+                          </div>
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <div className="flex items-center">
+                            LEAD STAGE
+                            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                            </svg>
+                          </div>
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <div className="flex items-center">
+                            CLOSE DATE (GMT+3)
+                            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                            </svg>
+                          </div>
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <div className="flex items-center">
+                            DEAL OWNER
+                            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                            </svg>
+                          </div>
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <div className="flex items-center">
+                            AMOUNT
+                            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                            </svg>
+                          </div>
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <div className="flex items-center">
+                            ACTIONS
+                            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                            </svg>
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {stats?.allLeads?.map((lead) => {
+                        const nameAnswer = lead.answers.find(a =>
+                          a.question?.prompt?.toLowerCase().includes('name')
+                        );
+                        const emailAnswer = lead.answers.find(a =>
+                          a.question?.prompt?.toLowerCase().includes('email')
+                        );
+
+                        return (
+                          <tr key={lead.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <input type="checkbox" className="rounded border-gray-300" />
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              {nameAnswer?.value || "N/A"}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                lead.status === "Purchased (Call)"
+                                  ? "bg-green-100 text-green-800"
+                                  : lead.status === "Not Interested"
+                                  ? "bg-red-100 text-red-800"
+                                  : lead.status === "Needs Follow Up"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : lead.status === "Booked"
+                                  ? "bg-blue-100 text-blue-800"
+                                  : "bg-gray-100 text-gray-800"
+                              }`}>
+                                {lead.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {lead.completedAt ? new Date(lead.completedAt).toLocaleDateString() : "N/A"}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600">
+                              Stefan
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              $100.00
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-700 cursor-pointer">
+                              View Details
+                            </td>
+                          </tr>
+                        );
+                      }) || (
+                        <tr>
+                          <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
+                            No leads found
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Pagination */}
+                <div className="bg-white px-6 py-4 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm text-gray-700">
+                      Showing 1 to {stats?.allLeads?.length || 0} of {stats?.allLeads?.length || 0} results
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm text-gray-700">Items per page:</span>
+                        <select className="border border-gray-300 rounded px-2 py-1 text-sm">
+                          <option>25</option>
+                          <option>50</option>
+                          <option>100</option>
+                        </select>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50" disabled>
+                          &lt; Prev
+                        </button>
+                        <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded">
+                          1
+                        </button>
+                        <button className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50" disabled>
+                          Next &gt;
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
 
           {/* CEO Analytics Section */}
