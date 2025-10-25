@@ -100,13 +100,6 @@ export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState<'quiz-analytics' | 'crm' | 'ceo-analytics' | 'closer-management' | 'settings'>('quiz-analytics');
   
   // CRM State Management
-  const [crmFilters, setCrmFilters] = useState({
-    pipeline: 'all',
-    dealOwner: 'all',
-    createDate: 'all',
-    lastActivity: 'all',
-    closeDate: 'all'
-  });
   const [crmSearch, setCrmSearch] = useState('');
   const [crmSortField, setCrmSortField] = useState('date');
   const [crmSortDirection, setCrmSortDirection] = useState<'asc' | 'desc'>('desc');
@@ -598,11 +591,6 @@ export default function AdminDashboard() {
   const dailyActivityData = getActivityChartData();
 
   // CRM Helper Functions
-  const handleCrmFilterChange = (filterType: string, value: string) => {
-    setCrmFilters(prev => ({ ...prev, [filterType]: value }));
-    setCrmCurrentPage(1); // Reset to first page when filtering
-  };
-
   const handleCrmSearch = (value: string) => {
     setCrmSearch(value);
     setCrmCurrentPage(1); // Reset to first page when searching
@@ -694,7 +682,7 @@ export default function AdminDashboard() {
 
   // Filter and sort CRM leads
   const filteredCrmLeads = stats?.allLeads ? stats.allLeads.filter(lead => {
-    // Search filter
+    // Search filter only
     if (crmSearch) {
       const nameAnswer = lead.answers.find(a => 
         a.question?.prompt?.toLowerCase().includes('name')
@@ -706,19 +694,6 @@ export default function AdminDashboard() {
       if (!searchText.includes(crmSearch.toLowerCase())) {
         return false;
       }
-    }
-
-    // Status filter
-    if (crmFilters.pipeline !== 'all') {
-      if (crmFilters.pipeline === 'purchased' && lead.status !== 'Purchased (Call)') return false;
-      if (crmFilters.pipeline === 'booked' && lead.status !== 'Booked') return false;
-      if (crmFilters.pipeline === 'not_interested' && lead.status !== 'Not Interested') return false;
-    }
-
-    // Deal owner filter
-    if (crmFilters.dealOwner !== 'all') {
-      // For now, all leads are assigned to Stefan
-      if (crmFilters.dealOwner !== 'stefan') return false;
     }
 
     return true;
@@ -1649,74 +1624,6 @@ export default function AdminDashboard() {
               <div className="bg-white px-6 py-6">
                 <div className="flex justify-between items-center">
                   <h1 className="text-2xl font-bold text-gray-900">Lead Pipeline</h1>
-                </div>
-              </div>
-
-              {/* Filters */}
-              <div className="bg-white px-6 py-4">
-                <div className="flex items-center space-x-4">
-                  <select 
-                    value={crmFilters.pipeline}
-                    onChange={(e) => handleCrmFilterChange('pipeline', e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black"
-                  >
-                    <option value="all">All pipelines</option>
-                    <option value="purchased">Purchased</option>
-                    <option value="booked">Booked</option>
-                    <option value="not_interested">Not Interested</option>
-                    <option value="needs_follow_up">Needs Follow Up</option>
-                  </select>
-                  <select 
-                    value={crmFilters.dealOwner}
-                    onChange={(e) => handleCrmFilterChange('dealOwner', e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black"
-                  >
-                    <option value="all">Deal owner</option>
-                    <option value="stefan">Stefan</option>
-                    <option value="unassigned">Unassigned</option>
-                  </select>
-                  <select 
-                    value={crmFilters.createDate}
-                    onChange={(e) => handleCrmFilterChange('createDate', e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black"
-                  >
-                    <option value="all">Create date</option>
-                    <option value="today">Today</option>
-                    <option value="yesterday">Yesterday</option>
-                    <option value="this_week">This week</option>
-                    <option value="last_week">Last week</option>
-                    <option value="this_month">This month</option>
-                    <option value="last_month">Last month</option>
-                  </select>
-                  <select 
-                    value={crmFilters.lastActivity}
-                    onChange={(e) => handleCrmFilterChange('lastActivity', e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black"
-                  >
-                    <option value="all">Last activity date</option>
-                    <option value="today">Today</option>
-                    <option value="yesterday">Yesterday</option>
-                    <option value="this_week">This week</option>
-                    <option value="last_week">Last week</option>
-                    <option value="this_month">This month</option>
-                    <option value="last_month">Last month</option>
-                  </select>
-                  <select 
-                    value={crmFilters.closeDate}
-                    onChange={(e) => handleCrmFilterChange('closeDate', e.target.value)}
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-black"
-                  >
-                    <option value="all">Close date</option>
-                    <option value="today">Today</option>
-                    <option value="yesterday">Yesterday</option>
-                    <option value="this_week">This week</option>
-                    <option value="last_week">Last week</option>
-                    <option value="this_month">This month</option>
-                    <option value="last_month">Last month</option>
-                  </select>
-                  <button className="text-blue-600 text-sm font-medium hover:text-blue-700">
-                    + More Advanced filters
-                  </button>
                 </div>
               </div>
 
