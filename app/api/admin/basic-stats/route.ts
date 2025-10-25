@@ -307,8 +307,42 @@ export async function GET(request: NextRequest) {
       const email = leadEmails[lead.id];
       const appointment = email ? appointmentsByEmail[email] : null;
       
-      // Determine status: if appointment exists, show "Booked", otherwise "Completed"
-      const status = appointment ? 'Booked' : 'Completed';
+      // Determine status based on appointment outcome
+      let status = 'Completed'; // Default for completed quiz sessions
+      
+      if (appointment) {
+        if (appointment.outcome) {
+          // Show actual call outcome
+          switch (appointment.outcome) {
+            case 'converted':
+              status = 'Purchased (Call)';
+              break;
+            case 'not_interested':
+              status = 'Not Interested';
+              break;
+            case 'needs_follow_up':
+              status = 'Needs Follow Up';
+              break;
+            case 'wrong_number':
+              status = 'Wrong Number';
+              break;
+            case 'no_answer':
+              status = 'No Answer';
+              break;
+            case 'callback_requested':
+              status = 'Callback Requested';
+              break;
+            case 'rescheduled':
+              status = 'Rescheduled';
+              break;
+            default:
+              status = 'Booked';
+          }
+        } else {
+          // Appointment exists but no outcome yet
+          status = 'Booked';
+        }
+      }
       
       return {
         ...lead,
