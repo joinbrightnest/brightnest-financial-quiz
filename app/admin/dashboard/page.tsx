@@ -1682,27 +1682,27 @@ export default function AdminDashboard() {
                     <div className="text-xs text-black">Average per deal: $100.00</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600 mb-1">$0.00M</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">$0.00M</div>
                     <div className="text-sm font-medium text-black mb-1">WEIGHTED DEAL AMOUNT</div>
                     <div className="text-xs text-black">Average per deal: $30.00</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-yellow-600 mb-1">$0.00M</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">$0.00M</div>
                     <div className="text-sm font-medium text-black mb-1">OPEN DEAL AMOUNT</div>
                     <div className="text-xs text-black">Average per deal: $Infinity</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-purple-600 mb-1">$0.00M</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">$0.00M</div>
                     <div className="text-sm font-medium text-black mb-1">CLOSED DEAL AMOUNT</div>
                     <div className="text-xs text-black">Average per deal: $80.00</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-indigo-600 mb-1">$0.01K</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">$0.01K</div>
                     <div className="text-sm font-medium text-black mb-1">NEW DEAL AMOUNT</div>
                     <div className="text-xs text-black">Average per deal: $Infinity</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-gray-600 mb-1">86.6 days</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">86.6 days</div>
                     <div className="text-sm font-medium text-black mb-1">AVERAGE DEAL AGE</div>
                     <div className="text-xs text-black">
                       <svg className="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
