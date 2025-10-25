@@ -93,10 +93,10 @@ export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const hasInitiallyLoaded = useRef(false);
-  const currentSectionRef = useRef(activeSection);
   const [showQuickLinks, setShowQuickLinks] = useState(false);
   const [showResetDropdown, setShowResetDropdown] = useState(false);
   const [activeSection, setActiveSection] = useState<'quiz-analytics' | 'crm' | 'ceo-analytics' | 'closer-management' | 'settings'>('quiz-analytics');
+  const currentSectionRef = useRef(activeSection);
   
   // Quiz Analytics Filters
   const [quizAnalyticsFilters, setQuizAnalyticsFilters] = useState({
