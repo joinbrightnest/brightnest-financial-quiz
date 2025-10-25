@@ -373,13 +373,15 @@ export default function AdminDashboard() {
     setError(null);
     
     try {
-      // Build query parameters for filters
+      // Build query parameters for filters - only apply Quiz Analytics filters when on Quiz Analytics section
       const params = new URLSearchParams();
-      if (quizAnalyticsFilters.quizType !== 'all') {
-        params.append('quizType', quizAnalyticsFilters.quizType);
-      }
-      if (quizAnalyticsFilters.duration !== 'all') {
-        params.append('duration', quizAnalyticsFilters.duration);
+      if (activeSection === 'quiz-analytics') {
+        if (quizAnalyticsFilters.quizType !== 'all') {
+          params.append('quizType', quizAnalyticsFilters.quizType);
+        }
+        if (quizAnalyticsFilters.duration !== 'all') {
+          params.append('duration', quizAnalyticsFilters.duration);
+        }
       }
       
       const queryString = params.toString();
@@ -406,7 +408,7 @@ export default function AdminDashboard() {
         setIsLoading(false);
       }
     }
-  }, [quizAnalyticsFilters]);
+  }, [quizAnalyticsFilters, activeSection]);
 
   useEffect(() => {
     fetchStats(true); // Pass true to indicate this is a timeframe change
@@ -414,7 +416,7 @@ export default function AdminDashboard() {
     fetchCommissionReleaseStatus();
   }, [fetchStats]);
 
-  // Trigger data fetch when Quiz Analytics filters change
+  // Trigger data fetch when Quiz Analytics filters change (only when on Quiz Analytics section)
   useEffect(() => {
     if (activeSection === 'quiz-analytics') {
       fetchStats(true);
