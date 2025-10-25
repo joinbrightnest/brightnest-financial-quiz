@@ -1618,15 +1618,8 @@ export default function AdminDashboard() {
           {/* CRM Section - HubSpot Style */}
           {activeSection === 'crm' && (
             <div className="bg-gray-50 min-h-screen">
-              {/* Header */}
-              <div className="bg-white px-6 py-6">
-                <div className="flex justify-between items-center">
-                  <h1 className="text-2xl font-bold text-gray-900">Lead Pipeline</h1>
-                </div>
-              </div>
-
               {/* CRM Filters */}
-              <div className="bg-white px-6 py-4 border-b border-gray-200">
+              <div className="bg-white px-6 py-6 border-b border-gray-200">
                 <div className="flex items-center space-x-4">
                   {/* Quiz Type Filter */}
                   <div className="flex items-center space-x-2">
