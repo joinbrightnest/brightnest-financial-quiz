@@ -2023,53 +2023,53 @@ export default function AdminDashboard() {
 
               {/* Lead Details Modal */}
               {crmShowLeadModal && crmSelectedLead && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                  <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[95vh] overflow-y-auto">
+                <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+                  <div className="min-h-screen bg-white">
                     {/* Header */}
-                    <div className="bg-slate-800 px-6 py-4 rounded-t-lg">
+                    <div className="bg-slate-800 px-8 py-6 border-b border-slate-700">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center space-x-4">
-                          <div className="w-12 h-12 bg-slate-700 rounded-lg flex items-center justify-center">
-                            <svg className="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <div className="w-16 h-16 bg-slate-700 rounded-xl flex items-center justify-center">
+                            <svg className="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                           </div>
                           <div>
-                            <h2 className="text-xl font-semibold text-white">
+                            <h1 className="text-3xl font-bold text-white">
                               {crmSelectedLead.answers.find((a: any) => 
                                 a.question?.prompt?.toLowerCase().includes('name')
                               )?.value || 'Lead Profile'}
-                            </h2>
-                            <p className="text-slate-300 text-sm">
+                            </h1>
+                            <p className="text-slate-300 text-lg mt-1">
                               Session ID: {crmSelectedLead.id || crmSelectedLead.sessionId || 'N/A'}
                             </p>
                           </div>
                         </div>
                         <button 
                           onClick={() => setCrmShowLeadModal(false)}
-                          className="text-slate-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-slate-700"
+                          className="text-slate-400 hover:text-white transition-colors p-3 rounded-lg hover:bg-slate-700"
                         >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                           </svg>
                         </button>
                       </div>
                     </div>
 
-                    <div className="p-6 space-y-6">
+                    <div className="p-8 space-y-8 max-w-7xl mx-auto">
                       {/* Personal Information Section */}
-                      <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                        <div className="flex items-center space-x-2 mb-4">
-                          <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
+                        <div className="flex items-center space-x-3 mb-6">
+                          <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
-                          <h3 className="text-lg font-semibold text-slate-900">Personal Information</h3>
+                          <h2 className="text-xl font-semibold text-slate-900">Personal Information</h2>
                         </div>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Full Name</label>
-                            <p className="text-sm font-medium text-slate-900 mt-1">
+                            <p className="text-base font-medium text-slate-900 mt-1">
                               {crmSelectedLead.answers.find((a: any) => 
                                 a.question?.prompt?.toLowerCase().includes('name')
                               )?.value || 'N/A'}
@@ -2077,7 +2077,7 @@ export default function AdminDashboard() {
                           </div>
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Email Address</label>
-                            <p className="text-sm font-medium text-slate-900 mt-1">
+                            <p className="text-base font-medium text-slate-900 mt-1">
                               {crmSelectedLead.answers.find((a: any) => 
                                 a.question?.prompt?.toLowerCase().includes('email')
                               )?.value || 'N/A'}
@@ -2087,19 +2087,19 @@ export default function AdminDashboard() {
                       </div>
 
                       {/* Deal Information Section */}
-                      <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                        <div className="flex items-center space-x-2 mb-4">
-                          <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
+                        <div className="flex items-center space-x-3 mb-6">
+                          <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
-                          <h3 className="text-lg font-semibold text-slate-900">Deal Information</h3>
+                          <h2 className="text-xl font-semibold text-slate-900">Deal Information</h2>
                         </div>
                         
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Status</label>
                             <div className="mt-1">
-                              <span className={`inline-flex px-2 py-1 text-xs font-medium rounded ${
+                              <span className={`inline-flex px-3 py-1 text-sm font-medium rounded ${
                                 crmSelectedLead.status === 'Completed' || crmSelectedLead.status === 'Purchased (Call)' 
                                   ? 'bg-green-100 text-green-800' 
                                   : crmSelectedLead.status === 'In Progress'
@@ -2112,31 +2112,31 @@ export default function AdminDashboard() {
                           </div>
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Owner</label>
-                            <p className="text-sm font-medium text-slate-900 mt-1">Stefan</p>
+                            <p className="text-base font-medium text-slate-900 mt-1">Stefan</p>
                           </div>
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Close Date</label>
-                            <p className="text-sm font-medium text-slate-900 mt-1">
+                            <p className="text-base font-medium text-slate-900 mt-1">
                               {crmSelectedLead.completedAt ? new Date(crmSelectedLead.completedAt).toLocaleDateString('en-GB') : 'N/A'}
                             </p>
                           </div>
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Amount</label>
-                            <p className="text-lg font-semibold text-slate-900 mt-1">
+                            <p className="text-xl font-semibold text-slate-900 mt-1">
                               {crmSelectedLead.appointment?.outcome === 'converted' ? '$100.00' : '--'}
                             </p>
                           </div>
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Lead Source</label>
                             <div className="mt-1">
-                              <span className="inline-flex px-2 py-1 text-xs font-medium rounded bg-blue-100 text-blue-800">
+                              <span className="inline-flex px-3 py-1 text-sm font-medium rounded bg-blue-100 text-blue-800">
                                 {crmSelectedLead.source || 'Direct'}
                               </span>
                             </div>
                           </div>
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Quiz Type</label>
-                            <p className="text-sm font-medium text-slate-900 mt-1 capitalize">
+                            <p className="text-base font-medium text-slate-900 mt-1 capitalize">
                               {crmSelectedLead.quizType || 'Financial Quiz'}
                             </p>
                           </div>
@@ -2144,29 +2144,29 @@ export default function AdminDashboard() {
                       </div>
 
                       {/* Quiz Responses Section */}
-                      <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                        <div className="flex items-center space-x-2 mb-4">
-                          <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
+                        <div className="flex items-center space-x-3 mb-6">
+                          <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
-                          <h3 className="text-lg font-semibold text-slate-900">Quiz Responses</h3>
-                          <span className="bg-slate-200 text-slate-700 text-xs font-medium px-2 py-1 rounded">
+                          <h2 className="text-xl font-semibold text-slate-900">Quiz Responses</h2>
+                          <span className="bg-slate-200 text-slate-700 text-sm font-medium px-3 py-1 rounded">
                             {crmSelectedLead.answers.length} Questions
                           </span>
                         </div>
                         
-                        <div className="space-y-3">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                           {crmSelectedLead.answers.map((answer: any, index: number) => (
-                            <div key={index} className="bg-white rounded border border-slate-200 p-3">
+                            <div key={index} className="bg-white rounded-lg border border-slate-200 p-4">
                               <div className="flex items-start space-x-3">
-                                <div className="w-6 h-6 bg-slate-100 rounded flex items-center justify-center flex-shrink-0 mt-0.5">
-                                  <span className="text-xs font-semibold text-slate-600">{index + 1}</span>
+                                <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                  <span className="text-sm font-semibold text-slate-600">{index + 1}</span>
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <h4 className="text-sm font-medium text-slate-900 mb-1">
+                                  <h4 className="text-sm font-medium text-slate-900 mb-2">
                                     {answer.question?.prompt || 'Question'}
                                   </h4>
-                                  <div className="bg-slate-50 rounded p-2">
+                                  <div className="bg-slate-50 rounded-lg p-3">
                                     <p className="text-sm text-slate-700">
                                       {answer.value}
                                     </p>
