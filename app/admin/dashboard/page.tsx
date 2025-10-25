@@ -1720,12 +1720,16 @@ export default function AdminDashboard() {
                         const closedLeads = stats?.allLeads?.filter(lead => 
                           lead.status === 'completed' || lead.status === 'purchased' || lead.status === 'converted'
                         ) || [];
-                        const totalClosedAmount = closedLeads.reduce((sum, lead) => {
+                        const closedLeadsWithValue = closedLeads.filter(lead => {
+                          const saleValue = parseFloat(lead.saleValue || '0');
+                          return saleValue > 0;
+                        });
+                        const totalClosedAmount = closedLeadsWithValue.reduce((sum, lead) => {
                           const saleValue = parseFloat(lead.saleValue || '0');
                           return sum + saleValue;
                         }, 0);
-                        return closedLeads.length > 0 
-                          ? (totalClosedAmount / closedLeads.length).toFixed(2)
+                        return closedLeadsWithValue.length > 0 
+                          ? (totalClosedAmount / closedLeadsWithValue.length).toFixed(2)
                           : '0.00';
                       })()}
                     </div>
