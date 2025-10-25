@@ -75,22 +75,37 @@ export async function GET(request: NextRequest) {
     // Get affiliate information if lead has affiliate code
     let source = 'Website'; // Default
     if (lead.affiliateCode) {
-      // Find affiliate by referral code
-      const affiliate = await prisma.affiliate.findFirst({
-        where: {
-          OR: [
-            { referralCode: lead.affiliateCode },
-            { customTrackingLink: `/${lead.affiliateCode}` },
-            { customTrackingLink: lead.affiliateCode }
-          ]
-        },
-        select: {
-          name: true
+      try {
+        // Find affiliate by referral code first
+        const affiliate = await prisma.affiliate.findFirst({
+          where: {
+            referralCode: lead.affiliateCode
+          },
+          select: {
+            name: true
+          }
+        });
+        
+        if (affiliate) {
+          source = affiliate.name;
+        } else {
+          // Try custom tracking link match
+          const customAffiliate = await prisma.affiliate.findFirst({
+            where: {
+              customTrackingLink: `/${lead.affiliateCode}`
+            },
+            select: {
+              name: true
+            }
+          });
+          
+          if (customAffiliate) {
+            source = customAffiliate.name;
+          }
         }
-      });
-      
-      if (affiliate) {
-        source = affiliate.name;
+      } catch (error) {
+        console.error('Error looking up affiliate:', error);
+        // Keep default 'Website' if lookup fails
       }
     }
 
