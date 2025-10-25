@@ -673,7 +673,7 @@ export default function AdminDashboard() {
           lead.status,
           lead.completedAt ? new Date(lead.completedAt).toLocaleDateString() : 'N/A',
           'Stefan',
-          '$100.00',
+          lead.appointment?.outcome === 'converted' ? '$100.00' : '--',
           lead.source || 'Direct'
         ].join(',');
       })
@@ -1926,7 +1926,7 @@ export default function AdminDashboard() {
                             )}
                             {crmVisibleColumns.amount && (
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              $100.00
+                              {lead.appointment?.outcome === 'converted' ? '$100.00' : '--'}
                             </td>
                             )}
                             {crmVisibleColumns.source && (
@@ -2048,7 +2048,9 @@ export default function AdminDashboard() {
                         </div>
                         <div>
                           <label className="text-sm font-medium text-gray-700">Amount</label>
-                          <p className="text-sm text-gray-900">$100.00</p>
+                          <p className="text-sm text-gray-900">
+                            {crmSelectedLead.appointment?.outcome === 'converted' ? '$100.00' : '--'}
+                          </p>
                         </div>
                         <div>
                           <label className="text-sm font-medium text-gray-700">Source</label>
