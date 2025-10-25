@@ -52,6 +52,7 @@ interface AdminStats {
       };
     }>;
     source?: string;
+    saleValue?: string | null;
   }>;
   quizTypes?: Array<{
     name: string;

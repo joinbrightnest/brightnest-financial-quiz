@@ -326,6 +326,7 @@ export async function GET(request: NextRequest) {
         source: lead.affiliateCode 
           ? (affiliateMap[lead.affiliateCode] || 'Unknown Affiliate')
           : 'Website',
+        saleValue: appointment?.saleValue || null, // Include sale value from appointment
         appointment: appointment // Include appointment data
       };
     });
