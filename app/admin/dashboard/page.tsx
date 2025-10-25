@@ -389,6 +389,29 @@ export default function AdminDashboard() {
   }, [quizAnalyticsFilters, crmFilters, activeSection]);
 
   useEffect(() => {
+    // Check for quizSessionId in URL and open lead modal
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const quizSessionId = params.get('quizSessionId');
+      
+      if (quizSessionId && stats?.allLeads) {
+        // Find the lead by quizSessionId
+        const lead = stats.allLeads.find((l: any) => l.id === quizSessionId);
+        if (lead) {
+          setCrmSelectedLead(lead);
+          setCrmShowLeadModal(true);
+          setActiveSection('crm'); // Switch to CRM section to show the lead
+          
+          // Clear the URL parameter
+          params.delete('quizSessionId');
+          const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+          window.history.replaceState({}, '', newUrl);
+        }
+      }
+    }
+  }, [stats]);
+
+  useEffect(() => {
     // Only fetch on initial load, not when switching sections
     if (!hasInitiallyLoaded.current) {
       fetchStats(true);
