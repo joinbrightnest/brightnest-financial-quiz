@@ -1790,7 +1790,7 @@ export default function AdminDashboard() {
               <div className="bg-white px-6 py-4">
                 <div className="overflow-x-auto">
                   <table className="min-w-full">
-                    <thead className="bg-white">
+                    <thead className="bg-gray-50">
                       <tr>
                         {crmVisibleColumns.checkbox && (
                         <th className="px-6 py-3 text-left">
