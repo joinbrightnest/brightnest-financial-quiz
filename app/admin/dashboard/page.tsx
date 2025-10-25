@@ -2141,6 +2141,44 @@ export default function AdminDashboard() {
                             </p>
                           </div>
                         </div>
+                        
+                        {/* Call Details Section */}
+                        {crmSelectedLead.appointment && (
+                          <div className="mt-6 pt-6 border-t border-slate-200">
+                            <h4 className="text-sm font-semibold text-slate-700 mb-4">Call Details</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <div>
+                                <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Recording Link</label>
+                                <div className="mt-1">
+                                  {crmSelectedLead.appointment.recordingLink ? (
+                                    <a 
+                                      href={crmSelectedLead.appointment.recordingLink} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
+                                    >
+                                      {crmSelectedLead.appointment.recordingLink}
+                                    </a>
+                                  ) : (
+                                    <p className="text-sm text-slate-400 italic">No recording available</p>
+                                  )}
+                                </div>
+                              </div>
+                              <div>
+                                <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Call Notes</label>
+                                <div className="mt-1">
+                                  {crmSelectedLead.appointment.notes ? (
+                                    <p className="text-sm text-slate-900 bg-slate-50 rounded-lg p-3 border border-slate-200">
+                                      {crmSelectedLead.appointment.notes}
+                                    </p>
+                                  ) : (
+                                    <p className="text-sm text-slate-400 italic">No notes available</p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       {/* Quiz Responses Section */}
