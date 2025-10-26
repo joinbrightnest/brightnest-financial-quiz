@@ -734,7 +734,15 @@ export default function AdminDashboard() {
       // This means they have an appointment but haven't had the call yet
       if (appointment && !appointmentOutcome) {
         // This is a NEW deal - freshly booked call with no outcome
+        console.log('NEW DEAL: Lead has appointment with no outcome, adding to newDealAmount');
         newDealAmount += potentialValuePerCall;
+      } else if (lead.status === 'Booked') {
+        // Debug: Log if status is Booked but not counted
+        console.log('DEBUG: Lead has Booked status but appointment check:', { 
+          hasAppointment: !!appointment, 
+          outcome: appointment?.outcome,
+          leadStatus: lead.status 
+        });
       }
       
       if (appointment) {
