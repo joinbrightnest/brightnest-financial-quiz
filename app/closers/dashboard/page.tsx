@@ -467,23 +467,26 @@ export default function CloserDashboard() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="w-1/7 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Customer
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="w-1/7 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Scheduled
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="w-1/7 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="w-1/7 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Outcome
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="w-1/7 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Sale Value
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="w-1/7 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Actions
+                    </th>
+                    <th className="w-1/7 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Details
                     </th>
                   </tr>
                 </thead>
@@ -520,20 +523,20 @@ export default function CloserDashboard() {
                         {appointment.saleValue ? `$${Number(appointment.saleValue).toFixed(2)}` : '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex space-x-3">
-                          <button
-                            onClick={() => openOutcomeModal(appointment)}
-                            className="text-purple-600 hover:text-purple-800 font-medium transition-colors"
-                          >
-                            Update Outcome
-                          </button>
-                          <button
-                            onClick={() => viewLeadDetails(appointment)}
-                            className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
-                          >
-                            View Details
-                          </button>
-                        </div>
+                        <button
+                          onClick={() => openOutcomeModal(appointment)}
+                          className="text-purple-600 hover:text-purple-800 font-medium transition-colors"
+                        >
+                          Update Outcome
+                        </button>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button
+                          onClick={() => viewLeadDetails(appointment)}
+                          className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                        >
+                          View Details
+                        </button>
                       </td>
                     </tr>
                   ))}
