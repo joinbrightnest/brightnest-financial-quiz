@@ -65,16 +65,16 @@ export default function ResultsClientComponent({ result }: { result: Result }) {
   return (
     <div className="min-h-screen flex flex-col" style={{backgroundColor: '#faf8f0'}}>
       {/* Header */}
-      <div className="bg-[#333333] py-3 px-4">
+      <div className="bg-[#333333] py-3 sm:py-4 px-4">
         <div className="max-w-4xl mx-auto text-center">
           {/* Logo */}
-          <div className="mb-2">
-            <Link href="/" className="flex-shrink-0">
-              <div className="inline-flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-teal-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">B</span>
+          <div>
+            <Link href="/" className="flex-shrink-0 inline-block">
+              <div className="inline-flex items-center space-x-2 sm:space-x-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-600 to-teal-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm sm:text-lg">B</span>
                 </div>
-                <span className="text-xl font-bold text-white font-serif">BrightNest</span>
+                <span className="text-lg sm:text-xl font-bold text-white font-serif">BrightNest</span>
               </div>
             </Link>
           </div>
@@ -82,81 +82,81 @@ export default function ResultsClientComponent({ result }: { result: Result }) {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 px-4 sm:px-6 lg:px-8 py-12">
+      <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6 sm:py-12 pb-20">
         <div className="max-w-4xl mx-auto">
           
           {/* Header Section */}
-          <div className="text-center mb-16">
-            <p className="text-gray-500 text-sm mb-2">Your Financial Archetype</p>
-            <h2 className="text-4xl md:text-5xl font-serif text-blue-600 mb-4">
+          <div className="text-center mb-8 sm:mb-16">
+            <p className="text-gray-500 text-xs sm:text-sm mb-2">Your Financial Archetype</p>
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif text-blue-600 mb-3 sm:mb-4">
               {result.archetype}
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-xl text-gray-600 max-w-2xl mx-auto">
               {copy.header.subtitle}
             </p>
           </div>
 
           {/* Main Content Container */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-12 space-y-12">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-12 space-y-8 sm:space-y-12">
             
             {/* Recognition Section */}
             <div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">Recognition</h3>
-              <p className="text-lg text-gray-600 leading-relaxed">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 sm:mb-4">Recognition</h3>
+              <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
                 {copy.validation}
               </p>
             </div>
 
-            <hr className="my-8 border-gray-200" />
+            <hr className="my-6 sm:my-8 border-gray-200" />
 
             {/* Functional Reflection Section */}
             <div className="opacity-0 translate-y-4 animate-fade-in">
-              <h3 className="text-2xl font-bold text-gray-800 mb-6">Your Financial Patterns</h3>
-              <p className="text-lg text-gray-600 leading-relaxed">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">Your Financial Patterns</h3>
+              <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
                 {copy.reflection}
               </p>
             </div>
 
-            <hr className="my-8 border-gray-200" />
+            <hr className="my-6 sm:my-8 border-gray-200" />
 
             {/* Hidden Challenge Section */}
             <div className="opacity-0 translate-y-4 animate-fade-in">
-              <div className="bg-yellow-50 rounded-lg p-6 -mx-6">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">Hidden Challenge</h3>
-                <p className="text-lg text-gray-600 leading-relaxed">
+              <div className="bg-yellow-50 rounded-lg p-4 sm:p-6 -mx-6 sm:-mx-6">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 sm:mb-4">Hidden Challenge</h3>
+                <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
                   {copy.problem_realization}
                 </p>
               </div>
             </div>
 
-            <hr className="my-8 border-gray-200" />
+            <hr className="my-6 sm:my-8 border-gray-200" />
 
             {/* Your Opportunity Section */}
             <div className="opacity-0 translate-y-4 animate-fade-in">
-              <div className="bg-green-50 rounded-lg p-6 -mx-6">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">Your Opportunity</h3>
-                <p className="text-lg text-gray-600 leading-relaxed">
+              <div className="bg-green-50 rounded-lg p-4 sm:p-6 -mx-6 sm:-mx-6">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 sm:mb-4">Your Opportunity</h3>
+                <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
                   {copy.hope_and_solution}
                 </p>
               </div>
             </div>
 
-            <hr className="my-8 border-gray-200" />
+            <hr className="my-6 sm:my-8 border-gray-200" />
 
             {/* CTA Section */}
             <div className="opacity-0 translate-y-4 animate-fade-in text-center">
-              <h3 className="text-3xl font-bold text-gray-800 mb-6">
+              <h3 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6">
                 {copy.cta.headline}
               </h3>
-              <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+              <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed">
                 {copy.cta.body}
               </p>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {qualifiesForCall ? (
                   // User qualifies for call - show book call button
                   <Link
                     href="/book-call"
-                    className="inline-block w-full md:w-auto bg-blue-600 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                    className="inline-block w-full md:w-auto bg-blue-600 text-white px-6 sm:px-10 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                   >
                     {copy.cta.button}
                   </Link>
@@ -164,26 +164,26 @@ export default function ResultsClientComponent({ result }: { result: Result }) {
                   // User doesn't qualify - show checkout button
                   <Link
                     href="/checkout"
-                    className="inline-block w-full md:w-auto bg-blue-600 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                    className="inline-block w-full md:w-auto bg-blue-600 text-white px-6 sm:px-10 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                   >
                     Complete Your Financial Assessment
                   </Link>
                 )}
-                <div className="text-gray-500 font-medium">
+                <div className="text-gray-500 font-medium text-sm sm:text-base">
                   or
                 </div>
-                <button className="w-full md:w-auto bg-gray-100 text-gray-700 px-10 py-4 rounded-lg font-semibold text-lg hover:bg-gray-200 transition-all duration-300">
+                <button className="w-full md:w-auto bg-gray-100 text-gray-700 px-6 sm:px-10 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:bg-gray-200 transition-all duration-300">
                   {copy.cta.secondary}
                 </button>
               </div>
-              <p className="text-sm text-gray-500 mt-6">
+              <p className="text-xs sm:text-sm text-gray-500 mt-4 sm:mt-6">
                 No pressure — just clarity and guidance.
               </p>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="text-center mt-16">
+          <div className="text-center mt-8 sm:mt-16">
             <div className="inline-flex items-center space-x-6 text-gray-500">
               <Link
                 href="/quiz"

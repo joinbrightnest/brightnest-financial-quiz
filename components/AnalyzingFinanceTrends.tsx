@@ -407,7 +407,7 @@ const AnalyzingFinanceTrends = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Top Bar with BrightNest Logo and User Info */}
-      <div className="w-full bg-[#28303B] px-4 py-4 relative z-10">
+      <div className="w-full bg-[#28303B] px-4 py-5 sm:py-6 relative z-10">
         {/* BrightNest text - centered horizontally within the full width */}
         <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
           <span className="text-base font-bold text-white font-serif">BrightNest</span>
