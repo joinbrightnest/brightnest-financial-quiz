@@ -138,8 +138,10 @@ export default function AdminDashboard() {
   const [commissionHoldDays, setCommissionHoldDays] = useState(30);
   const [minimumPayout, setMinimumPayout] = useState(50);
   const [payoutSchedule, setPayoutSchedule] = useState("monthly-1st");
+  const [newDealAmountPotential, setNewDealAmountPotential] = useState(5000);
   const [isUpdatingHoldDays, setIsUpdatingHoldDays] = useState(false);
   const [isUpdatingPayoutSettings, setIsUpdatingPayoutSettings] = useState(false);
+  const [isUpdatingCrmSettings, setIsUpdatingCrmSettings] = useState(false);
   const [commissionReleaseStatus, setCommissionReleaseStatus] = useState<any>(null);
   const [isProcessingReleases, setIsProcessingReleases] = useState(false);
   const [selectedLead, setSelectedLead] = useState<any>(null);
@@ -206,6 +208,7 @@ export default function AdminDashboard() {
         setCommissionHoldDays(data.settings.commissionHoldDays || 30);
         setMinimumPayout(data.settings.minimumPayout || 50);
         setPayoutSchedule(data.settings.payoutSchedule || "monthly-1st");
+        setNewDealAmountPotential(data.settings.newDealAmountPotential || 5000);
         console.log('Settings loaded:', data.settings); // Debug log
       }
     } catch (error) {
@@ -1767,9 +1770,21 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${((stats?.totalRevenue || 0) * 0.1 / 1000).toFixed(2)}</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">${(() => {
+                      // Count booked calls (status includes 'Scheduled', 'Confirmed', etc.)
+                      const bookedCalls = stats?.allLeads?.filter(lead => 
+                        lead.status === 'Scheduled' || 
+                        lead.status === 'Confirmed' || 
+                        lead.status === 'In Progress' ||
+                        lead.status === 'scheduled' ||
+                        lead.status === 'confirmed'
+                      ).length || 0;
+                      // Calculate: booked calls * potential value per call
+                      const totalNewDealAmount = bookedCalls * newDealAmountPotential;
+                      return totalNewDealAmount.toFixed(2);
+                    })()}</div>
                     <div className="text-sm font-medium text-black mb-1">NEW DEAL AMOUNT</div>
-                    <div className="text-xs text-black">Average per deal: ${((stats?.totalRevenue || 0) * 0.1 / (stats?.allLeads?.length || 1)).toFixed(2)}</div>
+                    <div className="text-xs text-black">Average per deal: ${newDealAmountPotential.toFixed(2)}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600 mb-1">{((stats?.averageTimeMs || 0) / (1000 * 60 * 60 * 24)).toFixed(1)} days</div>
@@ -2578,6 +2593,63 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   )}
+
+                  {/* CRM Settings */}
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <h3 className="text-lg font-medium text-gray-900 mb-3">CRM Settings</h3>
+                    <p className="text-gray-600 mb-4">
+                      Configure the potential value used for calculating the NEW DEAL AMOUNT metric. 
+                      This is multiplied by the number of booked calls to estimate pipeline value.
+                    </p>
+                    
+                    <div className="flex items-center space-x-4">
+                      <label htmlFor="newDealPotential" className="text-sm font-medium text-gray-700">
+                        Potential Value per Call:
+                      </label>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm text-gray-500">$</span>
+                        <input
+                          type="number"
+                          id="newDealPotential"
+                          min="0"
+                          max="100000"
+                          value={newDealAmountPotential}
+                          onChange={(e) => setNewDealAmountPotential(parseFloat(e.target.value))}
+                          className="w-32 px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4">
+                      <button 
+                        onClick={async () => {
+                          setIsUpdatingCrmSettings(true);
+                          try {
+                            const response = await fetch('/api/admin/settings', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ newDealAmountPotential })
+                            });
+                            const data = await response.json();
+                            if (data.success) {
+                              console.log('CRM settings updated successfully');
+                              await fetchSettings();
+                            } else {
+                              console.error('Failed to update CRM settings:', data.error);
+                            }
+                          } catch (error) {
+                            console.error('Error updating CRM settings:', error);
+                          } finally {
+                            setIsUpdatingCrmSettings(false);
+                          }
+                        }}
+                        disabled={isUpdatingCrmSettings}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isUpdatingCrmSettings ? 'Updating...' : 'Update CRM Settings'}
+                      </button>
+                    </div>
+                  </div>
 
                   {/* Current Settings Info */}
                   <div className="bg-gray-50 rounded-lg p-4">

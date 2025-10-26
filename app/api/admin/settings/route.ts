@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     // Get current settings from database
     // If settings table doesn't exist, create it and insert default values
     const settings = await prisma.$queryRaw`
-      SELECT * FROM "Settings" WHERE key IN ('qualification_threshold', 'commission_hold_days', 'minimum_payout', 'payout_schedule')
+      SELECT * FROM "Settings" WHERE key IN ('qualification_threshold', 'commission_hold_days', 'minimum_payout', 'payout_schedule', 'new_deal_amount_potential')
     `.catch(async () => {
       // If Settings table doesn't exist, create it and insert default values
       await prisma.$executeRaw`
@@ -37,7 +37,8 @@ export async function GET(request: NextRequest) {
           ('qualification_threshold', '17'),
           ('commission_hold_days', '30'),
           ('minimum_payout', '50'),
-          ('payout_schedule', 'monthly-1st')
+          ('payout_schedule', 'monthly-1st'),
+          ('new_deal_amount_potential', '5000')
         ON CONFLICT (key) DO NOTHING
       `;
       
@@ -45,7 +46,8 @@ export async function GET(request: NextRequest) {
         { key: 'qualification_threshold', value: '17' },
         { key: 'commission_hold_days', value: '30' },
         { key: 'minimum_payout', value: '50' },
-        { key: 'payout_schedule', value: 'monthly-1st' }
+        { key: 'payout_schedule', value: 'monthly-1st' },
+        { key: 'new_deal_amount_potential', value: '5000' }
       ];
     });
 
@@ -61,7 +63,8 @@ export async function GET(request: NextRequest) {
         qualificationThreshold: parseInt(settingsObj.qualification_threshold || '17'),
         commissionHoldDays: parseInt(settingsObj.commission_hold_days || '30'),
         minimumPayout: parseFloat(settingsObj.minimum_payout || '50'),
-        payoutSchedule: settingsObj.payout_schedule || 'monthly-1st'
+        payoutSchedule: settingsObj.payout_schedule || 'monthly-1st',
+        newDealAmountPotential: parseFloat(settingsObj.new_deal_amount_potential || '5000')
       }
     });
   } catch (error) {
@@ -84,7 +87,7 @@ export async function POST(request: NextRequest) {
   }
   
   try {
-    const { qualificationThreshold, commissionHoldDays, minimumPayout, payoutSchedule } = await request.json();
+    const { qualificationThreshold, commissionHoldDays, minimumPayout, payoutSchedule, newDealAmountPotential } = await request.json();
 
     // Validate qualification threshold
     if (qualificationThreshold !== undefined && (qualificationThreshold < 1 || qualificationThreshold > 20)) {
@@ -115,6 +118,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: 'Invalid payout schedule. Must be weekly, biweekly, monthly-1st, monthly-15th, monthly-last, or quarterly.'
+      }, { status: 400 });
+    }
+
+    // Validate new deal amount potential
+    if (newDealAmountPotential !== undefined && (newDealAmountPotential < 0 || newDealAmountPotential > 100000)) {
+      return NextResponse.json({
+        success: false,
+        error: 'Invalid new deal amount potential. Must be between 0 and 100000.'
       }, { status: 400 });
     }
 
@@ -183,13 +194,27 @@ export async function POST(request: NextRequest) {
       updates.push('payout schedule');
     }
 
+    // Update new deal amount potential if provided
+    if (newDealAmountPotential !== undefined) {
+      await prisma.$executeRaw`
+        INSERT INTO "Settings" (key, value) 
+        VALUES ('new_deal_amount_potential', ${newDealAmountPotential.toString()})
+        ON CONFLICT (key) 
+        DO UPDATE SET 
+          value = ${newDealAmountPotential.toString()},
+          updated_at = CURRENT_TIMESTAMP
+      `;
+      updates.push('new deal amount potential');
+    }
+
     return NextResponse.json({
       success: true,
       message: `${updates.join(' and ')} updated successfully`,
       qualificationThreshold,
       commissionHoldDays,
       minimumPayout,
-      payoutSchedule
+      payoutSchedule,
+      newDealAmountPotential
     });
   } catch (error) {
     console.error('Error updating settings:', error);
