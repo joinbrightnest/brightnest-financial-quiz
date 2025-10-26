@@ -289,34 +289,31 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
 
   // If using hourly breakdown (for single-day ranges)
   if (useHourly) {
-    // Get the date string for the specific day we're looking at (today or yesterday)
-    const targetDateStr = startDate.toISOString().split('T')[0];
-    
-    for (let hour = 0; hour < 24; hour++) {
-      const hourStart = new Date(startDate);
-      hourStart.setHours(hour, 0, 0, 0);
-      const hourEnd = new Date(startDate);
-      hourEnd.setHours(hour, 59, 59, 999);
-      const hourLabel = `${hour.toString().padStart(2, '0')}:00`;
+    // For "Last 24 hours", we need to go back 24 hours from now, not use a specific day
+    for (let i = 23; i >= 0; i--) {
+      // Calculate the timestamp for each of the last 24 hours (going backwards from now)
+      const hourTimestamp = new Date(now.getTime() - i * 60 * 60 * 1000);
+      const hourStart = new Date(hourTimestamp);
+      hourStart.setMinutes(0, 0, 0);
+      const hourEnd = new Date(hourTimestamp);
+      hourEnd.setMinutes(59, 59, 999);
       
-      // Filter data for this specific hour AND date
+      const hourLabel = `${hourTimestamp.getHours().toString().padStart(2, '0')}:00`;
+      
+      // Filter data for this specific hour using proper time ranges
       const hourClicks = allClicks.filter(c => {
         const clickDate = new Date(c.createdAt);
-        const clickDateStr = clickDate.toISOString().split('T')[0];
-        const clickHour = clickDate.getHours();
-        return clickDateStr === targetDateStr && clickHour === hour;
+        return clickDate >= hourStart && clickDate <= hourEnd;
       });
+      
       const hourConversions = allConversions.filter(c => {
         const convDate = new Date(c.createdAt);
-        const convDateStr = convDate.toISOString().split('T')[0];
-        const convHour = convDate.getHours();
-        return convDateStr === targetDateStr && convHour === hour;
+        return convDate >= hourStart && convDate <= hourEnd;
       });
+      
       const hourSales = allSaleConversions.filter(sale => {
         const saleDate = new Date(sale.createdAt);
-        const saleDateStr = saleDate.toISOString().split('T')[0];
-        const saleHour = saleDate.getHours();
-        return saleDateStr === targetDateStr && saleHour === hour;
+        return saleDate >= hourStart && saleDate <= hourEnd;
       });
 
       // Calculate commission from sale conversions (actual commission amounts)
