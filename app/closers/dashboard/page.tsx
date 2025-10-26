@@ -710,8 +710,8 @@ export default function CloserDashboard() {
                   {/* Deal Information */}
                   <div className="bg-white rounded-xl border border-slate-200 p-6">
                     <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-6m6 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                       </svg>
                       Deal Information
                     </h3>
@@ -831,8 +831,8 @@ export default function CloserDashboard() {
                   {/* Quiz Responses */}
                   <div className="bg-white rounded-xl border border-slate-200 p-6">
                     <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H9a2 2 0 01-2-2V6a2 2 0 012-2h2m4-2v4m0 4v10m-6-2h10a2 2 0 002-2V6a2 2 0 00-2-2H9a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                       </svg>
                       Quiz Responses
                       <span className="ml-2 text-sm text-slate-500 font-normal">({leadDetails.answers.length} Questions)</span>
