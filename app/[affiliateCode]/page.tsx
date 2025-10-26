@@ -106,16 +106,16 @@ async function validateAndTrackAffiliate(affiliateCode: string, searchParams: { 
         return true; // Valid affiliate, but skip tracking
       }
 
-      // Check if we already tracked this browser recently (within 2 minutes) to avoid duplicate clicks
-      // Use a more robust duplicate detection with IP + user agent + very short time window
-      const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+      // Check if we already tracked this browser recently (within 5 minutes) to avoid duplicate clicks
+      // Use a more robust duplicate detection with IP + user agent + reasonable time window
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
       const existingClick = await prisma.affiliateClick.findFirst({
         where: {
           affiliateId: affiliate.id,
           ipAddress: ipAddress,
           userAgent: userAgent,
           createdAt: {
-            gte: twoMinutesAgo
+            gte: fiveMinutesAgo
           }
         }
       });
@@ -127,7 +127,11 @@ async function validateAndTrackAffiliate(affiliateCode: string, searchParams: { 
           userAgent: userAgent.substring(0, 50) + "...",
           existingClickTime: existingClick.createdAt
         });
-      } else {
+        // Return true even if we're skipping - the affiliate is still valid
+        return true;
+      }
+
+      {
         // Record the click and update total clicks in a single transaction to prevent race conditions
         try {
           await prisma.$transaction(async (tx) => {
