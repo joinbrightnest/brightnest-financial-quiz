@@ -280,10 +280,11 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
     convertedAppointments = cardAppointments.filter(apt => apt.outcome === 'converted');
   } else {
     // Fallback: fetch appointments data for the correct date range
+    // Use createdAt instead of updatedAt to track when the appointment was originally created
     allAppointments = await prisma.appointment.findMany({
       where: {
         affiliateCode: affiliateCode,
-        updatedAt: {
+        createdAt: {
           gte: dateRange === "today" ? today : 
                dateRange === "yesterday" ? yesterday :
                dateRange === "week" ? startOfWeek :
@@ -326,8 +327,8 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       
       // Filter appointments for this specific hour
       const hourAppointments = convertedAppointments.filter(apt => {
-        const aptDate = apt.updatedAt.toISOString().split('T')[0];
-        const aptHour = apt.updatedAt.getHours();
+        const aptDate = apt.createdAt.toISOString().split('T')[0];
+        const aptHour = apt.createdAt.getHours();
         return aptDate === todayStr && aptHour === hour;
       });
 
@@ -373,8 +374,8 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       
       // Filter appointments for this specific hour
       const hourAppointments = convertedAppointments.filter(apt => {
-        const aptDate = apt.updatedAt.toISOString().split('T')[0];
-        const aptHour = apt.updatedAt.getHours();
+        const aptDate = apt.createdAt.toISOString().split('T')[0];
+        const aptHour = apt.createdAt.getHours();
         return aptDate === yesterdayStr && aptHour === hour;
       });
 
@@ -444,7 +445,7 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       
       // Filter appointments for this specific day
       const dayAppointments = convertedAppointments.filter(apt => {
-        const aptDate = apt.updatedAt.toISOString().split('T')[0];
+        const aptDate = apt.createdAt.toISOString().split('T')[0];
         return aptDate === dateStr;
       });
 

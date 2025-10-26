@@ -33,32 +33,27 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const dateRange = searchParams.get("dateRange") || "month";
+    const dateRange = searchParams.get("dateRange") || "30d";
 
     // Calculate date filter
     const now = new Date();
     let startDate: Date;
     
     switch (dateRange) {
-      case "today":
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      case "24h":
+        startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
         break;
-      case "yesterday":
-        const yesterday = new Date(now);
-        yesterday.setDate(yesterday.getDate() - 1);
-        startDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+      case "7d":
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         break;
-      case "week":
-        // Start of this week (Monday)
-        const startOfWeek = new Date(now);
-        const dayOfWeek = now.getDay();
-        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-        startOfWeek.setDate(now.getDate() - daysToMonday);
-        startDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate());
+      case "30d":
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         break;
-      case "month":
-        // Start of this month
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      case "90d":
+        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+        break;
+      case "1y":
+        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
         break;
       case "all":
         startDate = new Date(0); // All time
@@ -124,33 +119,21 @@ export async function GET(request: NextRequest) {
       payouts,
     };
 
-    // Calculate end date for the period
-    let endDateForQuery: Date | undefined = undefined;
-    switch (dateRange) {
-      case "today":
-        endDateForQuery = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
-        break;
-      case "yesterday":
-        const yesterday = new Date(now);
-        yesterday.setDate(yesterday.getDate() - 1);
-        endDateForQuery = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59, 999);
-        break;
-      // For other ranges, leave undefined (no upper bound)
-    }
-
     // Fetch appointments separately to calculate totalSales
+    // Sales should be counted based on when the closer closed the sale (updatedAt when outcome = converted)
     const allAppointments = await prisma.appointment.findMany({
       where: {
         affiliateCode: affiliate.referralCode,
+        outcome: 'converted', // Only get already-converted appointments
         updatedAt: {
           gte: startDate,
-          ...(endDateForQuery ? { lte: endDateForQuery } : {}),
         },
+        saleValue: { not: null } // Only appointments with actual sales
       },
     }).catch(() => []);
 
     // Filter for converted appointments
-    const convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
+    const convertedAppointments = allAppointments;
 
     // Calculate stats using centralized lead calculation
     const totalClicks = affiliateWithData.clicks.length;
@@ -210,50 +193,46 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
   const now = new Date();
   let days: number;
   let startDate: Date;
-  let endDate: Date;
+  let endDate: Date | undefined;
   let useHourly: boolean = false;
   
   switch (dateRange) {
-    case "today":
+    case "24h":
       days = 1;
-      startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
-      useHourly = true; // Use hourly breakdown for single-day ranges
+      startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      endDate = new Date(now);
+      useHourly = true; // Use hourly breakdown for last 24 hours
       break;
-    case "yesterday":
-      days = 1;
-      const yesterday = new Date(now);
-      yesterday.setDate(yesterday.getDate() - 1);
-      startDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
-      endDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59, 999);
-      useHourly = true; // Use hourly breakdown for single-day ranges
+    case "7d":
+      days = 7;
+      startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      endDate = new Date(now);
       break;
-      case "week":
-      // Calculate days from start of week to today
-      const startOfWeek = new Date(now);
-      const dayOfWeek = now.getDay();
-      const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-      startOfWeek.setDate(now.getDate() - daysToMonday);
-      startDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate());
-      endDate = undefined;
-      days = Math.ceil((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+    case "30d":
+      days = 30;
+      startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      endDate = new Date(now);
       break;
-    case "month":
-      // Calculate days from start of month to today
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-      endDate = undefined;
-      days = Math.ceil((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+    case "90d":
+      days = 90;
+      startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+      endDate = new Date(now);
       break;
-      case "all":
-        // Show last 90 days for "all time" to keep it manageable
-        days = 90;
-        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-        endDate = undefined;
-        break;
+    case "1y":
+      days = 365;
+      startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+      endDate = new Date(now);
+      break;
+    case "all":
+      // Show last 90 days for "all time" to keep it manageable
+      days = 90;
+      startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+      endDate = new Date(now);
+      break;
     default:
       days = 30;
       startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      endDate = undefined;
+      endDate = new Date(now);
   }
   
   const data = [];
@@ -268,9 +247,10 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
   }
 
   // Fetch all data for the entire date range at once for better performance
-  const rangeEnd = endDate || new Date(startDate.getTime() + days * 24 * 60 * 60 * 1000);
+  // Use the endDate which is calculated based on the date range
+  const rangeEnd = endDate;
   
-  const [allClicks, allConversions, allAppointmentsForChart] = await Promise.all([
+  const [allClicks, allConversions, allSaleConversions] = await Promise.all([
     prisma.affiliateClick.findMany({
       where: {
         affiliate: { referralCode: affiliateCode },
@@ -289,22 +269,23 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
         },
       },
     }),
-    prisma.appointment.findMany({
+    prisma.affiliateConversion.findMany({
       where: {
-        affiliateCode: affiliateCode,
-        updatedAt: {
+        affiliate: { referralCode: affiliateCode },
+        conversionType: "sale",
+        createdAt: {
           gte: startDate,
           lte: rangeEnd,
         },
       },
     }).catch((error) => {
-      console.error('Error fetching appointments:', error);
+      console.error('Error fetching sale conversions:', error);
       return [];
     })
   ]);
 
-  // Filter for converted appointments
-  const convertedAppointments = allAppointmentsForChart.filter(apt => apt.outcome === 'converted');
+  // Get bookings from conversions for the chart
+  const bookingConversions = allConversions.filter(c => c.conversionType === "booking");
 
   // If using hourly breakdown (for single-day ranges)
   if (useHourly) {
@@ -331,17 +312,16 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
         const convHour = convDate.getHours();
         return convDateStr === targetDateStr && convHour === hour;
       });
-      const hourAppointments = convertedAppointments.filter(apt => {
-        const aptDate = new Date(apt.updatedAt);
-        const aptDateStr = aptDate.toISOString().split('T')[0];
-        const aptHour = aptDate.getHours();
-        return aptDateStr === targetDateStr && aptHour === hour;
+      const hourSales = allSaleConversions.filter(sale => {
+        const saleDate = new Date(sale.createdAt);
+        const saleDateStr = saleDate.toISOString().split('T')[0];
+        const saleHour = saleDate.getHours();
+        return saleDateStr === targetDateStr && saleHour === hour;
       });
 
-      // Calculate commission from appointments (actual sales)
-      const hourCommission = hourAppointments.reduce((sum, apt) => {
-        const saleValue = Number(apt.saleValue || 0);
-        return sum + (saleValue * Number(affiliate.commissionRate));
+      // Calculate commission from sale conversions (actual commission amounts)
+      const hourCommission = hourSales.reduce((sum, sale) => {
+        return sum + Number(sale.commissionAmount || 0);
       }, 0);
 
       // Calculate real leads for this specific hour
@@ -351,7 +331,7 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
         date: hourLabel,
         clicks: hourClicks.length,
         leads: hourLeadData.totalLeads,
-        bookedCalls: hourConversions.filter(c => c.conversionType === "booking").length,
+        bookedCalls: hourConversions.length,
         commission: hourCommission,
       });
     }
@@ -367,13 +347,12 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
       
       // Filter data for this specific day
       const dayClicks = allClicks.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
-      const dayConversions = allConversions.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
-      const dayAppointments = convertedAppointments.filter(apt => apt.updatedAt.toISOString().split('T')[0] === dateStr);
+      const dayBookings = bookingConversions.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
+      const daySales = allSaleConversions.filter(sale => sale.createdAt.toISOString().split('T')[0] === dateStr);
 
-      // Calculate commission from appointments (actual sales)
-      const dayCommission = dayAppointments.reduce((sum, apt) => {
-        const saleValue = Number(apt.saleValue || 0);
-        return sum + (saleValue * Number(affiliate.commissionRate));
+      // Calculate commission from sale conversions (actual commission amounts)
+      const dayCommission = daySales.reduce((sum, sale) => {
+        return sum + Number(sale.commissionAmount || 0);
       }, 0);
 
       // Calculate real leads for this specific day
@@ -383,22 +362,8 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
         date: dateStr,
         clicks: dayClicks.length,
         leads: dayLeadData.totalLeads,
-        bookedCalls: dayConversions.filter(c => c.conversionType === "booking").length,
+        bookedCalls: dayBookings.length,
         commission: dayCommission,
-      });
-    }
-  }
-  
-  // If affiliate has commission but no appointments found, distribute it across active days
-  const totalCommissionFromAppointments = data.reduce((sum, day) => sum + day.commission, 0);
-  if (totalCommissionFromAppointments === 0 && Number(affiliate.totalCommission) > 0) {
-    const activeDays = data.filter(day => day.clicks > 0 || day.bookedCalls > 0);
-    if (activeDays.length > 0) {
-      const commissionPerDay = Number(affiliate.totalCommission) / activeDays.length;
-      data.forEach(day => {
-        if (day.clicks > 0 || day.bookedCalls > 0) {
-          day.commission = commissionPerDay;
-        }
       });
     }
   }
