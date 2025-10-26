@@ -386,6 +386,7 @@ model Closer {
   updatedAt       DateTime  @updatedAt @map("updated_at")
   
   appointments    Appointment[]
+  tasks           Task[]
   auditLogs       CloserAuditLog[]
 
   @@map("closers")
@@ -421,6 +422,7 @@ model Appointment {
   updatedAt       DateTime          @updatedAt @map("updated_at")
   
   closer          Closer?           @relation(fields: [closerId], references: [id], onDelete: SetNull)
+  tasks           Task[]
 
   @@index([closerId, outcome])
   @@index([affiliateCode])
@@ -428,6 +430,29 @@ model Appointment {
   @@index([outcome])
   @@index([createdAt])
   @@map("appointments")
+}
+
+model Task {
+  id              String       @id @default(cuid())
+  appointmentId   String?      @map("appointment_id")
+  leadEmail       String       @map("lead_email") // To identify which lead this task is for
+  closerId        String?      @map("closer_id")
+  title           String
+  description     String?
+  priority        TaskPriority @default(medium)
+  status          TaskStatus   @default(pending)
+  dueDate         DateTime?    @map("due_date")
+  completedAt     DateTime?    @map("completed_at")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+  
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  closer          Closer?      @relation(fields: [closerId], references: [id], onDelete: SetNull)
+
+  @@index([leadEmail, status])
+  @@index([closerId, status])
+  @@index([dueDate, status])
+  @@map("tasks")
 }
 
 model CloserAuditLog {
@@ -462,4 +487,18 @@ enum CallOutcome {
   no_answer
   callback_requested
   rescheduled
+}
+
+enum TaskPriority {
+  low
+  medium
+  high
+  urgent
+}
+
+enum TaskStatus {
+  pending
+  in_progress
+  completed
+  cancelled
 }
