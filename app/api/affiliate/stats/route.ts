@@ -195,12 +195,14 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
   const now = new Date();
   let days: number;
   let startDate: Date;
+  let endDate: Date;
   let useHourly: boolean = false;
   
   switch (dateRange) {
     case "today":
       days = 1;
       startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
       useHourly = true; // Use hourly breakdown for single-day ranges
       break;
     case "yesterday":
@@ -208,30 +210,35 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
       const yesterday = new Date(now);
       yesterday.setDate(yesterday.getDate() - 1);
       startDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+      endDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59, 999);
       useHourly = true; // Use hourly breakdown for single-day ranges
       break;
-    case "week":
+      case "week":
       // Calculate days from start of week to today
       const startOfWeek = new Date(now);
       const dayOfWeek = now.getDay();
       const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
       startOfWeek.setDate(now.getDate() - daysToMonday);
       startDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate());
+      endDate = undefined;
       days = Math.ceil((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) + 1;
       break;
     case "month":
       // Calculate days from start of month to today
       startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      endDate = undefined;
       days = Math.ceil((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) + 1;
       break;
       case "all":
         // Show last 90 days for "all time" to keep it manageable
         days = 90;
         startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+        endDate = undefined;
         break;
     default:
       days = 30;
       startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      endDate = undefined;
   }
   
   const data = [];
@@ -246,7 +253,7 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
   }
 
   // Fetch all data for the entire date range at once for better performance
-  const rangeEnd = new Date(startDate.getTime() + days * 24 * 60 * 60 * 1000);
+  const rangeEnd = endDate || new Date(startDate.getTime() + days * 24 * 60 * 60 * 1000);
   
   const [allClicks, allConversions, allAppointmentsForChart] = await Promise.all([
     prisma.affiliateClick.findMany({
