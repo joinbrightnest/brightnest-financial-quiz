@@ -304,7 +304,21 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
       // Calculate commission from appointments (actual sales)
       const hourCommission = hourAppointments.reduce((sum, apt) => {
         const saleValue = Number(apt.saleValue || 0);
-        return sum + (saleValue * Number(affiliate.commissionRate));
+        const commission = saleValue * Number(affiliate.commissionRate);
+        
+        // Debug logging for yesterday data
+        if (dateRange === 'yesterday' && commission > 0) {
+          console.log(`[${hourLabel}] Hour Commission:`, {
+            hour: hourLabel,
+            appointmentId: apt.id,
+            saleValue: apt.saleValue,
+            commissionRate: affiliate.commissionRate,
+            calculatedCommission: commission,
+            updatedAt: apt.updatedAt
+          });
+        }
+        
+        return sum + commission;
       }, 0);
 
       // Calculate real leads for this specific hour
