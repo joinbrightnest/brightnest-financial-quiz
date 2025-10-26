@@ -2204,74 +2204,6 @@ export default function AdminDashboard() {
                           </div>
                         </div>
 
-                        {/* Call Details */}
-                        <div className="mt-6 pt-6 border-t border-slate-200">
-                          <h4 className="text-sm font-semibold text-slate-700 mb-4">Call Details</h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                              <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Recording Link</label>
-                              <div className="mt-1">
-                                {(() => {
-                                  let recordingLink = null;
-                                  if (crmSelectedLead.appointment?.outcome) {
-                                    switch (crmSelectedLead.appointment.outcome) {
-                                      case 'converted':
-                                        recordingLink = crmSelectedLead.appointment.recordingLinkConverted;
-                                        break;
-                                      case 'not_interested':
-                                        recordingLink = crmSelectedLead.appointment.recordingLinkNotInterested;
-                                        break;
-                                      case 'needs_follow_up':
-                                        recordingLink = crmSelectedLead.appointment.recordingLinkNeedsFollowUp;
-                                        break;
-                                      case 'wrong_number':
-                                        recordingLink = crmSelectedLead.appointment.recordingLinkWrongNumber;
-                                        break;
-                                      case 'no_answer':
-                                        recordingLink = crmSelectedLead.appointment.recordingLinkNoAnswer;
-                                        break;
-                                      case 'callback_requested':
-                                        recordingLink = crmSelectedLead.appointment.recordingLinkCallbackRequested;
-                                        break;
-                                      case 'rescheduled':
-                                        recordingLink = crmSelectedLead.appointment.recordingLinkRescheduled;
-                                        break;
-                                      default:
-                                        recordingLink = crmSelectedLead.appointment?.recordingLink;
-                                    }
-                                  } else {
-                                    recordingLink = crmSelectedLead.appointment?.recordingLink;
-                                  }
-
-                                  return recordingLink ? (
-                                    <a 
-                                      href={recordingLink} 
-                                      target="_blank" 
-                                      rel="noopener noreferrer"
-                                      className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
-                                    >
-                                      {recordingLink}
-                                    </a>
-                                  ) : (
-                                    <p className="text-sm text-slate-400 italic">No recording available</p>
-                                  );
-                                })()}
-                              </div>
-                            </div>
-                            <div>
-                              <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Call Notes</label>
-                              <div className="mt-1">
-                                {crmSelectedLead.appointment?.notes ? (
-                                  <p className="text-sm text-slate-900 bg-slate-50 rounded-lg p-3 border border-slate-200">
-                                    {crmSelectedLead.appointment.notes}
-                                  </p>
-                                ) : (
-                                  <p className="text-sm text-slate-400 italic">No notes available</p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
                       </div>
 
                       {/* Tabs Navigation */}
@@ -2334,8 +2266,71 @@ export default function AdminDashboard() {
 
                         {crmLeadModalTab === 'notes' && (
                           <div>
-                            <h3 className="text-lg font-semibold text-slate-900 mb-6">Notes</h3>
-                            <p className="text-sm text-slate-600">No notes have been added for this lead.</p>
+                            <h3 className="text-lg font-semibold text-slate-900 mb-6">Call Details</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <div>
+                                <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Recording Link</label>
+                                <div className="mt-1">
+                                  {(() => {
+                                    let recordingLink = null;
+                                    if (crmSelectedLead.appointment?.outcome) {
+                                      switch (crmSelectedLead.appointment.outcome) {
+                                        case 'converted':
+                                          recordingLink = crmSelectedLead.appointment.recordingLinkConverted;
+                                          break;
+                                        case 'not_interested':
+                                          recordingLink = crmSelectedLead.appointment.recordingLinkNotInterested;
+                                          break;
+                                        case 'needs_follow_up':
+                                          recordingLink = crmSelectedLead.appointment.recordingLinkNeedsFollowUp;
+                                          break;
+                                        case 'wrong_number':
+                                          recordingLink = crmSelectedLead.appointment.recordingLinkWrongNumber;
+                                          break;
+                                        case 'no_answer':
+                                          recordingLink = crmSelectedLead.appointment.recordingLinkNoAnswer;
+                                          break;
+                                        case 'callback_requested':
+                                          recordingLink = crmSelectedLead.appointment.recordingLinkCallbackRequested;
+                                          break;
+                                        case 'rescheduled':
+                                          recordingLink = crmSelectedLead.appointment.recordingLinkRescheduled;
+                                          break;
+                                        default:
+                                          recordingLink = crmSelectedLead.appointment?.recordingLink;
+                                      }
+                                    } else {
+                                      recordingLink = crmSelectedLead.appointment?.recordingLink;
+                                    }
+
+                                    return recordingLink ? (
+                                      <a 
+                                        href={recordingLink} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
+                                      >
+                                        {recordingLink}
+                                      </a>
+                                    ) : (
+                                      <p className="text-sm text-slate-400 italic">No recording available</p>
+                                    );
+                                  })()}
+                                </div>
+                              </div>
+                              <div>
+                                <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Call Notes</label>
+                                <div className="mt-1">
+                                  {crmSelectedLead.appointment?.notes ? (
+                                    <p className="text-sm text-slate-900 bg-slate-50 rounded-lg p-3 border border-slate-200">
+                                      {crmSelectedLead.appointment.notes}
+                                    </p>
+                                  ) : (
+                                    <p className="text-sm text-slate-400 italic">No notes available</p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
                           </div>
                         )}
 
