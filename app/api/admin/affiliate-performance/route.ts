@@ -121,7 +121,7 @@ export async function GET(request: NextRequest) {
               status: 'completed'
             }
           });
-          totalPaidCommission = payouts.reduce((sum, payout) => sum + Number(payout.amount || 0), 0);
+          totalPaidCommission = payouts.reduce((sum, payout) => sum + Number(payout.amountDue || 0), 0);
         } catch (error) {
           console.log('No payouts found for affiliate:', affiliate.id);
           totalPaidCommission = 0;
