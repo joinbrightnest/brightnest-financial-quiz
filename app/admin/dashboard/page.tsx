@@ -125,6 +125,7 @@ export default function AdminDashboard() {
   const [crmSelectedLead, setCrmSelectedLead] = useState<any>(null);
   const [crmShowLeadModal, setCrmShowLeadModal] = useState(false);
   const [crmShowColumnModal, setCrmShowColumnModal] = useState(false);
+  const [crmLeadModalTab, setCrmLeadModalTab] = useState<'activity' | 'notes' | 'tasks'>('activity');
   const [crmVisibleColumns, setCrmVisibleColumns] = useState({
     checkbox: true,
     name: true,
@@ -2122,20 +2123,15 @@ export default function AdminDashboard() {
                       </div>
                     </div>
 
-                    <div className="p-8 space-y-8 max-w-7xl mx-auto">
-                      {/* Personal Information Section */}
+                    <div className="p-8 max-w-7xl mx-auto space-y-6">
+                      {/* Unified Lead Information Section */}
                       <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
-                        <div className="flex items-center space-x-3 mb-6">
-                          <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                          <h2 className="text-xl font-semibold text-slate-900">Personal Information</h2>
-                        </div>
+                        <h2 className="text-xl font-semibold text-slate-900 mb-6">Lead Information</h2>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Full Name</label>
-                            <p className="text-base font-medium text-slate-900 mt-1">
+                            <p className="text-sm font-medium text-slate-900 mt-1">
                               {crmSelectedLead.answers.find((a: any) => 
                                 a.question?.prompt?.toLowerCase().includes('name')
                               )?.value || 'N/A'}
@@ -2143,29 +2139,16 @@ export default function AdminDashboard() {
                           </div>
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Email Address</label>
-                            <p className="text-base font-medium text-slate-900 mt-1">
+                            <p className="text-sm font-medium text-slate-900 mt-1">
                               {crmSelectedLead.answers.find((a: any) => 
                                 a.question?.prompt?.toLowerCase().includes('email')
                               )?.value || 'N/A'}
                             </p>
                           </div>
-                        </div>
-                      </div>
-
-                      {/* Deal Information Section */}
-                      <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
-                        <div className="flex items-center space-x-3 mb-6">
-                          <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          <h2 className="text-xl font-semibold text-slate-900">Deal Information</h2>
-                        </div>
-                        
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Status</label>
                             <div className="mt-1">
-                              <span className={`inline-flex px-3 py-1 text-sm font-medium rounded ${
+                              <span className={`inline-flex px-3 py-1 text-xs font-medium rounded ${
                                 crmSelectedLead.status === 'Completed' || crmSelectedLead.status === 'Purchased (Call)' 
                                   ? 'bg-green-100 text-green-800' 
                                   : crmSelectedLead.status === 'In Progress'
@@ -2178,17 +2161,17 @@ export default function AdminDashboard() {
                           </div>
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Owner</label>
-                            <p className="text-base font-medium text-slate-900 mt-1">Stefan</p>
+                            <p className="text-sm font-medium text-slate-900 mt-1">Stefan</p>
                           </div>
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Close Date</label>
-                            <p className="text-base font-medium text-slate-900 mt-1">
+                            <p className="text-sm font-medium text-slate-900 mt-1">
                               {crmSelectedLead.completedAt ? new Date(crmSelectedLead.completedAt).toLocaleDateString('en-GB') : 'N/A'}
                             </p>
                           </div>
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Amount</label>
-                            <p className="text-xl font-semibold text-slate-900 mt-1">
+                            <p className="text-sm font-semibold text-slate-900 mt-1">
                               {crmSelectedLead.appointment?.outcome === 'converted' && crmSelectedLead.appointment?.saleValue 
                                 ? `$${Number(crmSelectedLead.appointment.saleValue).toFixed(2)}` 
                                 : '--'}
@@ -2197,124 +2180,92 @@ export default function AdminDashboard() {
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Lead Source</label>
                             <div className="mt-1">
-                              <span className="inline-flex px-3 py-1 text-sm font-medium rounded bg-blue-100 text-blue-800">
+                              <span className="inline-flex px-3 py-1 text-xs font-medium rounded bg-blue-100 text-blue-800">
                                 {crmSelectedLead.source || 'Direct'}
                               </span>
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Quiz Type</label>
-                            <p className="text-base font-medium text-slate-900 mt-1 capitalize">
-                              {crmSelectedLead.quizType || 'Financial Quiz'}
-                            </p>
-                          </div>
-                        </div>
-                        
-                        {/* Call Details Section - Always visible for all leads */}
-                        <div className="mt-6 pt-6 border-t border-slate-200">
-                          <h4 className="text-sm font-semibold text-slate-700 mb-4">Call Details</h4>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                              <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Recording Link</label>
-                              <div className="mt-1">
-                                {(() => {
-                                  // Get the appropriate recording link based on outcome
-                                  let recordingLink = null;
-                                  if (crmSelectedLead.appointment?.outcome) {
-                                    switch (crmSelectedLead.appointment.outcome) {
-                                      case 'converted':
-                                        recordingLink = crmSelectedLead.appointment.recordingLinkConverted;
-                                        break;
-                                      case 'not_interested':
-                                        recordingLink = crmSelectedLead.appointment.recordingLinkNotInterested;
-                                        break;
-                                      case 'needs_follow_up':
-                                        recordingLink = crmSelectedLead.appointment.recordingLinkNeedsFollowUp;
-                                        break;
-                                      case 'wrong_number':
-                                        recordingLink = crmSelectedLead.appointment.recordingLinkWrongNumber;
-                                        break;
-                                      case 'no_answer':
-                                        recordingLink = crmSelectedLead.appointment.recordingLinkNoAnswer;
-                                        break;
-                                      case 'callback_requested':
-                                        recordingLink = crmSelectedLead.appointment.recordingLinkCallbackRequested;
-                                        break;
-                                      case 'rescheduled':
-                                        recordingLink = crmSelectedLead.appointment.recordingLinkRescheduled;
-                                        break;
-                                      default:
-                                        recordingLink = crmSelectedLead.appointment?.recordingLink;
-                                    }
-                                  } else {
-                                    // Fallback to general recording link if no outcome
-                                    recordingLink = crmSelectedLead.appointment?.recordingLink;
-                                  }
-
-                                  return recordingLink ? (
-                                    <a 
-                                      href={recordingLink} 
-                                      target="_blank" 
-                                      rel="noopener noreferrer"
-                                      className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
-                                    >
-                                      {recordingLink}
-                                    </a>
-                                  ) : (
-                                    <p className="text-sm text-slate-400 italic">No recording available</p>
-                                  );
-                                })()}
-                              </div>
-                            </div>
-                            <div>
-                              <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Call Notes</label>
-                              <div className="mt-1">
-                                {crmSelectedLead.appointment?.notes ? (
-                                  <p className="text-sm text-slate-900 bg-slate-50 rounded-lg p-3 border border-slate-200">
-                                    {crmSelectedLead.appointment.notes}
-                                  </p>
-                                ) : (
-                                  <p className="text-sm text-slate-400 italic">No notes available</p>
-                                )}
-                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
 
-                      {/* Quiz Responses Section */}
-                      <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
-                        <div className="flex items-center space-x-3 mb-6">
-                          <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                          </svg>
-                          <h2 className="text-xl font-semibold text-slate-900">Quiz Responses</h2>
-                          <span className="bg-slate-200 text-slate-700 text-sm font-medium px-3 py-1 rounded">
-                            {crmSelectedLead.answers.length} Questions
-                          </span>
+                      {/* Tabs Navigation */}
+                      <div className="border-b border-slate-200">
+                        <div className="flex space-x-1">
+                          <button
+                            onClick={() => setCrmLeadModalTab('activity')}
+                            className={`px-4 py-2 text-sm font-medium transition-colors ${
+                              crmLeadModalTab === 'activity'
+                                ? 'border-b-2 border-blue-600 text-blue-600'
+                                : 'text-slate-500 hover:text-slate-700'
+                            }`}
+                          >
+                            Activity
+                          </button>
+                          <button
+                            onClick={() => setCrmLeadModalTab('notes')}
+                            className={`px-4 py-2 text-sm font-medium transition-colors ${
+                              crmLeadModalTab === 'notes'
+                                ? 'border-b-2 border-blue-600 text-blue-600'
+                                : 'text-slate-500 hover:text-slate-700'
+                            }`}
+                          >
+                            Notes
+                          </button>
+                          <button
+                            onClick={() => setCrmLeadModalTab('tasks')}
+                            className={`px-4 py-2 text-sm font-medium transition-colors ${
+                              crmLeadModalTab === 'tasks'
+                                ? 'border-b-2 border-blue-600 text-blue-600'
+                                : 'text-slate-500 hover:text-slate-700'
+                            }`}
+                          >
+                            Tasks
+                          </button>
                         </div>
-                        
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                          {crmSelectedLead.answers.map((answer: any, index: number) => (
-                            <div key={index} className="bg-white rounded-lg border border-slate-200 p-4">
-                              <div className="flex items-start space-x-3">
-                                <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                                  <span className="text-sm font-semibold text-slate-600">{index + 1}</span>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <h4 className="text-sm font-medium text-slate-900 mb-2">
-                                    {answer.question?.prompt || 'Question'}
-                                  </h4>
-                                  <div className="bg-slate-50 rounded-lg p-3">
-                                    <p className="text-sm text-slate-700">
-                                      {answer.value}
-                                    </p>
+                      </div>
+
+                      {/* Tab Content */}
+                      <div className="bg-white rounded-lg">
+                        {crmLeadModalTab === 'activity' && (
+                          <div className="p-6">
+                            <h3 className="text-lg font-semibold text-slate-900 mb-4">Quiz Responses</h3>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                              {crmSelectedLead.answers.map((answer: any, index: number) => (
+                                <div key={index} className="bg-slate-50 rounded-lg border border-slate-200 p-4">
+                                  <div className="flex items-start space-x-3">
+                                    <div className="w-8 h-8 bg-slate-200 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                                      <span className="text-sm font-semibold text-slate-600">{index + 1}</span>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="text-sm font-medium text-slate-900 mb-2">
+                                        {answer.question?.prompt || 'Question'}
+                                      </h4>
+                                      <div className="bg-white rounded-lg p-3">
+                                        <p className="text-sm text-slate-700">
+                                          {answer.value}
+                                        </p>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
+                          </div>
+                        )}
+
+                        {crmLeadModalTab === 'notes' && (
+                          <div className="p-6">
+                            <h3 className="text-lg font-semibold text-slate-900 mb-4">Notes</h3>
+                            <p className="text-slate-500">Notes functionality will be added here.</p>
+                          </div>
+                        )}
+
+                        {crmLeadModalTab === 'tasks' && (
+                          <div className="p-6">
+                            <h3 className="text-lg font-semibold text-slate-900 mb-4">Tasks</h3>
+                            <p className="text-slate-500">Tasks functionality will be added here.</p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
