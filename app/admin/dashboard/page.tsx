@@ -1771,8 +1771,10 @@ export default function AdminDashboard() {
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600 mb-1">${(() => {
-                      // Count booked calls (status includes 'Scheduled', 'Confirmed', etc.)
+                      // Count booked calls (status includes 'Booked', 'Scheduled', 'Confirmed', etc.)
                       const bookedCalls = stats?.allLeads?.filter(lead => 
+                        lead.status === 'Booked' ||
+                        lead.status === 'booked' ||
                         lead.status === 'Scheduled' || 
                         lead.status === 'Confirmed' || 
                         lead.status === 'In Progress' ||
