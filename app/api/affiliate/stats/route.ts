@@ -124,12 +124,27 @@ export async function GET(request: NextRequest) {
       payouts,
     };
 
+    // Calculate end date for the period
+    let endDateForQuery: Date | undefined = undefined;
+    switch (dateRange) {
+      case "today":
+        endDateForQuery = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+        break;
+      case "yesterday":
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        endDateForQuery = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59, 999);
+        break;
+      // For other ranges, leave undefined (no upper bound)
+    }
+
     // Fetch appointments separately to calculate totalSales
     const allAppointments = await prisma.appointment.findMany({
       where: {
         affiliateCode: affiliate.referralCode,
         updatedAt: {
           gte: startDate,
+          ...(endDateForQuery ? { lte: endDateForQuery } : {}),
         },
       },
     }).catch(() => []);
