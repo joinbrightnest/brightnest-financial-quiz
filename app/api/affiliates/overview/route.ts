@@ -18,6 +18,9 @@ export async function GET(request: NextRequest) {
     let startDate: Date;
     
     switch (dateRange) {
+      case "24h":
+        startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        break;
       case "7d":
         startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         break;
@@ -159,8 +162,8 @@ export async function GET(request: NextRequest) {
       const bookingCount = appointments.length;
       const saleCount = appointments.filter(apt => apt.outcome === CallOutcome.converted).length;
       
-      // Use centralized lead calculation
-      const leadData = await calculateAffiliateLeads(affiliate.id, '30d');
+      // Use centralized lead calculation with date range from filter
+      const leadData = await calculateAffiliateLeads(affiliate.id, dateRange === 'all' ? '1y' : dateRange);
       const leadCount = leadData.totalLeads;
 
       // Calculate actual revenue from converted appointments (total sale values)

@@ -47,40 +47,47 @@ interface ConversionFunnel {
   closed: number;
 }
 
-export default function AffiliateOverview() {
+interface AffiliateOverviewProps {
+  externalDateRange?: string;
+}
+
+export default function AffiliateOverview({ externalDateRange }: AffiliateOverviewProps = {}) {
   const [data, setData] = useState<AffiliateData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState("all");
   const [selectedTier, setSelectedTier] = useState("all");
 
+  // Use external dateRange if provided, otherwise use internal state
+  const effectiveDateRange = externalDateRange || dateRange;
+
   useEffect(() => {
-    fetchAffiliateData();
-  }, [dateRange, selectedTier]);
+    const fetchAffiliateData = async () => {
+      try {
+        setLoading(true);
+        const params = new URLSearchParams({
+          dateRange: effectiveDateRange,
+          tier: selectedTier,
+        });
 
-  const fetchAffiliateData = async () => {
-    try {
-      setLoading(true);
-      const params = new URLSearchParams({
-        dateRange,
-        tier: selectedTier,
-      });
+        const response = await fetch(`/api/affiliates/overview?${params}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch affiliate data");
+        }
 
-      const response = await fetch(`/api/affiliates/overview?${params}`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch affiliate data");
+        const result = await response.json();
+        setData(result);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching affiliate data:", err);
+        setError(err instanceof Error ? err.message : "Failed to load affiliate data");
+      } finally {
+        setLoading(false);
       }
+    };
 
-      const result = await response.json();
-      setData(result);
-      setError(null);
-    } catch (err) {
-      console.error("Error fetching affiliate data:", err);
-      setError(err instanceof Error ? err.message : "Failed to load affiliate data");
-    } finally {
-      setLoading(false);
-    }
-  };
+    fetchAffiliateData();
+  }, [effectiveDateRange, selectedTier]);
 
   if (loading) {
     return (
@@ -149,8 +156,9 @@ export default function AffiliateOverview() {
         <div className="flex items-center space-x-4">
           <div className="relative">
             <select
-              value={dateRange}
-              onChange={(e) => setDateRange(e.target.value)}
+              value={effectiveDateRange}
+              onChange={(e) => externalDateRange ? undefined : setDateRange(e.target.value)}
+              disabled={!!externalDateRange}
               className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
             >
               <option value="all">All Time</option>

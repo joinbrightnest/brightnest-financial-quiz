@@ -13,6 +13,34 @@ export async function GET(request: NextRequest) {
   }
   
   try {
+    // Get date range filter from query params
+    const { searchParams } = new URL(request.url);
+    const dateRange = searchParams.get("dateRange") || "all";
+    
+    // Calculate date filter
+    const now = new Date();
+    let startDate: Date;
+    
+    switch (dateRange) {
+      case "24h":
+        startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        break;
+      case "7d":
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        break;
+      case "30d":
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        break;
+      case "90d":
+        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+        break;
+      case "1y":
+        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+        break;
+      default:
+        startDate = new Date(0); // All time
+    }
+
     // Get all approved affiliates with their performance data
     const affiliates = await prisma.affiliate.findMany({
       where: {
@@ -26,31 +54,43 @@ export async function GET(request: NextRequest) {
     // Get detailed performance data for each affiliate
     const affiliatePerformance = await Promise.all(
       affiliates.map(async (affiliate) => {
-        // Get clicks for this affiliate
+        // Get clicks for this affiliate (with date filter)
         const clicks = await prisma.affiliateClick.findMany({
           where: {
             affiliateId: affiliate.id,
+            createdAt: {
+              gte: startDate,
+            },
           },
         });
 
-        // Get conversions for this affiliate
+        // Get conversions for this affiliate (with date filter)
         const conversions = await prisma.affiliateConversion.findMany({
           where: {
             affiliateId: affiliate.id,
+            createdAt: {
+              gte: startDate,
+            },
           },
         });
 
-        // Get quiz sessions for this affiliate
+        // Get quiz sessions for this affiliate (with date filter)
         const quizSessions = await prisma.quizSession.findMany({
           where: {
             affiliateCode: affiliate.referralCode,
+            createdAt: {
+              gte: startDate,
+            },
           },
         });
 
-        // Get appointments for this affiliate
+        // Get appointments for this affiliate (with date filter)
         const appointments = await prisma.appointment.findMany({
           where: {
             affiliateCode: affiliate.referralCode,
+            createdAt: {
+              gte: startDate,
+            },
           },
         });
 
@@ -64,8 +104,8 @@ export async function GET(request: NextRequest) {
         const bookingCount = appointments.length;
         const saleCount = appointments.filter(apt => apt.outcome === 'converted').length;
         
-        // Use centralized lead calculation with same date range as individual affiliate page (month)
-        const leadData = await calculateAffiliateLeads(affiliate.id, 'month');
+        // Use centralized lead calculation with date range from filter
+        const leadData = await calculateAffiliateLeads(affiliate.id, dateRange === 'all' ? '1y' : dateRange);
         const leadCount = leadData.totalLeads;
 
         // Calculate actual revenue from converted appointments (total sale values)

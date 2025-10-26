@@ -65,8 +65,9 @@ export default function CEOAnalytics() {
   const fetchCEOAnalytics = async () => {
     try {
       setLoading(true);
-      // Fetch affiliate performance data
-      const response = await fetch(`/api/admin/affiliate-performance`);
+      // Fetch affiliate performance data with date range
+      const params = new URLSearchParams({ dateRange });
+      const response = await fetch(`/api/admin/affiliate-performance?${params}`);
       if (!response.ok) {
         throw new Error("Failed to fetch affiliate performance data");
       }
@@ -614,7 +615,7 @@ export default function CEOAnalytics() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <AffiliateOverview />
+          <AffiliateOverview externalDateRange={dateRange} />
         </motion.div>
       )}
 
