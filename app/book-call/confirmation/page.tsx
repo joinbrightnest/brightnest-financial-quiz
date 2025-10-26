@@ -10,9 +10,8 @@ export default function ConfirmationPage() {
         <div className="max-w-4xl mx-auto text-center">
           {/* Logo */}
           <div className="mb-4 sm:mb-6">
-            <h1 className="text-white text-2xl sm:text-3xl lg:text-4xl font-black tracking-wider">
-              <span className="font-sans">BRIGHT</span>
-              <span className="font-serif italic ml-2 sm:ml-3 text-xl sm:text-2xl lg:text-3xl">Nest</span>
+            <h1 className="text-white text-2xl sm:text-3xl lg:text-4xl font-bold font-serif text-center">
+              BrightNest
             </h1>
           </div>
 
@@ -392,12 +391,11 @@ export default function ConfirmationPage() {
       <div className="bg-[#333333] py-6 sm:py-8 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <div className="mb-3 sm:mb-4">
-            <h1 className="text-white text-xl sm:text-2xl font-bold tracking-wide">
-              <span className="font-sans">BRIGHT</span>
-              <span className="font-serif italic ml-2">Nest</span>
+            <h1 className="text-white text-xl sm:text-2xl font-bold font-serif text-center">
+              BrightNest
             </h1>
           </div>
-          <div className="text-white text-xs sm:text-sm">
+          <div className="text-white text-xs sm:text-sm text-center">
             <Link href="/privacy" className="hover:text-[#4CAF50]">Privacy Policy</Link>
             <span className="mx-2">|</span>
             <Link href="/terms" className="hover:text-[#4CAF50]">Terms and Conditions</Link>
