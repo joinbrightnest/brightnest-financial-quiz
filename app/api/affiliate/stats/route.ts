@@ -271,6 +271,9 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
 
   // If using hourly breakdown (for single-day ranges)
   if (useHourly) {
+    // Get the date string for the specific day we're looking at (today or yesterday)
+    const targetDateStr = startDate.toISOString().split('T')[0];
+    
     for (let hour = 0; hour < 24; hour++) {
       const hourStart = new Date(startDate);
       hourStart.setHours(hour, 0, 0, 0);
@@ -278,18 +281,24 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
       hourEnd.setHours(hour, 59, 59, 999);
       const hourLabel = `${hour.toString().padStart(2, '0')}:00`;
       
-      // Filter data for this specific hour
+      // Filter data for this specific hour AND date
       const hourClicks = allClicks.filter(c => {
-        const clickHour = new Date(c.createdAt).getHours();
-        return clickHour === hour;
+        const clickDate = new Date(c.createdAt);
+        const clickDateStr = clickDate.toISOString().split('T')[0];
+        const clickHour = clickDate.getHours();
+        return clickDateStr === targetDateStr && clickHour === hour;
       });
       const hourConversions = allConversions.filter(c => {
-        const convHour = new Date(c.createdAt).getHours();
-        return convHour === hour;
+        const convDate = new Date(c.createdAt);
+        const convDateStr = convDate.toISOString().split('T')[0];
+        const convHour = convDate.getHours();
+        return convDateStr === targetDateStr && convHour === hour;
       });
       const hourAppointments = convertedAppointments.filter(apt => {
-        const aptHour = new Date(apt.updatedAt).getHours();
-        return aptHour === hour;
+        const aptDate = new Date(apt.updatedAt);
+        const aptDateStr = aptDate.toISOString().split('T')[0];
+        const aptHour = aptDate.getHours();
+        return aptDateStr === targetDateStr && aptHour === hour;
       });
 
       // Calculate commission from appointments (actual sales)
