@@ -1068,7 +1068,7 @@ export default function CloserDashboard() {
                                   type="text"
                                   value={taskForm.title}
                                   onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
-                                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
                                   placeholder="e.g., Follow up on product demo"
                                 />
                               </div>
@@ -1080,7 +1080,7 @@ export default function CloserDashboard() {
                                 <textarea
                                   value={taskForm.description}
                                   onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
-                                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-slate-900"
                                   rows={3}
                                   placeholder="Add any additional details..."
                                 />
@@ -1094,7 +1094,7 @@ export default function CloserDashboard() {
                                   <select
                                     value={taskForm.priority}
                                     onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value })}
-                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
                                   >
                                     <option value="low">Low</option>
                                     <option value="medium">Medium</option>
@@ -1111,7 +1111,7 @@ export default function CloserDashboard() {
                                     type="date"
                                     value={taskForm.dueDate}
                                     onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
-                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
                                   />
                                 </div>
                               </div>
