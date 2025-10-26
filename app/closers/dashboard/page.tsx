@@ -289,9 +289,9 @@ export default function CloserDashboard() {
       });
 
       if (response.ok) {
-        fetchTasks(leadEmail);
         setShowTaskForm(false);
         setTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
+        fetchTasks(leadEmail);
       } else {
         setError('Failed to create task');
       }
@@ -1052,20 +1052,109 @@ export default function CloserDashboard() {
                             Tasks
                             <span className="ml-2 text-sm text-slate-500 font-normal">({tasks.length})</span>
                     </h3>
-                          <button
-                            onClick={() => {
-                              setEditingTask(null);
-                              setTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
-                              setShowTaskForm(true);
-                            }}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center text-sm font-medium"
-                          >
-                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                            </svg>
-                            Add Task
-                          </button>
+                          {!showTaskForm && (
+                            <button
+                              onClick={() => {
+                                setEditingTask(null);
+                                setTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
+                                setShowTaskForm(true);
+                              }}
+                              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center text-sm font-medium"
+                            >
+                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                              </svg>
+                              Add Task
+                            </button>
+                          )}
                         </div>
+
+                        {/* Inline Task Form */}
+                        {showTaskForm && (
+                          <div className="bg-white border-2 border-blue-200 rounded-lg p-6 mb-6">
+                            <h4 className="text-lg font-semibold text-slate-900 mb-4">
+                              {editingTask ? 'Edit Task' : 'Create New Task'}
+                            </h4>
+                            
+                            <div className="space-y-4">
+                              <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                  Task Title *
+                                </label>
+                                <input
+                                  type="text"
+                                  value={taskForm.title}
+                                  onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
+                                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="e.g., Follow up on product demo"
+                                />
+                              </div>
+
+                              <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                  Description
+                                </label>
+                                <textarea
+                                  value={taskForm.description}
+                                  onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
+                                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                                  rows={3}
+                                  placeholder="Add any additional details..."
+                                />
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Priority
+                                  </label>
+                                  <select
+                                    value={taskForm.priority}
+                                    onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value })}
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  >
+                                    <option value="low">Low</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="high">High</option>
+                                    <option value="urgent">Urgent</option>
+                                  </select>
+                                </div>
+
+                                <div>
+                                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Due Date
+                                  </label>
+                                  <input
+                                    type="date"
+                                    value={taskForm.dueDate}
+                                    onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex justify-end space-x-3 mt-6">
+                              <button
+                                onClick={() => {
+                                  setShowTaskForm(false);
+                                  setEditingTask(null);
+                                  setTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
+                                }}
+                                className="px-4 py-2 text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors font-medium"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                onClick={editingTask ? handleSaveEditedTask : handleCreateTask}
+                                disabled={!taskForm.title}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                              >
+                                {editingTask ? 'Save Changes' : 'Create Task'}
+                              </button>
+                            </div>
+                          </div>
+                        )}
 
                         {isLoadingTasks ? (
                           <div className="flex items-center justify-center py-12">
@@ -1187,110 +1276,6 @@ export default function CloserDashboard() {
                     </div>
                             )}
                           </>
-                        )}
-
-                        {/* Task Form Modal */}
-                        {showTaskForm && (
-                          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100]" onClick={() => {
-                            setShowTaskForm(false);
-                            setEditingTask(null);
-                          }}>
-                            <div className="bg-white rounded-xl p-6 max-w-lg w-full mx-4" onClick={(e) => e.stopPropagation()}>
-                              <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-xl font-semibold text-slate-900">
-                                  {editingTask ? 'Edit Task' : 'Create New Task'}
-                                </h3>
-                                <button
-                                  onClick={() => {
-                                    setShowTaskForm(false);
-                                    setEditingTask(null);
-                                  }}
-                                  className="text-slate-400 hover:text-slate-600"
-                                >
-                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                  </svg>
-                                </button>
-                              </div>
-
-                              <div className="space-y-4">
-                                <div>
-                                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Task Title *
-                                  </label>
-                                  <input
-                                    type="text"
-                                    value={taskForm.title}
-                                    onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
-                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    placeholder="e.g., Follow up on product demo"
-                                  />
-                                </div>
-
-                                <div>
-                                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Description
-                                  </label>
-                                  <textarea
-                                    value={taskForm.description}
-                                    onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
-                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
-                                    rows={3}
-                                    placeholder="Add any additional details..."
-                                  />
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                      Priority
-                                    </label>
-                                    <select
-                                      value={taskForm.priority}
-                                      onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value })}
-                                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    >
-                                      <option value="low">Low</option>
-                                      <option value="medium">Medium</option>
-                                      <option value="high">High</option>
-                                      <option value="urgent">Urgent</option>
-                                    </select>
-                                  </div>
-
-                                  <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                      Due Date
-                                    </label>
-                                    <input
-                                      type="date"
-                                      value={taskForm.dueDate}
-                                      onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
-                                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div className="flex justify-end space-x-3 mt-6">
-                                <button
-                                  onClick={() => {
-                                    setShowTaskForm(false);
-                                    setEditingTask(null);
-                                  }}
-                                  className="px-4 py-2 text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors font-medium"
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  onClick={editingTask ? handleSaveEditedTask : handleCreateTask}
-                                  disabled={!taskForm.title}
-                                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
-                                >
-                                  {editingTask ? 'Save Changes' : 'Create Task'}
-                                </button>
-                              </div>
-                            </div>
-                          </div>
                         )}
                       </div>
                     )}
