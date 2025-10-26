@@ -124,6 +124,19 @@ export async function GET(request: NextRequest) {
       payouts,
     };
 
+    // Fetch appointments separately to calculate totalSales
+    const allAppointments = await prisma.appointment.findMany({
+      where: {
+        affiliateCode: affiliate.referralCode,
+        updatedAt: {
+          gte: startDate,
+        },
+      },
+    }).catch(() => []);
+
+    // Filter for converted appointments
+    const convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
+
     // Calculate stats using centralized lead calculation
     const totalClicks = affiliateWithData.clicks.length;
     const leadData = await calculateLeadsByCode(affiliate.referralCode, dateRange);
@@ -235,7 +248,7 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
   // Fetch all data for the entire date range at once for better performance
   const rangeEnd = new Date(startDate.getTime() + days * 24 * 60 * 60 * 1000);
   
-  const [allClicks, allConversions, allAppointments] = await Promise.all([
+  const [allClicks, allConversions, allAppointmentsForChart] = await Promise.all([
     prisma.affiliateClick.findMany({
       where: {
         affiliate: { referralCode: affiliateCode },
@@ -270,7 +283,7 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
 
   // Debug logging for yesterday
   if (dateRange === 'yesterday') {
-    console.log(`[DEBUG] All appointments found:`, allAppointments.map(apt => ({
+    console.log(`[DEBUG] All appointments found:`, allAppointmentsForChart.map(apt => ({
       id: apt.id,
       outcome: apt.outcome,
       saleValue: apt.saleValue,
@@ -280,7 +293,7 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
   }
 
   // Filter for converted appointments
-  const convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
+  const convertedAppointments = allAppointmentsForChart.filter(apt => apt.outcome === 'converted');
   
   // Debug logging for converted appointments
   if (dateRange === 'yesterday') {
