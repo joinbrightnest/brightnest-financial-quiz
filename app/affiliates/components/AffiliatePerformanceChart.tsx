@@ -191,7 +191,15 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
           Performance Over Time
         </h3>
         <div className="text-xs sm:text-sm text-gray-900">
-          {dailyStats.length === 24 && dailyStats[0]?.date.includes('T') ? '24 hours' : `${dailyStats.length} days`}
+          {(() => {
+            // Check if we have 24 data points (hourly breakdown) by checking if we have 24 entries
+            // or if any date contains a time component (HH:MM format)
+            const isHourly = dailyStats.length === 24 || 
+                            (dailyStats.length > 0 && dailyStats[0]?.date?.includes(':')) ||
+                            (dailyStats.length > 0 && /^\d{2}:\d{2}$/.test(dailyStats[0]?.date));
+            
+            return isHourly ? '24 hours' : `${dailyStats.length} ${dailyStats.length === 1 ? 'day' : 'days'}`;
+          })()}
         </div>
       </div>
 

@@ -411,7 +411,7 @@ export default function AffiliateDashboard() {
                   </div>
                   <div className="flex items-center justify-between p-2 sm:p-3 bg-gradient-to-r from-slate-50 to-white rounded-lg sm:rounded-xl border border-slate-200">
                     <div className="flex items-center space-x-2 sm:space-x-4">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg text-sm sm:text-base">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg text-sm sm:text-base">
                         2
                       </div>
                       <span className="text-xs sm:text-sm font-semibold text-slate-900">Quiz Completions</span>
@@ -423,7 +423,7 @@ export default function AffiliateDashboard() {
                   </div>
                   <div className="flex items-center justify-between p-2 sm:p-3 bg-gradient-to-r from-slate-50 to-white rounded-lg sm:rounded-xl border border-slate-200">
                     <div className="flex items-center space-x-2 sm:space-x-4">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg text-sm sm:text-base">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg text-sm sm:text-base">
                         3
                       </div>
                       <span className="text-xs sm:text-sm font-semibold text-slate-900">Booked Calls</span>
@@ -431,6 +431,18 @@ export default function AffiliateDashboard() {
                     <div className="text-right">
                       <p className="text-sm sm:text-lg font-bold text-slate-900">{(stats.totalBookings || 0).toLocaleString()}</p>
                       <p className="text-xs text-slate-600 font-medium">{(stats.totalClicks || 0) > 0 ? (((stats.totalBookings || 0) / (stats.totalClicks || 1)) * 100).toFixed(1) : 0}%</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-2 sm:p-3 bg-gradient-to-r from-slate-50 to-white rounded-lg sm:rounded-xl border border-slate-200">
+                    <div className="flex items-center space-x-2 sm:space-x-4">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg text-sm sm:text-base">
+                        4
+                      </div>
+                      <span className="text-xs sm:text-sm font-semibold text-slate-900">Sales</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm sm:text-lg font-bold text-slate-900">{(stats.totalSales || 0).toLocaleString()}</p>
+                      <p className="text-xs text-slate-600 font-medium">{(stats.totalBookings || 0) > 0 ? (((stats.totalSales || 0) / (stats.totalBookings || 1)) * 100).toFixed(1) : 0}%</p>
                     </div>
                   </div>
                 </div>
