@@ -202,6 +202,14 @@ export default function AdminDashboard() {
     return `${Math.round(ms / 3600000)}h ${Math.round((ms % 3600000) / 60000)}m`;
   };
 
+  // Format large numbers with 'k' suffix for thousands
+  const formatCurrency = (amount: number): string => {
+    if (amount >= 1000) {
+      return `$${(amount / 1000).toFixed(1)}k`;
+    }
+    return `$${amount.toFixed(2)}`;
+  };
+
   // Fetch settings
   const fetchSettings = async () => {
     try {
@@ -1778,27 +1786,27 @@ export default function AdminDashboard() {
               <div className="bg-white px-6 py-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${revenueMetrics.totalRevenue.toFixed(2)}</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">{formatCurrency(revenueMetrics.totalRevenue)}</div>
                     <div className="text-sm font-medium text-black mb-1">TOTAL DEAL AMOUNT</div>
                     <div className="text-xs text-black">Open + Closed deals</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${(revenueMetrics.totalRevenue * 0.3 / 1000000).toFixed(2)}</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">{formatCurrency(revenueMetrics.totalRevenue * 0.3)}</div>
                     <div className="text-sm font-medium text-black mb-1">WEIGHTED DEAL AMOUNT</div>
-                    <div className="text-xs text-black">Average per deal: ${(revenueMetrics.totalRevenue * 0.3 / (stats?.allLeads?.length || 1)).toFixed(2)}</div>
+                    <div className="text-xs text-black">Average per deal: {formatCurrency((revenueMetrics.totalRevenue * 0.3) / (stats?.allLeads?.length || 1))}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${(revenueMetrics.openDealAmount).toFixed(2)}</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">{formatCurrency(revenueMetrics.openDealAmount)}</div>
                     <div className="text-sm font-medium text-black mb-1">OPEN DEAL AMOUNT</div>
                     <div className="text-xs text-black">Potential + actual open deals</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${revenueMetrics.closedDealAmount.toFixed(2)}</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">{formatCurrency(revenueMetrics.closedDealAmount)}</div>
                     <div className="text-sm font-medium text-black mb-1">CLOSED DEAL AMOUNT</div>
                     <div className="text-xs text-black">Closed deals with sale values</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${revenueMetrics.newDealAmount.toFixed(2)}</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">{formatCurrency(revenueMetrics.newDealAmount)}</div>
                     <div className="text-sm font-medium text-black mb-1">NEW DEAL AMOUNT</div>
                     <div className="text-xs text-black">Deals with no outcome yet</div>
                   </div>
