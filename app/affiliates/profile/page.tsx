@@ -177,26 +177,24 @@ export default function AffiliateProfilePage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Full Name
                   </label>
-                  <input
-                    type="text"
-                    value={formData.name || ""}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black bg-white/50 backdrop-blur-sm transition-all duration-200"
-                    placeholder="Enter your full name"
-                  />
+                  <div className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm bg-gray-50/80 backdrop-blur-sm text-gray-700">
+                    {affiliate?.name || "Loading..."}
+                  </div>
+                  <p className="mt-2 text-xs text-gray-500">
+                    Your name cannot be changed
+                  </p>
                 </div>
                 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
                   </label>
-                  <input
-                    type="email"
-                    value={formData.email || ""}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black bg-white/50 backdrop-blur-sm transition-all duration-200"
-                    placeholder="Enter your email"
-                  />
+                  <div className="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm bg-gray-50/80 backdrop-blur-sm text-gray-700">
+                    {affiliate?.email || "Loading..."}
+                  </div>
+                  <p className="mt-2 text-xs text-gray-500">
+                    Your email cannot be changed
+                  </p>
                 </div>
               </div>
               
@@ -224,15 +222,6 @@ export default function AffiliateProfilePage() {
                     Your commission rate is set by your tier
                   </p>
                 </div>
-              </div>
-              
-              <div className="pt-4">
-                <button
-                  type="submit"
-                  className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg font-medium"
-                >
-                  Update Profile
-                </button>
               </div>
             </form>
           </motion.div>
