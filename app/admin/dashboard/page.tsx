@@ -715,38 +715,54 @@ export default function AdminDashboard() {
   };
 
   // Helper function to calculate revenue metrics
-  const calculateRevenueMetrics = (leads: any[], terminalOutcomesList: string[]) => {
+  const calculateRevenueMetrics = (leads: any[], terminalOutcomesList: string[], potentialValuePerCall: number) => {
     if (!leads || !Array.isArray(leads)) {
-      return { totalRevenue: 0, openDealAmount: 0 };
+      return { totalRevenue: 0, openDealAmount: 0, newDealAmount: 0 };
     }
 
     let totalRevenue = 0;
     let openDealAmount = 0;
+    let newDealAmount = 0;
 
     leads.forEach(lead => {
-      if (lead.saleValue) {
-        try {
-          const saleValue = parseFloat(lead.saleValue || '0');
-          totalRevenue += saleValue;
-          
-          // Check if this is an open deal (not a terminal outcome)
-          const appointment = lead.appointment;
-          const appointmentOutcome = appointment?.outcome;
-          const isTerminal = appointmentOutcome && terminalOutcomesList.includes(appointmentOutcome);
-          
-          if (!isTerminal) {
+      // Check if this is a booked call (has appointment)
+      const appointment = lead.appointment;
+      const appointmentOutcome = appointment?.outcome;
+      const hasSaleValue = lead.saleValue && parseFloat(lead.saleValue || '0') > 0;
+      
+      if (appointment) {
+        // This is a booked call
+        const isTerminal = appointmentOutcome && terminalOutcomesList.includes(appointmentOutcome);
+        
+        if (!isTerminal) {
+          // It's still an open deal
+          if (hasSaleValue) {
+            // Has actual sale value - use that for total revenue and open deal
+            const saleValue = parseFloat(lead.saleValue || '0');
+            totalRevenue += saleValue;
             openDealAmount += saleValue;
+          } else {
+            // No sale value yet - use potential value for open deal
+            openDealAmount += potentialValuePerCall;
           }
-        } catch (e) {
-          console.error('Error processing sale value:', e);
+          
+          // Check if it's a NEW deal (no outcome yet)
+          if (!appointmentOutcome) {
+            newDealAmount += potentialValuePerCall;
+          }
+        } else {
+          // It's a terminal outcome - only add to total revenue if has sale value
+          if (hasSaleValue) {
+            totalRevenue += parseFloat(lead.saleValue || '0');
+          }
         }
       }
     });
 
-    return { totalRevenue, openDealAmount };
+    return { totalRevenue, openDealAmount, newDealAmount };
   };
   
-  const revenueMetrics = calculateRevenueMetrics(stats?.allLeads || [], terminalOutcomes);
+  const revenueMetrics = calculateRevenueMetrics(stats?.allLeads || [], terminalOutcomes, newDealAmountPotential);
 
   // Filter and sort CRM leads
   const filteredCrmLeads = stats?.allLeads ? stats.allLeads.filter(lead => {
@@ -1766,9 +1782,9 @@ export default function AdminDashboard() {
                     <div className="text-xs text-black">Average per deal: ${(revenueMetrics.totalRevenue * 0.3 / (stats?.allLeads?.length || 1)).toFixed(2)}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${(revenueMetrics.openDealAmount / 1000000).toFixed(2)}</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">${(revenueMetrics.openDealAmount).toFixed(2)}</div>
                     <div className="text-sm font-medium text-black mb-1">OPEN DEAL AMOUNT</div>
-                    <div className="text-xs text-black">Average per deal: ${(revenueMetrics.openDealAmount / (stats?.allLeads?.length || 1)).toFixed(2)}</div>
+                    <div className="text-xs text-black">Potential + actual open deals</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600 mb-1">
@@ -1810,23 +1826,9 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${(() => {
-                      // Count booked calls (status includes 'Booked', 'Scheduled', 'Confirmed', etc.)
-                      const bookedCalls = stats?.allLeads?.filter(lead => 
-                        lead.status === 'Booked' ||
-                        lead.status === 'booked' ||
-                        lead.status === 'Scheduled' || 
-                        lead.status === 'Confirmed' || 
-                        lead.status === 'In Progress' ||
-                        lead.status === 'scheduled' ||
-                        lead.status === 'confirmed'
-                      ).length || 0;
-                      // Calculate: booked calls * potential value per call
-                      const totalNewDealAmount = bookedCalls * newDealAmountPotential;
-                      return totalNewDealAmount.toFixed(2);
-                    })()}</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">${revenueMetrics.newDealAmount.toFixed(2)}</div>
                     <div className="text-sm font-medium text-black mb-1">NEW DEAL AMOUNT</div>
-                    <div className="text-xs text-black">Average per deal: ${newDealAmountPotential.toFixed(2)}</div>
+                    <div className="text-xs text-black">Deals with no outcome yet</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600 mb-1">{((stats?.averageTimeMs || 0) / (1000 * 60 * 60 * 24)).toFixed(1)} days</div>
