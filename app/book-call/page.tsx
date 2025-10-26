@@ -312,15 +312,6 @@ export default function BookCallPage() {
       `}</style>
       
       <div className="min-h-screen bg-[#F8F7F5]">
-        {/* Top Header Bar */}
-        <div className="bg-gray-800 w-full py-3 sm:py-4">
-          <div className="max-w-md mx-auto px-4 sm:px-6">
-            <h1 className="text-white text-base sm:text-xl font-bold text-center tracking-wide">
-              BrightNest
-            </h1>
-          </div>
-        </div>
-
         {/* Main Content Section */}
         <div className="bg-[#333333] py-4 sm:py-6 px-4">
           <div className="max-w-4xl mx-auto text-center">
