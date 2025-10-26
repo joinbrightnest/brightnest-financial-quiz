@@ -717,12 +717,12 @@ export default function AdminDashboard() {
   // Helper function to calculate revenue metrics
   const calculateRevenueMetrics = (leads: any[], terminalOutcomesList: string[], potentialValuePerCall: number) => {
     if (!leads || !Array.isArray(leads)) {
-      return { totalRevenue: 0, openDealAmount: 0, newDealAmount: 0 };
+      return { totalRevenue: 0, openDealAmount: 0, newDealAmount: 0, closedDealAmount: 0 };
     }
 
-    let totalRevenue = 0;
     let openDealAmount = 0;
     let newDealAmount = 0;
+    let closedDealAmount = 0;
 
     leads.forEach(lead => {
       // Check if this is a booked call (has appointment)
@@ -745,24 +745,27 @@ export default function AdminDashboard() {
         if (!isTerminal) {
           // It's still an open deal (could have outcome or not)
           if (hasSaleValue) {
-            // Has actual sale value - use that for total revenue and open deal
+            // Has actual sale value - use that for open deal
             const saleValue = parseFloat(lead.saleValue || '0');
-            totalRevenue += saleValue;
             openDealAmount += saleValue;
           } else {
             // No sale value yet - use potential value for open deal
             openDealAmount += potentialValuePerCall;
           }
         } else {
-          // It's a terminal outcome - only add to total revenue if has sale value
+          // It's a terminal outcome - this is a closed deal
           if (hasSaleValue) {
-            totalRevenue += parseFloat(lead.saleValue || '0');
+            const saleValue = parseFloat(lead.saleValue || '0');
+            closedDealAmount += saleValue;
           }
         }
       }
     });
 
-    return { totalRevenue, openDealAmount, newDealAmount };
+    // TOTAL DEAL AMOUNT = OPEN + CLOSED
+    const totalRevenue = openDealAmount + closedDealAmount;
+
+    return { totalRevenue, openDealAmount, newDealAmount, closedDealAmount };
   };
   
   const revenueMetrics = calculateRevenueMetrics(stats?.allLeads || [], terminalOutcomes, newDealAmountPotential);
@@ -1775,9 +1778,9 @@ export default function AdminDashboard() {
               <div className="bg-white px-6 py-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${(revenueMetrics.totalRevenue / 1000000).toFixed(2)}</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">${revenueMetrics.totalRevenue.toFixed(2)}</div>
                     <div className="text-sm font-medium text-black mb-1">TOTAL DEAL AMOUNT</div>
-                    <div className="text-xs text-black">Average per deal: ${(revenueMetrics.totalRevenue / (stats?.allLeads?.length || 1)).toFixed(2)}</div>
+                    <div className="text-xs text-black">Open + Closed deals</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600 mb-1">${(revenueMetrics.totalRevenue * 0.3 / 1000000).toFixed(2)}</div>
@@ -1790,43 +1793,9 @@ export default function AdminDashboard() {
                     <div className="text-xs text-black">Potential + actual open deals</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">
-                      ${(() => {
-                        const closedLeads = stats?.allLeads?.filter(lead => 
-                          lead.status === 'Completed' || 
-                          lead.status === 'Purchased (Call)' || 
-                          lead.status === 'converted' ||
-                          lead.status === 'purchased'
-                        ) || [];
-                        const totalClosedAmount = closedLeads.reduce((sum, lead) => {
-                          const saleValue = parseFloat(lead.saleValue || '0');
-                          return sum + saleValue;
-                        }, 0);
-                        return totalClosedAmount.toFixed(2);
-                      })()}
-                    </div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">${revenueMetrics.closedDealAmount.toFixed(2)}</div>
                     <div className="text-sm font-medium text-black mb-1">CLOSED DEAL AMOUNT</div>
-                    <div className="text-xs text-black">
-                      Average per deal: ${(() => {
-                        const closedLeads = stats?.allLeads?.filter(lead => 
-                          lead.status === 'Completed' || 
-                          lead.status === 'Purchased (Call)' || 
-                          lead.status === 'converted' ||
-                          lead.status === 'purchased'
-                        ) || [];
-                        const closedLeadsWithValue = closedLeads.filter(lead => {
-                          const saleValue = parseFloat(lead.saleValue || '0');
-                          return saleValue > 0;
-                        });
-                        const totalClosedAmount = closedLeadsWithValue.reduce((sum, lead) => {
-                          const saleValue = parseFloat(lead.saleValue || '0');
-                          return sum + saleValue;
-                        }, 0);
-                        return closedLeadsWithValue.length > 0 
-                          ? (totalClosedAmount / closedLeadsWithValue.length).toFixed(2)
-                          : '0.00';
-                      })()}
-                    </div>
+                    <div className="text-xs text-black">Closed deals with sale values</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600 mb-1">${revenueMetrics.newDealAmount.toFixed(2)}</div>
