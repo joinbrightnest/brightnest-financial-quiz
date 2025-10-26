@@ -90,32 +90,8 @@ export default function AffiliateOverviewCards({ data }: AffiliateOverviewCardsP
               <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-2">
                 {card.title}
               </p>
-              <p className="text-3xl font-bold text-slate-900 mb-2">
+              <p className="text-3xl font-bold text-slate-900">
                 {card.value}
-              </p>
-              <div className="flex items-center mb-2">
-                <div className={`flex items-center text-sm font-semibold ${
-                  card.trendDirection === "up" 
-                    ? "text-emerald-600" 
-                    : card.trendDirection === "down"
-                    ? "text-red-600"
-                    : "text-slate-500"
-                }`}>
-                  <svg 
-                    className={`w-4 h-4 mr-1 ${
-                      card.trendDirection === "up" ? "rotate-0" : 
-                      card.trendDirection === "down" ? "rotate-180" : "hidden"
-                    }`} 
-                    fill="currentColor" 
-                    viewBox="0 0 20 20"
-                  >
-                    <path fillRule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                  </svg>
-                  {card.trend}
-                </div>
-              </div>
-              <p className="text-xs text-slate-500 font-medium">
-                {card.description}
               </p>
             </div>
           </div>
