@@ -180,17 +180,20 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
   const now = new Date();
   let days: number;
   let startDate: Date;
+  let useHourly: boolean = false;
   
   switch (dateRange) {
     case "today":
       days = 1;
       startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      useHourly = true; // Use hourly breakdown for single-day ranges
       break;
     case "yesterday":
       days = 1;
       const yesterday = new Date(now);
       yesterday.setDate(yesterday.getDate() - 1);
       startDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+      useHourly = true; // Use hourly breakdown for single-day ranges
       break;
     case "week":
       // Calculate days from start of week to today
@@ -266,35 +269,78 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
   // Filter for converted appointments
   const convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
 
-  for (let i = 0; i < days; i++) {
-    const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
-    const dayStart = new Date(date);
-    dayStart.setHours(0, 0, 0, 0);
-    const dayEnd = new Date(date);
-    dayEnd.setHours(23, 59, 59, 999);
-    const dateStr = date.toISOString().split('T')[0];
-    
-    // Filter data for this specific day
-    const dayClicks = allClicks.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
-    const dayConversions = allConversions.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
-    const dayAppointments = convertedAppointments.filter(apt => apt.updatedAt.toISOString().split('T')[0] === dateStr);
+  // If using hourly breakdown (for single-day ranges)
+  if (useHourly) {
+    for (let hour = 0; hour < 24; hour++) {
+      const hourStart = new Date(startDate);
+      hourStart.setHours(hour, 0, 0, 0);
+      const hourEnd = new Date(startDate);
+      hourEnd.setHours(hour, 59, 59, 999);
+      const hourLabel = `${hour.toString().padStart(2, '0')}:00`;
+      
+      // Filter data for this specific hour
+      const hourClicks = allClicks.filter(c => {
+        const clickHour = new Date(c.createdAt).getHours();
+        return clickHour === hour;
+      });
+      const hourConversions = allConversions.filter(c => {
+        const convHour = new Date(c.createdAt).getHours();
+        return convHour === hour;
+      });
+      const hourAppointments = convertedAppointments.filter(apt => {
+        const aptHour = new Date(apt.updatedAt).getHours();
+        return aptHour === hour;
+      });
 
-    // Calculate commission from appointments (actual sales)
-    const dayCommission = dayAppointments.reduce((sum, apt) => {
-      const saleValue = Number(apt.saleValue || 0);
-      return sum + (saleValue * Number(affiliate.commissionRate));
-    }, 0);
+      // Calculate commission from appointments (actual sales)
+      const hourCommission = hourAppointments.reduce((sum, apt) => {
+        const saleValue = Number(apt.saleValue || 0);
+        return sum + (saleValue * Number(affiliate.commissionRate));
+      }, 0);
 
-    // Calculate real leads for this specific day
-    const dayLeadData = await calculateLeadsWithDateRange(dayStart, dayEnd, undefined, affiliateCode);
-    
-    data.push({
-      date: dateStr,
-      clicks: dayClicks.length,
-      leads: dayLeadData.totalLeads,
-      bookedCalls: dayConversions.filter(c => c.conversionType === "booking").length,
-      commission: dayCommission,
-    });
+      // Calculate real leads for this specific hour
+      const hourLeadData = await calculateLeadsWithDateRange(hourStart, hourEnd, undefined, affiliateCode);
+      
+      data.push({
+        date: hourLabel,
+        clicks: hourClicks.length,
+        leads: hourLeadData.totalLeads,
+        bookedCalls: hourConversions.filter(c => c.conversionType === "booking").length,
+        commission: hourCommission,
+      });
+    }
+  } else {
+    // Use daily breakdown for multi-day ranges
+    for (let i = 0; i < days; i++) {
+      const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
+      const dayStart = new Date(date);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(date);
+      dayEnd.setHours(23, 59, 59, 999);
+      const dateStr = date.toISOString().split('T')[0];
+      
+      // Filter data for this specific day
+      const dayClicks = allClicks.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
+      const dayConversions = allConversions.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
+      const dayAppointments = convertedAppointments.filter(apt => apt.updatedAt.toISOString().split('T')[0] === dateStr);
+
+      // Calculate commission from appointments (actual sales)
+      const dayCommission = dayAppointments.reduce((sum, apt) => {
+        const saleValue = Number(apt.saleValue || 0);
+        return sum + (saleValue * Number(affiliate.commissionRate));
+      }, 0);
+
+      // Calculate real leads for this specific day
+      const dayLeadData = await calculateLeadsWithDateRange(dayStart, dayEnd, undefined, affiliateCode);
+      
+      data.push({
+        date: dateStr,
+        clicks: dayClicks.length,
+        leads: dayLeadData.totalLeads,
+        bookedCalls: dayConversions.filter(c => c.conversionType === "booking").length,
+        commission: dayCommission,
+      });
+    }
   }
   
   // If affiliate has commission but no appointments found, distribute it across active days
