@@ -195,29 +195,29 @@ export default function ConfirmationPage() {
                   </div>
                   <span className="text-sm sm:text-base text-[#333333]">Please be ready 5 minutes before your scheduled call time</span>
                 </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-6 h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-start space-x-2 sm:space-x-3">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                     </svg>
                   </div>
-                  <span className="text-[#333333]">Test your internet connection and camera beforehand</span>
+                  <span className="text-sm sm:text-base text-[#333333]">Test your internet connection and camera beforehand</span>
                 </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-6 h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-start space-x-2 sm:space-x-3">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                     </svg>
                   </div>
-                  <span className="text-[#333333]">Have a quiet, well-lit space for the call</span>
+                  <span className="text-sm sm:text-base text-[#333333]">Have a quiet, well-lit space for the call</span>
                 </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-6 h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-start space-x-2 sm:space-x-3">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                     </svg>
                   </div>
-                  <span className="text-[#333333]">Keep your financial documents ready for reference</span>
+                  <span className="text-sm sm:text-base text-[#333333]">Keep your financial documents ready for reference</span>
                 </div>
               </div>
               
