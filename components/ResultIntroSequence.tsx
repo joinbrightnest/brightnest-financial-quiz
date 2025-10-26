@@ -73,11 +73,11 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
   const text = current.text.replace("{{name}}", name);
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center overflow-hidden">
+    <div className="w-screen h-screen flex items-center justify-center overflow-hidden pb-20">
       <AnimatePresence mode="wait">
         <motion.div
           key={index}
-          className="w-full h-full flex flex-col items-center justify-center relative"
+          className="w-full h-full flex flex-col items-center justify-center relative px-4"
           style={{ backgroundColor: current.bg }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -87,15 +87,15 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
           {/* Logo for first slide */}
           {index === 0 && (
             <motion.div
-              className="flex items-center space-x-3 mb-8"
+              className="flex items-center space-x-2 sm:space-x-3 mb-6 sm:mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
             >
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-400 to-teal-400 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">B</span>
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-400 to-teal-400 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg sm:text-xl">B</span>
               </div>
-              <h1 className="text-3xl font-bold" style={{ color: current.color }}>
+              <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: current.color }}>
                 BrightNest
               </h1>
             </motion.div>
@@ -103,13 +103,13 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
 
           {/* Main text */}
           <motion.div
-            className="text-center px-8 max-w-2xl"
+            className="text-center px-4 sm:px-8 max-w-2xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index === 0 ? 1 : 0.5, duration: 0.8 }}
           >
             <motion.h1 
-              className="text-2xl md:text-3xl font-medium leading-relaxed"
+              className="text-xl sm:text-2xl md:text-3xl font-medium leading-relaxed text-center"
               style={{ color: current.color }}
             >
               {text}
@@ -118,7 +118,7 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
             {/* Subtitle for first slide */}
             {current.subtitle && (
               <motion.p
-                className="text-lg mt-4 opacity-80"
+                className="text-base sm:text-lg mt-4 opacity-80 text-center"
                 style={{ color: current.color }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.8 }}
@@ -131,7 +131,7 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
 
           {/* Progress indicator */}
           <motion.div
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2"
+            className="absolute bottom-16 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-1.5 sm:space-x-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.6 }}

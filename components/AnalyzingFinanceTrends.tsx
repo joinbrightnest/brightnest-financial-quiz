@@ -104,7 +104,7 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
           {label}
         </motion.span>
         <motion.span 
-          className={`text-sm font-medium ${isCompleted ? 'text-gray-700' : 'text-gray-400'}`}
+          className={`text-xs sm:text-sm font-medium ${isCompleted ? 'text-gray-700' : 'text-gray-400'}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: isVisible ? 1 : 0 }}
           transition={{ delay: 0.5 }}
@@ -407,31 +407,31 @@ const AnalyzingFinanceTrends = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Top Bar with BrightNest Logo and User Info */}
-      <div className="w-full bg-[#28303B] px-6 py-6 relative">
+      <div className="w-full bg-[#28303B] px-4 py-4 relative z-10">
         {/* BrightNest text - centered horizontally within the full width */}
         <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
-          <span className="text-xl font-bold text-white font-serif">BrightNest</span>
+          <span className="text-base font-bold text-white font-serif">BrightNest</span>
         </div>
-        {/* User Info - positioned closer to center */}
-        <div className="absolute right-24 top-1/2 -translate-y-1/2 flex items-center space-x-3">
-          <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-            <span className="text-white font-bold text-sm">{userNameInitial}</span>
+        {/* User Info - positioned closer to center, hidden on small mobile */}
+        <div className="absolute right-16 top-1/2 -translate-y-1/2 flex items-center space-x-2 sm:space-x-3">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 bg-green-500 rounded-full flex items-center justify-center">
+            <span className="text-white font-bold text-xs sm:text-sm">{userNameInitial}</span>
           </div>
-          <span className="text-white font-medium text-sm">{userName}</span>
+          <span className="text-white font-medium text-xs sm:text-sm max-w-[80px] sm:max-w-none truncate">{userName}</span>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-start justify-center px-4 pt-8">
+      <div className="flex-1 flex items-start justify-center px-4 pt-6 pb-20 overflow-y-auto">
         <div className="relative z-10 w-full max-w-none">
         {/* Header */}
         <motion.div
-          className="text-center mb-8"
+          className="text-center mb-6 sm:mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-              <h1 className="text-xl font-serif font-semibold text-gray-800 mb-2">
+              <h1 className="text-lg sm:text-xl font-serif font-semibold text-gray-800 mb-2 text-center">
             {loadingTexts[currentTextIndex]}
             <motion.span
               initial={{ opacity: 0 }}
@@ -479,7 +479,7 @@ const AnalyzingFinanceTrends = () => {
         </motion.div>
 
         {/* Progress Bars */}
-        <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100 mb-6 mx-4">
+        <div className="bg-white rounded-xl p-6 sm:p-8 shadow-lg border border-gray-100 mb-6">
           {progressBars.map((bar, index) => (
             <ProgressBar
               key={index}
@@ -494,7 +494,7 @@ const AnalyzingFinanceTrends = () => {
 
         {/* Progress Dots with Checkmarks */}
         <motion.div
-          className="flex justify-center space-x-3 mb-4"
+          className="flex justify-center space-x-2 sm:space-x-3 mb-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4 }}
@@ -516,7 +516,7 @@ const AnalyzingFinanceTrends = () => {
               {completedBars.includes(index) ? (
                 // Show checkmark with bar color when bar is completed
                 <motion.div 
-                  className={`w-6 h-6 rounded-full flex items-center justify-center ${bar.color}`}
+                  className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center ${bar.color}`}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ 
@@ -524,13 +524,13 @@ const AnalyzingFinanceTrends = () => {
                     delay: 0 // Show checkmark immediately for completed bars
                   }}
                 >
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                   </svg>
                 </motion.div>
               ) : (
                 // Show empty gray dot for current and future bars
-                <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
+                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gray-300 rounded-full"></div>
               )}
             </motion.div>
           ))}
@@ -538,12 +538,12 @@ const AnalyzingFinanceTrends = () => {
 
         {/* Trust Text - Always visible under dots */}
         <motion.div
-          className="text-center"
+          className="text-center px-2"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          <p className="text-sm text-gray-600">
+          <p className="text-xs sm:text-sm text-gray-600 text-center">
             Sit tight! We're building your perfect plan based on millions of data points from successful BrightNest users.
           </p>
         </motion.div>
