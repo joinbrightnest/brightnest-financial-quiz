@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     // Get current settings from database
     // If settings table doesn't exist, create it and insert default values
     const settings = await prisma.$queryRaw`
-      SELECT * FROM "Settings" WHERE key IN ('qualification_threshold', 'commission_hold_days', 'minimum_payout', 'payout_schedule', 'new_deal_amount_potential')
+      SELECT * FROM "Settings" WHERE key IN ('qualification_threshold', 'commission_hold_days', 'minimum_payout', 'payout_schedule', 'new_deal_amount_potential', 'terminal_outcomes')
     `.catch(async () => {
       // If Settings table doesn't exist, create it and insert default values
       await prisma.$executeRaw`
@@ -38,7 +38,8 @@ export async function GET(request: NextRequest) {
           ('commission_hold_days', '30'),
           ('minimum_payout', '50'),
           ('payout_schedule', 'monthly-1st'),
-          ('new_deal_amount_potential', '5000')
+          ('new_deal_amount_potential', '5000'),
+          ('terminal_outcomes', '["not_interested", "converted"]')
         ON CONFLICT (key) DO NOTHING
       `;
       
@@ -47,7 +48,8 @@ export async function GET(request: NextRequest) {
         { key: 'commission_hold_days', value: '30' },
         { key: 'minimum_payout', value: '50' },
         { key: 'payout_schedule', value: 'monthly-1st' },
-        { key: 'new_deal_amount_potential', value: '5000' }
+        { key: 'new_deal_amount_potential', value: '5000' },
+        { key: 'terminal_outcomes', value: '["not_interested", "converted"]' }
       ];
     });
 
@@ -64,7 +66,8 @@ export async function GET(request: NextRequest) {
         commissionHoldDays: parseInt(settingsObj.commission_hold_days || '30'),
         minimumPayout: parseFloat(settingsObj.minimum_payout || '50'),
         payoutSchedule: settingsObj.payout_schedule || 'monthly-1st',
-        newDealAmountPotential: parseFloat(settingsObj.new_deal_amount_potential || '5000')
+        newDealAmountPotential: parseFloat(settingsObj.new_deal_amount_potential || '5000'),
+        terminalOutcomes: JSON.parse(settingsObj.terminal_outcomes || '["not_interested", "converted"]')
       }
     });
   } catch (error) {
@@ -87,7 +90,7 @@ export async function POST(request: NextRequest) {
   }
   
   try {
-    const { qualificationThreshold, commissionHoldDays, minimumPayout, payoutSchedule, newDealAmountPotential } = await request.json();
+    const { qualificationThreshold, commissionHoldDays, minimumPayout, payoutSchedule, newDealAmountPotential, terminalOutcomes } = await request.json();
 
     // Validate qualification threshold
     if (qualificationThreshold !== undefined && (qualificationThreshold < 1 || qualificationThreshold > 20)) {
@@ -127,6 +130,26 @@ export async function POST(request: NextRequest) {
         success: false,
         error: 'Invalid new deal amount potential. Must be between 0 and 100000.'
       }, { status: 400 });
+    }
+
+    // Validate terminal outcomes
+    if (terminalOutcomes !== undefined) {
+      if (!Array.isArray(terminalOutcomes)) {
+        return NextResponse.json({
+          success: false,
+          error: 'Terminal outcomes must be an array.'
+        }, { status: 400 });
+      }
+      
+      const validOutcomes = ['converted', 'not_interested', 'needs_follow_up', 'wrong_number', 'no_answer', 'callback_requested', 'rescheduled'];
+      const invalidOutcomes = terminalOutcomes.filter((outcome: string) => !validOutcomes.includes(outcome));
+      
+      if (invalidOutcomes.length > 0) {
+        return NextResponse.json({
+          success: false,
+          error: `Invalid outcome(s): ${invalidOutcomes.join(', ')}. Valid outcomes are: ${validOutcomes.join(', ')}.`
+        }, { status: 400 });
+      }
     }
 
     // Ensure Settings table exists
@@ -207,6 +230,20 @@ export async function POST(request: NextRequest) {
       updates.push('new deal amount potential');
     }
 
+    // Update terminal outcomes if provided
+    if (terminalOutcomes !== undefined) {
+      const terminalOutcomesJson = JSON.stringify(terminalOutcomes);
+      await prisma.$executeRaw`
+        INSERT INTO "Settings" (key, value) 
+        VALUES ('terminal_outcomes', ${terminalOutcomesJson})
+        ON CONFLICT (key) 
+        DO UPDATE SET 
+          value = ${terminalOutcomesJson},
+          updated_at = CURRENT_TIMESTAMP
+      `;
+      updates.push('terminal outcomes');
+    }
+
     return NextResponse.json({
       success: true,
       message: `${updates.join(' and ')} updated successfully`,
@@ -214,7 +251,8 @@ export async function POST(request: NextRequest) {
       commissionHoldDays,
       minimumPayout,
       payoutSchedule,
-      newDealAmountPotential
+      newDealAmountPotential,
+      terminalOutcomes
     });
   } catch (error) {
     console.error('Error updating settings:', error);

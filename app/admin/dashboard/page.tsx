@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminAuth } from "@/lib/admin-auth";
 import CEOAnalytics from "../components/CEOAnalytics";
@@ -53,6 +53,9 @@ interface AdminStats {
     }>;
     source?: string;
     saleValue?: string | null;
+    appointment?: {
+      outcome?: string | null;
+    } | null;
   }>;
   quizTypes?: Array<{
     name: string;
@@ -139,9 +142,11 @@ export default function AdminDashboard() {
   const [minimumPayout, setMinimumPayout] = useState(50);
   const [payoutSchedule, setPayoutSchedule] = useState("monthly-1st");
   const [newDealAmountPotential, setNewDealAmountPotential] = useState(5000);
+  const [terminalOutcomes, setTerminalOutcomes] = useState<string[]>(['not_interested', 'converted']);
   const [isUpdatingHoldDays, setIsUpdatingHoldDays] = useState(false);
   const [isUpdatingPayoutSettings, setIsUpdatingPayoutSettings] = useState(false);
   const [isUpdatingCrmSettings, setIsUpdatingCrmSettings] = useState(false);
+  const [isUpdatingTerminalOutcomes, setIsUpdatingTerminalOutcomes] = useState(false);
   const [commissionReleaseStatus, setCommissionReleaseStatus] = useState<any>(null);
   const [isProcessingReleases, setIsProcessingReleases] = useState(false);
   const [selectedLead, setSelectedLead] = useState<any>(null);
@@ -209,6 +214,7 @@ export default function AdminDashboard() {
         setMinimumPayout(data.settings.minimumPayout || 50);
         setPayoutSchedule(data.settings.payoutSchedule || "monthly-1st");
         setNewDealAmountPotential(data.settings.newDealAmountPotential || 5000);
+        setTerminalOutcomes(data.settings.terminalOutcomes || ['not_interested', 'converted']);
         console.log('Settings loaded:', data.settings); // Debug log
       }
     } catch (error) {
@@ -707,6 +713,40 @@ export default function AdminDashboard() {
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
   };
+
+  // Compute revenue metrics
+  const revenueMetrics = useMemo(() => {
+    if (!stats?.allLeads) {
+      return { totalRevenue: 0, openDealAmount: 0 };
+    }
+
+    // Calculate total revenue from all leads with appointments and sale values
+    const totalRevenue = stats.allLeads.reduce((sum, lead) => {
+      if (lead.saleValue) {
+        const saleValue = parseFloat(lead.saleValue || '0');
+        return sum + saleValue;
+      }
+      return sum;
+    }, 0);
+
+    // Calculate open deal amount: deals that DON'T have terminal outcomes
+    const openDealAmount = stats.allLeads.reduce((sum, lead) => {
+      if (lead.saleValue) {
+        const appointment = lead.appointment;
+        // If there's no appointment or no outcome, it's an open deal
+        // If there's an outcome but it's not in terminalOutcomes, it's an open deal
+        const isTerminal = appointment?.outcome && terminalOutcomes.includes(appointment.outcome);
+        
+        if (!isTerminal) {
+          const saleValue = parseFloat(lead.saleValue || '0');
+          return sum + saleValue;
+        }
+      }
+      return sum;
+    }, 0);
+
+    return { totalRevenue, openDealAmount };
+  }, [stats?.allLeads, terminalOutcomes]);
 
   // Filter and sort CRM leads
   const filteredCrmLeads = stats?.allLeads ? stats.allLeads.filter(lead => {
@@ -1716,19 +1756,19 @@ export default function AdminDashboard() {
               <div className="bg-white px-6 py-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${((stats?.totalRevenue || 0) / 1000000).toFixed(2)}</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">${(revenueMetrics.totalRevenue / 1000000).toFixed(2)}</div>
                     <div className="text-sm font-medium text-black mb-1">TOTAL DEAL AMOUNT</div>
-                    <div className="text-xs text-black">Average per deal: ${(stats?.totalRevenue / (stats?.allLeads?.length || 1) || 0).toFixed(2)}</div>
+                    <div className="text-xs text-black">Average per deal: ${(revenueMetrics.totalRevenue / (stats?.allLeads?.length || 1)).toFixed(2)}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${((stats?.totalRevenue || 0) * 0.3 / 1000000).toFixed(2)}</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">${(revenueMetrics.totalRevenue * 0.3 / 1000000).toFixed(2)}</div>
                     <div className="text-sm font-medium text-black mb-1">WEIGHTED DEAL AMOUNT</div>
-                    <div className="text-xs text-black">Average per deal: ${((stats?.totalRevenue || 0) * 0.3 / (stats?.allLeads?.length || 1)).toFixed(2)}</div>
+                    <div className="text-xs text-black">Average per deal: ${(revenueMetrics.totalRevenue * 0.3 / (stats?.allLeads?.length || 1)).toFixed(2)}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${((stats?.totalRevenue || 0) * 0.4 / 1000000).toFixed(2)}</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">${(revenueMetrics.openDealAmount / 1000000).toFixed(2)}</div>
                     <div className="text-sm font-medium text-black mb-1">OPEN DEAL AMOUNT</div>
-                    <div className="text-xs text-black">Average per deal: ${((stats?.totalRevenue || 0) * 0.4 / (stats?.allLeads?.length || 1)).toFixed(2)}</div>
+                    <div className="text-xs text-black">Average per deal: ${(revenueMetrics.openDealAmount / (stats?.allLeads?.length || 1)).toFixed(2)}</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600 mb-1">
@@ -2653,6 +2693,71 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
+                  {/* Terminal Outcomes Settings */}
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <h3 className="text-lg font-medium text-gray-900 mb-3">Terminal Outcomes Configuration</h3>
+                    <p className="text-gray-600 mb-4">
+                      Configure which deal outcomes are considered "terminal" (closed deals that should NOT be counted in OPEN DEAL AMOUNT). 
+                      All other deals will be counted as open deals.
+                    </p>
+                    
+                    <div className="mb-4">
+                      <label className="text-sm font-medium text-gray-700 mb-2 block">
+                        Select Terminal Outcomes:
+                      </label>
+                      <div className="space-y-2">
+                        {['converted', 'not_interested', 'needs_follow_up', 'wrong_number', 'no_answer', 'callback_requested', 'rescheduled'].map((outcome) => (
+                          <label key={outcome} className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              checked={terminalOutcomes.includes(outcome)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setTerminalOutcomes([...terminalOutcomes, outcome]);
+                                } else {
+                                  setTerminalOutcomes(terminalOutcomes.filter(o => o !== outcome));
+                                }
+                              }}
+                              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <span className="text-sm text-gray-700 capitalize">{outcome.replace('_', ' ')}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4">
+                      <button 
+                        onClick={async () => {
+                          setIsUpdatingTerminalOutcomes(true);
+                          try {
+                            const response = await fetch('/api/admin/settings', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ terminalOutcomes })
+                            });
+                            const data = await response.json();
+                            if (data.success) {
+                              alert('Terminal outcomes updated successfully');
+                              await fetchSettings();
+                            } else {
+                              alert('Failed to update terminal outcomes: ' + data.error);
+                            }
+                          } catch (error) {
+                            console.error('Error updating terminal outcomes:', error);
+                            alert('Error updating terminal outcomes. Please try again.');
+                          } finally {
+                            setIsUpdatingTerminalOutcomes(false);
+                          }
+                        }}
+                        disabled={isUpdatingTerminalOutcomes}
+                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isUpdatingTerminalOutcomes ? 'Updating...' : 'Update Terminal Outcomes'}
+                      </button>
+                    </div>
+                  </div>
+
                   {/* Current Settings Info */}
                   <div className="bg-gray-50 rounded-lg p-4">
                     <h4 className="text-sm font-medium text-gray-900 mb-2">Current Settings</h4>
@@ -2664,6 +2769,8 @@ export default function AdminDashboard() {
                       <p>• Minimum Payout: <span className="font-medium">${minimumPayout}</span></p>
                       <p>• Payout Schedule: <span className="font-medium">{payoutSchedule.charAt(0).toUpperCase() + payoutSchedule.slice(1)}</span></p>
                       <p>• Commissions held for {commissionHoldDays} days before becoming available</p>
+                      <p>• New Deal Amount Potential: <span className="font-medium">${newDealAmountPotential}</span></p>
+                      <p>• Terminal Outcomes: <span className="font-medium">{terminalOutcomes.map(o => o.replace('_', ' ')).join(', ')}</span></p>
                     </div>
                   </div>
                 </div>
