@@ -23,9 +23,9 @@ export async function GET(request: NextRequest) {
     // Calculate date filter
     const now = new Date();
     let startDateStr = "";
+    let startDate: Date | null = null;
     
     if (dateRange !== "all") {
-      let startDate: Date;
       switch (dateRange) {
         case "24h":
           startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -109,13 +109,14 @@ export async function GET(request: NextRequest) {
 
     // Get pending/held commissions from conversions table (not from payouts)
     // These are commissions that are held and waiting to become available
+    const conversionDateFilter = startDate ? `AND created_at >= '${startDate.toISOString()}'` : '';
     const heldCommissionsStats = await prisma.$queryRawUnsafe(`
       SELECT 
         COALESCE(SUM(commission_amount), 0) as total_amount,
         COUNT(DISTINCT affiliate_id) as affiliate_count
       FROM affiliate_conversions
       WHERE commission_status = 'held'
-      ${affiliateId ? `AND affiliate_id = '${affiliateId}'` : ''} ${startDateStr}
+      ${affiliateId ? `AND affiliate_id = '${affiliateId}'` : ''} ${conversionDateFilter}
     `) as any[];
     
     // Get total earned commissions (all affiliates) - note: this uses all-time data
