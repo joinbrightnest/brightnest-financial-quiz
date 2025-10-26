@@ -1791,9 +1791,9 @@ export default function AdminDashboard() {
                     <div className="text-xs text-black">Open + Closed deals</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">{formatCurrency(revenueMetrics.totalRevenue * 0.3)}</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">$0.00</div>
                     <div className="text-sm font-medium text-black mb-1">WEIGHTED DEAL AMOUNT</div>
-                    <div className="text-xs text-black">Average per deal: {formatCurrency((revenueMetrics.totalRevenue * 0.3) / (stats?.allLeads?.length || 1))}</div>
+                    <div className="text-xs text-black">To be determined</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600 mb-1">{formatCurrency(revenueMetrics.openDealAmount)}</div>
