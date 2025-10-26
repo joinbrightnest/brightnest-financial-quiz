@@ -61,31 +61,31 @@ export default function AffiliateOverview({ externalDateRange }: AffiliateOvervi
   // Use external dateRange if provided, otherwise use internal state
   const effectiveDateRange = externalDateRange || dateRange;
 
-  useEffect(() => {
-    const fetchAffiliateData = async () => {
-      try {
-        setLoading(true);
-        const params = new URLSearchParams({
-          dateRange: effectiveDateRange,
-          tier: selectedTier,
-        });
+  const fetchAffiliateData = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams({
+        dateRange: effectiveDateRange,
+        tier: selectedTier,
+      });
 
-        const response = await fetch(`/api/affiliates/overview?${params}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch affiliate data");
-        }
-
-        const result = await response.json();
-        setData(result);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching affiliate data:", err);
-        setError(err instanceof Error ? err.message : "Failed to load affiliate data");
-      } finally {
-        setLoading(false);
+      const response = await fetch(`/api/affiliates/overview?${params}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch affiliate data");
       }
-    };
 
+      const result = await response.json();
+      setData(result);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching affiliate data:", err);
+      setError(err instanceof Error ? err.message : "Failed to load affiliate data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchAffiliateData();
   }, [effectiveDateRange, selectedTier]);
 
