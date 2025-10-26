@@ -129,7 +129,9 @@ export async function GET(request: NextRequest) {
     const leadData = await calculateLeadsByCode(affiliate.referralCode, dateRange);
     const totalLeads = leadData.totalLeads;
     const totalBookings = affiliateWithData.conversions.filter(c => c.conversionType === "booking").length;
-    const totalSales = affiliateWithData.conversions.filter(c => c.conversionType === "sale").length;
+    
+    // Count sales from appointments (converted appointments), not from affiliate_conversions
+    const totalSales = convertedAppointments.length;
     const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
 
     // Calculate pending and paid commissions from filtered payouts
