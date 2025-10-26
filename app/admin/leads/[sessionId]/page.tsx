@@ -266,6 +266,25 @@ export default function LeadDetailsPage() {
             </div>
           </div>
 
+          {/* Quiz Responses */}
+          <div className="bg-white rounded-xl border border-slate-200 p-6">
+            <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
+              <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+              </svg>
+              Quiz Responses
+              <span className="ml-2 text-sm text-slate-500 font-normal">({leadData.answers.length} Questions)</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {leadData.answers.map((answer, index) => (
+                <div key={index} className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                  <p className="text-sm font-semibold text-slate-900 mb-2">{answer.questionText || `Question ${index + 1}`}</p>
+                  <p className="text-sm text-slate-700">{answer.answer || 'No answer provided'}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Navigation Tabs */}
           <div className="border-b border-gray-200">
             <div className="flex space-x-8">
@@ -288,21 +307,44 @@ export default function LeadDetailsPage() {
           {/* Tab Content */}
           {activeTab === 'activity' && (
             <div className="bg-white rounded-xl border border-slate-200 p-6">
-              <h3 className="text-lg font-semibold text-slate-900 mb-6">Activity</h3>
-              <div className="space-y-4">
-                {leadData.answers.length > 0 && leadData.answers.map((answer, index) => (
-                  <div key={index} className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                    <div className="flex items-start">
-                      <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-sm font-semibold text-slate-700 mr-4 flex-shrink-0">
-                        {index + 1}
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-semibold text-slate-900 mb-2">{answer.questionText || `Question ${index + 1}`}</p>
-                        <p className="text-sm text-slate-700">{answer.answer || 'No answer provided'}</p>
-                      </div>
-                    </div>
+              <h3 className="text-lg font-semibold text-slate-900 mb-6">Lead Information</h3>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div>
+                    <p className="text-sm text-slate-600 mb-2">Full Name</p>
+                    <p className="text-lg font-semibold text-slate-900">{getLeadName()}</p>
                   </div>
-                ))}
+                  <div>
+                    <p className="text-sm text-slate-600 mb-2">Email Address</p>
+                    <p className="text-lg font-semibold text-slate-900">{getLeadEmail()}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-slate-600 mb-2">Status</p>
+                    <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${
+                      leadData.status === "Completed" || leadData.status === "completed" || leadData.status === "Booked"
+                        ? "bg-green-100 text-green-800" 
+                        : "bg-orange-100 text-orange-800"
+                    }`}>
+                      {leadData.status}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm text-slate-600 mb-2">Deal Owner</p>
+                    <p className="text-lg font-semibold text-slate-900">{leadData.affiliate?.name || 'Admin'}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-slate-600 mb-2">Close Date</p>
+                    <p className="text-lg font-semibold text-slate-900">
+                      {leadData.completedAt ? new Date(leadData.completedAt).toLocaleDateString('en-GB') : '--'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-slate-600 mb-2">Lead Source</p>
+                    <span className="inline-flex px-3 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-800">
+                      {leadData.affiliate?.referralCode ? 'Affiliate' : 'Website'}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           )}
