@@ -323,7 +323,7 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
         return clickDate >= hourStart && clickDate <= hourEnd;
       });
       
-      const hourConversions = allConversions.filter(c => {
+      const hourBookings = bookingConversions.filter(c => {
         const convDate = new Date(c.createdAt);
         return convDate >= hourStart && convDate <= hourEnd;
       });
@@ -345,7 +345,7 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
         date: hourLabel,
         clicks: hourClicks.length,
         leads: hourLeadData.totalLeads,
-        bookedCalls: hourConversions.length,
+        bookedCalls: hourBookings.length,
         commission: hourCommission,
       });
     }
