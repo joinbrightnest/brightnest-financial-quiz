@@ -303,29 +303,8 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
     })
   ]);
 
-  // Debug logging for yesterday
-  if (dateRange === 'yesterday') {
-    console.log(`[DEBUG] All appointments found:`, allAppointmentsForChart.map(apt => ({
-      id: apt.id,
-      outcome: apt.outcome,
-      saleValue: apt.saleValue,
-      updatedAt: apt.updatedAt,
-      affiliateCode: apt.affiliateCode
-    })));
-  }
-
   // Filter for converted appointments
   const convertedAppointments = allAppointmentsForChart.filter(apt => apt.outcome === 'converted');
-  
-  // Debug logging for converted appointments
-  if (dateRange === 'yesterday') {
-    console.log(`[DEBUG] Converted appointments:`, convertedAppointments.length);
-    console.log(`[DEBUG] Converted appointments details:`, convertedAppointments.map(apt => ({
-      id: apt.id,
-      saleValue: apt.saleValue,
-      updatedAt: apt.updatedAt
-    })));
-  }
 
   // If using hourly breakdown (for single-day ranges)
   if (useHourly) {
@@ -364,17 +343,6 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
         const saleValue = Number(apt.saleValue || 0);
         return sum + (saleValue * Number(affiliate.commissionRate));
       }, 0);
-
-      // Debug logging for specific hours with earnings
-      if (dateRange === 'yesterday' && hourCommission > 0) {
-        console.log(`[${hourLabel}] Found ${hourAppointments.length} appointments with total commission of $${hourCommission}`);
-        console.log(`[${hourLabel}] Appointment details:`, hourAppointments.map(apt => ({
-          id: apt.id,
-          saleValue: apt.saleValue,
-          commissionRate: affiliate.commissionRate,
-          calculatedCommission: Number(apt.saleValue || 0) * Number(affiliate.commissionRate)
-        })));
-      }
 
       // Calculate real leads for this specific hour
       const hourLeadData = await calculateLeadsWithDateRange(hourStart, hourEnd, undefined, affiliateCode);
