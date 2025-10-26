@@ -395,8 +395,12 @@ export async function GET(request: NextRequest) {
         ...lead,
         status,
         source,
-        saleValue: appointment?.saleValue || null, // Include sale value from appointment
-        appointment: appointment // Include appointment data
+        saleValue: appointment?.saleValue ? appointment.saleValue.toString() : null, // Include sale value from appointment
+        appointment: {
+          outcome: appointment?.outcome || null,
+          saleValue: appointment?.saleValue ? appointment.saleValue.toString() : null,
+          id: appointment?.id || null
+        } // Include only necessary appointment data
       };
     });
 
