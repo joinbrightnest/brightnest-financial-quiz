@@ -48,7 +48,11 @@ interface PayoutSummary {
   totalAffiliates: number;
 }
 
-export default function CommissionPayoutManager() {
+interface CommissionPayoutManagerProps {
+  dateRange?: string;
+}
+
+export default function CommissionPayoutManager({ dateRange = "all" }: CommissionPayoutManagerProps) {
   const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
   const [payouts, setPayouts] = useState<Payout[]>([]);
   const [summary, setSummary] = useState<PayoutSummary | null>(null);
@@ -68,14 +72,14 @@ export default function CommissionPayoutManager() {
 
   useEffect(() => {
     fetchData();
-  }, [filterStatus]);
+  }, [filterStatus, dateRange]);
 
   const fetchData = async () => {
     try {
       setLoading(true);
       const [affiliatesRes, payoutsRes] = await Promise.all([
-        fetch("/api/admin/affiliates"),
-        fetch(`/api/admin/payouts?status=${filterStatus}`),
+        fetch(`/api/admin/affiliates?dateRange=${dateRange}`),
+        fetch(`/api/admin/payouts?status=${filterStatus}&dateRange=${dateRange}`),
       ]);
 
       if (affiliatesRes.ok) {

@@ -16,6 +16,31 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status") || "approved";
     const tier = searchParams.get("tier") || "all";
+    const dateRange = searchParams.get("dateRange") || "all";
+    
+    // Calculate date filter
+    const now = new Date();
+    let startDate: Date;
+    
+    switch (dateRange) {
+      case "24h":
+        startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        break;
+      case "7d":
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        break;
+      case "30d":
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        break;
+      case "90d":
+        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+        break;
+      case "1y":
+        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+        break;
+      default:
+        startDate = new Date(0); // All time
+    }
 
     // Build where clause
     const whereClause: any = {};
@@ -34,12 +59,21 @@ export async function GET(request: NextRequest) {
     const affiliates = await prisma.affiliate.findMany({
       where: whereClause,
       include: {
-        payouts: true,
+        payouts: {
+          where: {
+            createdAt: {
+              gte: startDate,
+            },
+          },
+        },
         conversions: {
           where: {
             commissionAmount: {
               gt: 0 // Only conversions with actual commission amounts
-            }
+            },
+            createdAt: {
+              gte: startDate,
+            },
           }
         },
       },

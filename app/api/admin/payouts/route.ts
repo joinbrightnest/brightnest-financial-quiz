@@ -15,9 +15,38 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
     const affiliateId = searchParams.get("affiliateId");
+    const dateRange = searchParams.get("dateRange") || "all";
     const page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "50");
     const offset = (page - 1) * limit;
+
+    // Calculate date filter
+    const now = new Date();
+    let startDateStr = "";
+    
+    if (dateRange !== "all") {
+      let startDate: Date;
+      switch (dateRange) {
+        case "24h":
+          startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          break;
+        case "7d":
+          startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case "30d":
+          startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          break;
+        case "90d":
+          startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+          break;
+        case "1y":
+          startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+          break;
+        default:
+          startDate = new Date(0);
+      }
+      startDateStr = `AND p.created_at >= '${startDate.toISOString()}'`;
+    }
 
     // Build where clause
     const whereClause: any = {};
@@ -32,10 +61,10 @@ export async function GET(request: NextRequest) {
     let statusCondition = "";
     let affiliateCondition = "";
     if (status && status !== "all") {
-      statusCondition = `AND status = '${status}'`;
+      statusCondition = `AND p.status = '${status}'`;
     }
     if (affiliateId) {
-      affiliateCondition = `AND affiliate_id = '${affiliateId}'`;
+      affiliateCondition = `AND p.affiliate_id = '${affiliateId}'`;
     }
 
     // Get payouts with affiliate info using raw SQL
@@ -48,7 +77,7 @@ export async function GET(request: NextRequest) {
         a.referral_code as affiliate_referral_code
       FROM affiliate_payouts p
       JOIN affiliates a ON p.affiliate_id = a.id
-      WHERE 1=1 ${statusCondition} ${affiliateCondition}
+      WHERE 1=1 ${statusCondition} ${affiliateCondition} ${startDateStr}
       ORDER BY p.created_at DESC
       LIMIT ${limit} OFFSET ${offset}
     `) as any[];
@@ -57,7 +86,7 @@ export async function GET(request: NextRequest) {
     const totalCountResult = await prisma.$queryRawUnsafe(`
       SELECT COUNT(*) as count
       FROM affiliate_payouts p
-      WHERE 1=1 ${statusCondition} ${affiliateCondition}
+      WHERE 1=1 ${statusCondition} ${affiliateCondition} ${startDateStr}
     `) as any[];
     const totalCount = Number(totalCountResult[0].count);
 
@@ -67,7 +96,7 @@ export async function GET(request: NextRequest) {
         COALESCE(SUM(amount_due), 0) as total_amount,
         COUNT(*) as total_count
       FROM affiliate_payouts p
-      WHERE 1=1 ${statusCondition} ${affiliateCondition}
+      WHERE 1=1 ${statusCondition} ${affiliateCondition} ${startDateStr}
     `) as any[];
 
     const completedStats = await prisma.$queryRawUnsafe(`
@@ -75,7 +104,7 @@ export async function GET(request: NextRequest) {
         COALESCE(SUM(amount_due), 0) as total_amount,
         COUNT(*) as total_count
       FROM affiliate_payouts p
-      WHERE 1=1 ${statusCondition} ${affiliateCondition} AND status = 'completed'
+      WHERE 1=1 ${statusCondition} ${affiliateCondition} AND p.status = 'completed' ${startDateStr}
     `) as any[];
 
     // Get pending/held commissions from conversions table (not from payouts)
@@ -86,10 +115,10 @@ export async function GET(request: NextRequest) {
         COUNT(DISTINCT affiliate_id) as affiliate_count
       FROM affiliate_conversions
       WHERE commission_status = 'held'
-      ${affiliateId ? `AND affiliate_id = '${affiliateId}'` : ''}
+      ${affiliateId ? `AND affiliate_id = '${affiliateId}'` : ''} ${startDateStr}
     `) as any[];
     
-    // Get total earned commissions (all affiliates)
+    // Get total earned commissions (all affiliates) - note: this uses all-time data
     const totalEarnedStats = await prisma.$queryRawUnsafe(`
       SELECT 
         COALESCE(SUM(total_commission), 0) as total_earned,
@@ -104,7 +133,7 @@ export async function GET(request: NextRequest) {
         COALESCE(SUM(amount_due), 0) as total_amount,
         COUNT(*) as total_count
       FROM affiliate_payouts p
-      WHERE 1=1 ${statusCondition} ${affiliateCondition} AND status = 'pending'
+      WHERE 1=1 ${statusCondition} ${affiliateCondition} AND p.status = 'pending' ${startDateStr}
     `) as any[];
 
     // Transform payouts data to match expected frontend structure

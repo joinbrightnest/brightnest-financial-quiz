@@ -804,7 +804,7 @@ export default function CEOAnalytics() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <CommissionPayoutManager />
+          <CommissionPayoutManager dateRange={dateRange} />
         </motion.div>
       )}
       </div>
