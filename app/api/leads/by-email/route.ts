@@ -80,8 +80,8 @@ export async function GET(request: NextRequest) {
         where: {
           OR: [
             { referralCode: lead.affiliateCode },
-            { customTrackingLink: `/${lead.affiliateCode}` },
-            { customTrackingLink: lead.affiliateCode }
+            { customLink: `/${lead.affiliateCode}` },
+            { customLink: lead.affiliateCode }
           ]
         },
         select: {
