@@ -80,11 +80,39 @@ export async function GET(request: NextRequest) {
     let payouts: any[] = [];
     
     try {
+      // Calculate end date based on date range
+      let endDate: Date | undefined;
+      switch (dateRange) {
+        case "24h":
+          endDate = new Date(now.getTime());
+          break;
+        case "7d":
+          endDate = new Date(now.getTime());
+          break;
+        case "30d":
+          endDate = new Date(now.getTime());
+          break;
+        case "90d":
+          endDate = new Date(now.getTime());
+          break;
+        case "1y":
+          endDate = new Date(now.getTime());
+          break;
+        case "all":
+          endDate = undefined; // No upper bound for all time
+          break;
+        default:
+          endDate = new Date(now.getTime());
+      }
+
       [clicks, conversions, payouts] = await Promise.all([
         prisma.affiliateClick.findMany({
           where: {
             affiliateId: affiliate.id,
-            createdAt: {
+            createdAt: endDate ? {
+              gte: startDate,
+              lte: endDate,
+            } : {
               gte: startDate,
             },
           },
@@ -92,7 +120,10 @@ export async function GET(request: NextRequest) {
         prisma.affiliateConversion.findMany({
           where: {
             affiliateId: affiliate.id,
-            createdAt: {
+            createdAt: endDate ? {
+              gte: startDate,
+              lte: endDate,
+            } : {
               gte: startDate,
             },
           },
@@ -100,7 +131,10 @@ export async function GET(request: NextRequest) {
         prisma.affiliatePayout.findMany({
           where: {
             affiliateId: affiliate.id,
-            createdAt: {
+            createdAt: endDate ? {
+              gte: startDate,
+              lte: endDate,
+            } : {
               gte: startDate,
             },
           },
@@ -119,30 +153,13 @@ export async function GET(request: NextRequest) {
       payouts,
     };
 
-    // Fetch appointments separately to calculate totalSales
-    // Sales should be counted based on when the closer closed the sale (updatedAt when outcome = converted)
-    const allAppointments = await prisma.appointment.findMany({
-      where: {
-        affiliateCode: affiliate.referralCode,
-        outcome: 'converted', // Only get already-converted appointments
-        updatedAt: {
-          gte: startDate,
-        },
-        saleValue: { not: null } // Only appointments with actual sales
-      },
-    }).catch(() => []);
-
-    // Filter for converted appointments
-    const convertedAppointments = allAppointments;
-
-    // Calculate stats using centralized lead calculation
+    // Calculate stats from conversions - single source of truth
     const totalClicks = affiliateWithData.clicks.length;
-    const leadData = await calculateLeadsByCode(affiliate.referralCode, dateRange);
-    const totalLeads = leadData.totalLeads;
+    const totalLeads = affiliateWithData.conversions.filter(c => c.conversionType === "quiz_completion").length;
     const totalBookings = affiliateWithData.conversions.filter(c => c.conversionType === "booking").length;
     
-    // Count sales from appointments (converted appointments), not from affiliate_conversions
-    const totalSales = convertedAppointments.length;
+    // Count sales from AffiliateConversion records - single source of truth
+    const totalSales = affiliateWithData.conversions.filter(c => c.conversionType === "sale").length;
     const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
 
     // Calculate pending and paid commissions from filtered payouts
