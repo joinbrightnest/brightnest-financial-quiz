@@ -2124,7 +2124,7 @@ export default function AdminDashboard() {
                     </div>
 
                     <div className="p-8 max-w-7xl mx-auto space-y-8">
-                      {/* Personal Information */}
+                      {/* Combined Personal Information and Deal Information */}
                       <div className="bg-white rounded-xl border border-slate-200 p-6">
                         <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
                           <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2132,7 +2132,7 @@ export default function AdminDashboard() {
                           </svg>
                           Personal Information
                         </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Full Name</label>
                             <p className="mt-1 text-sm font-semibold text-slate-900">
@@ -2150,10 +2150,7 @@ export default function AdminDashboard() {
                             </p>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Deal Information */}
-                      <div className="bg-white rounded-xl border border-slate-200 p-6">
                         <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
                           <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -2277,25 +2274,6 @@ export default function AdminDashboard() {
                         </div>
                       </div>
 
-                      {/* Quiz Responses */}
-                      <div className="bg-white rounded-xl border border-slate-200 p-6">
-                        <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
-                          <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                          </svg>
-                          Quiz Responses
-                          <span className="ml-2 text-sm text-slate-500 font-normal">({crmSelectedLead.answers.length} Questions)</span>
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {crmSelectedLead.answers.map((answer: any, index: number) => (
-                            <div key={index} className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                              <p className="text-sm font-semibold text-slate-900 mb-2">{answer.question?.prompt || `Question ${index + 1}`}</p>
-                              <p className="text-sm text-slate-700">{answer.value || 'No answer provided'}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
                       {/* Tabs Navigation */}
                       <div className="border-b border-slate-200">
                         <div className="flex space-x-8">
@@ -2336,65 +2314,35 @@ export default function AdminDashboard() {
                       <div className="bg-white rounded-xl border border-slate-200 p-6">
                         {crmLeadModalTab === 'activity' && (
                           <div>
-                            <h3 className="text-lg font-semibold text-slate-900 mb-4">Lead Information</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                              <div>
-                                <p className="text-sm text-slate-600 mb-2">Full Name</p>
-                                <p className="text-lg font-semibold text-slate-900">
-                                  {crmSelectedLead.answers.find((a: any) => 
-                                    a.question?.prompt?.toLowerCase().includes('name')
-                                  )?.value || 'N/A'}
-                                </p>
-                              </div>
-                              <div>
-                                <p className="text-sm text-slate-600 mb-2">Email Address</p>
-                                <p className="text-lg font-semibold text-slate-900">
-                                  {crmSelectedLead.answers.find((a: any) => 
-                                    a.question?.prompt?.toLowerCase().includes('email')
-                                  )?.value || 'N/A'}
-                                </p>
-                              </div>
-                              <div>
-                                <p className="text-sm text-slate-600 mb-2">Status</p>
-                                <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${
-                                  crmSelectedLead.status === "Completed" || crmSelectedLead.status === "Booked"
-                                    ? "bg-green-100 text-green-800" 
-                                    : "bg-orange-100 text-orange-800"
-                                }`}>
-                                  {crmSelectedLead.status}
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-sm text-slate-600 mb-2">Deal Owner</p>
-                                <p className="text-lg font-semibold text-slate-900">Stefan</p>
-                              </div>
-                              <div>
-                                <p className="text-sm text-slate-600 mb-2">Close Date</p>
-                                <p className="text-lg font-semibold text-slate-900">
-                                  {crmSelectedLead.completedAt ? new Date(crmSelectedLead.completedAt).toLocaleDateString('en-GB') : '--'}
-                                </p>
-                              </div>
-                              <div>
-                                <p className="text-sm text-slate-600 mb-2">Lead Source</p>
-                                <span className="inline-flex px-3 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-800">
-                                  {crmSelectedLead.source || 'Website'}
-                                </span>
-                              </div>
+                            <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
+                              <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                              </svg>
+                              Quiz Responses
+                              <span className="ml-2 text-sm text-slate-500 font-normal">({crmSelectedLead.answers.length} Questions)</span>
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {crmSelectedLead.answers.map((answer: any, index: number) => (
+                                <div key={index} className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                                  <p className="text-sm font-semibold text-slate-900 mb-2">{answer.question?.prompt || `Question ${index + 1}`}</p>
+                                  <p className="text-sm text-slate-700">{answer.value || 'No answer provided'}</p>
+                                </div>
+                              ))}
                             </div>
                           </div>
                         )}
 
                         {crmLeadModalTab === 'notes' && (
-                          <div className="p-6">
-                            <h3 className="text-lg font-semibold text-slate-900 mb-4">Notes</h3>
-                            <p className="text-slate-500">Notes functionality will be added here.</p>
+                          <div>
+                            <h3 className="text-lg font-semibold text-slate-900 mb-6">Notes</h3>
+                            <p className="text-sm text-slate-600">No notes have been added for this lead.</p>
                           </div>
                         )}
 
                         {crmLeadModalTab === 'tasks' && (
-                          <div className="p-6">
-                            <h3 className="text-lg font-semibold text-slate-900 mb-4">Tasks</h3>
-                            <p className="text-slate-500">Tasks functionality will be added here.</p>
+                          <div>
+                            <h3 className="text-lg font-semibold text-slate-900 mb-6">Tasks</h3>
+                            <p className="text-sm text-slate-600">No tasks have been assigned for this lead.</p>
                           </div>
                         )}
                       </div>
