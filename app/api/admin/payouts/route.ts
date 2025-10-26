@@ -119,14 +119,15 @@ export async function GET(request: NextRequest) {
       ${affiliateId ? `AND affiliate_id = '${affiliateId}'` : ''} ${conversionDateFilter}
     `) as any[];
     
-    // Get total earned commissions (all affiliates) - note: this uses all-time data
+    // Get total earned commissions within the date range
     const totalEarnedStats = await prisma.$queryRawUnsafe(`
       SELECT 
-        COALESCE(SUM(total_commission), 0) as total_earned,
-        COUNT(*) as affiliate_count
-      FROM affiliates
-      WHERE is_approved = true
-      ${affiliateId ? `AND id = '${affiliateId}'` : ''}
+        COALESCE(SUM(commission_amount), 0) as total_earned,
+        COUNT(DISTINCT affiliate_id) as affiliate_count
+      FROM affiliate_conversions
+      WHERE 1=1
+      ${affiliateId ? `AND affiliate_id = '${affiliateId}'` : ''} 
+      ${conversionDateFilter}
     `) as any[];
     
     const pendingStats = await prisma.$queryRawUnsafe(`
