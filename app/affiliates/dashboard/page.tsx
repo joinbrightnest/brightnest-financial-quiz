@@ -124,31 +124,6 @@ export default function AffiliateDashboard() {
       if (response.ok) {
         const data = await response.json();
         console.log("Affiliate stats loaded:", data);
-        
-        // Log detailed commission breakdown for debugging
-        if (data.dailyStats && data.dailyStats.length > 0) {
-          console.log("📊 Daily Stats Breakdown:");
-          console.log("- Total data points:", data.dailyStats.length);
-          console.log("- Date range:", dateRange);
-          
-          // Log each hour/day with commission
-          data.dailyStats.forEach((day: any) => {
-            if (day.commission > 0) {
-              console.log(`💰 Earnings: $${day.commission} at ${day.date}`, {
-                clicks: day.clicks,
-                leads: day.leads,
-                bookedCalls: day.bookedCalls,
-                commission: day.commission
-              });
-            }
-          });
-          
-          // Calculate totals
-          const totalCommission = data.dailyStats.reduce((sum: number, d: any) => sum + (d.commission || 0), 0);
-          console.log(`💵 Total Commission from ${dateRange}: $${totalCommission}`);
-          console.log(`📈 KPI Total Commission: $${data.totalCommission}`);
-        }
-        
         setStats(data);
         setError(null);
       } else {
