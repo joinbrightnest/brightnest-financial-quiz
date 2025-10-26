@@ -1974,7 +1974,9 @@ export default function AdminDashboard() {
                             )}
                             {crmVisibleColumns.amount && (
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {lead.appointment?.outcome === 'converted' ? '$100.00' : '--'}
+                              {lead.appointment?.outcome === 'converted' && lead.appointment?.saleValue 
+                                ? `$${Number(lead.appointment.saleValue).toFixed(2)}` 
+                                : '--'}
                             </td>
                             )}
                             {crmVisibleColumns.source && (
