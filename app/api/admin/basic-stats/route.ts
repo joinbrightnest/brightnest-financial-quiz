@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { calculateTotalLeads, calculateLeadsByCode } from "@/lib/lead-calculation";
+import { calculateTotalLeads, calculateLeadsByCode, calculateLeads } from "@/lib/lead-calculation";
 import { getLeadStatuses } from "@/lib/lead-status";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
 
@@ -196,8 +196,55 @@ export async function GET(request: NextRequest) {
     });
 
     // Use centralized lead calculation with filters
-    const leadData = await calculateTotalLeads(duration, quizType || undefined);
-    const allLeads = leadData.leads;
+    // Convert duration parameter to format expected by calculateTotalLeads
+    let leadData: { leads: any[]; totalLeads: number };
+    let allLeads: any[];
+    
+    if (duration === '24h') {
+      const leadDataResult = await calculateLeads({ 
+        dateRange: '1d',
+        quizType: quizType || undefined
+      });
+      allLeads = leadDataResult.leads;
+      leadData = { leads: allLeads, totalLeads: leadDataResult.totalLeads };
+    } else if (duration === 'all') {
+      // For 'all', we need to bypass date filtering completely
+      // Get all leads without date restriction
+      const allCompletedSessionsAllTime = await prisma.quizSession.findMany({
+        where: {
+          status: "completed",
+          ...(quizType ? { quizType } : {})
+        },
+        include: {
+          answers: {
+            include: {
+              question: true,
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+      
+      // Filter to only include sessions that have name and email (actual leads)
+      const actualLeadsAllTime = allCompletedSessionsAllTime.filter(session => {
+        const nameAnswer = session.answers.find(a => 
+          a.question?.prompt?.toLowerCase().includes('name')
+        );
+        const emailAnswer = session.answers.find(a => 
+          a.question?.prompt?.toLowerCase().includes('email')
+        );
+        
+        return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
+      });
+      
+      allLeads = actualLeadsAllTime;
+      leadData = { leads: allLeads, totalLeads: actualLeadsAllTime.length };
+    } else {
+      // Map duration to calculateTotalLeads format (7d, 30d, 90d, 1y)
+      const leadDataResult = await calculateTotalLeads(duration as any, quizType || undefined);
+      allLeads = leadDataResult.leads;
+      leadData = { leads: allLeads, totalLeads: leadDataResult.totalLeads };
+    }
 
     // Get affiliate information for leads that have affiliate codes
     let affiliateMap: Record<string, string> = {};
@@ -216,14 +263,14 @@ export async function GET(request: NextRequest) {
           select: {
             referralCode: true,
             name: true,
-            customTrackingLink: true,
+            customLink: true,
           }
         });
 
-        console.log('👥 All affiliates:', allAffiliates.map(a => ({ 
+        console.log('👥 All affiliates:', allAffiliates.map((a: any) => ({ 
           name: a.name, 
           referralCode: a.referralCode, 
-          customLink: a.customTrackingLink 
+          customLink: a.customLink 
         })));
 
         // Create a map of affiliate codes to names
@@ -244,8 +291,8 @@ export async function GET(request: NextRequest) {
           
           // Try custom tracking link match (remove leading slash)
           const customMatch = allAffiliates.find(affiliate => 
-            affiliate.customTrackingLink === `/${code}` || 
-            affiliate.customTrackingLink === code
+            affiliate.customLink === `/${code}` || 
+            affiliate.customLink === code
           );
           
           if (customMatch) {
@@ -265,7 +312,7 @@ export async function GET(request: NextRequest) {
     // Extract emails from the leads data (which comes from CRM contact info)
     const leadEmails: Record<string, string> = {};
     allLeads.forEach(lead => {
-      const emailAnswer = lead.answers.find(a => 
+      const emailAnswer = lead.answers.find((a: any) => 
         a.question?.prompt?.toLowerCase().includes('email') ||
         a.question?.type === 'email'
       );
