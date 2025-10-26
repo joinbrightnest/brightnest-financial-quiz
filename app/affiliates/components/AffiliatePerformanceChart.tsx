@@ -72,13 +72,24 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
   // Prepare chart data
   const chartData = {
     labels: dailyStats.map(day => {
-      const date = new Date(day.date);
-      // Check if this is hourly data (contains time)
-      if (day.date.includes('T')) {
-        return date.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
-      } else {
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      // Check if this is already in HH:MM format (hourly data)
+      if (/^\d{2}:\d{2}$/.test(day.date)) {
+        return day.date; // Return as-is for hourly labels
       }
+      
+      // Try to parse as ISO date string
+      const date = new Date(day.date);
+      if (!isNaN(date.getTime())) {
+        // Check if this is hourly data (contains time component)
+        if (day.date.includes('T') || day.date.includes(' ')) {
+          return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        } else {
+          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+      }
+      
+      // Fallback: return the original value
+      return day.date;
     }),
     datasets: [
       {
@@ -192,11 +203,10 @@ export default function AffiliatePerformanceChart({ dailyStats, loading }: Affil
         </h3>
         <div className="text-xs sm:text-sm text-gray-900">
           {(() => {
-            // Check if we have 24 data points (hourly breakdown) by checking if we have 24 entries
-            // or if any date contains a time component (HH:MM format)
-            const isHourly = dailyStats.length === 24 || 
-                            (dailyStats.length > 0 && dailyStats[0]?.date?.includes(':')) ||
-                            (dailyStats.length > 0 && /^\d{2}:\d{2}$/.test(dailyStats[0]?.date));
+            // Check if we have hourly data by looking at the date format
+            const isHourly = dailyStats.length === 24 && 
+                            dailyStats.length > 0 && 
+                            /^\d{2}:\d{2}$/.test(dailyStats[0]?.date);
             
             return isHourly ? '24 hours' : `${dailyStats.length} ${dailyStats.length === 1 ? 'day' : 'days'}`;
           })()}
