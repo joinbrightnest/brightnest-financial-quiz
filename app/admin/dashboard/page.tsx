@@ -687,7 +687,7 @@ export default function AdminDashboard() {
           lead.status,
           lead.completedAt ? new Date(lead.completedAt).toLocaleDateString() : 'N/A',
           'Stefan',
-          lead.appointment?.outcome === 'converted' ? '$100.00' : '--',
+          lead.appointment?.outcome === 'converted' && lead.appointment?.saleValue ? `$${Number(lead.appointment.saleValue).toFixed(2)}` : '--',
           lead.source || 'Direct'
         ].join(',');
       })
@@ -2150,7 +2150,9 @@ export default function AdminDashboard() {
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Amount</label>
                             <p className="text-xl font-semibold text-slate-900 mt-1">
-                              {crmSelectedLead.appointment?.outcome === 'converted' ? '$100.00' : '--'}
+                              {crmSelectedLead.appointment?.outcome === 'converted' && crmSelectedLead.appointment?.saleValue 
+                                ? `$${Number(crmSelectedLead.appointment.saleValue).toFixed(2)}` 
+                                : '--'}
                             </p>
                           </div>
                           <div>
