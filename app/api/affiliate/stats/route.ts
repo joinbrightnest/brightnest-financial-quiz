@@ -328,6 +328,17 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
         return sum + (saleValue * Number(affiliate.commissionRate));
       }, 0);
 
+      // Debug logging for specific hours with earnings
+      if (dateRange === 'yesterday' && hourCommission > 0) {
+        console.log(`[${hourLabel}] Found ${hourAppointments.length} appointments with total commission of $${hourCommission}`);
+        console.log(`[${hourLabel}] Appointment details:`, hourAppointments.map(apt => ({
+          id: apt.id,
+          saleValue: apt.saleValue,
+          commissionRate: affiliate.commissionRate,
+          calculatedCommission: Number(apt.saleValue || 0) * Number(affiliate.commissionRate)
+        })));
+      }
+
       // Calculate real leads for this specific hour
       const hourLeadData = await calculateLeadsWithDateRange(hourStart, hourEnd, undefined, affiliateCode);
       
