@@ -266,8 +266,29 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
     })
   ]);
 
+  // Debug logging for yesterday
+  if (dateRange === 'yesterday') {
+    console.log(`[DEBUG] All appointments found:`, allAppointments.map(apt => ({
+      id: apt.id,
+      outcome: apt.outcome,
+      saleValue: apt.saleValue,
+      updatedAt: apt.updatedAt,
+      affiliateCode: apt.affiliateCode
+    })));
+  }
+
   // Filter for converted appointments
   const convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
+  
+  // Debug logging for converted appointments
+  if (dateRange === 'yesterday') {
+    console.log(`[DEBUG] Converted appointments:`, convertedAppointments.length);
+    console.log(`[DEBUG] Converted appointments details:`, convertedAppointments.map(apt => ({
+      id: apt.id,
+      saleValue: apt.saleValue,
+      updatedAt: apt.updatedAt
+    })));
+  }
 
   // If using hourly breakdown (for single-day ranges)
   if (useHourly) {
