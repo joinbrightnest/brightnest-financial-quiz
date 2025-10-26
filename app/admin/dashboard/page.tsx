@@ -730,19 +730,12 @@ export default function AdminDashboard() {
       const appointmentOutcome = appointment?.outcome;
       const hasSaleValue = lead.saleValue && parseFloat(lead.saleValue || '0') > 0;
       
-      // NEW DEAL AMOUNT: Only count leads with booked calls that have no outcome yet
+      // NEW DEAL AMOUNT: Only count leads with "Booked" status 
       // This means they have an appointment but haven't had the call yet
-      if (appointment && !appointmentOutcome) {
+      if (lead.status === 'Booked' && appointment && !appointmentOutcome) {
         // This is a NEW deal - freshly booked call with no outcome
-        console.log('NEW DEAL: Lead has appointment with no outcome, adding to newDealAmount');
+        console.log('NEW DEAL: Lead has Booked status with no outcome, adding to newDealAmount');
         newDealAmount += potentialValuePerCall;
-      } else if (lead.status === 'Booked') {
-        // Debug: Log if status is Booked but not counted
-        console.log('DEBUG: Lead has Booked status but appointment check:', { 
-          hasAppointment: !!appointment, 
-          outcome: appointment?.outcome,
-          leadStatus: lead.status 
-        });
       }
       
       if (appointment) {
