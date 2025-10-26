@@ -220,8 +220,8 @@ export default function CEOAnalytics() {
               </div>
             </div>
             
-            {/* Only show date filter for Global Overview, Pending, and Payouts sections */}
-            {activeSection !== "affiliates" && (
+            {/* Only show date filter for Global Overview and Payouts sections */}
+            {activeSection !== "affiliates" && activeSection !== "pending" && (
               <div className="flex items-center space-x-4">
                 <div className="relative">
                   <select
