@@ -337,18 +337,38 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
     }
   } else {
     // Use daily breakdown for multi-day ranges
+    // Iterate through days from startDate backwards (7d goes back 7 days from now)
     for (let i = 0; i < days; i++) {
-      const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
+      const daysAgo = days - 1 - i; // Count backwards from most recent day
+      const date = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+      
       const dayStart = new Date(date);
       dayStart.setHours(0, 0, 0, 0);
       const dayEnd = new Date(date);
       dayEnd.setHours(23, 59, 59, 999);
+      
+      // Don't go beyond the current time
+      if (dayEnd > now) {
+        dayEnd.setTime(now.getTime());
+      }
+      
       const dateStr = date.toISOString().split('T')[0];
       
-      // Filter data for this specific day
-      const dayClicks = allClicks.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
-      const dayBookings = bookingConversions.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
-      const daySales = allSaleConversions.filter(sale => sale.createdAt.toISOString().split('T')[0] === dateStr);
+      // Filter data for this specific day using time ranges
+      const dayClicks = allClicks.filter(c => {
+        const clickDate = new Date(c.createdAt);
+        return clickDate >= dayStart && clickDate <= dayEnd;
+      });
+      
+      const dayBookings = bookingConversions.filter(c => {
+        const bookingDate = new Date(c.createdAt);
+        return bookingDate >= dayStart && bookingDate <= dayEnd;
+      });
+      
+      const daySales = allSaleConversions.filter(sale => {
+        const saleDate = new Date(sale.createdAt);
+        return saleDate >= dayStart && saleDate <= dayEnd;
+      });
 
       // Calculate commission from sale conversions (actual commission amounts)
       const dayCommission = daySales.reduce((sum, sale) => {
