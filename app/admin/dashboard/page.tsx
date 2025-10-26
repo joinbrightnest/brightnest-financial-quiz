@@ -1713,17 +1713,17 @@ export default function AdminDashboard() {
               <div className="bg-white px-6 py-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${((stats?.totalRevenue || 0) / 1000000).toFixed(2)}M</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">${((stats?.totalRevenue || 0) / 1000000).toFixed(2)}</div>
                     <div className="text-sm font-medium text-black mb-1">TOTAL DEAL AMOUNT</div>
                     <div className="text-xs text-black">Average per deal: ${(stats?.totalRevenue / (stats?.allLeads?.length || 1) || 0).toFixed(2)}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${((stats?.totalRevenue || 0) * 0.3 / 1000000).toFixed(2)}M</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">${((stats?.totalRevenue || 0) * 0.3 / 1000000).toFixed(2)}</div>
                     <div className="text-sm font-medium text-black mb-1">WEIGHTED DEAL AMOUNT</div>
                     <div className="text-xs text-black">Average per deal: ${((stats?.totalRevenue || 0) * 0.3 / (stats?.allLeads?.length || 1)).toFixed(2)}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${((stats?.totalRevenue || 0) * 0.4 / 1000000).toFixed(2)}M</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">${((stats?.totalRevenue || 0) * 0.4 / 1000000).toFixed(2)}</div>
                     <div className="text-sm font-medium text-black mb-1">OPEN DEAL AMOUNT</div>
                     <div className="text-xs text-black">Average per deal: ${((stats?.totalRevenue || 0) * 0.4 / (stats?.allLeads?.length || 1)).toFixed(2)}</div>
                   </div>
@@ -1740,11 +1740,7 @@ export default function AdminDashboard() {
                           const saleValue = parseFloat(lead.saleValue || '0');
                           return sum + saleValue;
                         }, 0);
-                        return totalClosedAmount >= 1000000 
-                          ? (totalClosedAmount / 1000000).toFixed(2) + 'M'
-                          : totalClosedAmount >= 1000 
-                            ? (totalClosedAmount / 1000).toFixed(2) + 'K'
-                            : totalClosedAmount.toFixed(2);
+                        return totalClosedAmount.toFixed(2);
                       })()}
                     </div>
                     <div className="text-sm font-medium text-black mb-1">CLOSED DEAL AMOUNT</div>
@@ -1771,7 +1767,7 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">${((stats?.totalRevenue || 0) * 0.1 / 1000).toFixed(2)}K</div>
+                    <div className="text-2xl font-bold text-blue-600 mb-1">${((stats?.totalRevenue || 0) * 0.1 / 1000).toFixed(2)}</div>
                     <div className="text-sm font-medium text-black mb-1">NEW DEAL AMOUNT</div>
                     <div className="text-xs text-black">Average per deal: ${((stats?.totalRevenue || 0) * 0.1 / (stats?.allLeads?.length || 1)).toFixed(2)}</div>
                   </div>
