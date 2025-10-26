@@ -716,37 +716,52 @@ export default function AdminDashboard() {
 
   // Compute revenue metrics
   const revenueMetrics = useMemo(() => {
-    if (!stats?.allLeads) {
+    if (!stats?.allLeads || !Array.isArray(stats.allLeads)) {
       return { totalRevenue: 0, openDealAmount: 0 };
     }
 
-    // Calculate total revenue from all leads with appointments and sale values
-    const totalRevenue = stats.allLeads.reduce((sum, lead) => {
-      if (lead.saleValue) {
-        const saleValue = parseFloat(lead.saleValue || '0');
-        return sum + saleValue;
-      }
-      return sum;
-    }, 0);
-
-    // Calculate open deal amount: deals that DON'T have terminal outcomes
-    const openDealAmount = stats.allLeads.reduce((sum, lead) => {
-      if (lead.saleValue) {
-        const appointment = lead.appointment;
-        // If there's no appointment or no outcome, it's an open deal
-        // If there's an outcome but it's not in terminalOutcomes, it's an open deal
-        const isTerminal = appointment?.outcome && terminalOutcomes.includes(appointment.outcome);
-        
-        if (!isTerminal) {
-          const saleValue = parseFloat(lead.saleValue || '0');
-          return sum + saleValue;
+    try {
+      // Calculate total revenue from all leads with appointments and sale values
+      const totalRevenue = stats.allLeads.reduce((sum, lead) => {
+        try {
+          if (lead.saleValue) {
+            const saleValue = parseFloat(lead.saleValue || '0');
+            return sum + saleValue;
+          }
+        } catch (e) {
+          console.error('Error parsing saleValue:', e);
         }
-      }
-      return sum;
-    }, 0);
+        return sum;
+      }, 0);
 
-    return { totalRevenue, openDealAmount };
-  }, [stats?.allLeads, terminalOutcomes]);
+      // Calculate open deal amount: deals that DON'T have terminal outcomes
+      const openDealAmount = stats.allLeads.reduce((sum, lead) => {
+        try {
+          if (lead.saleValue) {
+            const appointment = lead.appointment;
+            // If there's no appointment or no outcome, it's an open deal
+            // If there's an outcome but it's not in terminalOutcomes, it's an open deal
+            const appointmentOutcome = appointment?.outcome;
+            const isTerminal = appointmentOutcome && terminalOutcomes.includes(appointmentOutcome);
+            
+            if (!isTerminal) {
+              const saleValue = parseFloat(lead.saleValue || '0');
+              return sum + saleValue;
+            }
+          }
+        } catch (e) {
+          console.error('Error processing appointment:', e);
+        }
+        return sum;
+      }, 0);
+
+      return { totalRevenue, openDealAmount };
+    } catch (e) {
+      console.error('Error computing revenue metrics:', e);
+      return { totalRevenue: 0, openDealAmount: 0 };
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stats?.allLeads?.length, terminalOutcomes.join(',')]);
 
   // Filter and sort CRM leads
   const filteredCrmLeads = stats?.allLeads ? stats.allLeads.filter(lead => {
