@@ -132,22 +132,19 @@ export async function GET(request: NextRequest) {
     const totalSales = affiliateWithData.conversions.filter(c => c.conversionType === "sale").length;
     const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
 
-    // Calculate pending and paid commissions
+    // Calculate pending and paid commissions from filtered payouts
     const pendingCommission = affiliateWithData.payouts
       .filter(p => p.status === "pending")
-      .reduce((sum, p) => sum + Number(p.amount), 0);
+      .reduce((sum, p) => sum + Number(p.amountDue || 0), 0);
     
     const paidCommission = affiliateWithData.payouts
       .filter(p => p.status === "completed")
-      .reduce((sum, p) => sum + Number(p.amount), 0);
+      .reduce((sum, p) => sum + Number(p.amountDue || 0), 0);
 
     // Generate daily stats based on actual data
     const dailyStats = await generateDailyStatsWithRealData(affiliate.referralCode, dateRange);
     
-    // Use stored commission for main display (consistent with database)
-    const totalCommission = Number(affiliate.totalCommission || 0);
-    
-    // Calculate date-filtered commission for daily stats (for timeframe analysis)
+    // Calculate date-filtered commission from daily stats
     const calculatedTotalCommission = dailyStats.reduce((sum, day) => sum + day.commission, 0);
 
     const stats = {
@@ -155,7 +152,7 @@ export async function GET(request: NextRequest) {
       totalLeads,
       totalBookings,
       totalSales,
-      totalCommission, // Use stored commission from database
+      totalCommission: calculatedTotalCommission, // Use date-filtered commission
       conversionRate,
       averageSaleValue: totalSales > 0 ? calculatedTotalCommission / totalSales : 0,
       pendingCommission,
