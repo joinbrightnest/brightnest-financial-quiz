@@ -79,43 +79,44 @@ export default function AffiliateOverviewCards({ data }: AffiliateOverviewCardsP
           transition={{ duration: 0.3, delay: index * 0.1 }}
           className="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300"
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className={`p-3 bg-gradient-to-br ${card.gradient} rounded-xl shadow-lg`}>
-                {card.icon}
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
-                  {card.title}
-                </p>
-                <p className="text-3xl font-bold text-slate-900 mt-1">
-                  {card.value}
-                </p>
-                <div className="flex items-center mt-2">
-                  <div className={`flex items-center text-sm font-semibold ${
-                    card.trendDirection === "up" 
-                      ? "text-emerald-600" 
-                      : card.trendDirection === "down"
-                      ? "text-red-600"
-                      : "text-slate-500"
-                  }`}>
-                    <svg 
-                      className={`w-4 h-4 mr-1 ${
-                        card.trendDirection === "up" ? "rotate-0" : 
-                        card.trendDirection === "down" ? "rotate-180" : "hidden"
-                      }`} 
-                      fill="currentColor" 
-                      viewBox="0 0 20 20"
-                    >
-                      <path fillRule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {card.trend}
-                  </div>
+          <div className="flex flex-col h-full">
+            {/* Icon at top */}
+            <div className={`w-12 h-12 bg-gradient-to-br ${card.gradient} rounded-xl shadow-lg flex items-center justify-center mb-4`}>
+              {card.icon}
+            </div>
+            
+            {/* Content stacked vertically */}
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-2">
+                {card.title}
+              </p>
+              <p className="text-3xl font-bold text-slate-900 mb-2">
+                {card.value}
+              </p>
+              <div className="flex items-center mb-2">
+                <div className={`flex items-center text-sm font-semibold ${
+                  card.trendDirection === "up" 
+                    ? "text-emerald-600" 
+                    : card.trendDirection === "down"
+                    ? "text-red-600"
+                    : "text-slate-500"
+                }`}>
+                  <svg 
+                    className={`w-4 h-4 mr-1 ${
+                      card.trendDirection === "up" ? "rotate-0" : 
+                      card.trendDirection === "down" ? "rotate-180" : "hidden"
+                    }`} 
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path fillRule="evenodd" d="M5.293 7.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L6.707 7.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                  </svg>
+                  {card.trend}
                 </div>
-                <p className="text-xs text-slate-500 font-medium mt-1">
-                  {card.description}
-                </p>
               </div>
+              <p className="text-xs text-slate-500 font-medium">
+                {card.description}
+              </p>
             </div>
           </div>
         </motion.div>
