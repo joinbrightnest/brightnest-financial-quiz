@@ -131,21 +131,20 @@ async function validateAndTrackAffiliate(affiliateCode: string, searchParams: { 
         return true;
       }
 
-      {
-        // Record the click and update total clicks in a single transaction to prevent race conditions
-        try {
-          await prisma.$transaction(async (tx) => {
-            // Double-check for duplicates within the transaction
-            const duplicateCheck = await tx.affiliateClick.findFirst({
-              where: {
-                affiliateId: affiliate.id,
-                ipAddress: ipAddress,
-                userAgent: userAgent,
-                createdAt: {
-                  gte: twoMinutesAgo
-                }
+      // Record the click and update total clicks in a single transaction to prevent race conditions
+      try {
+        await prisma.$transaction(async (tx) => {
+          // Double-check for duplicates within the transaction
+          const duplicateCheck = await tx.affiliateClick.findFirst({
+            where: {
+              affiliateId: affiliate.id,
+              ipAddress: ipAddress,
+              userAgent: userAgent,
+              createdAt: {
+                gte: fiveMinutesAgo
               }
-            });
+            }
+          });
 
             if (!duplicateCheck) {
               // Record the click
@@ -189,7 +188,6 @@ async function validateAndTrackAffiliate(affiliateCode: string, searchParams: { 
           console.error("Error in affiliate click transaction:", transactionError);
           // Continue anyway - still set cookie
         }
-      }
 
       return true;
     } else {
