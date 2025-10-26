@@ -730,12 +730,19 @@ export default function AdminDashboard() {
       const appointmentOutcome = appointment?.outcome;
       const hasSaleValue = lead.saleValue && parseFloat(lead.saleValue || '0') > 0;
       
+      // NEW DEAL AMOUNT: Only count leads with booked calls that have no outcome yet
+      // This means they have an appointment but haven't had the call yet
+      if (appointment && !appointmentOutcome) {
+        // This is a NEW deal - freshly booked call with no outcome
+        newDealAmount += potentialValuePerCall;
+      }
+      
       if (appointment) {
         // This is a booked call
         const isTerminal = appointmentOutcome && terminalOutcomesList.includes(appointmentOutcome);
         
         if (!isTerminal) {
-          // It's still an open deal
+          // It's still an open deal (could have outcome or not)
           if (hasSaleValue) {
             // Has actual sale value - use that for total revenue and open deal
             const saleValue = parseFloat(lead.saleValue || '0');
@@ -744,11 +751,6 @@ export default function AdminDashboard() {
           } else {
             // No sale value yet - use potential value for open deal
             openDealAmount += potentialValuePerCall;
-          }
-          
-          // Check if it's a NEW deal (no outcome yet)
-          if (!appointmentOutcome) {
-            newDealAmount += potentialValuePerCall;
           }
         } else {
           // It's a terminal outcome - only add to total revenue if has sale value
