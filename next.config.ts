@@ -1,18 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: true,
-  },
+  // SECURITY: Enable TypeScript and ESLint checks to catch errors before production
+  // If you need to temporarily skip checks during development:
+  // 1. Fix the errors first
+  // 2. Only disable temporarily if absolutely necessary
+  // 3. Re-enable before deploying to production
 };
 
 export default nextConfig;

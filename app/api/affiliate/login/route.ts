@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-
-const prisma = new PrismaClient();
+import jwt from "jsonwebtoken";
 
 export async function POST(request: NextRequest) {
   try {
@@ -52,13 +51,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate simple session token (for now, we'll use a simple approach)
-    const token = Buffer.from(JSON.stringify({
-      affiliateId: affiliate.id,
-      email: affiliate.email,
-      tier: affiliate.tier,
-      timestamp: Date.now(),
-    })).toString('base64');
+    // Generate secure JWT token
+    const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
+    if (!JWT_SECRET) {
+      console.error("FATAL: JWT_SECRET or NEXTAUTH_SECRET environment variable is required");
+      return NextResponse.json(
+        { error: "Authentication configuration error" },
+        { status: 500 }
+      );
+    }
+
+    const token = jwt.sign(
+      { 
+        affiliateId: affiliate.id,
+        email: affiliate.email,
+        tier: affiliate.tier,
+        role: 'affiliate'
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
     // Create audit log
     await prisma.affiliateAuditLog.create({

@@ -1,8 +1,17 @@
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
 
-const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET || 'your-secret-key-change-in-production';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123'; // Change this!
+// SECURITY: No fallback secrets - require environment variables
+const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+
+if (!JWT_SECRET) {
+  throw new Error('FATAL: JWT_SECRET or NEXTAUTH_SECRET environment variable is required');
+}
+
+if (!ADMIN_PASSWORD) {
+  throw new Error('FATAL: ADMIN_PASSWORD environment variable is required');
+}
 
 export interface AdminAuthPayload {
   isAdmin: true;

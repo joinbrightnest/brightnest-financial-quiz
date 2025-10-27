@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient, CallOutcome } from "@prisma/client";
+import { CallOutcome } from "@prisma/client";
 import { calculateLeadsByCode, calculateLeadsWithDateRange } from "@/lib/lead-calculation";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
+import jwt from "jsonwebtoken";
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,12 +15,23 @@ export async function GET(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    let decoded;
+    
+    // Verify JWT token
+    const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
+    if (!JWT_SECRET) {
+      console.error("FATAL: JWT_SECRET or NEXTAUTH_SECRET environment variable is required");
+      return NextResponse.json(
+        { error: "Authentication configuration error" },
+        { status: 500 }
+      );
+    }
+
+    let decoded: any;
     try {
-      decoded = JSON.parse(Buffer.from(token, 'base64').toString());
+      decoded = jwt.verify(token, JWT_SECRET);
     } catch (error) {
       return NextResponse.json(
-        { error: "Invalid token format" },
+        { error: "Invalid or expired token" },
         { status: 401 }
       );
     }
