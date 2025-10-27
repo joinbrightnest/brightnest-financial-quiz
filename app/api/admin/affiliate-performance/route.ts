@@ -4,16 +4,15 @@ import { calculateAffiliateLeads } from "@/lib/lead-calculation";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
 
 export async function GET(request: NextRequest) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: "Unauthorized - Admin authentication required" },
+      { status: 401 }
+    );
+  }
+  
   try {
-    // 🔒 SECURITY: Require admin authentication
-    if (!verifyAdminAuth(request)) {
-      return NextResponse.json(
-        { error: "Unauthorized - Admin authentication required" },
-        { status: 401 }
-      );
-    }
-    
-    console.log("Admin auth passed, starting data fetch...");
     // Get date range filter from query params
     const { searchParams } = new URL(request.url);
     const dateRange = searchParams.get("dateRange") || "all";
@@ -54,32 +53,7 @@ export async function GET(request: NextRequest) {
 
     // ⚡ PERFORMANCE: Bulk fetch all data for ALL affiliates at once (4 queries instead of N*6 queries)
     const affiliateIds = affiliates.map(a => a.id);
-    const referralCodes = affiliates.map(a => a.referralCode).filter(Boolean); // Filter out null/undefined
-
-    console.log('Fetching data for', affiliates.length, 'affiliates');
-    
-    // Handle empty affiliate list
-    if (affiliates.length === 0) {
-      return NextResponse.json({
-        success: true,
-        data: {
-          totalAffiliates: 0,
-          totalVisitors: 0,
-          totalQuizStarts: 0,
-          totalCompleted: 0,
-          totalBookedCalls: 0,
-          totalSales: 0,
-          totalRevenue: 0,
-          totalCommission: 0,
-          totalPaidCommission: 0,
-          overallClickToQuizRate: 0,
-          overallQuizToCompletionRate: 0,
-          overallClickToCompletionRate: 0,
-          affiliatePerformance: [],
-          topAffiliates: [],
-        },
-      });
-    }
+    const referralCodes = affiliates.map(a => a.referralCode);
 
     const [allClicks, allConversions, allQuizSessions, allAppointments, allPayouts] = await Promise.all([
       prisma.affiliateClick.findMany({
@@ -119,6 +93,7 @@ export async function GET(request: NextRequest) {
       prisma.appointment.findMany({
         where: {
           affiliateCode: { in: referralCodes },
+          createdAt: { gte: startDate },
         },
         select: {
           id: true,
@@ -141,14 +116,6 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-    console.log('Data fetched:', {
-      clicks: allClicks.length,
-      conversions: allConversions.length,
-      sessions: allQuizSessions.length,
-      appointments: allAppointments.length,
-      payouts: allPayouts.length,
-    });
-
     // Group data by affiliate (in-memory processing - FAST!)
     const dataByAffiliate = new Map();
     affiliates.forEach(aff => {
@@ -163,14 +130,13 @@ export async function GET(request: NextRequest) {
     });
 
     // Calculate performance metrics for each affiliate (using pre-fetched data)
-    const affiliatePerformance = affiliates.flatMap((affiliate) => {
-      try {
-        const data = dataByAffiliate.get(affiliate.id);
-        if (!data) {
-          console.error('No data found for affiliate:', affiliate.id);
-          return []; // Return empty array to skip this affiliate
-        }
-        const { clicks, conversions, quizSessions, appointments, payouts } = data;
+    const affiliatePerformance = affiliates.map((affiliate) => {
+      const data = dataByAffiliate.get(affiliate.id);
+      if (!data) {
+        console.error('No data found for affiliate:', affiliate.id);
+        return null;
+      }
+      const { clicks, conversions, quizSessions, appointments, payouts } = data;
 
       // Calculate metrics from pre-fetched data
       const clickCount = clicks.length;
@@ -198,37 +164,33 @@ export async function GET(request: NextRequest) {
       const quizToCompletionRate = quizCount > 0 ? (completionCount / quizCount) * 100 : 0;
       const clickToCompletionRate = clickCount > 0 ? (completionCount / clickCount) * 100 : 0;
 
-        return [{
-          id: affiliate.id,
-          name: affiliate.name,
-          email: affiliate.email,
-          referralCode: affiliate.referralCode,
-          customLink: affiliate.customLink,
-          tier: affiliate.tier,
-          commissionRate: affiliate.commissionRate,
-          // Funnel metrics
-          visitors: clickCount,
-          quizStarts: quizCount,
-          completed: completionCount,
-          bookedCall: bookingCount,
-          sales: saleCount,
-          // Conversion rates
-          clickToQuizRate: clickToQuizRate,
-          quizToCompletionRate: quizToCompletionRate,
-          clickToCompletionRate: clickToCompletionRate,
-          // Revenue
-          totalRevenue: totalRevenue,
-          totalCommission: totalEarnedCommission,
-          totalPaidCommission: totalPaidCommission,
-          // Dates
-          createdAt: affiliate.createdAt,
-          updatedAt: affiliate.updatedAt,
-        }];
-      } catch (err) {
-        console.error('Error processing affiliate:', affiliate.id, err);
-        return []; // Skip this affiliate on error
-      }
-    });
+      return {
+        id: affiliate.id,
+        name: affiliate.name,
+        email: affiliate.email,
+        referralCode: affiliate.referralCode,
+        customLink: affiliate.customLink,
+        tier: affiliate.tier,
+        commissionRate: affiliate.commissionRate,
+        // Funnel metrics
+        visitors: clickCount,
+        quizStarts: quizCount,
+        completed: completionCount,
+        bookedCall: bookingCount,
+        sales: saleCount,
+        // Conversion rates
+        clickToQuizRate: clickToQuizRate,
+        quizToCompletionRate: quizToCompletionRate,
+        clickToCompletionRate: clickToCompletionRate,
+        // Revenue
+        totalRevenue: totalRevenue,
+        totalCommission: totalEarnedCommission,
+        totalPaidCommission: totalPaidCommission,
+        // Dates
+        createdAt: affiliate.createdAt,
+        updatedAt: affiliate.updatedAt,
+      };
+    }).filter(Boolean); // Remove any null entries
 
     // Calculate overall affiliate stats
     const totalAffiliates = affiliatePerformance.length;
