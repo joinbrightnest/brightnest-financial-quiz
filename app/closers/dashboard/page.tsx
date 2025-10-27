@@ -830,12 +830,27 @@ export default function CloserDashboard() {
                 <>
                   {/* Combined Personal Information and Deal Information */}
                   <div className="bg-white rounded-xl border border-slate-200 p-6">
-                    <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                      Personal Information
-                    </h3>
+                    <div className="flex justify-between items-center mb-6">
+                      <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+                        <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Personal Information
+                      </h3>
+                      <button 
+                        onClick={() => {
+                          setShowLeadDetailsModal(false);
+                          setLeadDetails(null);
+                          setActiveTab('activity');
+                        }}
+                        className="text-slate-400 hover:text-slate-900 transition-colors p-2 rounded-lg hover:bg-slate-100"
+                        title="Close and return to dashboard"
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                       <div>
                         <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Full Name</label>
