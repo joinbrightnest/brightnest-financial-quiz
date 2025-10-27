@@ -71,9 +71,7 @@ export async function GET(request: NextRequest) {
             commissionAmount: {
               gt: 0 // Only conversions with actual commission amounts
             },
-            createdAt: {
-              gte: startDate,
-            },
+            // Don't filter by date - we need ALL conversions to calculate current available balance
           }
         },
       },
