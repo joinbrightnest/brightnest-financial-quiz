@@ -103,7 +103,28 @@ export async function GET(
           },
         }),
       ]);
-      console.log("Retrieved clicks:", clicks.length, "conversions:", conversions.length, "quiz sessions:", quizSessions.length, "appointments:", appointments.length);
+      
+      // Debug logging
+      console.log("📊 Admin Stats Debug:", {
+        clicks: clicks.length,
+        conversions: conversions.length,
+        bookingConversions: conversions.filter(c => c.conversionType === "booking").length,
+        quizSessions: quizSessions.length,
+        appointments: appointments.length,
+        appointmentDates: appointments.map(a => ({
+          id: a.id,
+          createdAt: a.createdAt,
+          scheduledAt: a.scheduledAt,
+          customerEmail: a.customerEmail
+        })),
+        bookingConversionDates: conversions
+          .filter(c => c.conversionType === "booking")
+          .map(c => ({
+            id: c.id,
+            createdAt: c.createdAt,
+            type: c.conversionType
+          }))
+      });
     } catch (error) {
       console.error("Error fetching related data:", error);
       // Set empty arrays if there's an error
@@ -117,8 +138,8 @@ export async function GET(
     const totalClicks = clicks.length;
     const leadData = await calculateAffiliateLeads(affiliateId, dateRange);
     const totalLeads = leadData.totalLeads;
-    // Count actual bookings from appointments table (source of truth)
-    const totalBookings = appointments.length;
+    // Count bookings from conversions (matches affiliate dashboard logic)
+    const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
     
     // Use stored commission for main display (all-time total, consistent with database)
     // This ensures commission shows immediately when deals are closed
@@ -161,7 +182,7 @@ export async function GET(
     const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
 
     // Generate daily stats from real data using centralized lead calculation
-    const dailyStats = await generateDailyStatsWithCentralizedLeads(affiliateId, clicks, conversions, appointments, dateRange);
+    const dailyStats = await generateDailyStatsWithCentralizedLeads(affiliateId, clicks, conversions, dateRange);
 
     // Generate traffic sources from real data
     const trafficSources = generateTrafficSourcesFromRealData(clicks);
@@ -308,8 +329,7 @@ function generateRecentActivityFromRealData(clicks: any[], conversions: any[]) {
 async function generateDailyStatsWithCentralizedLeads(
   affiliateId: string, 
   clicks: any[], 
-  conversions: any[], 
-  appointments: any[],
+  conversions: any[],
   dateRange: string
 ) {
   const stats = [];
@@ -335,15 +355,12 @@ async function generateDailyStatsWithCentralizedLeads(
         return clickDate >= hourStart && clickDate <= hourEnd;
       });
       
-      const hourAppointments = appointments.filter(a => {
-        const aptDate = new Date(a.createdAt);
-        return aptDate >= hourStart && aptDate <= hourEnd;
-      });
-      
       const hourConversions = conversions.filter(c => {
         const convDate = new Date(c.createdAt);
         return convDate >= hourStart && convDate <= hourEnd;
       });
+      
+      const hourBookings = hourConversions.filter(c => c.conversionType === "booking");
       
       // Calculate leads for this hour using centralized function
       const hourLeadData = await calculateLeadsWithDateRange(hourStart, hourEnd, affiliateId);
@@ -352,7 +369,7 @@ async function generateDailyStatsWithCentralizedLeads(
         date: hourLabel,
         clicks: hourClicks.length,
         leads: hourLeadData.totalLeads,
-        bookedCalls: hourAppointments.length, // Count from appointments, not conversions
+        bookedCalls: hourBookings.length,
         commission: hourConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0),
       });
     }
@@ -382,6 +399,8 @@ async function generateDailyStatsWithCentralizedLeads(
         days = 30;
     }
     
+    console.log(`📅 Generating ${days} days of data for dateRange: ${dateRange}`);
+    
     // Iterate through days from startDate backwards (7d goes back 7 days from now)
     for (let i = 0; i < days; i++) {
       const daysAgo = days - 1 - i; // Count backwards from most recent day
@@ -405,29 +424,34 @@ async function generateDailyStatsWithCentralizedLeads(
         return clickDate >= dayStart && clickDate <= dayEnd;
       });
       
-      const dayAppointments = appointments.filter(a => {
-        const aptDate = new Date(a.createdAt);
-        return aptDate >= dayStart && aptDate <= dayEnd;
-      });
-      
       const dayConversions = conversions.filter(c => {
         const convDate = new Date(c.createdAt);
         return convDate >= dayStart && convDate <= dayEnd;
       });
       
+      const dayBookings = dayConversions.filter(c => c.conversionType === "booking");
       const dayCommission = dayConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
       
       // Calculate leads for this day using centralized function
       const dayLeadData = await calculateLeadsWithDateRange(dayStart, dayEnd, affiliateId);
       
-      stats.push({
+      const dayData = {
         date: dateStr,
         clicks: dayClicks.length,
         leads: dayLeadData.totalLeads,
-        bookedCalls: dayAppointments.length, // Count from appointments, not conversions
+        bookedCalls: dayBookings.length,
         commission: dayCommission,
-      });
+      };
+      
+      // Log days with bookings
+      if (dayBookings.length > 0) {
+        console.log(`📊 Day ${dateStr}: ${dayBookings.length} bookings`, dayBookings.map(b => b.id));
+      }
+      
+      stats.push(dayData);
     }
+    
+    console.log(`📈 Generated ${stats.length} data points, bookings in ${stats.filter(s => s.bookedCalls > 0).length} days`);
   }
   
   return stats;
