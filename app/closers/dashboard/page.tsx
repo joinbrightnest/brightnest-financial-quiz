@@ -95,6 +95,10 @@ export default function CloserDashboard() {
     priority: 'medium',
     dueDate: '',
   });
+  const [notes, setNotes] = useState<any[]>([]);
+  const [isLoadingNotes, setIsLoadingNotes] = useState(false);
+  const [showNoteForm, setShowNoteForm] = useState(false);
+  const [noteContent, setNoteContent] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -978,73 +982,203 @@ export default function CloserDashboard() {
                     )}
 
                     {activeTab === 'notes' && (
-                      <div>
-                        <h3 className="text-lg font-semibold text-slate-900 mb-6">Call Details</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Recording Link</label>
-                          <div className="mt-1">
-                            {(() => {
-                              let recordingLink = null;
-                              if (leadDetails.appointment?.outcome) {
-                                switch (leadDetails.appointment.outcome) {
-                                  case 'converted':
-                                    recordingLink = leadDetails.appointment.recordingLinkConverted;
-                                    break;
-                                  case 'not_interested':
-                                    recordingLink = leadDetails.appointment.recordingLinkNotInterested;
-                                    break;
-                                  case 'needs_follow_up':
-                                    recordingLink = leadDetails.appointment.recordingLinkNeedsFollowUp;
-                                    break;
-                                  case 'wrong_number':
-                                    recordingLink = leadDetails.appointment.recordingLinkWrongNumber;
-                                    break;
-                                  case 'no_answer':
-                                    recordingLink = leadDetails.appointment.recordingLinkNoAnswer;
-                                    break;
-                                  case 'callback_requested':
-                                    recordingLink = leadDetails.appointment.recordingLinkCallbackRequested;
-                                    break;
-                                  case 'rescheduled':
-                                    recordingLink = leadDetails.appointment.recordingLinkRescheduled;
-                                    break;
-                                  default:
+                      <div className="space-y-6">
+                        {/* Call Details Section */}
+                        <div className="bg-slate-50 rounded-lg p-6 border border-slate-200">
+                          <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+                            <svg className="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            </svg>
+                            Call Details
+                          </h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                              <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Recording Link</label>
+                              <div className="mt-1">
+                                {(() => {
+                                  let recordingLink = null;
+                                  if (leadDetails.appointment?.outcome) {
+                                    switch (leadDetails.appointment.outcome) {
+                                      case 'converted':
+                                        recordingLink = leadDetails.appointment.recordingLinkConverted;
+                                        break;
+                                      case 'not_interested':
+                                        recordingLink = leadDetails.appointment.recordingLinkNotInterested;
+                                        break;
+                                      case 'needs_follow_up':
+                                        recordingLink = leadDetails.appointment.recordingLinkNeedsFollowUp;
+                                        break;
+                                      case 'wrong_number':
+                                        recordingLink = leadDetails.appointment.recordingLinkWrongNumber;
+                                        break;
+                                      case 'no_answer':
+                                        recordingLink = leadDetails.appointment.recordingLinkNoAnswer;
+                                        break;
+                                      case 'callback_requested':
+                                        recordingLink = leadDetails.appointment.recordingLinkCallbackRequested;
+                                        break;
+                                      case 'rescheduled':
+                                        recordingLink = leadDetails.appointment.recordingLinkRescheduled;
+                                        break;
+                                      default:
+                                        recordingLink = leadDetails.appointment?.recordingLink;
+                                    }
+                                  } else {
                                     recordingLink = leadDetails.appointment?.recordingLink;
-                                }
-                              } else {
-                                recordingLink = leadDetails.appointment?.recordingLink;
-                              }
+                                  }
 
-                              return recordingLink ? (
-                                <a 
-                                  href={recordingLink} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
-                                >
-                                  {recordingLink}
-                                </a>
-                              ) : (
-                                <p className="text-sm text-slate-400 italic">No recording available</p>
-                              );
-                            })()}
+                                  return recordingLink ? (
+                                    <a 
+                                      href={recordingLink} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
+                                    >
+                                      {recordingLink}
+                                    </a>
+                                  ) : (
+                                    <p className="text-sm text-slate-400 italic">No recording available</p>
+                                  );
+                                })()}
+                              </div>
+                            </div>
+                            <div>
+                              <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Call Notes</label>
+                              <div className="mt-1">
+                                {leadDetails.appointment?.notes ? (
+                                  <p className="text-sm text-slate-900 bg-white rounded-lg p-3 border border-slate-200">
+                                    {leadDetails.appointment.notes}
+                                  </p>
+                                ) : (
+                                  <p className="text-sm text-slate-400 italic">No notes available</p>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         </div>
+
+                        {/* Notes Section */}
                         <div>
-                          <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Call Notes</label>
-                          <div className="mt-1">
-                            {leadDetails.appointment?.notes ? (
-                              <p className="text-sm text-slate-900 bg-slate-50 rounded-lg p-3 border border-slate-200">
-                                {leadDetails.appointment.notes}
-                              </p>
-                            ) : (
-                              <p className="text-sm text-slate-400 italic">No notes available</p>
-                            )}
+                          <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+                              <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                              Notes
+                              <span className="ml-2 text-sm text-slate-500 font-normal">({notes.length})</span>
+                            </h3>
+                            <button
+                              onClick={() => setShowNoteForm(!showNoteForm)}
+                              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center"
+                            >
+                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                              </svg>
+                              Create Note
+                            </button>
                           </div>
+
+                          {/* Note Form */}
+                          {showNoteForm && (
+                            <div className="bg-white border-2 border-green-200 rounded-lg p-6 mb-6">
+                              <h4 className="text-lg font-semibold text-slate-900 mb-4">New Note</h4>
+                              <div className="space-y-4">
+                                <div>
+                                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Note Content *
+                                  </label>
+                                  <textarea
+                                    value={noteContent}
+                                    onChange={(e) => setNoteContent(e.target.value)}
+                                    rows={5}
+                                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-slate-900 resize-none"
+                                    placeholder="Enter your note here..."
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="flex justify-end space-x-3 mt-4">
+                                <button
+                                  onClick={() => {
+                                    setShowNoteForm(false);
+                                    setNoteContent('');
+                                  }}
+                                  className="px-4 py-2 text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors font-medium"
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (noteContent.trim()) {
+                                      const newNote = {
+                                        id: Date.now().toString(),
+                                        content: noteContent,
+                                        createdAt: new Date().toISOString(),
+                                      };
+                                      setNotes([newNote, ...notes]);
+                                      setNoteContent('');
+                                      setShowNoteForm(false);
+                                    }
+                                  }}
+                                  disabled={!noteContent.trim()}
+                                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                                >
+                                  Save Note
+                                </button>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Notes List */}
+                          {notes.length === 0 ? (
+                            <div className="text-center py-12 bg-slate-50 rounded-lg border-2 border-dashed border-slate-300">
+                              <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                              <p className="text-slate-600 text-lg mb-2">No notes yet</p>
+                              <p className="text-slate-500 text-sm">Click "Create Note" to add your first note</p>
+                            </div>
+                          ) : (
+                            <div className="space-y-4">
+                              {notes.map((note) => (
+                                <div
+                                  key={note.id}
+                                  className="bg-white border border-slate-200 rounded-lg p-5 hover:border-green-300 hover:shadow-md transition-all"
+                                >
+                                  <div className="flex justify-between items-start mb-3">
+                                    <div className="flex items-center text-sm text-slate-500">
+                                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                      </svg>
+                                      {new Date(note.createdAt).toLocaleString('en-US', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                      })}
+                                    </div>
+                                    <button
+                                      onClick={() => {
+                                        setNotes(notes.filter(n => n.id !== note.id));
+                                      }}
+                                      className="text-slate-400 hover:text-red-600 transition-colors"
+                                      title="Delete note"
+                                    >
+                                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                  <p className="text-slate-900 whitespace-pre-wrap leading-relaxed">
+                                    {note.content}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
-                    </div>
                     )}
 
                     {activeTab === 'tasks' && (
