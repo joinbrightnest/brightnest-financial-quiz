@@ -245,25 +245,34 @@ const AnalyzingFinanceTrends = () => {
     }, textInterval * 4);
 
     // Sequential progress bar animation - one at a time with variable timing
-    const progressInterval = setInterval(() => {
-      setActiveBarIndex(prev => {
-        if (prev < progressBars.length - 1) {
-          // Mark current bar as completed
-          setCompletedBars(completed => [...completed, prev]);
-          return prev + 1;
-        } else {
-          // All bars completed
-          setCompletedBars(completed => [...completed, prev]);
-          clearInterval(progressInterval);
-          return prev;
+    let totalElapsedTime = 0;
+    
+    // Schedule each bar with cumulative timing
+    progressBars.forEach((bar, index) => {
+      const barDuration = 3000 + Math.random() * 1000; // Variable timing: 3-4 seconds per bar
+      
+      // Start the bar
+      setTimeout(() => {
+        setActiveBarIndex(index);
+        if (index > 0) {
+          setCompletedBars(completed => [...completed, index - 1]);
         }
-      });
-    }, 3000 + Math.random() * 1000); // Variable timing: 3-4 seconds per bar
-
-    // Show intro sequence after all bars complete + 2 seconds
-    const introTimer = setTimeout(() => {
-      setShowIntroSequence(true);
-    }, (progressBars.length * 3000) + 2000); // Total time: bars * 3s + 2s buffer
+      }, totalElapsedTime);
+      
+      totalElapsedTime += barDuration;
+      
+      // If this is the last bar, mark it complete and show intro sequence
+      if (index === progressBars.length - 1) {
+        setTimeout(() => {
+          setCompletedBars(completed => [...completed, index]);
+          
+          // Show intro sequence 2 seconds after last bar completes
+          setTimeout(() => {
+            setShowIntroSequence(true);
+          }, 2000);
+        }, totalElapsedTime);
+      }
+    });
 
     // Try to get user's name from localStorage first, then API as fallback
     const fetchUserName = async () => {
@@ -302,15 +311,13 @@ const AnalyzingFinanceTrends = () => {
 
     fetchUserName();
 
-        return () => {
-          clearInterval(progressInterval);
-          clearTimeout(textTimer);
-          clearTimeout(textTimer2);
-          clearTimeout(textTimer3);
-          clearTimeout(textTimer4);
-          clearTimeout(introTimer);
-          clearTimeout(aiCopyTimer);
-        };
+    return () => {
+      clearTimeout(textTimer);
+      clearTimeout(textTimer2);
+      clearTimeout(textTimer3);
+      clearTimeout(textTimer4);
+      clearTimeout(aiCopyTimer);
+    };
   }, [router, progressBars.length]);
 
   // Handle intro sequence completion
