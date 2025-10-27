@@ -59,13 +59,7 @@ export async function GET(request: NextRequest) {
     const affiliates = await prisma.affiliate.findMany({
       where: whereClause,
       include: {
-        payouts: {
-          where: {
-            createdAt: {
-              gte: startDate,
-            },
-          },
-        },
+        payouts: true, // Get ALL payouts to calculate accurate totalPaid
         conversions: {
           where: {
             commissionAmount: {
@@ -82,7 +76,10 @@ export async function GET(request: NextRequest) {
 
     // Calculate payout summaries for each affiliate
     const affiliatesWithPayouts = affiliates.map(affiliate => {
-      const totalPaid = affiliate.payouts?.reduce((sum, payout) => sum + Number(payout.amountDue), 0) || 0;
+      // Only count completed payouts as "paid"
+      const totalPaid = affiliate.payouts
+        ?.filter(payout => payout.status === 'completed')
+        .reduce((sum, payout) => sum + Number(payout.amountDue), 0) || 0;
       
       // Calculate pending commissions (held commissions)
       const pendingCommissions = affiliate.conversions
