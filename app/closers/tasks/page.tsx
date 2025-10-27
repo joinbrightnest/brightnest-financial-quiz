@@ -43,7 +43,7 @@ export default function CloserTasks() {
     if (closer) {
       fetchTasks();
     }
-  }, [closer, filter]);
+  }, [closer]);
 
   const checkAuth = async () => {
     const token = localStorage.getItem('closerToken');
@@ -74,12 +74,16 @@ export default function CloserTasks() {
   };
 
   const fetchTasks = async () => {
-    if (!closer) return;
-
     try {
       setLoading(true);
       const token = localStorage.getItem('closerToken');
       
+      if (!token) {
+        setError('Not authenticated');
+        setLoading(false);
+        return;
+      }
+
       const response = await fetch('/api/closer/tasks', {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -114,6 +118,37 @@ export default function CloserTasks() {
     localStorage.removeItem('closerToken');
     localStorage.removeItem('closerData');
     router.push('/closers/login');
+  };
+
+  const handleUpdateStatus = async (taskId: string, newStatus: 'pending' | 'in_progress' | 'completed' | 'cancelled') => {
+    try {
+      const token = localStorage.getItem('closerToken');
+      if (!token) {
+        setError('Not authenticated');
+        return;
+      }
+
+      const response = await fetch(`/api/closer/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: newStatus,
+        }),
+      });
+
+      if (response.ok) {
+        // Refresh tasks to show updated status
+        await fetchTasks();
+      } else {
+        setError('Failed to update task status');
+      }
+    } catch (error) {
+      console.error('Error updating task status:', error);
+      setError('Failed to update task status');
+    }
   };
 
   const getPriorityColor = (priority: string) => {
@@ -344,6 +379,34 @@ export default function CloserTasks() {
                           </div>
                         )}
                       </div>
+                    </div>
+                    
+                    {/* Action Buttons */}
+                    <div className="flex items-center space-x-2 ml-4">
+                      {task.status !== 'in_progress' && task.status !== 'completed' && (
+                        <button
+                          onClick={() => handleUpdateStatus(task.id, 'in_progress')}
+                          className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+                        >
+                          Start
+                        </button>
+                      )}
+                      {task.status === 'in_progress' && (
+                        <button
+                          onClick={() => handleUpdateStatus(task.id, 'completed')}
+                          className="px-3 py-1.5 text-sm font-medium text-green-600 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors"
+                        >
+                          Complete
+                        </button>
+                      )}
+                      {task.status !== 'completed' && (
+                        <button
+                          onClick={() => handleUpdateStatus(task.id, 'cancelled')}
+                          className="px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+                        >
+                          Cancel
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
