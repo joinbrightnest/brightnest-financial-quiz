@@ -91,11 +91,9 @@ export async function GET(request: NextRequest) {
         .filter(conv => conv.commissionStatus === 'held')
         .reduce((sum, conv) => sum + Number(conv.commissionAmount), 0);
       
-      // Calculate available commissions (available status or null/undefined)
+      // Calculate available commissions (ONLY available status, not paid or held)
       const availableCommissions = affiliate.conversions
-        .filter(conv => conv.commissionStatus === 'available' || 
-                       conv.commissionStatus === null || 
-                       conv.commissionStatus === undefined)
+        .filter(conv => conv.commissionStatus === 'available')
         .reduce((sum, conv) => sum + Number(conv.commissionAmount), 0);
       
       // Calculate pending payouts (payouts with pending status)
