@@ -68,7 +68,7 @@ export default function AffiliatePerformancePage() {
   const [stats, setStats] = useState<AffiliateStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [dateRange, setDateRange] = useState("month");
+  const [dateRange, setDateRange] = useState("30d");
   const [showPasswordReset, setShowPasswordReset] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [passwordResetLoading, setPasswordResetLoading] = useState(false);
@@ -250,12 +250,12 @@ export default function AffiliatePerformancePage() {
                   onChange={(e) => setDateRange(e.target.value)}
                   className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
                 >
-                  <option value="today">Today</option>
-                  <option value="yesterday">Yesterday</option>
-                  <option value="week">This Week</option>
-                  <option value="month">This Month</option>
                   <option value="all">All Time</option>
-                  <option value="custom">Custom Range</option>
+                  <option value="24h">Last 24 hours</option>
+                  <option value="7d">Last 7 days</option>
+                  <option value="30d">Last 30 days</option>
+                  <option value="90d">Last 90 days</option>
+                  <option value="1y">Last year</option>
                 </select>
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                   <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -555,7 +555,7 @@ export default function AffiliatePerformancePage() {
 
               {/* Conversion Funnel */}
               <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 hover:shadow-lg transition-all duration-300">
-                <div className="flex items-center space-x-3 mb-6">
+                <div className="flex items-center space-x-3 mb-8">
                   <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -563,21 +563,55 @@ export default function AffiliatePerformancePage() {
                   </div>
                   <h4 className="text-xl font-bold text-slate-900">Conversion Funnel</h4>
                 </div>
-                <div className="space-y-4">
-                  {(stats.conversionFunnel || []).map((stage, index) => (
-                    <div key={stage.stage} className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
-                          {index + 1}
-                        </div>
-                        <span className="text-sm font-semibold text-slate-900">{stage.stage}</span>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                        1
                       </div>
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-slate-900">{stage.count.toLocaleString()}</p>
-                        <p className="text-xs text-slate-600 font-medium">{stage.percentage.toFixed(1)}%</p>
-                      </div>
+                      <span className="text-sm font-semibold text-slate-900">Clicks</span>
                     </div>
-                  ))}
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-slate-900">{(stats.totalClicks || 0).toLocaleString()}</p>
+                      <p className="text-xs text-slate-600 font-medium">100.0%</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                        2
+                      </div>
+                      <span className="text-sm font-semibold text-slate-900">Total Leads</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-slate-900">{(stats.totalLeads || 0).toLocaleString()}</p>
+                      <p className="text-xs text-slate-600 font-medium">{(stats.totalClicks || 0) > 0 ? (((stats.totalLeads || 0) / (stats.totalClicks || 1)) * 100).toFixed(1) : 0}%</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                        3
+                      </div>
+                      <span className="text-sm font-semibold text-slate-900">Booked Calls</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-slate-900">{(stats.totalBookings || 0).toLocaleString()}</p>
+                      <p className="text-xs text-slate-600 font-medium">{(stats.totalClicks || 0) > 0 ? (((stats.totalBookings || 0) / (stats.totalClicks || 1)) * 100).toFixed(1) : 0}%</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-10 h-10 bg-gradient-to-r from-amber-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                        4
+                      </div>
+                      <span className="text-sm font-semibold text-slate-900">Sales</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-slate-900">{(stats.totalSales || 0).toLocaleString()}</p>
+                      <p className="text-xs text-slate-600 font-medium">{(stats.totalBookings || 0) > 0 ? (((stats.totalSales || 0) / (stats.totalBookings || 1)) * 100).toFixed(1) : 0}%</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
