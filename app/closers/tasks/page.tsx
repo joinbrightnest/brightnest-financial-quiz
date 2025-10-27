@@ -9,6 +9,10 @@ interface Closer {
   name: string;
   email: string;
   phone: string;
+  totalCalls: number;
+  totalConversions: number;
+  totalRevenue: number;
+  conversionRate: number;
 }
 
 interface Task {
@@ -42,7 +46,7 @@ export default function CloserTasks() {
   }, [closer, filter]);
 
   const checkAuth = async () => {
-    const token = localStorage.getItem('closer_token');
+    const token = localStorage.getItem('closerToken');
     
     if (!token) {
       router.push('/closers/login');
@@ -50,17 +54,16 @@ export default function CloserTasks() {
     }
 
     try {
-      const response = await fetch('/api/closer/login', {
-        method: 'POST',
+      const response = await fetch('/api/closer/stats', {
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ token }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        setCloser(data);
+        setCloser(data.closer);
       } else {
         router.push('/closers/login');
       }
@@ -75,7 +78,7 @@ export default function CloserTasks() {
 
     try {
       setLoading(true);
-      const token = localStorage.getItem('closer_token');
+      const token = localStorage.getItem('closerToken');
       
       const response = await fetch('/api/closer/tasks', {
         headers: {
@@ -108,8 +111,8 @@ export default function CloserTasks() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('closer_token');
-    localStorage.removeItem('closer_id');
+    localStorage.removeItem('closerToken');
+    localStorage.removeItem('closerData');
     router.push('/closers/login');
   };
 
