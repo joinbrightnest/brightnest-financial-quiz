@@ -23,7 +23,7 @@ export default function ConfirmationPage() {
           </h2>
 
           {/* Confirmation Banner */}
-          <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-xl py-3 sm:py-4 px-4 sm:px-6 max-w-3xl mx-auto mb-6 sm:mb-8 shadow-lg border-2 border-white/20">
+          <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-xl py-3 sm:py-4 px-4 sm:px-6 max-w-3xl mx-auto shadow-lg border-2 border-white/20">
             <p className="text-white text-sm sm:text-base lg:text-lg font-black">
               Confirmed: Your Financial Transformation Assessment Has Been Booked
             </p>
@@ -31,11 +31,11 @@ export default function ConfirmationPage() {
         </div>
       </div>
 
-      {/* Spacing for gray section */}
-      <div className="h-8 sm:h-12 bg-[#F8F7F5]"></div>
+      {/* Spacing section */}
+      <div className="h-12 sm:h-16 bg-[#F8F7F5]"></div>
 
       {/* Section 2: Green Banner - Wider */}
-      <div className="relative z-10">
+      <div className="relative -mt-8 sm:-mt-10 z-10">
         <div className="max-w-5xl mx-auto px-4">
           <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-t-3xl py-3 sm:py-4 px-4 sm:px-6 shadow-lg relative overflow-hidden">
             <div className="text-center relative z-10">
