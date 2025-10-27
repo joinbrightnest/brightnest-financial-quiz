@@ -250,12 +250,30 @@ export async function GET(request: NextRequest) {
     let affiliateMap: Record<string, string> = {};
     
     if (allLeads.length > 0) {
-      const affiliateCodes = allLeads
+      // Get affiliate codes from both quiz sessions and appointments
+      const leadsAffiliateCodes = allLeads
         .filter(lead => lead.affiliateCode)
         .map(lead => lead.affiliateCode!)
         .filter((code): code is string => code !== null);
       
-      console.log('🔍 Affiliate codes found in leads:', affiliateCodes);
+      const appointmentAffiliateCodes = await prisma.appointment.findMany({
+        where: {
+          affiliateCode: { not: null }
+        },
+        select: {
+          affiliateCode: true
+        },
+        distinct: ['affiliateCode']
+      });
+      
+      const allAffiliateCodes = [
+        ...leadsAffiliateCodes,
+        ...appointmentAffiliateCodes.map(a => a.affiliateCode).filter((code): code is string => code !== null)
+      ];
+      
+      const affiliateCodes = [...new Set(allAffiliateCodes)]; // Remove duplicates
+      
+      console.log('🔍 Affiliate codes found in leads and appointments:', affiliateCodes);
       
       if (affiliateCodes.length > 0) {
         // Get all affiliates to check against
@@ -378,17 +396,21 @@ export async function GET(request: NextRequest) {
       }
       
       // Determine source with debugging
+      // Check both quiz session affiliate code AND appointment affiliate code
       let source = 'Website'; // Default
-      if (lead.affiliateCode) {
-        const mappedName = affiliateMap[lead.affiliateCode];
+      let affiliateCodeToCheck = lead.affiliateCode || appointment?.affiliateCode;
+      
+      if (affiliateCodeToCheck) {
+        const mappedName = affiliateMap[affiliateCodeToCheck];
         if (mappedName) {
           source = mappedName;
-          console.log(`✅ Lead ${lead.id} (${email}): affiliateCode=${lead.affiliateCode} -> source=${source}`);
+          const sourceType = lead.affiliateCode ? 'quiz session' : 'appointment';
+          console.log(`✅ Lead ${lead.id} (${email}): affiliateCode=${affiliateCodeToCheck} (from ${sourceType}) -> source=${source}`);
         } else {
-          console.log(`❌ Lead ${lead.id} (${email}): affiliateCode=${lead.affiliateCode} not found in map, defaulting to Website`);
+          console.log(`❌ Lead ${lead.id} (${email}): affiliateCode=${affiliateCodeToCheck} not found in map, defaulting to Website`);
         }
       } else {
-        console.log(`ℹ️ Lead ${lead.id} (${email}): no affiliateCode, defaulting to Website`);
+        console.log(`ℹ️ Lead ${lead.id} (${email}): no affiliateCode in quiz session or appointment, defaulting to Website`);
       }
       
       return {
