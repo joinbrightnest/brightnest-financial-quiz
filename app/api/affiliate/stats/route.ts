@@ -79,31 +79,32 @@ export async function GET(request: NextRequest) {
     let conversions: any[] = [];
     let payouts: any[] = [];
     
+    // Calculate end date based on date range
+    let endDate: Date | undefined;
+    switch (dateRange) {
+      case "24h":
+        endDate = new Date(now.getTime());
+        break;
+      case "7d":
+        endDate = new Date(now.getTime());
+        break;
+      case "30d":
+        endDate = new Date(now.getTime());
+        break;
+      case "90d":
+        endDate = new Date(now.getTime());
+        break;
+      case "1y":
+        endDate = new Date(now.getTime());
+        break;
+      case "all":
+        endDate = undefined; // No upper bound for all time
+        break;
+      default:
+        endDate = new Date(now.getTime());
+    }
+    
     try {
-      // Calculate end date based on date range
-      let endDate: Date | undefined;
-      switch (dateRange) {
-        case "24h":
-          endDate = new Date(now.getTime());
-          break;
-        case "7d":
-          endDate = new Date(now.getTime());
-          break;
-        case "30d":
-          endDate = new Date(now.getTime());
-          break;
-        case "90d":
-          endDate = new Date(now.getTime());
-          break;
-        case "1y":
-          endDate = new Date(now.getTime());
-          break;
-        case "all":
-          endDate = undefined; // No upper bound for all time
-          break;
-        default:
-          endDate = new Date(now.getTime());
-      }
 
       [clicks, conversions, payouts] = await Promise.all([
         prisma.affiliateClick.findMany({
@@ -155,7 +156,16 @@ export async function GET(request: NextRequest) {
 
     // Calculate stats from conversions - single source of truth
     const totalClicks = affiliateWithData.clicks.length;
-    const totalLeads = affiliateWithData.conversions.filter(c => c.conversionType === "quiz_completion").length;
+    
+    // Use centralized lead calculation for consistency
+    const leadsData = await calculateLeadsWithDateRange(
+      startDate,
+      endDate || now,
+      undefined,
+      affiliate.referralCode
+    );
+    const totalLeads = leadsData.totalLeads;
+    
     const totalBookings = affiliateWithData.conversions.filter(c => c.conversionType === "booking").length;
     
     // Count sales from AffiliateConversion records - single source of truth

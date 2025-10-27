@@ -414,7 +414,7 @@ export default function AffiliateDashboard() {
                       <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg text-sm sm:text-base">
                         2
                       </div>
-                      <span className="text-xs sm:text-sm font-semibold text-slate-900">Quiz Completions</span>
+                      <span className="text-xs sm:text-sm font-semibold text-slate-900">Total Leads</span>
                     </div>
                     <div className="text-right">
                       <p className="text-sm sm:text-lg font-bold text-slate-900">{(stats.totalLeads || 0).toLocaleString()}</p>
