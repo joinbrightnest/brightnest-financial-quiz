@@ -136,6 +136,9 @@ export default function AdminDashboard() {
     priority: 'medium',
     dueDate: '',
   });
+  const [adminNotes, setAdminNotes] = useState<any[]>([]);
+  const [showAdminNoteForm, setShowAdminNoteForm] = useState(false);
+  const [adminNoteContent, setAdminNoteContent] = useState('');
   const [crmVisibleColumns, setCrmVisibleColumns] = useState({
     checkbox: true,
     name: true,
@@ -2255,12 +2258,30 @@ export default function AdminDashboard() {
                     <div className="p-8 max-w-7xl mx-auto space-y-8">
                       {/* Combined Personal Information and Deal Information */}
                       <div className="bg-white rounded-xl border border-slate-200 p-6">
-                        <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
-                          <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                          Personal Information
-                        </h3>
+                        <div className="flex justify-between items-center mb-6">
+                          <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+                            <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                            Personal Information
+                          </h3>
+                          <button 
+                            onClick={() => {
+                              setCrmShowLeadModal(false);
+                              setCrmSelectedLead(null);
+                              setCrmLeadModalTab('activity');
+                              setAdminNotes([]);
+                              setAdminNoteContent('');
+                              setShowAdminNoteForm(false);
+                            }}
+                            className="text-slate-400 hover:text-slate-900 transition-colors p-2 rounded-lg hover:bg-slate-100"
+                            title="Close and return to dashboard"
+                          >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Full Name</label>
@@ -2394,71 +2415,193 @@ export default function AdminDashboard() {
                         )}
 
                         {crmLeadModalTab === 'notes' && (
-                          <div>
-                            <h3 className="text-lg font-semibold text-slate-900 mb-6">Call Details</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                              <div>
-                                <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Recording Link</label>
-                                <div className="mt-1">
-                                  {(() => {
-                                    let recordingLink = null;
-                                    if (crmSelectedLead.appointment?.outcome) {
-                                      switch (crmSelectedLead.appointment.outcome) {
-                                        case 'converted':
-                                          recordingLink = crmSelectedLead.appointment.recordingLinkConverted;
-                                          break;
-                                        case 'not_interested':
-                                          recordingLink = crmSelectedLead.appointment.recordingLinkNotInterested;
-                                          break;
-                                        case 'needs_follow_up':
-                                          recordingLink = crmSelectedLead.appointment.recordingLinkNeedsFollowUp;
-                                          break;
-                                        case 'wrong_number':
-                                          recordingLink = crmSelectedLead.appointment.recordingLinkWrongNumber;
-                                          break;
-                                        case 'no_answer':
-                                          recordingLink = crmSelectedLead.appointment.recordingLinkNoAnswer;
-                                          break;
-                                        case 'callback_requested':
-                                          recordingLink = crmSelectedLead.appointment.recordingLinkCallbackRequested;
-                                          break;
-                                        case 'rescheduled':
-                                          recordingLink = crmSelectedLead.appointment.recordingLinkRescheduled;
-                                          break;
-                                        default:
-                                          recordingLink = crmSelectedLead.appointment?.recordingLink;
+                          <div className="space-y-6">
+                            {/* Call Details Section */}
+                            <div className="bg-slate-50 rounded-lg p-6 border border-slate-200">
+                              <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
+                                <svg className="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                                Call Details
+                              </h3>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                  <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Recording Link</label>
+                                  <div className="mt-1">
+                                    {(() => {
+                                      let recordingLink = null;
+                                      if (crmSelectedLead.appointment?.outcome) {
+                                        switch (crmSelectedLead.appointment.outcome) {
+                                          case 'converted':
+                                            recordingLink = crmSelectedLead.appointment.recordingLinkConverted;
+                                            break;
+                                          case 'not_interested':
+                                            recordingLink = crmSelectedLead.appointment.recordingLinkNotInterested;
+                                            break;
+                                          case 'needs_follow_up':
+                                            recordingLink = crmSelectedLead.appointment.recordingLinkNeedsFollowUp;
+                                            break;
+                                          case 'wrong_number':
+                                            recordingLink = crmSelectedLead.appointment.recordingLinkWrongNumber;
+                                            break;
+                                          case 'no_answer':
+                                            recordingLink = crmSelectedLead.appointment.recordingLinkNoAnswer;
+                                            break;
+                                          case 'callback_requested':
+                                            recordingLink = crmSelectedLead.appointment.recordingLinkCallbackRequested;
+                                            break;
+                                          case 'rescheduled':
+                                            recordingLink = crmSelectedLead.appointment.recordingLinkRescheduled;
+                                            break;
+                                          default:
+                                            recordingLink = crmSelectedLead.appointment?.recordingLink;
+                                        }
+                                      } else {
+                                        recordingLink = crmSelectedLead.appointment?.recordingLink;
                                       }
-                                    } else {
-                                      recordingLink = crmSelectedLead.appointment?.recordingLink;
-                                    }
 
-                                    return recordingLink ? (
-                                      <a 
-                                        href={recordingLink} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
-                                      >
-                                        {recordingLink}
-                                      </a>
+                                      return recordingLink ? (
+                                        <a 
+                                          href={recordingLink} 
+                                          target="_blank" 
+                                          rel="noopener noreferrer"
+                                          className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
+                                        >
+                                          {recordingLink}
+                                        </a>
+                                      ) : (
+                                        <p className="text-sm text-slate-400 italic">No recording available</p>
+                                      );
+                                    })()}
+                                  </div>
+                                </div>
+                                <div>
+                                  <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Call Notes</label>
+                                  <div className="mt-1">
+                                    {crmSelectedLead.appointment?.notes ? (
+                                      <p className="text-sm text-slate-900 bg-white rounded-lg p-3 border border-slate-200">
+                                        {crmSelectedLead.appointment.notes}
+                                      </p>
                                     ) : (
-                                      <p className="text-sm text-slate-400 italic">No recording available</p>
-                                    );
-                                  })()}
+                                      <p className="text-sm text-slate-400 italic">No notes available</p>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                              <div>
-                                <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Call Notes</label>
-                                <div className="mt-1">
-                                  {crmSelectedLead.appointment?.notes ? (
-                                    <p className="text-sm text-slate-900 bg-slate-50 rounded-lg p-3 border border-slate-200">
-                                      {crmSelectedLead.appointment.notes}
-                                    </p>
-                                  ) : (
-                                    <p className="text-sm text-slate-400 italic">No notes available</p>
-                                  )}
-                                </div>
+                            </div>
+
+                            {/* Notes Section */}
+                            <div>
+                              <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-lg font-semibold text-slate-900 flex items-center">
+                                  <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                  </svg>
+                                  Notes
+                                  <span className="ml-2 text-sm text-slate-500 font-normal">({adminNotes.length})</span>
+                                </h3>
+                                <button
+                                  onClick={() => setShowAdminNoteForm(!showAdminNoteForm)}
+                                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center"
+                                >
+                                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                  </svg>
+                                  Create Note
+                                </button>
                               </div>
+
+                              {/* Note Form */}
+                              {showAdminNoteForm && (
+                                <div className="bg-white border-2 border-green-200 rounded-lg p-6 mb-6">
+                                  <h4 className="text-lg font-semibold text-slate-900 mb-4">New Note</h4>
+                                  <div className="space-y-4">
+                                    <div>
+                                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        Note Content *
+                                      </label>
+                                      <textarea
+                                        value={adminNoteContent}
+                                        onChange={(e) => setAdminNoteContent(e.target.value)}
+                                        rows={5}
+                                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-slate-900 resize-none"
+                                        placeholder="Enter your note here..."
+                                      />
+                                    </div>
+                                  </div>
+
+                                  <div className="flex justify-end space-x-3 mt-4">
+                                    <button
+                                      onClick={() => {
+                                        setShowAdminNoteForm(false);
+                                        setAdminNoteContent('');
+                                      }}
+                                      className="px-4 py-2 text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors font-medium"
+                                    >
+                                      Cancel
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        if (adminNoteContent.trim()) {
+                                          const newNote = {
+                                            id: Date.now().toString(),
+                                            content: adminNoteContent,
+                                            createdAt: new Date().toISOString(),
+                                          };
+                                          setAdminNotes([newNote, ...adminNotes]);
+                                          setAdminNoteContent('');
+                                          setShowAdminNoteForm(false);
+                                        }
+                                      }}
+                                      disabled={!adminNoteContent.trim()}
+                                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                                    >
+                                      Save Note
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Notes List */}
+                              {adminNotes.length > 0 && (
+                                <div className="space-y-4">
+                                  {adminNotes.map((note) => (
+                                    <div
+                                      key={note.id}
+                                      className="bg-white border border-slate-200 rounded-lg p-5 hover:border-green-300 hover:shadow-md transition-all"
+                                    >
+                                      <div className="flex justify-between items-start mb-3">
+                                        <div className="flex items-center text-sm text-slate-500">
+                                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                          </svg>
+                                          {new Date(note.createdAt).toLocaleString('en-US', {
+                                            year: 'numeric',
+                                            month: 'short',
+                                            day: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                          })}
+                                        </div>
+                                        <button
+                                          onClick={() => {
+                                            setAdminNotes(adminNotes.filter(n => n.id !== note.id));
+                                          }}
+                                          className="text-slate-400 hover:text-red-600 transition-colors"
+                                          title="Delete note"
+                                        >
+                                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                          </svg>
+                                        </button>
+                                      </div>
+                                      <p className="text-slate-900 whitespace-pre-wrap leading-relaxed">
+                                        {note.content}
+                                      </p>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                             </div>
                           </div>
                         )}
