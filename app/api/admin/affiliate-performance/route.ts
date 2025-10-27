@@ -131,7 +131,11 @@ export async function GET(request: NextRequest) {
 
     // Calculate performance metrics for each affiliate (using pre-fetched data)
     const affiliatePerformance = affiliates.map((affiliate) => {
-      const data = dataByAffiliate.get(affiliate.id)!;
+      const data = dataByAffiliate.get(affiliate.id);
+      if (!data) {
+        console.error('No data found for affiliate:', affiliate.id);
+        return null;
+      }
       const { clicks, conversions, quizSessions, appointments, payouts } = data;
 
       // Calculate metrics from pre-fetched data
@@ -186,7 +190,7 @@ export async function GET(request: NextRequest) {
         createdAt: affiliate.createdAt,
         updatedAt: affiliate.updatedAt,
       };
-    });
+    }).filter(Boolean); // Remove any null entries
 
     // Calculate overall affiliate stats
     const totalAffiliates = affiliatePerformance.length;
