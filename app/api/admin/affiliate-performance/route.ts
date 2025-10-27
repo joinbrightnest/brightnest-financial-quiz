@@ -4,15 +4,16 @@ import { calculateAffiliateLeads } from "@/lib/lead-calculation";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
 
 export async function GET(request: NextRequest) {
-  // 🔒 SECURITY: Require admin authentication
-  if (!verifyAdminAuth(request)) {
-    return NextResponse.json(
-      { error: "Unauthorized - Admin authentication required" },
-      { status: 401 }
-    );
-  }
-  
   try {
+    // 🔒 SECURITY: Require admin authentication
+    if (!verifyAdminAuth(request)) {
+      return NextResponse.json(
+        { error: "Unauthorized - Admin authentication required" },
+        { status: 401 }
+      );
+    }
+    
+    console.log("Admin auth passed, starting data fetch...");
     // Get date range filter from query params
     const { searchParams } = new URL(request.url);
     const dateRange = searchParams.get("dateRange") || "all";
