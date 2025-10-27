@@ -124,8 +124,8 @@ export async function GET(
     // This ensures commission shows immediately when deals are closed
     const totalCommission = Number(affiliate.totalCommission || 0);
     
-    // Calculate date-filtered commission for analysis
-    const appointments = await prisma.appointment.findMany({
+    // Calculate date-filtered commission for analysis (only converted appointments)
+    const convertedAppointments = await prisma.appointment.findMany({
       where: {
         affiliateCode: affiliate.referralCode,
         outcome: 'converted',
@@ -135,7 +135,7 @@ export async function GET(
       },
     }).catch(() => []);
     
-    const dateFilteredCommission = appointments.reduce((sum, apt) => {
+    const dateFilteredCommission = convertedAppointments.reduce((sum, apt) => {
       const saleValue = Number(apt.saleValue || 0);
       return sum + (saleValue * Number(affiliate.commissionRate));
     }, 0);
@@ -147,8 +147,8 @@ export async function GET(
       startDate: startDate.toISOString(),
       storedCommission: Number(affiliate.totalCommission || 0),
       dateFilteredCommission,
-      appointmentsFound: appointments.length,
-      appointments: appointments.map(apt => ({
+      convertedAppointmentsFound: convertedAppointments.length,
+      convertedAppointments: convertedAppointments.map(apt => ({
         id: apt.id,
         outcome: apt.outcome,
         saleValue: apt.saleValue,
