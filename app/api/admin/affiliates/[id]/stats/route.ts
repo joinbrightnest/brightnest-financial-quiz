@@ -66,9 +66,10 @@ export async function GET(
     let clicks = [];
     let conversions = [];
     let quizSessions = [];
+    let appointments = [];
     
     try {
-      [clicks, conversions, quizSessions] = await Promise.all([
+      [clicks, conversions, quizSessions, appointments] = await Promise.all([
         prisma.affiliateClick.findMany({
           where: {
             affiliateId: affiliate.id,
@@ -93,21 +94,31 @@ export async function GET(
             },
           },
         }),
+        prisma.appointment.findMany({
+          where: {
+            affiliateCode: affiliate.referralCode,
+            createdAt: {
+              gte: startDate,
+            },
+          },
+        }),
       ]);
-      console.log("Retrieved clicks:", clicks.length, "conversions:", conversions.length, "quiz sessions:", quizSessions.length);
+      console.log("Retrieved clicks:", clicks.length, "conversions:", conversions.length, "quiz sessions:", quizSessions.length, "appointments:", appointments.length);
     } catch (error) {
       console.error("Error fetching related data:", error);
       // Set empty arrays if there's an error
       clicks = [];
       conversions = [];
       quizSessions = [];
+      appointments = [];
     }
 
     // Calculate stats from real data using centralized lead calculation
     const totalClicks = clicks.length;
     const leadData = await calculateAffiliateLeads(affiliateId, dateRange);
     const totalLeads = leadData.totalLeads;
-    const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
+    // Count actual bookings from appointments table (source of truth)
+    const totalBookings = appointments.length;
     
     // Use stored commission for main display (all-time total, consistent with database)
     // This ensures commission shows immediately when deals are closed
@@ -150,7 +161,7 @@ export async function GET(
     const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
 
     // Generate daily stats from real data using centralized lead calculation
-    const dailyStats = await generateDailyStatsWithCentralizedLeads(affiliateId, clicks, conversions, dateRange);
+    const dailyStats = await generateDailyStatsWithCentralizedLeads(affiliateId, clicks, conversions, appointments, dateRange);
 
     // Generate traffic sources from real data
     const trafficSources = generateTrafficSourcesFromRealData(clicks);
@@ -298,6 +309,7 @@ async function generateDailyStatsWithCentralizedLeads(
   affiliateId: string, 
   clicks: any[], 
   conversions: any[], 
+  appointments: any[],
   dateRange: string
 ) {
   const stats = [];
@@ -323,6 +335,11 @@ async function generateDailyStatsWithCentralizedLeads(
         return clickDate >= hourStart && clickDate <= hourEnd;
       });
       
+      const hourAppointments = appointments.filter(a => {
+        const aptDate = new Date(a.createdAt);
+        return aptDate >= hourStart && aptDate <= hourEnd;
+      });
+      
       const hourConversions = conversions.filter(c => {
         const convDate = new Date(c.createdAt);
         return convDate >= hourStart && convDate <= hourEnd;
@@ -335,7 +352,7 @@ async function generateDailyStatsWithCentralizedLeads(
         date: hourLabel,
         clicks: hourClicks.length,
         leads: hourLeadData.totalLeads,
-        bookedCalls: hourConversions.filter(c => c.conversionType === "booking").length,
+        bookedCalls: hourAppointments.length, // Count from appointments, not conversions
         commission: hourConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0),
       });
     }
@@ -388,12 +405,16 @@ async function generateDailyStatsWithCentralizedLeads(
         return clickDate >= dayStart && clickDate <= dayEnd;
       });
       
+      const dayAppointments = appointments.filter(a => {
+        const aptDate = new Date(a.createdAt);
+        return aptDate >= dayStart && aptDate <= dayEnd;
+      });
+      
       const dayConversions = conversions.filter(c => {
         const convDate = new Date(c.createdAt);
         return convDate >= dayStart && convDate <= dayEnd;
       });
       
-      const dayBookings = dayConversions.filter(c => c.conversionType === "booking");
       const dayCommission = dayConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
       
       // Calculate leads for this day using centralized function
@@ -403,7 +424,7 @@ async function generateDailyStatsWithCentralizedLeads(
         date: dateStr,
         clicks: dayClicks.length,
         leads: dayLeadData.totalLeads,
-        bookedCalls: dayBookings.length,
+        bookedCalls: dayAppointments.length, // Count from appointments, not conversions
         commission: dayCommission,
       });
     }
