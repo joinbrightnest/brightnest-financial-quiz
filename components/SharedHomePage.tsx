@@ -19,9 +19,6 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
 
   return (
     <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
-      {/* Top Purple Bar */}
-      <div className="w-full h-1 bg-[#5C4F6B]"></div>
-      
       {/* Navigation */}
       <nav className="bg-[#F8F7F0] border-b border-gray-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
