@@ -30,7 +30,6 @@ export async function GET(request: NextRequest) {
         name: true,
         email: true,
         phone: true,
-        commissionRate: true,
         totalCalls: true,
         totalConversions: true,
         totalRevenue: true,
@@ -70,7 +69,6 @@ export async function GET(request: NextRequest) {
     // Ensure numeric fields have default values
     const closerWithDefaults = {
       ...closer,
-      commissionRate: parseFloat(closer.commissionRate.toString()),
       totalCalls: actualTotalCalls,
       totalConversions: actualTotalConversions,
       totalRevenue: actualTotalRevenue,

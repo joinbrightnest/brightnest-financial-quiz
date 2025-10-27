@@ -13,7 +13,6 @@ interface Closer {
   totalConversions: number;
   totalRevenue: number;
   conversionRate: number;
-  commissionRate: number;
 }
 
 interface Appointment {

@@ -13,7 +13,6 @@ interface CloserData {
   totalConversions: number;
   totalRevenue: number;
   conversionRate: number;
-  commissionRate: number;
 }
 
 interface CloserHeaderProps {
@@ -99,9 +98,6 @@ export default function CloserHeader({ closer, onLogout }: CloserHeaderProps) {
                     <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-200 shadow-sm">
                       <span className="mr-1">📞</span>
                       Closer
-                    </span>
-                    <span className="text-xs text-gray-600 font-medium">
-                      {(closer.commissionRate * 100).toFixed(0)}% commission
                     </span>
                   </div>
                 </div>
