@@ -18,9 +18,10 @@ interface CloserData {
 interface CloserHeaderProps {
   closer: CloserData;
   onLogout: () => void;
+  taskCount?: number;
 }
 
-export default function CloserHeader({ closer, onLogout }: CloserHeaderProps) {
+export default function CloserHeader({ closer, onLogout, taskCount = 0 }: CloserHeaderProps) {
   const [showMenu, setShowMenu] = useState(false);
   const pathname = usePathname();
 
@@ -69,7 +70,14 @@ export default function CloserHeader({ closer, onLogout }: CloserHeaderProps) {
                   : 'text-gray-700 hover:text-indigo-600 hover:bg-indigo-50'
               }`}
             >
-              <span className="relative z-10">Tasks</span>
+              <span className="relative z-10 flex items-center">
+                Tasks
+                {taskCount > 0 && (
+                  <span className="ml-2 px-2 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full min-w-[20px] text-center">
+                    {taskCount}
+                  </span>
+                )}
+              </span>
               {!isActive('/closers/tasks') && (
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
               )}
@@ -131,17 +139,24 @@ export default function CloserHeader({ closer, onLogout }: CloserHeaderProps) {
                   </Link>
                   <Link
                     href="/closers/tasks"
-                    className={`flex items-center px-4 py-3 text-sm transition-all duration-200 group ${
+                    className={`flex items-center justify-between px-4 py-3 text-sm transition-all duration-200 group ${
                       isActive('/closers/tasks')
                         ? 'text-indigo-600 bg-indigo-50 border-l-4 border-indigo-500'
                         : 'text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50'
                     }`}
                     onClick={() => setShowMenu(false)}
                   >
-                    <svg className={`w-4 h-4 mr-3 ${isActive('/closers/tasks') ? 'text-indigo-600' : 'text-gray-500 group-hover:text-indigo-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                    </svg>
-                    Tasks
+                    <div className="flex items-center">
+                      <svg className={`w-4 h-4 mr-3 ${isActive('/closers/tasks') ? 'text-indigo-600' : 'text-gray-500 group-hover:text-indigo-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                      </svg>
+                      Tasks
+                    </div>
+                    {taskCount > 0 && (
+                      <span className="px-2 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full min-w-[20px] text-center">
+                        {taskCount}
+                      </span>
+                    )}
                   </Link>
                   <div className="border-t border-gray-100/50 my-1"></div>
                   <button

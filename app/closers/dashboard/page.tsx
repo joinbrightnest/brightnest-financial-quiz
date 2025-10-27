@@ -71,6 +71,7 @@ export default function CloserDashboard() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [activeTaskCount, setActiveTaskCount] = useState(0);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [showOutcomeModal, setShowOutcomeModal] = useState(false);
   const [showAllAppointments, setShowAllAppointments] = useState(false);
@@ -107,6 +108,7 @@ export default function CloserDashboard() {
     // Fetch fresh closer stats and appointments
     fetchCloserStats(token);
     fetchAppointments(token);
+    fetchActiveTaskCount(token);
   }, [router]);
 
   const fetchCloserStats = async (token: string) => {
@@ -150,6 +152,25 @@ export default function CloserDashboard() {
       setError('Network error loading appointments');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchActiveTaskCount = async (token: string) => {
+    try {
+      const response = await fetch('/api/closer/tasks', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const tasks = await response.json();
+        const activeCount = tasks.filter((t: any) => t.status === 'pending' || t.status === 'in_progress').length;
+        setActiveTaskCount(activeCount);
+      }
+    } catch (error) {
+      console.error('Error fetching task count:', error);
     }
   };
 
@@ -465,7 +486,7 @@ export default function CloserDashboard() {
 
   return (
     <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
-      <CloserHeader closer={closer} onLogout={handleLogout} />
+      <CloserHeader closer={closer} onLogout={handleLogout} taskCount={activeTaskCount} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}

@@ -203,7 +203,7 @@ export default function CloserTasks() {
 
   return (
     <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
-      <CloserHeader closer={closer} onLogout={handleLogout} />
+      <CloserHeader closer={closer} onLogout={handleLogout} taskCount={tasks.filter(t => t.status === 'pending' || t.status === 'in_progress').length} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
