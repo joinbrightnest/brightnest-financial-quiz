@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient, CallOutcome } from "@prisma/client";
+import { CallOutcome } from "@prisma/client";
 import { calculateAffiliateLeads } from "@/lib/lead-calculation";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {

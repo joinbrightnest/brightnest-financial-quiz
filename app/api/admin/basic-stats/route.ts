@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import { calculateTotalLeads, calculateLeadsByCode, calculateLeads } from "@/lib/lead-calculation";
 import { getLeadStatuses } from "@/lib/lead-status";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export async function DELETE(request: NextRequest) {
   // 🔒 SECURITY: Require admin authentication
