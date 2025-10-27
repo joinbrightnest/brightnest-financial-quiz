@@ -809,9 +809,11 @@ export default function CloserDashboard() {
                     setLeadDetails(null);
                     setActiveTab('activity');
                   }}
-                  className="text-slate-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-slate-700"
+                  className="text-slate-400 hover:text-white transition-all p-2 rounded-lg hover:bg-slate-700 flex items-center space-x-2 group"
+                  title="Close and return to dashboard"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <span className="text-sm font-medium hidden group-hover:inline">Close</span>
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
