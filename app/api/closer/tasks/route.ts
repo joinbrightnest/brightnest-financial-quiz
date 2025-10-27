@@ -17,15 +17,18 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const leadEmail = searchParams.get('leadEmail');
 
-    if (!leadEmail) {
-      return NextResponse.json({ error: 'Lead email is required' }, { status: 400 });
+    // Build the where clause
+    const whereClause: any = {
+      closerId: decoded.closerId,
+    };
+    
+    // If leadEmail is provided, filter by it; otherwise get all tasks for this closer
+    if (leadEmail) {
+      whereClause.leadEmail = leadEmail;
     }
 
     const tasks = await prisma.task.findMany({
-      where: {
-        leadEmail: leadEmail,
-        closerId: decoded.closerId,
-      },
+      where: whereClause,
       orderBy: [
         { status: 'asc' },
         { dueDate: 'asc' },
@@ -33,7 +36,7 @@ export async function GET(request: NextRequest) {
       ],
     });
 
-    return NextResponse.json({ tasks });
+    return NextResponse.json(tasks);
   } catch (error) {
     console.error('Error fetching tasks:', error);
     return NextResponse.json({ error: 'Failed to fetch tasks' }, { status: 500 });

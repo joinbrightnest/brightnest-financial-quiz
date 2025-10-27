@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
         name: true,
         email: true,
         phone: true,
+        commissionRate: true,
         totalCalls: true,
         totalConversions: true,
         totalRevenue: true,
@@ -64,11 +65,12 @@ export async function GET(request: NextRequest) {
     const actualTotalRevenue = appointments
       .filter(apt => apt.outcome === 'converted' && apt.saleValue)
       .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
-    const actualConversionRate = actualTotalCalls > 0 ? (actualTotalConversions / actualTotalCalls) * 100 : 0;
+    const actualConversionRate = actualTotalCalls > 0 ? parseFloat(((actualTotalConversions / actualTotalCalls) * 100).toFixed(4)) : 0;
 
     // Ensure numeric fields have default values
     const closerWithDefaults = {
       ...closer,
+      commissionRate: parseFloat(closer.commissionRate.toString()),
       totalCalls: actualTotalCalls,
       totalConversions: actualTotalConversions,
       totalRevenue: actualTotalRevenue,
