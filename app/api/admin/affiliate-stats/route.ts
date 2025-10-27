@@ -304,31 +304,33 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
   // Use pre-calculated lead data if provided, otherwise fetch it
   const allLeadsData = preCalculatedLeadData || await calculateLeadsByCode(affiliateCode, dateRange);
 
-  if (dateRange === "today") {
-    // For today, show hourly data for today
-    const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
+  if (dateRange === "24h") {
+    // For 24 hours, show hourly data for the last 24 hours
+    const now = new Date();
     
-    for (let hour = 0; hour < 24; hour++) {
-      const hourStr = hour.toString().padStart(2, '0');
+    for (let i = 23; i >= 0; i--) {
+      const hourTimestamp = new Date(now.getTime() - i * 60 * 60 * 1000);
+      const hourStart = new Date(hourTimestamp);
+      hourStart.setMinutes(0, 0, 0);
+      const hourEnd = new Date(hourTimestamp);
+      hourEnd.setMinutes(59, 59, 999);
+      
+      const hourLabel = `${hourTimestamp.getHours().toString().padStart(2, '0')}:00`;
       
       const hourClicks = clicks.filter(c => {
-        const clickDate = c.createdAt.toISOString().split('T')[0];
-        const clickHour = c.createdAt.getHours().toString().padStart(2, '0');
-        return clickDate === todayStr && clickHour === hourStr;
+        const clickDate = new Date(c.createdAt);
+        return clickDate >= hourStart && clickDate <= hourEnd;
       });
       
       const hourConversions = conversions.filter(c => {
-        const convDate = c.createdAt.toISOString().split('T')[0];
-        const convHour = c.createdAt.getHours().toString().padStart(2, '0');
-        return convDate === todayStr && convHour === hourStr;
+        const convDate = new Date(c.createdAt);
+        return convDate >= hourStart && convDate <= hourEnd;
       });
       
       // Filter appointments for this specific hour
       const hourAppointments = convertedAppointments.filter(apt => {
-        const aptDate = apt.createdAt.toISOString().split('T')[0];
-        const aptHour = apt.createdAt.getHours();
-        return aptDate === todayStr && aptHour === hour;
+        const aptDate = new Date(apt.createdAt);
+        return aptDate >= hourStart && aptDate <= hourEnd;
       });
 
       // Calculate commission from appointments (actual sales)
@@ -340,59 +342,11 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       // Filter leads data for this specific hour
       const hourLeads = allLeadsData.leads.filter(lead => {
         const leadDate = new Date(lead.createdAt);
-        const leadHour = leadDate.getHours();
-        return leadDate.toISOString().split('T')[0] === todayStr && leadHour === hour;
+        return leadDate >= hourStart && leadDate <= hourEnd;
       });
       
       stats.push({
-        date: `${todayStr}T${hourStr}:00:00.000Z`,
-        clicks: hourClicks.length,
-        leads: hourLeads.length,
-        bookedCalls: hourConversions.filter(c => c.conversionType === "booking").length,
-        commission: hourCommission,
-      });
-    }
-  } else if (dateRange === "yesterday") {
-    // For yesterday, show hourly data for yesterday
-    const yesterdayStr = yesterday.toISOString().split('T')[0];
-    
-    for (let hour = 0; hour < 24; hour++) {
-      const hourStr = hour.toString().padStart(2, '0');
-      
-      const hourClicks = clicks.filter(c => {
-        const clickDate = c.createdAt.toISOString().split('T')[0];
-        const clickHour = c.createdAt.getHours().toString().padStart(2, '0');
-        return clickDate === yesterdayStr && clickHour === hourStr;
-      });
-      
-      const hourConversions = conversions.filter(c => {
-        const convDate = c.createdAt.toISOString().split('T')[0];
-        const convHour = c.createdAt.getHours().toString().padStart(2, '0');
-        return convDate === yesterdayStr && convHour === hourStr;
-      });
-      
-      // Filter appointments for this specific hour
-      const hourAppointments = convertedAppointments.filter(apt => {
-        const aptDate = apt.createdAt.toISOString().split('T')[0];
-        const aptHour = apt.createdAt.getHours();
-        return aptDate === yesterdayStr && aptHour === hour;
-      });
-
-      // Calculate commission from appointments (actual sales)
-      const hourCommission = hourAppointments.reduce((sum, apt) => {
-        const saleValue = Number(apt.saleValue || 0);
-        return sum + (saleValue * Number(affiliate.commissionRate));
-      }, 0);
-      
-      // Filter leads data for this specific hour
-      const hourLeads = allLeadsData.leads.filter(lead => {
-        const leadDate = new Date(lead.createdAt);
-        const leadHour = leadDate.getHours();
-        return leadDate.toISOString().split('T')[0] === yesterdayStr && leadHour === hour;
-      });
-      
-      stats.push({
-        date: `${yesterdayStr}T${hourStr}:00:00.000Z`,
+        date: hourLabel,
         clicks: hourClicks.length,
         leads: hourLeads.length,
         bookedCalls: hourConversions.filter(c => c.conversionType === "booking").length,
@@ -400,52 +354,65 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       });
     }
   } else {
-    // For week, month, all time - show daily data
+    // For all other date ranges - show daily data
     const now = new Date();
     let days: number;
-    let startDate: Date;
     
     switch (dateRange) {
-      case "week":
-        // Calculate days from start of week to today
-        const startOfWeek = new Date(now);
-        const dayOfWeek = now.getDay();
-        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-        startOfWeek.setDate(now.getDate() - daysToMonday);
-        startDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate());
-        days = Math.ceil((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+      case "7d":
+        days = 7;
         break;
-      case "month":
-        // Calculate days from start of month to today
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        // Set to start of day to avoid timezone issues
-        startDate.setHours(0, 0, 0, 0);
-        days = Math.ceil((now.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000)) + 1;
-        console.log("Month calculation:", { startDate, now, days });
+      case "30d":
+        days = 30;
+        break;
+      case "90d":
+        days = 90;
+        break;
+      case "1y":
+        days = 365;
         break;
       case "all":
         // Show last 90 days for "all time" to keep it manageable
         days = 90;
-        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
         break;
       default:
         days = 30;
-        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     }
 
-    // Use the appointments already fetched above (passed from card calculation)
+    console.log(`📅 Generating ${days} days of data for dateRange: ${dateRange}`);
 
+    // Iterate through days from oldest to newest
     for (let i = 0; i < days; i++) {
-      const date = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
+      const daysAgo = days - 1 - i; // Count backwards from most recent day
+      const date = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
+      
+      const dayStart = new Date(date);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(date);
+      dayEnd.setHours(23, 59, 59, 999);
+      
+      // Don't go beyond the current time
+      if (dayEnd > now) {
+        dayEnd.setTime(now.getTime());
+      }
+      
       const dateStr = date.toISOString().split('T')[0];
       
-      const dayClicks = clicks.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
-      const dayConversions = conversions.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
+      // Filter data for this specific day using time ranges
+      const dayClicks = clicks.filter(c => {
+        const clickDate = new Date(c.createdAt);
+        return clickDate >= dayStart && clickDate <= dayEnd;
+      });
+      
+      const dayConversions = conversions.filter(c => {
+        const convDate = new Date(c.createdAt);
+        return convDate >= dayStart && convDate <= dayEnd;
+      });
       
       // Filter appointments for this specific day
       const dayAppointments = convertedAppointments.filter(apt => {
-        const aptDate = apt.createdAt.toISOString().split('T')[0];
-        return aptDate === dateStr;
+        const aptDate = new Date(apt.createdAt);
+        return aptDate >= dayStart && aptDate <= dayEnd;
       });
 
       // Calculate commission from appointments (actual sales)
@@ -457,17 +424,25 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       // Filter leads data for this specific day
       const dayLeads = allLeadsData.leads.filter(lead => {
         const leadDate = new Date(lead.createdAt);
-        return leadDate.toISOString().split('T')[0] === dateStr;
+        return leadDate >= dayStart && leadDate <= dayEnd;
       });
+      
+      const dayBookings = dayConversions.filter(c => c.conversionType === "booking");
+      
+      if (dayBookings.length > 0) {
+        console.log(`📊 Day ${dateStr}: ${dayBookings.length} bookings`);
+      }
       
       stats.push({
         date: dateStr,
         clicks: dayClicks.length,
         leads: dayLeads.length,
-        bookedCalls: dayConversions.filter(c => c.conversionType === "booking").length,
+        bookedCalls: dayBookings.length,
         commission: dayCommission,
       });
     }
+    
+    console.log(`📈 Generated ${stats.length} data points, bookings in ${stats.filter(s => s.bookedCalls > 0).length} days`);
   }
   
   // Ensure graph commission matches card commission for consistency
