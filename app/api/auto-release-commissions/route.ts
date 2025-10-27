@@ -18,15 +18,15 @@ export async function GET(request: NextRequest) {
       console.log('Using default commission hold days:', commissionHoldDays);
     }
 
-    // Calculate cutoff date (commissions older than this are ready for release)
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - commissionHoldDays);
+    // Get current date/time - commissions where holdUntil has passed are ready for release
+    const now = new Date();
 
-    console.log(`📅 Cutoff date: ${cutoffDate.toISOString()}`);
+    console.log(`📅 Current date: ${now.toISOString()}`);
     console.log(`⏰ Hold period: ${commissionHoldDays} days`);
 
     // Find commissions ready for release
     // ONLY include conversions with actual commission amounts > 0
+    // Release commissions where holdUntil date has passed (is in the past)
     const readyCommissions = await prisma.affiliateConversion.findMany({
       where: {
         commissionStatus: 'held',
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
           gt: 0 // Only conversions with actual commission amounts
         },
         holdUntil: {
-          lte: cutoffDate
+          lte: now // Release if holdUntil is less than or equal to now
         }
       },
       include: {
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
         message: 'No commissions ready for automatic release',
         releasedCount: 0,
         releasedAmount: 0,
-        cutoffDate: cutoffDate.toISOString(),
+        currentDate: now.toISOString(),
         holdDays: commissionHoldDays
       });
     }
