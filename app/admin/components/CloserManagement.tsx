@@ -351,12 +351,6 @@ export default function CloserManagement() {
           >
             Create Appointment
           </button>
-          <button
-            onClick={() => window.open('/closers/signup', '_blank')}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-          >
-            Add New Closer
-          </button>
         </div>
       </div>
 
