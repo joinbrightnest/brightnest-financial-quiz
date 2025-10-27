@@ -230,26 +230,6 @@ export default function AffiliateBookCallPage() {
             Get personalized financial advice from our experts
           </p>
           
-          {/* Countdown Timer */}
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
-            <h3 className="text-lg font-semibold text-red-800 mb-2">
-              Limited Time Offer
-            </h3>
-            <div className="flex justify-center space-x-4 text-2xl font-bold text-red-600">
-              <div className="text-center">
-                <div>{timeLeft.hours.toString().padStart(2, '0')}</div>
-                <div className="text-sm text-red-500">Hours</div>
-              </div>
-              <div className="text-center">
-                <div>{timeLeft.minutes.toString().padStart(2, '0')}</div>
-                <div className="text-sm text-red-500">Minutes</div>
-              </div>
-              <div className="text-center">
-                <div>{timeLeft.seconds.toString().padStart(2, '0')}</div>
-                <div className="text-sm text-red-500">Seconds</div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Calendly Widget */}

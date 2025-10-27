@@ -325,32 +325,6 @@ export default function BookCallPage() {
               Congratulations On Taking The First Step! To Finalize Your Application And Determine If Our Money Behavior System™ Is Right For You Please Select A Time Below For Your FREE Financial Transformation Assessment
             </p>
 
-            {/* Countdown Timer */}
-            <div className="mb-4 sm:mb-6">
-              <div className="flex justify-center space-x-2 sm:space-x-3">
-                <div className="text-center">
-                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
-                    {String(timeLeft.hours).padStart(2, '0')}
-                  </div>
-                  <div className="text-white text-xs sm:text-sm mt-1">Hours</div>
-                </div>
-                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">:</div>
-                <div className="text-center">
-                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
-                    {String(timeLeft.minutes).padStart(2, '0')}
-                  </div>
-                  <div className="text-white text-xs sm:text-sm mt-1">Minutes</div>
-                </div>
-                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">:</div>
-                <div className="text-center">
-                  <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
-                    {String(timeLeft.seconds).padStart(2, '0')}
-                  </div>
-                  <div className="text-white text-xs sm:text-sm mt-1">Seconds</div>
-                </div>
-              </div>
-            </div>
-
             {/* Social Proof Images */}
             <div className="flex justify-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
               {[1, 2, 3, 4].map((i) => (
