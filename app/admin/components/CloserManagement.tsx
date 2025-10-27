@@ -48,7 +48,10 @@ export default function CloserManagement() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState<'closers' | 'assignments' | 'performance'>('closers');
+  const [activeTab, setActiveTab] = useState<'closers' | 'assignments' | 'performance' | 'tasks'>('closers');
+  const [allTasks, setAllTasks] = useState<any[]>([]);
+  const [isLoadingTasks, setIsLoadingTasks] = useState(false);
+  const [taskFilter, setTaskFilter] = useState<'all' | 'pending' | 'in_progress' | 'completed'>('all');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [selectedCloser, setSelectedCloser] = useState<string>('');
   const [showAssignmentModal, setShowAssignmentModal] = useState(false);
@@ -206,6 +209,24 @@ export default function CloserManagement() {
     }
   };
 
+
+  const fetchAllTasks = async () => {
+    setIsLoadingTasks(true);
+    try {
+      const response = await fetch('/api/admin/tasks');
+      if (response.ok) {
+        const data = await response.json();
+        setAllTasks(data);
+      } else {
+        setError('Failed to load tasks');
+      }
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+      setError('Network error loading tasks');
+    } finally {
+      setIsLoadingTasks(false);
+    }
+  };
 
   const handleUpdateCalendlyLink = async (closerId: string) => {
     try {
@@ -386,6 +407,19 @@ export default function CloserManagement() {
             }`}
           >
             Performance Analytics
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('tasks');
+              fetchAllTasks();
+            }}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'tasks'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Tasks
           </button>
         </nav>
       </div>
@@ -970,6 +1004,181 @@ export default function CloserManagement() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Tasks Tab */}
+      {activeTab === 'tasks' && (
+        <div className="space-y-6">
+          {/* Tasks Header with Filters */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">All Tasks</h3>
+                <p className="text-sm text-gray-600 mt-1">Track and manage tasks assigned by all closers</p>
+              </div>
+              <button
+                onClick={() => fetchAllTasks()}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Refresh
+              </button>
+            </div>
+
+            {/* Filter Buttons */}
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setTaskFilter('all')}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  taskFilter === 'all'
+                    ? 'bg-indigo-100 text-indigo-700 border border-indigo-300'
+                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                All Tasks ({allTasks.length})
+              </button>
+              <button
+                onClick={() => setTaskFilter('pending')}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  taskFilter === 'pending'
+                    ? 'bg-yellow-100 text-yellow-700 border border-yellow-300'
+                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                Pending ({allTasks.filter(t => t.status === 'pending').length})
+              </button>
+              <button
+                onClick={() => setTaskFilter('in_progress')}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  taskFilter === 'in_progress'
+                    ? 'bg-blue-100 text-blue-700 border border-blue-300'
+                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                In Progress ({allTasks.filter(t => t.status === 'in_progress').length})
+              </button>
+              <button
+                onClick={() => setTaskFilter('completed')}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  taskFilter === 'completed'
+                    ? 'bg-green-100 text-green-700 border border-green-300'
+                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                Completed ({allTasks.filter(t => t.status === 'completed').length})
+              </button>
+            </div>
+          </div>
+
+          {/* Tasks List */}
+          {isLoadingTasks ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+              <p className="text-gray-600 mt-2">Loading tasks...</p>
+            </div>
+          ) : (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+              {allTasks
+                .filter(task => taskFilter === 'all' || task.status === taskFilter)
+                .length === 0 ? (
+                <div className="text-center py-12 px-6">
+                  <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  <h3 className="text-lg font-medium text-gray-900 mb-1">No tasks found</h3>
+                  <p className="text-gray-600">
+                    {taskFilter === 'all' 
+                      ? 'No tasks have been created yet'
+                      : `No ${taskFilter.replace('_', ' ')} tasks`
+                    }
+                  </p>
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-200">
+                  {allTasks
+                    .filter(task => taskFilter === 'all' || task.status === taskFilter)
+                    .map((task) => (
+                      <div key={task.id} className="p-6 hover:bg-gray-50 transition-colors">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            {/* Task Header */}
+                            <div className="flex items-center space-x-3 mb-2">
+                              <h4 className="text-base font-semibold text-gray-900">{task.title}</h4>
+                              <span
+                                className={`px-3 py-1 text-xs font-semibold rounded-full border ${
+                                  task.priority === 'urgent'
+                                    ? 'bg-red-50 text-red-700 border-red-200'
+                                    : task.priority === 'high'
+                                    ? 'bg-orange-50 text-orange-700 border-orange-200'
+                                    : task.priority === 'medium'
+                                    ? 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                                    : 'bg-gray-50 text-gray-700 border-gray-200'
+                                }`}
+                              >
+                                {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                              </span>
+                              <span
+                                className={`px-3 py-1 text-xs font-semibold rounded-full border ${
+                                  task.status === 'completed'
+                                    ? 'bg-green-50 text-green-700 border-green-200'
+                                    : task.status === 'in_progress'
+                                    ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                    : task.status === 'cancelled'
+                                    ? 'bg-gray-50 text-gray-700 border-gray-200'
+                                    : 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                                }`}
+                              >
+                                {task.status === 'in_progress' ? 'In Progress' : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                              </span>
+                            </div>
+
+                            {/* Task Description */}
+                            {task.description && (
+                              <p className="text-sm text-gray-600 mb-3">{task.description}</p>
+                            )}
+
+                            {/* Task Meta Information */}
+                            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                              {task.closer && (
+                                <div className="flex items-center">
+                                  <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                  </svg>
+                                  <span className="font-medium text-gray-700">{task.closer.name}</span>
+                                  <span className="ml-1">(Deal Owner)</span>
+                                </div>
+                              )}
+                              {task.leadEmail && (
+                                <div className="flex items-center">
+                                  <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                  </svg>
+                                  <span>{task.leadEmail}</span>
+                                </div>
+                              )}
+                              {task.dueDate && (
+                                <div className="flex items-center">
+                                  <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                  </svg>
+                                  <span>Due: {new Date(task.dueDate).toLocaleDateString()}</span>
+                                </div>
+                              )}
+                              <div className="flex items-center">
+                                <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>Created {new Date(task.createdAt).toLocaleDateString()}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
