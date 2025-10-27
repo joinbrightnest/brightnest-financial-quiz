@@ -6,25 +6,25 @@ export default function ConfirmationPage() {
   return (
     <div className="min-h-screen bg-[#F8F7F5]">
       {/* Section 1: Dark Charcoal Background */}
-      <div className="bg-gradient-to-br from-[#333333] via-[#2a2a2a] to-[#333333] py-6 sm:py-8 lg:py-10 px-4">
+      <div className="bg-gradient-to-br from-[#333333] via-[#2a2a2a] to-[#333333] py-4 sm:py-5 px-4">
         <div className="max-w-4xl mx-auto text-center">
           {/* Logo */}
-          <div className="mb-4 sm:mb-6">
-            <h1 className="text-white text-2xl sm:text-3xl lg:text-4xl font-bold font-serif text-center">
+          <div className="mb-2 sm:mb-3">
+            <h1 className="text-white text-xl sm:text-2xl font-bold font-serif text-center">
               BrightNest
             </h1>
           </div>
 
           {/* Main Headline */}
-          <h2 className="text-2xl sm:text-3xl lg:text-5xl xl:text-6xl font-black text-white mb-4 sm:mb-6 lg:mb-8 leading-tight px-2">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white mb-3 sm:mb-4 leading-tight px-2">
             <span className="text-[#4CAF50]">
               CONGRATULATIONS!
             </span>
           </h2>
 
           {/* Confirmation Banner */}
-          <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-xl py-4 sm:py-5 lg:py-6 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto mb-4 sm:mb-6 lg:mb-8 shadow-lg border-2 border-white/20">
-            <p className="text-white text-base sm:text-lg lg:text-xl xl:text-2xl font-black">
+          <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-xl py-3 sm:py-4 px-4 sm:px-6 max-w-3xl mx-auto shadow-lg border-2 border-white/20">
+            <p className="text-white text-sm sm:text-base lg:text-lg font-black">
               Confirmed: Your Financial Transformation Assessment Has Been Booked
             </p>
           </div>
@@ -32,14 +32,14 @@ export default function ConfirmationPage() {
       </div>
 
       {/* Section 2: Green Banner - Wider */}
-      <div className="relative -mt-4 sm:-mt-6 lg:-mt-8 z-10">
+      <div className="relative -mt-2 sm:-mt-3 z-10">
         <div className="max-w-5xl mx-auto px-4">
-          <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-t-3xl py-4 sm:py-5 lg:py-6 px-4 sm:px-6 lg:px-8 shadow-lg relative overflow-hidden">
+          <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-t-3xl py-3 sm:py-4 px-4 sm:px-6 shadow-lg relative overflow-hidden">
             <div className="text-center relative z-10">
-              <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-white mb-2 sm:mb-3 lg:mb-4">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-black text-white mb-2">
                 ✨ IMPORTANT NEXT STEPS:
               </h3>
-              <p className="text-white text-sm sm:text-base lg:text-lg xl:text-xl font-bold">
+              <p className="text-white text-xs sm:text-sm lg:text-base font-bold">
                 Watch The Short 3 Minute Video & Complete Pre-Call Checklist To Confirm Your Appointment
               </p>
             </div>
