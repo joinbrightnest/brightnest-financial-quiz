@@ -58,27 +58,23 @@ export async function POST(
 
     // Mark conversions as "paid" - process available commissions up to the payout amount
     // This ensures the "Available Commission" reflects what's actually available
+    // Using cumulative sum to mark conversions until we reach the payout amount
     await prisma.$executeRaw`
       UPDATE affiliate_conversions
       SET commission_status = 'paid'
-      WHERE affiliate_id = ${id}
-        AND commission_status = 'available'
-        AND commission_amount > 0
-        AND id IN (
-          SELECT id FROM affiliate_conversions
+      WHERE id IN (
+        SELECT id FROM (
+          SELECT 
+            id,
+            commission_amount,
+            SUM(commission_amount) OVER (ORDER BY created_at ASC) as cumulative_sum
+          FROM affiliate_conversions
           WHERE affiliate_id = ${id}
             AND commission_status = 'available'
             AND commission_amount > 0
-          ORDER BY created_at ASC
-          LIMIT (
-            SELECT COUNT(*)
-            FROM affiliate_conversions
-            WHERE affiliate_id = ${id}
-              AND commission_status = 'available'
-              AND commission_amount > 0
-              AND commission_amount <= ${amount}
-          )
-        )
+        ) as cumulative
+        WHERE cumulative_sum <= ${amount}
+      )
     `;
 
     // Note: We don't decrement totalCommission because it represents lifetime earnings

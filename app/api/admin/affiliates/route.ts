@@ -86,10 +86,14 @@ export async function GET(request: NextRequest) {
         .filter(conv => conv.commissionStatus === 'held')
         .reduce((sum, conv) => sum + Number(conv.commissionAmount), 0);
       
-      // Calculate available commissions (ONLY available status, not paid or held)
-      const availableCommissions = affiliate.conversions
+      // Calculate sum of available conversions (before subtracting paid amounts)
+      const availableConversionsSum = affiliate.conversions
         .filter(conv => conv.commissionStatus === 'available')
         .reduce((sum, conv) => sum + Number(conv.commissionAmount), 0);
+      
+      // Calculate actual available commission (available conversions - already paid out)
+      // This handles partial payments correctly
+      const availableCommissions = Math.max(0, availableConversionsSum - totalPaid);
       
       // Calculate pending payouts (payouts with pending status)
       const pendingPayouts = affiliate.payouts
