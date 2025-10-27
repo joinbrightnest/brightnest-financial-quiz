@@ -21,6 +21,8 @@ export async function GET(
     const { id: affiliateId } = await params;
     const { searchParams } = new URL(request.url);
     const dateRange = searchParams.get("dateRange") || "30d";
+    
+    console.log("🚀 ADMIN STATS API CALLED - affiliateId:", affiliateId, "dateRange:", dateRange);
 
     // Calculate date filter
     const now = new Date();
@@ -205,9 +207,17 @@ export async function GET(
       recentActivity,
     };
 
+    console.log("✅ ADMIN STATS API SUCCESS - returning stats:", {
+      totalClicks,
+      totalLeads,
+      totalBookings,
+      totalCommission,
+      dailyStatsCount: dailyStats.length
+    });
+
     return NextResponse.json(stats);
   } catch (error) {
-    console.error("Error fetching affiliate stats:", error);
+    console.error("❌ ADMIN STATS API ERROR:", error);
     return NextResponse.json(
       { error: "Failed to fetch affiliate stats" },
       { status: 500 }
