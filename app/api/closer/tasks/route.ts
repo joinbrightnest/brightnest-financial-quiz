@@ -29,6 +29,15 @@ export async function GET(request: NextRequest) {
 
     const tasks = await prisma.task.findMany({
       where: whereClause,
+      include: {
+        closer: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
       orderBy: [
         { status: 'asc' },
         { dueDate: 'asc' },
