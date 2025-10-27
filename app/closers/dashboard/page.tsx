@@ -333,6 +333,7 @@ export default function CloserDashboard() {
       if (response.ok) {
         setTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
         fetchTasks(leadEmail);
+        if (token) fetchActiveTaskCount(token); // Update the task count badge
       } else {
         setError('Failed to create task');
       }
@@ -361,6 +362,7 @@ export default function CloserDashboard() {
         if (leadEmail) {
           fetchTasks(leadEmail);
         }
+        if (token) fetchActiveTaskCount(token); // Update the task count badge
       } else {
         setError('Failed to update task');
       }
@@ -388,6 +390,7 @@ export default function CloserDashboard() {
         if (leadEmail) {
           fetchTasks(leadEmail);
         }
+        if (token) fetchActiveTaskCount(token); // Update the task count badge
       } else {
         setError('Failed to delete task');
       }
