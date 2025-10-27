@@ -130,11 +130,11 @@ export async function GET(request: NextRequest) {
     });
 
     // Calculate performance metrics for each affiliate (using pre-fetched data)
-    const affiliatePerformance = affiliates.map((affiliate) => {
+    const affiliatePerformance = affiliates.flatMap((affiliate) => {
       const data = dataByAffiliate.get(affiliate.id);
       if (!data) {
         console.error('No data found for affiliate:', affiliate.id);
-        return null;
+        return []; // Return empty array to skip this affiliate
       }
       const { clicks, conversions, quizSessions, appointments, payouts } = data;
 
@@ -164,7 +164,7 @@ export async function GET(request: NextRequest) {
       const quizToCompletionRate = quizCount > 0 ? (completionCount / quizCount) * 100 : 0;
       const clickToCompletionRate = clickCount > 0 ? (completionCount / clickCount) * 100 : 0;
 
-      return {
+      return [{
         id: affiliate.id,
         name: affiliate.name,
         email: affiliate.email,
@@ -189,8 +189,8 @@ export async function GET(request: NextRequest) {
         // Dates
         createdAt: affiliate.createdAt,
         updatedAt: affiliate.updatedAt,
-      };
-    }).filter(Boolean); // Remove any null entries
+      }];
+    });
 
     // Calculate overall affiliate stats
     const totalAffiliates = affiliatePerformance.length;
