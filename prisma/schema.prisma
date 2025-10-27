@@ -455,6 +455,20 @@ model Task {
   @@map("tasks")
 }
 
+model Note {
+  id              String    @id @default(cuid())
+  leadEmail       String    @map("lead_email") // To identify which lead this note is for
+  content         String    @db.Text
+  createdBy       String?   @map("created_by") // Name or ID of person who created it
+  createdByType   String?   @map("created_by_type") // 'closer', 'admin', etc
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  
+  @@index([leadEmail])
+  @@index([createdAt])
+  @@map("notes")
+}
+
 model CloserAuditLog {
   id          String    @id @default(cuid())
   closerId    String?   @map("closer_id")

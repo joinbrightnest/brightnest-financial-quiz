@@ -693,8 +693,24 @@ export default function AdminDashboard() {
     setCrmSelectedLead(lead);
     setCrmShowLeadModal(true);
     setCrmLeadModalTab('activity');
-    // Also load tasks for this lead
+    // Also load tasks and notes for this lead
     fetchAdminTasks(lead);
+    fetchAdminNotes(lead);
+  };
+
+  const fetchAdminNotes = async (lead: any) => {
+    try {
+      const leadEmail = lead.answers?.find((a: any) => a.value?.includes('@'))?.value;
+      if (leadEmail) {
+        const response = await fetch(`/api/notes?leadEmail=${encodeURIComponent(leadEmail)}`);
+        if (response.ok) {
+          const data = await response.json();
+          setAdminNotes(data);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching admin notes:', error);
+    }
   };
 
   const fetchAdminTasks = async (lead: any) => {
@@ -2351,7 +2367,7 @@ export default function AdminDashboard() {
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Quiz Type</label>
                             <p className="mt-1 text-sm font-semibold text-slate-900">{crmSelectedLead.quizType || 'Financial-Profile'}</p>
-                          </div>
+                        </div>
                         </div>
 
                       </div>
@@ -2408,7 +2424,7 @@ export default function AdminDashboard() {
                                 <div key={index} className="bg-slate-50 rounded-lg p-4 border border-slate-200">
                                   <p className="text-sm font-semibold text-slate-900 mb-2">{answer.question?.prompt || `Question ${index + 1}`}</p>
                                   <p className="text-sm text-slate-700">{answer.value || 'No answer provided'}</p>
-                                </div>
+                                    </div>
                               ))}
                             </div>
                           </div>
@@ -2485,10 +2501,10 @@ export default function AdminDashboard() {
                                     ) : (
                                       <p className="text-sm text-slate-400 italic">No notes available</p>
                                     )}
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            </div>
 
                             {/* Notes Section */}
                             <div>
@@ -2541,16 +2557,32 @@ export default function AdminDashboard() {
                                       Cancel
                                     </button>
                                     <button
-                                      onClick={() => {
-                                        if (adminNoteContent.trim()) {
-                                          const newNote = {
-                                            id: Date.now().toString(),
-                                            content: adminNoteContent,
-                                            createdAt: new Date().toISOString(),
-                                          };
-                                          setAdminNotes([newNote, ...adminNotes]);
-                                          setAdminNoteContent('');
-                                          setShowAdminNoteForm(false);
+                                      onClick={async () => {
+                                        if (adminNoteContent.trim() && crmSelectedLead) {
+                                          try {
+                                            const leadEmail = crmSelectedLead.answers?.find((a: any) => a.value?.includes('@'))?.value;
+                                            const response = await fetch('/api/notes', {
+                                              method: 'POST',
+                                              headers: {
+                                                'Content-Type': 'application/json',
+                                              },
+                                              body: JSON.stringify({
+                                                leadEmail,
+                                                content: adminNoteContent,
+                                                createdBy: 'Admin',
+                                                createdByType: 'admin',
+                                              }),
+                                            });
+
+                                            if (response.ok) {
+                                              const newNote = await response.json();
+                                              setAdminNotes([newNote, ...adminNotes]);
+                                              setAdminNoteContent('');
+                                              setShowAdminNoteForm(false);
+                                            }
+                                          } catch (error) {
+                                            console.error('Error saving note:', error);
+                                          }
                                         }
                                       }}
                                       disabled={!adminNoteContent.trim()}
@@ -2558,9 +2590,9 @@ export default function AdminDashboard() {
                                     >
                                       Save Note
                                     </button>
-                                  </div>
-                                </div>
-                              )}
+                            </div>
+                          </div>
+                        )}
 
                               {/* Notes List */}
                               {adminNotes.length > 0 && (
@@ -2584,8 +2616,18 @@ export default function AdminDashboard() {
                                           })}
                                         </div>
                                         <button
-                                          onClick={() => {
-                                            setAdminNotes(adminNotes.filter(n => n.id !== note.id));
+                                          onClick={async () => {
+                                            try {
+                                              const response = await fetch(`/api/notes/${note.id}`, {
+                                                method: 'DELETE',
+                                              });
+
+                                              if (response.ok) {
+                                                setAdminNotes(adminNotes.filter(n => n.id !== note.id));
+                                              }
+                                            } catch (error) {
+                                              console.error('Error deleting note:', error);
+                                            }
                                           }}
                                           className="text-slate-400 hover:text-red-600 transition-colors"
                                           title="Delete note"
@@ -2616,7 +2658,7 @@ export default function AdminDashboard() {
                                 Tasks
                                 <span className="ml-2 text-sm text-slate-500 font-normal">({adminTasks.length})</span>
                               </h3>
-                            </div>
+                          </div>
 
                             {/* Inline Task Form - Always Visible */}
                             <div className="bg-white border-2 border-blue-200 rounded-lg p-6 mb-6">
@@ -2760,8 +2802,8 @@ export default function AdminDashboard() {
                                                 <span className="px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
                                                   In Progress
                                                 </span>
-                                              )}
-                                            </div>
+                        )}
+                      </div>
                                             {task.description && (
                                               <p className={`text-sm text-slate-600 ml-7 mb-2 ${task.status === 'completed' ? 'line-through text-slate-400' : ''}`}>
                                                 {task.description}
@@ -2774,7 +2816,7 @@ export default function AdminDashboard() {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                                   </svg>
                                                   {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                                </div>
+                    </div>
                                               )}
                                               <div className="flex items-center">
                                                 <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

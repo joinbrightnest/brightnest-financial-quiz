@@ -252,8 +252,9 @@ export default function CloserDashboard() {
       if (response.ok) {
         const data = await response.json();
         setLeadDetails(data.lead);
-        // Also load tasks for this lead
+        // Also load tasks and notes for this lead
         fetchTasks(appointment.customerEmail);
+        fetchNotes(appointment.customerEmail);
       } else {
         setError('Failed to load lead details');
       }
@@ -262,6 +263,21 @@ export default function CloserDashboard() {
       setError('Network error loading lead details');
     } finally {
       setIsLoadingLeadDetails(false);
+    }
+  };
+
+  const fetchNotes = async (leadEmail: string) => {
+    setIsLoadingNotes(true);
+    try {
+      const response = await fetch(`/api/notes?leadEmail=${encodeURIComponent(leadEmail)}`);
+      if (response.ok) {
+        const data = await response.json();
+        setNotes(data);
+      }
+    } catch (error) {
+      console.error('Error fetching notes:', error);
+    } finally {
+      setIsLoadingNotes(false);
     }
   };
 
@@ -836,11 +852,11 @@ export default function CloserDashboard() {
                   <div className="bg-white rounded-xl border border-slate-200 p-6">
                     <div className="flex justify-between items-center mb-6">
                       <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-                        <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                        </svg>
-                        Personal Information
-                      </h3>
+                      <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      Personal Information
+                    </h3>
                       <button 
                         onClick={() => {
                           setShowLeadDetailsModal(false);
@@ -991,71 +1007,71 @@ export default function CloserDashboard() {
                             </svg>
                             Call Details
                           </h3>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                              <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Recording Link</label>
-                              <div className="mt-1">
-                                {(() => {
-                                  let recordingLink = null;
-                                  if (leadDetails.appointment?.outcome) {
-                                    switch (leadDetails.appointment.outcome) {
-                                      case 'converted':
-                                        recordingLink = leadDetails.appointment.recordingLinkConverted;
-                                        break;
-                                      case 'not_interested':
-                                        recordingLink = leadDetails.appointment.recordingLinkNotInterested;
-                                        break;
-                                      case 'needs_follow_up':
-                                        recordingLink = leadDetails.appointment.recordingLinkNeedsFollowUp;
-                                        break;
-                                      case 'wrong_number':
-                                        recordingLink = leadDetails.appointment.recordingLinkWrongNumber;
-                                        break;
-                                      case 'no_answer':
-                                        recordingLink = leadDetails.appointment.recordingLinkNoAnswer;
-                                        break;
-                                      case 'callback_requested':
-                                        recordingLink = leadDetails.appointment.recordingLinkCallbackRequested;
-                                        break;
-                                      case 'rescheduled':
-                                        recordingLink = leadDetails.appointment.recordingLinkRescheduled;
-                                        break;
-                                      default:
-                                        recordingLink = leadDetails.appointment?.recordingLink;
-                                    }
-                                  } else {
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Recording Link</label>
+                          <div className="mt-1">
+                            {(() => {
+                              let recordingLink = null;
+                              if (leadDetails.appointment?.outcome) {
+                                switch (leadDetails.appointment.outcome) {
+                                  case 'converted':
+                                    recordingLink = leadDetails.appointment.recordingLinkConverted;
+                                    break;
+                                  case 'not_interested':
+                                    recordingLink = leadDetails.appointment.recordingLinkNotInterested;
+                                    break;
+                                  case 'needs_follow_up':
+                                    recordingLink = leadDetails.appointment.recordingLinkNeedsFollowUp;
+                                    break;
+                                  case 'wrong_number':
+                                    recordingLink = leadDetails.appointment.recordingLinkWrongNumber;
+                                    break;
+                                  case 'no_answer':
+                                    recordingLink = leadDetails.appointment.recordingLinkNoAnswer;
+                                    break;
+                                  case 'callback_requested':
+                                    recordingLink = leadDetails.appointment.recordingLinkCallbackRequested;
+                                    break;
+                                  case 'rescheduled':
+                                    recordingLink = leadDetails.appointment.recordingLinkRescheduled;
+                                    break;
+                                  default:
                                     recordingLink = leadDetails.appointment?.recordingLink;
-                                  }
+                                }
+                              } else {
+                                recordingLink = leadDetails.appointment?.recordingLink;
+                              }
 
-                                  return recordingLink ? (
-                                    <a 
-                                      href={recordingLink} 
-                                      target="_blank" 
-                                      rel="noopener noreferrer"
-                                      className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
-                                    >
-                                      {recordingLink}
-                                    </a>
-                                  ) : (
-                                    <p className="text-sm text-slate-400 italic">No recording available</p>
-                                  );
-                                })()}
-                              </div>
-                            </div>
-                            <div>
-                              <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Call Notes</label>
-                              <div className="mt-1">
-                                {leadDetails.appointment?.notes ? (
-                                  <p className="text-sm text-slate-900 bg-white rounded-lg p-3 border border-slate-200">
-                                    {leadDetails.appointment.notes}
-                                  </p>
-                                ) : (
-                                  <p className="text-sm text-slate-400 italic">No notes available</p>
-                                )}
-                              </div>
-                            </div>
+                              return recordingLink ? (
+                                <a 
+                                  href={recordingLink} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
+                                >
+                                  {recordingLink}
+                                </a>
+                              ) : (
+                                <p className="text-sm text-slate-400 italic">No recording available</p>
+                              );
+                            })()}
                           </div>
                         </div>
+                        <div>
+                          <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Call Notes</label>
+                          <div className="mt-1">
+                            {leadDetails.appointment?.notes ? (
+                                  <p className="text-sm text-slate-900 bg-white rounded-lg p-3 border border-slate-200">
+                                {leadDetails.appointment.notes}
+                              </p>
+                            ) : (
+                              <p className="text-sm text-slate-400 italic">No notes available</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
                         {/* Notes Section */}
                         <div>
@@ -1076,7 +1092,7 @@ export default function CloserDashboard() {
                               </svg>
                               Create Note
                             </button>
-                          </div>
+                  </div>
 
                           {/* Note Form */}
                           {showNoteForm && (
@@ -1108,16 +1124,35 @@ export default function CloserDashboard() {
                                   Cancel
                                 </button>
                                 <button
-                                  onClick={() => {
-                                    if (noteContent.trim()) {
-                                      const newNote = {
-                                        id: Date.now().toString(),
-                                        content: noteContent,
-                                        createdAt: new Date().toISOString(),
-                                      };
-                                      setNotes([newNote, ...notes]);
-                                      setNoteContent('');
-                                      setShowNoteForm(false);
+                                  onClick={async () => {
+                                    if (noteContent.trim() && leadDetails) {
+                                      try {
+                                        const leadEmail = leadDetails.answers.find((a: any) => a.value.includes('@'))?.value;
+                                        const response = await fetch('/api/notes', {
+                                          method: 'POST',
+                                          headers: {
+                                            'Content-Type': 'application/json',
+                                          },
+                                          body: JSON.stringify({
+                                            leadEmail,
+                                            content: noteContent,
+                                            createdBy: closer?.name || 'Closer',
+                                            createdByType: 'closer',
+                                          }),
+                                        });
+
+                                        if (response.ok) {
+                                          const newNote = await response.json();
+                                          setNotes([newNote, ...notes]);
+                                          setNoteContent('');
+                                          setShowNoteForm(false);
+                                        } else {
+                                          setError('Failed to save note');
+                                        }
+                                      } catch (error) {
+                                        console.error('Error saving note:', error);
+                                        setError('Failed to save note');
+                                      }
                                     }
                                   }}
                                   disabled={!noteContent.trim()}
@@ -1141,7 +1176,7 @@ export default function CloserDashboard() {
                                     <div className="flex items-center text-sm text-slate-500">
                                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                      </svg>
+                      </svg>
                                       {new Date(note.createdAt).toLocaleString('en-US', {
                                         year: 'numeric',
                                         month: 'short',
@@ -1151,8 +1186,21 @@ export default function CloserDashboard() {
                                       })}
                                     </div>
                                     <button
-                                      onClick={() => {
-                                        setNotes(notes.filter(n => n.id !== note.id));
+                                      onClick={async () => {
+                                        try {
+                                          const response = await fetch(`/api/notes/${note.id}`, {
+                                            method: 'DELETE',
+                                          });
+
+                                          if (response.ok) {
+                                            setNotes(notes.filter(n => n.id !== note.id));
+                                          } else {
+                                            setError('Failed to delete note');
+                                          }
+                                        } catch (error) {
+                                          console.error('Error deleting note:', error);
+                                          setError('Failed to delete note');
+                                        }
                                       }}
                                       className="text-slate-400 hover:text-red-600 transition-colors"
                                       title="Delete note"
