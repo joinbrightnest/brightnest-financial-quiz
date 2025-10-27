@@ -2995,18 +2995,77 @@ export default function AdminDashboard() {
           {/* Settings Section */}
           {activeSection === 'settings' && (
             <div className="mb-8">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-6">System Settings</h2>
-                
-                <div className="space-y-6">
+              {/* Settings Header */}
+              <div className="mb-6">
+                <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+                <p className="text-gray-600 mt-2">Manage your system configuration and preferences</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                {/* Settings Navigation Sidebar */}
+                <div className="lg:col-span-1">
+                  <nav className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sticky top-6">
+                    <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Categories</h3>
+                    <ul className="space-y-1">
+                      <li>
+                        <a href="#quiz-settings" className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-indigo-600 transition-colors">
+                          <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          Quiz Settings
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#affiliate-settings" className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-indigo-600 transition-colors">
+                          <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Affiliate & Payouts
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#crm-settings" className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-indigo-600 transition-colors">
+                          <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                          </svg>
+                          CRM Settings
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+
+                {/* Settings Content */}
+                <div className="lg:col-span-3 space-y-8">
+                  
+                  {/* QUIZ SETTINGS SECTION */}
+                  <div id="quiz-settings" className="scroll-mt-6">
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+                        <h2 className="text-xl font-bold text-white flex items-center">
+                          <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          Quiz Settings
+                        </h2>
+                        <p className="text-indigo-100 text-sm mt-1">Configure quiz behavior and qualification rules</p>
+                      </div>
+                      
+                      <div className="p-6">
                   {/* Qualification Threshold */}
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <h3 className="text-lg font-medium text-gray-900 mb-3">Qualification Threshold</h3>
-                    <p className="text-gray-600 mb-4">
+                        <div className="mb-6 pb-6 border-b border-gray-200 last:border-b-0 last:mb-0 last:pb-0">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex-1">
+                              <h3 className="text-base font-semibold text-gray-900 mb-2">Qualification Threshold</h3>
+                              <p className="text-sm text-gray-600">
                       Set the minimum points required for users to qualify for a consultation call. 
                       Users below this threshold will be directed to the checkout page instead.
                     </p>
+                            </div>
+                          </div>
                     
+                          <div className="bg-gray-50 rounded-lg p-4">
+                            <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <label htmlFor="threshold" className="text-sm font-medium text-gray-700">
                         Minimum Points:
@@ -3018,30 +3077,50 @@ export default function AdminDashboard() {
                         max="20"
                         value={qualificationThreshold}
                         onChange={(e) => setQualificationThreshold(parseInt(e.target.value))}
-                        className="w-20 px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                       />
                       <span className="text-sm text-gray-500">out of 20</span>
                     </div>
-                    
-                    <div className="mt-4">
                       <button 
                         onClick={() => updateQualificationThreshold(qualificationThreshold)}
                         disabled={isUpdatingThreshold}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
                       >
-                        {isUpdatingThreshold ? 'Updating...' : 'Update Threshold'}
+                                {isUpdatingThreshold ? 'Saving...' : 'Save Changes'}
                       </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
+                  {/* AFFILIATE & PAYOUTS SECTION */}
+                  <div id="affiliate-settings" className="scroll-mt-6">
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                      <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-4">
+                        <h2 className="text-xl font-bold text-white flex items-center">
+                          <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Affiliate & Payouts
+                        </h2>
+                        <p className="text-green-100 text-sm mt-1">Manage commissions, payouts, and affiliate settings</p>
+                      </div>
+                      
+                      <div className="p-6 space-y-6">
                   {/* Commission Hold Period */}
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <h3 className="text-lg font-medium text-gray-900 mb-3">Commission Hold Period</h3>
-                    <p className="text-gray-600 mb-4">
+                        <div className="pb-6 border-b border-gray-200">
+                          <div className="mb-4">
+                            <h3 className="text-base font-semibold text-gray-900 mb-2">Commission Hold Period</h3>
+                            <p className="text-sm text-gray-600">
                       Set how many days commissions should be held before becoming available for payout. 
                       This helps prevent chargebacks and ensures payment stability.
                     </p>
+                          </div>
                     
+                          <div className="bg-gray-50 rounded-lg p-4">
+                            <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <label htmlFor="holdDays" className="text-sm font-medium text-gray-700">
                         Hold Period:
@@ -3053,32 +3132,33 @@ export default function AdminDashboard() {
                         max="365"
                         value={commissionHoldDays}
                         onChange={(e) => setCommissionHoldDays(parseInt(e.target.value))}
-                        className="w-20 px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       />
                       <span className="text-sm text-gray-500">days</span>
                     </div>
-                    
-                    <div className="mt-4">
                       <button 
                         onClick={() => updateCommissionHoldDays(commissionHoldDays)}
                         disabled={isUpdatingHoldDays}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
                       >
-                        {isUpdatingHoldDays ? 'Updating...' : 'Update Hold Period'}
+                                {isUpdatingHoldDays ? 'Saving...' : 'Save Changes'}
                       </button>
+                            </div>
                     </div>
                   </div>
 
                   {/* Payout Settings */}
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <h3 className="text-lg font-medium text-gray-900 mb-3">Payout Settings</h3>
-                    <p className="text-gray-600 mb-4">
+                        <div className="pb-6 border-b border-gray-200">
+                          <div className="mb-4">
+                            <h3 className="text-base font-semibold text-gray-900 mb-2">Payout Settings</h3>
+                            <p className="text-sm text-gray-600">
                       Configure minimum payout amounts and payout schedules for all affiliates.
                     </p>
-                    
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-4">
-                        <label htmlFor="minimumPayout" className="text-sm font-medium text-gray-700 w-32">
+                          </div>
+                          
+                          <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+                            <div className="flex items-center justify-between">
+                              <label htmlFor="minimumPayout" className="text-sm font-medium text-gray-700">
                           Minimum Payout:
                         </label>
                         <div className="flex items-center space-x-2">
@@ -3090,20 +3170,20 @@ export default function AdminDashboard() {
                             step="0.01"
                             value={minimumPayout}
                             onChange={(e) => setMinimumPayout(parseFloat(e.target.value))}
-                            className="w-24 px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  className="w-28 px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           />
                         </div>
                       </div>
                       
-                      <div className="flex items-center space-x-4">
-                        <label htmlFor="payoutSchedule" className="text-sm font-medium text-gray-700 w-32">
+                            <div className="flex items-center justify-between">
+                              <label htmlFor="payoutSchedule" className="text-sm font-medium text-gray-700">
                           Payout Schedule:
                         </label>
                         <select
                           id="payoutSchedule"
                           value={payoutSchedule}
                           onChange={(e) => setPayoutSchedule(e.target.value)}
-                          className="px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                         >
                           <option value="weekly">Weekly (Every Monday)</option>
                           <option value="biweekly">Bi-weekly (Every 2 weeks)</option>
@@ -3112,72 +3192,97 @@ export default function AdminDashboard() {
                           <option value="monthly-last">Monthly (Last day of each month)</option>
                           <option value="quarterly">Quarterly (1st of Jan, Apr, Jul, Oct)</option>
                         </select>
-                      </div>
                     </div>
                     
-                    <div className="mt-4">
+                            <div className="flex justify-end pt-2">
                       <button 
                         onClick={updatePayoutSettings}
                         disabled={isUpdatingPayoutSettings}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
                       >
-                        {isUpdatingPayoutSettings ? 'Updating...' : 'Update Payout Settings'}
+                                {isUpdatingPayoutSettings ? 'Saving...' : 'Save Changes'}
                       </button>
+                            </div>
                     </div>
                   </div>
 
                   {/* Commission Release Management */}
                   {commissionReleaseStatus && (
-                    <div className="border border-gray-200 rounded-lg p-4">
-                      <h3 className="text-lg font-medium text-gray-900 mb-3">Commission Release Management</h3>
-                      <p className="text-gray-600 mb-4">
+                          <div>
+                            <div className="mb-4">
+                              <h3 className="text-base font-semibold text-gray-900 mb-2">Commission Release Management</h3>
+                              <p className="text-sm text-gray-600">
                         Commissions are automatically released after the hold period expires. Manual release is available for immediate processing.
                       </p>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div className="bg-blue-50 rounded-lg p-3">
-                          <div className="text-sm font-medium text-blue-700">Ready for Release</div>
-                          <div className="text-2xl font-bold text-blue-900">{commissionReleaseStatus.readyForRelease}</div>
+                            </div>
+                            
+                            <div className="bg-gray-50 rounded-lg p-4">
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                                <div className="bg-white border-2 border-blue-200 rounded-lg p-3">
+                                  <div className="text-xs font-medium text-blue-700 uppercase tracking-wide">Ready for Release</div>
+                                  <div className="text-2xl font-bold text-blue-900 mt-1">{commissionReleaseStatus.readyForRelease}</div>
                           <div className="text-xs text-blue-600">commissions</div>
                         </div>
-                        <div className="bg-orange-50 rounded-lg p-3">
-                          <div className="text-sm font-medium text-orange-700">Currently Held</div>
-                          <div className="text-2xl font-bold text-orange-900">{commissionReleaseStatus.totalHeld}</div>
+                                <div className="bg-white border-2 border-orange-200 rounded-lg p-3">
+                                  <div className="text-xs font-medium text-orange-700 uppercase tracking-wide">Currently Held</div>
+                                  <div className="text-2xl font-bold text-orange-900 mt-1">{commissionReleaseStatus.totalHeld}</div>
                           <div className="text-xs text-orange-600">commissions</div>
                         </div>
-                        <div className="bg-green-50 rounded-lg p-3">
-                          <div className="text-sm font-medium text-green-700">Available</div>
-                          <div className="text-2xl font-bold text-green-900">{commissionReleaseStatus.totalAvailable}</div>
+                                <div className="bg-white border-2 border-green-200 rounded-lg p-3">
+                                  <div className="text-xs font-medium text-green-700 uppercase tracking-wide">Available</div>
+                                  <div className="text-2xl font-bold text-green-900 mt-1">{commissionReleaseStatus.totalAvailable}</div>
                           <div className="text-xs text-green-600">commissions</div>
                         </div>
                       </div>
 
-                      <div className="flex items-center space-x-4">
+                              <div className="flex items-center justify-end space-x-3">
+                                <button 
+                                  onClick={fetchCommissionReleaseStatus}
+                                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
+                                >
+                                  Refresh Status
+                                </button>
                         <button 
                           onClick={processCommissionReleases}
                           disabled={isProcessingReleases || commissionReleaseStatus.readyForRelease === 0}
-                          className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
                         >
                           {isProcessingReleases ? 'Processing...' : `Release ${commissionReleaseStatus.readyForRelease} Commissions`}
                         </button>
-                        <button 
-                          onClick={fetchCommissionReleaseStatus}
-                          className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors"
-                        >
-                          Refresh Status
-                        </button>
+                              </div>
                       </div>
                     </div>
                   )}
+                      </div>
+                    </div>
+                  </div>
 
-                  {/* CRM Settings */}
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <h3 className="text-lg font-medium text-gray-900 mb-3">CRM Settings</h3>
-                    <p className="text-gray-600 mb-4">
+                  {/* CRM SETTINGS SECTION */}
+                  <div id="crm-settings" className="scroll-mt-6">
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                      <div className="bg-gradient-to-r from-blue-500 to-cyan-600 px-6 py-4">
+                        <h2 className="text-xl font-bold text-white flex items-center">
+                          <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                          </svg>
+                          CRM Settings
+                        </h2>
+                        <p className="text-blue-100 text-sm mt-1">Configure deal pipeline and outcome tracking</p>
+                      </div>
+                      
+                      <div className="p-6 space-y-6">
+                        {/* Deal Value Configuration */}
+                        <div className="pb-6 border-b border-gray-200">
+                          <div className="mb-4">
+                            <h3 className="text-base font-semibold text-gray-900 mb-2">Deal Value Configuration</h3>
+                            <p className="text-sm text-gray-600">
                       Configure the potential value used for calculating the NEW DEAL AMOUNT metric. 
                       This is multiplied by the number of booked calls to estimate pipeline value.
                     </p>
+                          </div>
                     
+                          <div className="bg-gray-50 rounded-lg p-4">
+                            <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">
                       <label htmlFor="newDealPotential" className="text-sm font-medium text-gray-700">
                         Potential Value per Call:
@@ -3191,12 +3296,10 @@ export default function AdminDashboard() {
                           max="100000"
                           value={newDealAmountPotential}
                           onChange={(e) => setNewDealAmountPotential(parseFloat(e.target.value))}
-                          className="w-32 px-3 py-2 border border-gray-300 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-32 px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         />
                       </div>
                     </div>
-                    
-                    <div className="mt-4">
                       <button 
                         onClick={async () => {
                           setIsUpdatingCrmSettings(true);
@@ -3220,28 +3323,31 @@ export default function AdminDashboard() {
                           }
                         }}
                         disabled={isUpdatingCrmSettings}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
                       >
-                        {isUpdatingCrmSettings ? 'Updating...' : 'Update CRM Settings'}
+                                {isUpdatingCrmSettings ? 'Saving...' : 'Save Changes'}
                       </button>
+                            </div>
                     </div>
                   </div>
 
-                  {/* Terminal Outcomes Settings */}
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <h3 className="text-lg font-medium text-gray-900 mb-3">Terminal Outcomes Configuration</h3>
-                    <p className="text-gray-600 mb-4">
+                        {/* Terminal Outcomes Configuration */}
+                        <div>
+                          <div className="mb-4">
+                            <h3 className="text-base font-semibold text-gray-900 mb-2">Terminal Outcomes Configuration</h3>
+                            <p className="text-sm text-gray-600">
                       Configure which deal outcomes are considered "terminal" (closed deals that should NOT be counted in OPEN DEAL AMOUNT). 
                       All other deals will be counted as open deals.
                     </p>
+                          </div>
                     
-                    <div className="mb-4">
-                      <label className="text-sm font-medium text-gray-700 mb-2 block">
+                          <div className="bg-gray-50 rounded-lg p-4">
+                            <label className="text-sm font-medium text-gray-700 mb-3 block">
                         Select Terminal Outcomes:
                       </label>
-                      <div className="space-y-2">
+                            <div className="grid grid-cols-2 gap-3 mb-4">
                         {['converted', 'not_interested', 'needs_follow_up', 'wrong_number', 'no_answer', 'callback_requested', 'rescheduled'].map((outcome) => (
-                          <label key={outcome} className="flex items-center space-x-2">
+                                <label key={outcome} className="flex items-center space-x-2 bg-white px-3 py-2 rounded border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
                             <input
                               type="checkbox"
                               checked={terminalOutcomes.includes(outcome)}
@@ -3257,10 +3363,9 @@ export default function AdminDashboard() {
                             <span className="text-sm text-gray-700 capitalize">{outcome.replace('_', ' ')}</span>
                           </label>
                         ))}
-                      </div>
                     </div>
                     
-                    <div className="mt-4">
+                            <div className="flex justify-end">
                       <button 
                         onClick={async () => {
                           setIsUpdatingTerminalOutcomes(true);
@@ -3285,28 +3390,17 @@ export default function AdminDashboard() {
                           }
                         }}
                         disabled={isUpdatingTerminalOutcomes}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
                       >
-                        {isUpdatingTerminalOutcomes ? 'Updating...' : 'Update Terminal Outcomes'}
+                                {isUpdatingTerminalOutcomes ? 'Saving...' : 'Save Changes'}
                       </button>
                     </div>
                   </div>
-
-                  {/* Current Settings Info */}
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h4 className="text-sm font-medium text-gray-900 mb-2">Current Settings</h4>
-                    <div className="text-sm text-gray-600 space-y-1">
-                      <p>• Qualification Threshold: <span className="font-medium">{qualificationThreshold} points</span></p>
-                      <p>• Users with {qualificationThreshold}+ points → Book consultation call</p>
-                      <p>• Users with &lt;{qualificationThreshold} points → Checkout page</p>
-                      <p>• Commission Hold Period: <span className="font-medium">{commissionHoldDays} days</span></p>
-                      <p>• Minimum Payout: <span className="font-medium">${minimumPayout}</span></p>
-                      <p>• Payout Schedule: <span className="font-medium">{payoutSchedule.charAt(0).toUpperCase() + payoutSchedule.slice(1)}</span></p>
-                      <p>• Commissions held for {commissionHoldDays} days before becoming available</p>
-                      <p>• New Deal Amount Potential: <span className="font-medium">${newDealAmountPotential}</span></p>
-                      <p>• Terminal Outcomes: <span className="font-medium">{terminalOutcomes.map(o => o.replace('_', ' ')).join(', ')}</span></p>
                     </div>
                   </div>
+                    </div>
+                  </div>
+
                 </div>
               </div>
             </div>
