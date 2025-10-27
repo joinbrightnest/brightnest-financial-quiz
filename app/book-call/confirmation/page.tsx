@@ -6,7 +6,7 @@ export default function ConfirmationPage() {
   return (
     <div className="min-h-screen bg-[#F8F7F5]">
       {/* Section 1: Dark Charcoal Background */}
-      <div className="bg-gradient-to-br from-[#333333] via-[#2a2a2a] to-[#333333] py-4 sm:py-5 px-4">
+      <div className="bg-gradient-to-br from-[#333333] via-[#2a2a2a] to-[#333333] py-4 sm:py-5 px-4 pb-12 sm:pb-16">
         <div className="max-w-4xl mx-auto text-center">
           {/* Logo */}
           <div className="mb-2 sm:mb-3">
@@ -21,9 +21,13 @@ export default function ConfirmationPage() {
               CONGRATULATIONS!
             </span>
           </h2>
+        </div>
+      </div>
 
-          {/* Confirmation Banner */}
-          <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-xl py-3 sm:py-4 px-4 sm:px-6 max-w-3xl mx-auto shadow-lg border-2 border-white/20">
+      {/* Confirmation Banner - Overlapping */}
+      <div className="relative -mt-8 sm:-mt-10 z-20">
+        <div className="max-w-3xl mx-auto px-4">
+          <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-xl py-3 sm:py-4 px-4 sm:px-6 shadow-lg border-2 border-white/20">
             <p className="text-white text-sm sm:text-base lg:text-lg font-black">
               Confirmed: Your Financial Transformation Assessment Has Been Booked
             </p>
