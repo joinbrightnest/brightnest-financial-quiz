@@ -405,9 +405,9 @@ const AnalyzingFinanceTrends = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="h-screen bg-white flex flex-col overflow-hidden">
       {/* Top Bar with BrightNest Logo and User Info */}
-      <div className="w-full bg-[#28303B] px-4 py-5 sm:py-6 relative z-10">
+      <div className="w-full bg-[#28303B] px-4 py-5 sm:py-6 relative z-10 flex-shrink-0">
         {/* BrightNest text - centered horizontally within the full width */}
         <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
           <span className="text-base font-bold text-white font-serif">BrightNest</span>
@@ -421,9 +421,9 @@ const AnalyzingFinanceTrends = () => {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex items-start justify-center px-4 pt-6 pb-20 overflow-y-auto">
-        <div className="relative z-10 w-full max-w-none">
+      {/* Main Content - flexible container that fills remaining space */}
+      <div className="flex-1 flex flex-col justify-center px-4 py-6 overflow-y-auto">
+        <div className="relative z-10 w-full max-w-none mx-auto">
         {/* Header */}
         <motion.div
           className="text-center mb-6 sm:mb-8"
@@ -494,7 +494,7 @@ const AnalyzingFinanceTrends = () => {
 
         {/* Progress Dots with Checkmarks */}
         <motion.div
-          className="flex justify-center space-x-2 sm:space-x-3 mb-4"
+          className="flex justify-center space-x-2 sm:space-x-3 mt-8 mb-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4 }}
@@ -550,7 +550,7 @@ const AnalyzingFinanceTrends = () => {
 
         {/* Loading indicator */}
         <motion.div
-          className="flex justify-center mt-6"
+          className="flex justify-center mt-6 mb-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}

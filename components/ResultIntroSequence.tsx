@@ -73,7 +73,7 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
   const text = current.text.replace("{{name}}", name);
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center overflow-hidden pb-20">
+    <div className="w-screen h-screen flex items-center justify-center overflow-hidden">
       <AnimatePresence mode="wait">
         <motion.div
           key={index}
