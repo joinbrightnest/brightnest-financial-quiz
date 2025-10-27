@@ -45,34 +45,33 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Affiliate not found" }, { status: 404 });
     }
     
+    console.log("🚀 ADMIN AFFILIATE-STATS API CALLED - affiliateCode:", affiliateCode, "dateRange:", dateRange);
+    
     // Calculate date filter for consistency with individual affiliate API
     const now = new Date();
     let startDate: Date;
     
     switch (dateRange) {
-      case "today":
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      case "24h":
+        startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
         break;
-      case "yesterday":
-        const yesterday = new Date(now);
-        yesterday.setDate(yesterday.getDate() - 1);
-        startDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+      case "7d":
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         break;
-      case "week":
-        const startOfWeek = new Date(now);
-        const dayOfWeek = now.getDay();
-        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-        startOfWeek.setDate(now.getDate() - daysToMonday);
-        startDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate());
+      case "30d":
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         break;
-      case "month":
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        break;
-      case "all":
+      case "90d":
         startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
         break;
+      case "1y":
+        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+        break;
+      case "all":
+        startDate = new Date(0); // All time
+        break;
       default:
-        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // Default to 30 days
     }
 
     const [clicks, conversions, quizSessions] = await Promise.all([
