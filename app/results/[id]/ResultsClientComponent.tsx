@@ -182,24 +182,6 @@ export default function ResultsClientComponent({ result }: { result: Result }) {
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="text-center mt-8 sm:mt-16">
-            <div className="inline-flex items-center space-x-6 text-gray-500">
-              <Link
-                href="/quiz"
-                className="hover:text-gray-700 transition-colors duration-300 font-medium"
-              >
-                Take the quiz again
-              </Link>
-              <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
-              <Link
-                href="/"
-                className="hover:text-gray-700 transition-colors duration-300 font-medium"
-              >
-                Home
-              </Link>
-            </div>
-          </div>
         </div>
       </div>
     </div>
