@@ -56,14 +56,37 @@ export async function POST(
       RETURNING *
     `;
 
-    // Update affiliate's total commission (subtract the paid amount)
-    const updatedAffiliate = await prisma.affiliate.update({
+    // Mark conversions as "paid" - process available commissions up to the payout amount
+    // This ensures the "Available Commission" reflects what's actually available
+    await prisma.$executeRaw`
+      UPDATE affiliate_conversions
+      SET commission_status = 'paid'
+      WHERE affiliate_id = ${id}
+        AND commission_status = 'available'
+        AND commission_amount > 0
+        AND id IN (
+          SELECT id FROM affiliate_conversions
+          WHERE affiliate_id = ${id}
+            AND commission_status = 'available'
+            AND commission_amount > 0
+          ORDER BY created_at ASC
+          LIMIT (
+            SELECT COUNT(*)
+            FROM affiliate_conversions
+            WHERE affiliate_id = ${id}
+              AND commission_status = 'available'
+              AND commission_amount > 0
+              AND commission_amount <= ${amount}
+          )
+        )
+    `;
+
+    // Note: We don't decrement totalCommission because it represents lifetime earnings
+    // The "available" amount is calculated as: sum of conversions with status='available'
+
+    // Get updated affiliate data
+    const updatedAffiliate = await prisma.affiliate.findUnique({
       where: { id },
-      data: {
-        totalCommission: {
-          decrement: amount,
-        },
-      },
     });
 
     return NextResponse.json({
@@ -107,7 +130,20 @@ export async function GET(
       );
     }
 
-    // Calculate payout summary
+    // Calculate available commission from conversions with status='available'
+    const availableConversions = await prisma.affiliateConversion.aggregate({
+      where: {
+        affiliateId: id,
+        commissionStatus: 'available',
+      },
+      _sum: {
+        commissionAmount: true,
+      },
+    });
+
+    const availableCommission = Number(availableConversions._sum.commissionAmount || 0);
+
+    // Calculate total paid from completed payouts
     const totalPaid = affiliate.payouts
       .filter(p => p.status === "completed")
       .reduce((sum, p) => sum + Number(p.amountDue), 0);
@@ -122,10 +158,10 @@ export async function GET(
         id: affiliate.id,
         name: affiliate.name,
         email: affiliate.email,
-        totalCommission: affiliate.totalCommission,
+        totalCommission: affiliate.totalCommission, // Lifetime total
         totalPaid,
         pendingPayouts,
-        availableCommission: Number(affiliate.totalCommission) - totalPaid,
+        availableCommission, // Sum of conversions with status='available'
       },
       payouts: affiliate.payouts,
     });
