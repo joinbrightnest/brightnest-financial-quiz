@@ -438,7 +438,7 @@ const AnalyzingFinanceTrends = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-              <h1 className="text-lg sm:text-xl font-serif font-semibold text-gray-800 mb-2 text-center">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-sans font-medium text-gray-900 mb-2 text-center leading-tight">
             {loadingTexts[currentTextIndex]}
             <motion.span
               initial={{ opacity: 0 }}
