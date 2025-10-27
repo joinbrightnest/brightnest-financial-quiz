@@ -58,10 +58,11 @@ export async function GET(request: NextRequest) {
     // Release the commissions
     let releasedCount = 0;
     let releasedAmount = 0;
-    const affiliateUpdates = new Map();
 
     for (const commission of readyCommissions) {
-      // Update commission status
+      // Update commission status to available
+      // Note: We don't increment totalCommission here because it was already
+      // incremented when the sale was first recorded in the outcome endpoint
       await prisma.affiliateConversion.update({
         where: { id: commission.id },
         data: {
@@ -69,36 +70,11 @@ export async function GET(request: NextRequest) {
           releasedAt: new Date()
         }
       });
-
-      // Track affiliate updates
-      const affiliateId = commission.affiliateId;
-      if (!affiliateUpdates.has(affiliateId)) {
-        affiliateUpdates.set(affiliateId, {
-          affiliate: commission.affiliate,
-          totalCommission: 0
-        });
-      }
-      
-      const affiliateUpdate = affiliateUpdates.get(affiliateId);
-      affiliateUpdate.totalCommission += Number(commission.commissionAmount);
       
       releasedCount++;
       releasedAmount += Number(commission.commissionAmount);
 
-      console.log(`✅ Released commission ${commission.id}: $${commission.commissionAmount}`);
-    }
-
-    // Update affiliate total commissions
-    for (const [affiliateId, update] of affiliateUpdates) {
-      await prisma.affiliate.update({
-        where: { id: affiliateId },
-        data: {
-          totalCommission: {
-            increment: update.totalCommission
-          }
-        }
-      });
-      console.log(`💰 Updated affiliate ${update.affiliate.name}: +$${update.totalCommission}`);
+      console.log(`✅ Released commission ${commission.id}: $${commission.commissionAmount} for affiliate ${commission.affiliate.name}`);
     }
 
     console.log(`🎉 Automatic release complete: ${releasedCount} commissions, $${releasedAmount} total`);
@@ -108,7 +84,7 @@ export async function GET(request: NextRequest) {
       message: `Automatically released ${releasedCount} commissions`,
       releasedCount,
       releasedAmount,
-      cutoffDate: cutoffDate.toISOString(),
+      currentDate: now.toISOString(),
       holdDays: commissionHoldDays,
       releasedCommissions: readyCommissions.map(c => ({
         id: c.id,
