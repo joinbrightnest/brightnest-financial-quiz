@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { calculateAffiliateLeads } from "@/lib/lead-calculation";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
 
 export async function GET(request: NextRequest) {
@@ -103,10 +102,6 @@ export async function GET(request: NextRequest) {
         // Count actual bookings and sales from appointments (more accurate)
         const bookingCount = appointments.length;
         const saleCount = appointments.filter(apt => apt.outcome === 'converted').length;
-        
-        // Use centralized lead calculation with date range from filter
-        const leadData = await calculateAffiliateLeads(affiliate.id, dateRange === 'all' ? '1y' : dateRange);
-        const leadCount = leadData.totalLeads;
 
         // Calculate actual revenue from converted appointments (total sale values)
         const convertedAppointments = appointments.filter(apt => apt.outcome === 'converted' && apt.saleValue);
