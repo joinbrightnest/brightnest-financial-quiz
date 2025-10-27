@@ -46,6 +46,18 @@ export default function AdminAffiliatePerformanceChart({ dailyStats, loading }: 
     earnings: true,
   });
 
+  // Add safety check for dailyStats
+  if (!dailyStats || !Array.isArray(dailyStats)) {
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 hover:shadow-lg transition-all duration-300">
+        <div className="animate-pulse">
+          <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 hover:shadow-lg transition-all duration-300">
@@ -60,13 +72,24 @@ export default function AdminAffiliatePerformanceChart({ dailyStats, loading }: 
   // Prepare chart data
   const chartData = {
     labels: dailyStats.map(day => {
-      const date = new Date(day.date);
-      // Check if this is hourly data (contains time)
-      if (day.date.includes('T')) {
-        return date.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
-      } else {
-        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      // Check if this is already in HH:MM format (hourly data)
+      if (/^\d{2}:\d{2}$/.test(day.date)) {
+        return day.date; // Return as-is for hourly labels
       }
+      
+      // Try to parse as ISO date string
+      const date = new Date(day.date);
+      if (!isNaN(date.getTime())) {
+        // Check if this is hourly data (contains time component)
+        if (day.date.includes('T') || day.date.includes(' ')) {
+          return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        } else {
+          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+      }
+      
+      // Fallback: return the original value
+      return day.date;
     }),
     datasets: [
       {
@@ -109,6 +132,16 @@ export default function AdminAffiliatePerformanceChart({ dailyStats, loading }: 
     ],
   };
 
+  // Calculate max values for proper scaling
+  const maxClicks = Math.max(...dailyStats.map(day => day.clicks), 1);
+  const maxLeads = Math.max(...dailyStats.map(day => day.leads), 1);
+  const maxBookedCalls = Math.max(...dailyStats.map(day => day.bookedCalls || 0), 1);
+  const maxCommission = Math.max(...dailyStats.map(day => day.commission || 0), 1);
+  
+  // Calculate appropriate step sizes
+  const leftAxisMax = Math.max(maxClicks, maxLeads, maxBookedCalls);
+  const rightAxisMax = maxCommission;
+
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -123,8 +156,12 @@ export default function AdminAffiliatePerformanceChart({ dailyStats, loading }: 
     scales: {
       y: {
         beginAtZero: true,
+        max: Math.ceil(leftAxisMax * 1.1), // Add 10% padding
         ticks: {
-          stepSize: 1,
+          stepSize: Math.ceil(leftAxisMax / 10), // Dynamic step size
+          callback: function(value) {
+            return Number.isInteger(value) ? value : '';
+          },
         },
       },
       y1: {
@@ -132,12 +169,14 @@ export default function AdminAffiliatePerformanceChart({ dailyStats, loading }: 
         display: true,
         position: 'right',
         beginAtZero: true,
+        max: Math.ceil(rightAxisMax * 1.1), // Add 10% padding
         grid: {
           drawOnChartArea: false,
         },
         ticks: {
+          stepSize: Math.ceil(rightAxisMax / 10), // Dynamic step size
           callback: function(value) {
-            return '$' + value.toFixed(2);
+            return '$' + value.toFixed(0);
           },
         },
       },

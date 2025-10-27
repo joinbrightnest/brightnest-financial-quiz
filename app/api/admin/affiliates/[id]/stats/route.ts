@@ -27,23 +27,21 @@ export async function GET(
     let startDate: Date;
     
     switch (dateRange) {
-      case "today":
-        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      case "24h":
+      case "1d": // Support both formats
+        startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
         break;
-      case "yesterday":
-        const yesterday = new Date(now);
-        yesterday.setDate(yesterday.getDate() - 1);
-        startDate = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
+      case "7d":
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         break;
-      case "week":
-        const startOfWeek = new Date(now);
-        const dayOfWeek = now.getDay();
-        const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-        startOfWeek.setDate(now.getDate() - daysToMonday);
-        startDate = new Date(startOfWeek.getFullYear(), startOfWeek.getMonth(), startOfWeek.getDate());
+      case "30d":
+        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         break;
-      case "month":
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+      case "90d":
+        startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+        break;
+      case "1y":
+        startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
         break;
       case "all":
         startDate = new Date(0); // All time
@@ -304,38 +302,37 @@ async function generateDailyStatsWithCentralizedLeads(
 ) {
   const stats = [];
   
-  if (dateRange === "1d") {
+  if (dateRange === "24h" || dateRange === "1d") {
     // For 24 hours, show hourly data
     const now = new Date();
-    const startHour = now.getHours() - 23; // Last 24 hours
     
-    for (let i = 0; i < 24; i++) {
-      const hour = (startHour + i + 24) % 24; // Handle negative hours
-      const hourStr = hour.toString().padStart(2, '0');
-      const dateStr = now.toISOString().split('T')[0];
+    // For "Last 24 hours", go back 24 hours from now
+    for (let i = 23; i >= 0; i--) {
+      // Calculate the timestamp for each of the last 24 hours (going backwards from now)
+      const hourTimestamp = new Date(now.getTime() - i * 60 * 60 * 1000);
+      const hourStart = new Date(hourTimestamp);
+      hourStart.setMinutes(0, 0, 0);
+      const hourEnd = new Date(hourTimestamp);
+      hourEnd.setMinutes(59, 59, 999);
       
+      const hourLabel = `${hourTimestamp.getHours().toString().padStart(2, '0')}:00`;
+      
+      // Filter data for this specific hour using proper time ranges
       const hourClicks = clicks.filter(c => {
-        const clickDate = c.createdAt.toISOString().split('T')[0];
-        const clickHour = c.createdAt.getHours().toString().padStart(2, '0');
-        return clickDate === dateStr && clickHour === hourStr;
+        const clickDate = new Date(c.createdAt);
+        return clickDate >= hourStart && clickDate <= hourEnd;
       });
       
       const hourConversions = conversions.filter(c => {
-        const convDate = c.createdAt.toISOString().split('T')[0];
-        const convHour = c.createdAt.getHours().toString().padStart(2, '0');
-        return convDate === dateStr && convHour === hourStr;
+        const convDate = new Date(c.createdAt);
+        return convDate >= hourStart && convDate <= hourEnd;
       });
       
       // Calculate leads for this hour using centralized function
-      const hourStart = new Date(now);
-      hourStart.setHours(hour, 0, 0, 0);
-      const hourEnd = new Date(now);
-      hourEnd.setHours(hour, 59, 59, 999);
-      
       const hourLeadData = await calculateLeadsWithDateRange(hourStart, hourEnd, affiliateId);
       
       stats.push({
-        date: `${dateStr}T${hourStr}:00:00.000Z`,
+        date: hourLabel,
         clicks: hourClicks.length,
         leads: hourLeadData.totalLeads,
         bookedCalls: hourConversions.filter(c => c.conversionType === "booking").length,
@@ -344,24 +341,62 @@ async function generateDailyStatsWithCentralizedLeads(
     }
   } else {
     // For other timeframes, show daily data
-    const days = dateRange === "7d" ? 7 : dateRange === "30d" ? 30 : dateRange === "90d" ? 90 : 365;
+    const now = new Date();
+    let days: number;
     
-    for (let i = days - 1; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
+    switch (dateRange) {
+      case "7d":
+        days = 7;
+        break;
+      case "30d":
+        days = 30;
+        break;
+      case "90d":
+        days = 90;
+        break;
+      case "1y":
+        days = 365;
+        break;
+      case "all":
+        // Show last 90 days for "all time" to keep it manageable
+        days = 90;
+        break;
+      default:
+        days = 30;
+    }
+    
+    // Iterate through days from startDate backwards (7d goes back 7 days from now)
+    for (let i = 0; i < days; i++) {
+      const daysAgo = days - 1 - i; // Count backwards from most recent day
+      const date = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
       
-      const dayClicks = clicks.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
-      const dayConversions = conversions.filter(c => c.createdAt.toISOString().split('T')[0] === dateStr);
-      const dayBookings = dayConversions.filter(c => c.conversionType === "booking");
-      const dayCommission = dayConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
-      
-      // Calculate leads for this day using centralized function
       const dayStart = new Date(date);
       dayStart.setHours(0, 0, 0, 0);
       const dayEnd = new Date(date);
       dayEnd.setHours(23, 59, 59, 999);
       
+      // Don't go beyond the current time
+      if (dayEnd > now) {
+        dayEnd.setTime(now.getTime());
+      }
+      
+      const dateStr = date.toISOString().split('T')[0];
+      
+      // Filter data for this specific day using time ranges
+      const dayClicks = clicks.filter(c => {
+        const clickDate = new Date(c.createdAt);
+        return clickDate >= dayStart && clickDate <= dayEnd;
+      });
+      
+      const dayConversions = conversions.filter(c => {
+        const convDate = new Date(c.createdAt);
+        return convDate >= dayStart && convDate <= dayEnd;
+      });
+      
+      const dayBookings = dayConversions.filter(c => c.conversionType === "booking");
+      const dayCommission = dayConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
+      
+      // Calculate leads for this day using centralized function
       const dayLeadData = await calculateLeadsWithDateRange(dayStart, dayEnd, affiliateId);
       
       stats.push({
