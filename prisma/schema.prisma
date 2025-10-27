@@ -19,18 +19,18 @@ model User {
 }
 
 model QuizSession {
-  id            String       @id @default(cuid())
+  id            String        @id @default(cuid())
   userId        String?
-  quizType      String       @default("financial-profile") // Type of quiz (financial-profile, health-finance, marriage-finance)
-  affiliateCode String?      @map("affiliate_code") // Referral code from affiliate link
-  startedAt     DateTime     @default(now())
+  quizType      String        @default("financial-profile") // Type of quiz (financial-profile, health-finance, marriage-finance)
+  affiliateCode String?       @map("affiliate_code") // Referral code from affiliate link
+  startedAt     DateTime      @default(now())
   completedAt   DateTime?
-  status        String       @default("in_progress")
+  status        String        @default("in_progress")
   durationMs    Int?
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   answers       QuizAnswer[]
-  user          User?        @relation(fields: [userId], references: [id])
+  user          User?         @relation(fields: [userId], references: [id])
   result        Result?
   articleViews  ArticleView[]
 
@@ -42,26 +42,26 @@ model QuizSession {
 }
 
 model QuizQuestion {
-  id        String       @id @default(cuid())
-  quizType  String       @default("financial-profile") // Type of quiz this question belongs to
-  order     Int
-  prompt    String
-  type      String
-  options   Json
-  active    Boolean      @default(true)
-  skipButton Boolean     @default(false) // Show skip option for this question
-  continueButton Boolean @default(false) // Show continue button after answer selection
-  continueButtonColor String @default("#09727c") // Color for continue button
-  continueButtonText String @default("Continue") // Text for continue button
-  
+  id                  String  @id @default(cuid())
+  quizType            String  @default("financial-profile") // Type of quiz this question belongs to
+  order               Int
+  prompt              String
+  type                String
+  options             Json
+  active              Boolean @default(true)
+  skipButton          Boolean @default(false) // Show skip option for this question
+  continueButton      Boolean @default(false) // Show continue button after answer selection
+  continueButtonColor String  @default("#09727c") // Color for continue button
+  continueButtonText  String  @default("Continue") // Text for continue button
+
   // Text customization options (optional fields)
   textUnderAnswers String? // Text to display under answer options (smaller, grey)
-  textUnderButton String?  // Text to display under submit/continue button (smaller, grey)
-  
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  answers   QuizAnswer[]
-  triggers  ArticleTrigger[]
+  textUnderButton  String? // Text to display under submit/continue button (smaller, grey)
+
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  answers        QuizAnswer[]
+  triggers       ArticleTrigger[]
   loadingScreens LoadingScreen[]
 
   @@map("quiz_questions")
@@ -93,162 +93,162 @@ model Result {
 }
 
 model Article {
-  id          String   @id @default(cuid())
-  title       String
-  content     String
-  type        String   // "static", "ai_generated", "template"
-  category    String   // "marriage", "health", "career", etc.
-  tags        Json     // Array of tags for better matching
-  
+  id       String @id @default(cuid())
+  title    String
+  content  String
+  type     String // "static", "ai_generated", "template"
+  category String // "marriage", "health", "career", etc.
+  tags     Json // Array of tags for better matching
+
   // Customization fields similar to LoadingScreen
-  subtitle           String?  // Optional subtitle
-  personalizedText   String?  // Text that can include variables like {{name}}, {{answer}}, etc.
-  backgroundColor    String   @default("#ffffff") // Background color
-  textColor          String   @default("#000000") // Text color
-  iconColor          String   @default("#3b82f6") // Icon color
-  accentColor        String   @default("#ef4444") // Accent/CTA button color
-  iconType           String   @default("document") // Type of icon (document, chart, heart, etc.)
-  showIcon           Boolean  @default(true) // Whether to show icon
-  showStatistic      Boolean  @default(true) // Whether to show statistic callout
-  statisticText      String?  // Custom statistic text (e.g., "75% of people...")
-  statisticValue     String?  // Custom statistic value (e.g., "75%")
-  ctaText            String   @default("CONTINUE") // Call-to-action button text
-  showCta            Boolean  @default(true) // Whether to show CTA button
-  
+  subtitle         String? // Optional subtitle
+  personalizedText String? // Text that can include variables like {{name}}, {{answer}}, etc.
+  backgroundColor  String  @default("#ffffff") // Background color
+  textColor        String  @default("#000000") // Text color
+  iconColor        String  @default("#3b82f6") // Icon color
+  accentColor      String  @default("#ef4444") // Accent/CTA button color
+  iconType         String  @default("document") // Type of icon (document, chart, heart, etc.)
+  showIcon         Boolean @default(true) // Whether to show icon
+  showStatistic    Boolean @default(true) // Whether to show statistic callout
+  statisticText    String? // Custom statistic text (e.g., "75% of people...")
+  statisticValue   String? // Custom statistic value (e.g., "75%")
+  ctaText          String  @default("CONTINUE") // Call-to-action button text
+  showCta          Boolean @default(true) // Whether to show CTA button
+
   // Layout and positioning fields
-  textAlignment      String   @default("center") // Text alignment (left, center, right)
-  contentPosition    String   @default("center") // Content position (top, center, bottom)
-  backgroundStyle    String   @default("solid") // Background style (solid, gradient)
-  backgroundGradient String?  // Gradient CSS string
-  contentPadding     String   @default("normal") // Content padding (compact, normal, spacious)
-  showTopBar         Boolean  @default(true) // Whether to show top bar
-  topBarColor        String   @default("#1f2937") // Top bar background color
-  
+  textAlignment      String  @default("center") // Text alignment (left, center, right)
+  contentPosition    String  @default("center") // Content position (top, center, bottom)
+  backgroundStyle    String  @default("solid") // Background style (solid, gradient)
+  backgroundGradient String? // Gradient CSS string
+  contentPadding     String  @default("normal") // Content padding (compact, normal, spacious)
+  showTopBar         Boolean @default(true) // Whether to show top bar
+  topBarColor        String  @default("#1f2937") // Top bar background color
+
   // Text formatting fields
-  titleFontSize      String   @default("large") // Title font size (small, normal, large, xlarge)
-  titleFontWeight    String   @default("bold") // Title font weight (normal, medium, semibold, bold, extrabold)
-  contentFontSize    String   @default("normal") // Content font size (small, normal, large)
-  contentFontWeight  String   @default("normal") // Content font weight (light, normal, medium, semibold)
-  lineHeight         String   @default("normal") // Line height (tight, normal, relaxed, loose)
-  
+  titleFontSize     String @default("large") // Title font size (small, normal, large, xlarge)
+  titleFontWeight   String @default("bold") // Title font weight (normal, medium, semibold, bold, extrabold)
+  contentFontSize   String @default("normal") // Content font size (small, normal, large)
+  contentFontWeight String @default("normal") // Content font weight (light, normal, medium, semibold)
+  lineHeight        String @default("normal") // Line height (tight, normal, relaxed, loose)
+
   // Image fields
-  imageUrl           String?  // URL of uploaded image
-  imageAlt           String?  // Alt text for accessibility
-  showImage          Boolean  @default(false) // Whether to show the uploaded image
-  
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  triggers    ArticleTrigger[]
-  views       ArticleView[]
+  imageUrl  String? // URL of uploaded image
+  imageAlt  String? // Alt text for accessibility
+  showImage Boolean @default(false) // Whether to show the uploaded image
+
+  isActive  Boolean          @default(true)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  triggers  ArticleTrigger[]
+  views     ArticleView[]
 
   @@map("articles")
 }
 
 model ArticleTrigger {
-  id         String   @id @default(cuid())
-  articleId  String
-  questionId String?
+  id          String        @id @default(cuid())
+  articleId   String
+  questionId  String?
   optionValue String? // Specific option value that triggers this article
-  condition  Json     // Complex conditions (e.g., score ranges, multiple answers)
-  priority   Int      @default(0) // Higher priority = shown first
-  isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  article    Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  question   QuizQuestion? @relation(fields: [questionId], references: [id])
+  condition   Json // Complex conditions (e.g., score ranges, multiple answers)
+  priority    Int           @default(0) // Higher priority = shown first
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  article     Article       @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  question    QuizQuestion? @relation(fields: [questionId], references: [id])
 
   @@map("article_triggers")
 }
 
 model ArticleTemplate {
-  id          String   @id @default(cuid())
-  name        String
-  template    String   // Template with variables like {{answer}}, {{score}}, etc.
-  variables   Json     // Available variables for this template
-  category    String
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  name      String
+  template  String // Template with variables like {{answer}}, {{score}}, etc.
+  variables Json // Available variables for this template
+  category  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("article_templates")
 }
 
 model ArticleView {
-  id        String   @id @default(cuid())
+  id        String      @id @default(cuid())
   sessionId String
   articleId String
-  viewedAt  DateTime @default(now())
+  viewedAt  DateTime    @default(now())
   session   QuizSession @relation(fields: [sessionId], references: [id])
-  article   Article  @relation(fields: [articleId], references: [id])
+  article   Article     @relation(fields: [articleId], references: [id])
 
   @@unique([sessionId, articleId])
   @@map("article_views")
 }
 
 model LoadingScreen {
-  id              String   @id @default(cuid())
-  quizType        String   // Which quiz this loading screen belongs to
-  title           String   // Main title text
-  subtitle        String?  // Optional subtitle
-  personalizedText String? // Text that can include variables like {{name}}, {{answer}}, etc.
-  duration        Int      @default(3000) // Duration in milliseconds
-  iconType        String   @default("puzzle-4") // Type of animated icon (puzzle-4, puzzle-6, gears, brain, etc.)
-  animationStyle  String   @default("complete-rotate") // Animation style (complete-rotate, spin, pulse, bounce, etc.)
-  backgroundColor String   @default("#ffffff") // Background color
-  textColor       String   @default("#000000") // Text color
-  iconColor       String   @default("#3b82f6") // Icon color
-  progressBarColor String  @default("#ef4444") // Progress bar color (legacy field)
-  progressBarFillColor String @default("#fb513d") // Progress bar fill color
-  progressBarBgColor String @default("#e4dece") // Progress bar background color
-  progressBarTextColor String @default("#191717") // Progress bar text color
-  showProgressBar Boolean  @default(true) // Whether to show progress bar
-  progressText    String?  // Custom progress text (e.g., "CALCULATING...")
-  showTopBar      Boolean  @default(true) // Whether to show top bar
-  topBarColor     String   @default("#1f2937") // Top bar background color
-  triggerQuestionId String? // Which question triggers this loading screen
-  
+  id                   String  @id @default(cuid())
+  quizType             String // Which quiz this loading screen belongs to
+  title                String // Main title text
+  subtitle             String? // Optional subtitle
+  personalizedText     String? // Text that can include variables like {{name}}, {{answer}}, etc.
+  duration             Int     @default(3000) // Duration in milliseconds
+  iconType             String  @default("puzzle-4") // Type of animated icon (puzzle-4, puzzle-6, gears, brain, etc.)
+  animationStyle       String  @default("complete-rotate") // Animation style (complete-rotate, spin, pulse, bounce, etc.)
+  backgroundColor      String  @default("#ffffff") // Background color
+  textColor            String  @default("#000000") // Text color
+  iconColor            String  @default("#3b82f6") // Icon color
+  progressBarColor     String  @default("#ef4444") // Progress bar color (legacy field)
+  progressBarFillColor String  @default("#fb513d") // Progress bar fill color
+  progressBarBgColor   String  @default("#e4dece") // Progress bar background color
+  progressBarTextColor String  @default("#191717") // Progress bar text color
+  showProgressBar      Boolean @default(true) // Whether to show progress bar
+  progressText         String? // Custom progress text (e.g., "CALCULATING...")
+  showTopBar           Boolean @default(true) // Whether to show top bar
+  topBarColor          String  @default("#1f2937") // Top bar background color
+  triggerQuestionId    String? // Which question triggers this loading screen
+
   // Image fields
-  imageUrl           String?  // URL of uploaded image
-  imageAlt           String?  // Alt text for accessibility
-  showImage          Boolean  @default(false) // Whether to show the uploaded image
-  
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  question        QuizQuestion? @relation(fields: [triggerQuestionId], references: [id])
+  imageUrl  String? // URL of uploaded image
+  imageAlt  String? // Alt text for accessibility
+  showImage Boolean @default(false) // Whether to show the uploaded image
+
+  isActive  Boolean       @default(true)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  question  QuizQuestion? @relation(fields: [triggerQuestionId], references: [id])
 
   @@map("loading_screens")
 }
 
 // Affiliate System Models
 model Affiliate {
-  id              String      @id @default(cuid())
+  id              String        @id @default(cuid())
   name            String
-  email           String      @unique
-  passwordHash    String      @map("password_hash")
+  email           String        @unique
+  passwordHash    String        @map("password_hash")
   tier            AffiliateTier @default(quiz)
-  referralCode    String      @unique @map("referral_code")
-  customLink      String      @map("custom_link")
+  referralCode    String        @unique @map("referral_code")
+  customLink      String        @map("custom_link")
   // customTrackingLink String?  @map("custom_tracking_link") // Temporarily disabled
   payoutMethod    PayoutMethod? @map("payout_method")
-  payoutDetails   Json?       @map("payout_details")
-  commissionRate  Decimal     @default(0.1000) @map("commission_rate") @db.Decimal(5, 4)
-  totalClicks     Int         @default(0) @map("total_clicks")
-  totalLeads      Int         @default(0) @map("total_leads")
-  totalBookings   Int         @default(0) @map("total_bookings")
-  totalSales      Int         @default(0) @map("total_sales")
-  totalCommission Decimal     @default(0.00) @map("total_commission") @db.Decimal(10, 2)
-  isActive        Boolean     @default(true) @map("is_active")
-  isApproved      Boolean     @default(false) @map("is_approved")
-  stripeAccountId String?     @map("stripe_account_id")
-  createdAt       DateTime    @default(now()) @map("created_at")
-  updatedAt       DateTime    @updatedAt @map("updated_at")
-  
-  clicks          AffiliateClick[]
-  conversions     AffiliateConversion[]
-  payouts         AffiliatePayout[]
-  auditLogs       AffiliateAuditLog[]
+  payoutDetails   Json?         @map("payout_details")
+  commissionRate  Decimal       @default(0.1000) @map("commission_rate") @db.Decimal(5, 4)
+  totalClicks     Int           @default(0) @map("total_clicks")
+  totalLeads      Int           @default(0) @map("total_leads")
+  totalBookings   Int           @default(0) @map("total_bookings")
+  totalSales      Int           @default(0) @map("total_sales")
+  totalCommission Decimal       @default(0.00) @map("total_commission") @db.Decimal(10, 2)
+  isActive        Boolean       @default(true) @map("is_active")
+  isApproved      Boolean       @default(false) @map("is_approved")
+  stripeAccountId String?       @map("stripe_account_id")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  clicks      AffiliateClick[]
+  conversions AffiliateConversion[]
+  payouts     AffiliatePayout[]
+  auditLogs   AffiliateAuditLog[]
 
   @@index([isApproved, isActive])
   @@index([createdAt])
@@ -256,17 +256,17 @@ model Affiliate {
 }
 
 model AffiliateClick {
-  id           String    @id @default(cuid())
-  affiliateId  String    @map("affiliate_id")
-  referralCode String    @map("referral_code")
-  ipAddress    String?   @map("ip_address")
-  userAgent    String?   @map("user_agent")
-  utmSource    String?   @map("utm_source")
-  utmMedium    String?   @map("utm_medium")
-  utmCampaign  String?   @map("utm_campaign")
-  createdAt    DateTime  @default(now()) @map("created_at")
-  
-  affiliate    Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  affiliateId  String   @map("affiliate_id")
+  referralCode String   @map("referral_code")
+  ipAddress    String?  @map("ip_address")
+  userAgent    String?  @map("user_agent")
+  utmSource    String?  @map("utm_source")
+  utmMedium    String?  @map("utm_medium")
+  utmCampaign  String?  @map("utm_campaign")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  affiliate Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
 
   @@index([affiliateId, createdAt])
   @@index([createdAt])
@@ -274,31 +274,31 @@ model AffiliateClick {
 }
 
 model NormalWebsiteClick {
-  id           String    @id @default(cuid())
-  ipAddress    String?   @map("ip_address")
-  userAgent    String?   @map("user_agent")
-  createdAt    DateTime  @default(now()) @map("created_at")
-  
+  id        String   @id @default(cuid())
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+
   @@index([createdAt])
   @@map("normal_website_clicks")
 }
 
 model AffiliateConversion {
-  id              String            @id @default(cuid())
-  affiliateId     String            @map("affiliate_id")
-  quizSessionId   String?           @map("quiz_session_id")
-  referralCode    String            @map("referral_code")
-  conversionType  String            @map("conversion_type")
-  status          ConversionStatus  @default(pending)
+  id               String           @id @default(cuid())
+  affiliateId      String           @map("affiliate_id")
+  quizSessionId    String?          @map("quiz_session_id")
+  referralCode     String           @map("referral_code")
+  conversionType   String           @map("conversion_type")
+  status           ConversionStatus @default(pending)
   commissionAmount Decimal          @default(0.00) @map("commission_amount") @db.Decimal(10, 2)
-  saleValue       Decimal           @default(0.00) @map("sale_value") @db.Decimal(10, 2)
+  saleValue        Decimal          @default(0.00) @map("sale_value") @db.Decimal(10, 2)
   commissionStatus CommissionStatus @default(held) @map("commission_status")
-  holdUntil       DateTime?         @map("hold_until") // When commission becomes available
-  releasedAt      DateTime?         @map("released_at") // When commission was released from hold
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
-  
-  affiliate       Affiliate         @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  holdUntil        DateTime?        @map("hold_until") // When commission becomes available
+  releasedAt       DateTime?        @map("released_at") // When commission was released from hold
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+
+  affiliate Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
 
   @@index([affiliateId])
   @@index([commissionStatus, holdUntil])
@@ -307,31 +307,31 @@ model AffiliateConversion {
 }
 
 model AffiliatePayout {
-  id              String        @id @default(cuid())
-  affiliateId     String        @map("affiliate_id")
-  amountDue       Decimal       @map("amount_due") @db.Decimal(10, 2)
-  status          PayoutStatus  @default(pending)
-  paidAt          DateTime?     @map("paid_at")
+  id               String       @id @default(cuid())
+  affiliateId      String       @map("affiliate_id")
+  amountDue        Decimal      @map("amount_due") @db.Decimal(10, 2)
+  status           PayoutStatus @default(pending)
+  paidAt           DateTime?    @map("paid_at")
   stripeTransferId String?      @map("stripe_transfer_id")
-  notes           String?
-  createdAt       DateTime      @default(now()) @map("created_at")
-  updatedAt       DateTime      @updatedAt @map("updated_at")
-  
-  affiliate       Affiliate     @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
+  notes            String?
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+
+  affiliate Affiliate @relation(fields: [affiliateId], references: [id], onDelete: Cascade)
 
   @@map("affiliate_payouts")
 }
 
 model AffiliateAuditLog {
-  id          String    @id @default(cuid())
-  affiliateId String?   @map("affiliate_id")
+  id          String   @id @default(cuid())
+  affiliateId String?  @map("affiliate_id")
   action      String
   details     Json?
-  ipAddress   String?   @map("ip_address")
-  userAgent   String?   @map("user_agent")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  
-  affiliate   Affiliate? @relation(fields: [affiliateId], references: [id], onDelete: SetNull)
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  affiliate Affiliate? @relation(fields: [affiliateId], references: [id], onDelete: SetNull)
 
   @@map("affiliate_audit_logs")
 }
@@ -369,60 +369,60 @@ enum PayoutStatus {
 
 // Closer System Models
 model Closer {
-  id              String    @id @default(cuid())
-  name            String
-  email           String    @unique
-  passwordHash    String    @map("password_hash")
-  phone           String?
-  calendlyLink    String?   @map("calendly_link")
-  isActive        Boolean   @default(true) @map("is_active")
-  isApproved      Boolean   @default(false) @map("is_approved")
-  commissionRate  Decimal   @default(0.1500) @map("commission_rate") @db.Decimal(5, 4)
-  totalCalls      Int       @default(0) @map("total_calls")
+  id               String   @id @default(cuid())
+  name             String
+  email            String   @unique
+  passwordHash     String   @map("password_hash")
+  phone            String?
+  calendlyLink     String?  @map("calendly_link")
+  isActive         Boolean  @default(true) @map("is_active")
+  isApproved       Boolean  @default(false) @map("is_approved")
+  commissionRate   Decimal  @default(0.1500) @map("commission_rate") @db.Decimal(5, 4)
+  totalCalls       Int      @default(0) @map("total_calls")
   totalConversions Int      @default(0) @map("total_conversions")
-  totalRevenue    Decimal   @default(0.00) @map("total_revenue") @db.Decimal(10, 2)
-  conversionRate  Decimal   @default(0.00) @map("conversion_rate") @db.Decimal(5, 4)
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
-  
-  appointments    Appointment[]
-  tasks           Task[]
-  auditLogs       CloserAuditLog[]
+  totalRevenue     Decimal  @default(0.00) @map("total_revenue") @db.Decimal(10, 2)
+  conversionRate   Decimal  @default(0.00) @map("conversion_rate") @db.Decimal(5, 4)
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  appointments Appointment[]
+  tasks        Task[]
+  auditLogs    CloserAuditLog[]
 
   @@map("closers")
 }
 
 model Appointment {
-  id              String            @id @default(cuid())
-  closerId        String?           @map("closer_id")
-  calendlyEventId String            @unique @map("calendly_event_id")
-  customerName    String            @map("customer_name")
-  customerEmail   String            @map("customer_email")
-  customerPhone   String?           @map("customer_phone")
-  scheduledAt     DateTime          @map("scheduled_at")
-  duration        Int               @default(30) // Duration in minutes
-  status          AppointmentStatus @default(scheduled)
-  outcome         CallOutcome?
-  notes           String?
-  recordingLink   String?           @map("recording_link")
-  recordingLinkConverted String?           @map("recording_link_converted")
-  recordingLinkNotInterested String?       @map("recording_link_not_interested")
-  recordingLinkNeedsFollowUp String?      @map("recording_link_needs_follow_up")
-  recordingLinkWrongNumber String?         @map("recording_link_wrong_number")
-  recordingLinkNoAnswer String?            @map("recording_link_no_answer")
-  recordingLinkCallbackRequested String?   @map("recording_link_callback_requested")
-  recordingLinkRescheduled String?         @map("recording_link_rescheduled")
-  saleValue       Decimal?          @map("sale_value") @db.Decimal(10, 2)
-  commissionAmount Decimal?         @map("commission_amount") @db.Decimal(10, 2)
-  affiliateCode   String?           @map("affiliate_code")
-  utmSource       String?           @map("utm_source")
-  utmMedium       String?           @map("utm_medium")
-  utmCampaign     String?           @map("utm_campaign")
-  createdAt       DateTime          @default(now()) @map("created_at")
-  updatedAt       DateTime          @updatedAt @map("updated_at")
-  
-  closer          Closer?           @relation(fields: [closerId], references: [id], onDelete: SetNull)
-  tasks           Task[]
+  id                             String            @id @default(cuid())
+  closerId                       String?           @map("closer_id")
+  calendlyEventId                String            @unique @map("calendly_event_id")
+  customerName                   String            @map("customer_name")
+  customerEmail                  String            @map("customer_email")
+  customerPhone                  String?           @map("customer_phone")
+  scheduledAt                    DateTime          @map("scheduled_at")
+  duration                       Int               @default(30) // Duration in minutes
+  status                         AppointmentStatus @default(scheduled)
+  outcome                        CallOutcome?
+  notes                          String?
+  recordingLink                  String?           @map("recording_link")
+  recordingLinkConverted         String?           @map("recording_link_converted")
+  recordingLinkNotInterested     String?           @map("recording_link_not_interested")
+  recordingLinkNeedsFollowUp     String?           @map("recording_link_needs_follow_up")
+  recordingLinkWrongNumber       String?           @map("recording_link_wrong_number")
+  recordingLinkNoAnswer          String?           @map("recording_link_no_answer")
+  recordingLinkCallbackRequested String?           @map("recording_link_callback_requested")
+  recordingLinkRescheduled       String?           @map("recording_link_rescheduled")
+  saleValue                      Decimal?          @map("sale_value") @db.Decimal(10, 2)
+  commissionAmount               Decimal?          @map("commission_amount") @db.Decimal(10, 2)
+  affiliateCode                  String?           @map("affiliate_code")
+  utmSource                      String?           @map("utm_source")
+  utmMedium                      String?           @map("utm_medium")
+  utmCampaign                    String?           @map("utm_campaign")
+  createdAt                      DateTime          @default(now()) @map("created_at")
+  updatedAt                      DateTime          @updatedAt @map("updated_at")
+
+  closer Closer? @relation(fields: [closerId], references: [id], onDelete: SetNull)
+  tasks  Task[]
 
   @@index([closerId, outcome])
   @@index([affiliateCode])
@@ -433,21 +433,21 @@ model Appointment {
 }
 
 model Task {
-  id              String       @id @default(cuid())
-  appointmentId   String?      @map("appointment_id")
-  leadEmail       String       @map("lead_email") // To identify which lead this task is for
-  closerId        String?      @map("closer_id")
-  title           String
-  description     String?
-  priority        TaskPriority @default(medium)
-  status          TaskStatus   @default(pending)
-  dueDate         DateTime?    @map("due_date")
-  completedAt     DateTime?    @map("completed_at")
-  createdAt       DateTime     @default(now()) @map("created_at")
-  updatedAt       DateTime     @updatedAt @map("updated_at")
-  
-  appointment     Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
-  closer          Closer?      @relation(fields: [closerId], references: [id], onDelete: SetNull)
+  id            String       @id @default(cuid())
+  appointmentId String?      @map("appointment_id")
+  leadEmail     String       @map("lead_email") // To identify which lead this task is for
+  closerId      String?      @map("closer_id")
+  title         String
+  description   String?
+  priority      TaskPriority @default(medium)
+  status        TaskStatus   @default(pending)
+  dueDate       DateTime?    @map("due_date")
+  completedAt   DateTime?    @map("completed_at")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  appointment Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  closer      Closer?      @relation(fields: [closerId], references: [id], onDelete: SetNull)
 
   @@index([leadEmail, status])
   @@index([closerId, status])
@@ -456,29 +456,29 @@ model Task {
 }
 
 model Note {
-  id              String    @id @default(cuid())
-  leadEmail       String    @map("lead_email") // To identify which lead this note is for
-  content         String    @db.Text
-  createdBy       String?   @map("created_by") // Name or ID of person who created it
-  createdByType   String?   @map("created_by_type") // 'closer', 'admin', etc
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
-  
+  id            String   @id @default(cuid())
+  leadEmail     String   @map("lead_email") // To identify which lead this note is for
+  content       String   @db.Text
+  createdBy     String?  @map("created_by") // Name or ID of person who created it
+  createdByType String?  @map("created_by_type") // 'closer', 'admin', etc
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
   @@index([leadEmail])
   @@index([createdAt])
   @@map("notes")
 }
 
 model CloserAuditLog {
-  id          String    @id @default(cuid())
-  closerId    String?   @map("closer_id")
-  action      String
-  details     Json?
-  ipAddress   String?   @map("ip_address")
-  userAgent   String?   @map("user_agent")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  
-  closer      Closer?   @relation(fields: [closerId], references: [id], onDelete: SetNull)
+  id        String   @id @default(cuid())
+  closerId  String?  @map("closer_id")
+  action    String
+  details   Json?
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  closer Closer? @relation(fields: [closerId], references: [id], onDelete: SetNull)
 
   @@map("closer_audit_logs")
 }
