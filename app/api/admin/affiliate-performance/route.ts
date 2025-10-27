@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { PrismaClient } from "@prisma/client";
 import { calculateAffiliateLeads } from "@/lib/lead-calculation";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
+
+const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   // 🔒 SECURITY: Require admin authentication
