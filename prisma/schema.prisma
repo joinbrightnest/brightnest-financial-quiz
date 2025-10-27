@@ -38,6 +38,8 @@ model QuizSession {
   @@index([completedAt])
   @@index([status, quizType])
   @@index([createdAt])
+  @@index([affiliateCode, createdAt]) // Speed up affiliate analytics date queries
+  @@index([affiliateCode, status, createdAt]) // Speed up filtered affiliate queries
   @@map("quiz_sessions")
 }
 
@@ -270,6 +272,7 @@ model AffiliateClick {
 
   @@index([affiliateId, createdAt])
   @@index([createdAt])
+  @@index([referralCode, createdAt]) // Speed up analytics by referral code + date
   @@map("affiliate_clicks")
 }
 
@@ -303,6 +306,8 @@ model AffiliateConversion {
   @@index([affiliateId])
   @@index([commissionStatus, holdUntil])
   @@index([createdAt])
+  @@index([referralCode, createdAt]) // Speed up conversion tracking by date
+  @@index([affiliateId, commissionStatus, createdAt]) // Speed up dashboard filtering
   @@map("affiliate_conversions")
 }
 
@@ -429,6 +434,8 @@ model Appointment {
   @@index([scheduledAt])
   @@index([outcome])
   @@index([createdAt])
+  @@index([affiliateCode, scheduledAt]) // Speed up booking analytics by date
+  @@index([affiliateCode, status, scheduledAt]) // Speed up filtered bookings
   @@map("appointments")
 }
 
