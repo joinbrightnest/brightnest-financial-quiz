@@ -51,119 +51,142 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // Get detailed performance data for each affiliate
-    const affiliatePerformance = await Promise.all(
-      affiliates.map(async (affiliate) => {
-        // Get clicks for this affiliate (with date filter)
-        const clicks = await prisma.affiliateClick.findMany({
-          where: {
-            affiliateId: affiliate.id,
-            createdAt: {
-              gte: startDate,
-            },
-          },
-        });
+    // ⚡ PERFORMANCE: Bulk fetch all data for ALL affiliates at once (4 queries instead of N*6 queries)
+    const affiliateIds = affiliates.map(a => a.id);
+    const referralCodes = affiliates.map(a => a.referralCode);
 
-        // Get conversions for this affiliate (with date filter)
-        const conversions = await prisma.affiliateConversion.findMany({
-          where: {
-            affiliateId: affiliate.id,
-            createdAt: {
-              gte: startDate,
-            },
-          },
-        });
+    const [allClicks, allConversions, allQuizSessions, allAppointments, allPayouts] = await Promise.all([
+      prisma.affiliateClick.findMany({
+        where: {
+          affiliateId: { in: affiliateIds },
+          createdAt: { gte: startDate },
+        },
+        select: {
+          id: true,
+          affiliateId: true,
+          createdAt: true,
+        },
+      }),
+      prisma.affiliateConversion.findMany({
+        where: {
+          affiliateId: { in: affiliateIds },
+          createdAt: { gte: startDate },
+        },
+        select: {
+          id: true,
+          affiliateId: true,
+          createdAt: true,
+        },
+      }),
+      prisma.quizSession.findMany({
+        where: {
+          affiliateCode: { in: referralCodes },
+          createdAt: { gte: startDate },
+        },
+        select: {
+          id: true,
+          affiliateCode: true,
+          status: true,
+          createdAt: true,
+        },
+      }),
+      prisma.appointment.findMany({
+        where: {
+          affiliateCode: { in: referralCodes },
+          createdAt: { gte: startDate },
+        },
+        select: {
+          id: true,
+          affiliateCode: true,
+          outcome: true,
+          saleValue: true,
+          createdAt: true,
+        },
+      }),
+      prisma.affiliatePayout.findMany({
+        where: {
+          affiliateId: { in: affiliateIds },
+          status: 'completed',
+        },
+        select: {
+          id: true,
+          affiliateId: true,
+          amountDue: true,
+        },
+      }),
+    ]);
 
-        // Get quiz sessions for this affiliate (with date filter)
-        const quizSessions = await prisma.quizSession.findMany({
-          where: {
-            affiliateCode: affiliate.referralCode,
-            createdAt: {
-              gte: startDate,
-            },
-          },
-        });
+    // Group data by affiliate (in-memory processing - FAST!)
+    const dataByAffiliate = new Map();
+    affiliates.forEach(aff => {
+      dataByAffiliate.set(aff.id, {
+        affiliate: aff,
+        clicks: allClicks.filter(c => c.affiliateId === aff.id),
+        conversions: allConversions.filter(c => c.affiliateId === aff.id),
+        quizSessions: allQuizSessions.filter(s => s.affiliateCode === aff.referralCode),
+        appointments: allAppointments.filter(a => a.affiliateCode === aff.referralCode),
+        payouts: allPayouts.filter(p => p.affiliateId === aff.id),
+      });
+    });
 
-        // Get appointments for this affiliate (with date filter)
-        const appointments = await prisma.appointment.findMany({
-          where: {
-            affiliateCode: affiliate.referralCode,
-            createdAt: {
-              gte: startDate,
-            },
-          },
-        });
+    // Calculate performance metrics for each affiliate (using pre-fetched data)
+    const affiliatePerformance = affiliates.map((affiliate) => {
+      const data = dataByAffiliate.get(affiliate.id)!;
+      const { clicks, conversions, quizSessions, appointments, payouts } = data;
 
-        // Calculate conversion rates
-        const clickCount = clicks.length;
-        const conversionCount = conversions.length;
-        const quizCount = quizSessions.length;
-        const completionCount = quizSessions.filter(session => session.status === "completed").length;
-        
-        // Count actual bookings and sales from appointments (more accurate)
-        const bookingCount = appointments.length;
-        const saleCount = appointments.filter(apt => apt.outcome === 'converted').length;
-        
-        // Use centralized lead calculation with date range from filter
-        const leadData = await calculateAffiliateLeads(affiliate.id, dateRange === 'all' ? '1y' : dateRange);
-        const leadCount = leadData.totalLeads;
+      // Calculate metrics from pre-fetched data
+      const clickCount = clicks.length;
+      const conversionCount = conversions.length;
+      const quizCount = quizSessions.length;
+      const completionCount = quizSessions.filter(session => session.status === "completed").length;
+      
+      // Count actual bookings and sales from appointments
+      const bookingCount = appointments.length;
+      const saleCount = appointments.filter(apt => apt.outcome === 'converted').length;
 
-        // Calculate actual revenue from converted appointments (total sale values)
-        const convertedAppointments = appointments.filter(apt => apt.outcome === 'converted' && apt.saleValue);
-        const totalRevenue = convertedAppointments.reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
+      // Calculate actual revenue from converted appointments
+      const totalRevenue = appointments
+        .filter(apt => apt.outcome === 'converted' && apt.saleValue)
+        .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
 
-        // Get actually PAID commissions (from completed payouts)
-        let totalPaidCommission = 0;
-        try {
-          const payouts = await prisma.affiliatePayout.findMany({
-            where: {
-              affiliateId: affiliate.id,
-              status: 'completed'
-            }
-          });
-          totalPaidCommission = payouts.reduce((sum, payout) => sum + Number(payout.amountDue || 0), 0);
-        } catch (error) {
-          console.log('No payouts found for affiliate:', affiliate.id);
-          totalPaidCommission = 0;
-        }
+      // Get actually PAID commissions from pre-fetched payouts
+      const totalPaidCommission = payouts.reduce((sum, payout) => sum + Number(payout.amountDue || 0), 0);
 
-        // Use stored commission from database for total earned (held + available + paid)
-        const totalEarnedCommission = Number(affiliate.totalCommission || 0);
+      // Use stored commission from database for total earned
+      const totalEarnedCommission = Number(affiliate.totalCommission || 0);
 
+      // Calculate conversion rates
+      const clickToQuizRate = clickCount > 0 ? (quizCount / clickCount) * 100 : 0;
+      const quizToCompletionRate = quizCount > 0 ? (completionCount / quizCount) * 100 : 0;
+      const clickToCompletionRate = clickCount > 0 ? (completionCount / clickCount) * 100 : 0;
 
-        // Calculate conversion rates
-        const clickToQuizRate = clickCount > 0 ? (quizCount / clickCount) * 100 : 0;
-        const quizToCompletionRate = quizCount > 0 ? (completionCount / quizCount) * 100 : 0;
-        const clickToCompletionRate = clickCount > 0 ? (completionCount / clickCount) * 100 : 0;
-
-        return {
-          id: affiliate.id,
-          name: affiliate.name,
-          email: affiliate.email,
-          referralCode: affiliate.referralCode,
-          customLink: affiliate.customLink,
-          tier: affiliate.tier,
-          commissionRate: affiliate.commissionRate,
-          // Funnel metrics
-          visitors: clickCount,
-          quizStarts: quizCount,
-          completed: completionCount,
-          bookedCall: bookingCount, // Use actual booking count
-          sales: saleCount, // Use actual sale count
-          // Conversion rates
-          clickToQuizRate: clickToQuizRate,
-          quizToCompletionRate: quizToCompletionRate,
-          clickToCompletionRate: clickToCompletionRate,
-          // Revenue
-          totalRevenue: totalRevenue,
-          totalCommission: totalEarnedCommission, // Total earned (all time)
-          totalPaidCommission: totalPaidCommission, // Actually paid out
-          // Dates
-          createdAt: affiliate.createdAt,
-          updatedAt: affiliate.updatedAt,
-        };
-      })
-    );
+      return {
+        id: affiliate.id,
+        name: affiliate.name,
+        email: affiliate.email,
+        referralCode: affiliate.referralCode,
+        customLink: affiliate.customLink,
+        tier: affiliate.tier,
+        commissionRate: affiliate.commissionRate,
+        // Funnel metrics
+        visitors: clickCount,
+        quizStarts: quizCount,
+        completed: completionCount,
+        bookedCall: bookingCount,
+        sales: saleCount,
+        // Conversion rates
+        clickToQuizRate: clickToQuizRate,
+        quizToCompletionRate: quizToCompletionRate,
+        clickToCompletionRate: clickToCompletionRate,
+        // Revenue
+        totalRevenue: totalRevenue,
+        totalCommission: totalEarnedCommission,
+        totalPaidCommission: totalPaidCommission,
+        // Dates
+        createdAt: affiliate.createdAt,
+        updatedAt: affiliate.updatedAt,
+      };
+    });
 
     // Calculate overall affiliate stats
     const totalAffiliates = affiliatePerformance.length;
