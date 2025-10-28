@@ -179,8 +179,22 @@ export async function GET(request: NextRequest) {
     
     const totalBookings = affiliateWithData.conversions.filter(c => c.conversionType === "booking").length;
     
-    // Count sales from AffiliateConversion records - single source of truth
-    const totalSales = affiliateWithData.conversions.filter(c => c.conversionType === "sale").length;
+    // Count sales from Appointment records with outcome='converted' (SAME as admin API)
+    // This is the single source of truth
+    const convertedAppointments = await prisma.appointment.findMany({
+      where: {
+        affiliateCode: affiliate.referralCode,
+        outcome: 'converted',
+        createdAt: endDate ? {
+          gte: startDate,
+          lte: endDate,
+        } : {
+          gte: startDate,
+        },
+      },
+    }).catch(() => []);
+    
+    const totalSales = convertedAppointments.length;
     const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
 
     // Calculate pending and paid commissions from filtered payouts
@@ -288,7 +302,9 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
   // Use the endDate which is calculated based on the date range
   const rangeEnd = endDate;
   
-  const [allClicks, allConversions, allSaleConversions] = await Promise.all([
+  // IMPORTANT: Use the SAME data source as admin API - Appointments with outcome='converted'
+  // This is the single source of truth for commission calculations
+  const [allClicks, allConversions, allConvertedAppointments] = await Promise.all([
     prisma.affiliateClick.findMany({
       where: {
         affiliate: { referralCode: affiliateCode },
@@ -307,17 +323,18 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
         },
       },
     }),
-    prisma.affiliateConversion.findMany({
+    // Fetch converted appointments (SAME as admin API) - this is the source of truth
+    prisma.appointment.findMany({
       where: {
-        affiliate: { referralCode: affiliateCode },
-        conversionType: "sale",
+        affiliateCode: affiliateCode,
+        outcome: 'converted', // Only converted appointments generate commission
         createdAt: {
           gte: startDate,
           lte: rangeEnd,
         },
       },
     }).catch((error) => {
-      console.error('Error fetching sale conversions:', error);
+      console.error('Error fetching converted appointments:', error);
       return [];
     })
   ]);
@@ -349,14 +366,16 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
         return convDate >= hourStart && convDate <= hourEnd;
       });
       
-      const hourSales = allSaleConversions.filter(sale => {
-        const saleDate = new Date(sale.createdAt);
-        return saleDate >= hourStart && saleDate <= hourEnd;
+      // Filter converted appointments for this specific hour (SAME as admin API)
+      const hourAppointments = allConvertedAppointments.filter(apt => {
+        const aptDate = new Date(apt.createdAt);
+        return aptDate >= hourStart && aptDate <= hourEnd;
       });
 
-      // Calculate commission from sale conversions (actual commission amounts)
-      const hourCommission = hourSales.reduce((sum, sale) => {
-        return sum + Number(sale.commissionAmount || 0);
+      // Calculate commission from appointments (SAME formula as admin API)
+      const hourCommission = hourAppointments.reduce((sum, apt) => {
+        const saleValue = Number(apt.saleValue || 0);
+        return sum + (saleValue * Number(affiliate.commissionRate));
       }, 0);
 
       // Calculate real leads for this specific hour
@@ -400,14 +419,16 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
         return bookingDate >= dayStart && bookingDate <= dayEnd;
       });
       
-      const daySales = allSaleConversions.filter(sale => {
-        const saleDate = new Date(sale.createdAt);
-        return saleDate >= dayStart && saleDate <= dayEnd;
+      // Filter converted appointments for this specific day (SAME as admin API)
+      const dayAppointments = allConvertedAppointments.filter(apt => {
+        const aptDate = new Date(apt.createdAt);
+        return aptDate >= dayStart && aptDate <= dayEnd;
       });
 
-      // Calculate commission from sale conversions (actual commission amounts)
-      const dayCommission = daySales.reduce((sum, sale) => {
-        return sum + Number(sale.commissionAmount || 0);
+      // Calculate commission from appointments (SAME formula as admin API)
+      const dayCommission = dayAppointments.reduce((sum, apt) => {
+        const saleValue = Number(apt.saleValue || 0);
+        return sum + (saleValue * Number(affiliate.commissionRate));
       }, 0);
 
       // Calculate real leads for this specific day
