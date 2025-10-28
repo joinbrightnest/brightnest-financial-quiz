@@ -32,6 +32,15 @@ interface LeadData {
     name: string;
     referralCode: string;
   };
+  appointment?: {
+    id: string;
+    outcome: string;
+    saleValue: number | null;
+    scheduledAt: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+  dealClosedAt?: string | null;
 }
 
 type TabType = 'activity' | 'notes' | 'tasks';
@@ -223,14 +232,22 @@ export default function LeadDetailsPage() {
                 <p className="mt-1 text-sm font-semibold text-slate-900">{leadData.affiliate?.name || 'Admin'}</p>
               </div>
               <div>
-                <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Close Date</label>
+                <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Lead Added</label>
                 <p className="mt-1 text-sm font-semibold text-slate-900">
                   {leadData.completedAt ? new Date(leadData.completedAt).toLocaleDateString('en-GB') : 'N/A'}
                 </p>
               </div>
               <div>
+                <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Closed</label>
+                <p className="mt-1 text-sm font-semibold text-slate-900">
+                  {leadData.dealClosedAt ? new Date(leadData.dealClosedAt).toLocaleDateString('en-GB') : '--'}
+                </p>
+              </div>
+              <div>
                 <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Amount</label>
-                <p className="mt-1 text-sm font-semibold text-slate-900">--</p>
+                <p className="mt-1 text-sm font-semibold text-slate-900">
+                  {leadData.appointment?.saleValue ? `$${leadData.appointment.saleValue.toFixed(2)}` : '--'}
+                </p>
               </div>
               <div>
                 <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Lead Source</label>

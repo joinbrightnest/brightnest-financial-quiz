@@ -78,6 +78,38 @@ export async function GET(
       a.question?.text?.toLowerCase().includes("email")
     );
 
+    // Get appointment data if it exists (to show deal close date)
+    const email = emailAnswer?.value || emailAnswer?.answer || emailAnswer?.answerValue;
+    let appointment = null;
+    let affiliateConversion = null;
+    
+    if (email && typeof email === 'string') {
+      appointment = await prisma.appointment.findFirst({
+        where: {
+          customerEmail: email.toLowerCase()
+        }
+      });
+      
+      // Get the affiliate conversion record to get the actual close date
+      if (appointment && appointment.outcome === 'converted' && quizSession.affiliateCode) {
+        const affiliateRecord = await prisma.affiliate.findUnique({
+          where: { referralCode: quizSession.affiliateCode }
+        });
+        
+        if (affiliateRecord) {
+          affiliateConversion = await prisma.affiliateConversion.findFirst({
+            where: {
+              affiliateId: affiliateRecord.id,
+              conversionType: 'sale'
+            },
+            orderBy: {
+              createdAt: 'desc'
+            }
+          });
+        }
+      }
+    }
+
     // Transform the data for the lead details view
     const leadData = {
       id: quizSession.id,
@@ -99,7 +131,7 @@ export async function GET(
         answerValue: answer.value,
       })),
       user: {
-        email: emailAnswer?.value || emailAnswer?.answer || emailAnswer?.answerValue || "N/A",
+        email: email || "N/A",
         name: nameAnswer?.value || nameAnswer?.answer || nameAnswer?.answerValue || "N/A",
         role: "user",
       },
@@ -107,6 +139,15 @@ export async function GET(
         name: affiliate.name,
         referralCode: affiliate.referralCode,
       } : null,
+      appointment: appointment ? {
+        id: appointment.id,
+        outcome: appointment.outcome,
+        saleValue: appointment.saleValue ? Number(appointment.saleValue) : null,
+        scheduledAt: appointment.scheduledAt.toISOString(),
+        createdAt: appointment.createdAt.toISOString(),
+        updatedAt: appointment.updatedAt.toISOString(),
+      } : null,
+      dealClosedAt: affiliateConversion ? affiliateConversion.createdAt.toISOString() : null,
     };
 
     return NextResponse.json(leadData);
