@@ -8,32 +8,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Find quiz sessions with email containing "kdsak"
-    const sessions = await prisma.quizSession.findMany({
-      where: {
-        answers: {
-          some: {
-            value: {
-              contains: 'kdsak',
-              mode: 'insensitive'
-            }
-          }
-        }
-      },
-      include: {
-        answers: {
-          include: {
-            question: true
-          }
-        }
-      },
-      orderBy: {
-        createdAt: 'desc'
-      },
-      take: 5
-    });
-
-    // Find appointments with email containing "kdsak"
+    // Find appointments first (easier to search)
     const appointments = await prisma.appointment.findMany({
       where: {
         customerEmail: {
@@ -49,6 +24,29 @@ export async function GET(request: NextRequest) {
       },
       take: 5
     });
+
+    // Get all recent quiz sessions and filter in JS
+    const allSessions = await prisma.quizSession.findMany({
+      include: {
+        answers: {
+          include: {
+            question: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      take: 50
+    });
+
+    // Filter sessions that have "kdsak" in any answer
+    const sessions = allSessions.filter(s => 
+      s.answers.some(a => {
+        const val = String(a.value || '').toLowerCase();
+        return val.includes('kdsak');
+      })
+    ).slice(0, 5);
 
     return NextResponse.json({
       sessions: sessions.map(s => ({

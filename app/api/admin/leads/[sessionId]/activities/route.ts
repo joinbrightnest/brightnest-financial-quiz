@@ -53,7 +53,7 @@ export async function GET(
 
     const activities: Array<{
       id: string;
-      type: 'quiz_completed' | 'call_booked' | 'deal_closed' | 'note_added' | 'task_created' | 'task_started' | 'task_completed';
+      type: 'quiz_completed' | 'call_booked' | 'deal_closed' | 'outcome_updated' | 'note_added' | 'task_created' | 'task_started' | 'task_completed';
       timestamp: string;
       leadName: string;
       actor?: string; // Who performed the action
@@ -103,7 +103,23 @@ export async function GET(
           }
         });
 
-        // 3. Deal closed activity (if appointment outcome is converted)
+        // 3. Outcome updated activity (for ALL outcomes)
+        if (appointment.outcome) {
+          activities.push({
+            id: `outcome_${appointment.id}`,
+            type: 'outcome_updated' as any,
+            timestamp: appointment.updatedAt.toISOString(),
+            leadName,
+            actor: appointment.closer?.name || 'Unknown',
+            details: {
+              outcome: appointment.outcome,
+              saleValue: appointment.saleValue ? Number(appointment.saleValue) : null,
+              notes: appointment.notes
+            }
+          });
+        }
+
+        // 4. Deal closed activity (ONLY if appointment outcome is converted)
         if (appointment.outcome === 'converted') {
           // Find the affiliate conversion record to get the exact close date
           const conversion = await prisma.affiliateConversion.findFirst({

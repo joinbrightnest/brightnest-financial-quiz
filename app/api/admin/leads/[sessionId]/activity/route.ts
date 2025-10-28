@@ -36,17 +36,49 @@ export async function GET(
       );
     }
 
-    // Get email from quiz answers (same logic as main lead route)
+    // Get email from quiz answers - AGGRESSIVE EXTRACTION
     const emailAnswer = quizSession.answers.find(a => 
       a.question?.prompt?.toLowerCase().includes('email')
     );
 
-    // Get appointment by matching email - MUST match main lead route logic exactly
-    const email = emailAnswer?.value || emailAnswer?.answer || emailAnswer?.answerValue;
+    // Extract email - handle all possible data structures
+    let email: string | null = null;
+    if (emailAnswer) {
+      // Try direct value
+      if (typeof emailAnswer.value === 'string') {
+        email = emailAnswer.value;
+      } 
+      // Try if value is an object with nested properties
+      else if (emailAnswer.value && typeof emailAnswer.value === 'object') {
+        const val: any = emailAnswer.value;
+        email = val.answer || val.value || val.email || null;
+      }
+      // Fallback: search all answers for anything with @
+      if (!email) {
+        const anyEmail = quizSession.answers.find(a => {
+          const v = String(a.value || '');
+          return v.includes('@') && v.includes('.');
+        });
+        if (anyEmail) {
+          email = String(anyEmail.value);
+        }
+      }
+    }
+
+    console.log('📧 EMAIL EXTRACTION:', {
+      emailAnswerFound: !!emailAnswer,
+      emailAnswerValue: emailAnswer?.value,
+      emailAnswerType: typeof emailAnswer?.value,
+      extractedEmail: email,
+      allAnswersWithAt: quizSession.answers.filter(a => String(a.value || '').includes('@')).map(a => ({
+        question: a.question?.prompt,
+        value: a.value
+      }))
+    });
+
+    // Get appointment by matching email
     let appointment = null;
-    
     if (email && typeof email === 'string') {
-      // Use exact same query as main lead route
       appointment = await prisma.appointment.findFirst({
         where: {
           customerEmail: email.toLowerCase()
