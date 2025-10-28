@@ -258,37 +258,39 @@ export async function GET(
       });
     });
 
-    // 5. ALWAYS show current outcome if appointment has one
-    // Simplified logic - if outcome exists, show it. Period.
-    if (appointment?.outcome) {
-      const nameAnswer = quizSession.answers.find(a => 
-        a.question?.prompt?.toLowerCase().includes('name')
-      );
-      
-      console.log('✅ OUTCOME FOUND - Adding to activities:', {
-        outcome: appointment.outcome,
-        appointmentId: appointment.id,
-        updatedAt: appointment.updatedAt
+    // 5. SHOW OUTCOME - Force it to appear
+    const nameAnswerForOutcome = quizSession.answers.find(a => 
+      a.question?.prompt?.toLowerCase().includes('name')
+    );
+    
+    if (appointment) {
+      console.log('🔥 APPOINTMENT DATA:', {
+        id: appointment.id,
+        hasOutcome: !!appointment.outcome,
+        outcomeValue: appointment.outcome,
+        outcomeType: typeof appointment.outcome,
+        allKeys: Object.keys(appointment)
       });
       
-      activities.push({
-        id: `outcome-${appointment.id}`,
-        type: 'outcome_updated',
-        timestamp: appointment.updatedAt.toISOString(),
-        actor: appointment.closer?.name || 'Unknown',
-        leadName: nameAnswer?.value || 'Lead',
-        details: {
-          outcome: appointment.outcome,
-          saleValue: appointment.saleValue,
-          notes: appointment.notes
-        }
-      });
-    } else {
-      console.log('⚠️ NO OUTCOME on appointment:', {
-        hasAppointment: !!appointment,
-        appointmentId: appointment?.id,
-        status: appointment?.status
-      });
+      // Force add outcome if it exists
+      if (appointment.outcome) {
+        const outcomeActivity = {
+          id: `outcome-${appointment.id}-${Date.now()}`,
+          type: 'outcome_updated' as const,
+          timestamp: appointment.updatedAt.toISOString(),
+          actor: appointment.closer?.name || 'Stefan',
+          leadName: nameAnswerForOutcome?.value || 'Lead',
+          details: {
+            outcome: String(appointment.outcome),
+            saleValue: appointment.saleValue,
+            notes: appointment.notes
+          }
+        };
+        
+        console.log('✅ PUSHING OUTCOME ACTIVITY:', outcomeActivity);
+        activities.push(outcomeActivity);
+        console.log('✅ Activities array length after push:', activities.length);
+      }
     }
 
     // 6. Task Activities
