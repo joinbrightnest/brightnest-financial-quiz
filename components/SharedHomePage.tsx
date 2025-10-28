@@ -30,8 +30,8 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
               </Link>
             </div>
             
-            {/* Desktop Menu Items - Hidden on Mobile */}
-            <div className="hidden lg:flex items-center space-x-6">
+            {/* Desktop Menu Items - Spread across the bar */}
+            <div className="hidden lg:flex items-center flex-1 justify-center space-x-8">
               <Link href="/about" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
                 ABOUT US
               </Link>
@@ -41,7 +41,10 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
               <Link href="/careers" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
                 CAREERS
               </Link>
-              
+            </div>
+            
+            {/* Right Side Items */}
+            <div className="hidden lg:flex items-center space-x-6">
               {/* Language Selector */}
               <div className="flex items-center space-x-1 text-gray-900 font-medium text-sm uppercase tracking-wide">
                 <span>EN</span>
