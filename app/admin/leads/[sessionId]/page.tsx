@@ -56,6 +56,7 @@ export default function LeadDetailsPage() {
   const [activeTab, setActiveTab] = useState<TabType>('activity');
   const [activities, setActivities] = useState<any[]>([]);
   const [loadingActivities, setLoadingActivities] = useState(false);
+  const [expandedActivity, setExpandedActivity] = useState<string | null>(null);
 
   useEffect(() => {
     if (sessionId) {
@@ -307,25 +308,6 @@ export default function LeadDetailsPage() {
             </div>
           </div>
 
-          {/* Quiz Responses */}
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
-            <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
-              <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-              </svg>
-              Quiz Responses
-              <span className="ml-2 text-sm text-slate-500 font-normal">({leadData.answers.length} Questions)</span>
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {leadData.answers.map((answer, index) => (
-                <div key={index} className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                  <p className="text-sm font-semibold text-slate-900 mb-2">{answer.questionText || `Question ${index + 1}`}</p>
-                  <p className="text-sm text-slate-700">{answer.answer || 'No answer provided'}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* Navigation Tabs */}
           <div className="border-b border-gray-200">
             <div className="flex space-x-8">
@@ -438,14 +420,48 @@ export default function LeadDetailsPage() {
                               {activity.details && (
                                 <div className="mt-3 text-sm text-slate-600">
                                   {activity.type === 'quiz_completed' && (
-                                    <div className="flex items-center space-x-4">
-                                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                        {activity.details.quizType?.replace('-', ' ')}
-                                      </span>
-                                      <span className="text-xs text-slate-500">
-                                        {activity.details.answersCount} questions answered
-                    </span>
-                  </div>
+                                    <div>
+                                      <div className="flex items-center space-x-4">
+                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                          {activity.details.quizType?.replace('-', ' ')}
+                                        </span>
+                                        <span className="text-xs text-slate-500">
+                                          {activity.details.answersCount} questions answered
+                                        </span>
+                                        <button
+                                          onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
+                                          className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center"
+                                        >
+                                          {expandedActivity === activity.id ? (
+                                            <>
+                                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                              </svg>
+                                              Hide answers
+                                            </>
+                                          ) : (
+                                            <>
+                                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                              </svg>
+                                              View answers
+                                            </>
+                                          )}
+                                        </button>
+                                      </div>
+                                      {expandedActivity === activity.id && leadData && (
+                                        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                          {leadData.answers.map((answer, idx) => (
+                                            <div key={idx} className="bg-white rounded-lg p-3 border border-slate-300">
+                                              <p className="text-xs font-semibold text-slate-900 mb-1">
+                                                {answer.questionText || `Question ${idx + 1}`}
+                                              </p>
+                                              <p className="text-sm text-slate-700">{answer.answer || 'No answer provided'}</p>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
                                   )}
                                   {activity.type === 'call_booked' && activity.details.scheduledAt && (
                                     <div className="text-xs text-slate-600">
