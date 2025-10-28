@@ -592,8 +592,18 @@ export async function GET(request: NextRequest) {
           groupedData[key] = (groupedData[key] || 0) + 1;
         });
 
+        // Fill in missing days with 0 to show complete timeline
+        const daysData: { [key: string]: number } = {};
+        const totalDays = duration === '7d' ? 7 : duration === '30d' ? 30 : duration === '90d' ? 90 : duration === '1y' ? 365 : 30;
+        
+        for (let i = 0; i < totalDays; i++) {
+          const dayDate = new Date(now.getTime() - (totalDays - 1 - i) * 24 * 60 * 60 * 1000);
+          const dayKey = dayDate.toISOString().slice(0, 10); // YYYY-MM-DD
+          daysData[dayKey] = groupedData[dayKey] || 0;
+        }
+
         // Convert to array format with properly formatted dates
-        return Object.entries(groupedData).map(([key, count]) => {
+        return Object.entries(daysData).map(([key, count]) => {
           const formattedDate = new Date(key + 'T00:00:00.000Z').toISOString();
           
           return {
