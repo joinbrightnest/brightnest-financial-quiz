@@ -41,35 +41,56 @@ export async function GET(
       a.question?.prompt?.toLowerCase().includes('email')
     );
 
-    // Get appointment by matching email (same as main leads route)
+    // Get appointment by matching email - try multiple methods
     const email = emailAnswer?.value;
     let appointment = null;
     
     if (email && typeof email === 'string') {
+      // Try lowercase first
       appointment = await prisma.appointment.findFirst({
         where: {
           customerEmail: email.toLowerCase()
         },
-        select: {
-          id: true,
-          customerName: true,
-          customerEmail: true,
-          scheduledAt: true,
-          outcome: true,  // EXPLICITLY select outcome
-          notes: true,
-          saleValue: true,
-          status: true,
-          closerId: true,
-          createdAt: true,
-          updatedAt: true,
+        include: {
           closer: {
             select: {
               id: true,
               name: true
             }
           }
+        },
+        orderBy: {
+          createdAt: 'desc'
         }
       });
+
+      // If not found, try case-insensitive search
+      if (!appointment) {
+        const allAppointments = await prisma.appointment.findMany({
+          where: {
+            customerEmail: {
+              contains: email.split('@')[0],
+              mode: 'insensitive'
+            }
+          },
+          include: {
+            closer: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          },
+          orderBy: {
+            createdAt: 'desc'
+          }
+        });
+        
+        // Find exact match (case insensitive)
+        appointment = allAppointments.find(a => 
+          a.customerEmail.toLowerCase() === email.toLowerCase()
+        ) || null;
+      }
     }
 
     console.log('🔍 Appointment lookup:', {
@@ -79,8 +100,7 @@ export async function GET(
       appointmentId: appointment?.id,
       outcome: appointment?.outcome,
       outcomeType: typeof appointment?.outcome,
-      closerId: appointment?.closerId,
-      fullAppointment: appointment
+      closerId: appointment?.closerId
     });
 
     // Get affiliate conversion for deal closure info
@@ -260,39 +280,30 @@ export async function GET(
       });
     });
 
-    // 5. SHOW OUTCOME - Force it to appear
+    // 5. OUTCOME ACTIVITY - Show ALL outcomes (not just converted)
     const nameAnswerForOutcome = quizSession.answers.find(a => 
       a.question?.prompt?.toLowerCase().includes('name')
     );
     
-    if (appointment) {
-      console.log('🔥 APPOINTMENT DATA:', {
-        id: appointment.id,
-        hasOutcome: !!appointment.outcome,
-        outcomeValue: appointment.outcome,
-        outcomeType: typeof appointment.outcome,
-        allKeys: Object.keys(appointment)
+    if (appointment && appointment.outcome) {
+      console.log('🔥 Adding outcome activity:', {
+        appointmentId: appointment.id,
+        outcome: appointment.outcome,
+        updatedAt: appointment.updatedAt
       });
       
-      // Force add outcome if it exists
-      if (appointment.outcome) {
-        const outcomeActivity = {
-          id: `outcome-${appointment.id}-${Date.now()}`,
-          type: 'outcome_updated' as const,
-          timestamp: appointment.updatedAt.toISOString(),
-          actor: appointment.closer?.name || 'Stefan',
-          leadName: nameAnswerForOutcome?.value || 'Lead',
-          details: {
-            outcome: String(appointment.outcome),
-            saleValue: appointment.saleValue,
-            notes: appointment.notes
-          }
-        };
-        
-        console.log('✅ PUSHING OUTCOME ACTIVITY:', outcomeActivity);
-        activities.push(outcomeActivity);
-        console.log('✅ Activities array length after push:', activities.length);
-      }
+      activities.push({
+        id: `outcome-${appointment.id}`,
+        type: 'outcome_updated' as const,
+        timestamp: appointment.updatedAt.toISOString(),
+        actor: appointment.closer?.name || 'Closer',
+        leadName: nameAnswerForOutcome?.value || 'Lead',
+        details: {
+          outcome: String(appointment.outcome),
+          saleValue: appointment.saleValue ? Number(appointment.saleValue) : null,
+          notes: appointment.notes
+        }
+      });
     }
 
     // 6. Task Activities
