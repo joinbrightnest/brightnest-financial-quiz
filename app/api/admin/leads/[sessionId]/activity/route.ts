@@ -84,6 +84,37 @@ export async function GET(
       where: {
         leadEmail: emailAnswer.value
       },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    }) : [];
+
+    // Get tasks for this lead
+    const tasks = emailAnswer ? await prisma.task.findMany({
+      where: {
+        leadEmail: emailAnswer.value
+      },
+      include: {
+        closer: {
+          select: {
+            name: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    }) : [];
+
+    // Get audit logs for appointment outcome changes
+    const auditLogs = quizSession.appointment ? await prisma.closerAuditLog.findMany({
+      where: {
+        action: 'appointment_outcome_updated',
+        details: {
+          path: ['appointmentId'],
+          equals: quizSession.appointment.id
+        }
+      },
       include: {
         closer: {
           select: {
@@ -99,7 +130,7 @@ export async function GET(
     // Build activity timeline
     const activities: Array<{
       id: string;
-      type: 'quiz_completed' | 'call_booked' | 'deal_closed' | 'note_added';
+      type: 'quiz_completed' | 'call_booked' | 'deal_closed' | 'note_added' | 'task_created' | 'task_started' | 'task_finished' | 'outcome_updated';
       timestamp: string;
       actor?: string;
       leadName?: string;
@@ -171,12 +202,106 @@ export async function GET(
         id: `note-${note.id}`,
         type: 'note_added',
         timestamp: note.createdAt.toISOString(),
-        actor: note.closer?.name || 'Unknown',
+        actor: note.createdBy || 'Unknown',
         leadName: nameAnswer?.value || 'Lead',
         details: {
           content: note.content
         }
       });
+    });
+
+    // 5. Outcome Changes (from audit logs)
+    auditLogs.forEach(log => {
+      const nameAnswer = quizSession.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes('name')
+      );
+      
+      const details = log.details as any;
+      activities.push({
+        id: `outcome-${log.id}`,
+        type: 'outcome_updated',
+        timestamp: log.createdAt.toISOString(),
+        actor: log.closer?.name || 'Unknown',
+        leadName: nameAnswer?.value || 'Lead',
+        details: {
+          outcome: details?.outcome,
+          previousOutcome: details?.previousOutcome,
+          saleValue: details?.saleValue,
+          notes: details?.notes
+        }
+      });
+    });
+
+    // 5b. Current outcome (if exists but not in audit logs - for historical data)
+    // This handles cases where outcome was set before audit logging was implemented
+    if (quizSession.appointment?.outcome && auditLogs.length === 0) {
+      const nameAnswer = quizSession.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes('name')
+      );
+      
+      activities.push({
+        id: `outcome-current-${quizSession.appointment.id}`,
+        type: 'outcome_updated',
+        timestamp: quizSession.appointment.updatedAt.toISOString(),
+        actor: quizSession.appointment.closer?.name || 'Unknown',
+        leadName: nameAnswer?.value || 'Lead',
+        details: {
+          outcome: quizSession.appointment.outcome,
+          saleValue: quizSession.appointment.saleValue,
+          notes: quizSession.appointment.notes
+        }
+      });
+    }
+
+    // 6. Task Activities
+    tasks.forEach(task => {
+      const nameAnswer = quizSession.answers.find(a => 
+        a.question?.prompt?.toLowerCase().includes('name')
+      );
+
+      // Task created
+      activities.push({
+        id: `task-created-${task.id}`,
+        type: 'task_created',
+        timestamp: task.createdAt.toISOString(),
+        actor: task.closer?.name || 'Unknown',
+        leadName: nameAnswer?.value || 'Lead',
+        details: {
+          title: task.title,
+          description: task.description,
+          priority: task.priority,
+          dueDate: task.dueDate
+        }
+      });
+
+      // Task started (if status is in_progress or completed and updatedAt != createdAt)
+      if ((task.status === 'in_progress' || task.status === 'completed') && 
+          task.updatedAt.getTime() !== task.createdAt.getTime()) {
+        activities.push({
+          id: `task-started-${task.id}`,
+          type: 'task_started',
+          timestamp: task.updatedAt.toISOString(),
+          actor: task.closer?.name || 'Unknown',
+          leadName: nameAnswer?.value || 'Lead',
+          details: {
+            title: task.title
+          }
+        });
+      }
+
+      // Task finished (if completed)
+      if (task.status === 'completed' && task.completedAt) {
+        activities.push({
+          id: `task-finished-${task.id}`,
+          type: 'task_finished',
+          timestamp: task.completedAt.toISOString(),
+          actor: task.closer?.name || 'Unknown',
+          leadName: nameAnswer?.value || 'Lead',
+          details: {
+            title: task.title
+          }
+        });
+      }
     });
 
     // Sort by timestamp (most recent first)
