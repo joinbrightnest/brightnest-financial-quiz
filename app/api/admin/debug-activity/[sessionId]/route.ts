@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-<parameter name="prisma">/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { verifyAdminAuth } from '@/lib/admin-auth-server';
 
 export async function GET(
