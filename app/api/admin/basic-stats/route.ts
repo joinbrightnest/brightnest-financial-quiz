@@ -557,25 +557,51 @@ export async function GET(request: NextRequest) {
         }
       });
 
-      // Group sessions by day
+      // Group sessions by hour (for 24h) or by day (for other periods)
       const groupedData: { [key: string]: number } = {};
       
-      sessions.forEach(session => {
-        const date = new Date(session.createdAt);
-        const key = date.toISOString().slice(0, 10); // YYYY-MM-DD
-        
-        groupedData[key] = (groupedData[key] || 0) + 1;
-      });
+      if (duration === '24h') {
+        // For 24h view, group by hour
+        sessions.forEach(session => {
+          const date = new Date(session.createdAt);
+          // Group by hour: YYYY-MM-DD HH:00
+          const key = date.toISOString().slice(0, 13) + ':00:00.000Z'; 
+          
+          groupedData[key] = (groupedData[key] || 0) + 1;
+        });
 
-      // Convert to array format with properly formatted dates
-      return Object.entries(groupedData).map(([key, count]) => {
-        const formattedDate = new Date(key + 'T00:00:00.000Z').toISOString();
-        
-        return {
-          createdAt: formattedDate,
+        // Fill in missing hours with 0 to show complete timeline
+        const hoursData: { [key: string]: number } = {};
+        for (let i = 0; i < 24; i++) {
+          const hourDate = new Date(now.getTime() - (23 - i) * 60 * 60 * 1000);
+          const hourKey = hourDate.toISOString().slice(0, 13) + ':00:00.000Z';
+          hoursData[hourKey] = groupedData[hourKey] || 0;
+        }
+
+        // Convert to array format
+        return Object.entries(hoursData).map(([key, count]) => ({
+          createdAt: key,
           _count: { id: count }
-        };
-      });
+        }));
+      } else {
+        // For other periods, group by day
+        sessions.forEach(session => {
+          const date = new Date(session.createdAt);
+          const key = date.toISOString().slice(0, 10); // YYYY-MM-DD
+          
+          groupedData[key] = (groupedData[key] || 0) + 1;
+        });
+
+        // Convert to array format with properly formatted dates
+        return Object.entries(groupedData).map(([key, count]) => {
+          const formattedDate = new Date(key + 'T00:00:00.000Z').toISOString();
+          
+          return {
+            createdAt: formattedDate,
+            _count: { id: count }
+          };
+        });
+      }
     };
 
     const dailyActivity = await getActivityData();

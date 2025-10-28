@@ -627,6 +627,15 @@ export default function AdminDashboard() {
         return 'Invalid Date';
       }
       
+      // For 24h view, show hourly labels (e.g., "2 PM", "3 PM")
+      if (quizAnalyticsFilters.duration === '24h') {
+        return date.toLocaleTimeString('en-US', { 
+          hour: 'numeric', 
+          hour12: true 
+        });
+      }
+      
+      // For other views, show dates (e.g., "Oct 27")
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     };
 
@@ -1703,7 +1712,7 @@ export default function AdminDashboard() {
                               },
                               title: {
                                 display: true,
-                                text: 'Date',
+                                text: quizAnalyticsFilters.duration === '24h' ? 'Hour' : 'Date',
                                 color: 'rgba(0, 0, 0, 0.7)',
                                 font: {
                                   size: 12,
