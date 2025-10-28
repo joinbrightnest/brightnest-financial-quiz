@@ -107,13 +107,11 @@ export async function GET(
     }) : [];
 
     // Get audit logs for appointment outcome changes
-    const auditLogs = quizSession.appointment ? await prisma.closerAuditLog.findMany({
+    // Fetch all outcome update logs for this closer and filter by appointmentId
+    const allAuditLogs = quizSession.appointment ? await prisma.closerAuditLog.findMany({
       where: {
         action: 'appointment_outcome_updated',
-        details: {
-          path: ['appointmentId'],
-          equals: quizSession.appointment.id
-        }
+        closerId: quizSession.appointment.closerId || undefined
       },
       include: {
         closer: {
@@ -126,6 +124,24 @@ export async function GET(
         createdAt: 'desc'
       }
     }) : [];
+
+    // Filter by appointmentId in JavaScript since JSON querying can be database-specific
+    const auditLogs = allAuditLogs.filter(log => {
+      const details = log.details as any;
+      return details?.appointmentId === quizSession.appointment?.id;
+    });
+
+    console.log('📊 Activity Log Debug:', {
+      sessionId,
+      appointmentId: quizSession.appointment?.id,
+      closerId: quizSession.appointment?.closerId,
+      totalAuditLogs: allAuditLogs.length,
+      filteredAuditLogs: auditLogs.length,
+      auditLogSample: allAuditLogs.slice(0, 2).map(log => ({
+        id: log.id,
+        details: log.details
+      }))
+    });
 
     // Build activity timeline
     const activities: Array<{
