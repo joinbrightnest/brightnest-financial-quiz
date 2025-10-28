@@ -103,31 +103,31 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900">
+    <div className="min-h-screen bg-[#faf8f0]">
       {/* Navigation */}
-      <nav className="bg-gray-900/50 backdrop-blur-md border-b border-white/10">
+      <nav className="bg-[#F8F7F0] border-b border-gray-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 sm:h-20">
             <div className="flex items-center">
-              <Link href="/" className="text-xl sm:text-2xl font-bold text-white">
+              <Link href="/" className="text-xl sm:text-2xl font-bold text-gray-900">
                 BrightNest
               </Link>
             </div>
             
             <div className="hidden lg:flex items-center flex-1 justify-center space-x-8">
-              <Link href="/about" className="text-white/80 font-medium text-sm uppercase tracking-wide hover:text-white transition-colors">
+              <Link href="/about" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
                 ABOUT US
               </Link>
-              <Link href="/blog" className="text-white/80 font-medium text-sm uppercase tracking-wide hover:text-white transition-colors">
+              <Link href="/blog" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
                 BLOG
               </Link>
-              <Link href="/careers" className="text-white/80 font-medium text-sm uppercase tracking-wide hover:text-white transition-colors">
+              <Link href="/careers" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
                 CAREERS
               </Link>
             </div>
             
             <div className="hidden lg:flex items-center">
-              <Link href="/quiz/financial-profile" className="bg-white text-gray-900 px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-gray-100 transition-colors">
+              <Link href="/quiz/financial-profile" className="bg-[#1ABC9C] text-white px-4 py-2 rounded-md font-medium text-sm hover:bg-[#16a085] transition-colors">
                 Learn More
               </Link>
             </div>
@@ -135,7 +135,7 @@ export default function AboutPage() {
             <div className="lg:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-white hover:text-white/80 focus:outline-none"
+                className="text-gray-900 hover:text-gray-700 focus:outline-none"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {isMobileMenuOpen ? (
@@ -149,13 +149,13 @@ export default function AboutPage() {
           </div>
 
           {isMobileMenuOpen && (
-            <div className="lg:hidden bg-gray-900/95 backdrop-blur-md border-t border-white/10">
+            <div className="lg:hidden bg-[#F8F7F0] border-t border-gray-300">
               <div className="px-4 py-4 space-y-4">
-                <Link href="/about" className="block text-white font-medium text-sm uppercase" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
-                <Link href="/blog" className="block text-white font-medium text-sm uppercase" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
-                <Link href="/careers" className="block text-white font-medium text-sm uppercase" onClick={() => setIsMobileMenuOpen(false)}>Careers</Link>
-                <div className="pt-4 border-t border-white/10">
-                  <Link href="/quiz/financial-profile" className="block w-full bg-white text-gray-900 px-4 py-3 rounded-lg font-semibold text-sm text-center hover:bg-gray-100 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/about" className="block text-gray-900 font-medium text-sm uppercase" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
+                <Link href="/blog" className="block text-gray-900 font-medium text-sm uppercase" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
+                <Link href="/careers" className="block text-gray-900 font-medium text-sm uppercase" onClick={() => setIsMobileMenuOpen(false)}>Careers</Link>
+                <div className="pt-4 border-t border-gray-300">
+                  <Link href="/quiz/financial-profile" className="block w-full bg-[#1ABC9C] text-white px-4 py-3 rounded-md font-medium text-sm text-center" onClick={() => setIsMobileMenuOpen(false)}>
                     Learn More
                   </Link>
                 </div>
@@ -166,30 +166,29 @@ export default function AboutPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="py-16 sm:py-20 lg:py-24 relative">
+      <section className="py-16 sm:py-20 lg:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
               About BrightNest
             </h1>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-16">
-            <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
-              <p className="text-base sm:text-lg text-gray-300 leading-relaxed mb-6">
+            <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200">
+              <p className="text-base sm:text-lg text-gray-700 leading-relaxed mb-6">
                 BrightNest is a results-driven company empowering women through personalized financial coaching, education, and community support. With online programs, world-class advisors, and a supportive network, we help women take control of their finances and achieve life-changing transformations.
               </p>
-              <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
+              <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
                 Founded by a team of passionate financial experts, BrightNest has grown into a movement trusted by thousands of women worldwide. We are on a mission to help women regain their financial power and feel confident in their financial future.
               </p>
             </div>
-            <div className="relative h-64 sm:h-80 lg:h-96 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 backdrop-blur-sm overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+            <div className="relative h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-blue-50 to-teal-50 rounded-2xl flex items-center justify-center border border-gray-200 overflow-hidden group">
               <div className="relative text-center z-10">
-                <svg className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
-                <p className="text-gray-400 font-medium text-sm uppercase tracking-wider">Your Financial Journey</p>
+                <p className="text-gray-600 font-medium text-sm uppercase tracking-wider">Your Financial Journey</p>
               </div>
             </div>
           </div>
@@ -198,7 +197,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-4xl sm:text-5xl lg:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-teal-500 mb-2">
+                <div className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900 mb-2">
                   {stat.number}
                 </div>
                 <p className="text-base sm:text-lg text-gray-600 font-semibold">{stat.label}</p>
@@ -209,24 +208,23 @@ export default function AboutPage() {
       </section>
 
       {/* Mission Section */}
-      <section className="py-16 sm:py-20 lg:py-24 relative">
+      <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <div className="order-2 lg:order-1 relative h-64 sm:h-80 lg:h-96 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 backdrop-blur-sm overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+            <div className="order-2 lg:order-1 relative h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl flex items-center justify-center border border-gray-200 overflow-hidden">
               <div className="relative text-center z-10">
-                <svg className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                <p className="text-gray-400 font-medium text-sm uppercase tracking-wider">Our Mission</p>
+                <p className="text-gray-600 font-medium text-sm uppercase tracking-wider">Our Mission</p>
               </div>
             </div>
-            <div className="order-1 lg:order-2 bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
-              <p className="text-base sm:text-lg text-gray-400 mb-6 leading-relaxed">
+            <div className="order-1 lg:order-2 bg-white rounded-3xl p-8 border border-gray-200">
+              <p className="text-base sm:text-lg text-gray-600 mb-6 leading-relaxed">
                 Since we started in 2020, our mission has been to transform lives.
               </p>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
-                Our goal is to <span className="text-white underline decoration-white/30">empower women</span> to build wealth, confidence, and a financial future they love at any stage of life.
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+                Our goal is to <span className="text-gray-900 underline decoration-gray-300">empower women</span> to build wealth, confidence, and a financial future they love at any stage of life.
               </h2>
             </div>
           </div>
@@ -234,14 +232,14 @@ export default function AboutPage() {
       </section>
 
       {/* Our Vision */}
-      <section className="py-16 sm:py-20 lg:py-24 relative">
+      <section className="py-16 sm:py-20 lg:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-sm sm:text-base text-gray-400 uppercase tracking-wide mb-4 font-semibold">Our Vision</h2>
-            <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white max-w-4xl mx-auto leading-tight">
+            <h2 className="text-sm sm:text-base text-gray-600 uppercase tracking-wide mb-4 font-semibold">Our Vision</h2>
+            <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 max-w-4xl mx-auto leading-tight">
               to become the ultimate solution for women seeking financial strength, confidence, and lasting transformation.
             </p>
-            <p className="mt-6 text-base sm:text-lg text-gray-300 max-w-3xl mx-auto">
+            <p className="mt-6 text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
               Imagine everything you need — financial planning, coaching, education, and support — under one roof, tailored just for you.
             </p>
           </div>
@@ -249,21 +247,20 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mt-16">
             <div className="grid grid-cols-2 gap-6">
               {visionFeatures.map((feature, index) => (
-                <div key={index} className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-white/30 hover:shadow-lg transition-all text-center group">
-                  <svg className="w-8 h-8 mx-auto mb-3 text-white/60 group-hover:text-white/80 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div key={index} className="bg-gray-50 rounded-2xl p-6 border border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all text-center group">
+                  <svg className="w-8 h-8 mx-auto mb-3 text-gray-500 group-hover:text-gray-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <h3 className="text-base sm:text-lg font-semibold text-white">{feature}</h3>
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900">{feature}</h3>
                 </div>
               ))}
             </div>
-            <div className="relative h-64 sm:h-80 lg:h-96 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 backdrop-blur-sm overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+            <div className="relative h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-green-50 to-teal-50 rounded-2xl flex items-center justify-center border border-gray-200 overflow-hidden">
               <div className="relative text-center z-10">
-                <svg className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
-                <p className="text-gray-400 font-medium text-sm uppercase tracking-wider">Growth & Success</p>
+                <p className="text-gray-600 font-medium text-sm uppercase tracking-wider">Growth & Success</p>
               </div>
             </div>
           </div>
@@ -271,19 +268,11 @@ export default function AboutPage() {
       </section>
 
       {/* Timeline - Modern Carousel Design */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
-            backgroundSize: '40px 40px'
-          }}></div>
-        </div>
-
+      <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0] relative overflow-hidden">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-sm sm:text-base text-gray-400 uppercase tracking-wide mb-4 font-semibold">Our Journey</h2>
-            <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
+            <h2 className="text-sm sm:text-base text-gray-600 uppercase tracking-wide mb-4 font-semibold">Our Journey</h2>
+            <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
               The BrightNest Story
             </p>
           </div>
@@ -306,8 +295,8 @@ export default function AboutPage() {
                         <div className="absolute right-full w-[calc(100vw/6)] sm:w-32 md:w-40 lg:w-48 xl:w-56 h-px">
                           <div className={`h-full transition-all duration-500 ${
                             index <= currentTimelineIndex 
-                              ? 'bg-white' 
-                              : 'bg-white/20'
+                              ? 'bg-gray-900' 
+                              : 'bg-gray-300'
                           }`}></div>
                         </div>
                       )}
@@ -315,14 +304,14 @@ export default function AboutPage() {
                       {/* Dot */}
                       <div className={`relative w-4 h-4 rounded-full transition-all duration-300 ${
                         index === currentTimelineIndex 
-                          ? 'bg-white shadow-lg shadow-white/50 scale-150' 
+                          ? 'bg-gray-900 shadow-lg shadow-gray-900/30 scale-150' 
                           : index < currentTimelineIndex
-                          ? 'bg-white/80 scale-110'
-                          : 'bg-white/30 group-hover:bg-white/50 group-hover:scale-110'
+                          ? 'bg-gray-600 scale-110'
+                          : 'bg-gray-300 group-hover:bg-gray-400 group-hover:scale-110'
                       }`}>
                         {/* Inner dot for active state */}
                         {index === currentTimelineIndex && (
-                          <div className="absolute inset-0 rounded-full bg-white animate-pulse"></div>
+                          <div className="absolute inset-0 rounded-full bg-gray-900 animate-pulse"></div>
                         )}
                       </div>
                     </div>
@@ -330,17 +319,17 @@ export default function AboutPage() {
                     {/* Year label */}
                     <span className={`text-sm font-semibold tracking-wider transition-all duration-300 ${
                       index === currentTimelineIndex 
-                        ? 'text-white' 
+                        ? 'text-gray-900' 
                         : index < currentTimelineIndex
-                        ? 'text-gray-400'
-                        : 'text-gray-500 group-hover:text-gray-400'
+                        ? 'text-gray-600'
+                        : 'text-gray-500 group-hover:text-gray-700'
                     }`}>
                       {item.year}
                     </span>
                     
                     {/* Active indicator underline */}
                     {index === currentTimelineIndex && (
-                      <div className="absolute -bottom-2 w-8 h-0.5 bg-white rounded-full"></div>
+                      <div className="absolute -bottom-2 w-8 h-0.5 bg-gray-900 rounded-full"></div>
                     )}
                   </button>
                 ))}
@@ -350,29 +339,29 @@ export default function AboutPage() {
 
           {/* Carousel Content */}
           <div className="relative max-w-5xl mx-auto">
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-8 sm:p-12 lg:p-16 shadow-2xl min-h-[400px] flex flex-col justify-between">
+            <div className="bg-white border border-gray-200 rounded-3xl p-8 sm:p-12 lg:p-16 shadow-xl min-h-[400px] flex flex-col justify-between">
               {/* Year Badge */}
               <div className="mb-8">
-                <div className="inline-block bg-white/10 border border-white/20 text-white px-8 py-3 rounded-lg font-bold text-2xl">
+                <div className="inline-block bg-gray-100 border border-gray-300 text-gray-900 px-8 py-3 rounded-lg font-bold text-2xl">
                   {timeline[currentTimelineIndex].year}
                 </div>
               </div>
 
               {/* Content */}
               <div className="flex-1">
-                <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
+                <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
                   {timeline[currentTimelineIndex].title}
                 </h3>
-                <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
+                <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
                   {timeline[currentTimelineIndex].description}
                 </p>
               </div>
 
               {/* Navigation Arrows */}
-              <div className="flex justify-between items-center mt-8 pt-6 border-t border-white/10">
+              <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
                 <button
                   onClick={prevTimeline}
-                  className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors group"
+                  className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors group"
                 >
                   <svg className="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -387,8 +376,8 @@ export default function AboutPage() {
                       onClick={() => setCurrentTimelineIndex(index)}
                       className={`transition-all duration-300 rounded-full ${
                         index === currentTimelineIndex 
-                          ? 'w-8 h-3 bg-white' 
-                          : 'w-3 h-3 bg-gray-600 hover:bg-gray-500'
+                          ? 'w-8 h-3 bg-gray-900' 
+                          : 'w-3 h-3 bg-gray-300 hover:bg-gray-400'
                       }`}
                       aria-label={`Go to ${timeline[index].year}`}
                     />
@@ -397,7 +386,7 @@ export default function AboutPage() {
 
                 <button
                   onClick={nextTimeline}
-                  className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors group"
+                  className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors group"
                 >
                   <span className="font-semibold">Next</span>
                   <svg className="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -408,7 +397,7 @@ export default function AboutPage() {
             </div>
 
             {/* Keyboard Navigation Hint */}
-            <div className="text-center mt-6 text-gray-400 text-sm">
+            <div className="text-center mt-6 text-gray-600 text-sm">
               Use arrow keys or click dots to navigate
             </div>
           </div>
@@ -416,11 +405,11 @@ export default function AboutPage() {
       </section>
 
       {/* Leadership Section */}
-      <section className="py-16 sm:py-20 lg:py-24 relative">
+      <section className="py-16 sm:py-20 lg:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-sm sm:text-base text-gray-400 uppercase tracking-wide mb-4 font-semibold">Our Leadership</h2>
-            <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
+            <h2 className="text-sm sm:text-base text-gray-600 uppercase tracking-wide mb-4 font-semibold">Our Leadership</h2>
+            <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
               meet the team
             </p>
           </div>
@@ -428,12 +417,11 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8">
             {leadership.map((member, index) => (
               <div key={index} className="group text-center">
-                <div className="relative w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white font-bold text-3xl sm:text-4xl group-hover:bg-white/10 group-hover:border-white/20 transition-all overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+                <div className={`relative w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${member.color} flex items-center justify-center text-white font-bold text-3xl sm:text-4xl group-hover:scale-105 transition-transform shadow-lg overflow-hidden`}>
                   <span className="relative z-10">{member.initials}</span>
                 </div>
-                <h3 className="text-base sm:text-lg font-bold text-white mb-1">{member.name}</h3>
-                <p className="text-sm text-gray-400 font-medium">{member.title}</p>
+                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1">{member.name}</h3>
+                <p className="text-sm text-gray-600 font-medium">{member.title}</p>
               </div>
             ))}
           </div>
@@ -441,17 +429,17 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
+      <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
             join the team
           </h2>
-          <p className="text-base sm:text-lg text-gray-300 mb-10 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-gray-600 mb-10 max-w-2xl mx-auto">
             View our open positions and become part of something special
           </p>
           <Link
             href="/careers"
-            className="inline-block bg-white text-gray-900 px-10 sm:px-14 py-4 sm:py-5 rounded-lg font-bold text-base sm:text-lg uppercase hover:bg-gray-100 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl"
+            className="inline-block bg-[#FF6B6B] text-white px-10 sm:px-14 py-4 sm:py-5 rounded-lg font-bold text-base sm:text-lg uppercase hover:bg-[#FF5252] transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl"
           >
             Let's Go
           </Link>
