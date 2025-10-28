@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
           closerId: closer.id,
           calendlyEventId,
           customerName,
-          customerEmail,
+          customerEmail: customerEmail.toLowerCase(), // Normalize email for consistency
           customerPhone,
           scheduledAt,
           duration: 30,

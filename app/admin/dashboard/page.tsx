@@ -817,7 +817,7 @@ export default function AdminDashboard() {
     try {
       const leadEmail = lead.answers?.find((a: any) => a.value?.includes('@'))?.value;
       if (leadEmail) {
-        const response = await fetch(`/api/closer/tasks?leadEmail=${encodeURIComponent(leadEmail)}`);
+        const response = await fetch(`/api/admin/tasks?leadEmail=${encodeURIComponent(leadEmail)}`);
         if (response.ok) {
           const data = await response.json();
           setAdminTasks(data.tasks || []);
@@ -841,7 +841,7 @@ export default function AdminDashboard() {
         return;
       }
 
-      const response = await fetch('/api/closer/tasks', {
+      const response = await fetch('/api/admin/tasks', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -868,7 +868,7 @@ export default function AdminDashboard() {
     if (!crmSelectedLead) return;
 
     try {
-      const response = await fetch(`/api/closer/tasks/${taskId}`, {
+      const response = await fetch(`/api/admin/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -888,7 +888,7 @@ export default function AdminDashboard() {
     if (!crmSelectedLead || !confirm('Are you sure you want to delete this task?')) return;
 
     try {
-      const response = await fetch(`/api/closer/tasks/${taskId}`, {
+      const response = await fetch(`/api/admin/tasks/${taskId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

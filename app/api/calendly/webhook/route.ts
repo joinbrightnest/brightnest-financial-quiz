@@ -68,9 +68,9 @@ async function handleInviteeCreated(payload: any) {
       console.log('⚠️ No customer name found in invitee data');
     }
     
-    // Extract email
+    // Extract email (normalize to lowercase for consistency)
     if (invitee?.email) {
-      customerEmail = invitee.email;
+      customerEmail = invitee.email.toLowerCase();
       console.log('✅ Found customer email:', customerEmail);
     } else {
       console.log('⚠️ No customer email found in invitee data');
