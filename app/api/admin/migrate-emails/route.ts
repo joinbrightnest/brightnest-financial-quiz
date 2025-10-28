@@ -2,15 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyAdminAuth } from '@/lib/admin-auth-server';
 
-export async function POST(request: NextRequest) {
-  // 🔒 SECURITY: Require admin authentication
-  if (!verifyAdminAuth(request)) {
-    return NextResponse.json(
-      { error: 'Unauthorized - Admin authentication required' },
-      { status: 401 }
-    );
-  }
-
+async function runMigration() {
   try {
     console.log('🔄 Starting email normalization migration...');
 
@@ -78,3 +70,26 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function GET(request: NextRequest) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: 'Unauthorized - Admin authentication required' },
+      { status: 401 }
+    );
+  }
+
+  return runMigration();
+}
+
+export async function POST(request: NextRequest) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: 'Unauthorized - Admin authentication required' },
+      { status: 401 }
+    );
+  }
+
+  return runMigration();
+}
