@@ -243,8 +243,9 @@ export async function GET(
       'task_created': 3,
       'task_started': 4,
       'note_added': 5,
-      'task_completed': 6,
-      'deal_closed': 7
+      'outcome_updated': 6,
+      'task_completed': 7,
+      'deal_closed': 8
     };
 
     activities.sort((a, b) => {
