@@ -247,39 +247,52 @@ export async function GET(
       });
     });
 
-    // 5. Outcome Changes (from audit logs)
-    auditLogs.forEach(log => {
-      const nameAnswer = quizSession.answers.find(a => 
-        a.question?.prompt?.toLowerCase().includes('name')
-      );
-      
-      const details = log.details as any;
-      activities.push({
-        id: `outcome-${log.id}`,
-        type: 'outcome_updated',
-        timestamp: log.createdAt.toISOString(),
-        actor: log.closer?.name || 'Unknown',
-        leadName: nameAnswer?.value || 'Lead',
-        details: {
-          outcome: details?.outcome,
-          previousOutcome: details?.previousOutcome,
-          saleValue: details?.saleValue,
-          notes: details?.notes
-        }
+    // 5. Outcome Changes - from audit logs (only if they match this appointment)
+    // auditLogs are already filtered to only include this appointment's logs
+    if (auditLogs.length > 0) {
+      auditLogs.forEach(log => {
+        const nameAnswer = quizSession.answers.find(a => 
+          a.question?.prompt?.toLowerCase().includes('name')
+        );
+        
+        const details = log.details as any;
+        activities.push({
+          id: `outcome-${log.id}`,
+          type: 'outcome_updated',
+          timestamp: log.createdAt.toISOString(),
+          actor: log.closer?.name || 'Unknown',
+          leadName: nameAnswer?.value || 'Lead',
+          details: {
+            outcome: details?.outcome,
+            previousOutcome: details?.previousOutcome,
+            saleValue: details?.saleValue,
+            notes: details?.notes
+          }
+        });
       });
-    });
+    }
 
-    // 5b. Current outcome - ALWAYS show if it exists
+    // 5b. Always add current outcome from appointment if it exists
+    // This handles cases where audit logs don't have appointmentId or don't exist
+    console.log('🔍 Checking outcome:', {
+      hasAppointment: !!appointment,
+      hasOutcome: !!appointment?.outcome,
+      outcome: appointment?.outcome,
+      auditLogsCount: auditLogs.length
+    });
+    
     if (appointment?.outcome) {
       const nameAnswer = quizSession.answers.find(a => 
         a.question?.prompt?.toLowerCase().includes('name')
       );
       
-      // Check if we already added this outcome from audit logs
-      const hasOutcomeFromAuditLogs = activities.some(a => a.type === 'outcome_updated');
+      console.log('✅ ADDING OUTCOME TO ACTIVITIES:', {
+        outcome: appointment.outcome,
+        fromAuditLogs: auditLogs.length > 0
+      });
       
-      // Only add if not already added from audit logs
-      if (!hasOutcomeFromAuditLogs) {
+      // Only add if we didn't already add from audit logs
+      if (auditLogs.length === 0) {
         activities.push({
           id: `outcome-current-${appointment.id}`,
           type: 'outcome_updated',
@@ -292,6 +305,9 @@ export async function GET(
             notes: appointment.notes
           }
         });
+        console.log('✅ Outcome activity added to array');
+      } else {
+        console.log('⚠️ Skipped adding outcome - already have from audit logs');
       }
     } else {
       console.log('⚠️ No outcome on appointment:', {
