@@ -119,7 +119,8 @@ export default function AdminDashboard() {
   // CRM Filters
   const [crmFilters, setCrmFilters] = useState({
     quizType: 'all',
-    dateRange: 'all'
+    dateRange: 'all',
+    affiliateCode: 'all'
   });
   
   // CRM State Management
@@ -402,6 +403,9 @@ export default function AdminDashboard() {
         if (crmFilters.dateRange !== 'all') {
           params.append('duration', crmFilters.dateRange);
         }
+        if (crmFilters.affiliateCode !== 'all') {
+          params.append('affiliateCode', crmFilters.affiliateCode);
+        }
       }
       
       const queryString = params.toString();
@@ -485,6 +489,17 @@ export default function AdminDashboard() {
       console.error('Error fetching affiliates:', error);
     }
   };
+
+  // Sync affiliate filter when switching sections
+  useEffect(() => {
+    if (activeSection === 'crm' && crmFilters.affiliateCode !== quizAnalyticsFilters.affiliateCode) {
+      // When switching to CRM, sync the affiliate filter from Quiz Analytics
+      setCrmFilters(prev => ({ ...prev, affiliateCode: quizAnalyticsFilters.affiliateCode }));
+    } else if (activeSection === 'quiz-analytics' && quizAnalyticsFilters.affiliateCode !== crmFilters.affiliateCode) {
+      // When switching back to Quiz Analytics, sync from CRM if it was changed there
+      setQuizAnalyticsFilters(prev => ({ ...prev, affiliateCode: crmFilters.affiliateCode }));
+    }
+  }, [activeSection]);
 
   // Trigger data fetch when filters change (only when on the respective section)
   useEffect(() => {
@@ -2099,6 +2114,23 @@ export default function AdminDashboard() {
                       <option value="30d">Last 30 days</option>
                       <option value="90d">Last 90 days</option>
                       <option value="1y">Last year</option>
+                    </select>
+                  </div>
+
+                  {/* Affiliate Filter */}
+                  <div className="flex items-center space-x-2">
+                    <label className="text-sm font-medium text-gray-700">Affiliate:</label>
+                    <select
+                      value={crmFilters.affiliateCode}
+                      onChange={(e) => setCrmFilters(prev => ({ ...prev, affiliateCode: e.target.value }))}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="all">All Affiliates</option>
+                      {affiliates.map(affiliate => (
+                        <option key={affiliate.id} value={affiliate.referralCode}>
+                          {affiliate.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
