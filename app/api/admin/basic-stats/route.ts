@@ -120,6 +120,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const quizType = searchParams.get('quizType') || null;
   const duration = searchParams.get('duration') || 'all';
+  const affiliateCode = searchParams.get('affiliateCode') || null;
   
   try {
     // Build date filter based on duration parameter
@@ -159,7 +160,8 @@ export async function GET(request: NextRequest) {
     const totalSessions = await prisma.quizSession.count({
       where: {
         createdAt: dateFilter,
-        ...(quizType ? { quizType } : {})
+        ...(quizType ? { quizType } : {}),
+        ...(affiliateCode ? { affiliateCode } : {})
       }
     });
     
@@ -170,7 +172,8 @@ export async function GET(request: NextRequest) {
         createdAt: dateFilter,
         status: "completed",
         durationMs: { not: null },
-        ...(quizType ? { quizType } : {})
+        ...(quizType ? { quizType } : {}),
+        ...(affiliateCode ? { affiliateCode } : {})
       },
     });
 
@@ -179,7 +182,8 @@ export async function GET(request: NextRequest) {
       where: {
         createdAt: dateFilter,
         status: "completed",
-        ...(quizType ? { quizType } : {})
+        ...(quizType ? { quizType } : {}),
+        ...(affiliateCode ? { affiliateCode } : {})
       },
       include: { 
         result: true,
@@ -201,7 +205,8 @@ export async function GET(request: NextRequest) {
     if (duration === '24h') {
       const leadDataResult = await calculateLeads({ 
         dateRange: '1d',
-        quizType: quizType || undefined
+        quizType: quizType || undefined,
+        affiliateCode: affiliateCode || undefined
       });
       allLeads = leadDataResult.leads;
       leadData = { leads: allLeads, totalLeads: leadDataResult.totalLeads };
@@ -211,7 +216,8 @@ export async function GET(request: NextRequest) {
       const allCompletedSessionsAllTime = await prisma.quizSession.findMany({
         where: {
           status: "completed",
-          ...(quizType ? { quizType } : {})
+          ...(quizType ? { quizType } : {}),
+          ...(affiliateCode ? { affiliateCode } : {})
         },
         include: {
           answers: {
@@ -238,8 +244,12 @@ export async function GET(request: NextRequest) {
       allLeads = actualLeadsAllTime;
       leadData = { leads: allLeads, totalLeads: actualLeadsAllTime.length };
     } else {
-      // Map duration to calculateTotalLeads format (7d, 30d, 90d, 1y)
-      const leadDataResult = await calculateTotalLeads(duration as any, quizType || undefined);
+      // Map duration to calculateLeads format (7d, 30d, 90d, 1y)
+      const leadDataResult = await calculateLeads({ 
+        dateRange: duration, 
+        quizType: quizType || undefined,
+        affiliateCode: affiliateCode || undefined
+      });
       allLeads = leadDataResult.leads;
       leadData = { leads: allLeads, totalLeads: leadDataResult.totalLeads };
     }
@@ -547,7 +557,8 @@ export async function GET(request: NextRequest) {
           createdAt: {
             gte: startDate,
           },
-          ...(quizType ? { quizType } : {})
+          ...(quizType ? { quizType } : {}),
+          ...(affiliateCode ? { affiliateCode } : {})
         },
         select: {
           createdAt: true
@@ -645,12 +656,23 @@ export async function GET(request: NextRequest) {
         }
       }
       
+      // Get affiliate ID if filtering by affiliate
+      let affiliateIdForFilter: string | undefined;
+      if (affiliateCode) {
+        const affiliate = await prisma.affiliate.findUnique({
+          where: { referralCode: affiliateCode },
+          select: { id: true }
+        });
+        affiliateIdForFilter = affiliate?.id;
+      }
+
       // Get affiliate clicks and normal website clicks
       const affiliateClicks = await prisma.affiliateClick.findMany({
         where: {
           createdAt: {
             gte: startDate,
           },
+          ...(affiliateIdForFilter ? { affiliateId: affiliateIdForFilter } : {})
         },
         select: {
           createdAt: true
@@ -660,7 +682,8 @@ export async function GET(request: NextRequest) {
         }
       });
 
-      const normalClicks = await prisma.normalWebsiteClick.findMany({
+      // Normal website clicks don't have affiliate association, so only include them if showing all affiliates
+      const normalClicks = affiliateCode ? [] : await prisma.normalWebsiteClick.findMany({
         where: {
           createdAt: {
             gte: startDate,
@@ -730,29 +753,41 @@ export async function GET(request: NextRequest) {
 
     const clicksActivity = await getClicksActivityData();
 
-    // Calculate clicks - CORRECT LOGIC:
-    // Use stored totalClicks from affiliate records + normal website clicks
-    // This matches what the tracking system actually increments
-    
+    // Calculate clicks - count actual click records filtered by date and affiliate
     let totalClicks = 0;
     
-    // Sum up stored totalClicks from all affiliates (this is what gets incremented when clicks are tracked)
-    const affiliateClicksResult = await prisma.affiliate.aggregate({
-      _sum: {
-        totalClicks: true
+    if (affiliateCode) {
+      // If filtering by affiliate, get the affiliate ID and count their clicks
+      const affiliate = await prisma.affiliate.findUnique({
+        where: { referralCode: affiliateCode },
+        select: { id: true }
+      });
+      
+      if (affiliate) {
+        totalClicks = await prisma.affiliateClick.count({
+          where: {
+            affiliateId: affiliate.id,
+            createdAt: dateFilter
+          }
+        });
       }
-    });
-    
-    const affiliateClicks = affiliateClicksResult._sum.totalClicks || 0;
-    
-    // Count normal website clicks (these don't have a stored counter)
-    const normalWebsiteClicks = await prisma.normalWebsiteClick.count({
-      where: {
-        createdAt: dateFilter
-      }
-    });
-    
-    totalClicks = affiliateClicks + normalWebsiteClicks;
+    } else {
+      // Count all affiliate clicks
+      const affiliateClicksCount = await prisma.affiliateClick.count({
+        where: {
+          createdAt: dateFilter
+        }
+      });
+      
+      // Count normal website clicks (these don't have affiliate association)
+      const normalWebsiteClicksCount = await prisma.normalWebsiteClick.count({
+        where: {
+          createdAt: dateFilter
+        }
+      });
+      
+      totalClicks = affiliateClicksCount + normalWebsiteClicksCount;
+    }
     
     const clicks = totalClicks; // Total clicks (affiliate clicks + normal website clicks)
     const partialSubmissions = totalSessions - completedSessions; // Started but didn't complete

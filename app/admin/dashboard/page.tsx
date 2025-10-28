@@ -109,8 +109,12 @@ export default function AdminDashboard() {
   // Quiz Analytics Filters
   const [quizAnalyticsFilters, setQuizAnalyticsFilters] = useState({
     quizType: 'all',
-    duration: '7d'
+    duration: '7d',
+    affiliateCode: 'all'
   });
+  
+  // Affiliates list for filter
+  const [affiliates, setAffiliates] = useState<Array<{ id: string; name: string; referralCode: string }>>([]);
   
   // CRM Filters
   const [crmFilters, setCrmFilters] = useState({
@@ -388,6 +392,9 @@ export default function AdminDashboard() {
         if (quizAnalyticsFilters.duration !== 'all') {
           params.append('duration', quizAnalyticsFilters.duration);
         }
+        if (quizAnalyticsFilters.affiliateCode !== 'all') {
+          params.append('affiliateCode', quizAnalyticsFilters.affiliateCode);
+        }
       } else if (activeSection === 'crm') {
         if (crmFilters.quizType !== 'all') {
           params.append('quizType', crmFilters.quizType);
@@ -458,8 +465,26 @@ export default function AdminDashboard() {
       fetchStats(true);
       fetchSettings();
       fetchCommissionReleaseStatus();
+      fetchAffiliates(); // Fetch affiliates for filter dropdown
     }
   }, [fetchStats]);
+
+  // Fetch affiliates for filter dropdown
+  const fetchAffiliates = async () => {
+    try {
+      const response = await fetch('/api/admin/affiliates?status=approved');
+      const data = await response.json();
+      if (data.success) {
+        setAffiliates(data.affiliates.map((aff: any) => ({
+          id: aff.id,
+          name: aff.name,
+          referralCode: aff.referralCode
+        })));
+      }
+    } catch (error) {
+      console.error('Error fetching affiliates:', error);
+    }
+  };
 
   // Trigger data fetch when filters change (only when on the respective section)
   useEffect(() => {
@@ -1445,6 +1470,23 @@ export default function AdminDashboard() {
                         <option value="30d">Last 30 days</option>
                         <option value="90d">Last 90 days</option>
                         <option value="1y">Last year</option>
+                      </select>
+                    </div>
+
+                    {/* Affiliate Filter */}
+                    <div className="flex items-center space-x-2">
+                      <label className="text-sm font-medium text-gray-700">Affiliate:</label>
+                      <select
+                        value={quizAnalyticsFilters.affiliateCode}
+                        onChange={(e) => setQuizAnalyticsFilters(prev => ({ ...prev, affiliateCode: e.target.value }))}
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      >
+                        <option value="all">All Affiliates</option>
+                        {affiliates.map(affiliate => (
+                          <option key={affiliate.id} value={affiliate.referralCode}>
+                            {affiliate.name}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </div>
