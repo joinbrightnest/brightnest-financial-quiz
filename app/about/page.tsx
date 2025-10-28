@@ -197,10 +197,10 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-4xl sm:text-5xl lg:text-6xl font-black text-gray-900 mb-2">
+                <div className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#FF6B6B] mb-2">
                   {stat.number}
                 </div>
-                <p className="text-base sm:text-lg text-gray-600 font-semibold">{stat.label}</p>
+                <p className="text-base sm:text-lg text-gray-700 font-bold">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -224,7 +224,7 @@ export default function AboutPage() {
                 Since we started in 2020, our mission has been to transform lives.
               </p>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
-                Our goal is to <span className="text-gray-900 underline decoration-gray-300">empower women</span> to build wealth, confidence, and a financial future they love at any stage of life.
+                Our goal is to <span className="text-[#FF6B6B] font-black">empower women</span> to build <span className="text-[#FF6B6B] font-black">wealth, confidence,</span> and a financial future they love at any stage of life.
               </h2>
             </div>
           </div>
@@ -235,9 +235,9 @@ export default function AboutPage() {
       <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-sm sm:text-base text-gray-600 uppercase tracking-wide mb-4 font-semibold">Our Vision</h2>
+            <h2 className="text-sm sm:text-base text-[#FF6B6B] uppercase tracking-wide mb-4 font-bold">Our Vision</h2>
             <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 max-w-4xl mx-auto leading-tight">
-              to become the ultimate solution for women seeking financial strength, confidence, and lasting transformation.
+              to become the ultimate solution for women seeking <span className="text-[#FF6B6B]">financial strength, confidence,</span> and <span className="text-[#FF6B6B]">lasting transformation.</span>
             </p>
             <p className="mt-6 text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
               Imagine everything you need — financial planning, coaching, education, and support — under one roof, tailored just for you.
@@ -271,7 +271,7 @@ export default function AboutPage() {
       <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0] relative overflow-hidden">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-sm sm:text-base text-gray-600 uppercase tracking-wide mb-4 font-semibold">Our Journey</h2>
+            <h2 className="text-sm sm:text-base text-[#FF6B6B] uppercase tracking-wide mb-4 font-bold">Our Journey</h2>
             <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
               The BrightNest Story
             </p>
@@ -408,7 +408,7 @@ export default function AboutPage() {
       <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-sm sm:text-base text-gray-600 uppercase tracking-wide mb-4 font-semibold">Our Leadership</h2>
+            <h2 className="text-sm sm:text-base text-[#FF6B6B] uppercase tracking-wide mb-4 font-bold">Our Leadership</h2>
             <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
               meet the team
             </p>
