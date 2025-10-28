@@ -12,8 +12,18 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // 🔒 SECURITY: Require JWT_SECRET (no fallback)
+    const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
+    if (!JWT_SECRET) {
+      console.error('FATAL: JWT_SECRET or NEXTAUTH_SECRET environment variable is required');
+      return NextResponse.json(
+        { error: 'Authentication configuration error' },
+        { status: 500 }
+      );
+    }
+
     const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret') as any;
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
 
     if (decoded.role !== 'closer') {
       return NextResponse.json(

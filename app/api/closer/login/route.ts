@@ -54,6 +54,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 🔒 SECURITY: Require JWT_SECRET (no fallback)
+    const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
+    if (!JWT_SECRET) {
+      console.error('FATAL: JWT_SECRET or NEXTAUTH_SECRET environment variable is required');
+      return NextResponse.json(
+        { error: 'Authentication configuration error' },
+        { status: 500 }
+      );
+    }
+
     // Generate JWT token
     const token = jwt.sign(
       { 
@@ -61,7 +71,7 @@ export async function POST(request: NextRequest) {
         email: closer.email,
         role: 'closer'
       },
-      process.env.JWT_SECRET || 'fallback-secret',
+      JWT_SECRET,
       { expiresIn: '7d' }
     );
 
