@@ -77,6 +77,10 @@ interface AdminStats {
     createdAt: string;
     _count: { id: number };
   }>;
+  clicksActivity: Array<{
+    createdAt: string;
+    _count: { id: number };
+  }>;
   clicks: number;
   partialSubmissions: number;
   leadsCollected: number;
@@ -654,6 +658,44 @@ export default function AdminDashboard() {
   };
 
   const dailyActivityData = getActivityChartData();
+
+  // Chart data for clicks activity
+  const getClicksChartData = () => {
+    if (!stats) return null;
+
+    const formatLabel = (dateStr: string) => {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) {
+        return 'Invalid Date';
+      }
+      
+      // For 24h view, show hourly labels (e.g., "2 PM", "3 PM")
+      if (quizAnalyticsFilters.duration === '24h') {
+        return date.toLocaleTimeString('en-US', { 
+          hour: 'numeric', 
+          hour12: true 
+        });
+      }
+      
+      // For other views, show dates (e.g., "Oct 27")
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    };
+
+    return {
+      labels: stats.clicksActivity.map(day => formatLabel(day.createdAt)),
+      datasets: [
+        {
+          label: 'Clicks',
+          data: stats.clicksActivity.map(day => day._count.id),
+          borderColor: 'rgba(16, 185, 129, 1)', // Green color
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          tension: 0,
+        },
+      ],
+    };
+  };
+
+  const clicksActivityData = getClicksChartData();
 
   // CRM Helper Functions
   const handleCrmSearch = (value: string) => {
@@ -1739,6 +1781,89 @@ export default function AdminDashboard() {
                   )}
                 </div>
               </div>
+
+            {/* Clicks Chart */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+                      <svg className="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                      </svg>
+                      Clicks
+                    </h3>
+                  </div>
+                  {clicksActivityData && (
+                    <div className="h-80">
+                      <Line 
+                        data={clicksActivityData} 
+                        options={{
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          interaction: {
+                            intersect: false,
+                            mode: 'index',
+                          },
+                          plugins: {
+                            legend: {
+                              display: false,
+                            },
+                            tooltip: {
+                              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                              titleColor: 'white',
+                              bodyColor: 'white',
+                              borderColor: 'rgba(16, 185, 129, 1)',
+                              borderWidth: 1,
+                              cornerRadius: 8,
+                              callbacks: {
+                                label: function(context) {
+                                  return `${context.parsed.y} clicks`;
+                                }
+                              }
+                            }
+                          },
+                          scales: {
+                            y: {
+                              beginAtZero: true,
+                              grid: {
+                                color: 'rgba(0, 0, 0, 0.1)',
+                              },
+                              ticks: {
+                                stepSize: 1,
+                                color: 'rgba(0, 0, 0, 0.7)',
+                              },
+                              title: {
+                                display: true,
+                                text: 'Clicks',
+                                color: 'rgba(0, 0, 0, 0.7)',
+                                font: {
+                                  size: 12,
+                                  weight: 'bold'
+                                }
+                              }
+                            },
+                            x: {
+                              grid: {
+                                display: false,
+                              },
+                              ticks: {
+                                color: 'rgba(0, 0, 0, 0.7)',
+                              },
+                              title: {
+                                display: true,
+                                text: quizAnalyticsFilters.duration === '24h' ? 'Hour' : 'Date',
+                                color: 'rgba(0, 0, 0, 0.7)',
+                                font: {
+                                  size: 12,
+                                  weight: 'bold'
+                                }
+                              }
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
 
           {/* Top Funnel Drop-offs */}
           <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-8">

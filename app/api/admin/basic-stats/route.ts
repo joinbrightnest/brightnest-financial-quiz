@@ -616,6 +616,120 @@ export async function GET(request: NextRequest) {
 
     const dailyActivity = await getActivityData();
 
+    // Get clicks activity over time (similar to quiz started chart)
+    const getClicksActivityData = async () => {
+      const now = new Date();
+      let startDate = new Date();
+      
+      if (duration === 'all') {
+        startDate = new Date(0); // All time
+      } else {
+        switch (duration) {
+          case '24h':
+            startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            break;
+          case '7d':
+            startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            break;
+          case '30d':
+            startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            break;
+          case '90d':
+            startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+            break;
+          case '1y':
+            startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+            break;
+          default:
+            startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        }
+      }
+      
+      // Get affiliate clicks and normal website clicks
+      const affiliateClicks = await prisma.affiliateClick.findMany({
+        where: {
+          createdAt: {
+            gte: startDate,
+          },
+        },
+        select: {
+          createdAt: true
+        },
+        orderBy: {
+          createdAt: 'asc'
+        }
+      });
+
+      const normalClicks = await prisma.normalWebsiteClick.findMany({
+        where: {
+          createdAt: {
+            gte: startDate,
+          },
+        },
+        select: {
+          createdAt: true
+        },
+        orderBy: {
+          createdAt: 'asc'
+        }
+      });
+
+      // Combine all clicks
+      const allClicks = [...affiliateClicks, ...normalClicks];
+
+      // Group clicks by hour (for 24h) or by day (for other periods)
+      const groupedData: { [key: string]: number } = {};
+      
+      if (duration === '24h') {
+        // For 24h view, group by hour
+        allClicks.forEach(click => {
+          const date = new Date(click.createdAt);
+          const key = date.toISOString().slice(0, 13) + ':00:00.000Z';
+          groupedData[key] = (groupedData[key] || 0) + 1;
+        });
+
+        // Fill in missing hours with 0
+        const hoursData: { [key: string]: number } = {};
+        for (let i = 0; i < 24; i++) {
+          const hourDate = new Date(now.getTime() - (23 - i) * 60 * 60 * 1000);
+          const hourKey = hourDate.toISOString().slice(0, 13) + ':00:00.000Z';
+          hoursData[hourKey] = groupedData[hourKey] || 0;
+        }
+
+        return Object.entries(hoursData).map(([key, count]) => ({
+          createdAt: key,
+          _count: { id: count }
+        }));
+      } else {
+        // For other periods, group by day
+        allClicks.forEach(click => {
+          const date = new Date(click.createdAt);
+          const key = date.toISOString().slice(0, 10);
+          groupedData[key] = (groupedData[key] || 0) + 1;
+        });
+
+        // Fill in missing days with 0
+        const daysData: { [key: string]: number } = {};
+        const totalDays = duration === '7d' ? 7 : duration === '30d' ? 30 : duration === '90d' ? 90 : duration === '1y' ? 365 : 30;
+        
+        for (let i = 0; i < totalDays; i++) {
+          const dayDate = new Date(now.getTime() - (totalDays - 1 - i) * 24 * 60 * 60 * 1000);
+          const dayKey = dayDate.toISOString().slice(0, 10);
+          daysData[dayKey] = groupedData[dayKey] || 0;
+        }
+
+        return Object.entries(daysData).map(([key, count]) => {
+          const formattedDate = new Date(key + 'T00:00:00.000Z').toISOString();
+          return {
+            createdAt: formattedDate,
+            _count: { id: count }
+          };
+        });
+      }
+    };
+
+    const clicksActivity = await getClicksActivityData();
+
     // Calculate clicks - CORRECT LOGIC:
     // Use stored totalClicks from affiliate records + normal website clicks
     // This matches what the tracking system actually increments
@@ -746,6 +860,7 @@ export async function GET(request: NextRequest) {
       archetypeStats,
       questionAnalytics: questionAnalytics.filter(Boolean),
       dailyActivity,
+      clicksActivity,
       // New metrics
       clicks,
       partialSubmissions,
