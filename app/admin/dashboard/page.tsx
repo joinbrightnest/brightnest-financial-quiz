@@ -135,6 +135,7 @@ export default function AdminDashboard() {
   const [crmShowLeadModal, setCrmShowLeadModal] = useState(false);
   const [crmShowColumnModal, setCrmShowColumnModal] = useState(false);
   const [crmLeadModalTab, setCrmLeadModalTab] = useState<'activity' | 'notes' | 'tasks'>('activity');
+  const [crmActivities, setCrmActivities] = useState<any[] | null>(null);
   const [adminTasks, setAdminTasks] = useState<any[]>([]);
   const [isLoadingAdminTasks, setIsLoadingAdminTasks] = useState(false);
   const [adminShowTaskForm, setAdminShowTaskForm] = useState(true);
@@ -773,9 +774,10 @@ export default function AdminDashboard() {
     setCrmSelectedLead(lead);
     setCrmShowLeadModal(true);
     setCrmLeadModalTab('activity');
-    // Also load tasks and notes for this lead
+    // Also load tasks, notes, and activities for this lead
     fetchAdminTasks(lead);
     fetchAdminNotes(lead);
+    fetchCrmActivities(lead);
   };
 
   const fetchAdminNotes = async (lead: any) => {
@@ -790,6 +792,23 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error('Error fetching admin notes:', error);
+    }
+  };
+
+  const fetchCrmActivities = async (lead: any) => {
+    setCrmActivities(null); // Reset to show loading state
+    try {
+      const response = await fetch(`/api/admin/leads/${lead.sessionId}/activities`);
+      if (response.ok) {
+        const data = await response.json();
+        setCrmActivities(data.activities || []);
+      } else {
+        console.error('Failed to fetch activities');
+        setCrmActivities([]);
+      }
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+      setCrmActivities([]);
     }
   };
 
@@ -2623,114 +2642,161 @@ export default function AdminDashboard() {
                               Activity Timeline
                             </h3>
 
-                            {/* Simple timeline with key events */}
-                            <div className="space-y-4">
-                              {/* Quiz Completed */}
-                              <div className="flex items-start space-x-4">
-                                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
-                                  <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                  </svg>
-                                </div>
-                                <div className="flex-1 bg-slate-50 rounded-lg p-4 border border-slate-200">
-                                  <p className="text-sm font-semibold text-slate-900">
-                                    Completed the quiz
-                                  </p>
-                                  <p className="text-xs text-slate-500 mt-1">
-                                    {crmSelectedLead.completedAt ? new Date(crmSelectedLead.completedAt).toLocaleString('en-US', {
-                                      month: 'short',
-                                      day: 'numeric',
-                                      year: 'numeric',
-                                      hour: 'numeric',
-                                      minute: '2-digit'
-                                    }) : 'N/A'}
-                                  </p>
-                                  <div className="mt-2">
-                                    <button 
-                                      onClick={() => {
-                                        const modal = document.getElementById('quiz-answers-modal');
-                                        if (modal) modal.classList.toggle('hidden');
-                                      }}
-                                      className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-                                    >
-                                      View quiz answers →
-                                    </button>
-                                    <div id="quiz-answers-modal" className="hidden mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                                      {crmSelectedLead.answers.map((answer: any, index: number) => (
-                                        <div key={index} className="bg-white rounded-lg p-3 border border-slate-300">
-                                          <p className="text-xs font-semibold text-slate-900 mb-1">
-                                            {answer.question?.prompt || `Question ${index + 1}`}
-                                          </p>
-                                          <p className="text-sm text-slate-700">{answer.value || 'No answer provided'}</p>
+                            {!crmActivities ? (
+                              <div className="text-center py-8">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                                <p className="text-sm text-slate-600 mt-4">Loading activities...</p>
+                              </div>
+                            ) : crmActivities.length === 0 ? (
+                              <div className="text-center py-8">
+                                <svg className="w-12 h-12 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <p className="text-sm text-slate-600">No activity recorded yet</p>
+                              </div>
+                            ) : (
+                              <div className="space-y-4">
+                                {crmActivities.map((activity: any) => (
+                                  <div key={activity.id} className="flex items-start space-x-4">
+                                    {/* Icon */}
+                                    <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
+                                      activity.type === 'quiz_completed' ? 'bg-purple-100' :
+                                      activity.type === 'call_booked' ? 'bg-blue-100' :
+                                      activity.type === 'deal_closed' ? 'bg-green-100' :
+                                      activity.type === 'note_added' ? 'bg-amber-100' :
+                                      activity.type === 'task_created' ? 'bg-indigo-100' :
+                                      'bg-gray-100'
+                                    }`}>
+                                      {activity.type === 'quiz_completed' && (
+                                        <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                      )}
+                                      {activity.type === 'call_booked' && (
+                                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                      )}
+                                      {activity.type === 'deal_closed' && (
+                                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                      )}
+                                      {activity.type === 'note_added' && (
+                                        <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                      )}
+                                      {activity.type === 'task_created' && (
+                                        <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                        </svg>
+                                      )}
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="flex-1 bg-slate-50 rounded-lg p-4 border border-slate-200">
+                                      <p className="text-sm font-semibold text-slate-900">
+                                        {activity.type === 'quiz_completed' && (
+                                          <span><span className="text-blue-600">{activity.leadName}</span> completed the quiz</span>
+                                        )}
+                                        {activity.type === 'call_booked' && (
+                                          <span><span className="text-blue-600">{activity.leadName}</span> booked a call</span>
+                                        )}
+                                        {activity.type === 'deal_closed' && (
+                                          <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as closed</span>
+                                        )}
+                                        {activity.type === 'note_added' && (
+                                          <span><span className="text-amber-600">{activity.actor}</span> added a note</span>
+                                        )}
+                                        {activity.type === 'task_created' && (
+                                          <span><span className="text-indigo-600">{activity.actor}</span> created a task</span>
+                                        )}
+                                      </p>
+                                      <p className="text-xs text-slate-500 mt-1">
+                                        {new Date(activity.timestamp).toLocaleString('en-US', {
+                                          month: 'short',
+                                          day: 'numeric',
+                                          year: 'numeric',
+                                          hour: 'numeric',
+                                          minute: '2-digit'
+                                        })}
+                                      </p>
+
+                                      {/* Activity-specific details */}
+                                      {activity.type === 'quiz_completed' && (
+                                        <div className="mt-2">
+                                          <button 
+                                            onClick={() => {
+                                              const modal = document.getElementById(`quiz-answers-${activity.id}`);
+                                              if (modal) modal.classList.toggle('hidden');
+                                            }}
+                                            className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                                          >
+                                            View quiz answers →
+                                          </button>
+                                          <div id={`quiz-answers-${activity.id}`} className="hidden mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            {crmSelectedLead.answers.map((answer: any, index: number) => (
+                                              <div key={index} className="bg-white rounded-lg p-3 border border-slate-300">
+                                                <p className="text-xs font-semibold text-slate-900 mb-1">
+                                                  {answer.question?.prompt || `Question ${index + 1}`}
+                                                </p>
+                                                <p className="text-sm text-slate-700">{answer.value || 'No answer provided'}</p>
+                                              </div>
+                                            ))}
+                                          </div>
                                         </div>
-                                      ))}
+                                      )}
+
+                                      {activity.type === 'call_booked' && activity.details?.closerName && (
+                                        <p className="text-xs text-slate-600 mt-2">
+                                          <span className="font-medium">Assigned to:</span> {activity.details.closerName}
+                                        </p>
+                                      )}
+
+                                      {activity.type === 'deal_closed' && activity.details?.amount && (
+                                        <div className="mt-2">
+                                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            ${Number(activity.details.amount).toFixed(2)}
+                                          </span>
+                                        </div>
+                                      )}
+
+                                      {activity.type === 'note_added' && activity.details?.content && (
+                                        <div className="mt-2 p-3 bg-white rounded border border-slate-200">
+                                          <p className="text-sm text-slate-700">{activity.details.content}</p>
+                                        </div>
+                                      )}
+
+                                      {activity.type === 'task_created' && (
+                                        <div className="mt-2 space-y-1">
+                                          <p className="text-sm font-medium text-slate-900">{activity.details?.title}</p>
+                                          {activity.details?.description && (
+                                            <p className="text-xs text-slate-600">{activity.details.description}</p>
+                                          )}
+                                          <div className="flex items-center space-x-2 mt-2">
+                                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                              activity.details?.priority === 'high' ? 'bg-red-100 text-red-800' :
+                                              activity.details?.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                              'bg-green-100 text-green-800'
+                                            }`}>
+                                              {activity.details?.priority}
+                                            </span>
+                                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                              activity.details?.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                              activity.details?.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                                              'bg-gray-100 text-gray-800'
+                                            }`}>
+                                              {activity.details?.status}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      )}
                                     </div>
                                   </div>
-                                </div>
+                                ))}
                               </div>
-
-                              {/* Call Booked */}
-                              {crmSelectedLead.appointment && (
-                                <div className="flex items-start space-x-4">
-                                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                  </div>
-                                  <div className="flex-1 bg-slate-50 rounded-lg p-4 border border-slate-200">
-                                    <p className="text-sm font-semibold text-slate-900">
-                                      Booked a call
-                                    </p>
-                                    <p className="text-xs text-slate-500 mt-1">
-                                      {crmSelectedLead.appointment.createdAt ? new Date(crmSelectedLead.appointment.createdAt).toLocaleString('en-US', {
-                                        month: 'short',
-                                        day: 'numeric',
-                                        year: 'numeric',
-                                        hour: 'numeric',
-                                        minute: '2-digit'
-                                      }) : 'Unknown'}
-                                    </p>
-                                    {crmSelectedLead.appointment.closer && (
-                                      <p className="text-xs text-slate-600 mt-2">
-                                        <span className="font-medium">Assigned to:</span> {crmSelectedLead.appointment.closer.name}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Deal Closed */}
-                              {crmSelectedLead.dealClosedAt && crmSelectedLead.appointment?.outcome === 'converted' && (
-                                <div className="flex items-start space-x-4">
-                                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                                    <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                  </div>
-                                  <div className="flex-1 bg-slate-50 rounded-lg p-4 border border-slate-200">
-                                    <p className="text-sm font-semibold text-slate-900">
-                                      Deal closed
-                                    </p>
-                                    <p className="text-xs text-slate-500 mt-1">
-                                      {new Date(crmSelectedLead.dealClosedAt).toLocaleString('en-US', {
-                                        month: 'short',
-                                        day: 'numeric',
-                                        year: 'numeric',
-                                        hour: 'numeric',
-                                        minute: '2-digit'
-                                      })}
-                                    </p>
-                                    {crmSelectedLead.appointment.saleValue && (
-                                      <div className="mt-2">
-                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                          ${Number(crmSelectedLead.appointment.saleValue).toFixed(2)}
-                                        </span>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
+                            )}
                           </div>
                         )}
 
