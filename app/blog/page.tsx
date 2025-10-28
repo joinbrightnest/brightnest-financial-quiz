@@ -156,29 +156,29 @@ export default function BlogPage() {
       </nav>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
         
         {/* Featured Post Section - Left: Main Post, Right: Featured Posts List */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16">
           {/* Main Featured Post - Left (50% width) */}
           <div>
             {/* Image with overlay text */}
-            <div className="relative h-80 rounded-t-lg overflow-hidden mb-4">
+            <div className="relative h-64 sm:h-80 rounded-t-lg overflow-hidden mb-4">
               {/* Background Image */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-teal-400 to-green-400"></div>
               
               {/* Text Banner Overlay - Positioned over image */}
-              <div className="absolute bottom-8 left-8 right-8">
-                <div className="inline-block bg-pink-500 px-6 py-3 rounded-md">
-                  <h2 className="text-2xl md:text-3xl font-black text-white uppercase">
+              <div className="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 right-4 sm:right-8">
+                <div className="inline-block bg-pink-500 px-3 sm:px-6 py-2 sm:py-3 rounded-md">
+                  <h2 className="text-lg sm:text-2xl md:text-3xl font-black text-white uppercase leading-tight">
                     3 Money Habits That Keep You Broke
                   </h2>
                 </div>
               </div>
               
               {/* Featured Post Badge */}
-              <div className="absolute top-6 left-6">
-                <div className="inline-block bg-pink-500 text-white px-4 py-2 rounded-full text-xs font-bold">
+              <div className="absolute top-4 sm:top-6 left-4 sm:left-6">
+                <div className="inline-block bg-pink-500 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-bold">
                   FEATURED POST
                 </div>
               </div>
@@ -186,13 +186,13 @@ export default function BlogPage() {
             
             {/* Title and Description Below Image */}
             <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-3">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
                 Why Your Budget Keeps Failing (And How to Fix It)
               </h3>
-              <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+              <p className="text-gray-600 text-sm mb-3 sm:mb-4 leading-relaxed">
                 Budgets aren't about restriction — they're about freedom. Discover the 3 behavior shifts that make budgeting actually work.
               </p>
-              <div className="flex items-center space-x-4 text-sm">
+              <div className="flex items-center space-x-3 sm:space-x-4 text-xs sm:text-sm">
                 <span className="text-gray-500 uppercase font-semibold">HABITS</span>
                 <span className="text-gray-400">4 min read</span>
               </div>
@@ -201,15 +201,15 @@ export default function BlogPage() {
 
           {/* Featured Posts List - Right (50% width) */}
           <div>
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">FEATURED POSTS</h2>
-              <div className="h-1 bg-pink-500 w-24"></div>
+            <div className="mb-4 sm:mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">FEATURED POSTS</h2>
+              <div className="h-1 bg-pink-500 w-20 sm:w-24"></div>
             </div>
             
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               {featuredPosts.slice(0, 6).map((post) => (
-                <div key={post.id} className="border-b border-gray-200 pb-4 last:border-0">
-                  <h3 className="text-base font-bold text-gray-900 mb-1 hover:text-pink-500 cursor-pointer transition-colors">
+                <div key={post.id} className="border-b border-gray-200 pb-3 sm:pb-4 last:border-0">
+                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1 hover:text-pink-500 cursor-pointer transition-colors leading-snug">
                     {post.title}
                   </h3>
                   <p className="text-xs text-gray-500">{post.readTime}</p>
@@ -220,14 +220,14 @@ export default function BlogPage() {
         </div>
 
         {/* Filter by Category */}
-        <div className="mb-12">
-          <h3 className="text-lg text-gray-600 mb-6">Filter by Category</h3>
-          <div className="flex flex-wrap gap-4">
+        <div className="mb-8 sm:mb-12">
+          <h3 className="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6">Filter by Category</h3>
+          <div className="flex flex-wrap gap-2 sm:gap-4">
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setActiveCategory(category.toLowerCase())}
-                className={`px-8 py-3 text-xl font-black uppercase rounded-md transition-all ${
+                className={`px-4 sm:px-8 py-2 sm:py-3 text-sm sm:text-xl font-black uppercase rounded-md transition-all ${
                   activeCategory === category.toLowerCase()
                     ? 'bg-pink-500 text-white'
                     : 'bg-transparent text-gray-900 hover:bg-gray-100'
@@ -240,18 +240,18 @@ export default function BlogPage() {
         </div>
 
         {/* Read Section */}
-        <div className="mb-16">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold lowercase text-gray-900">read</h2>
-            <Link href="#" className="text-pink-500 font-semibold hover:text-pink-600">
+        <div className="mb-12 sm:mb-16">
+          <div className="flex items-center justify-between mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold lowercase text-gray-900">read</h2>
+            <Link href="#" className="text-sm sm:text-base text-pink-500 font-semibold hover:text-pink-600">
               view more
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-48 bg-gradient-to-br from-blue-200 to-blue-300"></div>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
                   The Psychology Behind Impulse Buying
                 </h3>
@@ -264,7 +264,7 @@ export default function BlogPage() {
 
             <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-48 bg-gradient-to-br from-teal-200 to-teal-300"></div>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
                   How to Build an Emergency Fund From Zero
                 </h3>
@@ -277,7 +277,7 @@ export default function BlogPage() {
 
             <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-48 bg-gradient-to-br from-purple-200 to-purple-300"></div>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
                   Money Scripts: What Your Parents Taught You
                 </h3>
@@ -291,22 +291,22 @@ export default function BlogPage() {
         </div>
 
         {/* Watch Section */}
-        <div className="mb-16">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold lowercase text-gray-900">watch</h2>
-            <Link href="#" className="text-pink-500 font-semibold hover:text-pink-600">
+        <div className="mb-12 sm:mb-16">
+          <div className="flex items-center justify-between mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold lowercase text-gray-900">watch</h2>
+            <Link href="#" className="text-sm sm:text-base text-pink-500 font-semibold hover:text-pink-600">
               view more
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-48 bg-gradient-to-br from-red-200 to-red-300 flex items-center justify-center">
                 <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z"/>
                 </svg>
               </div>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
                   The Real Cost of Lifestyle Inflation
                 </h3>
@@ -322,7 +322,7 @@ export default function BlogPage() {
                   <path d="M8 5v14l11-7z"/>
                 </svg>
               </div>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
                   3 Money Habits That Build Wealth Automatically
                 </h3>
@@ -338,7 +338,7 @@ export default function BlogPage() {
                   <path d="M8 5v14l11-7z"/>
                 </svg>
               </div>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
                   How to Handle Financial Setbacks
                 </h3>
@@ -351,22 +351,22 @@ export default function BlogPage() {
         </div>
 
         {/* Listen Section */}
-        <div className="mb-16">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold lowercase text-gray-900">listen</h2>
-            <Link href="#" className="text-pink-500 font-semibold hover:text-pink-600">
+        <div className="mb-12 sm:mb-16">
+          <div className="flex items-center justify-between mb-6 sm:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold lowercase text-gray-900">listen</h2>
+            <Link href="#" className="text-sm sm:text-base text-pink-500 font-semibold hover:text-pink-600">
               view more
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-48 bg-gradient-to-br from-green-200 to-green-300 flex items-center justify-center">
                 <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
                 </svg>
               </div>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
                   Episode 47: Breaking Free From Debt Shame
                 </h3>
@@ -382,7 +382,7 @@ export default function BlogPage() {
                   <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
                 </svg>
               </div>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
                   Episode 52: The Truth About Investing for Beginners
                 </h3>
@@ -398,7 +398,7 @@ export default function BlogPage() {
                   <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
                 </svg>
               </div>
-              <div className="p-6">
+              <div className="p-4 sm:p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
                   Episode 58: Money and Marriage — The Honest Conversation
                 </h3>
@@ -411,16 +411,16 @@ export default function BlogPage() {
         </div>
 
         {/* CTA Section */}
-        <div className="bg-gradient-to-r from-blue-600 to-teal-500 rounded-2xl p-12 text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">
+        <div className="bg-gradient-to-r from-blue-600 to-teal-500 rounded-xl sm:rounded-2xl p-6 sm:p-12 text-center text-white">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">
             Begin Your Journey To Financial Peace
           </h2>
-          <p className="text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto">
             Uncover what's holding you back from building lasting wealth and feeling confident with your money!
           </p>
           <Link
             href="/quiz/financial-profile"
-            className="inline-block bg-pink-500 text-white px-8 py-4 rounded-md font-bold text-lg hover:bg-pink-600 transition-colors"
+            className="inline-block bg-pink-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-md font-bold text-base sm:text-lg hover:bg-pink-600 transition-colors"
           >
             TAKE THE QUIZ
           </Link>
@@ -428,9 +428,9 @@ export default function BlogPage() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-12 mt-16">
+      <footer className="bg-gray-800 text-white py-8 sm:py-12 mt-12 sm:mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8">
             {/* Logo and Social */}
             <div>
               <Link href="/" className="text-2xl font-bold text-white mb-6 block">
