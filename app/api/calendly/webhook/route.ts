@@ -134,10 +134,8 @@ async function handleInviteeCreated(payload: any) {
       affiliateCode
     });
 
-    // If there's an affiliate code, try to find and assign to an active closer
-    if (affiliateCode) {
-      await tryAutoAssignToCloser(appointment.id, affiliateCode);
-    }
+    // ALWAYS auto-assign appointments to available closers (round-robin)
+    await autoAssignToCloser(appointment.id);
 
   } catch (error) {
     console.error('❌ Error handling invitee created:', error);
@@ -197,49 +195,65 @@ async function handleInviteeRescheduled(payload: any) {
   }
 }
 
-async function tryAutoAssignToCloser(appointmentId: string, affiliateCode: string) {
+async function autoAssignToCloser(appointmentId: string) {
   try {
-    // Find the affiliate
-    const affiliate = await prisma.affiliate.findUnique({
-      where: { referralCode: affiliateCode },
-      select: { id: true, name: true }
-    });
+    console.log('🔄 Starting auto-assignment for appointment:', appointmentId);
 
-    if (!affiliate) {
-      console.log('⚠️ Affiliate not found for auto-assignment:', affiliateCode);
-      return;
-    }
-
-    // Find an active, approved closer (you could implement more sophisticated assignment logic here)
-    const availableCloser = await prisma.closer.findFirst({
+    // Find all active, approved closers
+    const availableClosers = await prisma.closer.findMany({
       where: {
         isActive: true,
         isApproved: true
       },
+      select: {
+        id: true,
+        name: true,
+        totalCalls: true
+      },
       orderBy: {
-        totalCalls: 'asc' // Assign to closer with fewer calls (load balancing)
+        totalCalls: 'asc' // Round-robin: assign to closer with fewer calls
       }
     });
 
-    if (availableCloser) {
-      // Assign the appointment to the closer
-      await prisma.appointment.update({
-        where: { id: appointmentId },
-        data: {
-          closerId: availableCloser.id,
-          status: 'confirmed'
-        }
-      });
+    console.log('👥 Available closers:', availableClosers.map(c => ({
+      name: c.name,
+      totalCalls: c.totalCalls
+    })));
 
-      console.log('✅ Auto-assigned appointment to closer:', {
-        appointmentId,
-        closerId: availableCloser.id,
-        closerName: availableCloser.name,
-        affiliateCode
-      });
-    } else {
+    if (availableClosers.length === 0) {
       console.log('⚠️ No available closers for auto-assignment');
+      return;
     }
+
+    // Get the closer with the least calls (round-robin)
+    const assignedCloser = availableClosers[0];
+
+    // Assign the appointment to the closer
+    await prisma.appointment.update({
+      where: { id: appointmentId },
+      data: {
+        closerId: assignedCloser.id,
+        status: 'confirmed'
+      }
+    });
+
+    // Increment the closer's total calls count
+    await prisma.closer.update({
+      where: { id: assignedCloser.id },
+      data: {
+        totalCalls: {
+          increment: 1
+        }
+      }
+    });
+
+    console.log('✅ Auto-assigned appointment to closer (round-robin):', {
+      appointmentId,
+      closerId: assignedCloser.id,
+      closerName: assignedCloser.name,
+      previousTotalCalls: assignedCloser.totalCalls,
+      newTotalCalls: assignedCloser.totalCalls + 1
+    });
 
   } catch (error) {
     console.error('❌ Error in auto-assignment:', error);

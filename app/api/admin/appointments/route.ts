@@ -54,6 +54,17 @@ export async function GET(request: NextRequest) {
       }
     });
 
+    // Debug: Log booked appointments and their closer assignments
+    const bookedAppointments = appointments.filter(a => a.status === 'booked' || a.status === 'scheduled');
+    console.log('🔍 BOOKED APPOINTMENTS:', bookedAppointments.map(a => ({
+      name: a.customerName,
+      email: a.customerEmail,
+      status: a.status,
+      closerId: a.closerId,
+      closerName: a.closer?.name || 'UNASSIGNED',
+      scheduledAt: a.scheduledAt
+    })));
+
     // Get all quiz sessions that are completed and have name/email (actual leads)
     const quizSessions = await prisma.quizSession.findMany({
       where: {
