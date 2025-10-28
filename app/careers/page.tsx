@@ -188,44 +188,36 @@ export default function CareersPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-20 sm:py-28 lg:py-36 overflow-hidden">
-        {/* Subtle background pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
-            backgroundSize: '40px 40px'
-          }}></div>
-        </div>
-
+      <section className="relative bg-[#faf8f0] py-20 sm:py-28 lg:py-36 overflow-hidden">
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black mb-6 sm:mb-8 leading-tight tracking-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black mb-6 sm:mb-8 leading-tight tracking-tight text-gray-900">
             <span className="block">Join Our Team.</span>
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-pink-500 to-rose-500">Empower Women.</span>
+            <span className="block text-[#FF6B6B]">Empower Women.</span>
             <span className="block">Transform Lives.</span>
           </h1>
           
-          <p className="text-base sm:text-lg lg:text-xl text-gray-300 max-w-3xl mx-auto mb-8 sm:mb-10 leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto mb-8 sm:mb-10 leading-relaxed">
             At BrightNest, we're on a mission to inspire and empower women to achieve their financial, wealth, and life goals. Join a passionate, driven team that's changing lives every day—one transformation at a time.
           </p>
 
-          <p className="text-lg sm:text-xl font-semibold mb-8 sm:mb-10 text-gray-200">Ready to make an impact?</p>
+          <p className="text-lg sm:text-xl font-semibold mb-8 sm:mb-10 text-gray-700">Ready to make an impact?</p>
 
           <button
             onClick={handleSeePositions}
-            className="inline-block bg-gradient-to-r from-pink-500 to-rose-500 text-white px-10 sm:px-14 py-4 sm:py-5 rounded-full font-bold text-base sm:text-lg uppercase hover:from-pink-600 hover:to-rose-600 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl"
+            className="inline-block bg-[#FF6B6B] text-white px-10 sm:px-14 py-4 sm:py-5 rounded-lg font-bold text-base sm:text-lg uppercase hover:bg-[#FF5252] transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl"
           >
             Apply Now
           </button>
 
           {/* Team Member Avatars */}
           <div className="flex justify-center items-center mt-16 sm:mt-20">
-            <p className="text-sm text-gray-400 uppercase tracking-wide mb-6">Are You Ready?</p>
+            <p className="text-sm text-[#FF6B6B] uppercase tracking-wide mb-6 font-bold">Are You Ready?</p>
           </div>
           <div className="flex justify-center items-center space-x-[-12px] sm:space-x-[-16px]">
             {testimonials.slice(0, 4).map((testimonial, idx) => (
               <div
                 key={idx}
-                className={`w-14 h-14 sm:w-18 sm:h-18 lg:w-20 lg:h-20 rounded-full bg-gradient-to-br ${testimonial.color} flex items-center justify-center text-white font-bold text-sm sm:text-base border-4 border-gray-900 shadow-lg hover:scale-110 transition-transform cursor-pointer z-${10 + idx}`}
+                className={`w-14 h-14 sm:w-18 sm:h-18 lg:w-20 lg:h-20 rounded-full bg-gradient-to-br ${testimonial.color} flex items-center justify-center text-white font-bold text-sm sm:text-base border-4 border-white shadow-lg hover:scale-110 transition-transform cursor-pointer z-${10 + idx}`}
                 style={{ zIndex: 10 + idx }}
               >
                 {testimonial.initials}
@@ -236,29 +228,29 @@ export default function CareersPage() {
       </section>
 
       {/* Your Next Big Career Shift */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-white">
+      <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
-            <p className="text-sm sm:text-base text-pink-500 uppercase tracking-wide mb-3 font-semibold">Are you Ready?</p>
+            <p className="text-sm sm:text-base text-[#FF6B6B] uppercase tracking-wide mb-3 font-bold">Are you Ready?</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
               Your Next Big Career Shift
             </h2>
             <p className="mt-4 text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
-              Join BrightNest, where passionate innovators transform women's financial lives. We foster a supportive, inclusive environment, pushing boundaries and empowering women worldwide.
+              Join BrightNest, where <span className="text-[#FF6B6B] font-bold">passionate innovators</span> transform women's financial lives. We foster a <span className="text-[#FF6B6B] font-bold">supportive, inclusive environment,</span> pushing boundaries and empowering women worldwide.
             </p>
           </div>
 
           {/* Testimonials Carousel */}
           <div className="relative max-w-5xl mx-auto">
             {/* Main Testimonial Display */}
-            <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 sm:p-12 border-2 border-gray-100 shadow-xl min-h-[320px] sm:min-h-[280px] flex flex-col justify-between">
+            <div className="bg-white rounded-2xl p-8 sm:p-12 border-2 border-gray-100 shadow-xl min-h-[320px] sm:min-h-[280px] flex flex-col justify-between">
               <div className="flex items-start space-x-4 mb-6">
                 <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br ${testimonials[currentTestimonial].color} flex items-center justify-center text-white font-bold text-xl sm:text-2xl flex-shrink-0 shadow-lg`}>
                   {testimonials[currentTestimonial].initials}
                 </div>
                 <div>
                   <h3 className="text-xl sm:text-2xl font-bold text-gray-900">{testimonials[currentTestimonial].name}</h3>
-                  <p className="text-sm sm:text-base text-pink-500 font-semibold">{testimonials[currentTestimonial].title}</p>
+                  <p className="text-sm sm:text-base text-[#FF6B6B] font-bold">{testimonials[currentTestimonial].title}</p>
                 </div>
               </div>
               
@@ -274,7 +266,7 @@ export default function CareersPage() {
                     onClick={() => setCurrentTestimonial(index)}
                     className={`transition-all duration-300 rounded-full ${
                       index === currentTestimonial 
-                        ? 'w-8 h-3 bg-pink-500' 
+                        ? 'w-8 h-3 bg-[#FF6B6B]' 
                         : 'w-3 h-3 bg-gray-300 hover:bg-gray-400'
                     }`}
                     aria-label={`View testimonial ${index + 1}`}
@@ -313,7 +305,7 @@ export default function CareersPage() {
                   const actualIndex = testimonials.findIndex(t => t.name === testimonial.name);
                   setCurrentTestimonial(actualIndex);
                 }}
-                className="bg-gray-50 rounded-xl p-6 border border-gray-200 hover:border-pink-300 hover:shadow-lg transition-all cursor-pointer"
+                className="bg-white rounded-xl p-6 border border-gray-200 hover:border-[#FF6B6B] hover:shadow-lg transition-all cursor-pointer"
               >
                 <div className="flex items-center space-x-3 mb-3">
                   <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${testimonial.color} flex items-center justify-center text-white font-bold text-sm shadow-md`}>
@@ -321,7 +313,7 @@ export default function CareersPage() {
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-gray-900">{testimonial.name}</h4>
-                    <p className="text-xs text-pink-500 font-medium">{testimonial.title}</p>
+                    <p className="text-xs text-[#FF6B6B] font-bold">{testimonial.title}</p>
                   </div>
                 </div>
                 <p className="text-sm text-gray-600 leading-relaxed italic line-clamp-3">
@@ -334,10 +326,10 @@ export default function CareersPage() {
       </section>
 
       {/* Core Values */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-[#faf8f0] to-white">
+      <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
-            <p className="text-sm sm:text-base text-pink-500 uppercase tracking-wide mb-3 font-semibold">The Values That Guide Us</p>
+            <p className="text-sm sm:text-base text-[#FF6B6B] uppercase tracking-wide mb-3 font-bold">The Values That Guide Us</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
               BrightNest Core Values
             </h2>
@@ -345,9 +337,9 @@ export default function CareersPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {coreValues.map((value, index) => (
-              <div key={index} className="group bg-white rounded-2xl p-6 sm:p-8 text-center border-2 border-gray-100 hover:border-pink-300 hover:shadow-2xl transition-all transform hover:-translate-y-1">
+              <div key={index} className="group bg-white rounded-2xl p-6 sm:p-8 text-center border-2 border-gray-100 hover:border-[#FF6B6B] hover:shadow-2xl transition-all transform hover:-translate-y-1">
                 <div className="text-5xl sm:text-6xl mb-5 group-hover:scale-110 transition-transform">{value.icon}</div>
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 group-hover:text-pink-600 transition-colors">{value.title}</h3>
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 group-hover:text-[#FF6B6B] transition-colors">{value.title}</h3>
                 <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{value.description}</p>
               </div>
             ))}
@@ -356,10 +348,10 @@ export default function CareersPage() {
       </section>
 
       {/* Perks Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-white">
+      <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
-            <p className="text-sm sm:text-base text-pink-500 uppercase tracking-wide mb-3 font-semibold">Just A Few Perks of Working With BrightNest</p>
+            <p className="text-sm sm:text-base text-[#FF6B6B] uppercase tracking-wide mb-3 font-bold">Just A Few Perks of Working With BrightNest</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
               Your BrightNest Journey Starts Here
             </h2>
@@ -367,8 +359,8 @@ export default function CareersPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {perks.map((perk, index) => (
-              <div key={index} className="group bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 sm:p-8 border-2 border-gray-100 hover:border-pink-200 hover:shadow-xl transition-all">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 group-hover:text-pink-600 transition-colors">{perk.title}</h3>
+              <div key={index} className="group bg-white rounded-2xl p-6 sm:p-8 border-2 border-gray-100 hover:border-[#FF6B6B] hover:shadow-xl transition-all">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 group-hover:text-[#FF6B6B] transition-colors">{perk.title}</h3>
                 <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{perk.description}</p>
               </div>
             ))}
@@ -377,21 +369,21 @@ export default function CareersPage() {
       </section>
 
       {/* What It's Like To Work With Us */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-[#faf8f0] to-white">
+      <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
-            <p className="text-sm sm:text-base text-pink-500 uppercase tracking-wide mb-3 font-semibold">What It's Like To</p>
+            <p className="text-sm sm:text-base text-[#FF6B6B] uppercase tracking-wide mb-3 font-bold">What It's Like To</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
               work with us
             </h2>
           </div>
 
-          <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 sm:p-12 border-2 border-gray-100 shadow-2xl">
+          <div className="bg-white rounded-3xl p-8 sm:p-12 border-2 border-gray-100 shadow-2xl">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mb-10">
               {benefits.map((benefit, index) => (
                 <div key={index} className="flex items-start space-x-4 group">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <div className="w-8 h-8 rounded-full bg-[#FF6B6B] flex items-center justify-center group-hover:scale-110 transition-transform">
                       <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
@@ -405,7 +397,7 @@ export default function CareersPage() {
             <div className="text-center">
               <button
                 onClick={handleSeePositions}
-                className="inline-block bg-gradient-to-r from-pink-500 to-rose-500 text-white px-10 sm:px-14 py-4 sm:py-5 rounded-full font-bold text-base sm:text-lg uppercase hover:from-pink-600 hover:to-rose-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                className="inline-block bg-[#FF6B6B] text-white px-10 sm:px-14 py-4 sm:py-5 rounded-lg font-bold text-base sm:text-lg uppercase hover:bg-[#FF5252] transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 See Positions
               </button>
@@ -418,14 +410,14 @@ export default function CareersPage() {
       {showPositions && (
         <section 
           id="positions" 
-          className="py-16 sm:py-20 lg:py-24 bg-white animate-fade-in"
+          className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0] animate-fade-in"
           style={{ opacity: 0, animation: 'fadeIn 0.6s ease-out forwards' }}
         >
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-8 sm:p-12 lg:p-16 border-2 border-gray-100 shadow-xl text-center">
+            <div className="bg-white rounded-3xl p-8 sm:p-12 lg:p-16 border-2 border-gray-100 shadow-xl text-center">
               {/* Icon */}
               <div className="mb-8">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-full bg-gray-100 flex items-center justify-center">
                   <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
@@ -437,23 +429,23 @@ export default function CareersPage() {
               </h2>
               
               <p className="text-base sm:text-lg text-gray-600 mb-6 max-w-2xl mx-auto leading-relaxed">
-                We're not currently hiring, but we're always interested in connecting with talented individuals who are passionate about empowering women and making a real difference.
+                We're not currently hiring, but we're always interested in connecting with <span className="text-[#FF6B6B] font-bold">talented individuals</span> who are passionate about <span className="text-[#FF6B6B] font-bold">empowering women</span> and making a real difference.
               </p>
 
               <p className="text-base sm:text-lg text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-                If you'd like to be considered for future opportunities, please send your resume and a brief introduction to <a href="mailto:careers@joinbrightnest.com" className="text-pink-500 hover:text-pink-600 font-semibold underline">careers@joinbrightnest.com</a>. We'll keep your information on file and reach out when a position that matches your skills becomes available.
+                If you'd like to be considered for future opportunities, please send your resume and a brief introduction to <a href="mailto:careers@joinbrightnest.com" className="text-[#FF6B6B] hover:text-[#FF5252] font-bold underline">careers@joinbrightnest.com</a>. We'll keep your information on file and reach out when a position that matches your skills becomes available.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <a
                   href="mailto:careers@joinbrightnest.com"
-                  className="inline-block bg-gradient-to-r from-pink-500 to-rose-500 text-white px-8 sm:px-12 py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg hover:from-pink-600 hover:to-rose-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  className="inline-block bg-[#FF6B6B] text-white px-8 sm:px-12 py-3 sm:py-4 rounded-lg font-bold text-base sm:text-lg hover:bg-[#FF5252] transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
                   Send Resume
                 </a>
                 <Link
                   href="/"
-                  className="inline-block bg-white text-gray-700 px-8 sm:px-12 py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg border-2 border-gray-300 hover:border-gray-400 transition-all"
+                  className="inline-block bg-[#faf8f0] text-gray-700 px-8 sm:px-12 py-3 sm:py-4 rounded-lg font-bold text-base sm:text-lg border-2 border-gray-300 hover:border-gray-400 transition-all"
                 >
                   Back to Home
                 </Link>
