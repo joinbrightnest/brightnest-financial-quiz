@@ -103,8 +103,8 @@ export async function GET(
           }
         });
 
-        // 3. Outcome updated activity (for ALL outcomes)
-        if (appointment.outcome) {
+        // 3. Outcome updated activity (for NON-CONVERTED outcomes only)
+        if (appointment.outcome && appointment.outcome !== 'converted') {
           activities.push({
             id: `outcome_${appointment.id}`,
             type: 'outcome_updated' as any,
