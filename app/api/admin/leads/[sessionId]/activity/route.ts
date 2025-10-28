@@ -366,7 +366,16 @@ export async function GET(
     return NextResponse.json({
       success: true,
       activities,
-      leadEmail: emailAnswer?.value
+      leadEmail: emailAnswer?.value,
+      // Debug info
+      debug: {
+        appointmentFound: !!appointment,
+        appointmentId: appointment?.id,
+        outcome: appointment?.outcome,
+        closerId: appointment?.closerId,
+        totalAuditLogs: allAuditLogs.length,
+        filteredAuditLogs: auditLogs.length
+      }
     });
 
   } catch (error) {
