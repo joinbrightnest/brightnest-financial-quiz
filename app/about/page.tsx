@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function AboutPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [currentTimelineIndex, setCurrentTimelineIndex] = useState(0);
 
   const stats = [
     { number: "10,000+", label: "Women Empowered" },
@@ -24,39 +25,67 @@ export default function AboutPage() {
       year: "2020",
       title: "The Beginning",
       description: "A bold vision started. While working in corporate finance and witnessing countless women struggle with money stress, our founder began coaching colleagues one-on-one. This early hands-on experience laid the foundation for what would become a transformative approach to women's financial wellness — rooted in behavior change, empathy, and empowerment.",
-      image: "from-blue-400 to-teal-400"
+      icon: "💡",
+      color: "from-blue-500 to-teal-500"
     },
     {
       year: "2021",
       title: "Going Digital",
       description: "As demand grew, we evolved into a hybrid model, combining personalized coaching with online resources. This marked the start of delivering expert-level financial strategies on a larger scale, helping more women achieve their goals with proven results and compassionate support.",
-      image: "from-purple-400 to-pink-400"
+      icon: "💻",
+      color: "from-purple-500 to-pink-500"
     },
     {
       year: "2022",
       title: "The Birth of BrightNest",
       description: "BrightNest was officially born, setting a new standard in financial education for women. Our signature program empowered women with the tools and knowledge to transform their relationship with money for life. The launch of BrightNest signaled the start of a movement, establishing expertise in personalized financial solutions for women.",
-      image: "from-green-400 to-teal-400"
+      icon: "🚀",
+      color: "from-green-500 to-teal-500"
     },
     {
       year: "2023",
       title: "Innovation and Growth",
       description: "BrightNest solidified its position as a leader in women's financial education, testing and refining new programs to ensure the best client outcomes. Through strategic innovation, we expanded our reach and impact while maintaining our core commitment to delivering unmatched expertise and support.",
-      image: "from-orange-400 to-red-400"
+      icon: "📈",
+      color: "from-orange-500 to-red-500"
     },
     {
       year: "2024",
       title: "Scaling Impact",
       description: "This year saw record-breaking growth as we helped thousands of women transform their financial lives. We launched new programs, expanded our coaching team, and introduced cutting-edge tools to make financial wellness accessible to every woman, regardless of her starting point.",
-      image: "from-pink-400 to-rose-400"
+      icon: "🌟",
+      color: "from-pink-500 to-rose-500"
     },
     {
       year: "2025",
       title: "The Future of Financial Wellness",
       description: "BrightNest continues to revolutionize women's financial health with innovative approaches and personalized solutions. We're building the ultimate platform for women seeking financial confidence, security, and lasting transformation. The best is yet to come.",
-      image: "from-indigo-400 to-purple-400"
+      icon: "🔮",
+      color: "from-indigo-500 to-purple-500"
     }
   ];
+
+  const nextTimeline = () => {
+    setCurrentTimelineIndex((prev) => (prev === timeline.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevTimeline = () => {
+    setCurrentTimelineIndex((prev) => (prev === 0 ? timeline.length - 1 : prev - 1));
+  };
+
+  // Keyboard navigation for timeline
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        prevTimeline();
+      } else if (e.key === 'ArrowRight') {
+        nextTimeline();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentTimelineIndex]);
 
   const leadership = [
     { name: "Sarah Mitchell", title: "Co-Founder & CEO", initials: "SM", color: "from-blue-400 to-teal-400" },
@@ -230,26 +259,128 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Timeline */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-16 sm:space-y-20">
-            {timeline.map((item, index) => (
-              <div key={index} className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
-                <div className={index % 2 === 1 ? 'lg:order-2' : ''}>
-                  <div className="inline-block bg-gradient-to-r from-pink-500 to-teal-500 text-white px-6 py-2 rounded-full font-bold text-lg mb-4">
-                    {item.year}
-                  </div>
-                  <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">{item.title}</h3>
-                  <p className="text-base sm:text-lg text-gray-600 leading-relaxed">{item.description}</p>
-                </div>
-                <div className={`relative h-64 sm:h-80 bg-gradient-to-br ${item.image} rounded-2xl flex items-center justify-center ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
-                  <div className="text-center">
-                    <div className="text-7xl text-white font-black opacity-50">{item.year}</div>
-                  </div>
+      {/* Timeline - Modern Carousel Design */}
+      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 relative overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+            backgroundSize: '40px 40px'
+          }}></div>
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-sm sm:text-base text-pink-400 uppercase tracking-wide mb-4 font-semibold">Our Journey</h2>
+            <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
+              The BrightNest Story
+            </p>
+          </div>
+
+          {/* Timeline Progress Bar */}
+          <div className="max-w-4xl mx-auto mb-12">
+            <div className="relative">
+              {/* Progress line */}
+              <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-700 -translate-y-1/2"></div>
+              <div 
+                className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-pink-500 to-teal-500 -translate-y-1/2 transition-all duration-500"
+                style={{ width: `${((currentTimelineIndex + 1) / timeline.length) * 100}%` }}
+              ></div>
+              
+              {/* Timeline dots */}
+              <div className="relative flex justify-between">
+                {timeline.map((item, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentTimelineIndex(index)}
+                    className="group flex flex-col items-center"
+                  >
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center border-4 transition-all duration-300 ${
+                      index <= currentTimelineIndex 
+                        ? 'bg-gradient-to-br from-pink-500 to-teal-500 border-white scale-110' 
+                        : 'bg-gray-700 border-gray-600 hover:border-gray-500'
+                    }`}>
+                      <span className="text-2xl">{index <= currentTimelineIndex ? '✓' : item.icon}</span>
+                    </div>
+                    <span className={`mt-3 text-xs sm:text-sm font-bold transition-colors ${
+                      index === currentTimelineIndex ? 'text-pink-400' : 'text-gray-500'
+                    }`}>
+                      {item.year}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Carousel Content */}
+          <div className="relative max-w-5xl mx-auto">
+            <div className="bg-white rounded-3xl p-8 sm:p-12 lg:p-16 shadow-2xl min-h-[400px] flex flex-col justify-between">
+              {/* Year Badge */}
+              <div className="mb-6">
+                <div className={`inline-block bg-gradient-to-r ${timeline[currentTimelineIndex].color} text-white px-8 py-3 rounded-full font-bold text-2xl shadow-lg`}>
+                  {timeline[currentTimelineIndex].year}
                 </div>
               </div>
-            ))}
+
+              {/* Icon */}
+              <div className="text-8xl mb-6 text-center">
+                {timeline[currentTimelineIndex].icon}
+              </div>
+
+              {/* Content */}
+              <div className="flex-1">
+                <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+                  {timeline[currentTimelineIndex].title}
+                </h3>
+                <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
+                  {timeline[currentTimelineIndex].description}
+                </p>
+              </div>
+
+              {/* Navigation Arrows */}
+              <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
+                <button
+                  onClick={prevTimeline}
+                  className="flex items-center space-x-2 text-gray-600 hover:text-pink-500 transition-colors group"
+                >
+                  <svg className="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span className="font-semibold">Previous</span>
+                </button>
+
+                <div className="flex space-x-2">
+                  {timeline.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentTimelineIndex(index)}
+                      className={`transition-all duration-300 rounded-full ${
+                        index === currentTimelineIndex 
+                          ? 'w-8 h-3 bg-pink-500' 
+                          : 'w-3 h-3 bg-gray-300 hover:bg-gray-400'
+                      }`}
+                      aria-label={`Go to ${timeline[index].year}`}
+                    />
+                  ))}
+                </div>
+
+                <button
+                  onClick={nextTimeline}
+                  className="flex items-center space-x-2 text-gray-600 hover:text-pink-500 transition-colors group"
+                >
+                  <span className="font-semibold">Next</span>
+                  <svg className="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Keyboard Navigation Hint */}
+            <div className="text-center mt-6 text-gray-400 text-sm">
+              Use arrow keys or click dots to navigate
+            </div>
           </div>
         </div>
       </section>
