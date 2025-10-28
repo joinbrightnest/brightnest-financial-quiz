@@ -219,8 +219,32 @@ export async function GET(
       });
     }
 
-    // Sort all activities by timestamp (newest first for timeline display, but we'll reverse on frontend)
-    activities.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    // Sort all activities by timestamp, with secondary sorting for logical order when timestamps are the same
+    // Priority order for same timestamps: created -> started -> completed
+    const activityTypePriority: { [key: string]: number } = {
+      'quiz_completed': 1,
+      'call_booked': 2,
+      'task_created': 3,
+      'task_started': 4,
+      'note_added': 5,
+      'task_completed': 6,
+      'deal_closed': 7
+    };
+
+    activities.sort((a, b) => {
+      const timeA = new Date(a.timestamp).getTime();
+      const timeB = new Date(b.timestamp).getTime();
+      
+      // If timestamps are the same, use activity type priority
+      if (timeA === timeB) {
+        const priorityA = activityTypePriority[a.type] || 999;
+        const priorityB = activityTypePriority[b.type] || 999;
+        return priorityA - priorityB;
+      }
+      
+      // Otherwise, sort by timestamp
+      return timeA - timeB;
+    });
 
     return NextResponse.json({ activities });
 
