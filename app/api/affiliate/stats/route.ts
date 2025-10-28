@@ -244,32 +244,13 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
   // Use appointments passed from card calculation, or fetch if not provided
   let allAppointments, convertedAppointments;
   
+  // CRITICAL: Use the pre-fetched converted appointments from card calculation
+  // This ensures the graph uses the SAME data as the cards
   if (cardAppointments) {
-    // Use the same appointments data as the card for consistency
-    allAppointments = cardAppointments;
-    convertedAppointments = cardAppointments.filter(apt => apt.outcome === 'converted');
+    convertedAppointments = cardAppointments;
   } else {
-    // Fallback: fetch appointments data for the correct date range
-    // Use createdAt instead of updatedAt to track when the appointment was originally created
-    allAppointments = await prisma.appointment.findMany({
-      where: {
-        affiliateCode: affiliateCode,
-        createdAt: {
-          gte: dateRange === "today" ? today : 
-               dateRange === "yesterday" ? yesterday :
-               dateRange === "week" ? startOfWeek :
-               dateRange === "month" ? startOfMonth :
-               new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000), // all time
-          lte: now,
-        },
-      },
-    }).catch((error) => {
-      console.error('Error fetching appointments:', error);
-      return [];
-    });
-
-    // Filter for converted appointments
-    convertedAppointments = allAppointments.filter(apt => apt.outcome === 'converted');
+    // This shouldn't happen since we always pass cardAppointments, but keep as fallback
+    convertedAppointments = [];
   }
 
   // Use pre-calculated lead data if provided, otherwise fetch it
@@ -298,16 +279,13 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         return convDate >= hourStart && convDate <= hourEnd;
       });
       
-      // Filter appointments for this specific hour
-      const hourAppointments = convertedAppointments.filter(apt => {
-        const aptDate = new Date(apt.createdAt);
-        return aptDate >= hourStart && aptDate <= hourEnd;
-      });
+      // Filter SALE conversions for this specific hour (SOURCE OF TRUTH for commission)
+      // Use AffiliateConversion.createdAt (when deal closed) not Appointment.createdAt (when booked)
+      const hourSales = hourConversions.filter(c => c.conversionType === "sale");
 
-      // Calculate commission from appointments (actual sales)
-      const hourCommission = hourAppointments.reduce((sum, apt) => {
-        const saleValue = Number(apt.saleValue || 0);
-        return sum + (saleValue * Number(affiliate.commissionRate));
+      // Calculate commission from sale conversions (actual commission amount)
+      const hourCommission = hourSales.reduce((sum, sale) => {
+        return sum + Number(sale.commissionAmount || 0);
       }, 0);
       
       // Filter leads data for this specific hour
@@ -380,16 +358,13 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         return convDate >= dayStart && convDate <= dayEnd;
       });
       
-      // Filter appointments for this specific day
-      const dayAppointments = convertedAppointments.filter(apt => {
-        const aptDate = new Date(apt.createdAt);
-        return aptDate >= dayStart && aptDate <= dayEnd;
-      });
+      // Filter SALE conversions for this specific day (SOURCE OF TRUTH for commission)
+      // Use AffiliateConversion.createdAt (when deal closed) not Appointment.createdAt (when booked)
+      const daySales = dayConversions.filter(c => c.conversionType === "sale");
 
-      // Calculate commission from appointments (actual sales)
-      const dayCommission = dayAppointments.reduce((sum, apt) => {
-        const saleValue = Number(apt.saleValue || 0);
-        return sum + (saleValue * Number(affiliate.commissionRate));
+      // Calculate commission from sale conversions (actual commission amount)
+      const dayCommission = daySales.reduce((sum, sale) => {
+        return sum + Number(sale.commissionAmount || 0);
       }, 0);
       
       // Filter leads data for this specific day

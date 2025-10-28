@@ -337,16 +337,13 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         return convDate >= hourStart && convDate <= hourEnd;
       });
       
-      // Filter appointments for this specific hour
-      const hourAppointments = convertedAppointments.filter(apt => {
-        const aptDate = new Date(apt.createdAt);
-        return aptDate >= hourStart && aptDate <= hourEnd;
-      });
+      // Filter SALE conversions for this specific hour (SOURCE OF TRUTH for commission)
+      // Use AffiliateConversion.createdAt (when deal closed) not Appointment.createdAt (when booked)
+      const hourSales = hourConversions.filter(c => c.conversionType === "sale");
 
-      // Calculate commission from appointments (actual sales)
-      const hourCommission = hourAppointments.reduce((sum, apt) => {
-        const saleValue = Number(apt.saleValue || 0);
-        return sum + (saleValue * Number(affiliate.commissionRate));
+      // Calculate commission from sale conversions (actual commission amount)
+      const hourCommission = hourSales.reduce((sum, sale) => {
+        return sum + Number(sale.commissionAmount || 0);
       }, 0);
       
       // Filter leads data for this specific hour
@@ -419,16 +416,13 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         return convDate >= dayStart && convDate <= dayEnd;
       });
       
-      // Filter appointments for this specific day
-      const dayAppointments = convertedAppointments.filter(apt => {
-        const aptDate = new Date(apt.createdAt);
-        return aptDate >= dayStart && aptDate <= dayEnd;
-      });
+      // Filter SALE conversions for this specific day (SOURCE OF TRUTH for commission)
+      // Use AffiliateConversion.createdAt (when deal closed) not Appointment.createdAt (when booked)
+      const daySales = dayConversions.filter(c => c.conversionType === "sale");
 
-      // Calculate commission from appointments (actual sales)
-      const dayCommission = dayAppointments.reduce((sum, apt) => {
-        const saleValue = Number(apt.saleValue || 0);
-        return sum + (saleValue * Number(affiliate.commissionRate));
+      // Calculate commission from sale conversions (actual commission amount)
+      const dayCommission = daySales.reduce((sum, sale) => {
+        return sum + Number(sale.commissionAmount || 0);
       }, 0);
       
       // Filter leads data for this specific day
