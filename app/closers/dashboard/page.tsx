@@ -62,6 +62,7 @@ interface LeadDetails {
   status: string;
   createdAt: string;
   completedAt: string | null;
+  dealClosedAt?: string | null;
   affiliateCode?: string | null;
   source?: string;
 }

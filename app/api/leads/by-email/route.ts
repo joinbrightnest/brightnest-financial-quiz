@@ -104,6 +104,12 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // For deal close date, use appointment updatedAt when outcome is converted
+    // This approximates when the deal was closed (when outcome was set)
+    const dealClosedAt = appointment?.outcome === 'converted' && appointment?.updatedAt 
+      ? appointment.updatedAt.toISOString() 
+      : null;
+
     return NextResponse.json({
       success: true,
       lead: {
@@ -113,6 +119,7 @@ export async function GET(request: NextRequest) {
         status: lead.status,
         createdAt: lead.createdAt,
         completedAt: lead.completedAt,
+        dealClosedAt: dealClosedAt, // When the deal was actually closed
         affiliateCode: lead.affiliateCode,
         source: source
       }
