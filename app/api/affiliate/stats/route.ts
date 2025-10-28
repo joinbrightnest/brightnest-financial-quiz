@@ -276,18 +276,18 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         return convDate >= hourStart && convDate <= hourEnd;
       });
       
-      // Filter converted appointments for this specific hour (SOURCE OF TRUTH for commission)
-      // CRITICAL: Use Appointment.updatedAt (when outcome was set to 'converted' = when deal CLOSED)
-      // NOT Appointment.createdAt (when call was booked) or AffiliateConversion.createdAt (record creation)
-      const hourSales = convertedAppointments.filter(apt => {
-        const closeDate = new Date(apt.updatedAt); // When the deal was actually closed
-        return closeDate >= hourStart && closeDate <= hourEnd;
+      // Filter sale conversions for this specific hour (SOURCE OF TRUTH for commission)
+      // CRITICAL: Use AffiliateConversion.createdAt (when conversion record was created = when deal CLOSED)
+      // NOT Appointment.updatedAt (changes on ANY field update) or Appointment.createdAt (when call was booked)
+      const hourSaleConversions = conversions.filter(c => {
+        const closeDate = new Date(c.createdAt); // When the conversion was recorded
+        return c.conversionType === 'sale' && closeDate >= hourStart && closeDate <= hourEnd;
       });
 
-      // Calculate commission from converted appointments
-      const hourCommission = hourSales.reduce((sum, apt) => {
-        const saleValue = Number(apt.saleValue || 0);
-        return sum + (saleValue * Number(affiliate.commissionRate));
+      // Calculate commission from sale conversion records
+      const hourCommission = hourSaleConversions.reduce((sum, conv) => {
+        const commissionAmount = Number(conv.commissionAmount || 0);
+        return sum + commissionAmount;
       }, 0);
       
       // Filter leads data for this specific hour
@@ -360,18 +360,18 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         return convDate >= dayStart && convDate <= dayEnd;
       });
       
-      // Filter converted appointments for this specific day (SOURCE OF TRUTH for commission)
-      // CRITICAL: Use Appointment.updatedAt (when outcome was set to 'converted' = when deal CLOSED)
-      // NOT Appointment.createdAt (when call was booked) or AffiliateConversion.createdAt (record creation)
-      const daySales = convertedAppointments.filter(apt => {
-        const closeDate = new Date(apt.updatedAt); // When the deal was actually closed
-        return closeDate >= dayStart && closeDate <= dayEnd;
+      // Filter sale conversions for this specific day (SOURCE OF TRUTH for commission)
+      // CRITICAL: Use AffiliateConversion.createdAt (when conversion record was created = when deal CLOSED)
+      // NOT Appointment.updatedAt (changes on ANY field update) or Appointment.createdAt (when call was booked)
+      const daySaleConversions = conversions.filter(c => {
+        const closeDate = new Date(c.createdAt); // When the conversion was recorded
+        return c.conversionType === 'sale' && closeDate >= dayStart && closeDate <= dayEnd;
       });
 
-      // Calculate commission from converted appointments
-      const dayCommission = daySales.reduce((sum, apt) => {
-        const saleValue = Number(apt.saleValue || 0);
-        return sum + (saleValue * Number(affiliate.commissionRate));
+      // Calculate commission from sale conversion records
+      const dayCommission = daySaleConversions.reduce((sum, conv) => {
+        const commissionAmount = Number(conv.commissionAmount || 0);
+        return sum + commissionAmount;
       }, 0);
       
       // Filter leads data for this specific day
