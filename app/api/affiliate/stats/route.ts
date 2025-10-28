@@ -182,24 +182,21 @@ export async function GET(request: NextRequest) {
       leadsData
     );
     
-    // Calculate date-filtered commission from daily stats (for graph)
-    const dateFilteredCommission = dailyStats.reduce((sum, day) => sum + day.commission, 0);
-    
-    // For the main dashboard card, use the stored total commission (all-time) - SAME as admin API
-    // This ensures commission shows immediately when deals are closed
-    const totalCommission = Number(affiliate.totalCommission || 0);
+    // Calculate date-filtered commission from daily stats
+    // This commission respects the selected date range (24h, 7d, 30d, etc.)
+    const totalCommission = dailyStats.reduce((sum, day) => sum + day.commission, 0);
 
     const stats = {
       totalClicks,
       totalLeads,
       totalBookings,
       totalSales,
-      totalCommission, // Use stored all-time commission (SAME as admin API)
+      totalCommission, // Use date-filtered commission (respects time period)
       conversionRate,
       averageSaleValue: totalSales > 0 ? totalCommission / totalSales : 0,
       pendingCommission,
       paidCommission,
-      dailyStats, // Graph uses date-filtered commission from here
+      dailyStats,
     };
 
     return NextResponse.json(stats, {

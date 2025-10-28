@@ -132,21 +132,12 @@ export async function GET(request: NextRequest) {
     // Get all converted appointments (same as dateFiltered since we removed date filtering)
     const allConvertedAppointments = dateFilteredAppointments;
     
-    const appointmentBasedCommission = dateFilteredAppointments.reduce((sum, apt) => {
-      const saleValue = Number(apt.saleValue || 0);
-      return sum + (saleValue * Number(affiliate.commissionRate));
-    }, 0);
-    
-    // For the main dashboard card, use the stored total commission (all-time)
-    // This ensures commission shows immediately when deals are closed
-    const totalCommission = Number(affiliate.totalCommission || 0);
-    
-    // Keep the date-filtered commission for the graph
-    const dateFilteredCommission = appointmentBasedCommission;
-    
     // Generate daily stats from real data using centralized lead calculation
     // Pass the same appointment data and lead data to ensure consistency between card and graph
     const dailyStats = await generateDailyStatsFromRealData(clicks, conversions, dateRange, affiliateCode, dateFilteredAppointments, leadData);
+    
+    // Calculate commission from daily stats - this respects the selected date range
+    const totalCommission = dailyStats.reduce((sum, day) => sum + day.commission, 0);
     
     const totalQuizStarts = quizSessions.length; // Use actual quiz sessions count
     const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
