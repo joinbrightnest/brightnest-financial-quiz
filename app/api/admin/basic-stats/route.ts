@@ -446,6 +446,9 @@ export async function GET(request: NextRequest) {
           outcome: appointment?.outcome || null,
           saleValue: appointment?.saleValue ? appointment.saleValue.toString() : null,
           id: appointment?.id || null,
+          createdAt: appointment?.createdAt ? appointment.createdAt.toISOString() : null,
+          scheduledAt: appointment?.scheduledAt ? appointment.scheduledAt.toISOString() : null,
+          updatedAt: appointment?.updatedAt ? appointment.updatedAt.toISOString() : null,
           closer: appointment?.closer ? { 
             id: appointment.closer.id, 
             name: appointment.closer.name 
