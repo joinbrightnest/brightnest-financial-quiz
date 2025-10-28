@@ -278,35 +278,57 @@ export default function AboutPage() {
           </div>
 
           {/* Timeline Progress Bar */}
-          <div className="max-w-4xl mx-auto mb-12">
-            <div className="relative">
-              {/* Progress line */}
-              <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-700 -translate-y-1/2"></div>
+          <div className="max-w-6xl mx-auto mb-16">
+            <div className="relative pt-1">
+              {/* Background line */}
+              <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/10"></div>
+              
+              {/* Active progress line */}
               <div 
-                className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-pink-500 to-teal-500 -translate-y-1/2 transition-all duration-500"
+                className="absolute top-0 left-0 h-0.5 bg-gradient-to-r from-pink-500 via-purple-500 to-teal-500 transition-all duration-700 ease-out"
                 style={{ width: `${((currentTimelineIndex + 1) / timeline.length) * 100}%` }}
               ></div>
               
-              {/* Timeline dots */}
-              <div className="relative flex justify-between">
+              {/* Timeline markers */}
+              <div className="relative flex justify-between items-start -mt-3">
                 {timeline.map((item, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentTimelineIndex(index)}
-                    className="group flex flex-col items-center"
+                    className="group flex flex-col items-center gap-3 transition-all duration-300 hover:scale-105"
                   >
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center border-4 transition-all duration-300 ${
-                      index <= currentTimelineIndex 
-                        ? 'bg-gradient-to-br from-pink-500 to-teal-500 border-white scale-110' 
-                        : 'bg-gray-700 border-gray-600 hover:border-gray-500'
-                    }`}>
-                      <span className="text-2xl">{index <= currentTimelineIndex ? '✓' : item.icon}</span>
+                    {/* Marker dot */}
+                    <div className="relative">
+                      <div className={`w-6 h-6 rounded-full transition-all duration-300 ${
+                        index === currentTimelineIndex 
+                          ? 'bg-gradient-to-br from-pink-500 to-teal-500 shadow-lg shadow-pink-500/50 scale-125' 
+                          : index < currentTimelineIndex
+                          ? 'bg-gradient-to-br from-pink-500/70 to-teal-500/70'
+                          : 'bg-gray-700 group-hover:bg-gray-600'
+                      }`}>
+                        {index === currentTimelineIndex && (
+                          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-pink-500 to-teal-500 animate-ping opacity-75"></div>
+                        )}
+                      </div>
                     </div>
-                    <span className={`mt-3 text-xs sm:text-sm font-bold transition-colors ${
-                      index === currentTimelineIndex ? 'text-pink-400' : 'text-gray-500'
-                    }`}>
-                      {item.year}
-                    </span>
+                    
+                    {/* Year label */}
+                    <div className="flex flex-col items-center">
+                      <span className={`text-base font-bold tracking-wide transition-all duration-300 ${
+                        index === currentTimelineIndex 
+                          ? 'text-pink-400 scale-110' 
+                          : index < currentTimelineIndex
+                          ? 'text-gray-400'
+                          : 'text-gray-500 group-hover:text-gray-400'
+                      }`}>
+                        {item.year}
+                      </span>
+                      
+                      {/* Active indicator line */}
+                      {index === currentTimelineIndex && (
+                        <div className="w-12 h-0.5 bg-gradient-to-r from-pink-500 to-teal-500 mt-2 rounded-full"></div>
+                      )}
+                    </div>
                   </button>
                 ))}
               </div>
