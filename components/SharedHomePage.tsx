@@ -44,15 +44,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
             </div>
             
             {/* Right Side Items */}
-            <div className="hidden lg:flex items-center space-x-6">
-              {/* Language Selector */}
-              <div className="flex items-center space-x-1 text-gray-900 font-medium text-sm uppercase tracking-wide">
-                <span>EN</span>
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </div>
-              
+            <div className="hidden lg:flex items-center">
               {/* CTA Button */}
               <Link href={getLink("/quiz/financial-profile")} className="bg-[#1ABC9C] text-white px-4 py-2 rounded-md font-medium text-sm hover:bg-[#16a085] transition-colors">
                 Learn More
