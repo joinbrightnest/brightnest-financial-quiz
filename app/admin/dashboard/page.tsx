@@ -2665,6 +2665,8 @@ export default function AdminDashboard() {
                                       activity.type === 'deal_closed' ? 'bg-green-100' :
                                       activity.type === 'note_added' ? 'bg-amber-100' :
                                       activity.type === 'task_created' ? 'bg-indigo-100' :
+                                      activity.type === 'task_started' ? 'bg-blue-100' :
+                                      activity.type === 'task_completed' ? 'bg-green-100' :
                                       'bg-gray-100'
                                     }`}>
                                       {activity.type === 'quiz_completed' && (
@@ -2692,6 +2694,17 @@ export default function AdminDashboard() {
                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                         </svg>
                                       )}
+                                      {activity.type === 'task_started' && (
+                                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                      )}
+                                      {activity.type === 'task_completed' && (
+                                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                      )}
                                     </div>
 
                                     {/* Content */}
@@ -2711,6 +2724,12 @@ export default function AdminDashboard() {
                                         )}
                                         {activity.type === 'task_created' && (
                                           <span><span className="text-indigo-600">{activity.actor}</span> created a task</span>
+                                        )}
+                                        {activity.type === 'task_started' && (
+                                          <span><span className="text-blue-600">{activity.actor}</span> started the task</span>
+                                        )}
+                                        {activity.type === 'task_completed' && (
+                                          <span><span className="text-green-600">{activity.actor}</span> finished the task</span>
                                         )}
                                       </p>
                                       <p className="text-xs text-slate-500 mt-1">
@@ -2790,6 +2809,12 @@ export default function AdminDashboard() {
                                               {activity.details?.status}
                                             </span>
                                           </div>
+                                        </div>
+                                      )}
+
+                                      {(activity.type === 'task_started' || activity.type === 'task_completed') && activity.details?.title && (
+                                        <div className="mt-2">
+                                          <p className="text-sm font-medium text-slate-700">"{activity.details.title}"</p>
                                         </div>
                                       )}
                                     </div>
@@ -3221,8 +3246,8 @@ export default function AdminDashboard() {
                                           </div>
                                         </div>
                                       </div>
-                                  ))}
-                                </div>
+                                    ))}
+                                  </div>
                               </>
                             )}
                           </div>

@@ -53,7 +53,7 @@ export async function GET(
 
     const activities: Array<{
       id: string;
-      type: 'quiz_completed' | 'call_booked' | 'deal_closed' | 'note_added' | 'task_created';
+      type: 'quiz_completed' | 'call_booked' | 'deal_closed' | 'note_added' | 'task_created' | 'task_started' | 'task_completed';
       timestamp: string;
       leadName: string;
       actor?: string; // Who performed the action
@@ -171,8 +171,9 @@ export async function GET(
       });
 
       tasks.forEach(task => {
+        // 1. Task created
         activities.push({
-          id: `task_${task.id}`,
+          id: `task_created_${task.id}`,
           type: 'task_created',
           timestamp: task.createdAt.toISOString(),
           leadName,
@@ -182,10 +183,39 @@ export async function GET(
             description: task.description,
             priority: task.priority,
             status: task.status,
-            dueDate: task.dueDate?.toISOString() || null,
-            completedAt: task.completedAt?.toISOString() || null
+            dueDate: task.dueDate?.toISOString() || null
           }
         });
+
+        // 2. Task started (if status is in_progress or completed)
+        if (task.status === 'in_progress' || task.status === 'completed') {
+          // Use updatedAt as approximate start time (when status changed from pending)
+          const startTime = task.updatedAt.toISOString();
+          activities.push({
+            id: `task_started_${task.id}`,
+            type: 'task_started',
+            timestamp: startTime,
+            leadName,
+            actor: task.closer?.name || 'Unknown',
+            details: {
+              title: task.title
+            }
+          });
+        }
+
+        // 3. Task completed (if completedAt exists)
+        if (task.completedAt) {
+          activities.push({
+            id: `task_completed_${task.id}`,
+            type: 'task_completed',
+            timestamp: task.completedAt.toISOString(),
+            leadName,
+            actor: task.closer?.name || 'Unknown',
+            details: {
+              title: task.title
+            }
+          });
+        }
       });
     }
 
