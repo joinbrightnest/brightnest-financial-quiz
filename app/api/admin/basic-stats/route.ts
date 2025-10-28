@@ -337,11 +337,19 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Get all appointments for these emails
+    // Get all appointments for these emails (with closer info)
     const emails = Object.values(leadEmails);
     const appointments = await prisma.appointment.findMany({
       where: { 
         customerEmail: { in: emails }
+      },
+      include: {
+        closer: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
       }
     });
 
@@ -423,11 +431,16 @@ export async function GET(request: NextRequest) {
         source,
         saleValue: appointment?.saleValue ? appointment.saleValue.toString() : null, // Include sale value from appointment
         dealClosedAt, // When the deal was actually closed (for converted deals)
+        closerName: appointment?.closer?.name || null, // Include closer name for Deal Owner column
         appointment: {
           outcome: appointment?.outcome || null,
           saleValue: appointment?.saleValue ? appointment.saleValue.toString() : null,
-          id: appointment?.id || null
-        } // Include only necessary appointment data
+          id: appointment?.id || null,
+          closer: appointment?.closer ? { 
+            id: appointment.closer.id, 
+            name: appointment.closer.name 
+          } : null
+        } // Include necessary appointment data including closer
       };
     });
 

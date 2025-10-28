@@ -2157,7 +2157,7 @@ export default function AdminDashboard() {
                             )}
                             {crmVisibleColumns.owner && (
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-700 cursor-pointer">
-                              Stefan
+                              {lead.closerName || lead.appointment?.closer?.name || 'Unassigned'}
                             </td>
                             )}
                             {crmVisibleColumns.amount && (
@@ -2340,7 +2340,9 @@ export default function AdminDashboard() {
                           </div>
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Owner</label>
-                            <p className="mt-1 text-sm font-semibold text-slate-900">Stefan</p>
+                            <p className="mt-1 text-sm font-semibold text-slate-900">
+                              {crmSelectedLead.closerName || crmSelectedLead.appointment?.closer?.name || 'Unassigned'}
+                            </p>
                           </div>
                           <div>
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Lead Added</label>
