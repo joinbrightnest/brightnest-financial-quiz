@@ -490,17 +490,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Sync affiliate filter when switching sections
-  useEffect(() => {
-    if (activeSection === 'crm' && crmFilters.affiliateCode !== quizAnalyticsFilters.affiliateCode) {
-      // When switching to CRM, sync the affiliate filter from Quiz Analytics
-      setCrmFilters(prev => ({ ...prev, affiliateCode: quizAnalyticsFilters.affiliateCode }));
-    } else if (activeSection === 'quiz-analytics' && quizAnalyticsFilters.affiliateCode !== crmFilters.affiliateCode) {
-      // When switching back to Quiz Analytics, sync from CRM if it was changed there
-      setQuizAnalyticsFilters(prev => ({ ...prev, affiliateCode: crmFilters.affiliateCode }));
-    }
-  }, [activeSection]);
-
   // Trigger data fetch when filters change (only when on the respective section)
   useEffect(() => {
     // Only fetch if we're switching to a section that needs data, or if filters changed
