@@ -190,54 +190,54 @@ export default function CareersPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative bg-[#faf8f0] py-20 sm:py-28 lg:py-36 overflow-hidden">
+      <section className="relative bg-[#faf8f0] py-12 sm:py-20 lg:py-28 overflow-hidden">
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black mb-6 sm:mb-8 leading-tight tracking-tight text-gray-900">
-            <span className="block">Join Our Team.</span>
-            <span className="block text-[#FF6B6B]">Empower Women.</span>
+          <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black mb-4 sm:mb-6 leading-tight text-gray-900">
+            <span className="block mb-1">Join Our Team.</span>
+            <span className="block text-[#FF6B6B] mb-1">Empower Women.</span>
             <span className="block">Transform Lives.</span>
           </h1>
           
-          <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto mb-8 sm:mb-10 leading-relaxed">
+          <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed px-2">
             At BrightNest, we're on a mission to inspire and empower women to achieve their financial, wealth, and life goals. Join a passionate, driven team that's changing lives every day—one transformation at a time.
           </p>
 
-          <p className="text-lg sm:text-xl font-semibold mb-8 sm:mb-10 text-gray-700">Ready to make an impact?</p>
+          <p className="text-base sm:text-lg font-semibold mb-6 sm:mb-8 text-gray-700">Ready to make an impact?</p>
 
           <button
             onClick={handleSeePositions}
-            className="inline-block bg-[#FF6B6B] text-white px-10 sm:px-14 py-4 sm:py-5 rounded-lg font-bold text-base sm:text-lg uppercase hover:bg-[#FF5252] transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl"
+            className="inline-block bg-[#FF6B6B] text-white px-8 sm:px-12 py-3 sm:py-4 rounded-lg font-bold text-sm sm:text-base uppercase hover:bg-[#FF5252] transition-all shadow-lg active:scale-95 w-full sm:w-auto max-w-xs sm:max-w-none"
           >
             Apply Now
           </button>
 
           {/* Team Member Avatars */}
-          <div className="flex justify-center items-center mt-16 sm:mt-20">
-            <p className="text-sm text-[#FF6B6B] uppercase tracking-wide mb-6 font-bold">Are You Ready?</p>
-          </div>
-          <div className="flex justify-center items-center space-x-[-12px] sm:space-x-[-16px]">
-            {testimonials.slice(0, 4).map((testimonial, idx) => (
-              <div
-                key={idx}
-                className={`w-14 h-14 sm:w-18 sm:h-18 lg:w-20 lg:h-20 rounded-full bg-gradient-to-br ${testimonial.color} flex items-center justify-center text-white font-bold text-sm sm:text-base border-4 border-white shadow-lg hover:scale-110 transition-transform cursor-pointer z-${10 + idx}`}
-                style={{ zIndex: 10 + idx }}
-              >
-                {testimonial.initials}
-              </div>
-            ))}
+          <div className="mt-10 sm:mt-16">
+            <p className="text-xs sm:text-sm text-[#FF6B6B] uppercase tracking-wide mb-4 sm:mb-6 font-bold">Are You Ready?</p>
+            <div className="flex justify-center items-center space-x-[-8px] sm:space-x-[-12px]">
+              {testimonials.slice(0, 4).map((testimonial, idx) => (
+                <div
+                  key={idx}
+                  className={`w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-full bg-gradient-to-br ${testimonial.color} flex items-center justify-center text-white font-bold text-xs sm:text-sm lg:text-base border-3 sm:border-4 border-white shadow-lg z-${10 + idx}`}
+                  style={{ zIndex: 10 + idx }}
+                >
+                  {testimonial.initials}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Your Next Big Career Shift */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0]">
+      <section className="py-10 sm:py-16 lg:py-20 bg-[#faf8f0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
-            <p className="text-sm sm:text-base text-[#FF6B6B] uppercase tracking-wide mb-3 font-bold">Are you Ready?</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+          <div className="text-center mb-8 sm:mb-12">
+            <p className="text-xs sm:text-sm text-[#FF6B6B] uppercase tracking-wide mb-2 font-bold">Are you Ready?</p>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 px-2">
               Your Next Big Career Shift
             </h2>
-            <p className="mt-4 text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="mt-3 text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-4">
               Join BrightNest, where <span className="text-[#FF6B6B] font-bold">passionate innovators</span> transform women's financial lives. We foster a <span className="text-[#FF6B6B] font-bold">supportive, inclusive environment,</span> pushing boundaries and empowering women worldwide.
             </p>
           </div>
@@ -245,31 +245,31 @@ export default function CareersPage() {
           {/* Testimonials Carousel */}
           <div className="relative max-w-5xl mx-auto">
             {/* Main Testimonial Display */}
-            <div className="bg-white rounded-2xl p-8 sm:p-12 border-2 border-gray-100 shadow-xl min-h-[320px] sm:min-h-[280px] flex flex-col justify-between">
-              <div className="flex items-start space-x-4 mb-6">
-                <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br ${testimonials[currentTestimonial].color} flex items-center justify-center text-white font-bold text-xl sm:text-2xl flex-shrink-0 shadow-lg`}>
+            <div className="bg-white rounded-xl sm:rounded-2xl p-5 sm:p-8 lg:p-12 border border-gray-200 shadow-lg min-h-[280px] sm:min-h-[260px] flex flex-col justify-between">
+              <div className="flex items-start space-x-3 sm:space-x-4 mb-4 sm:mb-6">
+                <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br ${testimonials[currentTestimonial].color} flex items-center justify-center text-white font-bold text-base sm:text-xl flex-shrink-0 shadow-md`}>
                   {testimonials[currentTestimonial].initials}
                 </div>
-                <div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900">{testimonials[currentTestimonial].name}</h3>
-                  <p className="text-sm sm:text-base text-[#FF6B6B] font-bold">{testimonials[currentTestimonial].title}</p>
+                <div className="min-w-0">
+                  <h3 className="text-base sm:text-xl font-bold text-gray-900 truncate">{testimonials[currentTestimonial].name}</h3>
+                  <p className="text-xs sm:text-sm text-[#FF6B6B] font-bold">{testimonials[currentTestimonial].title}</p>
                 </div>
               </div>
               
-              <p className="text-base sm:text-lg text-gray-700 leading-relaxed italic mb-8">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed italic mb-6 sm:mb-8">
                 "{testimonials[currentTestimonial].quote}"
               </p>
 
               {/* Navigation Dots */}
-              <div className="flex justify-center items-center space-x-3">
+              <div className="flex justify-center items-center space-x-2 sm:space-x-3">
                 {testimonials.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentTestimonial(index)}
                     className={`transition-all duration-300 rounded-full ${
                       index === currentTestimonial 
-                        ? 'w-8 h-3 bg-[#FF6B6B]' 
-                        : 'w-3 h-3 bg-gray-300 hover:bg-gray-400'
+                        ? 'w-6 sm:w-8 h-2 sm:h-3 bg-[#FF6B6B]' 
+                        : 'w-2 sm:w-3 h-2 sm:h-3 bg-gray-300 hover:bg-gray-400'
                     }`}
                     aria-label={`View testimonial ${index + 1}`}
                   />
@@ -277,10 +277,10 @@ export default function CareersPage() {
               </div>
             </div>
 
-            {/* Arrow Navigation */}
+            {/* Arrow Navigation - Hidden on mobile */}
             <button
               onClick={() => setCurrentTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 sm:-translate-x-6 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
+              className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 w-12 h-12 bg-white rounded-full shadow-lg items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
               aria-label="Previous testimonial"
             >
               <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -289,7 +289,7 @@ export default function CareersPage() {
             </button>
             <button
               onClick={() => setCurrentTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 sm:translate-x-6 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
+              className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 w-12 h-12 bg-white rounded-full shadow-lg items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
               aria-label="Next testimonial"
             >
               <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -328,21 +328,21 @@ export default function CareersPage() {
       </section>
 
       {/* Core Values */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0]">
+      <section className="py-10 sm:py-16 lg:py-20 bg-[#faf8f0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
-            <p className="text-sm sm:text-base text-[#FF6B6B] uppercase tracking-wide mb-3 font-bold">The Values That Guide Us</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
+          <div className="text-center mb-8 sm:mb-12">
+            <p className="text-xs sm:text-sm text-[#FF6B6B] uppercase tracking-wide mb-2 font-bold">The Values That Guide Us</p>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 px-2">
               BrightNest Core Values
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {coreValues.map((value, index) => (
-              <div key={index} className="group bg-white rounded-2xl p-6 sm:p-8 text-center border-2 border-gray-100 hover:border-[#FF6B6B] hover:shadow-2xl transition-all transform hover:-translate-y-1">
-                <div className="text-5xl sm:text-6xl mb-5 group-hover:scale-110 transition-transform">{value.icon}</div>
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 group-hover:text-[#FF6B6B] transition-colors">{value.title}</h3>
-                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{value.description}</p>
+              <div key={index} className="group bg-white rounded-xl p-5 sm:p-6 text-center border border-gray-200 hover:border-[#FF6B6B] hover:shadow-lg transition-all active:scale-95 sm:hover:-translate-y-1 sm:active:scale-100">
+                <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">{value.icon}</div>
+                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 group-hover:text-[#FF6B6B] transition-colors">{value.title}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{value.description}</p>
               </div>
             ))}
           </div>
@@ -350,20 +350,20 @@ export default function CareersPage() {
       </section>
 
       {/* Perks Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0]">
+      <section className="py-10 sm:py-16 lg:py-20 bg-[#faf8f0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
-            <p className="text-sm sm:text-base text-[#FF6B6B] uppercase tracking-wide mb-3 font-bold">Just A Few Perks of Working With BrightNest</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
+          <div className="text-center mb-8 sm:mb-12">
+            <p className="text-xs sm:text-sm text-[#FF6B6B] uppercase tracking-wide mb-2 font-bold px-2">Just A Few Perks of Working With BrightNest</p>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 px-2">
               Your BrightNest Journey Starts Here
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {perks.map((perk, index) => (
-              <div key={index} className="group bg-white rounded-2xl p-6 sm:p-8 border-2 border-gray-100 hover:border-[#FF6B6B] hover:shadow-xl transition-all">
-                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 group-hover:text-[#FF6B6B] transition-colors">{perk.title}</h3>
-                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{perk.description}</p>
+              <div key={index} className="group bg-white rounded-xl p-5 sm:p-6 border border-gray-200 hover:border-[#FF6B6B] hover:shadow-lg transition-all active:scale-95">
+                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3 group-hover:text-[#FF6B6B] transition-colors">{perk.title}</h3>
+                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{perk.description}</p>
               </div>
             ))}
           </div>
@@ -371,10 +371,10 @@ export default function CareersPage() {
       </section>
 
       {/* What It's Like To Work With Us */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0]">
+      <section className="py-10 sm:py-16 lg:py-20 bg-[#faf8f0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 rounded-3xl p-8 sm:p-12 lg:p-16 shadow-2xl">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-14 shadow-xl">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
               {/* Left Side - Image */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] bg-gradient-to-br from-[#FF6B6B] via-[#FF8E8E] to-[#FFAAAA]">
                 {/* Decorative Pattern */}
@@ -415,28 +415,28 @@ export default function CareersPage() {
                     })}
                   </div>
                   
-                  <h3 className="text-2xl font-bold text-white text-center">Join Our Team</h3>
-                  <p className="text-white/90 text-center mt-2">Empowering Women Together</p>
+                  <h3 className="text-xl sm:text-2xl font-bold text-white text-center">Join Our Team</h3>
+                  <p className="text-white/90 text-center mt-1 sm:mt-2 text-sm sm:text-base">Empowering Women Together</p>
                 </div>
               </div>
 
               {/* Right Side - Content */}
-              <div>
-                <p className="text-[#FF6B6B] italic text-base sm:text-lg mb-3">What It's Like To</p>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-6 sm:mb-8 uppercase italic leading-tight">
+              <div className="order-first lg:order-last">
+                <p className="text-[#FF6B6B] italic text-sm sm:text-base mb-2 sm:mb-3">What It's Like To</p>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-5 sm:mb-6 uppercase italic leading-tight">
                   work with us
                 </h2>
 
                 {/* Benefits List */}
-                <div className="space-y-4 mb-8">
+                <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                   {benefits.map((benefit, index) => (
-                    <div key={index} className="flex items-start space-x-3 group">
-                      <div className="flex-shrink-0">
-                        <svg className="w-6 h-6 text-[#FF6B6B]" fill="currentColor" viewBox="0 0 20 20">
+                    <div key={index} className="flex items-start space-x-2 sm:space-x-3 group">
+                      <div className="flex-shrink-0 mt-0.5">
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#FF6B6B]" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                         </svg>
                       </div>
-                      <p className="text-sm sm:text-base text-white font-light italic">{benefit}</p>
+                      <p className="text-xs sm:text-sm text-white font-light italic">{benefit}</p>
                     </div>
                   ))}
                 </div>
@@ -444,7 +444,7 @@ export default function CareersPage() {
                 {/* Button */}
                 <button
                   onClick={handleSeePositions}
-                  className="w-full sm:w-auto bg-[#FF6B6B] text-white px-10 sm:px-12 py-3 sm:py-4 rounded-lg font-bold text-base sm:text-lg uppercase italic hover:bg-[#FF5252] transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  className="w-full sm:w-auto bg-[#FF6B6B] text-white px-8 sm:px-10 py-3 rounded-lg font-bold text-sm sm:text-base uppercase italic hover:bg-[#FF5252] transition-all active:scale-95 shadow-lg"
                 >
                   See Positions
                 </button>
@@ -458,50 +458,50 @@ export default function CareersPage() {
       {showPositions && (
         <section 
           id="positions" 
-          className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0] animate-fade-in"
+          className="py-10 sm:py-16 lg:py-20 bg-[#faf8f0] animate-fade-in"
           style={{ opacity: 0, animation: 'fadeIn 0.6s ease-out forwards' }}
         >
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-white rounded-3xl p-8 sm:p-12 lg:p-16 border-2 border-gray-100 shadow-xl text-center">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-12 border border-gray-200 shadow-lg text-center">
               {/* Icon */}
-              <div className="mb-8">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-full bg-gray-100 flex items-center justify-center">
-                  <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="mb-6 sm:mb-8">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gray-100 flex items-center justify-center">
+                  <svg className="w-8 h-8 sm:w-10 sm:h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
               </div>
 
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 sm:mb-5 px-2">
                 No Open Positions at This Time
               </h2>
               
-              <p className="text-base sm:text-lg text-gray-600 mb-6 max-w-2xl mx-auto leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-5 max-w-2xl mx-auto leading-relaxed px-2">
                 We're not currently hiring, but we're always interested in connecting with <span className="text-[#FF6B6B] font-bold">talented individuals</span> who are passionate about <span className="text-[#FF6B6B] font-bold">empowering women</span> and making a real difference.
               </p>
 
-              <p className="text-base sm:text-lg text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-                If you'd like to be considered for future opportunities, please send your resume and a brief introduction to <a href="mailto:careers@joinbrightnest.com" className="text-[#FF6B6B] hover:text-[#FF5252] font-bold underline">careers@joinbrightnest.com</a>. We'll keep your information on file and reach out when a position that matches your skills becomes available.
+              <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-2">
+                If you'd like to be considered for future opportunities, please send your resume and a brief introduction to <a href="mailto:careers@joinbrightnest.com" className="text-[#FF6B6B] hover:text-[#FF5252] font-bold underline break-all">careers@joinbrightnest.com</a>. We'll keep your information on file and reach out when a position that matches your skills becomes available.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center px-2">
                 <a
                   href="mailto:careers@joinbrightnest.com"
-                  className="inline-block bg-[#FF6B6B] text-white px-8 sm:px-12 py-3 sm:py-4 rounded-lg font-bold text-base sm:text-lg hover:bg-[#FF5252] transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  className="w-full sm:w-auto bg-[#FF6B6B] text-white px-6 sm:px-10 py-3 rounded-lg font-bold text-sm sm:text-base hover:bg-[#FF5252] transition-all active:scale-95 shadow-lg text-center"
                 >
                   Send Resume
                 </a>
                 <Link
                   href="/"
-                  className="inline-block bg-[#faf8f0] text-gray-700 px-8 sm:px-12 py-3 sm:py-4 rounded-lg font-bold text-base sm:text-lg border-2 border-gray-300 hover:border-gray-400 transition-all"
+                  className="w-full sm:w-auto bg-[#faf8f0] text-gray-700 px-6 sm:px-10 py-3 rounded-lg font-bold text-sm sm:text-base border-2 border-gray-300 hover:border-gray-400 transition-all active:scale-95 text-center"
                 >
                   Back to Home
                 </Link>
               </div>
 
               {/* Additional Message */}
-              <div className="mt-12 pt-8 border-t border-gray-200">
-                <p className="text-sm text-gray-500 italic">
+              <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-gray-200">
+                <p className="text-xs sm:text-sm text-gray-500 italic px-2">
                   Thank you for your interest in BrightNest. We're building something special, and we'd love to have you be part of it when the time is right.
                 </p>
               </div>
