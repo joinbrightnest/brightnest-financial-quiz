@@ -50,7 +50,18 @@ export async function GET(
         where: {
           customerEmail: email.toLowerCase()
         },
-        include: {
+        select: {
+          id: true,
+          customerName: true,
+          customerEmail: true,
+          scheduledAt: true,
+          outcome: true,  // EXPLICITLY select outcome
+          notes: true,
+          saleValue: true,
+          status: true,
+          closerId: true,
+          createdAt: true,
+          updatedAt: true,
           closer: {
             select: {
               id: true,
