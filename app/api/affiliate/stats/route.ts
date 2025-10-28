@@ -180,21 +180,25 @@ export async function GET(request: NextRequest) {
     const totalBookings = affiliateWithData.conversions.filter(c => c.conversionType === "booking").length;
     
     // Count sales from Appointment records with outcome='converted' (SAME as admin API)
+    // Fetch ALL converted appointments (no date filter) - matches admin API pattern
     // This is the single source of truth
-    const convertedAppointments = await prisma.appointment.findMany({
+    const allConvertedAppointments = await prisma.appointment.findMany({
       where: {
         affiliateCode: affiliate.referralCode,
         outcome: 'converted',
-        createdAt: endDate ? {
-          gte: startDate,
-          lte: endDate,
-        } : {
-          gte: startDate,
-        },
       },
     }).catch(() => []);
     
-    const totalSales = convertedAppointments.length;
+    // Filter by date range for the current view (clicks are already date-filtered)
+    const dateFilteredSales = allConvertedAppointments.filter(apt => {
+      const aptDate = new Date(apt.createdAt);
+      if (endDate) {
+        return aptDate >= startDate && aptDate <= endDate;
+      }
+      return aptDate >= startDate;
+    });
+    
+    const totalSales = dateFilteredSales.length;
     const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
 
     // Calculate pending and paid commissions from filtered payouts
@@ -209,20 +213,24 @@ export async function GET(request: NextRequest) {
     // Generate daily stats based on actual data
     const dailyStats = await generateDailyStatsWithRealData(affiliate.referralCode, dateRange);
     
-    // Calculate date-filtered commission from daily stats
-    const calculatedTotalCommission = dailyStats.reduce((sum, day) => sum + day.commission, 0);
+    // Calculate date-filtered commission from daily stats (for graph)
+    const dateFilteredCommission = dailyStats.reduce((sum, day) => sum + day.commission, 0);
+    
+    // For the main dashboard card, use the stored total commission (all-time) - SAME as admin API
+    // This ensures commission shows immediately when deals are closed
+    const totalCommission = Number(affiliate.totalCommission || 0);
 
     const stats = {
       totalClicks,
       totalLeads,
       totalBookings,
       totalSales,
-      totalCommission: calculatedTotalCommission, // Use date-filtered commission
+      totalCommission, // Use stored all-time commission (SAME as admin API)
       conversionRate,
-      averageSaleValue: totalSales > 0 ? calculatedTotalCommission / totalSales : 0,
+      averageSaleValue: totalSales > 0 ? totalCommission / totalSales : 0,
       pendingCommission,
       paidCommission,
-      dailyStats,
+      dailyStats, // Graph uses date-filtered commission from here
     };
 
     return NextResponse.json(stats, {
@@ -302,7 +310,8 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
   // Use the endDate which is calculated based on the date range
   const rangeEnd = endDate;
   
-  // IMPORTANT: Use the SAME data source as admin API - Appointments with outcome='converted'
+  // IMPORTANT: Fetch ALL appointments (no date filter) - SAME as admin API
+  // The date filtering happens later in the function for each data point
   // This is the single source of truth for commission calculations
   const [allClicks, allConversions, allConvertedAppointments] = await Promise.all([
     prisma.affiliateClick.findMany({
@@ -323,15 +332,11 @@ async function generateDailyStatsWithRealData(affiliateCode: string, dateRange: 
         },
       },
     }),
-    // Fetch converted appointments (SAME as admin API) - this is the source of truth
+    // Fetch ALL converted appointments (no date filter) - SAME as admin API approach
     prisma.appointment.findMany({
       where: {
         affiliateCode: affiliateCode,
         outcome: 'converted', // Only converted appointments generate commission
-        createdAt: {
-          gte: startDate,
-          lte: rangeEnd,
-        },
       },
     }).catch((error) => {
       console.error('Error fetching converted appointments:', error);
