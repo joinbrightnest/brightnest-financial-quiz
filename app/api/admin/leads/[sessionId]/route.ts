@@ -91,21 +91,40 @@ export async function GET(
       });
       
       // Get the affiliate conversion record to get the actual close date
+      // Match by quiz session ID first (most accurate), fall back to matching by affiliate + time
       if (appointment && appointment.outcome === 'converted' && quizSession.affiliateCode) {
         const affiliateRecord = await prisma.affiliate.findUnique({
           where: { referralCode: quizSession.affiliateCode }
         });
         
         if (affiliateRecord) {
+          // Try to find conversion record linked to this specific quiz session
           affiliateConversion = await prisma.affiliateConversion.findFirst({
             where: {
               affiliateId: affiliateRecord.id,
-              conversionType: 'sale'
+              conversionType: 'sale',
+              // Some conversions might have quizSessionId, use it if available
+              OR: [
+                { quizSessionId: quizSession.id },
+                // Fall back to matching by time window (within 1 day of appointment update)
+                {
+                  createdAt: {
+                    gte: new Date(new Date(appointment.updatedAt).getTime() - 60 * 60 * 1000), // 1 hour before
+                    lte: new Date(new Date(appointment.updatedAt).getTime() + 60 * 60 * 1000), // 1 hour after
+                  }
+                }
+              ]
             },
             orderBy: {
               createdAt: 'desc'
             }
           });
+          
+          console.log('🔍 Deal close date lookup for', quizSession.id);
+          console.log('   Quiz completed:', quizSession.completedAt);
+          console.log('   Appointment updated:', appointment?.updatedAt);
+          console.log('   Conversion found:', affiliateConversion ? 'YES' : 'NO');
+          console.log('   Conversion created:', affiliateConversion?.createdAt);
         }
       }
     }

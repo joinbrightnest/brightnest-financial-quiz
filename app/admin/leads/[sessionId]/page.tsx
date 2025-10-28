@@ -350,9 +350,15 @@ export default function LeadDetailsPage() {
                     <p className="text-lg font-semibold text-slate-900">{leadData.affiliate?.name || 'Admin'}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-slate-600 mb-2">Close Date</p>
+                    <p className="text-sm text-slate-600 mb-2">Lead Added</p>
                     <p className="text-lg font-semibold text-slate-900">
                       {leadData.completedAt ? new Date(leadData.completedAt).toLocaleDateString('en-GB') : '--'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-slate-600 mb-2">Deal Closed</p>
+                    <p className="text-lg font-semibold text-slate-900">
+                      {leadData.dealClosedAt ? new Date(leadData.dealClosedAt).toLocaleDateString('en-GB') : '--'}
                     </p>
                   </div>
                   <div>
