@@ -109,7 +109,7 @@ export default function AdminDashboard() {
   // Quiz Analytics Filters
   const [quizAnalyticsFilters, setQuizAnalyticsFilters] = useState({
     quizType: 'all',
-    duration: 'all'
+    duration: '7d'
   });
   
   // CRM Filters
@@ -1440,7 +1440,6 @@ export default function AdminDashboard() {
                         onChange={(e) => setQuizAnalyticsFilters(prev => ({ ...prev, duration: e.target.value }))}
                         className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       >
-                        <option value="all">All Time</option>
                         <option value="24h">Last 24 hours</option>
                         <option value="7d">Last 7 days</option>
                         <option value="30d">Last 30 days</option>
