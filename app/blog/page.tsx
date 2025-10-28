@@ -5,6 +5,7 @@ import { useState } from "react";
 
 export default function BlogPage() {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Sample blog posts data
   const featuredPosts = [
@@ -62,64 +63,142 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      {/* Navigation - Same as main page */}
+      <nav className="bg-[#F8F7F0] border-b border-gray-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-center items-center py-6">
-            <Link href="/" className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-gray-900">
+          <div className="flex justify-between items-center h-16 sm:h-20">
+            {/* Logo - Left Side */}
+            <div className="flex items-center">
+              <Link href="/" className="text-xl sm:text-2xl font-bold text-gray-900">
                 BrightNest
-              </h1>
-            </Link>
+              </Link>
+            </div>
+            
+            {/* Desktop Menu Items - Spread across the bar */}
+            <div className="hidden lg:flex items-center flex-1 justify-center space-x-8">
+              <Link href="/about" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
+                ABOUT US
+              </Link>
+              <Link href="/blog" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
+                BLOG
+              </Link>
+              <Link href="/careers" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
+                CAREERS
+              </Link>
+            </div>
+            
+            {/* Right Side Items */}
+            <div className="hidden lg:flex items-center">
+              {/* CTA Button */}
+              <Link href="/quiz/financial-profile" className="bg-[#1ABC9C] text-white px-4 py-2 rounded-md font-medium text-sm hover:bg-[#16a085] transition-colors">
+                Learn More
+              </Link>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="lg:hidden">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-gray-900 hover:text-gray-700 focus:outline-none focus:text-gray-700"
+                aria-label="Toggle mobile menu"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {isMobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
           </div>
+
+          {/* Mobile Menu - Dropdown */}
+          {isMobileMenuOpen && (
+            <div className="lg:hidden bg-[#F8F7F0] border-t border-gray-300">
+              <div className="px-4 py-4 space-y-4">
+                <Link 
+                  href="/about" 
+                  className="block text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  About Us
+                </Link>
+                <Link 
+                  href="/blog" 
+                  className="block text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Blog
+                </Link>
+                <Link 
+                  href="/careers" 
+                  className="block text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Careers
+                </Link>
+                
+                {/* Mobile CTA Button */}
+                <div className="pt-4 border-t border-gray-300">
+                  <Link 
+                    href="/quiz/financial-profile" 
+                    className="block w-full bg-[#1ABC9C] text-white px-4 py-3 rounded-md font-medium text-sm text-center hover:bg-[#16a085] transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Learn More
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
+      </nav>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         
-        {/* Featured Post Hero */}
-        <div className="mb-16">
-          <div className="relative h-96 rounded-2xl overflow-hidden bg-gradient-to-r from-blue-600 to-teal-500">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-white px-6">
-                <div className="inline-block bg-pink-500 text-white px-4 py-2 rounded-full text-sm font-bold mb-4">
+        {/* Featured Post Section - Left: Main Post, Right: Featured Posts List */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+          {/* Main Featured Post - Left (2/3 width) */}
+          <div className="lg:col-span-2">
+            <div className="relative h-96 rounded-2xl overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300"></div>
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+                <div className="inline-block bg-pink-500 text-white px-4 py-2 rounded-full text-xs font-bold mb-3">
                   FEATURED POST
                 </div>
-                <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                <h2 className="text-3xl font-bold text-white mb-3">
                   Why Your Budget Keeps Failing (And How to Fix It)
                 </h2>
-                <p className="text-lg mb-6 max-w-2xl mx-auto">
+                <p className="text-white/90 text-sm mb-4">
                   Budgets aren't about restriction — they're about freedom. Discover the 3 behavior shifts that make budgeting actually work.
                 </p>
-                <div className="flex items-center justify-center space-x-4 text-sm">
+                <div className="flex items-center space-x-4 text-sm text-white">
                   <span className="bg-white/20 px-3 py-1 rounded-full">HABITS</span>
                   <span>4 min read</span>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Featured Posts Section */}
-        <div className="mb-16">
-          <div className="flex items-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">FEATURED POSTS</h2>
-            <div className="ml-4 h-1 bg-pink-500 flex-grow max-w-xs"></div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredPosts.map((post) => (
-              <div key={post.id} className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-                <div className="h-48 bg-gradient-to-br from-gray-200 to-gray-300"></div>
-                <div className="p-6">
-                  <div className="text-xs font-bold text-pink-500 mb-2">{post.category}</div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{post.title}</h3>
-                  <p className="text-sm text-gray-600 mb-4">{post.description}</p>
-                  <div className="text-xs text-gray-500">{post.readTime}</div>
+          {/* Featured Posts List - Right (1/3 width) */}
+          <div className="lg:col-span-1">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">FEATURED POSTS</h2>
+              <div className="h-1 bg-pink-500 w-24"></div>
+            </div>
+            
+            <div className="space-y-6">
+              {featuredPosts.slice(0, 6).map((post) => (
+                <div key={post.id} className="border-b border-gray-200 pb-4 last:border-0">
+                  <h3 className="text-base font-bold text-gray-900 mb-1 hover:text-pink-500 cursor-pointer transition-colors">
+                    {post.title}
+                  </h3>
+                  <p className="text-xs text-gray-500">{post.readTime}</p>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
