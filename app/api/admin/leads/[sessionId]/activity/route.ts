@@ -36,17 +36,17 @@ export async function GET(
       );
     }
 
-    // Get email from quiz answers
+    // Get email from quiz answers (same logic as main lead route)
     const emailAnswer = quizSession.answers.find(a => 
       a.question?.prompt?.toLowerCase().includes('email')
     );
 
-    // Get appointment by matching email - try multiple methods
-    const email = emailAnswer?.value;
+    // Get appointment by matching email - MUST match main lead route logic exactly
+    const email = emailAnswer?.value || emailAnswer?.answer || emailAnswer?.answerValue;
     let appointment = null;
     
     if (email && typeof email === 'string') {
-      // Try lowercase first
+      // Use exact same query as main lead route
       appointment = await prisma.appointment.findFirst({
         where: {
           customerEmail: email.toLowerCase()
@@ -63,34 +63,6 @@ export async function GET(
           createdAt: 'desc'
         }
       });
-
-      // If not found, try case-insensitive search
-      if (!appointment) {
-        const allAppointments = await prisma.appointment.findMany({
-          where: {
-            customerEmail: {
-              contains: email.split('@')[0],
-              mode: 'insensitive'
-            }
-          },
-          include: {
-            closer: {
-              select: {
-                id: true,
-                name: true
-              }
-            }
-          },
-          orderBy: {
-            createdAt: 'desc'
-          }
-        });
-        
-        // Find exact match (case insensitive)
-        appointment = allAppointments.find(a => 
-          a.customerEmail.toLowerCase() === email.toLowerCase()
-        ) || null;
-      }
     }
 
     console.log('🔍 Appointment lookup:', {
