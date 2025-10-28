@@ -371,7 +371,7 @@ export default function CareersPage() {
       {/* What It's Like To Work With Us */}
       <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-3xl p-8 sm:p-12 lg:p-16 shadow-2xl">
+          <div className="bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 rounded-3xl p-8 sm:p-12 lg:p-16 shadow-2xl">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               {/* Left Side - Image */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
@@ -395,21 +395,21 @@ export default function CareersPage() {
 
               {/* Right Side - Content */}
               <div>
-                <p className="text-[#FF6B6B] italic text-lg sm:text-xl mb-4">What It's Like To</p>
-                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-8 sm:mb-12 uppercase italic leading-tight">
+                <p className="text-[#FF6B6B] italic text-base sm:text-lg mb-3">What It's Like To</p>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-6 sm:mb-8 uppercase italic leading-tight">
                   work with us
                 </h2>
 
                 {/* Benefits List */}
-                <div className="space-y-6 mb-10">
+                <div className="space-y-4 mb-8">
                   {benefits.map((benefit, index) => (
-                    <div key={index} className="flex items-start space-x-4 group">
+                    <div key={index} className="flex items-start space-x-3 group">
                       <div className="flex-shrink-0">
-                        <svg className="w-8 h-8 text-[#FF6B6B]" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-6 h-6 text-[#FF6B6B]" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                         </svg>
                       </div>
-                      <p className="text-base sm:text-lg text-white font-light italic">{benefit}</p>
+                      <p className="text-sm sm:text-base text-white font-light italic">{benefit}</p>
                     </div>
                   ))}
                 </div>
@@ -417,7 +417,7 @@ export default function CareersPage() {
                 {/* Button */}
                 <button
                   onClick={handleSeePositions}
-                  className="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-pink-600 text-white px-12 sm:px-16 py-4 sm:py-5 rounded-lg font-black text-lg sm:text-xl uppercase italic hover:from-pink-600 hover:to-pink-700 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl"
+                  className="w-full sm:w-auto bg-[#FF6B6B] text-white px-10 sm:px-12 py-3 sm:py-4 rounded-lg font-bold text-base sm:text-lg uppercase italic hover:bg-[#FF5252] transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
                   See Positions
                 </button>
