@@ -8,32 +8,12 @@ export default function PrivacyPage() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+          <div className="flex justify-center items-center py-6">
             <Link href="/" className="flex-shrink-0">
               <h1 className="text-2xl font-bold text-gray-900">
                 BrightNest
               </h1>
             </Link>
-            <nav className="hidden md:flex space-x-8">
-              <Link
-                href="/quiz"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium"
-              >
-                Take Quiz
-              </Link>
-              <Link
-                href="/affiliates/login"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium"
-              >
-                Affiliates
-              </Link>
-              <Link
-                href="/book-call"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium"
-              >
-                Book Call
-              </Link>
-            </nav>
           </div>
         </div>
       </div>
