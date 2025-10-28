@@ -103,31 +103,31 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900">
       {/* Navigation */}
-      <nav className="bg-[#F8F7F0] border-b border-gray-300">
+      <nav className="bg-gray-900/50 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 sm:h-20">
             <div className="flex items-center">
-              <Link href="/" className="text-xl sm:text-2xl font-bold text-gray-900">
+              <Link href="/" className="text-xl sm:text-2xl font-bold text-white">
                 BrightNest
               </Link>
             </div>
             
             <div className="hidden lg:flex items-center flex-1 justify-center space-x-8">
-              <Link href="/about" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
+              <Link href="/about" className="text-white font-medium text-sm uppercase tracking-wide hover:text-pink-400 transition-colors">
                 ABOUT US
               </Link>
-              <Link href="/blog" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
+              <Link href="/blog" className="text-white font-medium text-sm uppercase tracking-wide hover:text-pink-400 transition-colors">
                 BLOG
               </Link>
-              <Link href="/careers" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
+              <Link href="/careers" className="text-white font-medium text-sm uppercase tracking-wide hover:text-pink-400 transition-colors">
                 CAREERS
               </Link>
             </div>
             
             <div className="hidden lg:flex items-center">
-              <Link href="/quiz/financial-profile" className="bg-[#1ABC9C] text-white px-4 py-2 rounded-md font-medium text-sm hover:bg-[#16a085] transition-colors">
+              <Link href="/quiz/financial-profile" className="bg-gradient-to-r from-pink-500 to-teal-500 text-white px-4 py-2 rounded-md font-medium text-sm hover:from-pink-600 hover:to-teal-600 transition-colors">
                 Learn More
               </Link>
             </div>
@@ -135,7 +135,7 @@ export default function AboutPage() {
             <div className="lg:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-gray-900 hover:text-gray-700 focus:outline-none"
+                className="text-white hover:text-pink-400 focus:outline-none"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {isMobileMenuOpen ? (
@@ -149,13 +149,13 @@ export default function AboutPage() {
           </div>
 
           {isMobileMenuOpen && (
-            <div className="lg:hidden bg-[#F8F7F0] border-t border-gray-300">
+            <div className="lg:hidden bg-gray-900/95 backdrop-blur-md border-t border-white/10">
               <div className="px-4 py-4 space-y-4">
-                <Link href="/about" className="block text-gray-900 font-medium text-sm uppercase" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
-                <Link href="/blog" className="block text-gray-900 font-medium text-sm uppercase" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
-                <Link href="/careers" className="block text-gray-900 font-medium text-sm uppercase" onClick={() => setIsMobileMenuOpen(false)}>Careers</Link>
-                <div className="pt-4 border-t border-gray-300">
-                  <Link href="/quiz/financial-profile" className="block w-full bg-[#1ABC9C] text-white px-4 py-3 rounded-md font-medium text-sm text-center" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/about" className="block text-white font-medium text-sm uppercase" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
+                <Link href="/blog" className="block text-white font-medium text-sm uppercase" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
+                <Link href="/careers" className="block text-white font-medium text-sm uppercase" onClick={() => setIsMobileMenuOpen(false)}>Careers</Link>
+                <div className="pt-4 border-t border-white/10">
+                  <Link href="/quiz/financial-profile" className="block w-full bg-gradient-to-r from-pink-500 to-teal-500 text-white px-4 py-3 rounded-md font-medium text-sm text-center" onClick={() => setIsMobileMenuOpen(false)}>
                     Learn More
                   </Link>
                 </div>
@@ -166,27 +166,27 @@ export default function AboutPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-[#faf8f0] to-white">
+      <section className="py-16 sm:py-20 lg:py-24 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
               About BrightNest
             </h1>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-16">
-            <div>
-              <p className="text-base sm:text-lg text-gray-700 leading-relaxed mb-6">
+            <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
+              <p className="text-base sm:text-lg text-gray-300 leading-relaxed mb-6">
                 BrightNest is a results-driven company empowering women through personalized financial coaching, education, and community support. With online programs, world-class advisors, and a supportive network, we help women take control of their finances and achieve life-changing transformations.
               </p>
-              <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
+              <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
                 Founded by a team of passionate financial experts, BrightNest has grown into a movement trusted by thousands of women worldwide. We are on a mission to help women regain their financial power and feel confident in their financial future.
               </p>
             </div>
-            <div className="relative h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-blue-100 to-teal-100 rounded-2xl flex items-center justify-center">
+            <div className="relative h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-blue-500/20 to-teal-500/20 rounded-2xl flex items-center justify-center border border-white/10 backdrop-blur-sm">
               <div className="text-center">
                 <div className="text-6xl mb-4">💰</div>
-                <p className="text-gray-600 font-medium">Your Financial Journey</p>
+                <p className="text-gray-300 font-medium">Your Financial Journey</p>
               </div>
             </div>
           </div>
@@ -206,21 +206,21 @@ export default function AboutPage() {
       </section>
 
       {/* Mission Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-white">
+      <section className="py-16 sm:py-20 lg:py-24 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <div className="order-2 lg:order-1 relative h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center">
+            <div className="order-2 lg:order-1 relative h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl flex items-center justify-center border border-white/10 backdrop-blur-sm">
               <div className="text-center">
                 <div className="text-6xl mb-4">🎯</div>
-                <p className="text-gray-600 font-medium">Our Mission</p>
+                <p className="text-gray-300 font-medium">Our Mission</p>
               </div>
             </div>
-            <div className="order-1 lg:order-2">
-              <p className="text-base sm:text-lg text-gray-600 mb-6 leading-relaxed">
+            <div className="order-1 lg:order-2 bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
+              <p className="text-base sm:text-lg text-gray-400 mb-6 leading-relaxed">
                 Since we started in 2020, our mission has been to transform lives.
               </p>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
-                Our goal is to <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-teal-500">empower women</span> to build wealth, confidence, and a financial future they love at any stage of life.
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
+                Our goal is to <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-teal-400">empower women</span> to build wealth, confidence, and a financial future they love at any stage of life.
               </h2>
             </div>
           </div>
@@ -228,14 +228,14 @@ export default function AboutPage() {
       </section>
 
       {/* Our Vision */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-[#faf8f0] to-white">
+      <section className="py-16 sm:py-20 lg:py-24 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-sm sm:text-base text-pink-500 uppercase tracking-wide mb-4 font-semibold">Our Vision</h2>
-            <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 max-w-4xl mx-auto leading-tight">
+            <h2 className="text-sm sm:text-base text-pink-400 uppercase tracking-wide mb-4 font-semibold">Our Vision</h2>
+            <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white max-w-4xl mx-auto leading-tight">
               to become the ultimate solution for women seeking financial strength, confidence, and lasting transformation.
             </p>
-            <p className="mt-6 text-base sm:text-lg text-gray-600 max-w-3xl mx-auto">
+            <p className="mt-6 text-base sm:text-lg text-gray-300 max-w-3xl mx-auto">
               Imagine everything you need — financial planning, coaching, education, and support — under one roof, tailored just for you.
             </p>
           </div>
@@ -243,16 +243,16 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mt-16">
             <div className="grid grid-cols-2 gap-6">
               {visionFeatures.map((feature, index) => (
-                <div key={index} className="bg-white rounded-2xl p-6 border-2 border-gray-100 hover:border-pink-300 hover:shadow-lg transition-all text-center">
+                <div key={index} className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-pink-400/50 hover:shadow-lg transition-all text-center">
                   <div className="text-3xl mb-3">✓</div>
-                  <h3 className="text-base sm:text-lg font-bold text-gray-900">{feature}</h3>
+                  <h3 className="text-base sm:text-lg font-bold text-white">{feature}</h3>
                 </div>
               ))}
             </div>
-            <div className="relative h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-green-100 to-teal-100 rounded-2xl flex items-center justify-center">
+            <div className="relative h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-green-500/20 to-teal-500/20 rounded-2xl flex items-center justify-center border border-white/10 backdrop-blur-sm">
               <div className="text-center">
                 <div className="text-6xl mb-4">📈</div>
-                <p className="text-gray-600 font-medium">Growth & Success</p>
+                <p className="text-gray-300 font-medium">Growth & Success</p>
               </div>
             </div>
           </div>
@@ -386,11 +386,11 @@ export default function AboutPage() {
       </section>
 
       {/* Leadership Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-[#faf8f0] to-white">
+      <section className="py-16 sm:py-20 lg:py-24 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-sm sm:text-base text-pink-500 uppercase tracking-wide mb-4 font-semibold">Our Leadership</h2>
-            <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
+            <h2 className="text-sm sm:text-base text-pink-400 uppercase tracking-wide mb-4 font-semibold">Our Leadership</h2>
+            <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
               meet the team
             </p>
           </div>
@@ -401,8 +401,8 @@ export default function AboutPage() {
                 <div className={`w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${member.color} flex items-center justify-center text-white font-bold text-3xl sm:text-4xl shadow-lg group-hover:scale-105 transition-transform`}>
                   {member.initials}
                 </div>
-                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-1">{member.name}</h3>
-                <p className="text-sm text-pink-500 font-medium">{member.title}</p>
+                <h3 className="text-base sm:text-lg font-bold text-white mb-1">{member.name}</h3>
+                <p className="text-sm text-pink-400 font-medium">{member.title}</p>
               </div>
             ))}
           </div>
