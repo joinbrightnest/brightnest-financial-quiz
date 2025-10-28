@@ -97,6 +97,19 @@ export default function CloserManagement() {
         console.log('📊 Appointments data:', data);
         console.log('📊 Appointments array:', data.appointments);
         console.log('📊 Appointments count:', data.appointments?.length || 0);
+        
+        // Debug: Check unassigned appointments
+        const allUnassigned = data.appointments?.filter(a => !a.closer) || [];
+        const actualAppointments = allUnassigned.filter(a => a.type !== 'quiz_session');
+        console.log('🔍 All unassigned (including quiz):', allUnassigned.length);
+        console.log('🔍 Actual unassigned appointments:', actualAppointments.length);
+        console.log('🔍 Actual appointments:', actualAppointments.map(a => ({ 
+          name: a.customerName, 
+          type: a.type, 
+          status: a.status,
+          closer: a.closer 
+        })));
+        
         setAppointments(data.appointments || []);
       } else {
         console.error('❌ Failed to load appointments:', response.status);
@@ -397,7 +410,7 @@ export default function CloserManagement() {
                 : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
             }`}
           >
-            Unassigned ({appointments.filter(a => !a.closer).length})
+            Unassigned ({appointments.filter(a => !a.closer && a.type !== 'quiz_session').length})
           </button>
           <button
             onClick={() => setActiveTab('performance')}
