@@ -411,11 +411,18 @@ export async function GET(request: NextRequest) {
         console.log(`ℹ️ Lead ${lead.id} (${email}): no affiliateCode in quiz session or appointment, defaulting to Website`);
       }
       
+      // For deal close date, use appointment updatedAt when outcome is converted
+      // This approximates when the deal was closed (when outcome was set)
+      const dealClosedAt = appointment?.outcome === 'converted' && appointment?.updatedAt 
+        ? appointment.updatedAt.toISOString() 
+        : null;
+      
       return {
         ...lead,
         status,
         source,
         saleValue: appointment?.saleValue ? appointment.saleValue.toString() : null, // Include sale value from appointment
+        dealClosedAt, // When the deal was actually closed (for converted deals)
         appointment: {
           outcome: appointment?.outcome || null,
           saleValue: appointment?.saleValue ? appointment.saleValue.toString() : null,

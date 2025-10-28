@@ -2343,9 +2343,15 @@ export default function AdminDashboard() {
                             <p className="mt-1 text-sm font-semibold text-slate-900">Stefan</p>
                           </div>
                           <div>
-                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Close Date</label>
+                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Lead Added</label>
                             <p className="mt-1 text-sm font-semibold text-slate-900">
                               {crmSelectedLead.completedAt ? new Date(crmSelectedLead.completedAt).toLocaleDateString('en-GB') : 'N/A'}
+                            </p>
+                          </div>
+                          <div>
+                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Closed</label>
+                            <p className="mt-1 text-sm font-semibold text-slate-900">
+                              {crmSelectedLead.dealClosedAt ? new Date(crmSelectedLead.dealClosedAt).toLocaleDateString('en-GB') : '--'}
                             </p>
                           </div>
                           <div>
@@ -2918,7 +2924,7 @@ export default function AdminDashboard() {
                         />
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-700">Close Date</span>
+                        <span className="text-sm font-medium text-gray-700">Lead Added</span>
                         <input 
                           type="checkbox" 
                           checked={crmVisibleColumns.date}
