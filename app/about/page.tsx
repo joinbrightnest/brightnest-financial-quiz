@@ -173,41 +173,41 @@ export default function AboutPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0]">
+      <section className="py-10 sm:py-16 lg:py-20 bg-[#faf8f0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
+          <div className="text-center mb-8 sm:mb-10">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-5 px-2">
               About BrightNest
             </h1>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-16">
-            <div className="bg-gray-50 rounded-3xl p-8 border border-gray-200">
-              <p className="text-base sm:text-lg text-gray-700 leading-relaxed mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center mb-10 sm:mb-14">
+            <div className="bg-white rounded-2xl p-5 sm:p-6 lg:p-8 border border-gray-200 shadow-sm">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-4 sm:mb-5">
                 BrightNest is a results-driven company empowering women through personalized financial coaching, education, and community support. With online programs, world-class advisors, and a supportive network, we help women take control of their finances and achieve life-changing transformations.
               </p>
-              <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
+              <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                 Founded by a team of passionate financial experts, BrightNest has grown into a movement trusted by thousands of women worldwide. We are on a mission to help women regain their financial power and feel confident in their financial future.
               </p>
             </div>
-            <div className="relative h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-blue-50 to-teal-50 rounded-2xl flex items-center justify-center border border-gray-200 overflow-hidden group">
+            <div className="relative h-56 sm:h-72 lg:h-80 bg-gradient-to-br from-blue-50 to-teal-50 rounded-2xl flex items-center justify-center border border-gray-200 overflow-hidden">
               <div className="relative text-center z-10">
-                <svg className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
-                <p className="text-gray-600 font-medium text-sm uppercase tracking-wider">Your Financial Journey</p>
+                <p className="text-gray-600 font-medium text-xs sm:text-sm uppercase tracking-wider px-4">Your Financial Journey</p>
               </div>
             </div>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#FF6B6B] mb-2">
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#FF6B6B] mb-1 sm:mb-2">
                   {stat.number}
                 </div>
-                <p className="text-base sm:text-lg text-gray-700 font-bold">{stat.label}</p>
+                <p className="text-sm sm:text-base text-gray-700 font-bold">{stat.label}</p>
               </div>
             ))}
           </div>
