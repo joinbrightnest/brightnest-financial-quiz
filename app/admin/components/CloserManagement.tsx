@@ -19,6 +19,7 @@ interface Closer {
 
 interface Appointment {
   id: string;
+  type?: string; // 'appointment' or 'quiz_session'
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -577,7 +578,7 @@ export default function CloserManagement() {
             <p className="mt-1 max-w-2xl text-sm text-gray-500">Assign appointments to available closers</p>
           </div>
           <div className="border-t border-gray-200">
-            {appointments.filter(a => !a.closer).length === 0 ? (
+            {appointments.filter(a => !a.closer && a.type !== 'quiz_session').length === 0 ? (
               <div className="text-center py-12">
                 <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -602,7 +603,7 @@ export default function CloserManagement() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {appointments.filter(a => !a.closer).map((appointment) => (
+                    {appointments.filter(a => !a.closer && a.type !== 'quiz_session').map((appointment) => (
                       <tr key={appointment.id}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
