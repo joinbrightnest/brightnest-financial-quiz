@@ -2723,7 +2723,7 @@ export default function AdminDashboard() {
                                           <span><span className="text-blue-600">{activity.leadName}</span> booked a call</span>
                                         )}
                                         {activity.type === 'outcome_updated' && (
-                                          <span><span className="text-green-600">{activity.actor}</span> updated outcome to <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
+                                          <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
                                         )}
                                         {activity.type === 'deal_closed' && (
                                           <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as closed</span>
