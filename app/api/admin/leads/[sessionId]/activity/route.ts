@@ -25,16 +25,6 @@ export async function GET(
           include: {
             question: true
           }
-        },
-        appointment: {
-          include: {
-            closer: {
-              select: {
-                id: true,
-                name: true
-              }
-            }
-          }
         }
       }
     });
@@ -46,14 +36,48 @@ export async function GET(
       );
     }
 
+    // Get email from quiz answers
+    const emailAnswer = quizSession.answers.find(a => 
+      a.question?.prompt?.toLowerCase().includes('email')
+    );
+
+    // Get appointment by matching email (same as main leads route)
+    const email = emailAnswer?.value;
+    let appointment = null;
+    
+    if (email && typeof email === 'string') {
+      appointment = await prisma.appointment.findFirst({
+        where: {
+          customerEmail: email.toLowerCase()
+        },
+        include: {
+          closer: {
+            select: {
+              id: true,
+              name: true
+            }
+          }
+        }
+      });
+    }
+
+    console.log('🔍 Appointment lookup:', {
+      sessionId,
+      email,
+      appointmentFound: !!appointment,
+      appointmentId: appointment?.id,
+      outcome: appointment?.outcome,
+      closerId: appointment?.closerId
+    });
+
     // Get affiliate conversion for deal closure info
     let affiliateConversion = null;
-    if (quizSession.affiliateCode) {
+    if (quizSession.affiliateCode && appointment?.outcome === 'converted') {
       const affiliate = await prisma.affiliate.findUnique({
         where: { referralCode: quizSession.affiliateCode }
       });
       
-      if (affiliate && quizSession.appointment?.outcome === 'converted') {
+      if (affiliate) {
         affiliateConversion = await prisma.affiliateConversion.findFirst({
           where: {
             affiliateId: affiliate.id,
@@ -62,8 +86,8 @@ export async function GET(
               { quizSessionId: quizSession.id },
               {
                 createdAt: {
-                  gte: new Date(new Date(quizSession.appointment.updatedAt).getTime() - 60 * 60 * 1000),
-                  lte: new Date(new Date(quizSession.appointment.updatedAt).getTime() + 60 * 60 * 1000),
+                  gte: new Date(new Date(appointment.updatedAt).getTime() - 60 * 60 * 1000),
+                  lte: new Date(new Date(appointment.updatedAt).getTime() + 60 * 60 * 1000),
                 }
               }
             ]
@@ -76,9 +100,6 @@ export async function GET(
     }
 
     // Get notes for this lead
-    const emailAnswer = quizSession.answers.find(a => 
-      a.question?.prompt?.toLowerCase().includes('email')
-    );
     
     const notes = emailAnswer ? await prisma.note.findMany({
       where: {
@@ -108,10 +129,10 @@ export async function GET(
 
     // Get audit logs for appointment outcome changes
     // Fetch all outcome update logs for this closer and filter by appointmentId
-    const allAuditLogs = quizSession.appointment ? await prisma.closerAuditLog.findMany({
+    const allAuditLogs = appointment ? await prisma.closerAuditLog.findMany({
       where: {
         action: 'appointment_outcome_updated',
-        closerId: quizSession.appointment.closerId || undefined
+        closerId: appointment.closerId || undefined
       },
       include: {
         closer: {
@@ -128,13 +149,13 @@ export async function GET(
     // Filter by appointmentId in JavaScript since JSON querying can be database-specific
     const auditLogs = allAuditLogs.filter(log => {
       const details = log.details as any;
-      return details?.appointmentId === quizSession.appointment?.id;
+      return details?.appointmentId === appointment?.id;
     });
 
     console.log('📊 Activity Log Debug:', {
       sessionId,
-      appointmentId: quizSession.appointment?.id,
-      closerId: quizSession.appointment?.closerId,
+      appointmentId: appointment?.id,
+      closerId: appointment?.closerId,
       totalAuditLogs: allAuditLogs.length,
       filteredAuditLogs: auditLogs.length,
       auditLogSample: allAuditLogs.slice(0, 2).map(log => ({
@@ -172,25 +193,25 @@ export async function GET(
     }
 
     // 2. Call Booked
-    if (quizSession.appointment) {
+    if (appointment) {
       const nameAnswer = quizSession.answers.find(a => 
         a.question?.prompt?.toLowerCase().includes('name')
       );
       
       activities.push({
-        id: `appointment-${quizSession.appointment.id}`,
+        id: `appointment-${appointment.id}`,
         type: 'call_booked',
-        timestamp: quizSession.appointment.createdAt.toISOString(),
-        leadName: nameAnswer?.value || quizSession.appointment.customerName,
+        timestamp: appointment.createdAt.toISOString(),
+        leadName: nameAnswer?.value || appointment.customerName,
         details: {
-          scheduledAt: quizSession.appointment.scheduledAt,
-          closerName: quizSession.appointment.closer?.name
+          scheduledAt: appointment.scheduledAt,
+          closerName: appointment.closer?.name
         }
       });
     }
 
     // 3. Deal Closed
-    if (affiliateConversion && quizSession.appointment) {
+    if (affiliateConversion && appointment) {
       const nameAnswer = quizSession.answers.find(a => 
         a.question?.prompt?.toLowerCase().includes('name')
       );
@@ -199,10 +220,10 @@ export async function GET(
         id: `deal-${affiliateConversion.id}`,
         type: 'deal_closed',
         timestamp: affiliateConversion.createdAt.toISOString(),
-        actor: quizSession.appointment.closer?.name || 'Unknown Closer',
-        leadName: nameAnswer?.value || quizSession.appointment.customerName,
+        actor: appointment.closer?.name || 'Unknown Closer',
+        leadName: nameAnswer?.value || appointment.customerName,
         details: {
-          amount: quizSession.appointment.saleValue,
+          amount: appointment.saleValue,
           commission: affiliateConversion.commissionAmount
         }
       });
@@ -250,22 +271,39 @@ export async function GET(
 
     // 5b. Current outcome (if exists but not in audit logs - for historical data)
     // This handles cases where outcome was set before audit logging was implemented
-    if (quizSession.appointment?.outcome && auditLogs.length === 0) {
+    // OR if audit logs aren't being captured properly
+    if (appointment?.outcome) {
       const nameAnswer = quizSession.answers.find(a => 
         a.question?.prompt?.toLowerCase().includes('name')
       );
       
-      activities.push({
-        id: `outcome-current-${quizSession.appointment.id}`,
-        type: 'outcome_updated',
-        timestamp: quizSession.appointment.updatedAt.toISOString(),
-        actor: quizSession.appointment.closer?.name || 'Unknown',
-        leadName: nameAnswer?.value || 'Lead',
-        details: {
-          outcome: quizSession.appointment.outcome,
-          saleValue: quizSession.appointment.saleValue,
-          notes: quizSession.appointment.notes
-        }
+      // Only add if we don't already have audit logs for this outcome
+      const hasAuditLog = auditLogs.length > 0;
+      
+      if (!hasAuditLog) {
+        console.log('⚠️ No audit logs found, using appointment data directly:', {
+          appointmentId: appointment.id,
+          outcome: appointment.outcome,
+          updatedAt: appointment.updatedAt
+        });
+        
+        activities.push({
+          id: `outcome-current-${appointment.id}`,
+          type: 'outcome_updated',
+          timestamp: appointment.updatedAt.toISOString(),
+          actor: appointment.closer?.name || 'Unknown',
+          leadName: nameAnswer?.value || 'Lead',
+          details: {
+            outcome: appointment.outcome,
+            saleValue: appointment.saleValue,
+            notes: appointment.notes
+          }
+        });
+      }
+    } else {
+      console.log('⚠️ No outcome on appointment:', {
+        appointmentId: appointment?.id,
+        status: appointment?.status
       });
     }
 
