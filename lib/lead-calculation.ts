@@ -31,23 +31,27 @@ export async function calculateLeads(params: {
     let filterStartDate = new Date();
 
     switch (dateRange) {
+      case '24h':  // Handle '24h' parameter from frontend
       case '1d':
-        filterStartDate.setHours(now.getHours() - 24);
+        filterStartDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
         break;
       case '7d':
-        filterStartDate.setDate(now.getDate() - 7);
+        filterStartDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         break;
       case '30d':
-        filterStartDate.setDate(now.getDate() - 30);
+        filterStartDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         break;
       case '90d':
-        filterStartDate.setDate(now.getDate() - 90);
+        filterStartDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
         break;
       case '1y':
-        filterStartDate.setFullYear(now.getFullYear() - 1);
+        filterStartDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+        break;
+      case 'all':
+        filterStartDate = new Date(0); // All time
         break;
       default:
-        filterStartDate.setDate(now.getDate() - 30);
+        filterStartDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     }
     return { gte: filterStartDate };
   };

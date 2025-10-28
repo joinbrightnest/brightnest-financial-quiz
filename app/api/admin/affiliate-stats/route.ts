@@ -72,25 +72,37 @@ export async function GET(request: NextRequest) {
         startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // Default to 30 days
     }
 
+    // Set upper bound for date filtering (current time)
+    const endDate = new Date();
+    
     const [clicks, conversions, quizSessions] = await Promise.all([
       prisma.affiliateClick.findMany({
         where: { 
           affiliateId: affiliate.id,
-          createdAt: { gte: startDate }
+          createdAt: { 
+            gte: startDate,
+            lte: endDate
+          }
         },
         orderBy: { createdAt: "desc" }
       }),
       prisma.affiliateConversion.findMany({
         where: { 
           affiliateId: affiliate.id,
-          createdAt: { gte: startDate }
+          createdAt: { 
+            gte: startDate,
+            lte: endDate
+          }
         },
         orderBy: { createdAt: "desc" }
       }),
       prisma.quizSession.findMany({
         where: { 
           affiliateCode: affiliateCode,
-          createdAt: { gte: startDate }
+          createdAt: { 
+            gte: startDate,
+            lte: endDate
+          }
         },
         orderBy: { createdAt: "desc" }
       })
