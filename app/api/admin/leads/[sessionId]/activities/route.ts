@@ -53,7 +53,7 @@ export async function GET(
 
     const activities: Array<{
       id: string;
-      type: 'quiz_completed' | 'call_booked' | 'deal_closed' | 'outcome_updated' | 'note_added' | 'task_created' | 'task_started' | 'task_completed';
+      type: 'quiz_completed' | 'call_booked' | 'deal_closed' | 'outcome_marked' | 'outcome_updated' | 'note_added' | 'task_created' | 'task_started' | 'task_completed';
       timestamp: string;
       leadName: string;
       actor?: string; // Who performed the action
@@ -103,21 +103,55 @@ export async function GET(
           }
         });
 
-        // 3. Outcome updated activity (for NON-CONVERTED outcomes only)
-        if (appointment.outcome && appointment.outcome !== 'converted') {
+        // 3. Outcome history - Get ALL outcome changes from audit log
+        const outcomeAuditLogs = await prisma.closerAuditLog.findMany({
+          where: {
+            action: 'appointment_outcome_updated',
+            closerId: appointment.closerId || undefined
+          },
+          include: {
+            closer: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          },
+          orderBy: {
+            createdAt: 'asc'
+          }
+        });
+
+        // Filter logs for this specific appointment
+        const appointmentOutcomeLogs = outcomeAuditLogs.filter(log => {
+          const details = log.details as any;
+          return details?.appointmentId === appointment.id;
+        });
+
+        // Add each outcome change as an activity
+        appointmentOutcomeLogs.forEach((log, index) => {
+          const details = log.details as any;
+          const outcome = details?.outcome;
+          
+          // Skip converted outcomes (they'll be shown as "deal_closed" instead)
+          if (outcome === 'converted') return;
+
+          // First outcome = "marked", subsequent = "updated"
+          const isFirstOutcome = index === 0;
+          
           activities.push({
-            id: `outcome_${appointment.id}`,
-            type: 'outcome_updated' as any,
-            timestamp: appointment.updatedAt.toISOString(),
+            id: `outcome_${log.id}`,
+            type: isFirstOutcome ? 'outcome_marked' : 'outcome_updated' as any,
+            timestamp: log.createdAt.toISOString(),
             leadName,
-            actor: appointment.closer?.name || 'Unknown',
+            actor: log.closer?.name || 'Unknown',
             details: {
-              outcome: appointment.outcome,
-              saleValue: appointment.saleValue ? Number(appointment.saleValue) : null,
-              notes: appointment.notes
+              outcome: outcome,
+              saleValue: details?.saleValue ? Number(details.saleValue) : null,
+              isFirstOutcome
             }
           });
-        }
+        });
 
         // 4. Deal closed activity (ONLY if appointment outcome is converted)
         if (appointment.outcome === 'converted') {
@@ -243,9 +277,10 @@ export async function GET(
       'task_created': 3,
       'task_started': 4,
       'note_added': 5,
-      'outcome_updated': 6,
-      'task_completed': 7,
-      'deal_closed': 8
+      'outcome_marked': 6,
+      'outcome_updated': 7,
+      'task_completed': 8,
+      'deal_closed': 9
     };
 
     activities.sort((a, b) => {

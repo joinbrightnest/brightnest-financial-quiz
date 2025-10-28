@@ -2662,6 +2662,7 @@ export default function AdminDashboard() {
                                     <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
                                       activity.type === 'quiz_completed' ? 'bg-purple-100' :
                                       activity.type === 'call_booked' ? 'bg-blue-100' :
+                                      activity.type === 'outcome_marked' ? 'bg-orange-100' :
                                       activity.type === 'outcome_updated' ? 'bg-orange-100' :
                                       activity.type === 'deal_closed' ? 'bg-green-100' :
                                       activity.type === 'note_added' ? 'bg-amber-100' :
@@ -2680,7 +2681,7 @@ export default function AdminDashboard() {
                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                       )}
-                                      {activity.type === 'outcome_updated' && (
+                                      {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated') && (
                                         <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
@@ -2722,8 +2723,11 @@ export default function AdminDashboard() {
                                         {activity.type === 'call_booked' && (
                                           <span><span className="text-blue-600">{activity.leadName}</span> booked a call</span>
                                         )}
-                                        {activity.type === 'outcome_updated' && (
+                                        {activity.type === 'outcome_marked' && (
                                           <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
+                                        )}
+                                        {activity.type === 'outcome_updated' && (
+                                          <span><span className="text-green-600">{activity.actor}</span> updated <span className="text-blue-600">{activity.leadName}</span>'s outcome to <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
                                         )}
                                         {activity.type === 'deal_closed' && (
                                           <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as closed</span>
@@ -2782,7 +2786,7 @@ export default function AdminDashboard() {
                                         </p>
                                       )}
 
-                                      {activity.type === 'outcome_updated' && activity.details?.outcome && (
+                                      {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated') && activity.details?.outcome && (
                                         <div className="mt-2">
                                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
                                             {activity.details.outcome.replace(/_/g, ' ').toUpperCase()}
