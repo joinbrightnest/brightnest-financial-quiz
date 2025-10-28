@@ -374,22 +374,47 @@ export default function CareersPage() {
           <div className="bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 rounded-3xl p-8 sm:p-12 lg:p-16 shadow-2xl">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               {/* Left Side - Image */}
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                <img 
-                  src="/team-photo.jpg" 
-                  alt="BrightNest Team" 
-                  className="w-full h-full object-cover aspect-[4/3]"
-                  onError={(e) => {
-                    // Fallback if image doesn't exist
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.nextElementSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="hidden aspect-[4/3] bg-gradient-to-br from-gray-700 to-gray-800 flex-col items-center justify-center">
-                  <svg className="w-24 h-24 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                  <p className="text-gray-400 text-sm">Team Photo</p>
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] bg-gradient-to-br from-[#FF6B6B] via-[#FF8E8E] to-[#FFAAAA]">
+                {/* Decorative Pattern */}
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute inset-0" style={{
+                    backgroundImage: `radial-gradient(circle at 20% 50%, white 2px, transparent 2px),
+                                      radial-gradient(circle at 60% 70%, white 2px, transparent 2px),
+                                      radial-gradient(circle at 80% 20%, white 2px, transparent 2px)`,
+                    backgroundSize: '100px 100px, 80px 80px, 120px 120px'
+                  }}></div>
+                </div>
+                
+                {/* Content */}
+                <div className="relative flex flex-col items-center justify-center h-full p-8">
+                  {/* Team avatars in a circle */}
+                  <div className="relative w-48 h-48 mb-6">
+                    {/* Center circle */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                      <svg className="w-10 h-10 text-[#FF6B6B]" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
+                      </svg>
+                    </div>
+                    
+                    {/* Orbiting circles */}
+                    {[0, 1, 2, 3, 4].map((i) => {
+                      const angle = (i * 72 - 90) * (Math.PI / 180);
+                      const x = Math.cos(angle) * 70;
+                      const y = Math.sin(angle) * 70;
+                      return (
+                        <div
+                          key={i}
+                          className="absolute top-1/2 left-1/2 w-12 h-12 rounded-full bg-white/80 backdrop-blur-sm shadow-lg"
+                          style={{
+                            transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`
+                          }}
+                        ></div>
+                      );
+                    })}
+                  </div>
+                  
+                  <h3 className="text-2xl font-bold text-white text-center">Join Our Team</h3>
+                  <p className="text-white/90 text-center mt-2">Empowering Women Together</p>
                 </div>
               </div>
 
