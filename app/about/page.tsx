@@ -115,19 +115,19 @@ export default function AboutPage() {
             </div>
             
             <div className="hidden lg:flex items-center flex-1 justify-center space-x-8">
-              <Link href="/about" className="text-white font-medium text-sm uppercase tracking-wide hover:text-pink-400 transition-colors">
+              <Link href="/about" className="text-white/80 font-medium text-sm uppercase tracking-wide hover:text-white transition-colors">
                 ABOUT US
               </Link>
-              <Link href="/blog" className="text-white font-medium text-sm uppercase tracking-wide hover:text-pink-400 transition-colors">
+              <Link href="/blog" className="text-white/80 font-medium text-sm uppercase tracking-wide hover:text-white transition-colors">
                 BLOG
               </Link>
-              <Link href="/careers" className="text-white font-medium text-sm uppercase tracking-wide hover:text-pink-400 transition-colors">
+              <Link href="/careers" className="text-white/80 font-medium text-sm uppercase tracking-wide hover:text-white transition-colors">
                 CAREERS
               </Link>
             </div>
             
             <div className="hidden lg:flex items-center">
-              <Link href="/quiz/financial-profile" className="bg-gradient-to-r from-pink-500 to-teal-500 text-white px-4 py-2 rounded-md font-medium text-sm hover:from-pink-600 hover:to-teal-600 transition-colors">
+              <Link href="/quiz/financial-profile" className="bg-white text-gray-900 px-6 py-2.5 rounded-lg font-semibold text-sm hover:bg-gray-100 transition-colors">
                 Learn More
               </Link>
             </div>
@@ -135,7 +135,7 @@ export default function AboutPage() {
             <div className="lg:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-white hover:text-pink-400 focus:outline-none"
+                className="text-white hover:text-white/80 focus:outline-none"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {isMobileMenuOpen ? (
@@ -155,7 +155,7 @@ export default function AboutPage() {
                 <Link href="/blog" className="block text-white font-medium text-sm uppercase" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
                 <Link href="/careers" className="block text-white font-medium text-sm uppercase" onClick={() => setIsMobileMenuOpen(false)}>Careers</Link>
                 <div className="pt-4 border-t border-white/10">
-                  <Link href="/quiz/financial-profile" className="block w-full bg-gradient-to-r from-pink-500 to-teal-500 text-white px-4 py-3 rounded-md font-medium text-sm text-center" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link href="/quiz/financial-profile" className="block w-full bg-white text-gray-900 px-4 py-3 rounded-lg font-semibold text-sm text-center hover:bg-gray-100 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
                     Learn More
                   </Link>
                 </div>
@@ -183,10 +183,13 @@ export default function AboutPage() {
                 Founded by a team of passionate financial experts, BrightNest has grown into a movement trusted by thousands of women worldwide. We are on a mission to help women regain their financial power and feel confident in their financial future.
               </p>
             </div>
-            <div className="relative h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-blue-500/20 to-teal-500/20 rounded-2xl flex items-center justify-center border border-white/10 backdrop-blur-sm">
-              <div className="text-center">
-                <div className="text-6xl mb-4">💰</div>
-                <p className="text-gray-300 font-medium">Your Financial Journey</p>
+            <div className="relative h-64 sm:h-80 lg:h-96 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 backdrop-blur-sm overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+              <div className="relative text-center z-10">
+                <svg className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <p className="text-gray-400 font-medium text-sm uppercase tracking-wider">Your Financial Journey</p>
               </div>
             </div>
           </div>
@@ -209,10 +212,13 @@ export default function AboutPage() {
       <section className="py-16 sm:py-20 lg:py-24 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <div className="order-2 lg:order-1 relative h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl flex items-center justify-center border border-white/10 backdrop-blur-sm">
-              <div className="text-center">
-                <div className="text-6xl mb-4">🎯</div>
-                <p className="text-gray-300 font-medium">Our Mission</p>
+            <div className="order-2 lg:order-1 relative h-64 sm:h-80 lg:h-96 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 backdrop-blur-sm overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+              <div className="relative text-center z-10">
+                <svg className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <p className="text-gray-400 font-medium text-sm uppercase tracking-wider">Our Mission</p>
               </div>
             </div>
             <div className="order-1 lg:order-2 bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
@@ -220,7 +226,7 @@ export default function AboutPage() {
                 Since we started in 2020, our mission has been to transform lives.
               </p>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
-                Our goal is to <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-teal-400">empower women</span> to build wealth, confidence, and a financial future they love at any stage of life.
+                Our goal is to <span className="text-white underline decoration-white/30">empower women</span> to build wealth, confidence, and a financial future they love at any stage of life.
               </h2>
             </div>
           </div>
@@ -231,7 +237,7 @@ export default function AboutPage() {
       <section className="py-16 sm:py-20 lg:py-24 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-sm sm:text-base text-pink-400 uppercase tracking-wide mb-4 font-semibold">Our Vision</h2>
+            <h2 className="text-sm sm:text-base text-gray-400 uppercase tracking-wide mb-4 font-semibold">Our Vision</h2>
             <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white max-w-4xl mx-auto leading-tight">
               to become the ultimate solution for women seeking financial strength, confidence, and lasting transformation.
             </p>
@@ -243,16 +249,21 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mt-16">
             <div className="grid grid-cols-2 gap-6">
               {visionFeatures.map((feature, index) => (
-                <div key={index} className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-pink-400/50 hover:shadow-lg transition-all text-center">
-                  <div className="text-3xl mb-3">✓</div>
-                  <h3 className="text-base sm:text-lg font-bold text-white">{feature}</h3>
+                <div key={index} className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:border-white/30 hover:shadow-lg transition-all text-center group">
+                  <svg className="w-8 h-8 mx-auto mb-3 text-white/60 group-hover:text-white/80 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <h3 className="text-base sm:text-lg font-semibold text-white">{feature}</h3>
                 </div>
               ))}
             </div>
-            <div className="relative h-64 sm:h-80 lg:h-96 bg-gradient-to-br from-green-500/20 to-teal-500/20 rounded-2xl flex items-center justify-center border border-white/10 backdrop-blur-sm">
-              <div className="text-center">
-                <div className="text-6xl mb-4">📈</div>
-                <p className="text-gray-300 font-medium">Growth & Success</p>
+            <div className="relative h-64 sm:h-80 lg:h-96 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 backdrop-blur-sm overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+              <div className="relative text-center z-10">
+                <svg className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+                <p className="text-gray-400 font-medium text-sm uppercase tracking-wider">Growth & Success</p>
               </div>
             </div>
           </div>
@@ -271,7 +282,7 @@ export default function AboutPage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-sm sm:text-base text-pink-400 uppercase tracking-wide mb-4 font-semibold">Our Journey</h2>
+            <h2 className="text-sm sm:text-base text-gray-400 uppercase tracking-wide mb-4 font-semibold">Our Journey</h2>
             <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
               The BrightNest Story
             </p>
@@ -341,15 +352,10 @@ export default function AboutPage() {
           <div className="relative max-w-5xl mx-auto">
             <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-8 sm:p-12 lg:p-16 shadow-2xl min-h-[400px] flex flex-col justify-between">
               {/* Year Badge */}
-              <div className="mb-6">
-                <div className={`inline-block bg-gradient-to-r ${timeline[currentTimelineIndex].color} text-white px-8 py-3 rounded-full font-bold text-2xl shadow-lg`}>
+              <div className="mb-8">
+                <div className="inline-block bg-white/10 border border-white/20 text-white px-8 py-3 rounded-lg font-bold text-2xl">
                   {timeline[currentTimelineIndex].year}
                 </div>
-              </div>
-
-              {/* Icon */}
-              <div className="text-8xl mb-6 text-center">
-                {timeline[currentTimelineIndex].icon}
               </div>
 
               {/* Content */}
@@ -366,7 +372,7 @@ export default function AboutPage() {
               <div className="flex justify-between items-center mt-8 pt-6 border-t border-white/10">
                 <button
                   onClick={prevTimeline}
-                  className="flex items-center space-x-2 text-gray-300 hover:text-pink-400 transition-colors group"
+                  className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors group"
                 >
                   <svg className="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -381,7 +387,7 @@ export default function AboutPage() {
                       onClick={() => setCurrentTimelineIndex(index)}
                       className={`transition-all duration-300 rounded-full ${
                         index === currentTimelineIndex 
-                          ? 'w-8 h-3 bg-pink-500' 
+                          ? 'w-8 h-3 bg-white' 
                           : 'w-3 h-3 bg-gray-600 hover:bg-gray-500'
                       }`}
                       aria-label={`Go to ${timeline[index].year}`}
@@ -391,7 +397,7 @@ export default function AboutPage() {
 
                 <button
                   onClick={nextTimeline}
-                  className="flex items-center space-x-2 text-gray-300 hover:text-pink-400 transition-colors group"
+                  className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors group"
                 >
                   <span className="font-semibold">Next</span>
                   <svg className="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -413,7 +419,7 @@ export default function AboutPage() {
       <section className="py-16 sm:py-20 lg:py-24 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-sm sm:text-base text-pink-400 uppercase tracking-wide mb-4 font-semibold">Our Leadership</h2>
+            <h2 className="text-sm sm:text-base text-gray-400 uppercase tracking-wide mb-4 font-semibold">Our Leadership</h2>
             <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
               meet the team
             </p>
@@ -422,11 +428,12 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8">
             {leadership.map((member, index) => (
               <div key={index} className="group text-center">
-                <div className={`w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${member.color} flex items-center justify-center text-white font-bold text-3xl sm:text-4xl shadow-lg group-hover:scale-105 transition-transform`}>
-                  {member.initials}
+                <div className="relative w-32 h-32 sm:w-40 sm:h-40 mx-auto mb-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white font-bold text-3xl sm:text-4xl group-hover:bg-white/10 group-hover:border-white/20 transition-all overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+                  <span className="relative z-10">{member.initials}</span>
                 </div>
                 <h3 className="text-base sm:text-lg font-bold text-white mb-1">{member.name}</h3>
-                <p className="text-sm text-pink-400 font-medium">{member.title}</p>
+                <p className="text-sm text-gray-400 font-medium">{member.title}</p>
               </div>
             ))}
           </div>
@@ -444,7 +451,7 @@ export default function AboutPage() {
           </p>
           <Link
             href="/careers"
-            className="inline-block bg-gradient-to-r from-pink-500 to-rose-500 text-white px-10 sm:px-14 py-4 sm:py-5 rounded-full font-bold text-base sm:text-lg uppercase hover:from-pink-600 hover:to-rose-600 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl"
+            className="inline-block bg-white text-gray-900 px-10 sm:px-14 py-4 sm:py-5 rounded-lg font-bold text-base sm:text-lg uppercase hover:bg-gray-100 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl"
           >
             Let's Go
           </Link>
