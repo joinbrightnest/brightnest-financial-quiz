@@ -242,6 +242,32 @@ export default function CloserManagement() {
     }
   };
 
+  const handleAutoAssignAll = async () => {
+    if (!confirm('Auto-assign all unassigned appointments to available closers using round-robin distribution?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/admin/auto-assign-appointments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert(`Success! Assigned ${data.assignedCount} appointments.`);
+        fetchAppointments(); // Refresh the list
+      } else {
+        const data = await response.json();
+        alert(`Failed to auto-assign: ${data.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      alert('Network error during auto-assignment');
+    }
+  };
+
   const handleUpdateCalendlyLink = async (closerId: string) => {
     try {
       const response = await fetch(`/api/admin/closers/${closerId}/calendly-link`, {
@@ -586,9 +612,19 @@ export default function CloserManagement() {
       {/* Assignments Tab */}
       {activeTab === 'assignments' && (
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
-          <div className="px-4 py-5 sm:px-6">
-            <h3 className="text-lg leading-6 font-medium text-gray-900">Unassigned Appointments</h3>
-            <p className="mt-1 max-w-2xl text-sm text-gray-500">Assign appointments to available closers</p>
+          <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
+            <div>
+              <h3 className="text-lg leading-6 font-medium text-gray-900">Unassigned Appointments</h3>
+              <p className="mt-1 max-w-2xl text-sm text-gray-500">Assign appointments to available closers</p>
+            </div>
+            {appointments.filter(a => !a.closer && a.type !== 'quiz_session').length > 0 && (
+              <button
+                onClick={handleAutoAssignAll}
+                className="ml-4 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
+              >
+                🔄 Auto-Assign All
+              </button>
+            )}
           </div>
           <div className="border-t border-gray-200">
             {appointments.filter(a => !a.closer && a.type !== 'quiz_session').length === 0 ? (
