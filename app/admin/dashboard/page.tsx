@@ -2662,6 +2662,7 @@ export default function AdminDashboard() {
                                     <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
                                       activity.type === 'quiz_completed' ? 'bg-purple-100' :
                                       activity.type === 'call_booked' ? 'bg-blue-100' :
+                                      activity.type === 'outcome_updated' ? 'bg-orange-100' :
                                       activity.type === 'deal_closed' ? 'bg-green-100' :
                                       activity.type === 'note_added' ? 'bg-amber-100' :
                                       activity.type === 'task_created' ? 'bg-indigo-100' :
@@ -2677,6 +2678,11 @@ export default function AdminDashboard() {
                                       {activity.type === 'call_booked' && (
                                         <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                      )}
+                                      {activity.type === 'outcome_updated' && (
+                                        <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                       )}
                                       {activity.type === 'deal_closed' && (
@@ -2715,6 +2721,9 @@ export default function AdminDashboard() {
                                         )}
                                         {activity.type === 'call_booked' && (
                                           <span><span className="text-blue-600">{activity.leadName}</span> booked a call</span>
+                                        )}
+                                        {activity.type === 'outcome_updated' && (
+                                          <span><span className="text-green-600">{activity.actor}</span> updated outcome to <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
                                         )}
                                         {activity.type === 'deal_closed' && (
                                           <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as closed</span>
@@ -2771,6 +2780,19 @@ export default function AdminDashboard() {
                                         <p className="text-xs text-slate-600 mt-2">
                                           <span className="font-medium">Assigned to:</span> {activity.details.closerName}
                                         </p>
+                                      )}
+
+                                      {activity.type === 'outcome_updated' && activity.details?.outcome && (
+                                        <div className="mt-2">
+                                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                            {activity.details.outcome.replace(/_/g, ' ').toUpperCase()}
+                                          </span>
+                                          {activity.details.saleValue && (
+                                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                              ${Number(activity.details.saleValue).toFixed(2)}
+                                            </span>
+                                          )}
+                                        </div>
                                       )}
 
                                       {activity.type === 'deal_closed' && activity.details?.amount && (
