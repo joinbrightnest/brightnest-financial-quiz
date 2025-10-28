@@ -6,6 +6,15 @@ import { useState } from "react";
 export default function CareersPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [showPositions, setShowPositions] = useState(false);
+
+  const handleSeePositions = () => {
+    setShowPositions(true);
+    // Smooth scroll to positions section after state update
+    setTimeout(() => {
+      document.getElementById('positions')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  };
 
   const testimonials = [
     {
@@ -201,12 +210,12 @@ export default function CareersPage() {
 
           <p className="text-lg sm:text-xl font-semibold mb-8 sm:mb-10 text-gray-200">Ready to make an impact?</p>
 
-          <Link
-            href="#positions"
+          <button
+            onClick={handleSeePositions}
             className="inline-block bg-gradient-to-r from-pink-500 to-rose-500 text-white px-10 sm:px-14 py-4 sm:py-5 rounded-full font-bold text-base sm:text-lg uppercase hover:from-pink-600 hover:to-rose-600 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl"
           >
             Apply Now
-          </Link>
+          </button>
 
           {/* Team Member Avatars */}
           <div className="flex justify-center items-center mt-16 sm:mt-20">
@@ -394,66 +403,72 @@ export default function CareersPage() {
             </div>
 
             <div className="text-center">
-              <Link
-                href="#positions"
+              <button
+                onClick={handleSeePositions}
                 className="inline-block bg-gradient-to-r from-pink-500 to-rose-500 text-white px-10 sm:px-14 py-4 sm:py-5 rounded-full font-bold text-base sm:text-lg uppercase hover:from-pink-600 hover:to-rose-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 See Positions
-              </Link>
+              </button>
             </div>
           </div>
         </div>
       </section>
 
       {/* Positions Section - No Positions Available */}
-      <section id="positions" className="py-16 sm:py-20 lg:py-24 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-8 sm:p-12 lg:p-16 border-2 border-gray-100 shadow-xl text-center">
-            {/* Icon */}
-            <div className="mb-8">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
+      {showPositions && (
+        <section 
+          id="positions" 
+          className="py-16 sm:py-20 lg:py-24 bg-white animate-fade-in"
+          style={{ opacity: 0, animation: 'fadeIn 0.6s ease-out forwards' }}
+        >
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-8 sm:p-12 lg:p-16 border-2 border-gray-100 shadow-xl text-center">
+              {/* Icon */}
+              <div className="mb-8">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                  <svg className="w-10 h-10 sm:w-12 sm:h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+              </div>
+
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+                No Open Positions at This Time
+              </h2>
+              
+              <p className="text-base sm:text-lg text-gray-600 mb-6 max-w-2xl mx-auto leading-relaxed">
+                We're not currently hiring, but we're always interested in connecting with talented individuals who are passionate about empowering women and making a real difference.
+              </p>
+
+              <p className="text-base sm:text-lg text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+                If you'd like to be considered for future opportunities, please send your resume and a brief introduction to <a href="mailto:careers@joinbrightnest.com" className="text-pink-500 hover:text-pink-600 font-semibold underline">careers@joinbrightnest.com</a>. We'll keep your information on file and reach out when a position that matches your skills becomes available.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a
+                  href="mailto:careers@joinbrightnest.com"
+                  className="inline-block bg-gradient-to-r from-pink-500 to-rose-500 text-white px-8 sm:px-12 py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg hover:from-pink-600 hover:to-rose-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                >
+                  Send Resume
+                </a>
+                <Link
+                  href="/"
+                  className="inline-block bg-white text-gray-700 px-8 sm:px-12 py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg border-2 border-gray-300 hover:border-gray-400 transition-all"
+                >
+                  Back to Home
+                </Link>
+              </div>
+
+              {/* Additional Message */}
+              <div className="mt-12 pt-8 border-t border-gray-200">
+                <p className="text-sm text-gray-500 italic">
+                  Thank you for your interest in BrightNest. We're building something special, and we'd love to have you be part of it when the time is right.
+                </p>
               </div>
             </div>
-
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
-              No Open Positions at This Time
-            </h2>
-            
-            <p className="text-base sm:text-lg text-gray-600 mb-6 max-w-2xl mx-auto leading-relaxed">
-              We're not currently hiring, but we're always interested in connecting with talented individuals who are passionate about empowering women and making a real difference.
-            </p>
-
-            <p className="text-base sm:text-lg text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
-              If you'd like to be considered for future opportunities, please send your resume and a brief introduction to <a href="mailto:careers@joinbrightnest.com" className="text-pink-500 hover:text-pink-600 font-semibold underline">careers@joinbrightnest.com</a>. We'll keep your information on file and reach out when a position that matches your skills becomes available.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <a
-                href="mailto:careers@joinbrightnest.com"
-                className="inline-block bg-gradient-to-r from-pink-500 to-rose-500 text-white px-8 sm:px-12 py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg hover:from-pink-600 hover:to-rose-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
-              >
-                Send Resume
-              </a>
-              <Link
-                href="/"
-                className="inline-block bg-white text-gray-700 px-8 sm:px-12 py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg border-2 border-gray-300 hover:border-gray-400 transition-all"
-              >
-                Back to Home
-              </Link>
-            </div>
-
-            {/* Additional Message */}
-            <div className="mt-12 pt-8 border-t border-gray-200">
-              <p className="text-sm text-gray-500 italic">
-                Thank you for your interest in BrightNest. We're building something special, and we'd love to have you be part of it when the time is right.
-              </p>
-            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-8 sm:py-12">
