@@ -159,9 +159,9 @@ export default function BlogPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         
         {/* Featured Post Section - Left: Main Post, Right: Featured Posts List */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-          {/* Main Featured Post - Left (2/3 width) */}
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+          {/* Main Featured Post - Left (50% width) */}
+          <div>
             {/* Image with overlay text */}
             <div className="relative h-80 rounded-t-lg overflow-hidden mb-4">
               {/* Background Image */}
@@ -199,8 +199,8 @@ export default function BlogPage() {
             </div>
           </div>
 
-          {/* Featured Posts List - Right (1/3 width) */}
-          <div className="lg:col-span-1">
+          {/* Featured Posts List - Right (50% width) */}
+          <div>
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">FEATURED POSTS</h2>
               <div className="h-1 bg-pink-500 w-24"></div>
