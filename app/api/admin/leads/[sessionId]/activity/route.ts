@@ -275,15 +275,11 @@ export async function GET(
         a.question?.prompt?.toLowerCase().includes('name')
       );
       
-      console.log('✅ Adding outcome from appointment:', {
-        appointmentId: appointment.id,
-        outcome: appointment.outcome,
-        updatedAt: appointment.updatedAt,
-        hasAuditLogs: auditLogs.length > 0
-      });
+      // Check if we already added this outcome from audit logs
+      const hasOutcomeFromAuditLogs = activities.some(a => a.type === 'outcome_updated');
       
-      // Add outcome activity (prefer audit logs, fall back to appointment data)
-      if (auditLogs.length === 0) {
+      // Only add if not already added from audit logs
+      if (!hasOutcomeFromAuditLogs) {
         activities.push({
           id: `outcome-current-${appointment.id}`,
           type: 'outcome_updated',
