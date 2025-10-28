@@ -32,17 +32,14 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
             
             {/* Desktop Menu Items - Hidden on Mobile */}
             <div className="hidden lg:flex items-center space-x-6">
-              <Link href={getLink("/quiz/financial-profile")} className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
-                FINANCIAL PROFILE
+              <Link href="/about" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
+                ABOUT US
               </Link>
-              <Link href={getLink("/quiz/health-finance")} className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
-                HEALTH FINANCE
+              <Link href="/blog" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
+                BLOG
               </Link>
-              <Link href={getLink("/quiz/marriage-finance")} className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
-                MARRIAGE FINANCE
-              </Link>
-              <Link href={getLink("/book-call")} className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
-                BOOK CALL
+              <Link href="/careers" className="text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors">
+                CAREERS
               </Link>
               
               {/* Language Selector */}
@@ -82,32 +79,25 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
             <div className="lg:hidden bg-[#F8F7F0] border-t border-gray-300">
               <div className="px-4 py-4 space-y-4">
                 <Link 
-                  href={getLink("/quiz/financial-profile")} 
+                  href="/about" 
                   className="block text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Financial Profile
+                  About Us
                 </Link>
                 <Link 
-                  href={getLink("/quiz/health-finance")} 
+                  href="/blog" 
                   className="block text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Health Finance
+                  Blog
                 </Link>
                 <Link 
-                  href={getLink("/quiz/marriage-finance")} 
+                  href="/careers" 
                   className="block text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Marriage Finance
-                </Link>
-                <Link 
-                  href={getLink("/book-call")} 
-                  className="block text-gray-900 font-medium text-sm uppercase tracking-wide hover:text-gray-700 transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Book Call
+                  Careers
                 </Link>
                 
                 {/* Mobile CTA Button */}
