@@ -48,14 +48,6 @@ export default function BlogPage() {
       readTime: "6 min read",
       description: "Freelancer? Commission-based? Entrepreneur? Here's how to build financial stability when your income fluctuates.",
       image: "/blog/variable-income.jpg"
-    },
-    {
-      id: 6,
-      title: "The Power of the 24-Hour Rule",
-      category: "HABITS",
-      readTime: "3 min read",
-      description: "One simple habit that could save you thousands per year. It's not about deprivation — it's about intention.",
-      image: "/blog/24-hour-rule.jpg"
     }
   ];
 
@@ -159,7 +151,7 @@ export default function BlogPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
         
         {/* Featured Post Section - Left: Main Post, Right: Featured Posts List */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
           {/* Main Featured Post - Left (50% width) */}
           <div>
             {/* Image with overlay text */}
@@ -206,8 +198,8 @@ export default function BlogPage() {
               <div className="h-1 bg-pink-500 w-20 sm:w-24"></div>
             </div>
             
-            <div className="space-y-4 sm:space-y-6">
-              {featuredPosts.slice(0, 6).map((post) => (
+            <div className="space-y-3 sm:space-y-4">
+              {featuredPosts.slice(0, 5).map((post) => (
                 <div key={post.id} className="border-b border-gray-200 pb-3 sm:pb-4 last:border-0">
                   <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1 hover:text-pink-500 cursor-pointer transition-colors leading-snug">
                     {post.title}
@@ -220,8 +212,8 @@ export default function BlogPage() {
         </div>
 
         {/* Filter by Category */}
-        <div className="mb-8 sm:mb-12">
-          <h3 className="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6">Filter by Category</h3>
+        <div className="mb-6 sm:mb-10">
+          <h3 className="text-base sm:text-lg text-gray-600 mb-3 sm:mb-5">Filter by Category</h3>
           <div className="flex flex-wrap gap-2 sm:gap-4">
             {categories.map((category) => (
               <button
@@ -240,8 +232,8 @@ export default function BlogPage() {
         </div>
 
         {/* Read Section */}
-        <div className="mb-12 sm:mb-16">
-          <div className="flex items-center justify-between mb-6 sm:mb-8">
+        <div className="mb-10 sm:mb-12">
+          <div className="flex items-center justify-between mb-5 sm:mb-6">
             <h2 className="text-2xl sm:text-3xl font-bold lowercase text-gray-900">read</h2>
             <Link href="#" className="text-sm sm:text-base text-pink-500 font-semibold hover:text-pink-600">
               view more
@@ -291,8 +283,8 @@ export default function BlogPage() {
         </div>
 
         {/* Watch Section */}
-        <div className="mb-12 sm:mb-16">
-          <div className="flex items-center justify-between mb-6 sm:mb-8">
+        <div className="mb-10 sm:mb-12">
+          <div className="flex items-center justify-between mb-5 sm:mb-6">
             <h2 className="text-2xl sm:text-3xl font-bold lowercase text-gray-900">watch</h2>
             <Link href="#" className="text-sm sm:text-base text-pink-500 font-semibold hover:text-pink-600">
               view more
@@ -351,8 +343,8 @@ export default function BlogPage() {
         </div>
 
         {/* Listen Section */}
-        <div className="mb-12 sm:mb-16">
-          <div className="flex items-center justify-between mb-6 sm:mb-8">
+        <div className="mb-10 sm:mb-12">
+          <div className="flex items-center justify-between mb-5 sm:mb-6">
             <h2 className="text-2xl sm:text-3xl font-bold lowercase text-gray-900">listen</h2>
             <Link href="#" className="text-sm sm:text-base text-pink-500 font-semibold hover:text-pink-600">
               view more
