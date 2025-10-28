@@ -2682,14 +2682,30 @@ export default function AdminDashboard() {
                                       Booked a call
                                     </p>
                                     <p className="text-xs text-slate-500 mt-1">
-                                      {crmSelectedLead.appointment.createdAt ? new Date(crmSelectedLead.appointment.createdAt).toLocaleString('en-US', {
+                                      Booked: {crmSelectedLead.appointment.createdAt ? new Date(crmSelectedLead.appointment.createdAt).toLocaleString('en-US', {
                                         month: 'short',
                                         day: 'numeric',
                                         year: 'numeric',
                                         hour: 'numeric',
                                         minute: '2-digit'
-                                      }) : 'N/A'}
+                                      }) : 'Unknown'}
                                     </p>
+                                    {crmSelectedLead.appointment.scheduledAt && (
+                                      <p className="text-xs text-slate-500 mt-1">
+                                        Scheduled for: {new Date(crmSelectedLead.appointment.scheduledAt).toLocaleString('en-US', {
+                                          month: 'short',
+                                          day: 'numeric',
+                                          year: 'numeric',
+                                          hour: 'numeric',
+                                          minute: '2-digit'
+                                        })}
+                                      </p>
+                                    )}
+                                    {crmSelectedLead.appointment.closer && (
+                                      <p className="text-xs text-slate-600 mt-2">
+                                        <span className="font-medium">Assigned to:</span> {crmSelectedLead.appointment.closer.name}
+                                      </p>
+                                    )}
                                   </div>
                                 </div>
                               )}
