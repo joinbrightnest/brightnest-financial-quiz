@@ -269,24 +269,21 @@ export async function GET(
       });
     });
 
-    // 5b. Current outcome (if exists but not in audit logs - for historical data)
-    // This handles cases where outcome was set before audit logging was implemented
-    // OR if audit logs aren't being captured properly
+    // 5b. Current outcome - ALWAYS show if it exists
     if (appointment?.outcome) {
       const nameAnswer = quizSession.answers.find(a => 
         a.question?.prompt?.toLowerCase().includes('name')
       );
       
-      // Only add if we don't already have audit logs for this outcome
-      const hasAuditLog = auditLogs.length > 0;
+      console.log('✅ Adding outcome from appointment:', {
+        appointmentId: appointment.id,
+        outcome: appointment.outcome,
+        updatedAt: appointment.updatedAt,
+        hasAuditLogs: auditLogs.length > 0
+      });
       
-      if (!hasAuditLog) {
-        console.log('⚠️ No audit logs found, using appointment data directly:', {
-          appointmentId: appointment.id,
-          outcome: appointment.outcome,
-          updatedAt: appointment.updatedAt
-        });
-        
+      // Add outcome activity (prefer audit logs, fall back to appointment data)
+      if (auditLogs.length === 0) {
         activities.push({
           id: `outcome-current-${appointment.id}`,
           type: 'outcome_updated',
@@ -302,8 +299,10 @@ export async function GET(
       }
     } else {
       console.log('⚠️ No outcome on appointment:', {
+        appointmentFound: !!appointment,
         appointmentId: appointment?.id,
-        status: appointment?.status
+        status: appointment?.status,
+        email: emailAnswer?.value
       });
     }
 
