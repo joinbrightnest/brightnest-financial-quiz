@@ -798,7 +798,7 @@ export default function AdminDashboard() {
   const fetchCrmActivities = async (lead: any) => {
     setCrmActivities(null); // Reset to show loading state
     try {
-      const response = await fetch(`/api/admin/leads/${lead.sessionId}/activities`);
+      const response = await fetch(`/api/admin/leads/${lead.id}/activities`);
       if (response.ok) {
         const data = await response.json();
         setCrmActivities(data.activities || []);
