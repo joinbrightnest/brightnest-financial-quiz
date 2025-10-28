@@ -279,56 +279,58 @@ export default function AboutPage() {
 
           {/* Timeline Progress Bar */}
           <div className="max-w-6xl mx-auto mb-16">
-            <div className="relative pt-1">
-              {/* Background line */}
-              <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/10"></div>
-              
-              {/* Active progress line */}
-              <div 
-                className="absolute top-0 left-0 h-0.5 bg-gradient-to-r from-pink-500 via-purple-500 to-teal-500 transition-all duration-700 ease-out"
-                style={{ width: `${((currentTimelineIndex + 1) / timeline.length) * 100}%` }}
-              ></div>
-              
+            <div className="relative">
               {/* Timeline markers */}
-              <div className="relative flex justify-between items-start -mt-3">
+              <div className="relative flex justify-between items-center">
                 {timeline.map((item, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentTimelineIndex(index)}
-                    className="group flex flex-col items-center gap-3 transition-all duration-300 hover:scale-105"
+                    className="group flex flex-col items-center gap-4 transition-all duration-300"
                   >
-                    {/* Marker dot */}
-                    <div className="relative">
-                      <div className={`w-6 h-6 rounded-full transition-all duration-300 ${
+                    {/* Marker dot with connecting line */}
+                    <div className="relative flex items-center">
+                      {/* Connecting line before dot (except first) */}
+                      {index > 0 && (
+                        <div className="absolute right-full w-[calc(100vw/6)] sm:w-32 md:w-40 lg:w-48 xl:w-56 h-px">
+                          <div className={`h-full transition-all duration-500 ${
+                            index <= currentTimelineIndex 
+                              ? 'bg-white' 
+                              : 'bg-white/20'
+                          }`}></div>
+                        </div>
+                      )}
+                      
+                      {/* Dot */}
+                      <div className={`relative w-4 h-4 rounded-full transition-all duration-300 ${
                         index === currentTimelineIndex 
-                          ? 'bg-gradient-to-br from-pink-500 to-teal-500 shadow-lg shadow-pink-500/50 scale-125' 
+                          ? 'bg-white shadow-lg shadow-white/50 scale-150' 
                           : index < currentTimelineIndex
-                          ? 'bg-gradient-to-br from-pink-500/70 to-teal-500/70'
-                          : 'bg-gray-700 group-hover:bg-gray-600'
+                          ? 'bg-white/80 scale-110'
+                          : 'bg-white/30 group-hover:bg-white/50 group-hover:scale-110'
                       }`}>
+                        {/* Inner dot for active state */}
                         {index === currentTimelineIndex && (
-                          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-pink-500 to-teal-500 animate-ping opacity-75"></div>
+                          <div className="absolute inset-0 rounded-full bg-white animate-pulse"></div>
                         )}
                       </div>
                     </div>
                     
                     {/* Year label */}
-                    <div className="flex flex-col items-center">
-                      <span className={`text-base font-bold tracking-wide transition-all duration-300 ${
-                        index === currentTimelineIndex 
-                          ? 'text-pink-400 scale-110' 
-                          : index < currentTimelineIndex
-                          ? 'text-gray-400'
-                          : 'text-gray-500 group-hover:text-gray-400'
-                      }`}>
-                        {item.year}
-                      </span>
-                      
-                      {/* Active indicator line */}
-                      {index === currentTimelineIndex && (
-                        <div className="w-12 h-0.5 bg-gradient-to-r from-pink-500 to-teal-500 mt-2 rounded-full"></div>
-                      )}
-                    </div>
+                    <span className={`text-sm font-semibold tracking-wider transition-all duration-300 ${
+                      index === currentTimelineIndex 
+                        ? 'text-white' 
+                        : index < currentTimelineIndex
+                        ? 'text-gray-400'
+                        : 'text-gray-500 group-hover:text-gray-400'
+                    }`}>
+                      {item.year}
+                    </span>
+                    
+                    {/* Active indicator underline */}
+                    {index === currentTimelineIndex && (
+                      <div className="absolute -bottom-2 w-8 h-0.5 bg-white rounded-full"></div>
+                    )}
                   </button>
                 ))}
               </div>
