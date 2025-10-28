@@ -315,7 +315,7 @@ export default function AboutPage() {
 
           {/* Carousel Content */}
           <div className="relative max-w-5xl mx-auto">
-            <div className="bg-white rounded-3xl p-8 sm:p-12 lg:p-16 shadow-2xl min-h-[400px] flex flex-col justify-between">
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-8 sm:p-12 lg:p-16 shadow-2xl min-h-[400px] flex flex-col justify-between">
               {/* Year Badge */}
               <div className="mb-6">
                 <div className={`inline-block bg-gradient-to-r ${timeline[currentTimelineIndex].color} text-white px-8 py-3 rounded-full font-bold text-2xl shadow-lg`}>
@@ -330,19 +330,19 @@ export default function AboutPage() {
 
               {/* Content */}
               <div className="flex-1">
-                <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6">
+                <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
                   {timeline[currentTimelineIndex].title}
                 </h3>
-                <p className="text-base sm:text-lg text-gray-600 leading-relaxed">
+                <p className="text-base sm:text-lg text-gray-300 leading-relaxed">
                   {timeline[currentTimelineIndex].description}
                 </p>
               </div>
 
               {/* Navigation Arrows */}
-              <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-200">
+              <div className="flex justify-between items-center mt-8 pt-6 border-t border-white/10">
                 <button
                   onClick={prevTimeline}
-                  className="flex items-center space-x-2 text-gray-600 hover:text-pink-500 transition-colors group"
+                  className="flex items-center space-x-2 text-gray-300 hover:text-pink-400 transition-colors group"
                 >
                   <svg className="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -358,7 +358,7 @@ export default function AboutPage() {
                       className={`transition-all duration-300 rounded-full ${
                         index === currentTimelineIndex 
                           ? 'w-8 h-3 bg-pink-500' 
-                          : 'w-3 h-3 bg-gray-300 hover:bg-gray-400'
+                          : 'w-3 h-3 bg-gray-600 hover:bg-gray-500'
                       }`}
                       aria-label={`Go to ${timeline[index].year}`}
                     />
@@ -367,7 +367,7 @@ export default function AboutPage() {
 
                 <button
                   onClick={nextTimeline}
-                  className="flex items-center space-x-2 text-gray-600 hover:text-pink-500 transition-colors group"
+                  className="flex items-center space-x-2 text-gray-300 hover:text-pink-400 transition-colors group"
                 >
                   <span className="font-semibold">Next</span>
                   <svg className="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
