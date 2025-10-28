@@ -369,35 +369,47 @@ export default function CareersPage() {
       </section>
 
       {/* What It's Like To Work With Us */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-[#faf8f0]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
-            <p className="text-sm sm:text-base text-[#FF6B6B] uppercase tracking-wide mb-3 font-bold">What It's Like To</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
-              work with us
-            </h2>
-          </div>
-
-          <div className="bg-white rounded-3xl p-8 sm:p-12 border-2 border-gray-100 shadow-2xl">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 mb-10">
-              {benefits.map((benefit, index) => (
-                <div key={index} className="flex items-start space-x-4 group">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 rounded-full bg-[#FF6B6B] flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  </div>
-                  <p className="text-base sm:text-lg text-gray-900 font-medium">{benefit}</p>
+      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-gray-900 via-black to-gray-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Left Side - Image */}
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+              <div className="aspect-[4/3] bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+                {/* Placeholder for team image - replace with actual image */}
+                <div className="text-center p-8">
+                  <svg className="w-24 h-24 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  <p className="text-gray-400 text-sm">Team Photo</p>
                 </div>
-              ))}
+              </div>
             </div>
 
-            <div className="text-center">
+            {/* Right Side - Content */}
+            <div>
+              <p className="text-[#FF6B6B] italic text-lg sm:text-xl mb-4">What It's Like To</p>
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-8 sm:mb-12 uppercase italic leading-tight">
+                work with us
+              </h2>
+
+              {/* Benefits List */}
+              <div className="space-y-6 mb-10">
+                {benefits.map((benefit, index) => (
+                  <div key={index} className="flex items-start space-x-4 group">
+                    <div className="flex-shrink-0">
+                      <svg className="w-8 h-8 text-[#FF6B6B]" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <p className="text-base sm:text-lg text-white font-light italic">{benefit}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Button */}
               <button
                 onClick={handleSeePositions}
-                className="inline-block bg-[#FF6B6B] text-white px-10 sm:px-14 py-4 sm:py-5 rounded-lg font-bold text-base sm:text-lg uppercase hover:bg-[#FF5252] transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                className="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-pink-600 text-white px-12 sm:px-16 py-4 sm:py-5 rounded-lg font-black text-lg sm:text-xl uppercase italic hover:from-pink-600 hover:to-pink-700 transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl"
               >
                 See Positions
               </button>
