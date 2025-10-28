@@ -179,26 +179,9 @@ export async function GET(request: NextRequest) {
     
     const totalBookings = affiliateWithData.conversions.filter(c => c.conversionType === "booking").length;
     
-    // Count sales from Appointment records with outcome='converted' (SAME as admin API)
-    // Fetch ALL converted appointments (no date filter) - matches admin API pattern
-    // This is the single source of truth
-    const allConvertedAppointments = await prisma.appointment.findMany({
-      where: {
-        affiliateCode: affiliate.referralCode,
-        outcome: 'converted',
-      },
-    }).catch(() => []);
-    
-    // Filter by date range for the current view (clicks are already date-filtered)
-    const dateFilteredSales = allConvertedAppointments.filter(apt => {
-      const aptDate = new Date(apt.createdAt);
-      if (endDate) {
-        return aptDate >= startDate && aptDate <= endDate;
-      }
-      return aptDate >= startDate;
-    });
-    
-    const totalSales = dateFilteredSales.length;
+    // Count sales from AffiliateConversion records (SAME as admin API line 118)
+    // This matches the admin API's approach exactly
+    const totalSales = affiliateWithData.conversions.filter(c => c.conversionType === "sale").length;
     const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
 
     // Calculate pending and paid commissions from filtered payouts
