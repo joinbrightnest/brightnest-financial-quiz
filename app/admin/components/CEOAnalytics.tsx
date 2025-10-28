@@ -537,12 +537,12 @@ export default function CEOAnalytics() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-slate-900">Total Commissions</p>
-                      <p className="text-xs text-slate-500 font-medium">Paid to affiliates</p>
+                      <p className="text-xs text-slate-500 font-medium">Earned by affiliates</p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-bold text-slate-900">
-                      ${data.totalPaidCommission.toLocaleString()}
+                      ${data.totalCommission.toLocaleString()}
                     </p>
                   </div>
                 </div>

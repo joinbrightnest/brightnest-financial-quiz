@@ -107,7 +107,14 @@ export async function GET(request: NextRequest) {
         const convertedAppointments = appointments.filter(apt => apt.outcome === 'converted' && apt.saleValue);
         const totalRevenue = convertedAppointments.reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
 
-        // Get actually PAID commissions (from completed payouts)
+        // Calculate EARNED commission from converted appointments (respects date filter)
+        // This is the commission that affiliates have earned in the selected period
+        const totalEarnedCommission = convertedAppointments.reduce((sum, apt) => {
+          const saleValue = Number(apt.saleValue || 0);
+          return sum + (saleValue * Number(affiliate.commissionRate));
+        }, 0);
+
+        // Get actually PAID commissions (from completed payouts - for reference)
         let totalPaidCommission = 0;
         try {
           const payouts = await prisma.affiliatePayout.findMany({
@@ -121,9 +128,6 @@ export async function GET(request: NextRequest) {
           console.log('No payouts found for affiliate:', affiliate.id);
           totalPaidCommission = 0;
         }
-
-        // Use stored commission from database for total earned (held + available + paid)
-        const totalEarnedCommission = Number(affiliate.totalCommission || 0);
 
 
         // Calculate conversion rates
