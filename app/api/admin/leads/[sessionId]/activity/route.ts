@@ -78,7 +78,9 @@ export async function GET(
       appointmentFound: !!appointment,
       appointmentId: appointment?.id,
       outcome: appointment?.outcome,
-      closerId: appointment?.closerId
+      outcomeType: typeof appointment?.outcome,
+      closerId: appointment?.closerId,
+      fullAppointment: appointment
     });
 
     // Get affiliate conversion for deal closure info
@@ -349,6 +351,12 @@ export async function GET(
       new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
 
+    console.log('📋 FINAL ACTIVITIES BEING RETURNED:', {
+      totalActivities: activities.length,
+      activityTypes: activities.map(a => a.type),
+      hasOutcomeUpdated: activities.some(a => a.type === 'outcome_updated')
+    });
+
     return NextResponse.json({
       success: true,
       activities,
@@ -358,9 +366,11 @@ export async function GET(
         appointmentFound: !!appointment,
         appointmentId: appointment?.id,
         outcome: appointment?.outcome,
+        outcomeType: typeof appointment?.outcome,
         closerId: appointment?.closerId,
         totalAuditLogs: allAuditLogs.length,
-        filteredAuditLogs: auditLogs.length
+        filteredAuditLogs: auditLogs.length,
+        activitiesCount: activities.length
       }
     });
 
