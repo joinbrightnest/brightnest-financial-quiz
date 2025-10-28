@@ -162,22 +162,39 @@ export default function BlogPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
           {/* Main Featured Post - Left (2/3 width) */}
           <div className="lg:col-span-2">
-            <div className="relative h-96 rounded-2xl overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300"></div>
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-                <div className="inline-block bg-pink-500 text-white px-4 py-2 rounded-full text-xs font-bold mb-3">
+            {/* Image with overlay text */}
+            <div className="relative h-80 rounded-t-lg overflow-hidden mb-4">
+              {/* Background Image */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-teal-400 to-green-400"></div>
+              
+              {/* Text Banner Overlay - Positioned over image */}
+              <div className="absolute bottom-8 left-8 right-8">
+                <div className="inline-block bg-pink-500 px-6 py-3 rounded-md">
+                  <h2 className="text-2xl md:text-3xl font-black text-white uppercase">
+                    3 Money Habits That Keep You Broke
+                  </h2>
+                </div>
+              </div>
+              
+              {/* Featured Post Badge */}
+              <div className="absolute top-6 left-6">
+                <div className="inline-block bg-pink-500 text-white px-4 py-2 rounded-full text-xs font-bold">
                   FEATURED POST
                 </div>
-                <h2 className="text-3xl font-bold text-white mb-3">
-                  Why Your Budget Keeps Failing (And How to Fix It)
-                </h2>
-                <p className="text-white/90 text-sm mb-4">
-                  Budgets aren't about restriction — they're about freedom. Discover the 3 behavior shifts that make budgeting actually work.
-                </p>
-                <div className="flex items-center space-x-4 text-sm text-white">
-                  <span className="bg-white/20 px-3 py-1 rounded-full">HABITS</span>
-                  <span>4 min read</span>
-                </div>
+              </div>
+            </div>
+            
+            {/* Title and Description Below Image */}
+            <div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                Why Your Budget Keeps Failing (And How to Fix It)
+              </h3>
+              <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+                Budgets aren't about restriction — they're about freedom. Discover the 3 behavior shifts that make budgeting actually work.
+              </p>
+              <div className="flex items-center space-x-4 text-sm">
+                <span className="text-gray-500 uppercase font-semibold">HABITS</span>
+                <span className="text-gray-400">4 min read</span>
               </div>
             </div>
           </div>
