@@ -501,20 +501,23 @@ export async function GET(request: NextRequest) {
     const filteredSessionIds = filteredSessions.map(s => s.id);
 
     // Get question analytics for ONLY the filtered sessions
-    const questionAnalyticsData = await prisma.quizAnswer.groupBy({
-      by: ['questionId'],
-      _count: {
-        sessionId: true
-      },
-      where: {
-        questionId: {
-          in: allQuestions.map(q => q.id)
-        },
-        sessionId: {
-          in: filteredSessionIds // ✅ Filter by session IDs (applies date + affiliate filters)
-        }
-      }
-    });
+    // If no sessions match filters, skip the query and use empty results
+    const questionAnalyticsData = filteredSessionIds.length > 0 
+      ? await prisma.quizAnswer.groupBy({
+          by: ['questionId'],
+          _count: {
+            sessionId: true
+          },
+          where: {
+            questionId: {
+              in: allQuestions.map(q => q.id)
+            },
+            sessionId: {
+              in: filteredSessionIds // ✅ Filter by session IDs (applies date + affiliate filters)
+            }
+          }
+        })
+      : []; // Empty array if no sessions match filters
 
     // Create a map for quick lookup
     const questionCountMap = new Map(
