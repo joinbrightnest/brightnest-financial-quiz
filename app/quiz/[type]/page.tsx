@@ -68,7 +68,7 @@ export default function QuizPage({ params }: QuizPageProps) {
   const [userVariables, setUserVariables] = useState<{name?: string; email?: string}>({});
   
   // UI state
-  const [quizState, setQuizState] = useState<QuizState>('question'); // Start with question state
+  const [quizState, setQuizState] = useState<QuizState>('loading'); // Start with loading state to show skeleton UI
   const [error, setError] = useState<string | null>(null);
   const [canGoBack, setCanGoBack] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -142,6 +142,7 @@ export default function QuizPage({ params }: QuizPageProps) {
         setTotalQuestions(countData.count);
         setCanGoBack(false);
         setIsLoading(false);
+        setQuizState('question'); // Transition from loading to question state
       } catch (err) {
         console.error('Quiz initialization error:', err);
         setError("Failed to start quiz. Please try again.");
@@ -409,6 +410,7 @@ export default function QuizPage({ params }: QuizPageProps) {
 
   // Render based on quiz state
   if (quizState === 'loading') {
+    console.log('🎨 NEW SKELETON UI LOADING STATE');
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
         <div className="w-full max-w-2xl">
