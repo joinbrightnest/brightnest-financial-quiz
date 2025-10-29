@@ -51,19 +51,16 @@ interface ConversionFunnel {
 
 interface AffiliateOverviewProps {
   externalDateRange?: string;
-  externalTier?: string;
 }
 
-export default function AffiliateOverview({ externalDateRange, externalTier }: AffiliateOverviewProps = {}) {
+export default function AffiliateOverview({ externalDateRange }: AffiliateOverviewProps = {}) {
   const [data, setData] = useState<AffiliateData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState("all");
-  const [selectedTier, setSelectedTier] = useState("all");
 
-  // Use external filters if provided, otherwise use internal state
+  // Use external dateRange if provided, otherwise use internal state
   const effectiveDateRange = externalDateRange || dateRange;
-  const effectiveTier = externalTier || selectedTier;
 
   const fetchAffiliateData = async () => {
     try {
@@ -71,7 +68,7 @@ export default function AffiliateOverview({ externalDateRange, externalTier }: A
       setError(null); // Clear any previous errors
       const params = new URLSearchParams({
         dateRange: effectiveDateRange,
-        tier: effectiveTier,
+        tier: "all", // Always fetch all tiers
       });
 
       const response = await fetch(`/api/affiliates/overview?${params}`);
@@ -92,7 +89,7 @@ export default function AffiliateOverview({ externalDateRange, externalTier }: A
 
   useEffect(() => {
     fetchAffiliateData();
-  }, [effectiveDateRange, effectiveTier]);
+  }, [effectiveDateRange]);
 
   if (loading) {
     return (
@@ -157,45 +154,25 @@ export default function AffiliateOverview({ externalDateRange, externalTier }: A
           </div>
         </div>
         
-        {/* Premium Filters - Hide if external filters are provided (controlled by parent) */}
-        {!externalDateRange && !externalTier && (
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <select
-                value={effectiveDateRange}
-                onChange={(e) => setDateRange(e.target.value)}
-                className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
-              >
-                <option value="all">All Time</option>
-                <option value="24h">Last 24 hours</option>
-                <option value="7d">Last 7 days</option>
-                <option value="30d">Last 30 days</option>
-                <option value="90d">Last 90 days</option>
-                <option value="1y">Last year</option>
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
-            </div>
-            
-            <div className="relative">
-              <select
-                value={selectedTier}
-                onChange={(e) => setSelectedTier(e.target.value)}
-                className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
-              >
-                <option value="all">All Tiers</option>
-                <option value="quiz">Quiz Affiliates</option>
-                <option value="creator">Creator Partners</option>
-                <option value="agency">Agency Partners</option>
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </div>
+        {/* Date Filter - Hide if external dateRange is provided (controlled by parent) */}
+        {!externalDateRange && (
+          <div className="relative">
+            <select
+              value={effectiveDateRange}
+              onChange={(e) => setDateRange(e.target.value)}
+              className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
+            >
+              <option value="all">All Time</option>
+              <option value="24h">Last 24 hours</option>
+              <option value="7d">Last 7 days</option>
+              <option value="30d">Last 30 days</option>
+              <option value="90d">Last 90 days</option>
+              <option value="1y">Last year</option>
+            </select>
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
           </div>
         )}

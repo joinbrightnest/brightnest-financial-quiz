@@ -55,7 +55,6 @@ export default function CEOAnalytics({ initialData }: CEOAnalyticsProps) {
   const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState("all");
-  const [selectedTier, setSelectedTier] = useState("all");
   const [activeSection, setActiveSection] = useState<"overview" | "affiliates" | "pending" | "payouts">("overview");
   const [pendingAffiliates, setPendingAffiliates] = useState<any[]>([]);
   const [editingTrackingLink, setEditingTrackingLink] = useState<string | null>(null);
@@ -234,44 +233,24 @@ export default function CEOAnalytics({ initialData }: CEOAnalyticsProps) {
               </div>
             </div>
             
-            {/* Universal filters - Always visible, only apply to Affiliate Performance tab */}
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <select
-                  value={dateRange}
-                  onChange={(e) => setDateRange(e.target.value)}
-                  className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
-                >
-                  <option value="all">All Time</option>
-                  <option value="24h">Last 24 hours</option>
-                  <option value="7d">Last 7 days</option>
-                  <option value="30d">Last 30 days</option>
-                  <option value="90d">Last 90 days</option>
-                  <option value="1y">Last year</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </div>
-              
-              <div className="relative">
-                <select
-                  value={selectedTier}
-                  onChange={(e) => setSelectedTier(e.target.value)}
-                  className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
-                >
-                  <option value="all">All Tiers</option>
-                  <option value="quiz">Quiz Affiliates</option>
-                  <option value="creator">Creator Partners</option>
-                  <option value="agency">Agency Partners</option>
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
+            {/* Date Range Filter - Always visible, only applies to Affiliate Performance tab */}
+            <div className="relative">
+              <select
+                value={dateRange}
+                onChange={(e) => setDateRange(e.target.value)}
+                className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
+              >
+                <option value="all">All Time</option>
+                <option value="24h">Last 24 hours</option>
+                <option value="7d">Last 7 days</option>
+                <option value="30d">Last 30 days</option>
+                <option value="90d">Last 90 days</option>
+                <option value="1y">Last year</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </div>
             </div>
           </div>
@@ -645,7 +624,7 @@ export default function CEOAnalytics({ initialData }: CEOAnalyticsProps) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <AffiliateOverview externalDateRange={dateRange} externalTier={selectedTier} />
+          <AffiliateOverview externalDateRange={dateRange} />
         </motion.div>
       )}
 
