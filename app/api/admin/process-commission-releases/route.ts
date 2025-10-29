@@ -68,17 +68,16 @@ export async function POST(request: NextRequest) {
       return sum + parseFloat(conversion.commissionAmount.toString());
     }, 0);
     
-    // Update affiliate total commission (add to available)
-    for (const conversion of conversionsToRelease) {
-      await prisma.affiliate.update({
-        where: { id: conversion.affiliateId },
-        data: {
-          totalCommission: {
-            increment: conversion.commissionAmount
-          }
-        }
-      });
-    }
+    // ⚠️ COMMISSION FIX: Do NOT increment totalCommission here!
+    // The totalCommission field is already incremented when the sale is marked as "converted"
+    // in /app/api/closer/appointments/[id]/outcome/route.ts (line 119-124)
+    // 
+    // This release process only changes the commission status from "held" to "available"
+    // so it can be paid out. It should NOT increment totalCommission again.
+    //
+    // Note: Existing totalCommission values in the database may be DOUBLED due to this bug.
+    // They were incremented both when created AND when released.
+    // Historical data may need correction via a one-time database migration.
     
     return NextResponse.json({
       success: true,

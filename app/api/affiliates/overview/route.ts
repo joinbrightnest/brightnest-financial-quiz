@@ -159,8 +159,9 @@ export async function GET(request: NextRequest) {
         .filter(apt => apt.outcome === CallOutcome.converted && apt.saleValue)
         .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
 
-      // Use stored commission from database
-      const totalCommission = Number(affiliate.totalCommission || 0);
+      // Calculate commission from actual revenue (don't use database field - it may be doubled)
+      // Commission = Revenue × Commission Rate
+      const totalCommission = totalRevenue * Number(affiliate.commissionRate);
 
       // Calculate conversion rate
       const clickToCompletionRate = clickCount > 0 ? (completionCount / clickCount) * 100 : 0;
@@ -189,8 +190,24 @@ export async function GET(request: NextRequest) {
     const totalLeadsFromAffiliates = topAffiliates.reduce((sum, aff) => sum + aff.leads, 0);
     const totalBookedCalls = topAffiliates.reduce((sum, aff) => sum + aff.bookedCalls, 0);
     const totalSalesValue = topAffiliates.reduce((sum, aff) => sum + aff.revenue, 0); // Use actual revenue, not commission
-    const totalCommissionsPaid = topAffiliates.reduce((sum, aff) => sum + (Number(aff.commission) * 0.7), 0); // 70% paid
-    const totalCommissionsPending = topAffiliates.reduce((sum, aff) => sum + (Number(aff.commission) * 0.3), 0); // 30% pending
+    
+    // Calculate total commissions from actual payouts (not arbitrary 70/30 split)
+    const totalCommissionsEarned = topAffiliates.reduce((sum, aff) => sum + Number(aff.commission), 0);
+    
+    // Get actual paid/pending from payout records for all affiliates
+    const allPayouts = await prisma.affiliatePayout.findMany({
+      where: {
+        affiliateId: {
+          in: affiliates.map(a => a.id)
+        }
+      }
+    });
+    
+    const totalCommissionsPaid = allPayouts
+      .filter(p => p.status === 'completed')
+      .reduce((sum, p) => sum + Number(p.amountDue), 0);
+    
+    const totalCommissionsPending = totalCommissionsEarned - totalCommissionsPaid;
     
     // Debug logging for overview metrics
     console.log("Overview Metrics Debug:", {
