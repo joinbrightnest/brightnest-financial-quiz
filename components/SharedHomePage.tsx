@@ -238,16 +238,9 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
           </div>
           
           {/* Bottom Section */}
-          <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <div className="text-sm text-gray-400 mb-4 md:mb-0">
+          <div className="border-t border-gray-700 mt-12 pt-8">
+            <div className="text-sm text-gray-400 text-center">
               Copyright © 2025 BrightNest, Inc. All Rights Reserved
-            </div>
-            <div className="flex space-x-4 text-sm">
-              <Link href={getLink("/book-call")} className="text-gray-400 hover:text-white underline">Contact Us</Link>
-              <span className="text-gray-600">|</span>
-              <Link href="/terms" className="text-gray-400 hover:text-white underline">Terms and Conditions</Link>
-              <span className="text-gray-600">|</span>
-              <Link href="/privacy" className="text-gray-400 hover:text-white underline">Privacy Policy</Link>
             </div>
           </div>
         </div>
