@@ -101,27 +101,52 @@ export async function PUT(
         const holdUntil = new Date();
         holdUntil.setDate(holdUntil.getDate() + commissionHoldDays);
         
-        // Create AffiliateConversion record with held status
-        await prisma.affiliateConversion.create({
-          data: {
+        // Check if conversion already exists for this affiliate/saleValue in last 1 minute (prevent duplicates)
+        const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
+        const existingConversion = await prisma.affiliateConversion.findFirst({
+          where: {
             affiliateId: affiliate.id,
-            referralCode: appointment.affiliateCode,
             conversionType: "sale",
-            status: "confirmed",
-            commissionAmount: affiliateCommissionAmount,
             saleValue: parseFloat(saleValue),
-            commissionStatus: "held",
-            holdUntil: holdUntil
+            createdAt: {
+              gte: oneMinuteAgo
+            }
           }
         });
         
-        // Update affiliate's total commission
-        await prisma.affiliate.update({
-          where: { id: affiliate.id },
-          data: {
-            totalCommission: { increment: affiliateCommissionAmount }
-          }
-        });
+        if (existingConversion) {
+          console.log('⚠️ Duplicate conversion detected (same affiliate, sale value within 1 min), skipping:', {
+            appointmentId: id,
+            existingConversionId: existingConversion.id,
+            affiliateCode: appointment.affiliateCode,
+            saleValue: parseFloat(saleValue)
+          });
+          affiliateCommissionAmount = null; // Don't increment totalCommission again
+        } else {
+          // Create AffiliateConversion record with held status
+          await prisma.affiliateConversion.create({
+            data: {
+              affiliateId: affiliate.id,
+              referralCode: appointment.affiliateCode,
+              conversionType: "sale",
+              status: "confirmed",
+              commissionAmount: affiliateCommissionAmount,
+              saleValue: parseFloat(saleValue),
+              commissionStatus: "held",
+              holdUntil: holdUntil
+            }
+          });
+        }
+        
+        // Update affiliate's total commission (only if not a duplicate)
+        if (affiliateCommissionAmount !== null) {
+          await prisma.affiliate.update({
+            where: { id: affiliate.id },
+            data: {
+              totalCommission: { increment: affiliateCommissionAmount }
+            }
+          });
+        }
         
         console.log('💰 Affiliate commission calculated and held:', {
           appointmentId: id,
