@@ -178,7 +178,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-6">
             {/* Logo and Social */}
             <div className="sm:col-span-2 md:col-span-1">
               <Link href={getLink("/")} className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-6 block">
@@ -215,34 +215,24 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
               </div>
             </div>
 
-            {/* Company */}
-            <div>
-              <h4 className="text-sm font-bold uppercase tracking-wide mb-4">Company</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href={getLink("/book-call")} className="text-gray-300 hover:text-white">Contact Us</Link></li>
-                <li><Link href="/affiliates/signup" className="text-gray-300 hover:text-white">Become a Partner</Link></li>
-              </ul>
-            </div>
-
             {/* Resources */}
             <div>
               <h4 className="text-sm font-bold uppercase tracking-wide mb-4">Resources</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href={getLink("/book-call")} className="text-gray-300 hover:text-white">Book a Call</Link></li>
-                <li><Link href={getLink("/quiz/financial-profile")} className="text-gray-300 hover:text-white">Financial Profile Quiz</Link></li>
-                <li><Link href={getLink("/quiz/health-finance")} className="text-gray-300 hover:text-white">Health Finance Quiz</Link></li>
-                <li><Link href={getLink("/quiz/marriage-finance")} className="text-gray-300 hover:text-white">Marriage Finance Quiz</Link></li>
+                <li><Link href="/blog" className="text-gray-300 hover:text-white">Blog</Link></li>
+                <li><Link href="/about" className="text-gray-300 hover:text-white">About Us</Link></li>
+                <li><Link href="/careers" className="text-gray-300 hover:text-white">Careers</Link></li>
+                <li><Link href="/affiliates/signup" className="text-gray-300 hover:text-white">Become a Partner</Link></li>
               </ul>
             </div>
 
-            {/* Languages */}
+            {/* Legal */}
             <div>
-              <h4 className="text-sm font-bold uppercase tracking-wide mb-4">Languages</h4>
+              <h4 className="text-sm font-bold uppercase tracking-wide mb-4">Legal</h4>
               <ul className="space-y-2 text-sm">
-                <li><Link href="#" className="text-gray-300 hover:text-white">English</Link></li>
-                <li><Link href="#" className="text-gray-300 hover:text-white">Spanish</Link></li>
-                <li><Link href="#" className="text-gray-300 hover:text-white">French</Link></li>
-                <li><Link href="#" className="text-gray-300 hover:text-white">German</Link></li>
+                <li><Link href="/terms" className="text-gray-300 hover:text-white">Terms of Service</Link></li>
+                <li><Link href="/privacy" className="text-gray-300 hover:text-white">Privacy Policy</Link></li>
+                <li><a href="mailto:support@joinbrightnest.com" className="text-gray-300 hover:text-white">Customer Support</a></li>
               </ul>
             </div>
           </div>
