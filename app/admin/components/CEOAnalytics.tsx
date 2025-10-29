@@ -46,9 +46,13 @@ interface CEOAnalyticsData {
   topAffiliates: AffiliatePerformance[];
 }
 
-export default function CEOAnalytics() {
-  const [data, setData] = useState<CEOAnalyticsData | null>(null);
-  const [loading, setLoading] = useState(true);
+interface CEOAnalyticsProps {
+  initialData?: CEOAnalyticsData | null;
+}
+
+export default function CEOAnalytics({ initialData }: CEOAnalyticsProps) {
+  const [data, setData] = useState<CEOAnalyticsData | null>(initialData || null);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState("all");
   const [activeSection, setActiveSection] = useState<"overview" | "affiliates" | "pending" | "payouts">("overview");
@@ -57,10 +61,23 @@ export default function CEOAnalytics() {
   const [trackingLinkInput, setTrackingLinkInput] = useState<string>("");
   const [approvingAffiliate, setApprovingAffiliate] = useState<string | null>(null);
 
+  // Set initial data if provided
   useEffect(() => {
+    if (initialData && dateRange === "all") {
+      setData(initialData);
+      setLoading(false);
+    }
+  }, [initialData, dateRange]);
+
+  useEffect(() => {
+    // Fetch data when date range changes (unless we have initial data and date range is "all")
+    if (dateRange === "all" && initialData) {
+      // Use initial data, no need to fetch
+      return;
+    }
     fetchCEOAnalytics();
     fetchPendingAffiliates();
-  }, [dateRange]);
+  }, [dateRange, initialData]);
 
   const fetchCEOAnalytics = async () => {
     try {

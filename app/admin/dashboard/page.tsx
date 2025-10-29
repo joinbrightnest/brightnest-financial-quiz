@@ -106,6 +106,9 @@ export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState<'quiz-analytics' | 'crm' | 'ceo-analytics' | 'closer-management' | 'settings'>('quiz-analytics');
   const currentSectionRef = useRef(activeSection);
   
+  // Preload affiliate analytics data for instant section switching
+  const [affiliateAnalyticsData, setAffiliateAnalyticsData] = useState<any>(null);
+  
   // Quiz Analytics Filters
   const [quizAnalyticsFilters, setQuizAnalyticsFilters] = useState({
     quizType: 'all',
@@ -471,6 +474,7 @@ export default function AdminDashboard() {
       fetchSettings();
       fetchCommissionReleaseStatus();
       fetchAffiliates(); // Fetch affiliates for filter dropdown
+      fetchAffiliateAnalytics(); // Preload affiliate analytics for instant switching
     }
   }, [fetchStats]);
 
@@ -488,6 +492,22 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error('Error fetching affiliates:', error);
+    }
+  };
+
+  // Preload affiliate analytics data for instant section switching
+  const fetchAffiliateAnalytics = async () => {
+    try {
+      const params = new URLSearchParams({ dateRange: 'all' });
+      const response = await fetch(`/api/admin/affiliate-performance?${params}`);
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setAffiliateAnalyticsData(result.data);
+        }
+      }
+    } catch (error) {
+      console.error('Error preloading affiliate analytics:', error);
     }
   };
 
@@ -3392,7 +3412,7 @@ export default function AdminDashboard() {
           {/* CEO Analytics Section */}
           {activeSection === 'ceo-analytics' && (
             <div className="mb-8">
-              <CEOAnalytics />
+              <CEOAnalytics initialData={affiliateAnalyticsData} />
             </div>
           )}
 
