@@ -32,9 +32,9 @@ interface ConversionFunnel {
 }
 
 interface AffiliateChartsProps {
-  topAffiliates: AffiliatePerformance[];
-  trafficSources: TrafficSource[];
-  conversionFunnel: ConversionFunnel[];
+  topAffiliates: AffiliatePerformance[] | null;
+  trafficSources: TrafficSource[] | null;
+  conversionFunnel: ConversionFunnel[] | null;
 }
 
 export default function AffiliateCharts({ 
@@ -42,6 +42,10 @@ export default function AffiliateCharts({
   trafficSources, 
   conversionFunnel 
 }: AffiliateChartsProps) {
+  if (!topAffiliates || !trafficSources || !conversionFunnel) {
+    return null;
+  }
+  
   const maxRevenue = Math.max(...topAffiliates.map(a => a.revenue));
 
   return (

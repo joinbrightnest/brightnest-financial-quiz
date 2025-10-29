@@ -68,6 +68,7 @@ export default function AffiliateOverview({ externalDateRange, externalTier }: A
   const fetchAffiliateData = async () => {
     try {
       setLoading(true);
+      setError(null); // Clear any previous errors
       const params = new URLSearchParams({
         dateRange: effectiveDateRange,
         tier: effectiveTier,
@@ -80,10 +81,10 @@ export default function AffiliateOverview({ externalDateRange, externalTier }: A
 
       const result = await response.json();
       setData(result);
-      setError(null);
     } catch (err) {
       console.error("Error fetching affiliate data:", err);
       setError(err instanceof Error ? err.message : "Failed to load affiliate data");
+      setData(null); // Clear data on error
     } finally {
       setLoading(false);
     }
@@ -205,14 +206,14 @@ export default function AffiliateOverview({ externalDateRange, externalTier }: A
 
       {/* Charts Section */}
       <AffiliateCharts 
-        topAffiliates={data.topAffiliates}
-        trafficSources={data.trafficSourceBreakdown}
-        conversionFunnel={data.conversionFunnelByTier}
+        topAffiliates={data?.topAffiliates || null}
+        trafficSources={data?.trafficSourceBreakdown || null}
+        conversionFunnel={data?.conversionFunnelByTier || null}
       />
 
       {/* Performance Table */}
       <AffiliatePerformanceTable 
-        data={data.topAffiliates}
+        data={data?.topAffiliates || []}
         loading={loading}
         onRefresh={fetchAffiliateData}
       />

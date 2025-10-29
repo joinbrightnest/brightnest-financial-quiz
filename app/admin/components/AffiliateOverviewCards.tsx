@@ -10,10 +10,14 @@ interface AffiliateOverviewCardsProps {
     totalSalesValue: number;
     totalCommissionsPaid: number;
     totalCommissionsPending: number;
-  };
+  } | null;
 }
 
 export default function AffiliateOverviewCards({ data }: AffiliateOverviewCardsProps) {
+  if (!data) {
+    return null;
+  }
+  
   const cards = [
     {
       title: "Total Active Affiliates",
