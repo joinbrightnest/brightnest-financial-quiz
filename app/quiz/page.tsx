@@ -204,48 +204,10 @@ export default function QuizPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-2xl">
-          {/* Skeleton Quiz Card */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 animate-pulse">
-            {/* Progress bar skeleton */}
-            <div className="mb-8">
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full w-1/12 bg-gradient-to-r from-gray-300 to-gray-200"></div>
-              </div>
-              <div className="flex justify-between mt-2">
-                <div className="h-4 w-20 bg-gray-200 rounded"></div>
-                <div className="h-4 w-16 bg-gray-200 rounded"></div>
-              </div>
-            </div>
-
-            {/* Question skeleton */}
-            <div className="mb-8">
-              <div className="h-8 bg-gray-200 rounded w-3/4 mb-4"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-            </div>
-
-            {/* Options skeleton */}
-            <div className="space-y-3 mb-8">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-14 bg-gray-100 rounded-xl border-2 border-gray-200"></div>
-              ))}
-            </div>
-
-            {/* Button skeleton */}
-            <div className="flex justify-between items-center">
-              <div className="h-12 w-24 bg-gray-200 rounded-xl"></div>
-              <div className="h-12 w-32 bg-blue-200 rounded-xl"></div>
-            </div>
-          </div>
-
-          {/* Loading indicator */}
-          <div className="mt-4 text-center">
-            <div className="inline-flex items-center gap-2 text-sm text-gray-600">
-              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-              <span>Preparing your personalized assessment...</span>
-            </div>
-          </div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading quiz...</p>
         </div>
       </div>
     );
