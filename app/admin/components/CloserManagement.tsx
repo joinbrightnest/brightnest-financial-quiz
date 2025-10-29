@@ -230,13 +230,16 @@ export default function CloserManagement() {
       const response = await fetch('/api/admin/tasks');
       if (response.ok) {
         const data = await response.json();
-        setAllTasks(data);
+        // Ensure data is always an array
+        setAllTasks(Array.isArray(data) ? data : []);
       } else {
         setError('Failed to load tasks');
+        setAllTasks([]); // Reset to empty array on error
       }
     } catch (error) {
       console.error('Error fetching tasks:', error);
       setError('Network error loading tasks');
+      setAllTasks([]); // Reset to empty array on error
     } finally {
       setIsLoadingTasks(false);
     }
@@ -1085,7 +1088,7 @@ export default function CloserManagement() {
                     : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                All Tasks ({allTasks.length})
+                All Tasks ({allTasks?.length || 0})
               </button>
               <button
                 onClick={() => setTaskFilter('pending')}
@@ -1095,7 +1098,7 @@ export default function CloserManagement() {
                     : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                Pending ({allTasks.filter(t => t.status === 'pending').length})
+                Pending ({allTasks?.filter(t => t.status === 'pending').length || 0})
               </button>
               <button
                 onClick={() => setTaskFilter('in_progress')}
@@ -1105,7 +1108,7 @@ export default function CloserManagement() {
                     : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                In Progress ({allTasks.filter(t => t.status === 'in_progress').length})
+                In Progress ({allTasks?.filter(t => t.status === 'in_progress').length || 0})
               </button>
               <button
                 onClick={() => setTaskFilter('completed')}
@@ -1115,7 +1118,7 @@ export default function CloserManagement() {
                     : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                Completed ({allTasks.filter(t => t.status === 'completed').length})
+                Completed ({allTasks?.filter(t => t.status === 'completed').length || 0})
               </button>
             </div>
           </div>
@@ -1128,7 +1131,7 @@ export default function CloserManagement() {
             </div>
           ) : (
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-              {allTasks
+              {(allTasks || [])
                 .filter(task => taskFilter === 'all' || task.status === taskFilter)
                 .length === 0 ? (
                 <div className="text-center py-12 px-6">
@@ -1145,7 +1148,7 @@ export default function CloserManagement() {
                 </div>
               ) : (
                 <div className="divide-y divide-gray-200">
-                  {allTasks
+                  {(allTasks || [])
                     .filter(task => taskFilter === 'all' || task.status === taskFilter)
                     .map((task) => (
                       <div key={task.id} className="p-6 hover:bg-gray-50 transition-colors">
