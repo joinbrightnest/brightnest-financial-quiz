@@ -106,6 +106,7 @@ export async function GET(request: NextRequest) {
       prisma.appointment.findMany({
         where: {
           affiliateCode: { in: referralCodes },
+          createdAt: { gte: startDate },
         },
         select: {
           id: true,

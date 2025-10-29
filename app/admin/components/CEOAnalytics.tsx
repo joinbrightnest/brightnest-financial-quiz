@@ -61,23 +61,19 @@ export default function CEOAnalytics({ initialData }: CEOAnalyticsProps) {
   const [trackingLinkInput, setTrackingLinkInput] = useState<string>("");
   const [approvingAffiliate, setApprovingAffiliate] = useState<string | null>(null);
 
-  // Set initial data if provided
+  // Set initial data only on first mount (ignore if dateRange changes)
   useEffect(() => {
-    if (initialData && dateRange === "all") {
+    if (initialData && dateRange === "all" && !data) {
       setData(initialData);
       setLoading(false);
     }
-  }, [initialData, dateRange]);
+  }, [initialData]);
 
   useEffect(() => {
-    // Fetch data when date range changes (unless we have initial data and date range is "all")
-    if (dateRange === "all" && initialData) {
-      // Use initial data, no need to fetch
-      return;
-    }
+    // Always fetch when dateRange changes (don't rely on cached initialData)
     fetchCEOAnalytics();
     fetchPendingAffiliates();
-  }, [dateRange, initialData]);
+  }, [dateRange]);
 
   const fetchCEOAnalytics = async () => {
     try {
