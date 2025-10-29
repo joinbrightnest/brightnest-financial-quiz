@@ -230,8 +230,9 @@ export default function CloserManagement() {
       const response = await fetch('/api/admin/tasks');
       if (response.ok) {
         const data = await response.json();
-        // Ensure data is always an array
-        setAllTasks(Array.isArray(data) ? data : []);
+        // API returns { tasks: [...] }, extract the tasks array
+        const tasksArray = data.tasks || data;
+        setAllTasks(Array.isArray(tasksArray) ? tasksArray : []);
       } else {
         setError('Failed to load tasks');
         setAllTasks([]); // Reset to empty array on error
