@@ -170,6 +170,7 @@ export async function GET(request: NextRequest) {
       return {
         id: affiliate.id,
         name: affiliate.name,
+        email: affiliate.email,
         tier: affiliate.tier,
         referralCode: affiliate.referralCode,
         clicks: clickCount,
