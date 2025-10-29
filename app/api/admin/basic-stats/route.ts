@@ -486,7 +486,21 @@ export async function GET(request: NextRequest) {
       orderBy: { order: 'asc' }
     });
 
-    // Get all question analytics in a single query to avoid connection pool issues
+    // Get filtered sessions first (applying date and affiliate filters)
+    const filteredSessions = await prisma.quizSession.findMany({
+      where: {
+        createdAt: dateFilter,
+        ...(quizType ? { quizType } : {}),
+        ...(affiliateCode ? { affiliateCode } : {})
+      },
+      select: {
+        id: true
+      }
+    });
+
+    const filteredSessionIds = filteredSessions.map(s => s.id);
+
+    // Get question analytics for ONLY the filtered sessions
     const questionAnalyticsData = await prisma.quizAnswer.groupBy({
       by: ['questionId'],
       _count: {
@@ -495,6 +509,9 @@ export async function GET(request: NextRequest) {
       where: {
         questionId: {
           in: allQuestions.map(q => q.id)
+        },
+        sessionId: {
+          in: filteredSessionIds // ✅ Filter by session IDs (applies date + affiliate filters)
         }
       }
     });
