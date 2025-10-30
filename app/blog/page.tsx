@@ -15,7 +15,8 @@ export default function BlogPage() {
       category: "HABITS",
       readTime: "4 min read",
       description: "Budgets aren't about restriction — they're about freedom. Discover the 3 behavior shifts that make budgeting actually work.",
-      image: "/blog/budget-failing.jpg"
+      image: "/blog/budget-failing.jpg",
+      slug: "why-your-budget-keeps-failing"
     },
     {
       id: 2,
@@ -23,7 +24,8 @@ export default function BlogPage() {
       category: "MINDSET",
       readTime: "3 min read",
       description: "That innocent payment plan could be costing you more than money. Let's talk about the psychological trap of deferred payments.",
-      image: "/blog/bnpl.jpg"
+      image: "/blog/bnpl.jpg",
+      slug: "hidden-cost-of-bnpl"
     },
     {
       id: 3,
@@ -31,7 +33,8 @@ export default function BlogPage() {
       category: "RELATIONSHIPS",
       readTime: "5 min read",
       description: "Money conversations don't have to be awkward. Here's how to build financial trust and alignment in your relationship.",
-      image: "/blog/money-talk.jpg"
+      image: "/blog/money-talk.jpg",
+      slug: "talk-about-money-with-your-partner"
     },
     {
       id: 4,
@@ -39,7 +42,8 @@ export default function BlogPage() {
       category: "PLANNING",
       readTime: "4 min read",
       description: "Stop juggling everything in one account. This simple system makes managing money effortless and automatic.",
-      image: "/blog/account-system.jpg"
+      image: "/blog/account-system.jpg",
+      slug: "three-account-system"
     },
     {
       id: 5,
@@ -47,7 +51,8 @@ export default function BlogPage() {
       category: "PLANNING",
       readTime: "6 min read",
       description: "Freelancer? Commission-based? Entrepreneur? Here's how to build financial stability when your income fluctuates.",
-      image: "/blog/variable-income.jpg"
+      image: "/blog/variable-income.jpg",
+      slug: "build-wealth-on-variable-income"
     }
   ];
 
@@ -156,7 +161,9 @@ export default function BlogPage() {
             {/* Title and Description Below Image */}
             <div>
               <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
-                Why Your Budget Keeps Failing (And How to Fix It)
+                <Link href={`/blog/${featuredPosts[0].slug}`} className="hover:text-pink-500 transition-colors">
+                  Why Your Budget Keeps Failing (And How to Fix It)
+                </Link>
               </h3>
               <p className="text-gray-600 text-sm mb-3 sm:mb-4 leading-relaxed">
                 Budgets aren't about restriction — they're about freedom. Discover the 3 behavior shifts that make budgeting actually work.
@@ -178,10 +185,12 @@ export default function BlogPage() {
             <div className="space-y-3 sm:space-y-4">
               {featuredPosts.slice(0, 5).map((post) => (
                 <div key={post.id} className="border-b border-gray-200 pb-3 sm:pb-4 last:border-0">
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1 hover:text-pink-500 cursor-pointer transition-colors leading-snug">
-                    {post.title}
-                  </h3>
-                  <p className="text-xs text-gray-500">{post.readTime}</p>
+                  <Link href={`/blog/${post.slug}`} className="block">
+                    <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1 hover:text-pink-500 transition-colors leading-snug">
+                      {post.title}
+                    </h3>
+                    <p className="text-xs text-gray-500">{post.readTime}</p>
+                  </Link>
                 </div>
               ))}
             </div>
