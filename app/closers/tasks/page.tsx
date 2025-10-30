@@ -159,28 +159,28 @@ export default function CloserTasks() {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'urgent':
-        return 'bg-red-100 text-red-800 border-red-300';
+        return 'bg-red-50 text-red-700';
       case 'high':
-        return 'bg-orange-100 text-orange-800 border-orange-300';
+        return 'bg-orange-50 text-orange-700';
       case 'medium':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+        return 'bg-amber-50 text-amber-700';
       case 'low':
-        return 'bg-green-100 text-green-800 border-green-300';
+        return 'bg-slate-50 text-slate-700';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-300';
+        return 'bg-slate-50 text-slate-700';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-800 border-green-300';
+        return 'bg-emerald-50 text-emerald-700';
       case 'in_progress':
-        return 'bg-blue-100 text-blue-800 border-blue-300';
+        return 'bg-indigo-50 text-indigo-700';
       case 'cancelled':
-        return 'bg-gray-100 text-gray-800 border-gray-300';
+        return 'bg-slate-100 text-slate-600';
       default:
-        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+        return 'bg-amber-50 text-amber-700';
     }
   };
 
@@ -209,8 +209,8 @@ export default function CloserTasks() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mr-4">
+              <svg className="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
               </svg>
             </div>
@@ -229,10 +229,10 @@ export default function CloserTasks() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mr-4">
+                <svg className="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
               </div>
@@ -243,10 +243,10 @@ export default function CloserTasks() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mr-4">
-                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mr-4">
+                <svg className="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -259,10 +259,10 @@ export default function CloserTasks() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mr-4">
+                <svg className="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -275,10 +275,10 @@ export default function CloserTasks() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
-                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mr-4">
+                <svg className="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
@@ -293,34 +293,34 @@ export default function CloserTasks() {
         </div>
 
         {/* Filter Tabs */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
-          <div className="flex space-x-4">
+        <div className="bg-white rounded-lg border border-gray-200 p-4 mb-8">
+          <div className="flex space-x-2">
             <button
               onClick={() => setFilter('all')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all ${
+              className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
                 filter === 'all'
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
               }`}
             >
               All Tasks ({tasks.length})
             </button>
             <button
               onClick={() => setFilter('pending')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all ${
+              className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
                 filter === 'pending'
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
               }`}
             >
               Active ({tasks.filter(t => t.status === 'pending' || t.status === 'in_progress').length})
             </button>
             <button
               onClick={() => setFilter('completed')}
-              className={`px-6 py-3 rounded-lg font-medium transition-all ${
+              className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
                 filter === 'completed'
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
               }`}
             >
               Completed ({tasks.filter(t => t.status === 'completed').length})
@@ -329,7 +329,7 @@ export default function CloserTasks() {
         </div>
 
         {/* Tasks List */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
@@ -348,7 +348,7 @@ export default function CloserTasks() {
               {filteredTasks.map((task) => (
                 <div
                   key={task.id}
-                  className="border border-gray-200 rounded-lg p-6 hover:border-indigo-300 hover:shadow-md transition-all"
+                  className="border border-gray-200 rounded-lg p-6 hover:border-gray-300 hover:shadow-sm transition-all bg-white"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -356,10 +356,10 @@ export default function CloserTasks() {
                         <h3 className="text-lg font-semibold text-gray-900">
                           {task.title}
                         </h3>
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getPriorityColor(task.priority)}`}>
+                        <span className={`px-2.5 py-1 rounded text-xs font-medium ${getPriorityColor(task.priority)}`}>
                           {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
                         </span>
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(task.status)}`}>
+                        <span className={`px-2.5 py-1 rounded text-xs font-medium ${getStatusColor(task.status)}`}>
                           {task.status === 'in_progress' ? 'In Progress' : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
                         </span>
                       </div>
@@ -399,7 +399,7 @@ export default function CloserTasks() {
                       {task.status !== 'in_progress' && task.status !== 'completed' && (
                         <button
                           onClick={() => handleUpdateStatus(task.id, 'in_progress')}
-                          className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+                          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors shadow-sm"
                         >
                           Start
                         </button>
@@ -407,7 +407,7 @@ export default function CloserTasks() {
                       {task.status === 'in_progress' && (
                         <button
                           onClick={() => handleUpdateStatus(task.id, 'completed')}
-                          className="px-3 py-1.5 text-sm font-medium text-green-600 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors"
+                          className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 transition-colors shadow-sm"
                         >
                           Complete
                         </button>
@@ -415,7 +415,7 @@ export default function CloserTasks() {
                       {task.status !== 'completed' && (
                         <button
                           onClick={() => handleUpdateStatus(task.id, 'cancelled')}
-                          className="px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+                          className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors"
                         >
                           Cancel
                         </button>
