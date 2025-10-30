@@ -12,7 +12,7 @@ interface PostContentsProps {
 }
 
 export default function PostContents({ sections }: PostContentsProps) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const handleClick = (id: string) => {
     const el = document.getElementById(id);
