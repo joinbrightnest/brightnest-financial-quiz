@@ -57,15 +57,15 @@ export default async function BlogArticlePage({ params }: PageProps) {
               />
 
               {/* Promo card (hide on mobile to match reference; show only on desktop) */}
-              <div className="hidden lg:block rounded-2xl p-6 text-white shadow-md" style={{
+              <div className="hidden lg:block rounded-2xl p-6 text-white shadow-md text-center" style={{
                 background: "radial-gradient(120% 120% at 10% 0%, #2dd4bf 0%, #0ea5e9 45%, #ef4444 100%)"
               }}>
                 <div className="text-xs font-bold uppercase tracking-wider opacity-90 mb-2">Limited time</div>
                 <h3 className="text-2xl font-black leading-tight mb-3">
-                  Feel Like Your Body’s Betraying You After 40?
+                  Feel Like Your Body's Betraying You After 40?
                 </h3>
                 <p className="text-sm text-white/90 leading-relaxed mb-5">
-                  1‑on‑1 coaching. Personalized macros & workouts designed for your changing body. Join thousands proving it’s never too late to become your strongest self.
+                  1‑on‑1 coaching. Personalized macros & workouts designed for your changing body. Join thousands proving it's never too late to become your strongest self.
                 </p>
                 <Link
                   href="/quiz/financial-profile"
