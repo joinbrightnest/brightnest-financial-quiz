@@ -50,7 +50,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left rail: post contents + promo card */}
           <aside className="lg:col-span-3">
-            <div className="sticky top-6 space-y-6">
+            <div className="sticky top-28 space-y-6">
               {/* Post contents dropdown */}
               <PostContents
                 sections={article.sections.map((s, i) => ({ id: `section-${i + 1}`, title: s.title }))}
