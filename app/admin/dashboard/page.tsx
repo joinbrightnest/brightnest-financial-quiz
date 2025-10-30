@@ -1701,7 +1701,7 @@ export default function AdminDashboard() {
                                   const dropOff = Math.max(100 - context.parsed.y, 0).toFixed(1); // Ensure non-negative
                                   return [
                                     `Q${questionNum}: ${retention}% retention`,
-                                    `${dropOff}% dropped off`
+                                    `${dropOff}% never reached this question`
                                   ];
                                 }
                               }
@@ -1970,7 +1970,7 @@ export default function AdminDashboard() {
                   <h3 className="text-lg font-bold text-gray-900">Top Funnel Drop-offs</h3>
                   <p className="text-xs text-gray-500">
                     {stats.topDropOffQuestions.length > 0 
-                      ? 'Questions causing the highest user abandonment' 
+                      ? 'Questions that most users never reached (from quiz start)' 
                       : 'No significant drop-offs detected'
                     }
                   </p>
@@ -2030,7 +2030,7 @@ export default function AdminDashboard() {
                               {(question.dropFromPrevious || 0).toFixed(1)}%
                             </div>
                             <div className="text-xs text-red-500 font-medium uppercase tracking-wide">
-                              Drop-off
+                              Never Reached
                             </div>
                             <div className="mt-1 w-12 h-1 bg-red-200 rounded-full overflow-hidden">
                               <div 
