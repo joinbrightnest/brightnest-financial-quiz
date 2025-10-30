@@ -1,4 +1,5 @@
 import Link from "next/link";
+import PostContents from "@/components/PostContents";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -48,21 +49,9 @@ export default async function BlogArticlePage({ params }: PageProps) {
           <aside className="lg:col-span-3">
             <div className="sticky top-6 space-y-6">
               {/* Post contents dropdown */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-                <button className="w-full flex items-center justify-between px-5 py-4">
-                  <span className="text-base font-semibold text-gray-900">Post Contents</span>
-                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                <nav className="px-5 pb-4 space-y-3">
-                  {article.sections.map((s, i) => (
-                    <a key={i} href={`#section-${i + 1}`} className="block text-sm text-gray-700 hover:text-[#FF6B6B]">
-                      {s.title}
-                    </a>
-                  ))}
-                </nav>
-              </div>
+              <PostContents
+                sections={article.sections.map((s, i) => ({ id: `section-${i + 1}`, title: s.title }))}
+              />
 
               {/* Promo card (BrightNest colors) */}
               <div className="rounded-2xl p-6 text-white shadow-md" style={{
