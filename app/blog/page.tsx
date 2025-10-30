@@ -227,7 +227,7 @@ export default function BlogPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+            <Link href="/blog/why-your-budget-keeps-failing" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-48 bg-gradient-to-br from-blue-200 to-blue-300"></div>
               <div className="p-4 sm:p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -238,9 +238,9 @@ export default function BlogPage() {
                 </p>
                 <div className="text-xs text-gray-500">5 min read</div>
               </div>
-            </div>
+            </Link>
 
-            <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+            <Link href="/blog/hidden-cost-of-bnpl" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-48 bg-gradient-to-br from-teal-200 to-teal-300"></div>
               <div className="p-4 sm:p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -251,9 +251,9 @@ export default function BlogPage() {
                 </p>
                 <div className="text-xs text-gray-500">4 min read</div>
               </div>
-            </div>
+            </Link>
 
-            <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+            <Link href="/blog/three-account-system" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-48 bg-gradient-to-br from-purple-200 to-purple-300"></div>
               <div className="p-4 sm:p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-3">
@@ -264,7 +264,7 @@ export default function BlogPage() {
                 </p>
                 <div className="text-xs text-gray-500">6 min read</div>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
 
@@ -278,7 +278,7 @@ export default function BlogPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+            <Link href="/blog/why-your-budget-keeps-failing" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-48 bg-gradient-to-br from-red-200 to-red-300 flex items-center justify-center">
                 <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z"/>
@@ -292,9 +292,9 @@ export default function BlogPage() {
                   You're making more money but feeling just as broke? Here's why — and how to break the cycle.
                 </p>
               </div>
-            </div>
+            </Link>
 
-            <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+            <Link href="/blog/three-account-system" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-48 bg-gradient-to-br from-orange-200 to-orange-300 flex items-center justify-center">
                 <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z"/>
@@ -308,9 +308,9 @@ export default function BlogPage() {
                   Stop relying on willpower. These automated systems work while you sleep.
                 </p>
               </div>
-            </div>
+            </Link>
 
-            <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+            <Link href="/blog/hidden-cost-of-bnpl" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-48 bg-gradient-to-br from-indigo-200 to-indigo-300 flex items-center justify-center">
                 <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z"/>
@@ -324,7 +324,7 @@ export default function BlogPage() {
                   Lost your job? Unexpected expense? Here's your step-by-step recovery plan.
                 </p>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
 
@@ -338,7 +338,7 @@ export default function BlogPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+            <Link href="/blog/why-your-budget-keeps-failing" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-48 bg-gradient-to-br from-green-200 to-green-300 flex items-center justify-center">
                 <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
@@ -352,9 +352,9 @@ export default function BlogPage() {
                   Debt isn't a moral failing. In this episode, we talk about overcoming shame and building a real payoff strategy.
                 </p>
               </div>
-            </div>
+            </Link>
 
-            <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+            <Link href="/blog/three-account-system" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-48 bg-gradient-to-br from-yellow-200 to-yellow-300 flex items-center justify-center">
                 <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
@@ -368,9 +368,9 @@ export default function BlogPage() {
                   Stocks, ETFs, index funds — where do you even start? We break it down in plain English.
                 </p>
               </div>
-            </div>
+            </Link>
 
-            <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+            <Link href="/blog/hidden-cost-of-bnpl" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
               <div className="h-48 bg-gradient-to-br from-pink-200 to-pink-300 flex items-center justify-center">
                 <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
@@ -384,7 +384,7 @@ export default function BlogPage() {
                   Financial compatibility matters. Here's how to navigate money as a team without losing yourself.
                 </p>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
 
