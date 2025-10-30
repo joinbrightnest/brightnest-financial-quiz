@@ -159,28 +159,28 @@ export default function CloserTasks() {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'urgent':
-        return 'bg-red-50 text-red-700';
+        return 'bg-red-100 text-red-800 font-semibold';
       case 'high':
-        return 'bg-orange-50 text-orange-700';
+        return 'bg-orange-100 text-orange-800 font-semibold';
       case 'medium':
-        return 'bg-amber-50 text-amber-700';
+        return 'bg-amber-100 text-amber-800 font-semibold';
       case 'low':
-        return 'bg-slate-50 text-slate-700';
+        return 'bg-slate-100 text-slate-700';
       default:
-        return 'bg-slate-50 text-slate-700';
+        return 'bg-slate-100 text-slate-700';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-emerald-50 text-emerald-700';
+        return 'bg-emerald-100 text-emerald-800 font-semibold';
       case 'in_progress':
-        return 'bg-indigo-50 text-indigo-700';
+        return 'bg-indigo-100 text-indigo-800 font-semibold';
       case 'cancelled':
-        return 'bg-slate-100 text-slate-600';
+        return 'bg-slate-200 text-slate-700';
       default:
-        return 'bg-amber-50 text-amber-700';
+        return 'bg-amber-100 text-amber-800 font-semibold';
     }
   };
 
@@ -356,10 +356,10 @@ export default function CloserTasks() {
                         <h3 className="text-lg font-semibold text-gray-900">
                           {task.title}
                         </h3>
-                        <span className={`px-2.5 py-1 rounded text-xs font-medium ${getPriorityColor(task.priority)}`}>
+                        <span className={`px-3 py-1.5 rounded-md text-xs ${getPriorityColor(task.priority)}`}>
                           {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
                         </span>
-                        <span className={`px-2.5 py-1 rounded text-xs font-medium ${getStatusColor(task.status)}`}>
+                        <span className={`px-3 py-1.5 rounded-md text-xs ${getStatusColor(task.status)}`}>
                           {task.status === 'in_progress' ? 'In Progress' : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
                         </span>
                       </div>
