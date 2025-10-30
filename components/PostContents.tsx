@@ -21,6 +21,11 @@ export default function PostContents({ sections }: PostContentsProps) {
     }
   };
 
+  const stripLeadingNumbers = (title: string) => {
+    // Remove a leading numeric prefix like "1.", "2)" or "3 -"
+    return title.replace(/^\s*\d+\s*[\.|\)|-]?\s*/u, "");
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200">
       <button
@@ -47,7 +52,7 @@ export default function PostContents({ sections }: PostContentsProps) {
               onClick={() => handleClick(s.id)}
               className="block text-left w-full text-sm text-gray-700 hover:text-[#FF6B6B]"
             >
-              <span className="font-medium mr-1">{i + 1}.</span> {s.title}
+              <span className="font-medium mr-1">{i + 1}.</span> {stripLeadingNumbers(s.title)}
             </button>
           ))}
         </nav>
