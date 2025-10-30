@@ -4,7 +4,7 @@ export default function SiteFooter() {
   return (
     <footer className="bg-gray-800 text-white py-6 sm:py-10 mt-10 sm:mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-6">
           <div>
             <Link href="/" className="text-2xl font-bold text-white mb-6 block">
               BrightNest
@@ -34,19 +34,11 @@ export default function SiteFooter() {
           </div>
 
           <div>
-            <h4 className="text-sm font-bold uppercase tracking-wide mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link href="/" className="text-gray-300 hover:text-white">Home</Link></li>
-              <li><Link href="/about" className="text-gray-300 hover:text-white">About Us</Link></li>
-              <li><Link href="/blog" className="text-gray-300 hover:text-white">Blog</Link></li>
-              <li><Link href="/careers" className="text-gray-300 hover:text-white">Careers</Link></li>
-            </ul>
-          </div>
-
-          <div>
             <h4 className="text-sm font-bold uppercase tracking-wide mb-4">Resources</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/quiz/financial-profile" className="text-gray-300 hover:text-white">Take the Quiz</Link></li>
+              <li><Link href="/blog" className="text-gray-300 hover:text-white">Blog</Link></li>
+              <li><Link href="/about" className="text-gray-300 hover:text-white">About Us</Link></li>
+              <li><Link href="/careers" className="text-gray-300 hover:text-white">Careers</Link></li>
               <li><Link href="/affiliates/signup" className="text-gray-300 hover:text-white">Become a Partner</Link></li>
             </ul>
           </div>
@@ -56,12 +48,18 @@ export default function SiteFooter() {
             <ul className="space-y-2 text-sm">
               <li><Link href="/terms" className="text-gray-300 hover:text-white">Terms of Service</Link></li>
               <li><Link href="/privacy" className="text-gray-300 hover:text-white">Privacy Policy</Link></li>
+              <li><Link href="/support" className="text-gray-300 hover:text-white">Customer Support</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="mt-8 pt-6 border-top border-gray-700 text-center text-sm text-gray-400" style={{ borderTop: '1px solid rgba(55,65,81,1)' }}>
-          © {new Date().getFullYear()} BrightNest Technologies LLC. All rights reserved.
+          Copyright © {new Date().getFullYear()} BrightNest, Inc. All Rights Reserved
+        </div>
+
+        <div className="mt-4 text-center text-xs text-gray-400">
+          *Results vary depending on your starting point, goals and effort. People on the BrightNest plan typically improve their financial habits by 85%.
+          <a href="https://www.apa.org/pubs/journals/features/amp-67-9-690.pdf" target="_blank" rel="noopener noreferrer" className="ml-1 underline hover:text-gray-300">Reference: Financial Psychology Research</a>
         </div>
       </div>
     </footer>
