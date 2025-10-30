@@ -2,9 +2,9 @@ import Link from "next/link";
 
 export default function SiteFooter() {
   return (
-    <footer className="bg-gray-800 text-white py-8 sm:py-12 mt-12 sm:mt-16">
+    <footer className="bg-gray-800 text-white py-6 sm:py-10 mt-10 sm:mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-6">
           <div>
             <Link href="/" className="text-2xl font-bold text-white mb-6 block">
               BrightNest
@@ -60,7 +60,7 @@ export default function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-700 text-center text-sm text-gray-400">
+        <div className="mt-8 pt-6 border-top border-gray-700 text-center text-sm text-gray-400" style={{ borderTop: '1px solid rgba(55,65,81,1)' }}>
           © {new Date().getFullYear()} BrightNest Technologies LLC. All rights reserved.
         </div>
       </div>

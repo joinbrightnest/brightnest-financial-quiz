@@ -16,9 +16,13 @@ export default function PostContents({ sections }: PostContentsProps) {
 
   const handleClick = (id: string) => {
     const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    if (!el) return;
+
+    // Account for sticky header height
+    const header = document.querySelector('nav[aria-label="site-header"]') as HTMLElement | null;
+    const headerHeight = header?.offsetHeight ?? 88; // sensible default
+    const y = el.getBoundingClientRect().top + window.scrollY - headerHeight - 8; // small extra gap
+    window.scrollTo({ top: y, behavior: "smooth" });
   };
 
   const stripLeadingNumbers = (title: string) => {
