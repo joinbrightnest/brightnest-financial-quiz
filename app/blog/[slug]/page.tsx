@@ -107,6 +107,52 @@ export default async function BlogArticlePage({ params }: PageProps) {
               ))}
             </article>
 
+            {/* Top Read Content */}
+            <section className="mt-12 sm:mt-16">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-3xl font-extrabold text-gray-900">Top Read Content</h2>
+                <Link href="/blog" className="text-[#FF6B6B] font-semibold">View More</Link>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* Card 1 */}
+                <Link href="/blog/why-your-budget-keeps-failing" className="group block">
+                  <div className="rounded-xl overflow-hidden bg-white shadow-sm border border-gray-200">
+                    <div className="h-44 bg-gradient-to-br from-blue-300 to-blue-400 group-hover:opacity-95 transition-opacity" />
+                    <div className="p-5">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#FF6B6B] transition-colors">How To Balance Your Macros For Sustained Energy</h3>
+                      <p className="text-sm text-gray-600 line-clamp-3 mb-3">Macronutrients aren’t just about what & how much you eat in a day — there’s an art to supporting your body’s natural rhythms, giving you sustained energy and lasting results. Let’s look at how to do it!</p>
+                      <div className="text-xs text-gray-500">3 min read</div>
+                    </div>
+                  </div>
+                </Link>
+
+                {/* Card 2 */}
+                <Link href="/blog/hidden-cost-of-bnpl" className="group block">
+                  <div className="rounded-xl overflow-hidden bg-white shadow-sm border border-gray-200">
+                    <div className="h-44 bg-gradient-to-br from-fuchsia-300 to-pink-400 group-hover:opacity-95 transition-opacity" />
+                    <div className="p-5">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#FF6B6B] transition-colors">How To \*Guarantee\* You’ll Never Change Your Body Composition</h3>
+                      <p className="text-sm text-gray-600 line-clamp-3 mb-3">We talk a lot about what you can do to transform your body composition — this time, here are 3 things that will ensure you never build the body you want, so you can avoid them completely.</p>
+                      <div className="text-xs text-gray-500">3 min read</div>
+                    </div>
+                  </div>
+                </Link>
+
+                {/* Card 3 */}
+                <Link href="/blog/three-account-system" className="group block">
+                  <div className="rounded-xl overflow-hidden bg-white shadow-sm border border-gray-200">
+                    <div className="h-44 bg-gradient-to-br from-amber-300 to-orange-400 group-hover:opacity-95 transition-opacity" />
+                    <div className="p-5">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#FF6B6B] transition-colors">Why You Need Carbs To Tone</h3>
+                      <p className="text-sm text-gray-600 line-clamp-3 mb-3">If you’re serious about building a body composition you love, carbs aren’t just helpful — they’re essential. Here’s why they drive performance and results.</p>
+                      <div className="text-xs text-gray-500">3 min read</div>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </section>
+
             {/* CTA strip at bottom */}
             <div className="mt-12 rounded-xl p-6 sm:p-8 text-center text-white bg-gradient-to-r from-blue-600 to-teal-500">
               <h3 className="text-2xl font-bold mb-2">Begin Your Journey To A Stronger, Healthier You</h3>
