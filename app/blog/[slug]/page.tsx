@@ -44,7 +44,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
   const article = FALLBACK_ARTICLE;
 
   return (
-    <div className="min-h-screen bg-[#faf8f0]">
+    <div className="min-h-screen bg-white">
       <SiteHeader />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 md:py-7 lg:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8">
@@ -101,11 +101,11 @@ export default async function BlogArticlePage({ params }: PageProps) {
             </div>
 
             {/* Body */}
-            <article className="prose max-w-none prose-p:text-gray-700 prose-li:text-gray-700">
+            <article className="prose max-w-none">
               {article.sections.map((s, i) => (
                 <section key={i} id={`section-${i + 1}`} className="mb-10 scroll-mt-24 sm:scroll-mt-28 md:scroll-mt-32">
-                  <h2 className="text-lg sm:text-2xl font-extrabold text-gray-900 mb-3">{s.title}</h2>
-                  <p className="text-gray-700 leading-7">{s.body}</p>
+                  <h2 className="text-lg sm:text-2xl font-extrabold text-gray-900 mb-4">{s.title}</h2>
+                  <p className="text-gray-800 leading-relaxed text-base sm:text-lg">{s.body}</p>
                 </section>
               ))}
             </article>

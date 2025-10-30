@@ -59,7 +59,7 @@ export default function BlogPage() {
   const categories = ['ALL', 'MINDSET', 'HABITS', 'PLANNING', 'RELATIONSHIPS'];
 
   return (
-    <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
+    <div className="min-h-screen bg-white">
       {/* Navigation - Modern & Friendly */}
       <nav className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
