@@ -1,5 +1,7 @@
 import Link from "next/link";
 import PostContents from "@/components/PostContents";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -43,6 +45,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-[#faf8f0]">
+      <SiteHeader />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left rail: post contents + promo card */}
@@ -162,6 +165,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
             APPLY NOW
           </Link>
         </div>
+        <SiteFooter />
       </div>
     </div>
   );
