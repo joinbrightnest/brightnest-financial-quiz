@@ -165,8 +165,9 @@ export default async function BlogArticlePage({ params }: PageProps) {
             APPLY NOW
           </Link>
         </div>
-        <SiteFooter />
       </div>
+      {/* Footer must be OUTSIDE the constrained container to span full width */}
+      <SiteFooter />
     </div>
   );
 }
