@@ -46,11 +46,11 @@ export default async function BlogArticlePage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-[#faf8f0]">
       <SiteHeader />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 lg:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
           {/* Left rail: post contents + promo card */}
           <aside className="lg:col-span-3">
-            <div className="sticky top-28 space-y-6">
+            <div className="space-y-6 lg:sticky lg:top-28">
               {/* Post contents dropdown */}
               <PostContents
                 sections={article.sections.map((s, i) => ({ id: `section-${i + 1}`, title: s.title }))}
@@ -81,7 +81,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
           <main className="lg:col-span-9">
             <div className="mb-6">
               <div className="text-xs font-extrabold uppercase tracking-wider text-[#16a085]">{article.category}</div>
-              <h1 className="mt-2 text-4xl md:text-5xl font-black text-gray-900 leading-tight">
+              <h1 className="mt-2 text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 leading-tight">
                 {article.title}
               </h1>
             </div>
@@ -90,7 +90,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
             <div className="rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-200 mb-10">
               <div className="grid grid-cols-1 sm:grid-cols-3">
                 {article.heroImages.map((h, i) => (
-                  <div key={i} className={`h-56 sm:h-72 bg-gradient-to-br ${h.color}`} />
+                  <div key={i} className={`h-40 sm:h-56 md:h-72 bg-gradient-to-br ${h.color}`} />
                 ))}
               </div>
               <div className="px-5 sm:px-8 pb-5 sm:pb-7">
@@ -103,8 +103,8 @@ export default async function BlogArticlePage({ params }: PageProps) {
             {/* Body */}
             <article className="prose max-w-none prose-p:text-gray-700 prose-li:text-gray-700">
               {article.sections.map((s, i) => (
-                <section key={i} id={`section-${i + 1}`} className="mb-10 scroll-mt-28 md:scroll-mt-32">
-                  <h2 className="text-2xl font-extrabold text-gray-900 mb-3">{s.title}</h2>
+                <section key={i} id={`section-${i + 1}`} className="mb-10 scroll-mt-24 sm:scroll-mt-28 md:scroll-mt-32">
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 mb-3">{s.title}</h2>
                   <p className="text-gray-700 leading-7">{s.body}</p>
                 </section>
               ))}
