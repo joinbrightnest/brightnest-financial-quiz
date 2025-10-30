@@ -86,14 +86,11 @@ export default async function BlogArticlePage({ params }: PageProps) {
               </h1>
             </div>
 
-            {/* Hero media strip (compact mobile, 3-panel from tablet up) */}
+            {/* Hero media strip (always 3-panel landscape; scaled heights per breakpoint) */}
             <div className="rounded-xl sm:rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-200 mb-4 sm:mb-8 lg:mb-10">
-              {/* Mobile: single compact banner */}
-              <div className="sm:hidden h-32 bg-gradient-to-br from-blue-300 to-blue-400" />
-              {/* Tablet/Desktop: three-panel collage */}
-              <div className="hidden sm:grid grid-cols-3">
+              <div className="grid grid-cols-3">
                 {article.heroImages.map((h, i) => (
-                  <div key={i} className={`h-44 sm:h-48 md:h-64 lg:h-72 bg-gradient-to-br ${h.color}`} />
+                  <div key={i} className={`h-32 sm:h-48 md:h-64 lg:h-72 bg-gradient-to-br ${h.color}`} />
                 ))}
               </div>
               <div className="px-5 sm:px-8 pb-5 sm:pb-7">
