@@ -114,6 +114,16 @@ export default async function BlogArticlePage({ params }: PageProps) {
           </main>
         </div>
 
+        {/* Mid-page CTA (before Top Read Content) */}
+        <div className="mt-8 sm:mt-10">
+          <div className="rounded-xl sm:rounded-2xl p-6 sm:p-8 text-center text-white bg-gradient-to-r from-[#1d1b52] via-[#7a1f6e] to-[#ff2f68]">
+            <div className="text-xs font-bold uppercase tracking-wider opacity-90 mb-2">Limited Time</div>
+            <h3 className="text-xl sm:text-2xl font-bold mb-2">Begin Your Journey To A Stronger, Healthier You</h3>
+            <p className="text-sm text-white/90 mb-5 max-w-2xl mx-auto">Uncover what’s holding you back from getting toned & feeling confident in your skin!</p>
+            <Link href="/quiz/financial-profile" className="inline-block bg-[#FF6B6B] hover:bg-[#ff5670] text-white font-extrabold px-6 py-3 rounded-lg">APPLY NOW</Link>
+          </div>
+        </div>
+
         {/* Top Read Content - full width below the grid */}
         <section className="mt-8 sm:mt-12">
           <div className="flex items-center justify-between mb-6">
