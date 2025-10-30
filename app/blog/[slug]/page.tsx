@@ -103,7 +103,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
             {/* Body */}
             <article className="prose max-w-none prose-p:text-gray-700 prose-li:text-gray-700">
               {article.sections.map((s, i) => (
-                <section key={i} id={`section-${i + 1}`} className="mb-10">
+                <section key={i} id={`section-${i + 1}`} className="mb-10 scroll-mt-28 md:scroll-mt-32">
                   <h2 className="text-2xl font-extrabold text-gray-900 mb-3">{s.title}</h2>
                   <p className="text-gray-700 leading-7">{s.body}</p>
                 </section>
