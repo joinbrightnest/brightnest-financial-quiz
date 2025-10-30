@@ -46,8 +46,8 @@ export default async function BlogArticlePage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-[#faf8f0]">
       <SiteHeader />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 lg:py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 md:py-7 lg:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-8">
           {/* Left rail: post contents + promo card */}
           <aside className="lg:col-span-3">
             <div className="space-y-4 sm:space-y-6 lg:sticky lg:top-28">
@@ -79,7 +79,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
 
           {/* Main article */}
           <main className="lg:col-span-9">
-            <div className="mb-4 sm:mb-6">
+            <div className="mb-3 sm:mb-5">
               <div className="text-[11px] sm:text-xs font-extrabold uppercase tracking-wider text-[#16a085]">{article.category}</div>
               <h1 className="mt-1 sm:mt-2 text-2xl sm:text-4xl md:text-5xl font-black text-gray-900 leading-tight">
                 {article.title}
