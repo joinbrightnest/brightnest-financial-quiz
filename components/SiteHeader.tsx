@@ -7,31 +7,33 @@ export default function SiteHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <nav aria-label="site-header" className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+    <nav aria-label="site-header" className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-18 sm:h-20">
+        <div className="flex justify-between items-center h-20">
           <div className="flex items-center">
             <Link href="/" className="group flex items-center space-x-2">
-              <div className="text-2xl sm:text-3xl font-black text-gray-900 group-hover:text-[#FF6B6B] transition-colors">
+              <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all duration-300">
                 BrightNest
               </div>
             </Link>
           </div>
 
-          <div className="hidden lg:flex items-center space-x-1">
-            <Link href="/about" className="px-4 py-2 text-gray-700 font-semibold text-sm rounded-lg hover:bg-gray-100 hover:text-[#FF6B6B] transition-all">
+          <div className="hidden lg:flex items-center space-x-8">
+            <Link href="/about" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-teal-600 transition-colors duration-200 relative group">
               About Us
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-teal-600 transition-all duration-200 group-hover:w-full"></span>
             </Link>
-            <Link href="/blog" className="px-4 py-2 text-gray-700 font-semibold text-sm rounded-lg hover:bg-gray-100 hover:text-[#FF6B6B] transition-all">
+            <Link href="/blog" className="px-3 py-2 text-slate-900 font-medium text-sm border-b-2 border-teal-600 transition-colors duration-200">
               Blog
             </Link>
-            <Link href="/careers" className="px-4 py-2 text-gray-700 font-semibold text-sm rounded-lg hover:bg-gray-100 hover:text-[#FF6B6B] transition-all">
+            <Link href="/careers" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-teal-600 transition-colors duration-200 relative group">
               Careers
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-teal-600 transition-all duration-200 group-hover:w-full"></span>
             </Link>
           </div>
 
           <div className="hidden lg:flex items-center">
-            <Link href="/quiz/financial-profile" className="bg-gradient-to-r from-[#1ABC9C] to-[#16a085] text-white px-6 py-2.5 rounded-full font-semibold text-sm hover:shadow-lg hover:scale-105 transition-all">
+            <Link href="/quiz/financial-profile" className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02]">
               Learn More
             </Link>
           </div>
@@ -39,7 +41,7 @@ export default function SiteHeader() {
           <div className="lg:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 text-gray-700 hover:text-[#FF6B6B] hover:bg-gray-100 rounded-lg focus:outline-none transition-all"
+              className="p-2 text-slate-700 hover:text-slate-900 hover:bg-gray-50 rounded-md focus:outline-none transition-all duration-200"
               aria-label="Toggle mobile menu"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,13 +56,13 @@ export default function SiteHeader() {
         </div>
 
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-gray-200/50 backdrop-blur-md">
-            <div className="px-4 py-4 space-y-2">
-              <Link href="/about" className="block px-4 py-3 text-gray-700 font-semibold text-sm rounded-lg hover:bg-gray-100 hover:text-[#FF6B6B] transition-all" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
-              <Link href="/blog" className="block px-4 py-3 text-[#FF6B6B] font-semibold text-sm rounded-lg bg-[#FF6B6B]/10" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
-              <Link href="/careers" className="block px-4 py-3 text-gray-700 font-semibold text-sm rounded-lg hover:bg-gray-100 hover:text-[#FF6B6B] transition-all" onClick={() => setIsMobileMenuOpen(false)}>Careers</Link>
+          <div className="lg:hidden border-t border-gray-200 bg-white">
+            <div className="px-4 py-4 space-y-1">
+              <Link href="/about" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
+              <Link href="/blog" className="block px-4 py-3 text-teal-700 font-semibold text-sm bg-teal-50 rounded-md" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
+              <Link href="/careers" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Careers</Link>
               <div className="pt-2">
-                <Link href="/quiz/financial-profile" className="block w-full bg-gradient-to-r from-[#1ABC9C] to-[#16a085] text-white px-4 py-3 rounded-full font-semibold text-sm text-center shadow-md" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/quiz/financial-profile" className="block w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-3 rounded-lg font-semibold text-sm text-center shadow-md hover:from-teal-700 hover:to-teal-800 transition-all duration-300" onClick={() => setIsMobileMenuOpen(false)}>
                   Learn More
                 </Link>
               </div>
