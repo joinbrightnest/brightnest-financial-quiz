@@ -22,63 +22,57 @@ export default function CareersPage() {
       title: "Financial Coach",
       quote: "Working at BrightNest has been transformational. Every day, I help women break free from financial stress and build real wealth. The culture here is supportive, growth-oriented, and genuinely committed to making a difference in people's lives.",
       initials: "SJ",
-      color: "from-blue-400 to-teal-400"
     },
     {
       name: "Emily Chen",
       title: "Client Success Manager",
       quote: "BrightNest is more than a workplace—it's a community. I've grown both professionally and personally, learning from brilliant colleagues while helping clients achieve financial freedom. The remote culture feels close-knit, and leadership truly cares about our development.",
       initials: "EC",
-      color: "from-purple-400 to-pink-400"
     },
     {
       name: "Lisa Martinez",
       title: "Senior Financial Advisor",
       quote: "I love what I do at BrightNest because I see the real impact every single day. When a client tells me they paid off their debt or built their first emergency fund, that's everything. This team celebrates those wins together, and it's incredibly fulfilling.",
       initials: "LM",
-      color: "from-green-400 to-teal-400"
     },
     {
       name: "Amanda Brooks",
       title: "Enrollment Advisor",
       quote: "Joining BrightNest was one of the best career decisions I've made. The training is world-class, the team is supportive, and the mission is clear: empower women to take control of their financial futures. I wake up excited to come to work every day.",
       initials: "AB",
-      color: "from-orange-400 to-red-400"
     },
     {
       name: "Rachel Williams",
       title: "Customer Success Coordinator",
       quote: "From the moment I joined BrightNest, I was immersed in an empowering community that truly believes in creating lasting change in women's lives. The environment here is not only supportive but also continually evolving, fostering both personal and professional growth.",
       initials: "RW",
-      color: "from-indigo-400 to-purple-400"
     },
     {
       name: "Maria Rodriguez",
       title: "VIP Coach",
       quote: "I absolutely love my role at BrightNest, helping women fulfill their potential through sustainable financial practices. Being part of a team of like-minded women and having the support in place when I need it is a total game-changer.",
       initials: "MR",
-      color: "from-pink-400 to-rose-400"
     }
   ];
 
   const coreValues = [
     {
-      icon: "🎯",
+      icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
       title: "Future-Focused",
       description: "Long-term financial freedom instead of short-term quick fixes."
     },
     {
-      icon: "💪",
+      icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
       title: "Extreme Ownership",
       description: "We own our results. There's no one else to blame for our success or failure."
     },
     {
-      icon: "💎",
+      icon: "M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z",
       title: "Radical Transparency",
       description: "Honesty, especially when difficult, builds trust and informed decision-making."
     },
     {
-      icon: "⭐",
+      icon: "M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z",
       title: "World-Class Standards",
       description: "Excellence is our standard in everything we do and offer."
     }
@@ -120,36 +114,36 @@ export default function CareersPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#faf8f0]">
-      {/* Navigation - Modern & Friendly */}
-      <nav className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
+      {/* Navigation - Professional with Depth */}
+      <nav className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-18 sm:h-20">
+          <div className="flex justify-between items-center h-20">
             {/* Logo - Left Side */}
             <div className="flex items-center">
               <Link href="/" className="group flex items-center space-x-2">
-                <div className="text-2xl sm:text-3xl font-black text-gray-900 group-hover:text-[#FF6B6B] transition-colors">
+                <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all">
                   BrightNest
                 </div>
               </Link>
             </div>
             
             {/* Desktop Menu Items */}
-            <div className="hidden lg:flex items-center space-x-1">
-              <Link href="/about" className="px-4 py-2 text-gray-700 font-semibold text-sm rounded-lg hover:bg-gray-100 hover:text-[#FF6B6B] transition-all">
+            <div className="hidden lg:flex items-center space-x-8">
+              <Link href="/about" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-teal-600 transition-colors">
                 About Us
               </Link>
-              <Link href="/blog" className="px-4 py-2 text-gray-700 font-semibold text-sm rounded-lg hover:bg-gray-100 hover:text-[#FF6B6B] transition-all">
+              <Link href="/blog" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-teal-600 transition-colors">
                 Blog
               </Link>
-              <Link href="/careers" className="px-4 py-2 text-[#FF6B6B] font-semibold text-sm rounded-lg bg-[#FF6B6B]/10">
+              <Link href="/careers" className="px-3 py-2 text-slate-900 font-medium text-sm border-b-2 border-teal-600">
                 Careers
               </Link>
             </div>
             
             {/* Right Side Items */}
             <div className="hidden lg:flex items-center">
-              <Link href="/quiz/financial-profile" className="bg-gradient-to-r from-[#1ABC9C] to-[#16a085] text-white px-6 py-2.5 rounded-full font-semibold text-sm hover:shadow-lg hover:scale-105 transition-all">
+              <Link href="/quiz/financial-profile" className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all shadow-md hover:shadow-lg">
                 Learn More
               </Link>
             </div>
@@ -158,7 +152,7 @@ export default function CareersPage() {
             <div className="lg:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 text-gray-700 hover:text-[#FF6B6B] hover:bg-gray-100 rounded-lg focus:outline-none transition-all"
+                className="p-2 text-slate-700 hover:text-slate-900 hover:bg-gray-50 rounded-md focus:outline-none transition-all"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {isMobileMenuOpen ? (
@@ -173,13 +167,13 @@ export default function CareersPage() {
 
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="lg:hidden border-t border-gray-200/50 backdrop-blur-md">
-              <div className="px-4 py-4 space-y-2">
-                <Link href="/about" className="block px-4 py-3 text-gray-700 font-semibold text-sm rounded-lg hover:bg-gray-100 hover:text-[#FF6B6B] transition-all" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
-                <Link href="/blog" className="block px-4 py-3 text-gray-700 font-semibold text-sm rounded-lg hover:bg-gray-100 hover:text-[#FF6B6B] transition-all" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
-                <Link href="/careers" className="block px-4 py-3 text-[#FF6B6B] font-semibold text-sm rounded-lg bg-[#FF6B6B]/10" onClick={() => setIsMobileMenuOpen(false)}>Careers</Link>
+            <div className="lg:hidden border-t border-gray-200 bg-white">
+              <div className="px-4 py-4 space-y-1">
+                <Link href="/about" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
+                <Link href="/blog" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
+                <Link href="/careers" className="block px-4 py-3 text-teal-700 font-semibold text-sm bg-teal-50 rounded-md" onClick={() => setIsMobileMenuOpen(false)}>Careers</Link>
                 <div className="pt-2">
-                  <Link href="/quiz/financial-profile" className="block w-full bg-gradient-to-r from-[#1ABC9C] to-[#16a085] text-white px-4 py-3 rounded-full font-semibold text-sm text-center shadow-md" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link href="/quiz/financial-profile" className="block w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-3 rounded-lg font-semibold text-sm text-center shadow-md" onClick={() => setIsMobileMenuOpen(false)}>
                     Learn More
                   </Link>
                 </div>
@@ -190,35 +184,43 @@ export default function CareersPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative bg-[#faf8f0] py-12 sm:py-20 lg:py-28 overflow-hidden">
+      <section className="relative py-12 sm:py-20 lg:py-28 overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-50/30 via-white to-amber-50/20"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-teal-100/20 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-amber-100/20 to-transparent rounded-full blur-3xl"></div>
+        
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl sm:text-4xl lg:text-6xl font-black mb-4 sm:mb-6 leading-tight text-gray-900">
+          <div className="inline-block mb-6">
+            <span className="text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full">Careers</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-slate-900">
             <span className="block mb-1">Join Our Team.</span>
-            <span className="block text-[#FF6B6B] mb-1">Empower Women.</span>
+            <span className="block bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent mb-1">Empower Women.</span>
             <span className="block">Transform Lives.</span>
           </h1>
           
-          <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed px-2">
+          <p className="text-sm sm:text-base lg:text-lg text-slate-600 max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed px-2">
             At BrightNest, we're on a mission to inspire and empower women to achieve their financial, wealth, and life goals. Join a passionate, driven team that's changing lives every day—one transformation at a time.
           </p>
 
-          <p className="text-base sm:text-lg font-semibold mb-6 sm:mb-8 text-gray-700">Ready to make an impact?</p>
+          <p className="text-base sm:text-lg font-semibold mb-6 sm:mb-8 text-slate-700">Ready to make an impact?</p>
 
           <button
             onClick={handleSeePositions}
-            className="inline-block bg-[#FF6B6B] text-white px-8 sm:px-12 py-3 sm:py-4 rounded-lg font-bold text-sm sm:text-base uppercase hover:bg-[#FF5252] transition-all shadow-lg active:scale-95 w-full sm:w-auto max-w-xs sm:max-w-none"
+            className="inline-block bg-gradient-to-r from-teal-600 to-teal-700 text-white px-8 sm:px-12 py-3 sm:py-4 rounded-lg font-semibold text-sm sm:text-base hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300 w-full sm:w-auto max-w-xs sm:max-w-none"
           >
             Apply Now
           </button>
 
           {/* Team Member Avatars */}
           <div className="mt-10 sm:mt-16">
-            <p className="text-xs sm:text-sm text-[#FF6B6B] uppercase tracking-wide mb-4 sm:mb-6 font-bold">Are You Ready?</p>
+            <p className="text-xs sm:text-sm text-teal-600 uppercase tracking-wide mb-4 sm:mb-6 font-semibold">Are You Ready?</p>
             <div className="flex justify-center items-center space-x-[-8px] sm:space-x-[-12px]">
               {testimonials.slice(0, 4).map((testimonial, idx) => (
                 <div
                   key={idx}
-                  className={`w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-full bg-gradient-to-br ${testimonial.color} flex items-center justify-center text-white font-bold text-xs sm:text-sm lg:text-base border-3 sm:border-4 border-white shadow-lg z-${10 + idx}`}
+                  className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-full bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center text-white font-bold text-xs sm:text-sm lg:text-base border-3 sm:border-4 border-white shadow-lg hover:scale-110 transition-transform"
                   style={{ zIndex: 10 + idx }}
                 >
                   {testimonial.initials}
@@ -230,33 +232,36 @@ export default function CareersPage() {
       </section>
 
       {/* Your Next Big Career Shift */}
-      <section className="py-10 sm:py-16 lg:py-20 bg-[#faf8f0]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-10 sm:py-16 lg:py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-teal-50/20"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
-            <p className="text-xs sm:text-sm text-[#FF6B6B] uppercase tracking-wide mb-2 font-bold">Are you Ready?</p>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 px-2">
+            <span className="inline-block text-xs sm:text-sm text-teal-600 uppercase tracking-wide mb-4 font-semibold bg-teal-50 px-4 py-2 rounded-full">Are you Ready?</span>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 px-2 mt-4">
               Your Next Big Career Shift
             </h2>
-            <p className="mt-3 text-sm sm:text-base text-gray-600 max-w-2xl mx-auto px-4">
-              Join BrightNest, where <span className="text-[#FF6B6B] font-bold">passionate innovators</span> transform women's financial lives. We foster a <span className="text-[#FF6B6B] font-bold">supportive, inclusive environment,</span> pushing boundaries and empowering women worldwide.
+            <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto px-4">
+              Join BrightNest, where <span className="text-teal-600 font-semibold">passionate innovators</span> transform women's financial lives. We foster a <span className="text-teal-600 font-semibold">supportive, inclusive environment,</span> pushing boundaries and empowering women worldwide.
             </p>
           </div>
 
           {/* Testimonials Carousel */}
           <div className="relative max-w-5xl mx-auto">
             {/* Main Testimonial Display */}
-            <div className="bg-white rounded-xl sm:rounded-2xl p-5 sm:p-8 lg:p-12 border border-gray-200 shadow-lg min-h-[280px] sm:min-h-[260px] flex flex-col justify-between">
-              <div className="flex items-start space-x-3 sm:space-x-4 mb-4 sm:mb-6">
-                <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br ${testimonials[currentTestimonial].color} flex items-center justify-center text-white font-bold text-base sm:text-xl flex-shrink-0 shadow-md`}>
+            <div className="bg-white rounded-xl sm:rounded-2xl p-5 sm:p-8 lg:p-12 border border-slate-200/60 shadow-lg min-h-[280px] sm:min-h-[260px] flex flex-col justify-between relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500"></div>
+              <div className="flex items-start space-x-3 sm:space-x-4 mb-4 sm:mb-6 pt-4">
+                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center text-white font-bold text-base sm:text-xl flex-shrink-0 shadow-md">
                   {testimonials[currentTestimonial].initials}
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-base sm:text-xl font-bold text-gray-900 truncate">{testimonials[currentTestimonial].name}</h3>
-                  <p className="text-xs sm:text-sm text-[#FF6B6B] font-bold">{testimonials[currentTestimonial].title}</p>
+                  <h3 className="text-base sm:text-xl font-bold text-slate-900 truncate">{testimonials[currentTestimonial].name}</h3>
+                  <p className="text-xs sm:text-sm text-teal-600 font-semibold">{testimonials[currentTestimonial].title}</p>
                 </div>
               </div>
               
-              <p className="text-sm sm:text-base text-gray-700 leading-relaxed italic mb-6 sm:mb-8">
+              <p className="text-sm sm:text-base text-slate-700 leading-relaxed italic mb-6 sm:mb-8">
                 "{testimonials[currentTestimonial].quote}"
               </p>
 
@@ -268,8 +273,8 @@ export default function CareersPage() {
                     onClick={() => setCurrentTestimonial(index)}
                     className={`transition-all duration-300 rounded-full ${
                       index === currentTestimonial 
-                        ? 'w-6 sm:w-8 h-2 sm:h-3 bg-[#FF6B6B]' 
-                        : 'w-2 sm:w-3 h-2 sm:h-3 bg-gray-300 hover:bg-gray-400'
+                        ? 'w-6 sm:w-8 h-2 sm:h-3 bg-teal-600' 
+                        : 'w-2 sm:w-3 h-2 sm:h-3 bg-slate-300 hover:bg-teal-400'
                     }`}
                     aria-label={`View testimonial ${index + 1}`}
                   />
@@ -280,19 +285,19 @@ export default function CareersPage() {
             {/* Arrow Navigation - Hidden on mobile */}
             <button
               onClick={() => setCurrentTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
-              className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 w-12 h-12 bg-white rounded-full shadow-lg items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
+              className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 w-12 h-12 bg-white rounded-full shadow-lg items-center justify-center hover:bg-teal-50 transition-colors border border-slate-200 hover:border-teal-300"
               aria-label="Previous testimonial"
             >
-              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <button
               onClick={() => setCurrentTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
-              className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 w-12 h-12 bg-white rounded-full shadow-lg items-center justify-center hover:bg-gray-50 transition-colors border border-gray-200"
+              className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 w-12 h-12 bg-white rounded-full shadow-lg items-center justify-center hover:bg-teal-50 transition-colors border border-slate-200 hover:border-teal-300"
               aria-label="Next testimonial"
             >
-              <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
@@ -307,18 +312,18 @@ export default function CareersPage() {
                   const actualIndex = testimonials.findIndex(t => t.name === testimonial.name);
                   setCurrentTestimonial(actualIndex);
                 }}
-                className="bg-white rounded-xl p-6 border border-gray-200 hover:border-[#FF6B6B] hover:shadow-lg transition-all cursor-pointer"
+                className="bg-white rounded-xl p-6 border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all cursor-pointer group"
               >
                 <div className="flex items-center space-x-3 mb-3">
-                  <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${testimonial.color} flex items-center justify-center text-white font-bold text-sm shadow-md`}>
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center text-white font-bold text-sm shadow-md group-hover:scale-110 transition-transform">
                     {testimonial.initials}
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-gray-900">{testimonial.name}</h4>
-                    <p className="text-xs text-[#FF6B6B] font-bold">{testimonial.title}</p>
+                    <h4 className="text-sm font-bold text-slate-900">{testimonial.name}</h4>
+                    <p className="text-xs text-teal-600 font-semibold">{testimonial.title}</p>
                   </div>
                 </div>
-                <p className="text-sm text-gray-600 leading-relaxed italic line-clamp-3">
+                <p className="text-sm text-slate-600 leading-relaxed italic line-clamp-3">
                   "{testimonial.quote}"
                 </p>
               </div>
@@ -328,21 +333,28 @@ export default function CareersPage() {
       </section>
 
       {/* Core Values */}
-      <section className="py-10 sm:py-16 lg:py-20 bg-[#faf8f0]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-10 sm:py-16 lg:py-20 bg-white relative overflow-hidden">
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-50/20 rounded-full blur-3xl"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
-            <p className="text-xs sm:text-sm text-[#FF6B6B] uppercase tracking-wide mb-2 font-bold">The Values That Guide Us</p>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 px-2">
-              BrightNest Core Values
+            <span className="inline-block text-xs sm:text-sm text-teal-600 uppercase tracking-wide mb-4 font-semibold bg-teal-50 px-4 py-2 rounded-full">The Values That Guide Us</span>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 px-2 mt-4">
+              BrightNest <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Core Values</span>
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {coreValues.map((value, index) => (
-              <div key={index} className="group bg-white rounded-xl p-5 sm:p-6 text-center border border-gray-200 hover:border-[#FF6B6B] hover:shadow-lg transition-all active:scale-95 sm:hover:-translate-y-1 sm:active:scale-100">
-                <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">{value.icon}</div>
-                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 group-hover:text-[#FF6B6B] transition-colors">{value.title}</h3>
-                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{value.description}</p>
+              <div key={index} className="group bg-gradient-to-br from-white to-teal-50/30 rounded-xl p-5 sm:p-6 text-center border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-teal-100/20 rounded-full -mr-10 -mt-10"></div>
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 mb-4 shadow-md group-hover:scale-110 transition-transform">
+                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={value.icon} />
+                  </svg>
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 group-hover:text-teal-600 transition-colors">{value.title}</h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">{value.description}</p>
               </div>
             ))}
           </div>
@@ -350,20 +362,23 @@ export default function CareersPage() {
       </section>
 
       {/* Perks Section */}
-      <section className="py-10 sm:py-16 lg:py-20 bg-[#faf8f0]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-10 sm:py-16 lg:py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-amber-50/20"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
-            <p className="text-xs sm:text-sm text-[#FF6B6B] uppercase tracking-wide mb-2 font-bold px-2">Just A Few Perks of Working With BrightNest</p>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 px-2">
-              Your BrightNest Journey Starts Here
+            <span className="inline-block text-xs sm:text-sm text-teal-600 uppercase tracking-wide mb-4 font-semibold bg-teal-50 px-4 py-2 rounded-full">Just A Few Perks of Working With BrightNest</span>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 px-2 mt-4">
+              Your BrightNest Journey <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Starts Here</span>
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {perks.map((perk, index) => (
-              <div key={index} className="group bg-white rounded-xl p-5 sm:p-6 border border-gray-200 hover:border-[#FF6B6B] hover:shadow-lg transition-all active:scale-95">
-                <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3 group-hover:text-[#FF6B6B] transition-colors">{perk.title}</h3>
-                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{perk.description}</p>
+              <div key={index} className="group bg-gradient-to-br from-white to-teal-50/30 rounded-xl p-5 sm:p-6 border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-teal-100/20 rounded-full -mr-12 -mt-12"></div>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 sm:mb-3 group-hover:text-teal-600 transition-colors relative z-10">{perk.title}</h3>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed relative z-10">{perk.description}</p>
               </div>
             ))}
           </div>
@@ -371,12 +386,15 @@ export default function CareersPage() {
       </section>
 
       {/* What It's Like To Work With Us */}
-      <section className="py-10 sm:py-16 lg:py-20 bg-[#faf8f0]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-14 shadow-xl">
+      <section className="py-10 sm:py-16 lg:py-20 bg-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-50/20 rounded-full blur-3xl"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-14 shadow-xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500"></div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
               {/* Left Side - Image */}
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] bg-gradient-to-br from-[#FF6B6B] via-[#FF8E8E] to-[#FFAAAA]">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] bg-gradient-to-br from-teal-600 via-teal-500 to-teal-700">
                 {/* Decorative Pattern */}
                 <div className="absolute inset-0 opacity-10">
                   <div className="absolute inset-0" style={{
@@ -393,7 +411,7 @@ export default function CareersPage() {
                   <div className="relative w-48 h-48 mb-6">
                     {/* Center circle */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg">
-                      <svg className="w-10 h-10 text-[#FF6B6B]" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-10 h-10 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                       </svg>
                     </div>
@@ -422,8 +440,8 @@ export default function CareersPage() {
 
               {/* Right Side - Content */}
               <div className="order-first lg:order-last">
-                <p className="text-[#FF6B6B] italic text-sm sm:text-base mb-2 sm:mb-3">What It's Like To</p>
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-5 sm:mb-6 uppercase italic leading-tight">
+                <p className="text-teal-400 italic text-sm sm:text-base mb-2 sm:mb-3">What It's Like To</p>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-5 sm:mb-6 uppercase italic leading-tight">
                   work with us
                 </h2>
 
@@ -432,8 +450,8 @@ export default function CareersPage() {
                   {benefits.map((benefit, index) => (
                     <div key={index} className="flex items-start space-x-2 sm:space-x-3 group">
                       <div className="flex-shrink-0 mt-0.5">
-                        <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#FF6B6B]" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
                       </div>
                       <p className="text-xs sm:text-sm text-white font-light italic">{benefit}</p>
@@ -444,7 +462,7 @@ export default function CareersPage() {
                 {/* Button */}
                 <button
                   onClick={handleSeePositions}
-                  className="w-full sm:w-auto bg-[#FF6B6B] text-white px-8 sm:px-10 py-3 rounded-lg font-bold text-sm sm:text-base uppercase italic hover:bg-[#FF5252] transition-all active:scale-95 shadow-lg"
+                  className="w-full sm:w-auto bg-gradient-to-r from-teal-600 to-teal-700 text-white px-8 sm:px-10 py-3 rounded-lg font-semibold text-sm sm:text-base uppercase hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300"
                 >
                   See Positions
                 </button>
@@ -458,50 +476,54 @@ export default function CareersPage() {
       {showPositions && (
         <section 
           id="positions" 
-          className="py-10 sm:py-16 lg:py-20 bg-[#faf8f0] animate-fade-in"
+          className="py-10 sm:py-16 lg:py-20 relative overflow-hidden animate-fade-in"
           style={{ opacity: 0, animation: 'fadeIn 0.6s ease-out forwards' }}
         >
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-12 border border-gray-200 shadow-lg text-center">
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-teal-50/20"></div>
+          
+          <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-12 border border-slate-200/60 shadow-lg text-center relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500"></div>
+              
               {/* Icon */}
               <div className="mb-6 sm:mb-8">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gray-100 flex items-center justify-center">
-                  <svg className="w-8 h-8 sm:w-10 sm:h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-lg">
+                  <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 sm:mb-5 px-2">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-4 sm:mb-5 px-2">
                 No Open Positions at This Time
               </h2>
               
-              <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-5 max-w-2xl mx-auto leading-relaxed px-2">
-                We're not currently hiring, but we're always interested in connecting with <span className="text-[#FF6B6B] font-bold">talented individuals</span> who are passionate about <span className="text-[#FF6B6B] font-bold">empowering women</span> and making a real difference.
+              <p className="text-sm sm:text-base text-slate-600 mb-4 sm:mb-5 max-w-2xl mx-auto leading-relaxed px-2">
+                We're not currently hiring, but we're always interested in connecting with <span className="text-teal-600 font-semibold">talented individuals</span> who are passionate about <span className="text-teal-600 font-semibold">empowering women</span> and making a real difference.
               </p>
 
-              <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-2">
-                If you'd like to be considered for future opportunities, please send your resume and a brief introduction to <a href="mailto:careers@joinbrightnest.com" className="text-[#FF6B6B] hover:text-[#FF5252] font-bold underline break-all">careers@joinbrightnest.com</a>. We'll keep your information on file and reach out when a position that matches your skills becomes available.
+              <p className="text-sm sm:text-base text-slate-600 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-2">
+                If you'd like to be considered for future opportunities, please send your resume and a brief introduction to <a href="mailto:careers@joinbrightnest.com" className="text-teal-600 hover:text-teal-700 font-semibold underline break-all">careers@joinbrightnest.com</a>. We'll keep your information on file and reach out when a position that matches your skills becomes available.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center px-2">
                 <a
                   href="mailto:careers@joinbrightnest.com"
-                  className="w-full sm:w-auto bg-[#FF6B6B] text-white px-6 sm:px-10 py-3 rounded-lg font-bold text-sm sm:text-base hover:bg-[#FF5252] transition-all active:scale-95 shadow-lg text-center"
+                  className="w-full sm:w-auto bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 sm:px-10 py-3 rounded-lg font-semibold text-sm sm:text-base hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300 text-center"
                 >
                   Send Resume
                 </a>
                 <Link
                   href="/"
-                  className="w-full sm:w-auto bg-[#faf8f0] text-gray-700 px-6 sm:px-10 py-3 rounded-lg font-bold text-sm sm:text-base border-2 border-gray-300 hover:border-gray-400 transition-all active:scale-95 text-center"
+                  className="w-full sm:w-auto bg-slate-50 text-slate-700 px-6 sm:px-10 py-3 rounded-lg font-semibold text-sm sm:text-base border-2 border-slate-300 hover:border-slate-400 transition-all text-center"
                 >
                   Back to Home
                 </Link>
               </div>
 
               {/* Additional Message */}
-              <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-gray-200">
-                <p className="text-xs sm:text-sm text-gray-500 italic px-2">
+              <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-slate-200">
+                <p className="text-xs sm:text-sm text-slate-500 italic px-2">
                   Thank you for your interest in BrightNest. We're building something special, and we'd love to have you be part of it when the time is right.
                 </p>
               </div>
@@ -511,7 +533,7 @@ export default function CareersPage() {
       )}
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-8 sm:py-12">
+      <footer className="bg-slate-900 text-white py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8">
             {/* Logo and Social */}
@@ -520,23 +542,23 @@ export default function CareersPage() {
                 BrightNest
               </Link>
               <div className="flex space-x-4">
-                <a href="https://twitter.com/brightnest" target="_blank" rel="noopener noreferrer" className="text-white hover:text-orange-400 transition-colors">
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <a href="https://twitter.com/brightnest" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors" aria-label="Twitter">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                   </svg>
                 </a>
-                <a href="https://facebook.com/brightnest" target="_blank" rel="noopener noreferrer" className="text-white hover:text-orange-400 transition-colors">
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <a href="https://facebook.com/brightnest" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors" aria-label="Facebook">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                   </svg>
                 </a>
-                <a href="https://instagram.com/brightnest" target="_blank" rel="noopener noreferrer" className="text-white hover:text-orange-400 transition-colors">
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <a href="https://instagram.com/brightnest" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors" aria-label="Instagram">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
                   </svg>
                 </a>
-                <a href="https://youtube.com/@brightnest" target="_blank" rel="noopener noreferrer" className="text-white hover:text-orange-400 transition-colors">
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <a href="https://youtube.com/@brightnest" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors" aria-label="YouTube">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                   </svg>
                 </a>
@@ -545,35 +567,35 @@ export default function CareersPage() {
 
             {/* Quick Links */}
             <div>
-              <h4 className="text-sm font-bold uppercase tracking-wide mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/" className="text-gray-300 hover:text-white">Home</Link></li>
-                <li><Link href="/about" className="text-gray-300 hover:text-white">About Us</Link></li>
-                <li><Link href="/blog" className="text-gray-300 hover:text-white">Blog</Link></li>
-                <li><Link href="/careers" className="text-gray-300 hover:text-white">Careers</Link></li>
+              <h4 className="text-sm font-semibold uppercase tracking-wide mb-4 text-white">Quick Links</h4>
+              <ul className="space-y-3 text-sm">
+                <li><Link href="/" className="text-slate-400 hover:text-white transition-colors">Home</Link></li>
+                <li><Link href="/about" className="text-slate-400 hover:text-white transition-colors">About Us</Link></li>
+                <li><Link href="/blog" className="text-slate-400 hover:text-white transition-colors">Blog</Link></li>
+                <li><Link href="/careers" className="text-slate-400 hover:text-white transition-colors">Careers</Link></li>
               </ul>
             </div>
 
             {/* Resources */}
             <div>
-              <h4 className="text-sm font-bold uppercase tracking-wide mb-4">Resources</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/quiz/financial-profile" className="text-gray-300 hover:text-white">Take the Quiz</Link></li>
-                <li><Link href="/affiliates/signup" className="text-gray-300 hover:text-white">Become a Partner</Link></li>
+              <h4 className="text-sm font-semibold uppercase tracking-wide mb-4 text-white">Resources</h4>
+              <ul className="space-y-3 text-sm">
+                <li><Link href="/quiz/financial-profile" className="text-slate-400 hover:text-white transition-colors">Take the Quiz</Link></li>
+                <li><Link href="/affiliates/signup" className="text-slate-400 hover:text-white transition-colors">Become a Partner</Link></li>
               </ul>
             </div>
 
             {/* Legal */}
             <div>
-              <h4 className="text-sm font-bold uppercase tracking-wide mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/terms" className="text-gray-300 hover:text-white">Terms of Service</Link></li>
-                <li><Link href="/privacy" className="text-gray-300 hover:text-white">Privacy Policy</Link></li>
+              <h4 className="text-sm font-semibold uppercase tracking-wide mb-4 text-white">Legal</h4>
+              <ul className="space-y-3 text-sm">
+                <li><Link href="/terms" className="text-slate-400 hover:text-white transition-colors">Terms of Service</Link></li>
+                <li><Link href="/privacy" className="text-slate-400 hover:text-white transition-colors">Privacy Policy</Link></li>
               </ul>
             </div>
           </div>
 
-          <div className="mt-12 pt-8 border-t border-gray-700 text-center text-sm text-gray-400">
+          <div className="mt-12 pt-8 border-t border-slate-800 text-center text-sm text-slate-400">
             © {new Date().getFullYear()} BrightNest Technologies LLC. All rights reserved.
           </div>
         </div>
