@@ -59,36 +59,36 @@ export default function BlogPage() {
   const categories = ['ALL', 'MINDSET', 'HABITS', 'PLANNING', 'RELATIONSHIPS'];
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation - Modern & Friendly */}
-      <nav className="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
+      {/* Navigation - Professional with Depth */}
+      <nav className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-18 sm:h-20">
+          <div className="flex justify-between items-center h-20">
             {/* Logo - Left Side */}
             <div className="flex items-center">
               <Link href="/" className="group flex items-center space-x-2">
-                <div className="text-2xl sm:text-3xl font-black text-gray-900 group-hover:text-[#FF6B6B] transition-colors">
+                <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all">
                   BrightNest
                 </div>
               </Link>
             </div>
             
             {/* Desktop Menu Items */}
-            <div className="hidden lg:flex items-center space-x-1">
-              <Link href="/about" className="px-4 py-2 text-gray-700 font-semibold text-sm rounded-lg hover:bg-gray-100 hover:text-[#FF6B6B] transition-all">
+            <div className="hidden lg:flex items-center space-x-8">
+              <Link href="/about" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-teal-600 transition-colors">
                 About Us
               </Link>
-              <Link href="/blog" className="px-4 py-2 text-[#FF6B6B] font-semibold text-sm rounded-lg bg-[#FF6B6B]/10">
+              <Link href="/blog" className="px-3 py-2 text-slate-900 font-medium text-sm border-b-2 border-teal-600">
                 Blog
               </Link>
-              <Link href="/careers" className="px-4 py-2 text-gray-700 font-semibold text-sm rounded-lg hover:bg-gray-100 hover:text-[#FF6B6B] transition-all">
+              <Link href="/careers" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-teal-600 transition-colors">
                 Careers
               </Link>
             </div>
             
             {/* Right Side Items */}
             <div className="hidden lg:flex items-center">
-              <Link href="/quiz/financial-profile" className="bg-gradient-to-r from-[#1ABC9C] to-[#16a085] text-white px-6 py-2.5 rounded-full font-semibold text-sm hover:shadow-lg hover:scale-105 transition-all">
+              <Link href="/quiz/financial-profile" className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all shadow-md hover:shadow-lg">
                 Learn More
               </Link>
             </div>
@@ -97,7 +97,7 @@ export default function BlogPage() {
             <div className="lg:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 text-gray-700 hover:text-[#FF6B6B] hover:bg-gray-100 rounded-lg focus:outline-none transition-all"
+                className="p-2 text-slate-700 hover:text-slate-900 hover:bg-gray-50 rounded-md focus:outline-none transition-all"
                 aria-label="Toggle mobile menu"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,13 +113,13 @@ export default function BlogPage() {
 
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="lg:hidden border-t border-gray-200/50 backdrop-blur-md">
-              <div className="px-4 py-4 space-y-2">
-                <Link href="/about" className="block px-4 py-3 text-gray-700 font-semibold text-sm rounded-lg hover:bg-gray-100 hover:text-[#FF6B6B] transition-all" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
-                <Link href="/blog" className="block px-4 py-3 text-[#FF6B6B] font-semibold text-sm rounded-lg bg-[#FF6B6B]/10" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
-                <Link href="/careers" className="block px-4 py-3 text-gray-700 font-semibold text-sm rounded-lg hover:bg-gray-100 hover:text-[#FF6B6B] transition-all" onClick={() => setIsMobileMenuOpen(false)}>Careers</Link>
+            <div className="lg:hidden border-t border-gray-200 bg-white">
+              <div className="px-4 py-4 space-y-1">
+                <Link href="/about" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
+                <Link href="/blog" className="block px-4 py-3 text-teal-700 font-semibold text-sm bg-teal-50 rounded-md" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
+                <Link href="/careers" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all" onClick={() => setIsMobileMenuOpen(false)}>Careers</Link>
                 <div className="pt-2">
-                  <Link href="/quiz/financial-profile" className="block w-full bg-gradient-to-r from-[#1ABC9C] to-[#16a085] text-white px-4 py-3 rounded-full font-semibold text-sm text-center shadow-md" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link href="/quiz/financial-profile" className="block w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-3 rounded-lg font-semibold text-sm text-center shadow-md" onClick={() => setIsMobileMenuOpen(false)}>
                     Learn More
                   </Link>
                 </div>
@@ -130,21 +130,23 @@ export default function BlogPage() {
       </nav>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12 relative">
+        {/* Background decoration */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-50/20 rounded-full blur-3xl"></div>
         
         {/* Featured Post Section - Left: Main Post, Right: Featured Posts List */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12 relative">
           {/* Main Featured Post - Left (50% width) */}
-          <div>
+          <div className="relative">
             {/* Image with overlay text */}
-            <div className="relative h-64 sm:h-80 rounded-t-lg overflow-hidden mb-4">
+            <div className="relative h-64 sm:h-80 rounded-xl overflow-hidden mb-4 shadow-lg group">
               {/* Background Image */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 via-teal-400 to-green-400"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-teal-500 via-teal-600 to-teal-700"></div>
               
               {/* Text Banner Overlay - Positioned over image */}
               <div className="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 right-4 sm:right-8">
-                <div className="inline-block bg-pink-500 px-3 sm:px-6 py-2 sm:py-3 rounded-md">
-                  <h2 className="text-lg sm:text-2xl md:text-3xl font-black text-white uppercase leading-tight">
+                <div className="inline-block bg-gradient-to-r from-teal-700 to-teal-800 px-3 sm:px-6 py-2 sm:py-3 rounded-lg shadow-xl">
+                  <h2 className="text-lg sm:text-2xl md:text-3xl font-bold text-white uppercase leading-tight">
                     3 Money Habits That Keep You Broke
                   </h2>
                 </div>
@@ -152,7 +154,7 @@ export default function BlogPage() {
               
               {/* Featured Post Badge */}
               <div className="absolute top-4 sm:top-6 left-4 sm:left-6">
-                <div className="inline-block bg-pink-500 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-bold">
+                <div className="inline-block bg-white text-teal-600 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-bold shadow-md">
                   FEATURED POST
                 </div>
               </div>
@@ -160,36 +162,36 @@ export default function BlogPage() {
             
             {/* Title and Description Below Image */}
             <div>
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">
-                <Link href={`/blog/${featuredPosts[0].slug}`} className="hover:text-pink-500 transition-colors">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2 sm:mb-3">
+                <Link href={`/blog/${featuredPosts[0].slug}`} className="hover:text-teal-600 transition-colors">
                   Why Your Budget Keeps Failing (And How to Fix It)
                 </Link>
               </h3>
-              <p className="text-gray-600 text-sm mb-3 sm:mb-4 leading-relaxed">
+              <p className="text-slate-600 text-sm mb-3 sm:mb-4 leading-relaxed">
                 Budgets aren't about restriction — they're about freedom. Discover the 3 behavior shifts that make budgeting actually work.
               </p>
               <div className="flex items-center space-x-3 sm:space-x-4 text-xs sm:text-sm">
-                <span className="text-gray-500 uppercase font-semibold">HABITS</span>
-                <span className="text-gray-400">4 min read</span>
+                <span className="text-teal-600 uppercase font-semibold bg-teal-50 px-3 py-1 rounded-full">HABITS</span>
+                <span className="text-slate-400">4 min read</span>
               </div>
             </div>
           </div>
 
           {/* Featured Posts List - Right (50% width) */}
-          <div>
+          <div className="bg-white rounded-xl p-6 border border-slate-200/60 shadow-sm">
             <div className="mb-4 sm:mb-6">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">FEATURED POSTS</h2>
-              <div className="h-1 bg-pink-500 w-20 sm:w-24"></div>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">FEATURED POSTS</h2>
+              <div className="h-1 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500 w-20 sm:w-24 rounded-full"></div>
             </div>
             
             <div className="space-y-3 sm:space-y-4">
               {featuredPosts.slice(0, 5).map((post) => (
-                <div key={post.id} className="border-b border-gray-200 pb-3 sm:pb-4 last:border-0">
-                  <Link href={`/blog/${post.slug}`} className="block">
-                    <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1 hover:text-pink-500 transition-colors leading-snug">
+                <div key={post.id} className="border-b border-slate-200/60 pb-3 sm:pb-4 last:border-0">
+                  <Link href={`/blog/${post.slug}`} className="block group">
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900 mb-1 hover:text-teal-600 transition-colors leading-snug">
                       {post.title}
                     </h3>
-                    <p className="text-xs text-gray-500">{post.readTime}</p>
+                    <p className="text-xs text-slate-500">{post.readTime}</p>
                   </Link>
                 </div>
               ))}
@@ -198,17 +200,17 @@ export default function BlogPage() {
         </div>
 
         {/* Filter by Category */}
-        <div className="mb-6 sm:mb-10">
-          <h3 className="text-base sm:text-lg text-gray-600 mb-3 sm:mb-5">Filter by Category</h3>
+        <div className="mb-6 sm:mb-10 relative">
+          <h3 className="text-base sm:text-lg text-slate-600 mb-3 sm:mb-5 font-medium">Filter by Category</h3>
           <div className="flex flex-wrap gap-2 sm:gap-4">
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setActiveCategory(category.toLowerCase())}
-                className={`px-4 sm:px-8 py-2 sm:py-3 text-sm sm:text-xl font-black uppercase rounded-md transition-all ${
+                className={`px-4 sm:px-8 py-2 sm:py-3 text-sm sm:text-xl font-semibold uppercase rounded-lg transition-all duration-300 ${
                   activeCategory === category.toLowerCase()
-                    ? 'bg-pink-500 text-white'
-                    : 'bg-transparent text-gray-900 hover:bg-gray-100'
+                    ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-md'
+                    : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 hover:border-teal-300'
                 }`}
               >
                 {category}
@@ -220,49 +222,55 @@ export default function BlogPage() {
         {/* Read Section */}
         <div className="mb-10 sm:mb-12">
           <div className="flex items-center justify-between mb-5 sm:mb-6">
-            <h2 className="text-2xl sm:text-3xl font-bold lowercase text-gray-900">read</h2>
-            <Link href="#" className="text-sm sm:text-base text-pink-500 font-semibold hover:text-pink-600">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">read</h2>
+            <Link href="#" className="text-sm sm:text-base text-teal-600 font-semibold hover:text-teal-700 transition-colors">
               view more
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            <Link href="/blog/why-your-budget-keeps-failing" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-blue-200 to-blue-300"></div>
+            <Link href="/blog/why-your-budget-keeps-failing" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
+              <div className="h-48 bg-gradient-to-br from-teal-500 to-teal-600 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+              </div>
               <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
                   The Psychology Behind Impulse Buying
                 </h3>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-slate-600 mb-4 leading-relaxed">
                   Understanding the triggers that make you spend isn't about willpower — it's about awareness. Let's dive into the science.
                 </p>
-                <div className="text-xs text-gray-500">5 min read</div>
+                <div className="text-xs text-slate-500">5 min read</div>
               </div>
             </Link>
 
-            <Link href="/blog/hidden-cost-of-bnpl" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-teal-200 to-teal-300"></div>
+            <Link href="/blog/hidden-cost-of-bnpl" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
+              <div className="h-48 bg-gradient-to-br from-teal-400 to-teal-500 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+              </div>
               <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
                   How to Build an Emergency Fund From Zero
                 </h3>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-slate-600 mb-4 leading-relaxed">
                   No matter your income, you can start building financial security today. Here's the exact roadmap to your first $1,000.
                 </p>
-                <div className="text-xs text-gray-500">4 min read</div>
+                <div className="text-xs text-slate-500">4 min read</div>
               </div>
             </Link>
 
-            <Link href="/blog/three-account-system" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-purple-200 to-purple-300"></div>
+            <Link href="/blog/three-account-system" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
+              <div className="h-48 bg-gradient-to-br from-teal-600 to-teal-700 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+              </div>
               <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
                   Money Scripts: What Your Parents Taught You
                 </h3>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-slate-600 mb-4 leading-relaxed">
                   The beliefs you inherited about money are running your financial life. Let's identify and rewrite them.
                 </p>
-                <div className="text-xs text-gray-500">6 min read</div>
+                <div className="text-xs text-slate-500">6 min read</div>
               </div>
             </Link>
           </div>
@@ -271,56 +279,65 @@ export default function BlogPage() {
         {/* Watch Section */}
         <div className="mb-10 sm:mb-12">
           <div className="flex items-center justify-between mb-5 sm:mb-6">
-            <h2 className="text-2xl sm:text-3xl font-bold lowercase text-gray-900">watch</h2>
-            <Link href="#" className="text-sm sm:text-base text-pink-500 font-semibold hover:text-pink-600">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">watch</h2>
+            <Link href="#" className="text-sm sm:text-base text-teal-600 font-semibold hover:text-teal-700 transition-colors">
               view more
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            <Link href="/blog/why-your-budget-keeps-failing" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-red-200 to-red-300 flex items-center justify-center">
-                <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z"/>
-                </svg>
+            <Link href="/blog/why-your-budget-keeps-failing" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
+              <div className="h-48 bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                  <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </div>
               </div>
               <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
                   The Real Cost of Lifestyle Inflation
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-600 leading-relaxed">
                   You're making more money but feeling just as broke? Here's why — and how to break the cycle.
                 </p>
               </div>
             </Link>
 
-            <Link href="/blog/three-account-system" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-orange-200 to-orange-300 flex items-center justify-center">
-                <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z"/>
-                </svg>
+            <Link href="/blog/three-account-system" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
+              <div className="h-48 bg-gradient-to-br from-teal-400 to-teal-500 flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                  <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </div>
               </div>
               <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
                   3 Money Habits That Build Wealth Automatically
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-600 leading-relaxed">
                   Stop relying on willpower. These automated systems work while you sleep.
                 </p>
               </div>
             </Link>
 
-            <Link href="/blog/hidden-cost-of-bnpl" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-indigo-200 to-indigo-300 flex items-center justify-center">
-                <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z"/>
-                </svg>
+            <Link href="/blog/hidden-cost-of-bnpl" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
+              <div className="h-48 bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                  <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </div>
               </div>
               <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
                   How to Handle Financial Setbacks
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-600 leading-relaxed">
                   Lost your job? Unexpected expense? Here's your step-by-step recovery plan.
                 </p>
               </div>
@@ -331,56 +348,65 @@ export default function BlogPage() {
         {/* Listen Section */}
         <div className="mb-10 sm:mb-12">
           <div className="flex items-center justify-between mb-5 sm:mb-6">
-            <h2 className="text-2xl sm:text-3xl font-bold lowercase text-gray-900">listen</h2>
-            <Link href="#" className="text-sm sm:text-base text-pink-500 font-semibold hover:text-pink-600">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">listen</h2>
+            <Link href="#" className="text-sm sm:text-base text-teal-600 font-semibold hover:text-teal-700 transition-colors">
               view more
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            <Link href="/blog/why-your-budget-keeps-failing" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-green-200 to-green-300 flex items-center justify-center">
-                <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                </svg>
+            <Link href="/blog/why-your-budget-keeps-failing" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
+              <div className="h-48 bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                  <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                  </svg>
+                </div>
               </div>
               <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
                   Episode 47: Breaking Free From Debt Shame
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-600 leading-relaxed">
                   Debt isn't a moral failing. In this episode, we talk about overcoming shame and building a real payoff strategy.
                 </p>
               </div>
             </Link>
 
-            <Link href="/blog/three-account-system" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-yellow-200 to-yellow-300 flex items-center justify-center">
-                <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                </svg>
+            <Link href="/blog/three-account-system" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
+              <div className="h-48 bg-gradient-to-br from-teal-400 to-teal-500 flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                  <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                  </svg>
+                </div>
               </div>
               <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
                   Episode 52: The Truth About Investing for Beginners
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-600 leading-relaxed">
                   Stocks, ETFs, index funds — where do you even start? We break it down in plain English.
                 </p>
               </div>
             </Link>
 
-            <Link href="/blog/hidden-cost-of-bnpl" className="block bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow">
-              <div className="h-48 bg-gradient-to-br from-pink-200 to-pink-300 flex items-center justify-center">
-                <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                </svg>
+            <Link href="/blog/hidden-cost-of-bnpl" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
+              <div className="h-48 bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                  <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                  </svg>
+                </div>
               </div>
               <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
                   Episode 58: Money and Marriage — The Honest Conversation
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-600 leading-relaxed">
                   Financial compatibility matters. Here's how to navigate money as a team without losing yourself.
                 </p>
               </div>
@@ -389,49 +415,54 @@ export default function BlogPage() {
         </div>
 
         {/* CTA Section */}
-        <div className="bg-gradient-to-r from-blue-600 to-teal-500 rounded-xl sm:rounded-2xl p-6 sm:p-12 text-center text-white">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">
-            Begin Your Journey To Financial Peace
-          </h2>
-          <p className="text-sm sm:text-base md:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto">
-            Uncover what's holding you back from building lasting wealth and feeling confident with your money!
-          </p>
-          <Link
-            href="/quiz/financial-profile"
-            className="inline-block bg-pink-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-md font-bold text-base sm:text-lg hover:bg-pink-600 transition-colors"
-          >
-            TAKE THE QUIZ
-          </Link>
+        <div className="relative overflow-hidden rounded-xl sm:rounded-2xl">
+          <div className="absolute inset-0 bg-gradient-to-r from-teal-600 via-teal-700 to-teal-600"></div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-teal-800/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl"></div>
+          <div className="relative p-6 sm:p-12 text-center text-white">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">
+              Begin Your Journey To Financial Peace
+            </h2>
+            <p className="text-sm sm:text-base md:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto opacity-95">
+              Uncover what's holding you back from building lasting wealth and feeling confident with your money!
+            </p>
+            <Link
+              href="/quiz/financial-profile"
+              className="inline-block bg-white text-teal-600 px-6 sm:px-8 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:bg-slate-50 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300"
+            >
+              TAKE THE QUIZ
+            </Link>
+          </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-8 sm:py-12 mt-12 sm:mt-16">
+      <footer className="bg-slate-900 text-white py-12 sm:py-16 mt-12 sm:mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 sm:gap-12">
             {/* Logo and Social */}
             <div>
               <Link href="/" className="text-2xl font-bold text-white mb-6 block">
                 BrightNest
               </Link>
               <div className="flex space-x-4">
-                <a href="https://twitter.com/brightnest" target="_blank" rel="noopener noreferrer" className="text-white hover:text-orange-400 transition-colors" aria-label="Twitter">
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <a href="https://twitter.com/brightnest" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors" aria-label="Twitter">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                   </svg>
                 </a>
-                <a href="https://facebook.com/brightnest" target="_blank" rel="noopener noreferrer" className="text-white hover:text-orange-400 transition-colors" aria-label="Facebook">
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <a href="https://facebook.com/brightnest" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors" aria-label="Facebook">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                   </svg>
                 </a>
-                <a href="https://instagram.com/brightnest" target="_blank" rel="noopener noreferrer" className="text-white hover:text-orange-400 transition-colors" aria-label="Instagram">
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <a href="https://instagram.com/brightnest" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors" aria-label="Instagram">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
                   </svg>
                 </a>
-                <a href="https://youtube.com/@brightnest" target="_blank" rel="noopener noreferrer" className="text-white hover:text-orange-400 transition-colors" aria-label="YouTube">
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <a href="https://youtube.com/@brightnest" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors" aria-label="YouTube">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                   </svg>
                 </a>
@@ -440,35 +471,35 @@ export default function BlogPage() {
 
             {/* Quick Links */}
             <div>
-              <h4 className="text-sm font-bold uppercase tracking-wide mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/" className="text-gray-300 hover:text-white">Home</Link></li>
-                <li><Link href="/about" className="text-gray-300 hover:text-white">About Us</Link></li>
-                <li><Link href="/blog" className="text-gray-300 hover:text-white">Blog</Link></li>
-                <li><Link href="/careers" className="text-gray-300 hover:text-white">Careers</Link></li>
+              <h4 className="text-sm font-semibold uppercase tracking-wide mb-4 text-white">Quick Links</h4>
+              <ul className="space-y-3 text-sm">
+                <li><Link href="/" className="text-slate-400 hover:text-white transition-colors">Home</Link></li>
+                <li><Link href="/about" className="text-slate-400 hover:text-white transition-colors">About Us</Link></li>
+                <li><Link href="/blog" className="text-slate-400 hover:text-white transition-colors">Blog</Link></li>
+                <li><Link href="/careers" className="text-slate-400 hover:text-white transition-colors">Careers</Link></li>
               </ul>
             </div>
 
             {/* Resources */}
             <div>
-              <h4 className="text-sm font-bold uppercase tracking-wide mb-4">Resources</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/quiz/financial-profile" className="text-gray-300 hover:text-white">Take the Quiz</Link></li>
-                <li><Link href="/affiliates/signup" className="text-gray-300 hover:text-white">Become a Partner</Link></li>
+              <h4 className="text-sm font-semibold uppercase tracking-wide mb-4 text-white">Resources</h4>
+              <ul className="space-y-3 text-sm">
+                <li><Link href="/quiz/financial-profile" className="text-slate-400 hover:text-white transition-colors">Take the Quiz</Link></li>
+                <li><Link href="/affiliates/signup" className="text-slate-400 hover:text-white transition-colors">Become a Partner</Link></li>
               </ul>
             </div>
 
             {/* Legal */}
             <div>
-              <h4 className="text-sm font-bold uppercase tracking-wide mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/terms" className="text-gray-300 hover:text-white">Terms of Service</Link></li>
-                <li><Link href="/privacy" className="text-gray-300 hover:text-white">Privacy Policy</Link></li>
+              <h4 className="text-sm font-semibold uppercase tracking-wide mb-4 text-white">Legal</h4>
+              <ul className="space-y-3 text-sm">
+                <li><Link href="/terms" className="text-slate-400 hover:text-white transition-colors">Terms of Service</Link></li>
+                <li><Link href="/privacy" className="text-slate-400 hover:text-white transition-colors">Privacy Policy</Link></li>
               </ul>
             </div>
           </div>
 
-          <div className="mt-12 pt-8 border-t border-gray-700 text-center text-sm text-gray-400">
+          <div className="mt-12 pt-8 border-t border-slate-800 text-center text-sm text-slate-400">
             © {new Date().getFullYear()} BrightNest Technologies LLC. All rights reserved.
           </div>
         </div>
