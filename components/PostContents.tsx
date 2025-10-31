@@ -31,15 +31,15 @@ export default function PostContents({ sections }: PostContentsProps) {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200/60 overflow-hidden">
       <button
-        className="w-full flex items-center justify-between px-5 py-4"
+        className="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 transition-colors"
         aria-expanded={open}
         onClick={() => setOpen(!open)}
       >
-        <span className="text-base font-semibold text-gray-900">Post Contents</span>
+        <span className="text-base font-semibold text-slate-900">Post Contents</span>
         <svg
-          className={`w-5 h-5 text-gray-500 transition-transform ${open ? "rotate-180" : "rotate-0"}`}
+          className={`w-5 h-5 text-slate-500 transition-transform ${open ? "rotate-180" : "rotate-0"}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -49,14 +49,15 @@ export default function PostContents({ sections }: PostContentsProps) {
       </button>
 
       {open && (
-        <nav className="px-5 pb-4 space-y-3">
+        <nav className="px-5 pb-4 space-y-3 border-t border-slate-200/60 pt-4">
           {sections.map((s, i) => (
             <button
               key={s.id}
               onClick={() => handleClick(s.id)}
-              className="block text-left w-full text-sm text-gray-700 hover:text-[#FF6B6B]"
+              className="block text-left w-full text-sm text-slate-700 hover:text-teal-600 transition-colors group"
             >
-              <span className="font-medium mr-1">{i + 1}.</span> {stripLeadingNumbers(s.title)}
+              <span className="font-medium mr-2 text-teal-600 group-hover:text-teal-700">{i + 1}.</span> 
+              <span className="group-hover:underline">{stripLeadingNumbers(s.title)}</span>
             </button>
           ))}
         </nav>
