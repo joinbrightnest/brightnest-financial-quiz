@@ -63,11 +63,11 @@ export default function SiteHeader() {
         </div>
 
         {/* Mobile Layout: Menu Icon | Logo | Button */}
-        <div className="lg:hidden flex items-center justify-between h-16">
+        <div className="lg:hidden flex items-center h-16 relative">
           {/* Menu Icon - Left */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 text-slate-700 hover:text-slate-900 focus:outline-none transition-all duration-200"
+            className="p-2 text-slate-700 hover:text-slate-900 focus:outline-none transition-all duration-200 z-10"
             aria-label="Toggle mobile menu"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,9 +79,9 @@ export default function SiteHeader() {
             </svg>
           </button>
 
-          {/* Logo - Center */}
-          <Link href="/" className="flex-shrink-0 group">
-            <div className="text-xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all duration-300">
+          {/* Logo - Center (absolute positioning for perfect centering) */}
+          <Link href="/" className="absolute left-1/2 transform -translate-x-1/2 group z-10">
+            <div className="text-xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all duration-300 whitespace-nowrap">
               BrightNest
             </div>
           </Link>
@@ -89,7 +89,7 @@ export default function SiteHeader() {
           {/* Button - Right */}
           <Link 
             href="/quiz/financial-profile" 
-            className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-2 rounded-full font-semibold text-xs hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 whitespace-nowrap"
+            className="ml-auto bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-2 rounded-full font-semibold text-xs hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 whitespace-nowrap z-10"
           >
             APPLY NOW
           </Link>
