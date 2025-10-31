@@ -39,7 +39,8 @@ export default function SiteHeader() {
   return (
     <nav aria-label="site-header" className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        {/* Desktop Layout */}
+        <div className="hidden lg:flex justify-between items-center h-20">
           <div className="flex items-center">
             <Link href="/" className="group flex items-center space-x-2">
               <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all duration-300">
@@ -48,33 +49,50 @@ export default function SiteHeader() {
             </Link>
           </div>
 
-          <div className="hidden lg:flex items-center space-x-8">
+          <div className="flex items-center space-x-8">
             <NavLink href="/about">About Us</NavLink>
             <NavLink href="/blog">Blog</NavLink>
             <NavLink href="/careers">Careers</NavLink>
           </div>
 
-          <div className="hidden lg:flex items-center">
+          <div className="flex items-center">
             <Link href="/quiz/financial-profile" className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02]">
               Learn More
             </Link>
           </div>
+        </div>
 
-          <div className="lg:hidden">
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 text-slate-700 hover:text-slate-900 hover:bg-gray-50 rounded-md focus:outline-none transition-all duration-200"
-              aria-label="Toggle mobile menu"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {isMobileMenuOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
+        {/* Mobile Layout: Menu Icon | Logo | Button */}
+        <div className="lg:hidden flex items-center justify-between h-16">
+          {/* Menu Icon - Left */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="p-2 text-slate-700 hover:text-slate-900 focus:outline-none transition-all duration-200"
+            aria-label="Toggle mobile menu"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {isMobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+
+          {/* Logo - Center */}
+          <Link href="/" className="flex-shrink-0 group">
+            <div className="text-xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all duration-300">
+              BrightNest
+            </div>
+          </Link>
+
+          {/* Button - Right */}
+          <Link 
+            href="/quiz/financial-profile" 
+            className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-2 rounded-full font-semibold text-xs hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 whitespace-nowrap"
+          >
+            APPLY NOW
+          </Link>
         </div>
 
         {isMobileMenuOpen && (
