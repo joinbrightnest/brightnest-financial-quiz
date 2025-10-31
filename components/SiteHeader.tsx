@@ -37,7 +37,7 @@ export default function SiteHeader() {
   };
 
   return (
-    <nav aria-label="site-header" className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50 shadow-sm">
+    <nav aria-label="site-header" className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50 shadow-sm relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Desktop Layout */}
         <div className="hidden lg:flex justify-between items-center h-20">
@@ -95,49 +95,58 @@ export default function SiteHeader() {
           </Link>
         </div>
 
+        {/* Mobile Menu Overlay */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-gray-200 bg-white">
-            <div className="px-4 py-4 space-y-1">
-              <Link 
-                href="/about" 
-                className={`block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
-                  isActive("/about") 
-                    ? "text-teal-700 font-semibold bg-teal-50" 
-                    : "text-slate-600 hover:bg-gray-50 hover:text-teal-600"
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                About Us
-              </Link>
-              <Link 
-                href="/blog" 
-                className={`block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
-                  isActive("/blog") 
-                    ? "text-teal-700 font-semibold bg-teal-50" 
-                    : "text-slate-600 hover:bg-gray-50 hover:text-teal-600"
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Blog
-              </Link>
-              <Link 
-                href="/careers" 
-                className={`block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
-                  isActive("/careers") 
-                    ? "text-teal-700 font-semibold bg-teal-50" 
-                    : "text-slate-600 hover:bg-gray-50 hover:text-teal-600"
-                }`}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Careers
-              </Link>
-              <div className="pt-2">
-                <Link href="/quiz/financial-profile" className="block w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-3 rounded-lg font-semibold text-sm text-center shadow-md hover:from-teal-700 hover:to-teal-800 transition-all duration-300" onClick={() => setIsMobileMenuOpen(false)}>
-                  Learn More
+          <>
+            {/* Backdrop */}
+            <div 
+              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            {/* Menu Dropdown */}
+            <div className="lg:hidden absolute left-0 right-0 top-full bg-white border-b border-gray-200 shadow-lg z-50" style={{ animation: 'slideDown 0.3s ease-out' }}>
+              <div className="px-4 py-4 space-y-1">
+                <Link 
+                  href="/about" 
+                  className={`block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
+                    isActive("/about") 
+                      ? "text-teal-700 font-semibold bg-teal-50" 
+                      : "text-slate-600 hover:bg-gray-50 hover:text-teal-600"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  About Us
                 </Link>
+                <Link 
+                  href="/blog" 
+                  className={`block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
+                    isActive("/blog") 
+                      ? "text-teal-700 font-semibold bg-teal-50" 
+                      : "text-slate-600 hover:bg-gray-50 hover:text-teal-600"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Blog
+                </Link>
+                <Link 
+                  href="/careers" 
+                  className={`block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
+                    isActive("/careers") 
+                      ? "text-teal-700 font-semibold bg-teal-50" 
+                      : "text-slate-600 hover:bg-gray-50 hover:text-teal-600"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Careers
+                </Link>
+                <div className="pt-2">
+                  <Link href="/quiz/financial-profile" className="block w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-3 rounded-lg font-semibold text-sm text-center shadow-md hover:from-teal-700 hover:to-teal-800 transition-all duration-300" onClick={() => setIsMobileMenuOpen(false)}>
+                    Learn More
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
     </nav>
