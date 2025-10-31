@@ -126,8 +126,8 @@ export default async function BlogArticlePage({ params }: PageProps) {
           </main>
         </div>
 
-        {/* Mid-page CTA (before Top Read Content) */}
-        <div className="mt-8 sm:mt-10 relative">
+        {/* Mid-page CTA (before Top Read Content) - Mobile only */}
+        <div className="mt-8 sm:mt-10 relative lg:hidden">
           <div className="rounded-xl sm:rounded-2xl p-6 sm:p-8 text-center text-white relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-teal-600 via-teal-700 to-teal-600"></div>
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 via-amber-400 to-teal-400"></div>
