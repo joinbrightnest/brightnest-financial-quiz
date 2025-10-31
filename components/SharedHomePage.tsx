@@ -18,7 +18,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
   };
 
   return (
-    <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
+    <div className="min-h-screen flex flex-col" style={{backgroundColor: '#faf8f0'}}>
       {/* Navigation - Professional with Depth */}
       <nav className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-[60] shadow-sm relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -117,26 +117,26 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
       </nav>
 
       {/* Hero Section */}
-      <div className="flex flex-col px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8" style={{backgroundColor: '#FAF8F4'}}>
+      <div className="flex flex-col px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8 pb-16 sm:pb-24" style={{backgroundColor: '#FAF8F4'}}>
         <div className="max-w-4xl mx-auto text-center">
           {/* 1️⃣ Microline */}
-          <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-0 font-medium">
+          <p className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-3 font-medium">
             The behavior-based system for lasting financial peace.
           </p>
           
           {/* 2️⃣ Headline */}
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-serif text-gray-900 mb-4 sm:mb-6 leading-tight">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-serif text-gray-900 mb-6 sm:mb-8 leading-tight">
             <div>Real results.</div>
             <div>Built one habit at a time.</div>
           </h1>
           
           {/* 3️⃣ Subheadline */}
-          <p className="text-base sm:text-lg lg:text-xl text-gray-700 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-700 mb-12 sm:mb-16 max-w-2xl mx-auto leading-relaxed">
             Because wealth isn't about math — it's about behavior.
           </p>
           
           {/* 4️⃣ Visual Element */}
-          <div className="mb-8 sm:mb-12">
+          <div className="mb-12 sm:mb-16">
             <div className="relative inline-block w-full max-w-sm sm:max-w-lg mx-auto">
               <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-12 shadow-xl border border-gray-100 w-full">
                 {/* Behavior Progress Card */}
@@ -188,7 +188,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
               
           
           {/* 6️⃣ Primary CTA */}
-          <div className="mb-6 sm:mb-8">
+          <div className="mb-12 sm:mb-16">
             <Link
               href={getLink("/quiz/financial-profile")}
               className="inline-block bg-[#FF5C41] text-white px-8 py-4 sm:px-12 sm:py-5 lg:px-16 lg:py-6 text-base sm:text-lg font-semibold hover:bg-[#e54a2f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 rounded-lg w-full sm:w-auto"
