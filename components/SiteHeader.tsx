@@ -2,9 +2,39 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function SiteHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isActive = (path: string) => {
+    if (path === "/") {
+      return pathname === "/";
+    }
+    return pathname?.startsWith(path);
+  };
+
+  const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
+    const active = isActive(href);
+    return (
+      <Link 
+        href={href} 
+        className={`px-3 py-2 font-medium text-sm transition-colors duration-200 relative group ${
+          active 
+            ? "text-slate-900" 
+            : "text-slate-600 hover:text-teal-600"
+        }`}
+      >
+        {children}
+        {active ? (
+          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-teal-600"></span>
+        ) : (
+          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-teal-600 transition-all duration-200 group-hover:w-full"></span>
+        )}
+      </Link>
+    );
+  };
 
   return (
     <nav aria-label="site-header" className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50 shadow-sm">
@@ -19,17 +49,9 @@ export default function SiteHeader() {
           </div>
 
           <div className="hidden lg:flex items-center space-x-8">
-            <Link href="/about" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-teal-600 transition-colors duration-200 relative group">
-              About Us
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-teal-600 transition-all duration-200 group-hover:w-full"></span>
-            </Link>
-            <Link href="/blog" className="px-3 py-2 text-slate-900 font-medium text-sm border-b-2 border-teal-600 transition-colors duration-200">
-              Blog
-            </Link>
-            <Link href="/careers" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-teal-600 transition-colors duration-200 relative group">
-              Careers
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-teal-600 transition-all duration-200 group-hover:w-full"></span>
-            </Link>
+            <NavLink href="/about">About Us</NavLink>
+            <NavLink href="/blog">Blog</NavLink>
+            <NavLink href="/careers">Careers</NavLink>
           </div>
 
           <div className="hidden lg:flex items-center">
@@ -58,9 +80,39 @@ export default function SiteHeader() {
         {isMobileMenuOpen && (
           <div className="lg:hidden border-t border-gray-200 bg-white">
             <div className="px-4 py-4 space-y-1">
-              <Link href="/about" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
-              <Link href="/blog" className="block px-4 py-3 text-teal-700 font-semibold text-sm bg-teal-50 rounded-md" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
-              <Link href="/careers" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Careers</Link>
+              <Link 
+                href="/about" 
+                className={`block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
+                  isActive("/about") 
+                    ? "text-teal-700 font-semibold bg-teal-50" 
+                    : "text-slate-600 hover:bg-gray-50 hover:text-teal-600"
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                About Us
+              </Link>
+              <Link 
+                href="/blog" 
+                className={`block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
+                  isActive("/blog") 
+                    ? "text-teal-700 font-semibold bg-teal-50" 
+                    : "text-slate-600 hover:bg-gray-50 hover:text-teal-600"
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Blog
+              </Link>
+              <Link 
+                href="/careers" 
+                className={`block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
+                  isActive("/careers") 
+                    ? "text-teal-700 font-semibold bg-teal-50" 
+                    : "text-slate-600 hover:bg-gray-50 hover:text-teal-600"
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Careers
+              </Link>
               <div className="pt-2">
                 <Link href="/quiz/financial-profile" className="block w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-3 rounded-lg font-semibold text-sm text-center shadow-md hover:from-teal-700 hover:to-teal-800 transition-all duration-300" onClick={() => setIsMobileMenuOpen(false)}>
                   Learn More
