@@ -22,7 +22,8 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
       {/* Navigation - Professional with Depth */}
       <nav className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+          {/* Desktop Layout */}
+          <div className="hidden lg:flex justify-between items-center h-20">
             {/* Logo - Left Side */}
             <div className="flex items-center">
               <Link href={getLink("/")} className="group flex items-center space-x-2">
@@ -33,7 +34,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
             </div>
             
             {/* Desktop Menu Items */}
-            <div className="hidden lg:flex items-center space-x-8">
+            <div className="flex items-center space-x-8">
               <Link href="/about" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-teal-600 transition-colors duration-200 relative group">
                 About Us
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-teal-600 transition-all duration-200 group-hover:w-full"></span>
@@ -49,28 +50,44 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
             </div>
             
             {/* Right Side Items */}
-            <div className="hidden lg:flex items-center">
+            <div className="flex items-center">
               <Link href={getLink("/quiz/financial-profile")} className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02]">
                 Learn More
               </Link>
             </div>
+          </div>
 
-            {/* Mobile Menu Button */}
-            <div className="lg:hidden">
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 text-slate-700 hover:text-slate-900 hover:bg-gray-50 rounded-md focus:outline-none transition-all duration-200"
-                aria-label="Toggle mobile menu"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  {isMobileMenuOpen ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  )}
-                </svg>
-              </button>
-            </div>
+          {/* Mobile Layout: Menu Icon | Logo | Button */}
+          <div className="lg:hidden flex items-center h-16 relative">
+            {/* Menu Icon - Left */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 text-slate-700 hover:text-slate-900 focus:outline-none transition-all duration-200 z-10"
+              aria-label="Toggle mobile menu"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {isMobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+
+            {/* Logo - Center (absolute positioning for perfect centering) */}
+            <Link href={getLink("/")} className="absolute left-1/2 transform -translate-x-1/2 group z-10">
+              <div className="text-xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all duration-300 whitespace-nowrap">
+                BrightNest
+              </div>
+            </Link>
+
+            {/* Button - Right */}
+            <Link 
+              href={getLink("/quiz/financial-profile")} 
+              className="ml-auto bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-2 rounded-full font-semibold text-xs hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 whitespace-nowrap z-10"
+            >
+              APPLY NOW
+            </Link>
           </div>
 
           {/* Mobile Menu */}
