@@ -97,15 +97,15 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation - Professional */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
+      {/* Navigation - Professional with Depth */}
+      <nav className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo - Left Side */}
             <div className="flex items-center">
               <Link href="/" className="group flex items-center space-x-2">
-                <div className="text-2xl sm:text-3xl font-bold text-slate-900 group-hover:text-slate-700 transition-colors">
+                <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all">
                   BrightNest
                 </div>
               </Link>
@@ -113,20 +113,20 @@ export default function AboutPage() {
             
             {/* Desktop Menu Items */}
             <div className="hidden lg:flex items-center space-x-8">
-              <Link href="/about" className="px-3 py-2 text-slate-900 font-medium text-sm border-b-2 border-slate-900">
+              <Link href="/about" className="px-3 py-2 text-slate-900 font-medium text-sm border-b-2 border-teal-600">
                 About Us
               </Link>
-              <Link href="/blog" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-slate-900 transition-colors">
+              <Link href="/blog" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-teal-600 transition-colors">
                 Blog
               </Link>
-              <Link href="/careers" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-slate-900 transition-colors">
+              <Link href="/careers" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-teal-600 transition-colors">
                 Careers
               </Link>
             </div>
             
             {/* Right Side Items */}
             <div className="hidden lg:flex items-center">
-              <Link href="/quiz/financial-profile" className="bg-slate-900 text-white px-6 py-2.5 rounded-md font-semibold text-sm hover:bg-slate-800 transition-colors shadow-sm">
+              <Link href="/quiz/financial-profile" className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all shadow-md hover:shadow-lg">
                 Learn More
               </Link>
             </div>
@@ -152,11 +152,11 @@ export default function AboutPage() {
           {isMobileMenuOpen && (
             <div className="lg:hidden border-t border-gray-200 bg-white">
               <div className="px-4 py-4 space-y-1">
-                <Link href="/about" className="block px-4 py-3 text-slate-900 font-semibold text-sm bg-gray-50 rounded-md" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
-                <Link href="/blog" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 rounded-md transition-all" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
-                <Link href="/careers" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 rounded-md transition-all" onClick={() => setIsMobileMenuOpen(false)}>Careers</Link>
+                <Link href="/about" className="block px-4 py-3 text-teal-700 font-semibold text-sm bg-teal-50 rounded-md" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
+                <Link href="/blog" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
+                <Link href="/careers" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all" onClick={() => setIsMobileMenuOpen(false)}>Careers</Link>
                 <div className="pt-2">
-                  <Link href="/quiz/financial-profile" className="block w-full bg-slate-900 text-white px-4 py-3 rounded-md font-semibold text-sm text-center" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link href="/quiz/financial-profile" className="block w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-3 rounded-lg font-semibold text-sm text-center shadow-md" onClick={() => setIsMobileMenuOpen(false)}>
                     Learn More
                   </Link>
                 </div>
@@ -167,14 +167,19 @@ export default function AboutPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 sm:py-20 lg:py-24 relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-50/30 via-white to-amber-50/20"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-teal-100/20 to-transparent rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-amber-100/20 to-transparent rounded-full blur-3xl"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center mb-16">
             <div className="inline-block mb-6">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">About Us</span>
+              <span className="text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full">About Us</span>
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-              Empowering Women Through Financial Excellence
+              Empowering Women Through <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Financial Excellence</span>
             </h1>
             <p className="text-lg sm:text-xl text-slate-600 leading-relaxed max-w-3xl mx-auto">
               BrightNest is a results-driven financial services company empowering women through personalized financial coaching, education, and community support.
@@ -182,7 +187,8 @@ export default function AboutPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-16">
-            <div className="space-y-6">
+            <div className="space-y-6 relative">
+              <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-teal-500 to-amber-400 rounded-full"></div>
               <p className="text-base text-slate-700 leading-relaxed">
                 With online programs, world-class advisors, and a supportive network, we help women take control of their finances and achieve life-changing transformations.
               </p>
@@ -190,26 +196,30 @@ export default function AboutPage() {
                 Founded by a team of passionate financial experts, BrightNest has grown into a trusted platform serving thousands of women worldwide. We are committed to helping women regain their financial power and build confidence in their financial future.
               </p>
             </div>
-            <div className="relative h-64 sm:h-80 lg:h-96 bg-slate-50 rounded-lg flex items-center justify-center border border-slate-200">
-              <div className="text-center p-8">
-                <svg className="w-16 h-16 mx-auto mb-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                <p className="text-slate-500 font-medium text-sm uppercase tracking-wider">Your Financial Journey</p>
+            <div className="relative h-64 sm:h-80 lg:h-96 group">
+              <div className="absolute inset-0 bg-gradient-to-br from-teal-100 to-teal-50 rounded-xl shadow-lg border border-teal-200/50 flex items-center justify-center transform group-hover:scale-[1.02] transition-transform duration-300">
+                <div className="text-center p-8">
+                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 mb-6 shadow-lg">
+                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <p className="text-slate-700 font-semibold text-sm uppercase tracking-wider">Your Financial Journey</p>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-12 border-t border-slate-200 pt-12">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 lg:gap-12 border-t border-slate-200/60 pt-12">
             {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-slate-100 mb-4">
-                  <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div key={index} className="text-center group">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 mb-4 shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300">
+                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={stat.icon} />
                   </svg>
                 </div>
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-2">
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-2">
                   {stat.number}
                 </div>
                 <p className="text-sm sm:text-base text-slate-600 font-medium">{stat.label}</p>
@@ -220,21 +230,25 @@ export default function AboutPage() {
       </section>
 
       {/* Mission Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 sm:py-20 lg:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-teal-50/20 to-slate-50"></div>
+        <div className="absolute top-20 right-10 w-72 h-72 bg-amber-100/30 rounded-full blur-3xl"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Our Mission</span>
+              <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full mb-4">Our Mission</span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4 mb-6 leading-tight">
-                Transforming Lives Through Financial Empowerment
+                Transforming Lives Through <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Financial Empowerment</span>
               </h2>
               <p className="text-lg text-slate-600 leading-relaxed">
                 Since we started in 2020, our mission has been to transform lives.
               </p>
             </div>
-            <div className="bg-white rounded-lg p-8 sm:p-12 border border-slate-200 shadow-sm">
-              <p className="text-xl sm:text-2xl text-slate-900 leading-relaxed font-medium">
-                Our goal is to <span className="text-slate-700">empower women</span> to build <span className="text-slate-700">wealth, confidence,</span> and a financial future they love at any stage of life.
+            <div className="bg-white rounded-xl p-8 sm:p-12 border border-slate-200/60 shadow-lg relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500"></div>
+              <p className="text-xl sm:text-2xl text-slate-900 leading-relaxed font-medium relative z-10">
+                Our goal is to <span className="text-teal-600 font-semibold">empower women</span> to build <span className="text-teal-600 font-semibold">wealth, confidence,</span> and a financial future they love at any stage of life.
               </p>
             </div>
           </div>
@@ -242,12 +256,14 @@ export default function AboutPage() {
       </section>
 
       {/* Our Vision */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 sm:py-20 lg:py-24 bg-white relative overflow-hidden">
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-50/30 rounded-full blur-3xl"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Our Vision</span>
+            <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full mb-4">Our Vision</span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4 mb-6 max-w-4xl mx-auto leading-tight">
-              The Ultimate Solution for Women Seeking Financial Strength and Lasting Transformation
+              The Ultimate Solution for Women Seeking <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Financial Strength</span> and Lasting Transformation
             </h2>
             <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
               Everything you need — financial planning, coaching, education, and support — under one roof, tailored just for you.
@@ -256,11 +272,12 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
             {visionFeatures.map((feature, index) => (
-              <div key={index} className="bg-slate-50 rounded-lg p-8 border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all">
-                <div className="flex items-start space-x-4">
+              <div key={index} className="group bg-gradient-to-br from-white to-teal-50/30 rounded-xl p-8 border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-teal-100/20 rounded-full -mr-12 -mt-12"></div>
+                <div className="flex items-start space-x-4 relative z-10">
                   <div className="flex-shrink-0">
-                    <div className="w-10 h-10 rounded-lg bg-slate-200 flex items-center justify-center">
-                      <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
@@ -277,12 +294,14 @@ export default function AboutPage() {
       </section>
 
       {/* Timeline - Professional Design */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-slate-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 sm:py-20 lg:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-white to-amber-50/20"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Our Journey</span>
+            <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full mb-4">Our Journey</span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4">
-              The BrightNest Story
+              The <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">BrightNest</span> Story
             </h2>
           </div>
 
@@ -301,7 +320,7 @@ export default function AboutPage() {
                         <div className="absolute right-full w-[calc((100%-24px)/5)] sm:w-32 md:w-40 lg:w-48 h-px">
                           <div className={`h-full transition-all duration-500 ${
                             index <= currentTimelineIndex 
-                              ? 'bg-slate-900' 
+                              ? 'bg-gradient-to-r from-teal-500 to-teal-600' 
                               : 'bg-slate-300'
                           }`}></div>
                         </div>
@@ -309,20 +328,20 @@ export default function AboutPage() {
                       
                       <div className={`relative w-3 h-3 rounded-full transition-all duration-300 ${
                         index === currentTimelineIndex 
-                          ? 'bg-slate-900 scale-150 ring-4 ring-slate-100' 
+                          ? 'bg-teal-600 scale-150 ring-4 ring-teal-100 shadow-lg' 
                           : index < currentTimelineIndex
-                          ? 'bg-slate-600 scale-125'
-                          : 'bg-slate-300 group-hover:bg-slate-400 group-hover:scale-125'
+                          ? 'bg-teal-500 scale-125'
+                          : 'bg-slate-300 group-hover:bg-teal-400 group-hover:scale-125'
                       }`}>
                       </div>
                     </div>
                     
                     <span className={`text-xs font-semibold tracking-wider transition-all duration-300 ${
                       index === currentTimelineIndex 
-                        ? 'text-slate-900' 
+                        ? 'text-teal-700' 
                         : index < currentTimelineIndex
-                        ? 'text-slate-600'
-                        : 'text-slate-400 group-hover:text-slate-600'
+                        ? 'text-teal-600'
+                        : 'text-slate-400 group-hover:text-teal-600'
                     }`}>
                       {item.year}
                     </span>
@@ -334,15 +353,16 @@ export default function AboutPage() {
 
           {/* Timeline Content */}
           <div className="relative max-w-5xl mx-auto">
-            <div className="bg-white border border-slate-200 rounded-lg p-8 sm:p-12 lg:p-16 shadow-sm min-h-[400px]">
+            <div className="bg-white border border-slate-200/60 rounded-xl p-8 sm:p-12 lg:p-16 shadow-lg min-h-[400px] relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500"></div>
               <div className="mb-8">
                 <div className="inline-flex items-center space-x-3">
-                  <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center">
-                    <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-md">
+                    <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={timeline[currentTimelineIndex].icon} />
                     </svg>
                   </div>
-                  <div className="inline-block bg-slate-900 text-white px-6 py-2 rounded-md font-semibold text-xl">
+                  <div className="inline-block bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2 rounded-lg font-semibold text-xl shadow-md">
                     {timeline[currentTimelineIndex].year}
                   </div>
                 </div>
@@ -375,8 +395,8 @@ export default function AboutPage() {
                       onClick={() => setCurrentTimelineIndex(index)}
                       className={`transition-all duration-300 rounded-full ${
                         index === currentTimelineIndex 
-                          ? 'w-8 h-2 bg-slate-900' 
-                          : 'w-2 h-2 bg-slate-300 hover:bg-slate-400'
+                          ? 'w-8 h-2 bg-teal-600' 
+                          : 'w-2 h-2 bg-slate-300 hover:bg-teal-400'
                       }`}
                       aria-label={`Go to ${timeline[index].year}`}
                     />
@@ -403,12 +423,14 @@ export default function AboutPage() {
       </section>
 
       {/* Leadership Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 sm:py-20 lg:py-24 bg-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-50/20 rounded-full blur-3xl"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Our Leadership</span>
+            <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full mb-4">Our Leadership</span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4">
-              Meet the Team
+              Meet the <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Team</span>
             </h2>
             <p className="text-lg text-slate-600 mt-4 max-w-2xl mx-auto">
               Experienced professionals dedicated to your financial success
@@ -418,7 +440,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8">
             {leadership.map((member, index) => (
               <div key={index} className="text-center group">
-                <div className="relative w-28 h-28 sm:w-32 sm:h-32 mx-auto mb-4 rounded-lg bg-slate-900 flex items-center justify-center text-white font-semibold text-xl sm:text-2xl group-hover:bg-slate-800 transition-colors shadow-sm">
+                <div className="relative w-28 h-28 sm:w-32 sm:h-32 mx-auto mb-4 rounded-xl bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center text-white font-semibold text-xl sm:text-2xl group-hover:from-teal-700 group-hover:to-teal-800 transition-all shadow-lg group-hover:shadow-xl group-hover:scale-105 duration-300">
                   <span>{member.initials}</span>
                 </div>
                 <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-1">{member.name}</h3>
@@ -430,8 +452,12 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-slate-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="py-16 sm:py-20 lg:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-50 via-white to-amber-50/30"></div>
+        <div className="absolute top-10 left-10 w-72 h-72 bg-teal-100/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-10 right-10 w-72 h-72 bg-amber-100/20 rounded-full blur-3xl"></div>
+        
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
             Join the Team
           </h2>
@@ -440,7 +466,7 @@ export default function AboutPage() {
           </p>
           <Link
             href="/careers"
-            className="inline-block bg-slate-900 text-white px-8 sm:px-12 py-4 sm:py-5 rounded-lg font-semibold text-base sm:text-lg hover:bg-slate-800 transition-colors shadow-sm"
+            className="inline-block bg-gradient-to-r from-teal-600 to-teal-700 text-white px-8 sm:px-12 py-4 sm:py-5 rounded-lg font-semibold text-base sm:text-lg hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300"
           >
             View Open Positions
           </Link>
