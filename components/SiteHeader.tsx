@@ -37,7 +37,7 @@ export default function SiteHeader() {
   };
 
   return (
-    <nav aria-label="site-header" className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-50 shadow-sm relative">
+    <nav aria-label="site-header" className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-[60] shadow-sm relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Desktop Layout */}
         <div className="hidden lg:flex justify-between items-center h-20">
@@ -98,13 +98,13 @@ export default function SiteHeader() {
         {/* Mobile Menu Overlay */}
         {isMobileMenuOpen && (
           <>
-            {/* Backdrop */}
+            {/* Backdrop - starts below header */}
             <div 
-              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+              className="fixed top-16 left-0 right-0 bottom-0 bg-black/50 z-50 lg:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
             />
             {/* Menu Dropdown */}
-            <div className="lg:hidden absolute left-0 right-0 top-full bg-white border-b border-gray-200 shadow-lg z-50" style={{ animation: 'slideDown 0.3s ease-out' }}>
+            <div className="lg:hidden absolute left-0 right-0 top-full bg-white border-b border-gray-200 shadow-lg z-[60]" style={{ animation: 'slideDown 0.3s ease-out' }}>
               <div className="px-4 py-4 space-y-1">
                 <Link 
                   href="/about" 
