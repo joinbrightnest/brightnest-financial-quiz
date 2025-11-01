@@ -4,7 +4,7 @@ import { getCloserIdFromToken } from "@/lib/closer-auth";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { sessionId: string } }
+  { params }: { params: Promise<{ sessionId: string }> }
 ) {
   // 🔒 SECURITY: Require closer authentication
   const closerId = getCloserIdFromToken(request);
@@ -16,7 +16,7 @@ export async function GET(
   }
   
   try {
-    const { sessionId } = params;
+    const { sessionId } = await params;
 
     // Get the quiz session with all related data (EXACT COPY FROM ADMIN)
     const quizSession = await prisma.quizSession.findUnique({

@@ -5,14 +5,14 @@ import { getCloserIdFromToken } from '@/lib/closer-auth';
 const prisma = new PrismaClient();
 
 // DELETE a note
-export async function DELETE(req: NextRequest, { params }: { params: { noteId: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ noteId: string }> }) {
   try {
-    const closerId = await getCloserIdFromToken(req);
+    const closerId = getCloserIdFromToken(req);
     if (!closerId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { noteId } = params;
+    const { noteId } = await params;
 
     const note = await prisma.note.findUnique({
       where: { id: noteId },

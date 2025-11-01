@@ -4,7 +4,7 @@ import { getCloserIdFromToken } from '@/lib/closer-auth';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { sessionId: string } }
+  { params }: { params: Promise<{ sessionId: string }> }
 ) {
   // 🔒 SECURITY: Require closer authentication
   const closerId = getCloserIdFromToken(request);
@@ -15,7 +15,7 @@ export async function GET(
     );
   }
 
-  const { sessionId } = params;
+  const { sessionId } = await params;
 
   try {
     // Get the quiz session to find lead email
