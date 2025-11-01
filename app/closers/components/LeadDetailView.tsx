@@ -91,7 +91,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
 
   const handleCreateNote = async (e: React.FormEvent) => {
       e.preventDefault();
-      if (!newNoteContent.trim()) return;
+      if (!newNoteContent.trim() || !sessionId) return;
       
       setIsSubmittingNote(true);
       try {
@@ -103,18 +103,22 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                   'Authorization': `Bearer ${token}`,
               },
               body: JSON.stringify({
-                  leadEmail: leadData?.email,
+                  sessionId: sessionId, // Use sessionId
                   content: newNoteContent,
               }),
           });
 
           if (response.ok) {
               const newNote = await response.json();
-              // Add the new note to the state to re-render the list
-              setLeadData((prevData: any) => ({
-                  ...prevData,
-                  notes: [newNote, ...prevData.notes],
-              }));
+              // To reflect the new note and the new activity log entry, we should refetch all data.
+              const detailsResponse = await fetch(`/api/closer/lead-details/${sessionId}`, {
+                  headers: { 'Authorization': `Bearer ${token}` }
+              });
+              if (detailsResponse.ok) {
+                  const updatedData = await detailsResponse.json();
+                  setLeadData(updatedData);
+              }
+              
               // Reset form
               setNewNoteContent('');
               setShowNoteForm(false);

@@ -11,10 +11,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { leadEmail, content } = await req.json();
+    const { sessionId, content } = await req.json();
 
-    if (!leadEmail || !content) {
-      return NextResponse.json({ error: 'Missing leadEmail or content' }, { status: 400 });
+    if (!sessionId || !content) {
+      return NextResponse.json({ error: 'Missing sessionId or content' }, { status: 400 });
+    }
+
+    const quizSession = await prisma.quizSession.findUnique({
+      where: { id: sessionId },
+      include: { answers: { include: { question: true } } },
+    });
+
+    if (!quizSession) {
+      return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
+    }
+
+    const leadEmail = quizSession.answers.find(a => a.question?.prompt.toLowerCase().includes('email'))?.value;
+    
+    if (!leadEmail) {
+      return NextResponse.json({ error: 'Could not find email for this lead' }, { status: 404 });
     }
 
     // You might want to verify that the lead this note is being added to
