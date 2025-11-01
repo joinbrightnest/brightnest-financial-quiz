@@ -1060,11 +1060,10 @@ export default function CloserDashboard() {
                                     activity.type === 'quiz_completed' ? 'bg-purple-100' :
                                     activity.type === 'call_booked' ? 'bg-blue-100' :
                                     activity.type === 'deal_closed' ? 'bg-green-100' :
-                                    activity.type === 'outcome_marked' ? 'bg-orange-100' :
-                                    activity.type === 'outcome_updated' ? 'bg-orange-100' :
+                                    (activity.type === 'outcome_updated' || activity.type === 'outcome_marked') ? 'bg-orange-100' :
                                     activity.type === 'task_created' ? 'bg-indigo-100' :
                                     activity.type === 'task_started' ? 'bg-cyan-100' :
-                                    activity.type === 'task_completed' ? 'bg-teal-100' :
+                                    activity.type === 'task_finished' ? 'bg-teal-100' :
                                     'bg-amber-100'
                                   }`}>
                                     {activity.type === 'quiz_completed' && (
@@ -1087,12 +1086,12 @@ export default function CloserDashboard() {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                       </svg>
                                     )}
-                                    {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated') && (
+                                    {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked') && (
                                       <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                       </svg>
                                     )}
-                                    {(activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_completed') && (
+                                    {(activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_finished') && (
                                       <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                                       </svg>
@@ -1108,25 +1107,25 @@ export default function CloserDashboard() {
                                             <span><span className="text-blue-600">{activity.leadName}</span> completed the quiz</span>
                                           )}
                                           {activity.type === 'call_booked' && (
-                                            <span><span className="text-blue-600">{activity.leadName}</span> booked a call{activity.details?.closerName && ` with ${activity.details.closerName}`}</span>
+                                            <span><span className="text-blue-600">{activity.leadName}</span> booked a call</span>
                                           )}
                                           {activity.type === 'deal_closed' && (
                                             <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as closed</span>
                                           )}
                                           {activity.type === 'note_added' && (
-                                            <span><span className="text-green-600">{activity.actor}</span> added a note</span>
+                                            <span><span className="text-green-600">{activity.actor}</span> added a note to <span className="text-blue-600">{activity.leadName}</span></span>
                                           )}
-                                          {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated') && (
+                                          {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked') && (
                                             <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
                                           )}
                                           {activity.type === 'task_created' && (
                                             <span><span className="text-green-600">{activity.actor}</span> created a task</span>
                                           )}
                                           {activity.type === 'task_started' && (
-                                            <span><span className="text-green-600">{activity.actor}</span> started a task</span>
+                                            <span><span className="text-green-600">{activity.actor}</span> started the task</span>
                                           )}
-                                          {activity.type === 'task_completed' && (
-                                            <span><span className="text-green-600">{activity.actor}</span> completed a task</span>
+                                          {activity.type === 'task_finished' && (
+                                            <span><span className="text-green-600">{activity.actor}</span> finished the task</span>
                                           )}
                                         </p>
                                         <p className="text-xs text-slate-500 mt-1">
@@ -1140,87 +1139,98 @@ export default function CloserDashboard() {
                                           })}
                                         </p>
                                         
-                                        {/* Activity details */}
-                                        {activity.details && (
-                                          <div className="mt-3 text-sm text-slate-600 space-y-2">
-                                            {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated' || activity.type === 'deal_closed') && (
-                                              <>
-                                                <div className="mt-3 text-sm text-slate-600">
-                                                  <div className="flex flex-wrap items-center gap-2">
-                                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
-                                                      {activity.details.outcome?.replace(/_/g, ' ').toUpperCase()}
-                                                    </span>
-                                                    {activity.details.previousOutcome && (
-                                                      <span className="text-xs text-slate-500">
-                                                        (was: {activity.details.previousOutcome.replace(/_/g, ' ')})
-                                                      </span>
-                                                    )}
-                                                    {activity.details.saleValue && (
-                                                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                        ${Number(activity.details.saleValue).toFixed(2)}
-                                                      </span>
-                                                    )}
-                                                  </div>
+                                        {/* Show "View Details" for outcome updates */}
+                                        {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed') && (
+                                          <div className="mt-3">
+                                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                                              {activity.details?.outcome && (
+                                                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
+                                                  {activity.details.outcome.replace(/_/g, ' ').toUpperCase()}
+                                                </span>
+                                              )}
+                                              {activity.details?.previousOutcome && (
+                                                <span className="text-xs text-slate-500">
+                                                  (was: {activity.details.previousOutcome.replace(/_/g, ' ')})
+                                                </span>
+                                              )}
+                                              {activity.details?.saleValue && (
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                  ${Number(activity.details.saleValue).toFixed(2)}
+                                                </span>
+                                              )}
+                                            </div>
+                                            
+                                            <button
+                                              onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
+                                              className="mt-2 text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center"
+                                            >
+                                              {expandedActivity === activity.id ? 'Hide call details' : 'View call details'}
+                                              <svg className={`w-4 h-4 ml-1 transition-transform ${expandedActivity === activity.id ? '-rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                              </svg>
+                                            </button>
+
+                                            {expandedActivity === activity.id && (
+                                              <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                <div className="bg-white rounded-lg p-3 border border-slate-300">
+                                                  <p className="text-xs font-semibold text-slate-900 mb-1">Recording Link</p>
+                                                  {activity.details?.recordingLink ? (
+                                                    <a href={activity.details.recordingLink} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:text-blue-800 underline break-all">
+                                                      {activity.details.recordingLink}
+                                                    </a>
+                                                  ) : (
+                                                    <p className="text-sm text-slate-400 italic">No recording available</p>
+                                                  )}
                                                 </div>
-                                                
-                                                {/* View call details button - Same style and placement as "View quiz answers" */}
-                                                <div className="mt-2">
+                                                <div className="bg-white rounded-lg p-3 border border-slate-300">
+                                                  <p className="text-xs font-semibold text-slate-900 mb-1">Call Notes</p>
+                                                  {activity.details?.notes ? (
+                                                    <p className="text-sm text-slate-700 whitespace-pre-wrap">{activity.details.notes}</p>
+                                                  ) : (
+                                                    <p className="text-sm text-slate-400 italic">No notes available</p>
+                                                  )}
+                                                </div>
+                                              </div>
+                                            )}
+                                          </div>
+                                        )}
+                                        
+                                        {/* Activity details for other types */}
+                                        {activity.details && !(activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed') && (
+                                          <div className="mt-3 text-sm text-slate-600">
+                                            {activity.type === 'quiz_completed' && (
+                                              <div>
+                                                <div className="flex items-center space-x-4">
+                                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                    {activity.details.quizType?.replace('-', ' ')}
+                                                  </span>
+                                                  <span className="text-xs text-slate-500">
+                                                    {activity.details.answersCount} questions answered
+                                                  </span>
                                                   <button
                                                     onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
                                                     className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center"
                                                   >
-                                                    {expandedActivity === activity.id ? (
-                                                      <>
-                                                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                                                        </svg>
-                                                        Hide call details
-                                                      </>
-                                                    ) : (
-                                                      <>
-                                                        View call details
-                                                        <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                                        </svg>
-                                                      </>
-                                                    )}
+                                                    {expandedActivity === activity.id ? 'Hide answers' : 'View answers'}
+                                                    <svg className={`w-4 h-4 ml-1 transition-transform ${expandedActivity === activity.id ? '-rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                    </svg>
                                                   </button>
                                                 </div>
-                                                
-                                                {/* Expanded Call Details */}
-                                                {expandedActivity === activity.id && (
+                                                {expandedActivity === activity.id && leadDetails && (
                                                   <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                    {/* Recording Link */}
-                                                    <div className="bg-white rounded-lg p-3 border border-slate-300">
-                                                      <p className="text-xs font-semibold text-slate-900 mb-1">Recording Link</p>
-                                                      {activity.details?.recordingLink ? (
-                                                        <a 
-                                                          href={activity.details.recordingLink} 
-                                                          target="_blank" 
-                                                          rel="noopener noreferrer"
-                                                          className="text-sm text-blue-600 hover:text-blue-800 underline break-all"
-                                                        >
-                                                          {activity.details.recordingLink}
-                                                        </a>
-                                                      ) : (
-                                                        <p className="text-sm text-slate-400 italic">No recording available</p>
-                                                      )}
-                                                    </div>
-                                                    
-                                                    {/* Call Notes */}
-                                                    <div className="bg-white rounded-lg p-3 border border-slate-300">
-                                                      <p className="text-xs font-semibold text-slate-900 mb-1">Call Notes</p>
-                                                      {activity.details?.notes ? (
-                                                        <p className="text-sm text-slate-700 whitespace-pre-wrap">{activity.details.notes}</p>
-                                                      ) : (
-                                                        <p className="text-sm text-slate-400 italic">No notes available</p>
-                                                      )}
-                                                    </div>
+                                                    {leadDetails.answers.map((answer, idx) => (
+                                                      <div key={idx} className="bg-white rounded-lg p-3 border border-slate-300">
+                                                        <p className="text-xs font-semibold text-slate-900 mb-1">
+                                                          {answer.question?.prompt || `Question ${idx + 1}`}
+                                                        </p>
+                                                        <p className="text-sm text-slate-700">{answer.value || 'No answer provided'}</p>
+                                                      </div>
+                                                    ))}
                                                   </div>
                                                 )}
-                                              </>
+                                              </div>
                                             )}
-                                            
                                             {activity.type === 'call_booked' && activity.details.scheduledAt && (
                                               <div className="text-xs text-slate-600">
                                                 <div>
@@ -1236,83 +1246,22 @@ export default function CloserDashboard() {
                                                     </span>
                                                   )}
                                                 </div>
-                                                {/* Note: Call details (recording link & notes) are shown in outcome_marked/outcome_updated activities, not here */}
                                               </div>
                                             )}
-                                            
-                                            {activity.type === 'deal_closed' && (
-                                              <div className="flex items-center space-x-2">
-                                                {activity.details.amount && (
-                                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                    ${Number(activity.details.amount).toFixed(2)}
-                                                  </span>
-                                                )}
-                                                {activity.details.commission && (
-                                                  <span className="text-xs text-slate-500">
-                                                    Commission: ${Number(activity.details.commission).toFixed(2)}
-                                                  </span>
-                                                )}
-                                              </div>
-                                            )}
-                                            
                                             {activity.type === 'note_added' && activity.details.content && (
                                               <div className="mt-2 p-3 bg-white rounded border border-slate-200">
                                                 <p className="text-sm text-slate-700">{activity.details.content}</p>
                                               </div>
                                             )}
-                                            
-                                            {(activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_completed') && activity.details.title && (
+                                            {(activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_finished') && activity.details.title && (
                                               <div className="mt-2">
-                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
-                                                  {activity.details.title}
-                                                </span>
+                                                <div className="flex items-center gap-2">
+                                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+                                                    {activity.details.title}
+                                                  </span>
+                                                </div>
                                               </div>
                                             )}
-                                            
-                                            {activity.type === 'quiz_completed' && (
-                                              <div className="flex items-center space-x-4">
-                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                                  {activity.details.quizType?.replace('-', ' ')}
-                                                </span>
-                                                <span className="text-xs text-slate-500">
-                                                  {activity.details.answersCount} questions answered
-                                                </span>
-                                                <button
-                                                  onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
-                                                  className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center"
-                                                >
-                                                  {expandedActivity === activity.id ? (
-                                                    <>
-                                                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                                                      </svg>
-                                                      Hide answers
-                                                    </>
-                                                  ) : (
-                                                    <>
-                                                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                                      </svg>
-                                                      View answers
-                                                    </>
-                                                  )}
-                                                </button>
-                                              </div>
-                                            )}
-                                          </div>
-                                        )}
-                                        
-                                        {/* Expanded quiz answers */}
-                                        {expandedActivity === activity.id && activity.type === 'quiz_completed' && leadDetails && (
-                                          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-                                            {leadDetails.answers.map((answer: any, idx: number) => (
-                                              <div key={idx} className="bg-white rounded-lg p-3 border border-slate-300">
-                                                <p className="text-xs font-semibold text-slate-900 mb-1">
-                                                  {answer.question?.prompt || `Question ${idx + 1}`}
-                                                </p>
-                                                <p className="text-sm text-slate-700">{answer.value || 'No answer provided'}</p>
-                                              </div>
-                                            ))}
                                           </div>
                                         )}
                                       </div>
