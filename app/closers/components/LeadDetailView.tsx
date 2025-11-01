@@ -418,36 +418,49 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                         <p className="text-xs text-slate-500 mt-1">{new Date(activity.timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}</p>
                         {(activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_completed') && activity.details?.title && (
                           <div className="mt-2">
-                            <div className="flex items-center gap-2">
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
-                                {activity.details.title}
-                              </span>
-                              {activity.details.priority && activity.type === 'task_created' && (
-                                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                                  activity.details.priority === 'urgent' ? 'bg-red-100 text-red-800' :
-                                  activity.details.priority === 'high' ? 'bg-orange-100 text-orange-800' :
-                                  activity.details.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                                  'bg-green-100 text-green-800'
-                                }`}>
-                                  {activity.details.priority}
-                                </span>
-                              )}
-                            </div>
-                            {activity.details.description && activity.type === 'task_created' && (
-                              <div className="mt-2 p-3 bg-white rounded border border-slate-200">
-                                <p className="text-sm text-slate-600">{activity.details.description}</p>
+                            <button
+                              onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
+                              className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center"
+                            >
+                              {expandedActivity === activity.id ? 'Hide task details' : 'View task details'}
+                              <svg className={`w-4 h-4 ml-1 transition-transform ${expandedActivity === activity.id ? '-rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                              </svg>
+                            </button>
+                            {expandedActivity === activity.id && (
+                              <div className="mt-3">
+                                <div className="flex items-center gap-2">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+                                    {activity.details.title}
+                                  </span>
+                                  {activity.details.priority && activity.type === 'task_created' && (
+                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                      activity.details.priority === 'urgent' ? 'bg-red-100 text-red-800' :
+                                      activity.details.priority === 'high' ? 'bg-orange-100 text-orange-800' :
+                                      activity.details.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                      'bg-green-100 text-green-800'
+                                    }`}>
+                                      {activity.details.priority}
+                                    </span>
+                                  )}
+                                </div>
+                                {activity.details.description && activity.type === 'task_created' && (
+                                  <div className="mt-2 p-3 bg-white rounded border border-slate-200">
+                                    <p className="text-sm text-slate-600">{activity.details.description}</p>
+                                  </div>
+                                )}
+                                {activity.details.dueDate && activity.type === 'task_created' && (
+                                  <p className="text-xs text-slate-500 mt-2">
+                                    Due: {new Date(activity.details.dueDate).toLocaleString('en-US', {
+                                      month: 'short',
+                                      day: 'numeric',
+                                      year: 'numeric',
+                                      hour: 'numeric',
+                                      minute: '2-digit'
+                                    })}
+                                  </p>
+                                )}
                               </div>
-                            )}
-                            {activity.details.dueDate && activity.type === 'task_created' && (
-                              <p className="text-xs text-slate-500 mt-2">
-                                Due: {new Date(activity.details.dueDate).toLocaleString('en-US', {
-                                  month: 'short',
-                                  day: 'numeric',
-                                  year: 'numeric',
-                                  hour: 'numeric',
-                                  minute: '2-digit'
-                                })}
-                              </p>
                             )}
                           </div>
                         )}
