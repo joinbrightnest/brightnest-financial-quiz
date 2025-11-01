@@ -380,10 +380,23 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                 <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 Activity Timeline
               </h3>
-              <div className="relative">
-                <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-slate-200"></div>
-                <div className="space-y-6">
-                  {activities.map((activity: any) => (
+              {loadingActivities ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                  <p className="text-sm text-slate-600 mt-4">Loading activities...</p>
+                </div>
+              ) : activities.length === 0 ? (
+                <div className="text-center py-8">
+                  <svg className="w-12 h-12 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <p className="text-sm text-slate-600">No activity recorded yet</p>
+                </div>
+              ) : (
+                <div className="relative">
+                  <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-slate-200"></div>
+                  <div className="space-y-6">
+                    {activities.map((activity: any) => (
                     <div key={activity.id} className="relative flex items-start space-x-4">
                        <div className={`flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center z-10 ${
                             activity.type === 'quiz_completed' ? 'bg-purple-100' :
@@ -505,9 +518,10 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                         )}
                       </div>
                     </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
 

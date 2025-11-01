@@ -2499,7 +2499,7 @@ export default function AdminDashboard() {
                           onClick={() => setCrmShowLeadModal(false)}
                           className="text-slate-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-slate-700"
                         >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                           </svg>
                         </button>
@@ -2675,64 +2675,53 @@ export default function AdminDashboard() {
                                 <p className="text-sm text-slate-600">No activity recorded yet</p>
                               </div>
                             ) : (
-                              <div className="space-y-4">
-                                {crmActivities.map((activity: any) => (
-                                  <div key={activity.id} className="flex items-start space-x-4">
-                                    {/* Icon */}
-                                    <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
-                                      activity.type === 'quiz_completed' ? 'bg-purple-100' :
-                                      activity.type === 'call_booked' ? 'bg-blue-100' :
-                                      activity.type === 'outcome_marked' ? 'bg-orange-100' :
-                                      activity.type === 'outcome_updated' ? 'bg-orange-100' :
-                                      activity.type === 'deal_closed' ? 'bg-green-100' :
-                                      activity.type === 'note_added' ? 'bg-amber-100' :
-                                      activity.type === 'task_created' ? 'bg-indigo-100' :
-                                      activity.type === 'task_started' ? 'bg-blue-100' :
-                                      activity.type === 'task_completed' ? 'bg-green-100' :
-                                      'bg-gray-100'
-                                    }`}>
-                                      {activity.type === 'quiz_completed' && (
-                                        <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                      )}
-                                      {activity.type === 'call_booked' && (
-                                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
-                                      )}
-                                      {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated') && (
-                                        <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                      )}
-                                      {activity.type === 'deal_closed' && (
-                                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                      )}
-                                      {activity.type === 'note_added' && (
-                                        <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                        </svg>
-                                      )}
-                                      {activity.type === 'task_created' && (
-                                        <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                        </svg>
-                                      )}
-                                      {activity.type === 'task_started' && (
-                                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                      )}
-                                      {activity.type === 'task_completed' && (
-                                        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                      )}
-                                    </div>
+                              <div className="relative">
+                                <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-slate-200"></div>
+                                <div className="space-y-6">
+                                  {crmActivities.map((activity: any) => (
+                                    <div key={activity.id} className="relative flex items-start space-x-4">
+                                      {/* Icon */}
+                                      <div className={`flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center z-10 ${
+                                        activity.type === 'quiz_completed' ? 'bg-purple-100' :
+                                        activity.type === 'call_booked' ? 'bg-blue-100' :
+                                        activity.type === 'outcome_marked' ? 'bg-orange-100' :
+                                        activity.type === 'outcome_updated' ? 'bg-orange-100' :
+                                        activity.type === 'deal_closed' ? 'bg-green-100' :
+                                        activity.type === 'note_added' ? 'bg-amber-100' :
+                                        (activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_completed') ? 'bg-indigo-100' :
+                                        'bg-gray-100'
+                                      }`}>
+                                        {activity.type === 'quiz_completed' && (
+                                          <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                          </svg>
+                                        )}
+                                        {activity.type === 'call_booked' && (
+                                          <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                          </svg>
+                                        )}
+                                        {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated') && (
+                                          <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                          </svg>
+                                        )}
+                                        {activity.type === 'deal_closed' && (
+                                          <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                          </svg>
+                                        )}
+                                        {activity.type === 'note_added' && (
+                                          <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                          </svg>
+                                        )}
+                                        {(activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_completed') && (
+                                          <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                          </svg>
+                                        )}
+                                      </div>
 
                                     {/* Content */}
                                     <div className="flex-1 bg-slate-50 rounded-lg p-4 border border-slate-200">
@@ -2747,7 +2736,7 @@ export default function AdminDashboard() {
                                           <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
                                         )}
                                         {activity.type === 'outcome_updated' && (
-                                          <span><span className="text-green-600">{activity.actor}</span> updated <span className="text-blue-600">{activity.leadName}</span>'s outcome to <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
+                                          <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
                                         )}
                                         {activity.type === 'deal_closed' && (
                                           <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as closed</span>
@@ -2771,7 +2760,8 @@ export default function AdminDashboard() {
                                           day: 'numeric',
                                           year: 'numeric',
                                           hour: 'numeric',
-                                          minute: '2-digit'
+                                          minute: '2-digit',
+                                          hour12: true
                                         })}
                                       </p>
 
@@ -3053,132 +3043,113 @@ export default function AdminDashboard() {
                                 </h3>
                                 <button
                                   onClick={() => setShowAdminNoteForm(!showAdminNoteForm)}
-                                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center"
+                                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
                                 >
-                                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                                   </svg>
-                                  Create Note
+                                  {showAdminNoteForm ? 'Cancel' : 'Create Note'}
                                 </button>
                               </div>
 
                               {/* Note Form */}
                               {showAdminNoteForm && (
-                                <div className="bg-white border-2 border-green-200 rounded-lg p-6 mb-6">
-                                  <h4 className="text-lg font-semibold text-slate-900 mb-4">New Note</h4>
-                                  <div className="space-y-4">
-                                    <div>
-                                      <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        Note Content *
-                                      </label>
-                                      <textarea
-                                        value={adminNoteContent}
-                                        onChange={(e) => setAdminNoteContent(e.target.value)}
-                                        rows={5}
-                                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-slate-900 resize-none"
-                                        placeholder="Enter your note here..."
-                                      />
-                                    </div>
-                                  </div>
-
-                                  <div className="flex justify-end space-x-3 mt-4">
+                                <form onSubmit={(e) => {
+                                  e.preventDefault();
+                                  if (adminNoteContent.trim() && crmSelectedLead) {
+                                    const leadEmail = crmSelectedLead.answers?.find((a: any) => a.value?.includes('@'))?.value;
+                                    fetch('/api/notes', {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ leadEmail, content: adminNoteContent, createdBy: 'Admin', createdByType: 'admin' }),
+                                    }).then(async (response) => {
+                                      if (response.ok) {
+                                        const newNote = await response.json();
+                                        setAdminNotes([newNote, ...adminNotes]);
+                                        setAdminNoteContent('');
+                                        setShowAdminNoteForm(false);
+                                        fetchCrmActivities(crmSelectedLead);
+                                      }
+                                    }).catch((error) => console.error('Error saving note:', error));
+                                  }
+                                }} className="mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                  <textarea
+                                    value={adminNoteContent}
+                                    onChange={(e) => setAdminNoteContent(e.target.value)}
+                                    rows={4}
+                                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-slate-500 focus:border-slate-500"
+                                    placeholder="Add a new note..."
+                                  />
+                                  <div className="mt-2 flex justify-end gap-2">
                                     <button
+                                      type="button"
                                       onClick={() => {
                                         setShowAdminNoteForm(false);
                                         setAdminNoteContent('');
                                       }}
-                                      className="px-4 py-2 text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors font-medium"
+                                      className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50"
                                     >
                                       Cancel
                                     </button>
                                     <button
-                                      onClick={async () => {
-                                        if (adminNoteContent.trim() && crmSelectedLead) {
-                                          try {
-                                            const leadEmail = crmSelectedLead.answers?.find((a: any) => a.value?.includes('@'))?.value;
-                                            const response = await fetch('/api/notes', {
-                                              method: 'POST',
-                                              headers: {
-                                                'Content-Type': 'application/json',
-                                              },
-                                              body: JSON.stringify({
-                                                leadEmail,
-                                                content: adminNoteContent,
-                                                createdBy: 'Admin',
-                                                createdByType: 'admin',
-                                              }),
-                                            });
-
-                                            if (response.ok) {
-                                              const newNote = await response.json();
-                                              setAdminNotes([newNote, ...adminNotes]);
-                                              setAdminNoteContent('');
-                                              setShowAdminNoteForm(false);
-                                            }
-                                          } catch (error) {
-                                            console.error('Error saving note:', error);
-                                          }
-                                        }
-                                      }}
+                                      type="submit"
                                       disabled={!adminNoteContent.trim()}
-                                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 disabled:bg-slate-400"
                                     >
                                       Save Note
                                     </button>
-                            </div>
-                          </div>
-                        )}
+                                  </div>
+                                </form>
+                              )}
 
                               {/* Notes List */}
-                              {adminNotes.length > 0 && (
-                                <div className="space-y-4">
-                                  {adminNotes.map((note) => (
+                              <div className="space-y-4">
+                                {adminNotes.length > 0 ? (
+                                  adminNotes.map((note) => (
                                     <div
                                       key={note.id}
-                                      className="bg-white border border-slate-200 rounded-lg p-5 hover:border-green-300 hover:shadow-md transition-all"
+                                      className="group p-4 bg-white rounded-lg border border-slate-200 flex justify-between items-start"
                                     >
-                                      <div className="flex justify-between items-start mb-3">
-                                        <div className="flex items-center text-sm text-slate-500">
-                                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                          </svg>
-                                          {new Date(note.createdAt).toLocaleString('en-US', {
+                                      <div>
+                                        <p className="text-sm text-slate-500">
+                                          {new Date(note.createdAt).toLocaleString([], {
                                             year: 'numeric',
                                             month: 'short',
                                             day: 'numeric',
                                             hour: '2-digit',
                                             minute: '2-digit'
                                           })}
-                                        </div>
-                                        <button
-                                          onClick={async () => {
-                                            try {
-                                              const response = await fetch(`/api/notes/${note.id}`, {
-                                                method: 'DELETE',
-                                              });
-
-                                              if (response.ok) {
-                                                setAdminNotes(adminNotes.filter(n => n.id !== note.id));
-                                              }
-                                            } catch (error) {
-                                              console.error('Error deleting note:', error);
-                                            }
-                                          }}
-                                          className="text-slate-400 hover:text-red-600 transition-colors"
-                                          title="Delete note"
-                                        >
-                                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                          </svg>
-                                        </button>
+                                        </p>
+                                        <p className="text-sm text-slate-800 whitespace-pre-wrap mt-1">{note.content}</p>
                                       </div>
-                                      <p className="text-slate-900 whitespace-pre-wrap leading-relaxed">
-                                        {note.content}
-                                      </p>
+                                      <button
+                                        onClick={async () => {
+                                          try {
+                                            const response = await fetch(`/api/notes/${note.id}`, {
+                                              method: 'DELETE',
+                                            });
+
+                                            if (response.ok) {
+                                              setAdminNotes(adminNotes.filter(n => n.id !== note.id));
+                                              fetchCrmActivities(crmSelectedLead);
+                                            }
+                                          } catch (error) {
+                                            console.error('Error deleting note:', error);
+                                          }
+                                        }}
+                                        className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-50 transition-opacity"
+                                        aria-label="Delete note"
+                                      >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                      </button>
                                     </div>
-                                  ))}
-                                </div>
-                              )}
+                                  ))
+                                ) : (
+                                  !showAdminNoteForm && <p className="text-sm text-slate-600 text-center py-4">No notes have been added for this lead.</p>
+                                )}
+                              </div>
                             </div>
                           </div>
                         )}
