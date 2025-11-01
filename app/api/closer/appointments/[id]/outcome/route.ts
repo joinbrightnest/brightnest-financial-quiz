@@ -245,7 +245,7 @@ export async function PUT(
       });
     }
 
-    // Create audit log
+    // Create audit log - store notes and recordingLink for this specific outcome
     await prisma.closerAuditLog.create({
       data: {
         closerId: decoded.closerId,
@@ -258,7 +258,9 @@ export async function PUT(
           affiliateCode: appointment.affiliateCode,
           affiliateCommissionAmount,
           customerName: appointment.customerName,
-          recordingLink,
+          recordingLink, // Store the recording link that was provided
+          notes: notes || null, // Store notes for this outcome update
+          previousOutcome: appointment.outcome, // Store previous outcome for tracking changes
         },
         ipAddress: request.headers.get('x-forwarded-for') || 
                    request.headers.get('x-real-ip') || 
