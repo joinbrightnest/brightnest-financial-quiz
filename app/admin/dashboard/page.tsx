@@ -2808,8 +2808,8 @@ export default function AdminDashboard() {
                                             </p>
                                           )}
                                           
-                                          {/* Show dropdown if there's a closer and recording link or notes */}
-                                          {activity.details?.closerName && (activity.details?.recordingLink || activity.details?.notes) && (
+                                          {/* Show dropdown if there's a closer and the call has been completed (has outcome or recording/notes) */}
+                                          {activity.details?.closerName && (activity.details?.outcome || activity.details?.recordingLink || activity.details?.notes) && (
                                             <>
                                               <button 
                                                 onClick={() => {
@@ -2821,7 +2821,7 @@ export default function AdminDashboard() {
                                                 View call details →
                                               </button>
                                               <div id={`call-details-${activity.id}`} className="hidden mt-3 bg-white rounded-lg p-3 border border-slate-300 space-y-3">
-                                                {activity.details?.recordingLink && (
+                                                {activity.details?.recordingLink ? (
                                                   <div>
                                                     <p className="text-xs font-semibold text-slate-900 mb-1">Recording Link:</p>
                                                     <a 
@@ -2833,13 +2833,21 @@ export default function AdminDashboard() {
                                                       {activity.details.recordingLink}
                                                     </a>
                                                   </div>
-                                                )}
-                                                {activity.details?.notes && (
+                                                ) : activity.details?.outcome ? (
+                                                  <div>
+                                                    <p className="text-xs text-slate-500 italic">Recording link not available yet</p>
+                                                  </div>
+                                                ) : null}
+                                                {activity.details?.notes ? (
                                                   <div>
                                                     <p className="text-xs font-semibold text-slate-900 mb-1">Call Notes:</p>
                                                     <p className="text-sm text-slate-700 whitespace-pre-wrap">{activity.details.notes}</p>
                                                   </div>
-                                                )}
+                                                ) : activity.details?.outcome ? (
+                                                  <div>
+                                                    <p className="text-xs text-slate-500 italic">No call notes added yet</p>
+                                                  </div>
+                                                ) : null}
                                               </div>
                                             </>
                                           )}

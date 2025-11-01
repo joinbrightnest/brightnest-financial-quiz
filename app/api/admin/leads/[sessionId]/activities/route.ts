@@ -111,38 +111,27 @@ export async function GET(
       });
 
       if (appointment) {
-        // Determine which recording link to use (priority: outcome-specific > general)
-        let recordingLink = null;
-        if (appointment.outcome) {
-          switch (appointment.outcome) {
+        const getLegacyRecordingLink = (outcome: string | null): string | null => {
+          if (!outcome) return appointment.recordingLink;
+          switch (outcome) {
             case 'converted':
-              recordingLink = appointment.recordingLinkConverted;
-              break;
+              return appointment.recordingLinkConverted;
             case 'not_interested':
-              recordingLink = appointment.recordingLinkNotInterested;
-              break;
+              return appointment.recordingLinkNotInterested;
             case 'needs_follow_up':
-              recordingLink = appointment.recordingLinkNeedsFollowUp;
-              break;
+              return appointment.recordingLinkNeedsFollowUp;
             case 'wrong_number':
-              recordingLink = appointment.recordingLinkWrongNumber;
-              break;
+              return appointment.recordingLinkWrongNumber;
             case 'no_answer':
-              recordingLink = appointment.recordingLinkNoAnswer;
-              break;
+              return appointment.recordingLinkNoAnswer;
             case 'callback_requested':
-              recordingLink = appointment.recordingLinkCallbackRequested;
-              break;
+              return appointment.recordingLinkCallbackRequested;
             case 'rescheduled':
-              recordingLink = appointment.recordingLinkRescheduled;
-              break;
+              return appointment.recordingLinkRescheduled;
             default:
-              recordingLink = appointment.recordingLink;
+              return appointment.recordingLink;
           }
-        } else {
-          // No outcome set yet, use general recording link
-          recordingLink = appointment.recordingLink;
-        }
+        };
 
         // For call_booked, we only show the initial booking info
         // Don't include recording link/notes here - those belong to outcome updates
@@ -194,51 +183,17 @@ export async function GET(
           // Skip converted outcomes (they'll be shown as "deal_closed" instead)
           if (outcome === 'converted') return;
 
-          // Get recording link and notes from the audit log details first
-          // This ensures we show the recording link and notes that were set at the time of this specific outcome update
-          // IMPORTANT: We check if the key exists (not just if it's truthy) to distinguish between
-          // "not provided in audit log" (legacy record) vs "explicitly null" (provided but empty)
-          let recordingLink = null;
-          if (details?.hasOwnProperty('recordingLink')) {
-            // Key exists in audit log - use it (even if null, that means "no recording" was provided)
-            recordingLink = details.recordingLink;
-          } else {
-            // Key doesn't exist - this is a legacy record, fall back to appointment table
-            switch (outcome) {
-              case 'converted':
-                recordingLink = appointment.recordingLinkConverted;
-                break;
-              case 'not_interested':
-                recordingLink = appointment.recordingLinkNotInterested;
-                break;
-              case 'needs_follow_up':
-                recordingLink = appointment.recordingLinkNeedsFollowUp;
-                break;
-              case 'wrong_number':
-                recordingLink = appointment.recordingLinkWrongNumber;
-                break;
-              case 'no_answer':
-                recordingLink = appointment.recordingLinkNoAnswer;
-                break;
-              case 'callback_requested':
-                recordingLink = appointment.recordingLinkCallbackRequested;
-                break;
-              case 'rescheduled':
-                recordingLink = appointment.recordingLinkRescheduled;
-                break;
-              default:
-                recordingLink = appointment.recordingLink;
-            }
-          }
+          // Get recording link and notes from the audit log details first.
+          // This ensures we show the recording link and notes that were set at the time of this specific outcome update.
+          // Using `hasOwnProperty` is crucial to distinguish "not provided" from "provided but null/empty".
+          const recordingLink = details?.hasOwnProperty('recordingLink')
+            ? details.recordingLink
+            : getLegacyRecordingLink(outcome);
 
-          // Get notes from audit log (stored when outcome was updated)
-          // Same logic: if key exists, use it (even if null); otherwise fallback for legacy records
-          let notes = null;
-          if (details?.hasOwnProperty('notes')) {
-            notes = details.notes;
-          } else {
-            notes = appointment.notes || null;
-          }
+          // Get notes from audit log; fallback for legacy records.
+          const notes = details?.hasOwnProperty('notes')
+            ? details.notes
+            : appointment.notes || null;
 
           // First outcome = "marked", subsequent = "updated"
           const isFirstOutcome = index === 0;
@@ -255,7 +210,7 @@ export async function GET(
               previousOutcome: details?.previousOutcome || null,
               isFirstOutcome,
               recordingLink: recordingLink || null,
-              notes: notes
+              notes: notes || null
             }
           });
         });
@@ -283,8 +238,13 @@ export async function GET(
 
           // Get recording link and notes from audit log if available, otherwise fallback to appointment
           const convertedDetails = convertedOutcomeLog?.details as any;
-          const recordingLink = convertedDetails?.recordingLink || appointment.recordingLinkConverted || appointment.recordingLink || null;
-          const notes = convertedDetails?.notes !== undefined ? convertedDetails.notes : (appointment.notes || null);
+          const recordingLink = convertedDetails?.hasOwnProperty('recordingLink')
+            ? convertedDetails.recordingLink
+            : getLegacyRecordingLink('converted') || appointment.recordingLink || null;
+          
+          const notes = convertedDetails?.hasOwnProperty('notes')
+            ? convertedDetails.notes
+            : appointment.notes || null;
 
           activities.push({
             id: `deal_${appointment.id}`,
@@ -297,8 +257,8 @@ export async function GET(
               amount: appointment.saleValue ? Number(appointment.saleValue) : null,
               saleValue: appointment.saleValue ? Number(appointment.saleValue) : null, // Also include saleValue for consistency
               commission: appointment.commissionAmount ? Number(appointment.commissionAmount) : null,
-              recordingLink: recordingLink,
-              notes: notes
+              recordingLink: recordingLink || null,
+              notes: notes || null
             }
           });
         }
@@ -306,33 +266,8 @@ export async function GET(
         // If appointment has outcome but no audit logs yet, still show call details
         // This handles legacy appointments created before audit logging was implemented
         if (appointment.outcome && appointmentOutcomeLogs.length === 0 && appointment.outcome !== 'converted') {
-          let recordingLink = null;
-          switch (appointment.outcome) {
-            case 'converted':
-              recordingLink = appointment.recordingLinkConverted;
-              break;
-            case 'not_interested':
-              recordingLink = appointment.recordingLinkNotInterested;
-              break;
-            case 'needs_follow_up':
-              recordingLink = appointment.recordingLinkNeedsFollowUp;
-              break;
-            case 'wrong_number':
-              recordingLink = appointment.recordingLinkWrongNumber;
-              break;
-            case 'no_answer':
-              recordingLink = appointment.recordingLinkNoAnswer;
-              break;
-            case 'callback_requested':
-              recordingLink = appointment.recordingLinkCallbackRequested;
-              break;
-            case 'rescheduled':
-              recordingLink = appointment.recordingLinkRescheduled;
-              break;
-            default:
-              recordingLink = appointment.recordingLink;
-          }
-
+          const recordingLink = getLegacyRecordingLink(appointment.outcome);
+          
           activities.push({
             id: `outcome_${appointment.id}`,
             type: 'outcome_marked',

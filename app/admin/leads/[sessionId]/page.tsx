@@ -102,6 +102,20 @@ export default function LeadDetailsPage() {
         throw new Error("Failed to fetch activities");
       }
       const data = await response.json();
+      console.log('🔍 DEBUG: All activities fetched:', data.activities);
+      const outcomeActivities = (data.activities || []).filter((a: any) => 
+        a.type === 'outcome_updated' || a.type === 'outcome_marked' || a.type === 'deal_closed'
+      );
+      console.log('🔍 DEBUG: Outcome activities found:', outcomeActivities);
+      outcomeActivities.forEach((a: any, idx: number) => {
+        console.log(`🔍 DEBUG: Outcome activity ${idx}:`, {
+          id: a.id,
+          type: a.type,
+          details: a.details,
+          hasRecordingLink: !!a.details?.recordingLink,
+          hasNotes: !!a.details?.notes
+        });
+      });
       setActivities(data.activities || []);
     } catch (err) {
       console.error("❌ Error fetching activities:", err);
@@ -356,7 +370,18 @@ export default function LeadDetailsPage() {
                   
                   {/* Activity items */}
                   <div className="space-y-6">
-                    {activities.map((activity, index) => (
+                    {activities.map((activity, index) => {
+                      // DEBUG: Log outcome activities during render
+                      const isOutcomeActivity = activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed';
+                      if (isOutcomeActivity) {
+                        console.log(`🎯 RENDER DEBUG: Outcome activity ${index} (${activity.id}):`, {
+                          type: activity.type,
+                          hasDetails: !!activity.details,
+                          details: activity.details,
+                          conditionCheck: activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed'
+                        });
+                      }
+                      return (
                       <div key={activity.id} className="relative flex items-start space-x-4">
                         {/* Icon */}
                         <div className={`flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center z-10 ${
@@ -443,7 +468,20 @@ export default function LeadDetailsPage() {
                               </p>
                               
                               {/* Outcome activities - Always show button, even if details are missing */}
-                              {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed') && (
+                              {(() => {
+                                const conditionResult = activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed';
+                                if (isOutcomeActivity) {
+                                  console.log(`🔴 BUTTON CONDITION DEBUG for ${activity.id}:`, {
+                                    activityType: activity.type,
+                                    conditionResult,
+                                    typeCheck1: activity.type === 'outcome_updated',
+                                    typeCheck2: activity.type === 'outcome_marked',
+                                    typeCheck3: activity.type === 'deal_closed',
+                                    willRender: conditionResult
+                                  });
+                                }
+                                return conditionResult;
+                              })() && (
                                 <div className="mt-3">
                                   {/* Outcome Badges */}
                                   <div className="flex flex-wrap items-center gap-2 mb-2">
@@ -638,7 +676,8 @@ export default function LeadDetailsPage() {
                           </div>
                         </div>
                       </div>
-                    ))}
+                    );
+                    })}
                   </div>
                 </div>
               )}
