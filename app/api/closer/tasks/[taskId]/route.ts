@@ -1,32 +1,40 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
+import { getCloserIdFromToken } from '@/lib/closer-auth';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { taskId: string } }
+  { params }: { params: Promise<{ taskId: string }> }
 ) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const closerId = getCloserIdFromToken(request);
+    if (!closerId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, JWT_SECRET) as { closerId: string; email: string };
-
+    const { taskId } = await params;
     const body = await request.json();
     const { title, description, priority, status, dueDate } = body;
 
-    // Verify the task belongs to this closer
+    // Verify the task exists and belongs to this closer
     const existingTask = await prisma.task.findUnique({
-      where: { id: params.taskId },
+      where: { id: taskId },
     });
 
-    if (!existingTask || existingTask.closerId !== decoded.closerId) {
+    if (!existingTask) {
       return NextResponse.json({ error: 'Task not found' }, { status: 404 });
+    }
+
+    // Security check: Verify the closer is assigned to this lead
+    const appointment = await prisma.appointment.findFirst({
+      where: {
+        customerEmail: existingTask.leadEmail,
+        closerId: closerId
+      }
+    });
+
+    if (!appointment) {
+      return NextResponse.json({ error: 'Forbidden: You are not assigned to this lead.' }, { status: 403 });
     }
 
     const updateData: any = {};
@@ -44,8 +52,17 @@ export async function PUT(
     if (dueDate !== undefined) updateData.dueDate = dueDate ? new Date(dueDate) : null;
 
     const task = await prisma.task.update({
-      where: { id: params.taskId },
+      where: { id: taskId },
       data: updateData,
+      include: {
+        closer: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
 
     return NextResponse.json({ task });
@@ -57,28 +74,39 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { taskId: string } }
+  { params }: { params: Promise<{ taskId: string }> }
 ) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const closerId = getCloserIdFromToken(request);
+    if (!closerId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, JWT_SECRET) as { closerId: string; email: string };
+    const { taskId } = await params;
 
-    // Verify the task belongs to this closer
+    // Verify the task exists
     const existingTask = await prisma.task.findUnique({
-      where: { id: params.taskId },
+      where: { id: taskId },
     });
 
-    if (!existingTask || existingTask.closerId !== decoded.closerId) {
+    if (!existingTask) {
       return NextResponse.json({ error: 'Task not found' }, { status: 404 });
     }
 
+    // Security check: Verify the closer is assigned to this lead
+    const appointment = await prisma.appointment.findFirst({
+      where: {
+        customerEmail: existingTask.leadEmail,
+        closerId: closerId
+      }
+    });
+
+    if (!appointment) {
+      return NextResponse.json({ error: 'Forbidden: You are not assigned to this lead.' }, { status: 403 });
+    }
+
     await prisma.task.delete({
-      where: { id: params.taskId },
+      where: { id: taskId },
     });
 
     return NextResponse.json({ success: true });
@@ -87,4 +115,3 @@ export async function DELETE(
     return NextResponse.json({ error: 'Failed to delete task' }, { status: 500 });
   }
 }
-

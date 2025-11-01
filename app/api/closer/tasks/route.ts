@@ -1,34 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
+import { getCloserIdFromToken } from '@/lib/closer-auth';
 
 export async function GET(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const closerId = getCloserIdFromToken(request);
+    if (!closerId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, JWT_SECRET) as { closerId: string; email: string };
 
     const { searchParams } = new URL(request.url);
     const leadEmail = searchParams.get('leadEmail');
 
-    // Build the where clause
-    const whereClause: any = {
-      closerId: decoded.closerId,
-    };
-    
-    // If leadEmail is provided, filter by it; otherwise get all tasks for this closer
-    if (leadEmail) {
-      whereClause.leadEmail = leadEmail;
+    if (!leadEmail) {
+      return NextResponse.json({ error: 'Lead email is required' }, { status: 400 });
     }
 
+    // Security check: Verify the closer is assigned to this lead
+    const appointment = await prisma.appointment.findFirst({
+      where: {
+        customerEmail: leadEmail,
+        closerId: closerId
+      }
+    });
+
+    if (!appointment) {
+      return NextResponse.json({ error: 'Forbidden: You are not assigned to this lead.' }, { status: 403 });
+    }
+
+    // Fetch tasks for this lead
     const tasks = await prisma.task.findMany({
-      where: whereClause,
+      where: { leadEmail },
       include: {
         closer: {
           select: {
@@ -39,52 +41,77 @@ export async function GET(request: NextRequest) {
         },
       },
       orderBy: [
-        { status: 'asc' },
+        { status: 'asc' }, // pending, in_progress, completed, cancelled
         { dueDate: 'asc' },
         { createdAt: 'desc' },
       ],
     });
 
-    return NextResponse.json(tasks);
+    return NextResponse.json({ tasks });
   } catch (error) {
     console.error('Error fetching tasks:', error);
-    return NextResponse.json({ error: 'Failed to fetch tasks' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    const closerId = getCloserIdFromToken(request);
+    if (!closerId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, JWT_SECRET) as { closerId: string; email: string };
-
-    const body = await request.json();
-    const { leadEmail, title, description, priority, dueDate, appointmentId } = body;
+    const { leadEmail, title, description, priority, dueDate } = await request.json();
 
     if (!leadEmail || !title) {
-      return NextResponse.json({ error: 'Lead email and title are required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Lead email and title are required' },
+        { status: 400 }
+      );
+    }
+
+    // Security check: Verify the closer is assigned to this lead
+    const appointment = await prisma.appointment.findFirst({
+      where: {
+        customerEmail: leadEmail,
+        closerId: closerId
+      }
+    });
+
+    if (!appointment) {
+      return NextResponse.json({ error: 'Forbidden: You are not assigned to this lead.' }, { status: 403 });
     }
 
     const task = await prisma.task.create({
       data: {
         leadEmail,
         title,
-        description,
+        description: description || null,
         priority: priority || 'medium',
         dueDate: dueDate ? new Date(dueDate) : null,
-        closerId: decoded.closerId,
-        appointmentId: appointmentId || null,
+        status: 'pending',
+        closerId: closerId,
+      },
+      include: {
+        closer: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     });
 
-    return NextResponse.json({ task }, { status: 201 });
+    return NextResponse.json({ task });
   } catch (error) {
     console.error('Error creating task:', error);
-    return NextResponse.json({ error: 'Failed to create task' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
-
