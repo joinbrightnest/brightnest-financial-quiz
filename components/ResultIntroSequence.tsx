@@ -131,18 +131,19 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
           </motion.div>
 
           {/* Loading dots - mobile only - must be visible */}
-          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex space-x-3 sm:hidden z-50 items-center">
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex space-x-4 sm:hidden z-[100] items-center pointer-events-none">
             {[0, 1, 2, 3].map((i) => (
               <motion.div
-                key={i}
-                className="w-4 h-4 rounded-full"
+                key={`dot-${i}-${index}`}
+                className="w-5 h-5 rounded-full shadow-lg"
                 style={{ 
                   backgroundColor: current.color,
-                  opacity: 0.7
+                  opacity: 0.8,
+                  boxShadow: `0 2px 4px rgba(0,0,0,0.2)`
                 }}
                 animate={{
-                  opacity: [0.7, 1, 0.7],
-                  scale: [1, 1.3, 1]
+                  opacity: [0.6, 1, 0.6],
+                  scale: [1, 1.4, 1]
                 }}
                 transition={{
                   duration: 1.2,
