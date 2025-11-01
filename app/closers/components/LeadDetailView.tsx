@@ -87,13 +87,13 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
         
         {/* Content */}
         <div className="p-8 space-y-8 max-w-7xl mx-auto">
-          {/* Personal Information */}
+          {/* Combined Information */}
           <div className="bg-white rounded-xl border border-slate-200 p-6">
             <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
               <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
               Personal Information
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div>
                 <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Full Name</label>
                 <p className="mt-1 text-sm font-semibold text-slate-900">{getLeadName()}</p>
@@ -103,10 +103,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                 <p className="mt-1 text-sm font-semibold text-slate-900">{getLeadEmail()}</p>
               </div>
             </div>
-          </div>
 
-          {/* Deal Information */}
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
             <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
               <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
               Deal Information
