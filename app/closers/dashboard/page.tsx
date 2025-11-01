@@ -1145,21 +1145,23 @@ export default function CloserDashboard() {
                                           <div className="mt-3 text-sm text-slate-600 space-y-2">
                                             {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated' || activity.type === 'deal_closed') && (
                                               <div>
-                                                <div className="flex flex-wrap items-center gap-2 mb-2">
-                                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
-                                                    {activity.details.outcome?.replace(/_/g, ' ').toUpperCase()}
-                                                  </span>
-                                                  {activity.details.saleValue && (
-                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                      ${Number(activity.details.saleValue).toFixed(2)}
+                                                <div className="flex flex-wrap items-center gap-2 mb-2 justify-between">
+                                                  <div className="flex flex-wrap items-center gap-2">
+                                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
+                                                      {activity.details.outcome?.replace(/_/g, ' ').toUpperCase()}
                                                     </span>
-                                                  )}
+                                                    {activity.details.saleValue && (
+                                                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                        ${Number(activity.details.saleValue).toFixed(2)}
+                                                      </span>
+                                                    )}
+                                                  </div>
                                                   
                                                   {/* Dropdown button for call details */}
                                                   {(activity.details.recordingLink || activity.details.notes) && (
                                                     <button
                                                       onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
-                                                      className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center ml-auto"
+                                                      className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center whitespace-nowrap"
                                                     >
                                                       {expandedActivity === activity.id ? (
                                                         <>

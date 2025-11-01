@@ -78,7 +78,26 @@ export async function GET(
     if (leadEmail) {
       const appointment = await prisma.appointment.findFirst({
         where: { customerEmail: leadEmail },
-        include: {
+        select: {
+          id: true,
+          closerId: true,
+          customerEmail: true,
+          customerName: true,
+          scheduledAt: true,
+          createdAt: true,
+          updatedAt: true,
+          outcome: true,
+          notes: true,
+          saleValue: true,
+          commissionAmount: true,
+          recordingLink: true,
+          recordingLinkConverted: true,
+          recordingLinkNotInterested: true,
+          recordingLinkNeedsFollowUp: true,
+          recordingLinkWrongNumber: true,
+          recordingLinkNoAnswer: true,
+          recordingLinkCallbackRequested: true,
+          recordingLinkRescheduled: true,
           closer: {
             select: {
               id: true,
