@@ -77,43 +77,40 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
       <AnimatePresence mode="wait">
         <motion.div
           key={index}
-          className="w-full h-full flex flex-col items-center relative px-4"
+          className="w-full h-full flex flex-col items-center justify-center relative px-4 pb-16 sm:pb-8"
           style={{ backgroundColor: current.bg }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1, ease: "easeInOut" }}
         >
-          {/* Logo for first slide - minimal top spacing on mobile */}
-          {index === 0 && (
-            <motion.div
-              className="flex items-center space-x-2 sm:space-x-3 mt-3 sm:mt-0 mb-1 sm:mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-            >
-              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-400 to-teal-400 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm sm:text-xl">B</span>
-              </div>
-              <h1 className="text-xl sm:text-3xl font-bold" style={{ color: current.color }}>
-                BrightNest
-              </h1>
-            </motion.div>
-          )}
-
-          {/* Main text - positioned higher on mobile to balance spacing */}
+          {/* Content wrapper - centered vertically */}
           <motion.div
-            className="absolute left-1/2 -translate-x-1/2 text-center px-4 sm:px-8 max-w-2xl sm:static sm:translate-x-0"
-            style={{ 
-              top: index === 0 ? '38%' : '42%',
-              transform: 'translate(-50%, -50%)'
-            }}
+            className="flex flex-col items-center justify-center text-center max-w-2xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index === 0 ? 1 : 0.5, duration: 0.8 }}
           >
+            {/* Logo for first slide - part of centered content */}
+            {index === 0 && (
+              <motion.div
+                className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+              >
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-400 to-teal-400 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-lg sm:text-xl">B</span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: current.color }}>
+                  BrightNest
+                </h1>
+              </motion.div>
+            )}
+
+            {/* Main text - centered and structured */}
             <motion.h1 
-              className="text-2xl sm:text-2xl md:text-3xl font-medium leading-tight sm:leading-relaxed text-center"
+              className="text-2xl sm:text-2xl md:text-3xl font-medium leading-relaxed"
               style={{ color: current.color }}
             >
               {text}
@@ -122,7 +119,7 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
             {/* Subtitle for first slide */}
             {current.subtitle && (
               <motion.p
-                className="text-sm sm:text-lg mt-2 sm:mt-4 opacity-80 text-center"
+                className="text-base sm:text-lg mt-4 opacity-80"
                 style={{ color: current.color }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.8 }}
@@ -133,9 +130,9 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
             )}
           </motion.div>
 
-          {/* Progress indicator - always at bottom */}
+          {/* Progress indicator - always at bottom, visible */}
           <motion.div
-            className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2"
+            className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.6 }}
@@ -143,7 +140,7 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
             {slides.map((_, i) => (
               <motion.div
                 key={i}
-                className={`w-2.5 h-2.5 sm:w-2.5 sm:h-2.5 rounded-full ${
+                className={`w-2.5 h-2.5 rounded-full transition-all ${
                   i <= index ? 'opacity-100' : 'opacity-30'
                 }`}
                 style={{ 
