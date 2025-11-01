@@ -206,10 +206,100 @@ export async function GET(
           }
         });
       });
+
+      // 6. Tasks created (all tasks for this lead) - EXACT COPY FROM ADMIN
+      const tasks = await prisma.task.findMany({
+        where: { leadEmail },
+        include: {
+          closer: {
+            select: {
+              id: true,
+              name: true
+            }
+          }
+        },
+        orderBy: {
+          createdAt: 'asc'
+        }
+      });
+
+      tasks.forEach(task => {
+        // 1. Task created
+        activities.push({
+          id: `task_created_${task.id}`,
+          type: 'task_created',
+          timestamp: task.createdAt.toISOString(),
+          leadName,
+          actor: task.closer?.name || 'Unknown',
+          details: {
+            title: task.title,
+            description: task.description,
+            priority: task.priority,
+            status: task.status,
+            dueDate: task.dueDate?.toISOString() || null
+          }
+        });
+
+        // 2. Task started (if status is in_progress or completed)
+        if (task.status === 'in_progress' || task.status === 'completed') {
+          // Use updatedAt as approximate start time (when status changed from pending)
+          const startTime = task.updatedAt.toISOString();
+          activities.push({
+            id: `task_started_${task.id}`,
+            type: 'task_started',
+            timestamp: startTime,
+            leadName,
+            actor: task.closer?.name || 'Unknown',
+            details: {
+              title: task.title
+            }
+          });
+        }
+
+        // 3. Task completed (if completedAt exists)
+        if (task.completedAt) {
+          activities.push({
+            id: `task_completed_${task.id}`,
+            type: 'task_completed',
+            timestamp: task.completedAt.toISOString(),
+            leadName,
+            actor: task.closer?.name || 'Unknown',
+            details: {
+              title: task.title
+            }
+          });
+        }
+      });
     }
 
-    // Sort activities by timestamp
-    activities.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    // Sort all activities by timestamp, with secondary sorting for logical order when timestamps are the same
+    // Priority order for same timestamps: created -> started -> completed
+    const activityTypePriority: { [key: string]: number } = {
+      'quiz_completed': 1,
+      'call_booked': 2,
+      'task_created': 3,
+      'task_started': 4,
+      'note_added': 5,
+      'outcome_marked': 6,
+      'outcome_updated': 7,
+      'task_completed': 8,
+      'deal_closed': 9
+    };
+
+    activities.sort((a, b) => {
+      const timeA = new Date(a.timestamp).getTime();
+      const timeB = new Date(b.timestamp).getTime();
+      
+      // If timestamps are the same, use activity type priority
+      if (timeA === timeB) {
+        const priorityA = activityTypePriority[a.type] || 999;
+        const priorityB = activityTypePriority[b.type] || 999;
+        return priorityA - priorityB;
+      }
+      
+      // Otherwise, sort by timestamp
+      return timeA - timeB;
+    });
 
     return NextResponse.json({ activities });
   } catch (error) {
