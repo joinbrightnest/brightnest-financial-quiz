@@ -17,28 +17,68 @@ export default function AffiliateBookCallPage() {
   const [calendlyUrl, setCalendlyUrl] = useState("https://calendly.com/privatepublish/30min?hide_event_type_details=1&hide_gdpr_banner=1&hide_landing_page_details=1&embed_domain=joinbrightnest.com&embed_type=Inline");
   const [activeCloser, setActiveCloser] = useState<{id: string, name: string, calendlyLink: string} | null>(null);
 
-  // Fetch active closer's Calendly link
+  // Fetch active closer's Calendly link and quiz session data
   useEffect(() => {
-    const fetchActiveCloser = async () => {
+    const fetchDataAndPreFillCalendly = async () => {
       try {
+        // First, get quiz session data to pre-fill Calendly
+        const sessionId = localStorage.getItem('quizSessionId');
+        let quizName = null;
+        let quizEmail = null;
+        
+        if (sessionId) {
+          try {
+            const sessionResponse = await fetch(`/api/quiz/session?sessionId=${sessionId}`);
+            if (sessionResponse.ok) {
+              const sessionData = await sessionResponse.json();
+              quizName = sessionData.name || null;
+              quizEmail = sessionData.email || null;
+              console.log("✅ Found quiz data for pre-fill:", { quizName, quizEmail });
+            }
+          } catch (error) {
+            console.error("❌ Error fetching quiz session:", error);
+          }
+        }
+        
+        // Fetch active closer's Calendly link
         const response = await fetch('/api/closer/active-calendly');
         const data = await response.json();
+        
+        // Build Calendly URL with pre-filled data
+        let baseCalendlyUrl = "https://calendly.com/privatepublish/30min";
         
         if (data.success && data.closer) {
           console.log("🎯 Found active closer:", data.closer);
           setActiveCloser(data.closer);
-          // Update Calendly URL to use closer's link
-          const closerCalendlyUrl = `${data.closer.calendlyLink}?hide_event_type_details=1&hide_gdpr_banner=1&hide_landing_page_details=1&embed_domain=joinbrightnest.com&embed_type=Inline`;
-          setCalendlyUrl(closerCalendlyUrl);
-        } else {
-          console.log("ℹ️ No active closer found, using default Calendly");
+          baseCalendlyUrl = data.closer.calendlyLink;
         }
+        
+        // Add URL parameters for pre-filling
+        const urlParams = new URLSearchParams({
+          'hide_event_type_details': '1',
+          'hide_gdpr_banner': '1',
+          'hide_landing_page_details': '1',
+          'embed_domain': 'joinbrightnest.com',
+          'embed_type': 'Inline'
+        });
+        
+        // Add name and email if available
+        if (quizName) {
+          urlParams.append('name', quizName);
+        }
+        if (quizEmail) {
+          urlParams.append('email', quizEmail);
+        }
+        
+        const finalCalendlyUrl = `${baseCalendlyUrl}?${urlParams.toString()}`;
+        setCalendlyUrl(finalCalendlyUrl);
+        console.log("🔄 Using Calendly URL with pre-filled data:", finalCalendlyUrl);
       } catch (error) {
-        console.error("❌ Error fetching active closer:", error);
+        console.error("❌ Error fetching data:", error);
       }
     };
 
-    fetchActiveCloser();
+    fetchDataAndPreFillCalendly();
   }, []);
 
   // Set affiliate cookie when page loads
