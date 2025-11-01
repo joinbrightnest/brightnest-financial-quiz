@@ -23,7 +23,6 @@ export async function GET(
       },
       select: {
         id: true,
-        sessionId: true,
         quizType: true,
         completedAt: true,
         status: true,
