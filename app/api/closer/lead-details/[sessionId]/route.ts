@@ -68,20 +68,6 @@ export async function GET(
       );
     }
 
-    // Get affiliate conversion if exists
-    let affiliateConversion = null;
-    if (email) {
-      affiliateConversion = await prisma.affiliateConversion.findFirst({
-        where: { 
-          leadEmail: email,
-          status: 'paid'
-        },
-        orderBy: {
-          createdAt: 'desc'
-        }
-      });
-    }
-
     // Transform the data for the lead details view (EXACT COPY FROM ADMIN)
     const leadData = {
       id: quizSession.id,
@@ -115,7 +101,7 @@ export async function GET(
         createdAt: appointment.createdAt.toISOString(),
         updatedAt: appointment.updatedAt.toISOString(),
       } : null,
-      dealClosedAt: affiliateConversion ? affiliateConversion.createdAt.toISOString() : null,
+      dealClosedAt: appointment?.outcome === 'converted' ? appointment.updatedAt.toISOString() : null,
     };
 
     return NextResponse.json(leadData);
