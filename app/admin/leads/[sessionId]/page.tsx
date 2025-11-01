@@ -46,8 +46,6 @@ interface LeadData {
 type TabType = 'activity' | 'notes' | 'tasks';
 
 export default function LeadDetailsPage() {
-  console.log('🚀 LeadDetailsPage component rendering');
-  
   const params = useParams();
   const router = useRouter();
   const sessionId = params.sessionId as string;
@@ -59,8 +57,6 @@ export default function LeadDetailsPage() {
   const [activities, setActivities] = useState<any[]>([]);
   const [loadingActivities, setLoadingActivities] = useState(false);
   const [expandedActivity, setExpandedActivity] = useState<string | null>(null);
-  
-  console.log('🚀 Component state:', { sessionId, activeTab, activitiesCount: activities.length });
 
   useEffect(() => {
     if (sessionId) {
@@ -106,38 +102,7 @@ export default function LeadDetailsPage() {
         throw new Error("Failed to fetch activities");
       }
       const data = await response.json();
-      console.log('📦 ALL Activities data received:', data.activities);
-      console.log('📊 Total activities count:', data.activities?.length || 0);
-      
-      // Log outcome activities to verify call details are included
-      const outcomeActivities = (data.activities || []).filter((a: any) => 
-        a.type === 'outcome_marked' || a.type === 'outcome_updated' || a.type === 'deal_closed'
-      );
-      console.log('🎯 Outcome activities found:', outcomeActivities.length);
-      
-      outcomeActivities.forEach((activity: any, index: number) => {
-        console.log(`\n📝 Outcome Activity #${index + 1} (ID: ${activity.id}):`, {
-          type: activity.type,
-          outcome: activity.details?.outcome,
-          hasRecordingLink: !!activity.details?.recordingLink,
-          hasNotes: !!activity.details?.notes,
-          recordingLink: activity.details?.recordingLink,
-          notes: activity.details?.notes,
-          fullDetails: activity.details,
-          fullActivity: activity
-        });
-      });
-      
-      // Log all activity types to see what we're getting
-      const activityTypes = (data.activities || []).map((a: any) => a.type);
-      console.log('📋 All activity types:', activityTypes);
-      console.log('📋 Activity type counts:', activityTypes.reduce((acc: any, type: string) => {
-        acc[type] = (acc[type] || 0) + 1;
-        return acc;
-      }, {}));
-      
       setActivities(data.activities || []);
-      console.log('✅ Activities state updated, count:', data.activities?.length || 0);
     } catch (err) {
       console.error("❌ Error fetching activities:", err);
     } finally {
@@ -391,11 +356,8 @@ export default function LeadDetailsPage() {
                   
                   {/* Activity items */}
                   <div className="space-y-6">
-                    {console.log('🔄 ABOUT TO RENDER ACTIVITIES, count:', activities.length)}
-                    {activities.map((activity, index) => {
-                      console.log(`🎨 RENDERING ACTIVITY #${index + 1}:`, activity.id, activity.type);
-                      return (
-                        <div key={activity.id} className="relative flex items-start space-x-4">
+                    {activities.map((activity, index) => (
+                      <div key={activity.id} className="relative flex items-start space-x-4">
                         {/* Icon */}
                         <div className={`flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center z-10 ${
                           activity.type === 'quiz_completed' ? 'bg-purple-100' :
@@ -482,45 +444,49 @@ export default function LeadDetailsPage() {
                               
                               {/* Outcome activities - Always show button, even if details are missing */}
                               {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed') && (
-                                <>
-                                  {console.log('✅ RENDERING OUTCOME ACTIVITY:', activity.id, activity.type)}
-                                  <div className="mt-3 text-sm text-slate-600">
-                                    <div className="flex flex-wrap items-center gap-2">
-                                      {activity.details?.outcome && (
-                                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
-                                          {activity.details.outcome.replace(/_/g, ' ').toUpperCase()}
-                                        </span>
-                                      )}
-                                      {activity.details?.previousOutcome && (
-                                        <span className="text-xs text-slate-500">
-                                          (was: {activity.details.previousOutcome.replace(/_/g, ' ')})
-                                        </span>
-                                      )}
-                                      {activity.details?.saleValue && (
-                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                          ${Number(activity.details.saleValue).toFixed(2)}
-                                        </span>
-                                      )}
-                                    </div>
+                                <div className="mt-3">
+                                  {/* Outcome Badges */}
+                                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                                    {activity.details?.outcome && (
+                                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
+                                        {activity.details.outcome.replace(/_/g, ' ').toUpperCase()}
+                                      </span>
+                                    )}
+                                    {activity.details?.previousOutcome && (
+                                      <span className="text-xs text-slate-500">
+                                        (was: {activity.details.previousOutcome.replace(/_/g, ' ')})
+                                      </span>
+                                    )}
+                                    {activity.details?.saleValue && (
+                                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        ${Number(activity.details.saleValue).toFixed(2)}
+                                      </span>
+                                    )}
                                   </div>
                                   
-                                  {/* View call details button - ALWAYS SHOW FOR OUTCOME ACTIVITIES */}
-                                  <div className="mt-2" style={{ border: '2px solid red', padding: '4px' }}>
-                                    {console.log('🔘 RENDERING BUTTON FOR:', activity.id)}
-                                    <button
-                                      onClick={() => {
-                                        console.log('🔘 Button clicked for activity:', activity.id);
-                                        setExpandedActivity(expandedActivity === activity.id ? null : activity.id);
-                                      }}
-                                      className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center"
-                                      style={{ border: '1px solid blue', padding: '4px 8px', backgroundColor: 'yellow' }}
-                                    >
-                                      View call details
-                                      <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                      </svg>
-                                    </button>
-                                  </div>
+                                  {/* View call details button - MUST APPEAR FOR ALL OUTCOME ACTIVITIES */}
+                                  <button
+                                    onClick={() => {
+                                      setExpandedActivity(expandedActivity === activity.id ? null : activity.id);
+                                    }}
+                                    className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center mt-2"
+                                  >
+                                    {expandedActivity === activity.id ? (
+                                      <>
+                                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                        </svg>
+                                        Hide call details
+                                      </>
+                                    ) : (
+                                      <>
+                                        View call details
+                                        <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
+                                      </>
+                                    )}
+                                  </button>
                                   
                                   {/* Expanded Call Details */}
                                   {expandedActivity === activity.id && (
@@ -546,14 +512,14 @@ export default function LeadDetailsPage() {
                                       <div className="bg-white rounded-lg p-3 border border-slate-300">
                                         <p className="text-xs font-semibold text-slate-900 mb-1">Call Notes</p>
                                         {activity.details?.notes ? (
-                                          <p className="text-sm text-slate-700">{activity.details.notes}</p>
+                                          <p className="text-sm text-slate-700 whitespace-pre-wrap">{activity.details.notes}</p>
                                         ) : (
                                           <p className="text-sm text-slate-400 italic">No notes available</p>
                                         )}
                                       </div>
                                     </div>
                                   )}
-                                </>
+                                </div>
                               )}
                               
                               {/* Activity details - EXCLUDE outcome activities (they're handled above) */}
@@ -666,9 +632,8 @@ export default function LeadDetailsPage() {
                             </div>
                           </div>
                         </div>
-                        </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
