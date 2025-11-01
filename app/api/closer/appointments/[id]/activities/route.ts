@@ -281,32 +281,28 @@ export async function GET(
 
       // If appointment has outcome but no audit logs yet, still show call details
       if (appointment.outcome && appointmentOutcomeLogs.length === 0) {
-        let recordingLink = null;
-        switch (appointment.outcome) {
-          case 'converted':
-            recordingLink = appointment.recordingLinkConverted;
-            break;
-          case 'not_interested':
-            recordingLink = appointment.recordingLinkNotInterested;
-            break;
-          case 'needs_follow_up':
-            recordingLink = appointment.recordingLinkNeedsFollowUp;
-            break;
-          case 'wrong_number':
-            recordingLink = appointment.recordingLinkWrongNumber;
-            break;
-          case 'no_answer':
-            recordingLink = appointment.recordingLinkNoAnswer;
-            break;
-          case 'callback_requested':
-            recordingLink = appointment.recordingLinkCallbackRequested;
-            break;
-          case 'rescheduled':
-            recordingLink = appointment.recordingLinkRescheduled;
-            break;
-          default:
-            recordingLink = appointment.recordingLink;
-        }
+        const getLegacyRecordingLink = (outcome: string | null): string | null => {
+          if (!outcome) return appointment.recordingLink;
+          switch (outcome) {
+            case 'converted':
+              return appointment.recordingLinkConverted;
+            case 'not_interested':
+              return appointment.recordingLinkNotInterested;
+            case 'needs_follow_up':
+              return appointment.recordingLinkNeedsFollowUp;
+            case 'wrong_number':
+              return appointment.recordingLinkWrongNumber;
+            case 'no_answer':
+              return appointment.recordingLinkNoAnswer;
+            case 'callback_requested':
+              return appointment.recordingLinkCallbackRequested;
+            case 'rescheduled':
+              return appointment.recordingLinkRescheduled;
+            default:
+              return appointment.recordingLink;
+          }
+        };
+        const recordingLink = getLegacyRecordingLink(appointment.outcome);
 
         if (appointment.outcome !== 'converted') {
           activities.push({
