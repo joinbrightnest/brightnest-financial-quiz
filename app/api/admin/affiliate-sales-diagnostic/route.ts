@@ -99,15 +99,42 @@ export async function GET(request: NextRequest) {
         const appointmentEmail = sale.customerEmail?.toLowerCase().trim();
         const hasMatchingQuizSession = appointmentEmail && completedSessionEmails.has(appointmentEmail);
 
+        // Find the actual email from completed quiz sessions for comparison
+        let matchingQuizEmail = null;
+        if (!hasMatchingQuizSession && appointmentEmail) {
+          // Check for similar emails (fuzzy matching)
+          const similarEmails = Array.from(completedSessionEmails).filter(email => {
+            // Check if emails are similar (same domain, similar local part)
+            const appLocal = appointmentEmail.split('@')[0];
+            const appDomain = appointmentEmail.split('@')[1];
+            const quizLocal = email.split('@')[0];
+            const quizDomain = email.split('@')[1];
+            
+            // Exact domain match with similar local part
+            if (appDomain === quizDomain && 
+                (appLocal.toLowerCase() === quizLocal.toLowerCase() || 
+                 appLocal.replace(/\+.*$/, '').toLowerCase() === quizLocal.replace(/\+.*$/, '').toLowerCase())) {
+              return true;
+            }
+            return false;
+          });
+          
+          if (similarEmails.length > 0) {
+            matchingQuizEmail = similarEmails[0];
+          }
+        }
+
         return {
           appointmentId: sale.id,
           customerName: sale.customerName,
-          customerEmail: sale.customerEmail, // Email used in Calendly
+          calendlyEmail: sale.customerEmail, // Email entered in Calendly (from Calendly webhook invitee.email)
+          normalizedCalendlyEmail: appointmentEmail, // Normalized (lowercase, trimmed)
           saleValue: sale.saleValue ? Number(sale.saleValue) : null,
           calendlyEventId: sale.calendlyEventId,
           createdAt: sale.createdAt.toISOString(),
           updatedAt: sale.updatedAt.toISOString(),
           hasMatchingQuizSession,
+          matchingQuizEmail: hasMatchingQuizSession ? appointmentEmail : matchingQuizEmail, // Show which quiz email matched (if any)
           affiliateCode: affiliate.referralCode,
           affiliateName: affiliate.name,
         };
