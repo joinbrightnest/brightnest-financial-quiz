@@ -203,10 +203,14 @@ export async function GET(
 
         // Get recording link and notes from the audit log details first (like admin API)
         // This ensures we show the recording link and notes that were set at the time of this specific outcome update
-        let recordingLink = details?.recordingLink || null;
-        
-        // Fallback to appointment fields if not in audit log (for older records)
-        if (!recordingLink) {
+        // IMPORTANT: We check if the key exists (not just if it's truthy) to distinguish between
+        // "not provided in audit log" (legacy record) vs "explicitly null" (provided but empty)
+        let recordingLink = null;
+        if (details?.hasOwnProperty('recordingLink')) {
+          // Key exists in audit log - use it (even if null, that means "no recording" was provided)
+          recordingLink = details.recordingLink;
+        } else {
+          // Key doesn't exist - this is a legacy record, fall back to appointment table
           switch (outcome) {
             case 'converted':
               recordingLink = appointment.recordingLinkConverted;
@@ -235,8 +239,13 @@ export async function GET(
         }
 
         // Get notes from audit log (stored when outcome was updated)
-        // Fallback to appointment notes for older records
-        const notes = details?.notes !== undefined ? details.notes : (appointment.notes || null);
+        // Same logic: if key exists, use it (even if null); otherwise fallback for legacy records
+        let notes = null;
+        if (details?.hasOwnProperty('notes')) {
+          notes = details.notes;
+        } else {
+          notes = appointment.notes || null;
+        }
 
         // First outcome = "marked", subsequent = "updated"
         const isFirstOutcome = index === 0;

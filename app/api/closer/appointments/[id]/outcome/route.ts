@@ -245,7 +245,9 @@ export async function PUT(
       });
     }
 
-    // Create audit log - store notes and recordingLink for this specific outcome
+    // Create audit log - ALWAYS store notes and recordingLink for this specific outcome
+    // Even if they're empty/null, we store them to preserve the historical state
+    // This ensures each outcome update has its own recording link and notes preserved
     await prisma.closerAuditLog.create({
       data: {
         closerId: decoded.closerId,
@@ -258,8 +260,8 @@ export async function PUT(
           affiliateCode: appointment.affiliateCode,
           affiliateCommissionAmount,
           customerName: appointment.customerName,
-          recordingLink, // Store the recording link that was provided
-          notes: notes || null, // Store notes for this outcome update
+          recordingLink: recordingLink || null, // Always store, even if null (preserves "no recording" state)
+          notes: notes || null, // Always store, even if null (preserves "no notes" state)
           previousOutcome: appointment.outcome, // Store previous outcome for tracking changes
         },
         ipAddress: request.headers.get('x-forwarded-for') || 
@@ -267,6 +269,14 @@ export async function PUT(
                    'unknown',
         userAgent: request.headers.get('user-agent') || 'unknown',
       }
+    });
+    
+    console.log('📝 Audit log created with details:', {
+      appointmentId: id,
+      outcome,
+      recordingLink: recordingLink || '(not provided)',
+      notes: notes || '(not provided)',
+      previousOutcome: appointment.outcome
     });
 
     console.log('✅ Appointment outcome updated:', {
