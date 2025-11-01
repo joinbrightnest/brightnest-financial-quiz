@@ -9,43 +9,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { sessionId, content } = await req.json();
+    const { leadEmail, content } = await req.json();
 
-    if (!sessionId || !content) {
-      return NextResponse.json({ error: 'Missing sessionId or content' }, { status: 400 });
+    if (!leadEmail || !content) {
+      return NextResponse.json({ error: 'Lead email and content are required' }, { status: 400 });
     }
 
-    const quizSession = await prisma.quizSession.findUnique({
-      where: { id: sessionId },
-      include: { answers: { include: { question: true } } },
-    });
-
-    if (!quizSession) {
-      return NextResponse.json({ error: 'Lead session not found' }, { status: 404 });
-    }
-
-    const leadEmail = quizSession.answers.find(a => a.question?.prompt.toLowerCase().includes('email'))?.value;
-    
-    if (!leadEmail) {
-      return NextResponse.json({ error: 'Could not find email for this lead' }, { status: 404 });
-    }
-
-    // Ensure a lead record exists, similar to admin logic
-    let lead = await prisma.lead.findUnique({ where: { email: leadEmail } });
-    if (!lead) {
-      const name = quizSession.answers.find(a => a.question?.prompt.toLowerCase().includes('name'))?.value || 'N/A';
-      const phone = quizSession.answers.find(a => a.question?.prompt.toLowerCase().includes('phone'))?.value || 'N/A';
-      lead = await prisma.lead.create({
-        data: {
-          name: name,
-          email: leadEmail,
-          phone: phone,
-          quizSessionId: sessionId
-        }
-      });
-    }
-
-    // Security check: Find the appointment to verify closer assignment
+    // Security check: Verify the closer is assigned to this lead
     const appointment = await prisma.appointment.findFirst({
         where: {
             customerEmail: leadEmail,
@@ -53,7 +23,6 @@ export async function POST(req: NextRequest) {
         }
     });
     
-    // We still require an appointment to authorize the closer to add a note
     if (!appointment) {
         return NextResponse.json({ error: 'Forbidden: You are not assigned to this lead.' }, { status: 403 });
     }

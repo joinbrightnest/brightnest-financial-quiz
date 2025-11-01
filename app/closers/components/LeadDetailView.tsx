@@ -180,7 +180,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
 
     const handleCreateNote = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newNoteContent.trim() || !sessionId) return;
+        if (!newNoteContent.trim() || !leadData?.user?.email) return;
         
         setIsSubmittingNote(true);
         try {
@@ -192,7 +192,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                     'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    sessionId: sessionId,
+                    leadEmail: leadData.user.email,
                     content: newNoteContent,
                 }),
             });
