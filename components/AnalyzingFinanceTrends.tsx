@@ -80,10 +80,10 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
   }, [isActive, isVisible, isCompleted]);
 
   return (
-    <div className="w-full mb-6">
-      <div className="flex justify-between items-center mb-3">
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-2.5 sm:mb-3">
         <motion.span 
-          className={`text-sm ${isActive ? 'font-bold' : 'font-medium'}`}
+          className={`text-xs sm:text-sm font-semibold tracking-wide ${isActive ? 'font-bold' : 'font-medium'}`}
           style={{
             color: color === 'bg-red-500' ? '#ef4444' : 
                    color === 'bg-green-500' ? '#22c55e' : 
@@ -91,10 +91,11 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
                    color === 'bg-pink-500' ? '#ec4899' : 
                    color === 'bg-yellow-500' ? '#eab308' : 
                    color === 'bg-blue-500' ? '#3b82f6' : 
-                   color === 'bg-orange-500' ? '#f97316' : '#374151'
+                   color === 'bg-orange-500' ? '#f97316' : '#64748b'
           }}
           animate={{ 
-            fontWeight: isActive ? 'bold' : 'medium'
+            fontWeight: isActive ? 'bold' : 'semibold',
+            opacity: isActive || isCompleted ? 1 : 0.6
           }}
           transition={{ 
             duration: 0.3,
@@ -104,27 +105,35 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
           {label}
         </motion.span>
         <motion.span 
-          className={`text-xs sm:text-sm font-medium ${isCompleted ? 'text-gray-700' : 'text-gray-400'}`}
+          className={`text-xs sm:text-sm font-semibold ${isCompleted ? 'text-slate-700' : isActive ? 'text-slate-600' : 'text-slate-400'}`}
           initial={{ opacity: 0 }}
-          animate={{ opacity: isVisible ? 1 : 0 }}
+          animate={{ opacity: isVisible ? 1 : (isCompleted ? 1 : 0.5) }}
           transition={{ delay: 0.5 }}
         >
           {percentage}%
         </motion.span>
       </div>
       <motion.div 
-        className="w-full bg-gray-200 rounded-full overflow-hidden"
+        className="w-full bg-slate-100 rounded-full overflow-hidden shadow-inner"
         animate={{ 
-          height: isActive ? "12px" : "8px" // Make thicker when active
+          height: isActive ? "10px" : "8px" // Slightly thicker when active
         }}
         transition={{ 
           duration: 0.3,
           ease: "easeInOut"
         }}
       >
-        <div
-          className={`h-full rounded-full ${color} transition-all duration-50 ease-out`}
+        <motion.div
+          className={`h-full rounded-full ${color} transition-all duration-50 ease-out shadow-sm`}
           style={{ width: `${visualWidth}%` }}
+          animate={isActive ? {
+            boxShadow: ['0 0 0px rgba(0,0,0,0)', '0 0 8px rgba(0,0,0,0.1)', '0 0 0px rgba(0,0,0,0)']
+          } : {}}
+          transition={{
+            duration: 1.5,
+            repeat: isActive ? Infinity : 0,
+            ease: "easeInOut"
+          }}
         />
       </motion.div>
     </div>
@@ -412,16 +421,16 @@ const AnalyzingFinanceTrends = () => {
   }
 
   return (
-    <div className="h-screen bg-white flex flex-col overflow-hidden">
+    <div className="h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 flex flex-col overflow-hidden">
       {/* Top Bar with BrightNest Logo and User Info */}
-      <div className="w-full bg-[#28303B] px-4 py-5 sm:py-6 relative z-10 flex-shrink-0">
+      <div className="w-full bg-slate-900 px-4 py-5 sm:py-6 relative z-10 flex-shrink-0 shadow-md">
         {/* BrightNest text - centered horizontally within the full width */}
         <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
           <span className="text-base font-bold text-white font-serif">BrightNest</span>
         </div>
         {/* User Info - positioned closer to center, hidden on small mobile */}
         <div className="absolute right-16 top-1/2 -translate-y-1/2 flex items-center space-x-2 sm:space-x-3">
-          <div className="w-7 h-7 sm:w-8 sm:h-8 bg-green-500 rounded-full flex items-center justify-center">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
             <span className="text-white font-bold text-xs sm:text-sm">{userNameInitial}</span>
           </div>
           <span className="text-white font-medium text-xs sm:text-sm max-w-[80px] sm:max-w-none truncate">{userName}</span>
@@ -429,16 +438,16 @@ const AnalyzingFinanceTrends = () => {
       </div>
 
       {/* Main Content - flexible container that fills remaining space */}
-      <div className="flex-1 flex flex-col justify-center px-4 py-6 overflow-y-auto">
-        <div className="relative z-10 w-full max-w-none mx-auto">
+      <div className="flex-1 flex flex-col justify-center px-4 py-6 sm:py-8 overflow-y-auto">
+        <div className="relative z-10 w-full max-w-2xl mx-auto">
         {/* Header */}
         <motion.div
-          className="text-center mb-6 sm:mb-8"
+          className="text-center mb-8 sm:mb-10"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-sans font-medium text-gray-900 mb-2 text-center leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-slate-900 mb-2 text-center leading-tight">
             {loadingTexts[currentTextIndex]}
             <motion.span
               initial={{ opacity: 0 }}
@@ -485,23 +494,34 @@ const AnalyzingFinanceTrends = () => {
           </h1>
         </motion.div>
 
-        {/* Progress Bars */}
-        <div className="bg-white rounded-xl p-6 sm:p-8 shadow-lg border border-gray-100 mb-6">
-          {progressBars.map((bar, index) => (
-            <ProgressBar
-              key={index}
-              label={bar.label}
-              color={bar.color}
-              isActive={index === activeBarIndex}
-              isCompleted={index < activeBarIndex}
-              index={index}
-            />
-          ))}
+        {/* Progress Bars Card - Enhanced with depth and professional styling */}
+        <div className="relative mb-8 sm:mb-10">
+          {/* Background card with depth */}
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 shadow-xl border border-slate-200/60 relative overflow-hidden">
+            {/* Decorative gradient accents */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 via-amber-400 to-teal-400"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-teal-100/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-100/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+            
+            {/* Progress bars container */}
+            <div className="relative z-10 space-y-5 sm:space-y-6">
+              {progressBars.map((bar, index) => (
+                <ProgressBar
+                  key={index}
+                  label={bar.label}
+                  color={bar.color}
+                  isActive={index === activeBarIndex}
+                  isCompleted={index < activeBarIndex}
+                  index={index}
+                />
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Progress Dots with Checkmarks */}
+        {/* Progress Dots with Checkmarks - Enhanced styling */}
         <motion.div
-          className="flex justify-center space-x-2 sm:space-x-3 mt-8 mb-4"
+          className="flex justify-center space-x-2 sm:space-x-3 mb-6"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4 }}
@@ -521,9 +541,9 @@ const AnalyzingFinanceTrends = () => {
               }}
             >
               {completedBars.includes(index) ? (
-                // Show checkmark with bar color when bar is completed
+                // Show checkmark with bar color when bar is completed - enhanced with shadow
                 <motion.div 
-                  className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center ${bar.color}`}
+                  className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center ${bar.color} shadow-md`}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ 
@@ -536,34 +556,36 @@ const AnalyzingFinanceTrends = () => {
                   </svg>
                 </motion.div>
               ) : (
-                // Show empty gray dot for current and future bars
-                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gray-300 rounded-full"></div>
+                // Show empty slate dot for current and future bars
+                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-slate-200 rounded-full border-2 border-slate-300"></div>
               )}
             </motion.div>
           ))}
         </motion.div>
 
-        {/* Trust Text - Always visible under dots */}
+        {/* Trust Text - Enhanced styling */}
         <motion.div
-          className="text-center px-2"
+          className="text-center px-4 sm:px-6 mb-6"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          <p className="text-xs sm:text-sm text-gray-600 text-center">
-            Sit tight! We're building your perfect plan based on millions of data points from successful BrightNest users.
-          </p>
+          <div className="inline-block bg-white/80 backdrop-blur-sm rounded-xl px-4 sm:px-6 py-3 sm:py-4 border border-slate-200/60 shadow-sm">
+            <p className="text-xs sm:text-sm text-slate-600 text-center leading-relaxed">
+              Sit tight! We're building your perfect plan based on millions of data points from successful BrightNest users.
+            </p>
+          </div>
         </motion.div>
 
-        {/* Loading indicator */}
+        {/* Loading indicator - Enhanced with gradient */}
         <motion.div
-          className="flex justify-center mt-6 mb-4"
+          className="flex justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
         >
           <motion.div
-            className="w-6 h-6 border-2 border-[#4CAF50] border-t-transparent rounded-full"
+            className="w-8 h-8 sm:w-10 sm:h-10 border-[3px] border-teal-500 border-t-transparent rounded-full shadow-lg"
             animate={{ rotate: 360 }}
             transition={{
               duration: 1,
