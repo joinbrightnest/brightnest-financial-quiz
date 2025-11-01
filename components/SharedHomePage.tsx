@@ -135,56 +135,74 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
             Because wealth isn't about math — it's about behavior.
           </p>
           
-          {/* 4️⃣ Visual Element */}
+          {/* 4️⃣ Visual Element - Family-Friendly Illustration */}
           <div className="mb-12 sm:mb-16">
             <div className="relative inline-block w-full max-w-sm sm:max-w-lg mx-auto">
-              <div className="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl sm:rounded-3xl p-4 sm:p-8 lg:p-12 shadow-xl border border-gray-100 w-full">
-                {/* Behavior Progress Card */}
-                <div className="space-y-4 sm:space-y-6">
-                  {/* Header */}
-                  <div className="text-center">
-                    <div className="text-lg sm:text-2xl font-bold text-gray-800 mb-1">Behavior Progress Report</div>
-                    <div className="text-xs sm:text-sm text-gray-600">Your habit transformation</div>
+              <div className="bg-gradient-to-br from-teal-50 via-white to-amber-50 rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-14 shadow-xl border border-slate-200/60 w-full overflow-hidden relative">
+                {/* Decorative Elements */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-teal-200/20 rounded-full blur-2xl"></div>
+                <div className="absolute bottom-0 left-0 w-40 h-40 bg-amber-200/20 rounded-full blur-2xl"></div>
+                
+                {/* Illustration Content */}
+                <div className="relative z-10">
+                  {/* Centered Illustration */}
+                  <div className="flex justify-center items-center mb-6 sm:mb-8">
+                    <svg className="w-full max-w-[280px] sm:max-w-[320px] h-auto" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      {/* House Base */}
+                      <rect x="80" y="100" width="160" height="120" rx="8" fill="#14b8a6" opacity="0.15" stroke="#14b8a6" strokeWidth="2"/>
+                      <rect x="100" y="140" width="120" height="80" rx="4" fill="#14b8a6" opacity="0.2"/>
+                      
+                      {/* Roof */}
+                      <path d="M60 100 L160 40 L260 100 Z" fill="#0f766e" opacity="0.2" stroke="#0f766e" strokeWidth="2"/>
+                      
+                      {/* Door */}
+                      <rect x="130" y="160" width="40" height="60" rx="4" fill="#f59e0b" opacity="0.3" stroke="#f59e0b" strokeWidth="1.5"/>
+                      <circle cx="155" cy="190" r="3" fill="#0f766e"/>
+                      
+                      {/* Windows */}
+                      <rect x="110" y="120" width="30" height="30" rx="4" fill="#fef3c7" opacity="0.4" stroke="#f59e0b" strokeWidth="1.5"/>
+                      <rect x="180" y="120" width="30" height="30" rx="4" fill="#fef3c7" opacity="0.4" stroke="#f59e0b" strokeWidth="1.5"/>
+                      
+                      {/* Window Cross */}
+                      <line x1="125" y1="120" x2="125" y2="150" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6"/>
+                      <line x1="110" y1="135" x2="140" y2="135" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6"/>
+                      <line x1="195" y1="120" x2="195" y2="150" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6"/>
+                      <line x1="180" y1="135" x2="210" y2="135" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6"/>
+                      
+                      {/* Sun */}
+                      <circle cx="260" cy="60" r="25" fill="#fef3c7" opacity="0.4"/>
+                      <circle cx="260" cy="60" r="20" fill="#fef3c7" opacity="0.3"/>
+                      
+                      {/* Trees/Greenery */}
+                      <ellipse cx="50" cy="200" rx="15" ry="25" fill="#10b981" opacity="0.3"/>
+                      <ellipse cx="50" cy="200" rx="20" ry="15" fill="#10b981" opacity="0.25"/>
+                      <ellipse cx="270" cy="200" rx="15" ry="25" fill="#10b981" opacity="0.3"/>
+                      <ellipse cx="270" cy="200" rx="20" ry="15" fill="#10b981" opacity="0.25"/>
+                      
+                      {/* Ground */}
+                      <ellipse cx="160" cy="220" rx="140" ry="15" fill="#10b981" opacity="0.15"/>
+                    </svg>
                   </div>
                   
-                  {/* Behavior Items */}
-                  <div className="space-y-3 sm:space-y-4">
-                    <div className="flex items-center justify-between p-2 sm:p-3 bg-white/60 rounded-lg sm:rounded-xl">
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        <span className="text-sm sm:text-lg">💬</span>
-                        <span className="text-xs sm:text-sm font-medium text-gray-700">I check my accounts weekly</span>
-                      </div>
-                      <span className="text-xs sm:text-sm font-bold text-green-600">+80%</span>
-              </div>
-              
-                    <div className="flex items-center justify-between p-2 sm:p-3 bg-white/60 rounded-lg sm:rounded-xl">
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        <span className="text-sm sm:text-lg">💡</span>
-                        <span className="text-xs sm:text-sm font-medium text-gray-700">I plan my spending ahead</span>
-                      </div>
-                      <span className="text-xs sm:text-sm font-bold text-blue-600">+70%</span>
-              </div>
-              
-                    <div className="flex items-center justify-between p-2 sm:p-3 bg-white/60 rounded-lg sm:rounded-xl">
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        <span className="text-sm sm:text-lg">🌱</span>
-                        <span className="text-xs sm:text-sm font-medium text-gray-700">I save automatically</span>
-                      </div>
-                      <span className="text-xs sm:text-sm font-bold text-purple-600">+65%</span>
-              </div>
-            </div>
-            
-                  {/* Bottom Message */}
-                  <div className="text-center pt-1 sm:pt-2">
-                    <div className="text-xs sm:text-sm font-medium text-gray-700">Small wins, lasting change.</div>
+                  {/* Inspirational Message */}
+                  <div className="text-center space-y-2 sm:space-y-3">
+                    <h3 className="text-xl sm:text-2xl font-bold text-slate-800 leading-tight">
+                      Financial Peace for Your Family
+                    </h3>
+                    <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-xs mx-auto">
+                      Build lasting habits that protect what matters most
+                    </p>
+                  </div>
                 </div>
-                </div>
+                
+                {/* Accent Gradient Bar */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-400 via-amber-400 to-teal-400"></div>
               </div>
               
               {/* Subtle Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-blue-400/20 rounded-2xl sm:rounded-3xl blur-xl -z-10 animate-pulse"></div>
-                </div>
-              </div>
+              <div className="absolute inset-0 bg-gradient-to-r from-teal-400/10 to-amber-400/10 rounded-2xl sm:rounded-3xl blur-xl -z-10"></div>
+            </div>
+          </div>
               
           
           {/* 6️⃣ Primary CTA */}
