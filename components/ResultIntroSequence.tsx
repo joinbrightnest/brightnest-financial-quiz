@@ -73,43 +73,48 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
   const text = current.text.replace("{{name}}", name);
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center overflow-hidden">
+    <div className="w-screen h-screen flex overflow-hidden fixed inset-0">
       <AnimatePresence mode="wait">
         <motion.div
           key={index}
-          className="w-full h-full flex flex-col items-center justify-center relative px-4 py-4 sm:py-0"
+          className="w-full h-full flex flex-col items-center justify-between relative px-4 py-8 sm:py-12 sm:justify-center"
           style={{ backgroundColor: current.bg }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1, ease: "easeInOut" }}
         >
+          {/* Top spacer for mobile - invisible on desktop */}
+          <div className="flex-1 sm:hidden flex items-center justify-center">
+            <div></div>
+          </div>
+
           {/* Logo for first slide */}
           {index === 0 && (
             <motion.div
-              className="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-8 flex-shrink-0"
+              className="flex items-center space-x-2 sm:space-x-3 mb-2 sm:mb-8 flex-shrink-0"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
             >
-              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-400 to-teal-400 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-base sm:text-xl">B</span>
+              <div className="w-6 h-6 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-400 to-teal-400 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xs sm:text-xl">B</span>
               </div>
-              <h1 className="text-xl sm:text-3xl font-bold" style={{ color: current.color }}>
+              <h1 className="text-lg sm:text-3xl font-bold" style={{ color: current.color }}>
                 BrightNest
               </h1>
             </motion.div>
           )}
 
-          {/* Main text */}
+          {/* Main text - flex-1 on mobile to push dots down */}
           <motion.div
-            className="text-center px-2 sm:px-8 max-w-2xl flex-shrink flex-grow-0 mb-12 sm:mb-0"
+            className="text-center px-2 sm:px-8 max-w-2xl flex-1 sm:flex-none flex items-center justify-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index === 0 ? 1 : 0.5, duration: 0.8 }}
           >
             <motion.h1 
-              className="text-lg sm:text-2xl md:text-3xl font-medium leading-tight sm:leading-relaxed text-center"
+              className="text-base sm:text-2xl md:text-3xl font-medium leading-tight sm:leading-relaxed text-center"
               style={{ color: current.color }}
             >
               {text}
@@ -118,7 +123,7 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
             {/* Subtitle for first slide */}
             {current.subtitle && (
               <motion.p
-                className="text-sm sm:text-lg mt-2 sm:mt-4 opacity-80 text-center"
+                className="text-xs sm:text-lg mt-1 sm:mt-4 opacity-80 text-center"
                 style={{ color: current.color }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.8 }}
@@ -129,9 +134,9 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
             )}
           </motion.div>
 
-          {/* Progress indicator - positioned at bottom with safe spacing for mobile */}
+          {/* Progress indicator - always at bottom on mobile */}
           <motion.div
-            className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-1.5 sm:space-x-2 flex-shrink-0"
+            className="flex-shrink-0 pb-4 sm:pb-8 sm:absolute sm:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-1.5 sm:space-x-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.6 }}
