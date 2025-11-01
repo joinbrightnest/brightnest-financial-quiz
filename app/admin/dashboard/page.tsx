@@ -2775,6 +2775,56 @@ export default function AdminDashboard() {
                                         })}
                                       </p>
 
+                                      {/* View Call Details for outcome/deal activities */}
+                                      {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated' || activity.type === 'deal_closed') && (
+                                        <div className="mt-3">
+                                          <div className="flex flex-wrap items-center gap-2 mb-2">
+                                            {activity.details?.outcome && (
+                                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
+                                                {activity.details.outcome.replace(/_/g, ' ').toUpperCase()}
+                                              </span>
+                                            )}
+                                            {activity.details?.saleValue && (
+                                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                ${Number(activity.details.saleValue).toFixed(2)}
+                                              </span>
+                                            )}
+                                          </div>
+                                          <button
+                                            onClick={() => {
+                                              const detailsEl = document.getElementById(`call-details-${activity.id}`);
+                                              if (detailsEl) detailsEl.classList.toggle('hidden');
+                                            }}
+                                            className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center"
+                                          >
+                                            View call details
+                                            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                            </svg>
+                                          </button>
+                                          <div id={`call-details-${activity.id}`} className="hidden mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            <div className="bg-white rounded-lg p-3 border border-slate-300">
+                                              <p className="text-xs font-semibold text-slate-900 mb-1">Recording Link</p>
+                                              {activity.details?.recordingLink ? (
+                                                <a href={activity.details.recordingLink} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:text-blue-800 underline break-all">
+                                                  {activity.details.recordingLink}
+                                                </a>
+                                              ) : (
+                                                <p className="text-sm text-slate-400 italic">No recording available</p>
+                                              )}
+                                            </div>
+                                            <div className="bg-white rounded-lg p-3 border border-slate-300">
+                                              <p className="text-xs font-semibold text-slate-900 mb-1">Call Notes</p>
+                                              {activity.details?.notes ? (
+                                                <p className="text-sm text-slate-700 whitespace-pre-wrap">{activity.details.notes}</p>
+                                              ) : (
+                                                <p className="text-sm text-slate-400 italic">No notes available</p>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      )}
+
                                       {/* Activity-specific details */}
                                       {activity.type === 'quiz_completed' && (
                                         <div className="mt-2">
@@ -2853,62 +2903,38 @@ export default function AdminDashboard() {
                                           )}
                                         </div>
                                       )}
-
-                                      {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated') && activity.details?.outcome && (
+                                      
+                                      {activity.type === 'note_added' && (
                                         <div className="mt-2">
-                                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                                            {activity.details.outcome.replace(/_/g, ' ').toUpperCase()}
-                                          </span>
-                                          {activity.details.saleValue && (
-                                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                              ${Number(activity.details.saleValue).toFixed(2)}
-                                            </span>
-                                          )}
+                                          <p className="text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-200">{activity.details?.content}</p>
                                         </div>
                                       )}
-
-                                      {activity.type === 'deal_closed' && activity.details?.amount && (
-                                        <div className="mt-2">
-                                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            ${Number(activity.details.amount).toFixed(2)}
-                                          </span>
-                                        </div>
-                                      )}
-
-                                      {activity.type === 'note_added' && activity.details?.content && (
-                                        <div className="mt-2 p-3 bg-white rounded border border-slate-200">
-                                          <p className="text-sm text-slate-700">{activity.details.content}</p>
-                                        </div>
-                                      )}
-
+                                      
                                       {activity.type === 'task_created' && (
-                                        <div className="mt-2 space-y-1">
-                                          <p className="text-sm font-medium text-slate-900">{activity.details?.title}</p>
-                                          {activity.details?.description && (
-                                            <p className="text-xs text-slate-600">{activity.details.description}</p>
-                                          )}
-                                          <div className="flex items-center space-x-2 mt-2">
-                                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                                              activity.details?.priority === 'high' ? 'bg-red-100 text-red-800' :
-                                              activity.details?.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                                              'bg-green-100 text-green-800'
-                                            }`}>
-                                              {activity.details?.priority}
+                                        <div className="mt-2 space-y-2">
+                                          <div className="flex items-center gap-2">
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+                                              {activity.details?.title}
                                             </span>
-                                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                                              activity.details?.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                              activity.details?.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                                              'bg-gray-100 text-gray-800'
-                                            }`}>
-                                              {activity.details?.status}
-                                            </span>
+                                            {activity.details?.priority && (
+                                              <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                                activity.details.priority === 'urgent' ? 'bg-red-100 text-red-800' :
+                                                activity.details.priority === 'high' ? 'bg-orange-100 text-orange-800' :
+                                                activity.details.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                                'bg-green-100 text-green-800'
+                                              }`}>
+                                                {activity.details.priority}
+                                              </span>
+                                            )}
                                           </div>
-                                        </div>
-                                      )}
-
-                                      {(activity.type === 'task_started' || activity.type === 'task_completed') && activity.details?.title && (
-                                        <div className="mt-2">
-                                          <p className="text-sm font-medium text-slate-700">"{activity.details.title}"</p>
+                                          {activity.details?.description && (
+                                            <p className="text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-200">{activity.details.description}</p>
+                                          )}
+                                          {activity.details?.dueDate && (
+                                            <p className="text-xs text-slate-500">
+                                              Due: {new Date(activity.details.dueDate).toLocaleDateString()}
+                                            </p>
+                                          )}
                                         </div>
                                       )}
                                     </div>
