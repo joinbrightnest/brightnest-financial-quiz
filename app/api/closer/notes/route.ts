@@ -4,7 +4,7 @@ import { getCloserIdFromToken } from '@/lib/closer-auth';
 
 export async function POST(req: NextRequest) {
   try {
-    const closerId = await getCloserIdFromToken(req);
+    const closerId = getCloserIdFromToken(req);
     if (!closerId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
