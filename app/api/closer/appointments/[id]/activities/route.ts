@@ -282,7 +282,7 @@ export async function GET(
       // If appointment has outcome but no audit logs yet, still show call details
       if (appointment.outcome && appointmentOutcomeLogs.length === 0) {
         const getLegacyRecordingLink = (outcome: string | null): string | null => {
-          if (!outcome) return appointment.recordingLink;
+          if (!outcome) return null; // Fallback to null if no outcome
           switch (outcome) {
             case 'converted':
               return appointment.recordingLinkConverted;
@@ -299,7 +299,7 @@ export async function GET(
             case 'rescheduled':
               return appointment.recordingLinkRescheduled;
             default:
-              return appointment.recordingLink;
+              return null; // Default to null for any other case
           }
         };
         const recordingLink = getLegacyRecordingLink(appointment.outcome);
