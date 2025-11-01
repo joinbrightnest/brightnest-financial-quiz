@@ -82,27 +82,6 @@ export default function CloserDashboard() {
     saleValue: '',
     recordingLink: ''
   });
-  const [showLeadDetailsModal, setShowLeadDetailsModal] = useState(false);
-  const [leadDetails, setLeadDetails] = useState<LeadDetails | null>(null);
-  const [isLoadingLeadDetails, setIsLoadingLeadDetails] = useState(false);
-  const [activeTab, setActiveTab] = useState<'activity' | 'notes' | 'tasks'>('activity');
-  const [tasks, setTasks] = useState<any[]>([]);
-  const [isLoadingTasks, setIsLoadingTasks] = useState(false);
-  const [showTaskForm, setShowTaskForm] = useState(false);
-  const [editingTask, setEditingTask] = useState<any>(null);
-  const [taskForm, setTaskForm] = useState({
-    title: '',
-    description: '',
-    priority: 'medium',
-    dueDate: '',
-  });
-  const [notes, setNotes] = useState<any[]>([]);
-  const [isLoadingNotes, setIsLoadingNotes] = useState(false);
-  const [showNoteForm, setShowNoteForm] = useState(false);
-  const [noteContent, setNoteContent] = useState('');
-  const [activities, setActivities] = useState<any[]>([]);
-  const [loadingActivities, setLoadingActivities] = useState(false);
-  const [expandedActivity, setExpandedActivity] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -118,16 +97,6 @@ export default function CloserDashboard() {
     fetchAppointments(token);
     fetchActiveTaskCount(token);
   }, [router]);
-
-  // Fetch activities when activity tab is active and we have an appointment
-  useEffect(() => {
-    if (activeTab === 'activity' && leadDetails?.appointment?.id) {
-      const token = localStorage.getItem('closerToken');
-      if (token) {
-        fetchActivities(leadDetails.appointment.id, token);
-      }
-    }
-  }, [activeTab, leadDetails?.appointment?.id]);
 
   const fetchCloserStats = async (token: string) => {
     try {
@@ -249,219 +218,36 @@ export default function CloserDashboard() {
     setShowOutcomeModal(true);
   };
 
-  const viewLeadDetails = async (appointment: Appointment) => {
-    setIsLoadingLeadDetails(true);
-    setShowLeadDetailsModal(true);
-    setActiveTab('activity');
-    setActivities([]);
-    
-    try {
-      const token = localStorage.getItem('closerToken');
-      const response = await fetch(`/api/leads/by-email?email=${encodeURIComponent(appointment.customerEmail)}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setLeadDetails(data.lead);
-        // Also load tasks, notes, and activities for this lead
-        fetchTasks(appointment.customerEmail);
-        fetchNotes(appointment.customerEmail);
-        fetchActivities(appointment.id, token);
-      } else {
-        setError('Failed to load lead details');
-      }
-    } catch (error) {
-      console.error('Error fetching lead details:', error);
-      setError('Network error loading lead details');
-    } finally {
-      setIsLoadingLeadDetails(false);
-    }
-  };
-
-  const fetchActivities = async (appointmentId: string, token: string) => {
-    try {
-      setLoadingActivities(true);
-      const response = await fetch(`/api/closer/appointments/${appointmentId}/activities`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setActivities(data.activities || []);
-      } else {
-        console.error('Failed to fetch activities');
-      }
-    } catch (error) {
-      console.error('Error fetching activities:', error);
-    } finally {
-      setLoadingActivities(false);
-    }
-  };
-
-  const fetchNotes = async (leadEmail: string) => {
-    setIsLoadingNotes(true);
-    try {
-      const response = await fetch(`/api/notes?leadEmail=${encodeURIComponent(leadEmail)}`);
-      if (response.ok) {
-        const data = await response.json();
-        setNotes(data);
-      }
-    } catch (error) {
-      console.error('Error fetching notes:', error);
-    } finally {
-      setIsLoadingNotes(false);
-    }
-  };
-
-  const fetchTasks = async (leadEmail: string) => {
-    setIsLoadingTasks(true);
-    try {
-      const token = localStorage.getItem('closerToken');
-      const response = await fetch(`/api/closer/tasks?leadEmail=${encodeURIComponent(leadEmail)}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setTasks(data.tasks || []);
-      }
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
-    } finally {
-      setIsLoadingTasks(false);
-    }
-  };
-
-  const handleCreateTask = async () => {
-    if (!taskForm.title || !leadDetails) return;
-
-    try {
-      const token = localStorage.getItem('closerToken');
-      const leadEmail = leadDetails.answers.find((a: any) => a.value.includes('@'))?.value;
-      
-      if (!leadEmail) {
-        setError('No email found for this lead');
-        return;
-      }
-
-      const response = await fetch('/api/closer/tasks', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          leadEmail: leadEmail,
-          title: taskForm.title,
-          description: taskForm.description,
-          priority: taskForm.priority,
-          dueDate: taskForm.dueDate || null,
-        }),
-      });
-
-      if (response.ok) {
-        setTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
-        fetchTasks(leadEmail);
-        if (token) fetchActiveTaskCount(token); // Update the task count badge
-      } else {
-        setError('Failed to create task');
-      }
-    } catch (error) {
-      console.error('Error creating task:', error);
-      setError('Network error creating task');
-    }
-  };
-
-  const handleUpdateTask = async (taskId: string, updates: any) => {
-    if (!leadDetails) return;
-
-    try {
-      const token = localStorage.getItem('closerToken');
-      const response = await fetch(`/api/closer/tasks/${taskId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updates),
-      });
-
-      if (response.ok) {
-        const leadEmail = leadDetails.answers.find((a: any) => a.value.includes('@'))?.value;
-        if (leadEmail) {
-          fetchTasks(leadEmail);
+  const viewLeadDetails = (appointment: Appointment) => {
+    // Navigate to the new details page
+    // We need a unique identifier for the lead, let's try to find it.
+    // Assuming the lead can be identified by the appointment id for now.
+    // This might need adjustment if the session ID is stored differently.
+    // Let's assume we can derive the session from the appointment or customer email.
+    // For now, let's find the lead by email as the old code did, then get the session ID.
+    const findLeadAndNavigate = async () => {
+        try {
+            const token = localStorage.getItem('closerToken');
+            const response = await fetch(`/api/leads/by-email?email=${encodeURIComponent(appointment.customerEmail)}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                if (data.lead && data.lead.sessionId) {
+                    router.push(`/closers/leads/${data.lead.sessionId}`);
+                } else {
+                    setError('Could not find a valid session for this lead.');
+                }
+            } else {
+                setError('Failed to retrieve lead session details.');
+            }
+        } catch (e) {
+            setError('Error navigating to lead details.');
         }
-        if (token) fetchActiveTaskCount(token); // Update the task count badge
-      } else {
-        setError('Failed to update task');
-      }
-    } catch (error) {
-      console.error('Error updating task:', error);
-      setError('Network error updating task');
-    }
-  };
-
-  const handleDeleteTask = async (taskId: string) => {
-    if (!leadDetails || !confirm('Are you sure you want to delete this task?')) return;
-
-    try {
-      const token = localStorage.getItem('closerToken');
-      const response = await fetch(`/api/closer/tasks/${taskId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const leadEmail = leadDetails.answers.find((a: any) => a.value.includes('@'))?.value;
-        if (leadEmail) {
-          fetchTasks(leadEmail);
-        }
-        if (token) fetchActiveTaskCount(token); // Update the task count badge
-      } else {
-        setError('Failed to delete task');
-      }
-    } catch (error) {
-      console.error('Error deleting task:', error);
-      setError('Network error deleting task');
-    }
-  };
-
-  const openEditTask = (task: any) => {
-    setEditingTask(task);
-    setTaskForm({
-      title: task.title,
-      description: task.description || '',
-      priority: task.priority,
-      dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
-    });
-    setShowTaskForm(true);
-  };
-
-  const handleSaveEditedTask = async () => {
-    if (!editingTask || !taskForm.title) return;
-
-    await handleUpdateTask(editingTask.id, {
-      title: taskForm.title,
-      description: taskForm.description,
-      priority: taskForm.priority,
-      dueDate: taskForm.dueDate || null,
-    });
-
-    setEditingTask(null);
-    setTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
+    };
+    findLeadAndNavigate();
   };
 
   const getDisplayedAppointments = () => {
@@ -835,244 +621,6 @@ export default function CloserDashboard() {
               >
                 Update Outcome
               </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Lead Details Modal */}
-      {showLeadDetailsModal && (
-        <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
-          <div className="min-h-screen bg-white">
-            {/* Header */}
-            <div className="bg-slate-800 px-6 py-4 border-b border-slate-700">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h1 className="text-xl font-semibold text-white">
-                      {leadDetails?.answers.find((a: any) => 
-                        a.question?.prompt?.toLowerCase().includes('name') || 
-                        a.question?.prompt?.toLowerCase().includes('first name')
-                      )?.value || 'Lead Profile'}
-                    </h1>
-                    <p className="text-slate-300 text-sm">
-                      Session ID: {leadDetails?.id || 'N/A'}
-                    </p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => {
-                    setShowLeadDetailsModal(false);
-                    setLeadDetails(null);
-                    setActiveTab('activity');
-                  }}
-                  className="text-slate-400 hover:text-white transition-all p-2 rounded-lg hover:bg-slate-700"
-                  title="Close and return to dashboard"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-            
-            {/* Content */}
-            <div className="p-8 space-y-8 max-w-7xl mx-auto">
-              {isLoadingLeadDetails ? (
-                <div className="flex items-center justify-center py-20">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-                </div>
-              ) : leadDetails ? (
-                <>
-                  {/* Combined Personal Information and Deal Information */}
-                  <div className="bg-white rounded-xl border border-slate-200 p-6">
-                    <div className="flex justify-between items-center mb-6">
-                      <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                      </svg>
-                      Personal Information
-                    </h3>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                      <div>
-                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Full Name</label>
-                        <p className="mt-1 text-sm font-semibold text-slate-900">
-                          {leadDetails.answers.find((a: any) => 
-                            a.question?.prompt?.toLowerCase().includes('name') || 
-                            a.question?.prompt?.toLowerCase().includes('first name')
-                          )?.value || 'N/A'}
-                        </p>
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Email Address</label>
-                        <p className="mt-1 text-sm font-semibold text-slate-900">
-                          {leadDetails.answers.find((a: any) => a.value.includes('@'))?.value || 'N/A'}
-                        </p>
-                    </div>
-                  </div>
-
-                    <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                      </svg>
-                      Deal Information
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      <div>
-                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Status</label>
-                        <div className="mt-1">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            leadDetails.status === 'Completed' || leadDetails.status === 'completed' || leadDetails.status === 'Booked'
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {leadDetails.status || 'N/A'}
-                          </span>
-                        </div>
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Owner</label>
-                        <p className="mt-1 text-sm font-semibold text-slate-900">{closer?.name || 'Unassigned'}</p>
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Lead Added</label>
-                        <p className="mt-1 text-sm font-semibold text-slate-900">
-                          {leadDetails.completedAt ? new Date(leadDetails.completedAt).toLocaleDateString('en-GB') : 'N/A'}
-                        </p>
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Closed</label>
-                        <p className="mt-1 text-sm font-semibold text-slate-900">
-                          {leadDetails.dealClosedAt ? new Date(leadDetails.dealClosedAt).toLocaleDateString('en-GB') : '--'}
-                        </p>
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Amount</label>
-                        <p className="mt-1 text-sm font-semibold text-slate-900">
-                          {leadDetails.appointment?.saleValue ? `$${Number(leadDetails.appointment.saleValue).toFixed(2)}` : '--'}
-                        </p>
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Lead Source</label>
-                        <div className="mt-1">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {leadDetails.source || 'Website'}
-                          </span>
-                        </div>
-                      </div>
-                      <div>
-                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Quiz Type</label>
-                        <p className="mt-1 text-sm font-semibold text-slate-900">Financial-Profile</p>
-                      </div>
-                      </div>
-                    </div>
-                    
-                  {/* Tabs Navigation */}
-                  <div className="border-b border-slate-200">
-                    <div className="flex space-x-8">
-                      {(['activity', 'notes', 'tasks'] as const).map(tab => (
-                        <button
-                          key={tab}
-                          onClick={() => setActiveTab(tab)}
-                          className={`py-4 px-1 border-b-2 font-medium text-sm capitalize ${
-                            activeTab === tab
-                              ? 'border-slate-800 text-slate-800'
-                              : 'border-transparent text-gray-600 hover:text-slate-700 hover:border-gray-300'
-                          }`}
-                        >
-                          {tab}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Tab Content */}
-                  <div>
-                    {activeTab === 'activity' && (
-                      <div className="bg-white rounded-xl border border-slate-200 p-6">
-                        <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
-                          <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          Activity Timeline
-                        </h3>
-                        
-                        {loadingActivities ? (
-                          <div className="text-center py-8">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                            <p className="text-sm text-slate-600 mt-4">Loading activity...</p>
-                          </div>
-                        ) : activities.length === 0 ? (
-                          <div className="text-center py-8">
-                            <svg className="w-12 h-12 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                            <p className="text-sm text-slate-600">No activity recorded yet</p>
-                          </div>
-                        ) : (
-                          <div className="relative">
-                            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-slate-200"></div>
-                            <div className="space-y-6">
-                              {activities.map((activity) => (
-                                <div key={activity.id} className="relative flex items-start space-x-4">
-                                  <div className={`flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center z-10 ${
-                                    activity.type === 'quiz_completed' ? 'bg-purple-100' :
-                                    activity.type === 'call_booked' ? 'bg-blue-100' :
-                                    activity.type === 'deal_closed' ? 'bg-green-100' :
-                                    (activity.type === 'outcome_updated' || activity.type === 'outcome_marked') ? 'bg-orange-100' :
-                                    'bg-amber-100'
-                                  }`}>
-                                    {/* Icons */}
-                                  </div>
-                                  <div className="flex-1 bg-slate-50 rounded-lg p-4 border border-slate-200">
-                                    <div className="flex items-start justify-between">
-                                      <div className="flex-1">
-                                        <p className="text-sm font-semibold text-slate-900">
-                                          {/* Activity Descriptions */}
-                                        </p>
-                                        <p className="text-xs text-slate-500 mt-1">
-                                          {new Date(activity.timestamp).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}
-                                        </p>
-                                        {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed') && (
-                                          <div className="mt-3">
-                                            {/* ... Details button and expandable section ... */}
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {activeTab === 'notes' && (
-                      <div className="space-y-6">
-                        {/* Notes Section */}
-                      </div>
-                    )}
-
-                    {activeTab === 'tasks' && (
-                      <div>
-                        {/* Tasks Section */}
-                      </div>
-                    )}
-                  </div>
-                </>
-              ) : (
-                <div className="text-center py-20">
-                  <p className="text-slate-600">No lead details available</p>
-                </div>
-              )}
             </div>
           </div>
         </div>
