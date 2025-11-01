@@ -73,43 +73,47 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
   const text = current.text.replace("{{name}}", name);
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center overflow-hidden fixed inset-0">
+    <div className="w-screen h-screen flex overflow-hidden fixed inset-0">
       <AnimatePresence mode="wait">
         <motion.div
           key={index}
-          className="w-full h-full flex flex-col items-center justify-center relative px-4"
+          className="w-full h-full flex flex-col items-center relative px-4"
           style={{ backgroundColor: current.bg }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1, ease: "easeInOut" }}
         >
-          {/* Logo for first slide */}
+          {/* Logo for first slide - positioned at top on mobile */}
           {index === 0 && (
             <motion.div
-              className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-8"
+              className="flex items-center space-x-2 sm:space-x-3 mt-6 sm:mt-0 mb-2 sm:mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
             >
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-400 to-teal-400 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg sm:text-xl">B</span>
+              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-400 to-teal-400 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm sm:text-xl">B</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: current.color }}>
+              <h1 className="text-xl sm:text-3xl font-bold" style={{ color: current.color }}>
                 BrightNest
               </h1>
             </motion.div>
           )}
 
-          {/* Main text - centered */}
+          {/* Main text - positioned in upper-middle on mobile, centered on desktop */}
           <motion.div
-            className="text-center px-4 sm:px-8 max-w-2xl"
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center px-4 sm:px-8 max-w-2xl sm:static sm:transform-none sm:translate-y-0"
+            style={{ 
+              top: index === 0 ? '45%' : '50%',
+              marginTop: 'sm:0'
+            }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index === 0 ? 1 : 0.5, duration: 0.8 }}
           >
             <motion.h1 
-              className="text-2xl sm:text-2xl md:text-3xl font-medium leading-relaxed text-center"
+              className="text-2xl sm:text-2xl md:text-3xl font-medium leading-tight sm:leading-relaxed text-center"
               style={{ color: current.color }}
             >
               {text}
@@ -118,7 +122,7 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
             {/* Subtitle for first slide */}
             {current.subtitle && (
               <motion.p
-                className="text-base sm:text-lg mt-4 opacity-80 text-center"
+                className="text-sm sm:text-lg mt-2 sm:mt-4 opacity-80 text-center"
                 style={{ color: current.color }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.8 }}
@@ -129,9 +133,9 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
             )}
           </motion.div>
 
-          {/* Progress indicator - at bottom */}
+          {/* Progress indicator - always at bottom */}
           <motion.div
-            className="absolute bottom-6 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2"
+            className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.6 }}
