@@ -2286,7 +2286,7 @@ export default function AdminDashboard() {
                         {crmVisibleColumns.stage && (
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           <div className="flex items-center cursor-pointer hover:text-gray-700" onClick={() => handleCrmSort('status')}>
-                            LEAD STAGE
+                            STATUS
                             <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                             </svg>
@@ -3406,7 +3406,7 @@ export default function AdminDashboard() {
                         />
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-700">Lead Stage</span>
+                        <span className="text-sm font-medium text-gray-700">Status</span>
                         <input 
                           type="checkbox" 
                           checked={crmVisibleColumns.stage}

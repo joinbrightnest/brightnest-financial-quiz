@@ -426,7 +426,7 @@ export default function CloserDashboard() {
                       Scheduled
                     </th>
                     <th className="w-1/6 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Outcome
+                      Status
                     </th>
                     <th className="w-1/6 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Sale Value
@@ -471,7 +471,7 @@ export default function CloserDashboard() {
                           onClick={() => openOutcomeModal(appointment)}
                           className="text-purple-600 hover:text-purple-800 font-medium transition-colors"
                         >
-                          Update Outcome
+                          Update Status
                         </button>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -497,14 +497,14 @@ export default function CloserDashboard() {
           <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md border border-white/20 animate-slideUp">
             <div className="px-6 py-5 border-b border-gray-100">
               <h3 className="text-xl font-bold text-gray-900">
-                Update Call Outcome
+                Update Call Status
               </h3>
               <p className="text-gray-600 mt-1">{selectedAppointment.customerName}</p>
             </div>
             
             <div className="px-6 py-6 space-y-6">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Outcome *</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Status *</label>
                 <select
                   value={outcomeData.outcome}
                   onChange={(e) => setOutcomeData({ ...outcomeData, outcome: e.target.value })}
@@ -570,7 +570,7 @@ export default function CloserDashboard() {
                 disabled={!outcomeData.outcome}
                 className="px-6 py-3 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                Update Outcome
+                Update Status
               </button>
             </div>
           </div>
