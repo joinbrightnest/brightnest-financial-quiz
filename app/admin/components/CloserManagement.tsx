@@ -159,6 +159,31 @@ export default function CloserManagement() {
     }
   };
 
+  const handleDeleteCloser = async (closerId: string) => {
+    const closer = closers.find(c => c.id === closerId);
+    const closerName = closer?.name || 'this closer';
+    
+    if (!confirm(`Are you sure you want to delete ${closerName}? This action cannot be undone. All appointments will be unassigned.`)) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/admin/closers/${closerId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        fetchClosers();
+        fetchAppointments(); // Refresh appointments to show unassigned ones
+      } else {
+        const data = await response.json();
+        setError(data.error || 'Failed to delete closer');
+      }
+    } catch (error) {
+      setError('Network error deleting closer');
+    }
+  };
+
   const handleAssignAppointment = async () => {
     if (!selectedAppointment || !selectedCloser) return;
 
@@ -536,6 +561,13 @@ export default function CloserManagement() {
                           }`}
                         >
                           {closer.isActive ? 'Deactivate' : 'Activate'}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteCloser(closer.id)}
+                          className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors border border-gray-300"
+                          title="Delete closer permanently"
+                        >
+                          Delete
                         </button>
                       </div>
                     </div>
