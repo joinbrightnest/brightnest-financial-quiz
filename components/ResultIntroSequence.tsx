@@ -103,11 +103,10 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
 
           {/* Main text - positioned higher on mobile to balance spacing */}
           <motion.div
-            className="absolute left-1/2 transform -translate-x-1/2 text-center px-4 sm:px-8 max-w-2xl sm:static sm:transform-none sm:translate-y-0"
+            className="absolute left-1/2 -translate-x-1/2 text-center px-4 sm:px-8 max-w-2xl sm:static sm:translate-x-0"
             style={{ 
               top: index === 0 ? '38%' : '42%',
-              transform: 'translate(-50%, -50%)',
-              sm: { top: 'auto', transform: 'none' }
+              transform: 'translate(-50%, -50%)'
             }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
