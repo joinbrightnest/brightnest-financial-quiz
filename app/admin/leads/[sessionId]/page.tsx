@@ -546,7 +546,8 @@ export default function LeadDetailsPage() {
                                         {/* Dropdown button for call details - Always show for outcome activities */}
                                         <button
                                           onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
-                                          className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center whitespace-nowrap"
+                                          className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center whitespace-nowrap px-2 py-1 hover:bg-blue-50 rounded transition-colors"
+                                          title="View recording link and call notes"
                                         >
                                           {expandedActivity === activity.id ? (
                                             <>
