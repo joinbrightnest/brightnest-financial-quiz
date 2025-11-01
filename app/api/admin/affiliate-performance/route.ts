@@ -83,8 +83,41 @@ export async function GET(request: NextRequest) {
           },
         });
 
-        // Get appointments for this affiliate (with date filter)
-        const appointments = await prisma.appointment.findMany({
+        // Get completed quiz sessions to find emails
+        const completedQuizSessions = quizSessions.filter(session => session.status === "completed");
+        const completedSessionIds = completedQuizSessions.map(s => s.id);
+        
+        // Get emails from completed quiz sessions by finding email answers (batch query for efficiency)
+        const completedSessionEmails = new Set<string>();
+        if (completedSessionIds.length > 0) {
+          // Fetch all email answers for completed sessions in one query
+          const emailAnswers = await prisma.quizAnswer.findMany({
+            where: {
+              sessionId: { in: completedSessionIds },
+              OR: [
+                { question: { type: 'email' } },
+                { question: { prompt: { contains: 'email' } } },
+                { question: { prompt: { contains: 'Email' } } }
+              ]
+            },
+            include: {
+              question: true
+            }
+          });
+          
+          // Group by session ID to get the email for each session
+          const emailsBySession = new Map<string, string>();
+          emailAnswers.forEach(answer => {
+            if (answer.value) {
+              const email = String(answer.value).toLowerCase().trim();
+              emailsBySession.set(answer.sessionId, email);
+              completedSessionEmails.add(email);
+            }
+          });
+        }
+
+        // Get ALL appointments for this affiliate (with date filter)
+        const allAppointments = await prisma.appointment.findMany({
           where: {
             affiliateCode: affiliate.referralCode,
             createdAt: {
@@ -93,18 +126,26 @@ export async function GET(request: NextRequest) {
           },
         });
 
+        // Only count appointments that have a corresponding completed quiz session
+        // This ensures the funnel is sequential: Completed → Booked Calls → Sales
+        const validAppointments = allAppointments.filter(apt => {
+          const appointmentEmail = apt.customerEmail?.toLowerCase().trim();
+          return appointmentEmail && completedSessionEmails.has(appointmentEmail);
+        });
+
         // Calculate conversion rates
         const clickCount = clicks.length;
         const conversionCount = conversions.length;
         const quizCount = quizSessions.length;
-        const completionCount = quizSessions.filter(session => session.status === "completed").length;
+        const completionCount = completedQuizSessions.length;
         
-        // Count actual bookings and sales from appointments (more accurate)
-        const bookingCount = appointments.length;
-        const saleCount = appointments.filter(apt => apt.outcome === 'converted').length;
+        // Count bookings and sales only from appointments with completed quiz sessions
+        const bookingCount = validAppointments.length;
+        const saleCount = validAppointments.filter(apt => apt.outcome === 'converted').length;
 
         // Calculate actual revenue from converted appointments (total sale values)
-        const convertedAppointments = appointments.filter(apt => apt.outcome === 'converted' && apt.saleValue);
+        // Only count appointments that have corresponding completed quiz sessions
+        const convertedAppointments = validAppointments.filter(apt => apt.outcome === 'converted' && apt.saleValue);
         const totalRevenue = convertedAppointments.reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
 
         // Calculate EARNED commission from converted appointments (respects date filter)
