@@ -9,43 +9,58 @@ export async function GET(
   { params }: { params: { sessionId: string } }
 ) {
   try {
-    const closerId = await getCloserIdFromToken(request);
+    const closerId = getCloserIdFromToken(request);
+    console.log('[Closer API] closerId:', closerId);
+    
     if (!closerId) {
+      console.error('[Closer API] Unauthorized: No closer ID found');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { sessionId } = params;
+    console.log('[Closer API] sessionId:', sessionId);
 
     // 1. Fetch the core lead data (QuizSession)
     const quizSession = await prisma.quizSession.findUnique({
       where: { id: sessionId },
       include: {
         answers: { include: { question: true } },
+        result: true,
+        user: true,
       },
     });
 
     if (!quizSession) {
+      console.error('[Closer API] Quiz session not found');
       return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
     }
     
     const emailAnswer = quizSession.answers.find(a => a.question?.prompt.toLowerCase().includes('email'));
     const leadEmail = emailAnswer?.value as string;
+    console.log('[Closer API] leadEmail:', leadEmail);
 
     if (!leadEmail) {
+        console.error('[Closer API] Lead email not found in answers');
         return NextResponse.json({ error: 'Lead email not found' }, { status: 404 });
     }
+
+    const nameAnswer = quizSession.answers.find(a => a.question?.prompt.toLowerCase().includes('name'));
 
     const appointment = await prisma.appointment.findFirst({
         where: { customerEmail: leadEmail },
         include: { closer: true }
     });
 
+    console.log('[Closer API] appointment:', appointment ? appointment.id : 'null');
+
     if (!appointment) {
-        // If there is no appointment, the closer has no access.
+        console.error('[Closer API] No appointment found for this lead');
         return NextResponse.json({ error: 'Lead not assigned to this closer' }, { status: 403 });
     }
+    
     // Also verify ownership
     if (appointment.closerId !== closerId) {
+      console.error('[Closer API] Access denied: appointment.closerId !== closerId');
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
@@ -56,7 +71,7 @@ export async function GET(
     });
 
     // 2. Construct the detailed activity timeline, mirroring admin logic
-    const leadName = quizSession.answers.find(a => a.question?.prompt.toLowerCase().includes('name'))?.value as string || 'Lead';
+    const leadName = nameAnswer?.value as string || 'Lead';
     
     // Get system activities
     const systemActivities = await prisma.activityLog.findMany({
@@ -83,7 +98,7 @@ export async function GET(
         description: log.description.replace('A new user', leadName),
         date: log.createdAt,
         details: log.details,
-        closerName: null, // System events don't have a closer
+        closerName: null,
     }));
 
     const formattedCloserActivities = closerActivities.map(log => ({
@@ -102,24 +117,47 @@ export async function GET(
       id: quizSession.id,
       sessionId: quizSession.id,
       quizType: quizSession.quizType,
-      completedAt: quizSession.completedAt,
-      status: appointment?.status || quizSession.status,
+      startedAt: quizSession.startedAt?.toISOString(),
+      completedAt: quizSession.completedAt?.toISOString(),
+      status: quizSession.status,
+      durationMs: quizSession.durationMs,
+      result: quizSession.result ? {
+        archetype: quizSession.result.archetype,
+        score: quizSession.result.score,
+        insights: quizSession.result.insights || [],
+      } : null,
       answers: quizSession.answers.map(a => ({
         questionText: a.question?.prompt,
         answerValue: a.value,
+        answer: a.value,
       })),
-      appointment: appointment,
-      dealClosedAt: appointment?.outcome === 'converted' ? appointment.updatedAt : null,
+      user: {
+        email: leadEmail || "N/A",
+        name: leadName,
+        role: "user",
+      },
+      appointment: appointment ? {
+        id: appointment.id,
+        outcome: appointment.outcome,
+        saleValue: appointment.saleValue ? Number(appointment.saleValue) : null,
+        scheduledAt: appointment.scheduledAt.toISOString(),
+        createdAt: appointment.createdAt.toISOString(),
+        updatedAt: appointment.updatedAt.toISOString(),
+        recordingLink: appointment.recordingLink,
+        closerNotes: appointment.notes,
+      } : null,
+      dealClosedAt: appointment?.outcome === 'converted' ? appointment.updatedAt.toISOString() : null,
       closer: appointment?.closer,
-      source: quizSession.affiliateCode ? 'Affiliate' : 'Website', // Simplified
+      source: quizSession.affiliateCode ? 'Affiliate' : 'Website',
       activities: allActivities,
       notes: notes,
     };
 
+    console.log('[Closer API] Successfully returning lead data');
     return NextResponse.json(leadData);
 
   } catch (error) {
-    console.error('Error fetching lead details for closer:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('[Closer API] Error fetching lead details:', error);
+    return NextResponse.json({ error: 'Internal Server Error', details: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
   }
 }
