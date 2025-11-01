@@ -1154,30 +1154,59 @@ export default function CloserDashboard() {
                                                       ${Number(activity.details.saleValue).toFixed(2)}
                                                     </span>
                                                   )}
+                                                  
+                                                  {/* Dropdown button for call details */}
+                                                  {(activity.details.recordingLink || activity.details.notes) && (
+                                                    <button
+                                                      onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
+                                                      className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center ml-auto"
+                                                    >
+                                                      {expandedActivity === activity.id ? (
+                                                        <>
+                                                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                                          </svg>
+                                                          Hide call details
+                                                        </>
+                                                      ) : (
+                                                        <>
+                                                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                          </svg>
+                                                          View call details
+                                                        </>
+                                                      )}
+                                                    </button>
+                                                  )}
                                                 </div>
                                                 
-                                                {/* Call Details: Recording Link */}
-                                                {activity.details.recordingLink && (
-                                                  <div className="mt-2">
-                                                    <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Recording Link</label>
-                                                    <a 
-                                                      href={activity.details.recordingLink} 
-                                                      target="_blank" 
-                                                      rel="noopener noreferrer"
-                                                      className="text-blue-600 hover:text-blue-800 text-sm font-medium underline break-all"
-                                                    >
-                                                      {activity.details.recordingLink}
-                                                    </a>
-                                                  </div>
-                                                )}
-                                                
-                                                {/* Call Details: Notes */}
-                                                {activity.details.notes && (
-                                                  <div className="mt-2">
-                                                    <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Call Notes</label>
-                                                    <div className="p-3 bg-white rounded border border-slate-200">
-                                                      <p className="text-sm text-slate-700">{activity.details.notes}</p>
-                                                    </div>
+                                                {/* Expanded Call Details */}
+                                                {expandedActivity === activity.id && (activity.details.recordingLink || activity.details.notes) && (
+                                                  <div className="mt-3 space-y-3 p-4 bg-white rounded-lg border border-slate-200">
+                                                    {/* Recording Link */}
+                                                    {activity.details.recordingLink && (
+                                                      <div>
+                                                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Recording Link</label>
+                                                        <a 
+                                                          href={activity.details.recordingLink} 
+                                                          target="_blank" 
+                                                          rel="noopener noreferrer"
+                                                          className="text-blue-600 hover:text-blue-800 text-sm font-medium underline break-all"
+                                                        >
+                                                          {activity.details.recordingLink}
+                                                        </a>
+                                                      </div>
+                                                    )}
+                                                    
+                                                    {/* Call Notes */}
+                                                    {activity.details.notes && (
+                                                      <div>
+                                                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Call Notes</label>
+                                                        <div className="p-3 bg-slate-50 rounded border border-slate-200">
+                                                          <p className="text-sm text-slate-700">{activity.details.notes}</p>
+                                                        </div>
+                                                      </div>
+                                                    )}
                                                   </div>
                                                 )}
                                               </div>
