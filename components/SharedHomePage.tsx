@@ -117,7 +117,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
       </nav>
 
       {/* Hero Section */}
-      <div className="flex flex-col px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-8 pb-0" style={{backgroundColor: '#FAF8F4'}}>
+      <div className="flex flex-col px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-8 pb-20 sm:pb-24 lg:pb-32" style={{backgroundColor: '#FAF8F4'}}>
         <div className="max-w-4xl mx-auto text-center">
           {/* 1️⃣ Microline */}
           <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-2 font-medium">
@@ -206,7 +206,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
               
           
           {/* 6️⃣ Primary CTA */}
-          <div className="mb-0">
+          <div className="mb-4 sm:mb-6">
             <Link
               href={getLink("/quiz/financial-profile")}
               className="inline-block bg-[#FF5C41] text-white px-8 py-4 sm:px-12 sm:py-5 lg:px-16 lg:py-6 text-base sm:text-lg font-semibold hover:bg-[#e54a2f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 rounded-lg w-full sm:w-auto"
