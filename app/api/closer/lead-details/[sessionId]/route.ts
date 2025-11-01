@@ -40,8 +40,12 @@ export async function GET(
         include: { closer: true }
     });
 
-    // Verify ownership
-    if (appointment?.closerId !== closerId) {
+    if (!appointment) {
+        // If there is no appointment, the closer has no access.
+        return NextResponse.json({ error: 'Lead not assigned to this closer' }, { status: 403 });
+    }
+    // Also verify ownership
+    if (appointment.closerId !== closerId) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
@@ -51,38 +55,17 @@ export async function GET(
       orderBy: { createdAt: 'desc' },
     });
 
-    // 2. Construct the detailed activity timeline
+    // 2. Construct the detailed activity timeline, mirroring admin logic
     const leadName = quizSession.answers.find(a => a.question?.prompt.toLowerCase().includes('name'))?.value as string || 'Lead';
-    const activities: any[] = [];
+    
+    // Get system activities
+    const systemActivities = await prisma.activityLog.findMany({
+        where: { quizSessionId: sessionId },
+        orderBy: { createdAt: 'asc' },
+    });
 
-    // Quiz completed activity
-    if (quizSession.completedAt) {
-      activities.push({
-        id: `quiz_${quizSession.id}`,
-        type: 'quiz_completed',
-        timestamp: quizSession.completedAt.toISOString(),
-        leadName,
-        details: {
-          quizType: quizSession.quizType,
-          answersCount: quizSession.answers.length,
-        },
-      });
-    }
-
-    // Call booked activity
-    if (appointment) {
-      activities.push({
-        id: `call_${appointment.id}`,
-        type: 'call_booked',
-        timestamp: appointment.createdAt.toISOString(),
-        leadName,
-        details: {
-          scheduledAt: appointment.scheduledAt.toISOString(),
-          closerName: appointment.closer?.name || null,
-        },
-      });
-
-      const outcomeLogs = await prisma.closerAuditLog.findMany({
+    // Get closer-specific activities
+    const closerActivities = await prisma.closerAuditLog.findMany({
         where: {
             details: {
                 path: ['appointmentId'],
@@ -91,25 +74,30 @@ export async function GET(
         },
         orderBy: { createdAt: 'asc' },
         include: { closer: true }
-      });
+    });
 
-      outcomeLogs.forEach((log) => {
-        const details = log.details as any;
-        activities.push({
-          id: log.id,
-          type: details?.outcome === 'converted' ? 'deal_closed' : 'outcome_updated',
-          timestamp: log.createdAt.toISOString(),
-          leadName,
-          actor: log.closer?.name || 'Unknown',
-          details: { ...details },
-        });
-      });
-    }
+    // Format and combine all activities
+    const formattedSystemActivities = systemActivities.map(log => ({
+        id: log.id,
+        type: log.type,
+        description: log.description.replace('A new user', leadName),
+        date: log.createdAt,
+        details: log.details,
+        closerName: null, // System events don't have a closer
+    }));
 
-    // Sort activities
-    activities.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+    const formattedCloserActivities = closerActivities.map(log => ({
+        id: log.id,
+        type: log.type,
+        description: log.description,
+        date: log.createdAt,
+        details: log.details,
+        closerName: log.closer?.name || 'Unknown Closer',
+    }));
 
-    // 3. Assemble the final payload
+    const allActivities = [...formattedSystemActivities, ...formattedCloserActivities]
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
     const leadData = {
       id: quizSession.id,
       sessionId: quizSession.id,
@@ -118,14 +106,14 @@ export async function GET(
       status: appointment?.status || quizSession.status,
       answers: quizSession.answers.map(a => ({
         questionText: a.question?.prompt,
-        answer: a.value,
+        answerValue: a.value,
       })),
       appointment: appointment,
       dealClosedAt: appointment?.outcome === 'converted' ? appointment.updatedAt : null,
       closer: appointment?.closer,
       source: quizSession.affiliateCode ? 'Affiliate' : 'Website', // Simplified
-      activities: activities,
-      notes: notes, // Include notes in the payload
+      activities: allActivities,
+      notes: notes,
     };
 
     return NextResponse.json(leadData);
