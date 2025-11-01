@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import { getCloserIdFromToken } from '@/lib/closer-auth'; 
+import { getCloserIdFromToken } from '@/lib/closer-auth';
 
 const prisma = new PrismaClient();
 
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!quizSession) {
-      return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Lead session not found' }, { status: 404 });
     }
 
     const leadEmail = quizSession.answers.find(a => a.question?.prompt.toLowerCase().includes('email'))?.value;
@@ -32,19 +32,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Could not find email for this lead' }, { status: 404 });
     }
 
-    // You might want to verify that the lead this note is being added to
-    // is actually assigned to this closer. This adds a layer of security.
+    // Ensure a lead record exists, similar to admin logic
+    let lead = await prisma.lead.findUnique({ where: { email: leadEmail } });
+    if (!lead) {
+      const name = quizSession.answers.find(a => a.question?.prompt.toLowerCase().includes('name'))?.value || 'N/A';
+      const phone = quizSession.answers.find(a => a.question?.prompt.toLowerCase().includes('phone'))?.value || 'N/A';
+      lead = await prisma.lead.create({
+        data: {
+          name: name,
+          email: leadEmail,
+          phone: phone,
+          quizSessionId: sessionId
+        }
+      });
+    }
+
+    // Security check: Find the appointment to verify closer assignment
     const appointment = await prisma.appointment.findFirst({
         where: {
             customerEmail: leadEmail,
             closerId: closerId
         }
     });
-
-    if (!appointment) {
-        return NextResponse.json({ error: 'Lead not assigned to this closer' }, { status: 403 });
-    }
     
+    // We still require an appointment to authorize the closer to add a note
+    if (!appointment) {
+        return NextResponse.json({ error: 'Forbidden: You are not assigned to this lead.' }, { status: 403 });
+    }
+
     const closer = await prisma.closer.findUnique({ where: { id: closerId } });
     const closerName = closer?.name || `Closer ${closerId}`;
 
