@@ -45,6 +45,12 @@ export async function GET(
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
+    // Fetch Notes
+    const notes = await prisma.note.findMany({
+      where: { leadEmail: leadEmail },
+      orderBy: { createdAt: 'desc' },
+    });
+
     // 2. Construct the detailed activity timeline
     const leadName = quizSession.answers.find(a => a.question?.prompt.toLowerCase().includes('name'))?.value as string || 'Lead';
     const activities: any[] = [];
@@ -119,6 +125,7 @@ export async function GET(
       closer: appointment?.closer,
       source: quizSession.affiliateCode ? 'Affiliate' : 'Website', // Simplified
       activities: activities,
+      notes: notes, // Include notes in the payload
     };
 
     return NextResponse.json(leadData);

@@ -2,6 +2,18 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import {
+    Activity,
+    CreditCard,
+    MessageSquare,
+    Phone,
+    PlusCircle,
+    Trash2,
+    TrendingUp,
+    User,
+    Users,
+    Video
+} from 'lucide-react';
 
 // Simplified interface, as the component fetches its own data
 interface LeadDetailViewProps {
@@ -9,12 +21,46 @@ interface LeadDetailViewProps {
   onClose: () => void;
 }
 
+// Define the Note type based on your Prisma schema
+interface Note {
+  id: string;
+  content: string;
+  createdBy: string | null;
+  createdAt: string;
+}
+
+const getIcon = (type: string) => {
+    switch (type) {
+        case 'quiz_completed':
+            return <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+        case 'call_booked':
+            return <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>;
+        case 'deal_closed':
+            return <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+        case 'outcome_updated':
+        case 'outcome_marked':
+            return <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+        case 'note_added':
+            return <MessageSquare className="w-5 h-5 text-gray-500" />;
+        case 'outcome_marked_as_paid':
+            return <CreditCard className="w-5 h-5 text-green-500" />;
+        default:
+            return <Activity className="w-5 h-5 text-gray-500" />;
+    }
+};
+
 export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewProps) {
   const [leadData, setLeadData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'activity' | 'notes' | 'tasks'>('activity');
   const [expandedActivity, setExpandedActivity] = useState<string | null>(null);
+
+  // States for note creation
+  const [showNoteForm, setShowNoteForm] = useState(false);
+  const [newNoteContent, setNewNoteContent] = useState('');
+  const [isSubmittingNote, setIsSubmittingNote] = useState(false);
+
 
   useEffect(() => {
     const token = localStorage.getItem('closerToken');
@@ -42,6 +88,46 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
 
     fetchLeadDetails();
   }, [sessionId]);
+
+  const handleCreateNote = async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!newNoteContent.trim()) return;
+      
+      setIsSubmittingNote(true);
+      try {
+          const token = localStorage.getItem('closerToken');
+          const response = await fetch('/api/closer/notes', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                  leadEmail: leadData?.email,
+                  content: newNoteContent,
+              }),
+          });
+
+          if (response.ok) {
+              const newNote = await response.json();
+              // Add the new note to the state to re-render the list
+              setLeadData((prevData: any) => ({
+                  ...prevData,
+                  notes: [newNote, ...prevData.notes],
+              }));
+              // Reset form
+              setNewNoteContent('');
+              setShowNoteForm(false);
+          } else {
+              const errorData = await response.json();
+              setError(errorData.error || 'Failed to create note.');
+          }
+      } catch (error) {
+          setError('An unexpected error occurred while creating the note.');
+      } finally {
+          setIsSubmittingNote(false);
+      }
+  };
 
    if (loading) {
     return (
@@ -231,6 +317,101 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'notes' && (
+            <div className="space-y-6">
+              {/* Call Details */}
+              <div className="bg-white rounded-xl border border-slate-200 p-6">
+                <div className="flex items-center mb-6">
+                  <Phone className="w-6 h-6 text-slate-500 mr-3" />
+                  <h3 className="text-lg font-semibold text-slate-900">Call Details</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Recording Link</h4>
+                    <p className="text-sm text-slate-600 mt-1">
+                      {leadData.appointment?.recordingLink || 'No recording available'}
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Call Notes</h4>
+                    <p className="text-sm text-slate-600 mt-1">
+                      {leadData.appointment?.closerNotes || 'No notes available'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Notes Section */}
+              <div className="bg-white rounded-xl border border-slate-200 p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <div className="flex items-center">
+                    <MessageSquare className="w-6 h-6 text-slate-500 mr-3" />
+                    <h3 className="text-lg font-semibold text-slate-900">Notes ({leadData.notes?.length || 0})</h3>
+                  </div>
+                  <button
+                    onClick={() => setShowNoteForm(!showNoteForm)}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
+                  >
+                    <PlusCircle className="-ml-1 mr-2 h-5 w-5" />
+                    {showNoteForm ? 'Cancel' : 'Create Note'}
+                  </button>
+                </div>
+
+                {showNoteForm && (
+                  <form onSubmit={handleCreateNote} className="mb-6">
+                    <textarea
+                      value={newNoteContent}
+                      onChange={(e) => setNewNoteContent(e.target.value)}
+                      rows={4}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-slate-500 focus:border-slate-500"
+                      placeholder="Add a new note..."
+                      disabled={isSubmittingNote}
+                    />
+                    <div className="mt-2 text-right">
+                      <button
+                        type="submit"
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 disabled:bg-slate-400"
+                        disabled={isSubmittingNote || !newNoteContent.trim()}
+                      >
+                        {isSubmittingNote ? 'Saving...' : 'Save Note'}
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                <div className="space-y-4">
+                  {leadData.notes && leadData.notes.length > 0 ? (
+                    leadData.notes.map((note: Note) => (
+                      <div key={note.id} className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <p className="text-sm text-slate-800 whitespace-pre-wrap">{note.content}</p>
+                        <p className="text-xs text-slate-500 mt-2">
+                          - {note.createdBy || 'System'} on {new Date(note.createdAt).toLocaleString()}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-slate-600">No notes have been added for this lead.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'tasks' && (
+            <div className="bg-white rounded-xl border border-slate-200 p-6">
+              <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
+                <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                Tasks
+              </h3>
+              <div className="space-y-4">
+                {/* Placeholder for tasks */}
+                <div className="bg-slate-100 p-4 rounded-lg">
+                  <p className="text-sm text-slate-600">No tasks have been assigned to this lead yet.</p>
                 </div>
               </div>
             </div>
