@@ -459,7 +459,7 @@ export default function LeadDetailsPage() {
                               
                               {/* Outcome activities - Always show button, even if details are missing */}
                               {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed') && (
-                                <div className="mt-2">
+                                <div className="mt-3 text-sm text-slate-600">
                                   <div className="flex flex-wrap items-center gap-2">
                                     {activity.details?.outcome && (
                                       <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
@@ -476,43 +476,42 @@ export default function LeadDetailsPage() {
                                         ${Number(activity.details.saleValue).toFixed(2)}
                                       </span>
                                     )}
-                                    
-                                    {/* Dropdown button for call details - Always show for outcome activities */}
-                                    <button
-                                      onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
-                                      className="ml-auto text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center whitespace-nowrap px-3 py-1.5 hover:bg-blue-50 rounded transition-colors border border-blue-200 hover:border-blue-300"
-                                      title="View recording link and call notes"
-                                    >
-                                      {expandedActivity === activity.id ? (
-                                        <>
-                                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                                          </svg>
-                                          Hide call details
-                                        </>
-                                      ) : (
-                                        <>
-                                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                          </svg>
-                                          View call details
-                                        </>
-                                      )}
-                                    </button>
                                   </div>
+                                  
+                                  {/* View call details button - Same style as "View quiz answers" */}
+                                  <button
+                                    onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
+                                    className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center mt-2"
+                                  >
+                                    {expandedActivity === activity.id ? (
+                                      <>
+                                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                        </svg>
+                                        Hide call details
+                                      </>
+                                    ) : (
+                                      <>
+                                        View call details
+                                        <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
+                                      </>
+                                    )}
+                                  </button>
                                   
                                   {/* Expanded Call Details */}
                                   {expandedActivity === activity.id && (
-                                    <div className="mt-3 space-y-3 p-4 bg-white rounded-lg border border-slate-200">
+                                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
                                       {/* Recording Link */}
-                                      <div>
-                                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Recording Link</label>
+                                      <div className="bg-white rounded-lg p-3 border border-slate-300">
+                                        <p className="text-xs font-semibold text-slate-900 mb-1">Recording Link</p>
                                         {activity.details?.recordingLink ? (
                                           <a 
                                             href={activity.details.recordingLink} 
                                             target="_blank" 
                                             rel="noopener noreferrer"
-                                            className="text-blue-600 hover:text-blue-800 text-sm font-medium underline break-all"
+                                            className="text-sm text-blue-600 hover:text-blue-800 underline break-all"
                                           >
                                             {activity.details.recordingLink}
                                           </a>
@@ -522,12 +521,10 @@ export default function LeadDetailsPage() {
                                       </div>
                                       
                                       {/* Call Notes */}
-                                      <div>
-                                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Call Notes</label>
+                                      <div className="bg-white rounded-lg p-3 border border-slate-300">
+                                        <p className="text-xs font-semibold text-slate-900 mb-1">Call Notes</p>
                                         {activity.details?.notes ? (
-                                          <div className="p-3 bg-slate-50 rounded border border-slate-200">
-                                            <p className="text-sm text-slate-700">{activity.details.notes}</p>
-                                          </div>
+                                          <p className="text-sm text-slate-700">{activity.details.notes}</p>
                                         ) : (
                                           <p className="text-sm text-slate-400 italic">No notes available</p>
                                         )}
