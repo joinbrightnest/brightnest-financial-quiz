@@ -102,7 +102,7 @@ export default function LeadDetailsPage() {
         throw new Error("Failed to fetch activities");
       }
       const data = await response.json();
-      console.log('🔍 DEBUG: All activities fetched:', data.activities);
+      console.log('✅ [API] Raw activities payload received:', JSON.stringify(data.activities, null, 2));
       const outcomeActivities = (data.activities || []).filter((a: any) => 
         a.type === 'outcome_updated' || a.type === 'outcome_marked' || a.type === 'deal_closed'
       );
@@ -371,16 +371,13 @@ export default function LeadDetailsPage() {
                   {/* Activity items */}
                   <div className="space-y-6">
                     {activities.map((activity, index) => {
-                      // DEBUG: Log outcome activities during render
-                      const isOutcomeActivity = activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed';
-                      if (isOutcomeActivity) {
-                        console.log(`🎯 RENDER DEBUG: Outcome activity ${index} (${activity.id}):`, {
-                          type: activity.type,
-                          hasDetails: !!activity.details,
-                          details: activity.details,
-                          conditionCheck: activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed'
-                        });
-                      }
+                      console.log(`➡️ [UI] Rendering activity #${index}:`, {
+                        id: activity.id,
+                        type: activity.type,
+                        details: activity.details,
+                        hasDetails: !!activity.details,
+                        isOutcome: ['outcome_updated', 'outcome_marked', 'deal_closed'].includes(activity.type),
+                      });
                       return (
                       <div key={activity.id} className="relative flex items-start space-x-4">
                         {/* Icon */}
