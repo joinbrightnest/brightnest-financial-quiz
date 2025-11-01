@@ -261,7 +261,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
 
    if (loading) {
     return (
-      <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
+      <div className="fixed inset-0 bg-white z-[9999] flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-800"></div>
       </div>
     );
@@ -269,7 +269,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
 
   if (error || !leadData) {
     return (
-      <div className="fixed inset-0 bg-white z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-white z-[9999] flex items-center justify-center p-4">
         <div className="text-center bg-slate-50 p-8 rounded-lg border border-red-200">
           <h3 className="text-xl font-bold text-red-600">Error Loading Data</h3>
           <p className="text-slate-600 mt-2 mb-6">{error}</p>
@@ -283,7 +283,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
   const getLeadEmail = () => leadData.answers.find((a: any) => a.questionText?.toLowerCase().includes('email'))?.answer || 'N/A';
   
   return (
-    <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-white z-[9999] overflow-y-auto">
       <div className="min-h-screen bg-white">
         {/* Header */}
         <div className="bg-slate-800 px-6 py-4 border-b border-slate-700">
