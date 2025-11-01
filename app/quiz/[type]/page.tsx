@@ -236,11 +236,13 @@ export default function QuizPage({ params }: QuizPageProps) {
     // Store user variables
     if (currentQuestion.type === "text" && currentQuestion.prompt.toLowerCase().includes("name")) {
       setUserVariables(prev => ({ ...prev, name: value }));
-      // Store name in localStorage for analyzing page
+      // Store name in localStorage for analyzing page and Calendly pre-fill
       localStorage.setItem('userName', value);
     }
     if (currentQuestion.type === "email") {
       setUserVariables(prev => ({ ...prev, email: value }));
+      // Store email in localStorage for Calendly pre-fill
+      localStorage.setItem('userEmail', value);
     }
     
     const answerLabel = currentQuestion.options.find(opt => opt.value === value)?.label || value;

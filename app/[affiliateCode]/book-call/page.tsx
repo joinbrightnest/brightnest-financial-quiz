@@ -21,23 +21,34 @@ export default function AffiliateBookCallPage() {
   useEffect(() => {
     const fetchDataAndPreFillCalendly = async () => {
       try {
-        // First, get quiz session data to pre-fill Calendly
-        const sessionId = localStorage.getItem('quizSessionId');
-        let quizName = null;
-        let quizEmail = null;
+        // First, try to get name and email from localStorage (fastest)
+        let quizName = localStorage.getItem('userName');
+        let quizEmail = localStorage.getItem('userEmail');
         
-        if (sessionId) {
-          try {
-            const sessionResponse = await fetch(`/api/quiz/session?sessionId=${sessionId}`);
-            if (sessionResponse.ok) {
-              const sessionData = await sessionResponse.json();
-              quizName = sessionData.name || null;
-              quizEmail = sessionData.email || null;
-              console.log("✅ Found quiz data for pre-fill:", { quizName, quizEmail });
+        // If not in localStorage, fetch from quiz session API
+        if (!quizName || !quizEmail) {
+          const sessionId = localStorage.getItem('quizSessionId');
+          
+          if (sessionId) {
+            try {
+              const sessionResponse = await fetch(`/api/quiz/session?sessionId=${sessionId}`);
+              if (sessionResponse.ok) {
+                const sessionData = await sessionResponse.json();
+                quizName = quizName || sessionData.name || null;
+                quizEmail = quizEmail || sessionData.email || null;
+                
+                // Store in localStorage for future use
+                if (sessionData.name) localStorage.setItem('userName', sessionData.name);
+                if (sessionData.email) localStorage.setItem('userEmail', sessionData.email);
+                
+                console.log("✅ Found quiz data from API for pre-fill:", { quizName, quizEmail });
+              }
+            } catch (error) {
+              console.error("❌ Error fetching quiz session:", error);
             }
-          } catch (error) {
-            console.error("❌ Error fetching quiz session:", error);
           }
+        } else {
+          console.log("✅ Found quiz data from localStorage for pre-fill:", { quizName, quizEmail });
         }
         
         // Fetch active closer's Calendly link
@@ -62,12 +73,12 @@ export default function AffiliateBookCallPage() {
           'embed_type': 'Inline'
         });
         
-        // Add name and email if available
+        // Add name and email if available (Calendly supports these URL params for pre-filling)
         if (quizName) {
-          urlParams.append('name', quizName);
+          urlParams.append('name', quizName); // Pre-fills the name field
         }
         if (quizEmail) {
-          urlParams.append('email', quizEmail);
+          urlParams.append('email', quizEmail); // Pre-fills the email field
         }
         
         const finalCalendlyUrl = `${baseCalendlyUrl}?${urlParams.toString()}`;
