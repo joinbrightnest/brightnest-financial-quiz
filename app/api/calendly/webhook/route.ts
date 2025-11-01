@@ -97,15 +97,20 @@ async function handleInviteeCreated(payload: any) {
         const question = qa.question?.toLowerCase() || '';
         const answer = qa.answer || '';
         
+        // Only extract affiliate code from explicit affiliate/referral questions
+        // Do NOT extract from generic "source" questions to avoid confusion
         if (question.includes('affiliate') || question.includes('referral')) {
-          affiliateCode = answer;
-        } else if (question.includes('utm_source') || question.includes('source')) {
-          utmSource = answer;
-        } else if (question.includes('utm_medium') || question.includes('medium')) {
-          utmMedium = answer;
-        } else if (question.includes('utm_campaign') || question.includes('campaign')) {
-          utmCampaign = answer;
+          affiliateCode = answer?.trim() || null;
+          console.log('✅ Found affiliate code from question:', affiliateCode);
+        } else if (question.includes('utm_source') || (question.includes('utm') && question.includes('source'))) {
+          utmSource = answer?.trim() || null;
+        } else if (question.includes('utm_medium') || (question.includes('utm') && question.includes('medium'))) {
+          utmMedium = answer?.trim() || null;
+        } else if (question.includes('utm_campaign') || (question.includes('utm') && question.includes('campaign'))) {
+          utmCampaign = answer?.trim() || null;
         }
+        // Note: Generic "source" questions without "affiliate"/"referral" keywords are ignored
+        // This prevents incorrectly setting affiliate codes from generic source fields
       }
     }
 
