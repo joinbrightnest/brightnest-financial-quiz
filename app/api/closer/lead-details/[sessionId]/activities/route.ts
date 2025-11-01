@@ -119,7 +119,7 @@ export async function GET(
           },
         });
 
-        // Get outcome updates from CloserAuditLog
+        // 3. Outcome history - Get ALL outcome changes from audit log
         const outcomeAuditLogs = await prisma.closerAuditLog.findMany({
           where: {
             action: 'appointment_outcome_updated',
@@ -138,62 +138,74 @@ export async function GET(
           }
         });
 
-        // Get note activities from CloserAuditLog
-        const noteAuditLogs = await prisma.closerAuditLog.findMany({
-          where: {
-            type: 'note_added',
-            closerId: appointment.closerId || undefined
-          },
-          include: {
-            closer: {
-              select: {
-                id: true,
-                name: true
-              }
-            }
-          },
-          orderBy: {
-            createdAt: 'asc'
-          }
-        });
-
-        // Combine and filter logs for this specific appointment
-        const allAuditLogs = [...outcomeAuditLogs, ...noteAuditLogs];
-        const appointmentLogs = allAuditLogs.filter(log => {
+        // Filter logs for this specific appointment
+        const appointmentOutcomeLogs = outcomeAuditLogs.filter(log => {
           const details = log.details as any;
           return details?.appointmentId === appointment.id;
         });
 
-        // Add each log as an activity
-        appointmentLogs.forEach((log) => {
+        // Add each outcome change as an activity with call details
+        appointmentOutcomeLogs.forEach((log, index) => {
           const details = log.details as any;
+          const outcome = details?.outcome;
           
-          // Determine activity type
-          let activityType: 'outcome_updated' | 'outcome_marked' | 'deal_closed' | 'note_added' = 'outcome_marked';
-          
-          if (log.type === 'note_added') {
-            activityType = 'note_added';
-          } else if (details?.outcome === 'converted') {
-            activityType = 'deal_closed';
-          }
+          // Skip converted outcomes (they'll be shown as "deal_closed" instead)
+          if (outcome === 'converted') return;
 
+          // First outcome = "marked", subsequent = "updated"
+          const isFirstOutcome = index === 0;
+          
           activities.push({
-            id: log.id,
-            type: activityType,
+            id: `outcome_${log.id}`,
+            type: isFirstOutcome ? 'outcome_marked' : 'outcome_updated',
             timestamp: log.createdAt.toISOString(),
             leadName,
             actor: log.closer?.name || 'Unknown',
-            details: log.type === 'note_added' 
-              ? { content: details?.content, noteId: details?.noteId }
-              : { 
-                  outcome: details?.outcome,
-                  recordingLink: details?.recordingLink,
-                  notes: details?.notes,
-                  ...details 
-                },
+            details: {
+              outcome: outcome,
+              recordingLink: details?.recordingLink || null,
+              notes: details?.notes || null
+            }
           });
         });
+
+        // 4. Deal closed activity (ONLY if appointment outcome is converted)
+        if (appointment.outcome === 'converted') {
+          activities.push({
+            id: `deal_${appointment.id}`,
+            type: 'deal_closed',
+            timestamp: appointment.updatedAt.toISOString(),
+            leadName,
+            actor: appointment.closer?.name || 'Unknown',
+            details: {
+              outcome: 'converted',
+              amount: appointment.saleValue ? Number(appointment.saleValue) : null
+            }
+          });
+        }
       }
+
+      // 5. Notes added (all notes for this lead) - EXACT COPY FROM ADMIN
+      const notes = await prisma.note.findMany({
+        where: { leadEmail },
+        orderBy: {
+          createdAt: 'asc'
+        }
+      });
+
+      notes.forEach(note => {
+        activities.push({
+          id: `note_${note.id}`,
+          type: 'note_added',
+          timestamp: note.createdAt.toISOString(),
+          leadName,
+          actor: note.createdBy || 'Unknown',
+          details: {
+            content: note.content,
+            createdByType: note.createdByType
+          }
+        });
+      });
     }
 
     // Sort activities by timestamp
@@ -208,4 +220,3 @@ export async function GET(
     );
   }
 }
-
