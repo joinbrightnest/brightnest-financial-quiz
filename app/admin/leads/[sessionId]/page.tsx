@@ -363,7 +363,7 @@ export default function LeadDetailsPage() {
                           activity.type === 'quiz_completed' ? 'bg-purple-100' :
                           activity.type === 'call_booked' ? 'bg-blue-100' :
                           activity.type === 'deal_closed' ? 'bg-green-100' :
-                          activity.type === 'outcome_updated' ? 'bg-orange-100' :
+                          (activity.type === 'outcome_updated' || activity.type === 'outcome_marked') ? 'bg-orange-100' :
                           activity.type === 'task_created' ? 'bg-indigo-100' :
                           activity.type === 'task_started' ? 'bg-cyan-100' :
                           activity.type === 'task_finished' ? 'bg-teal-100' :
@@ -389,7 +389,7 @@ export default function LeadDetailsPage() {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                           )}
-                          {activity.type === 'outcome_updated' && (
+                          {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked') && (
                             <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
@@ -418,8 +418,8 @@ export default function LeadDetailsPage() {
                                 {activity.type === 'note_added' && (
                                   <span><span className="text-green-600">{activity.actor}</span> added a note to <span className="text-blue-600">{activity.leadName}</span></span>
                                 )}
-                                {activity.type === 'outcome_updated' && (
-                                  <span><span className="text-green-600">{activity.actor}</span> updated outcome to <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
+                                {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked') && (
+                                  <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
                                 )}
                                 {activity.type === 'task_created' && (
                                   <span><span className="text-green-600">{activity.actor}</span> created a task</span>
@@ -504,26 +504,12 @@ export default function LeadDetailsPage() {
                                       )}
                                     </div>
                                   )}
-                                  {activity.type === 'deal_closed' && (
-                                    <div className="flex items-center space-x-2">
-                                      {activity.details.amount && (
-                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                          ${Number(activity.details.amount).toFixed(2)}
-                                        </span>
-                                      )}
-                                      {activity.details.commission && (
-                                        <span className="text-xs text-slate-500">
-                                          Commission: ${Number(activity.details.commission).toFixed(2)}
-                                        </span>
-                                      )}
-                                    </div>
-                                  )}
                                   {activity.type === 'note_added' && activity.details.content && (
                                     <div className="mt-2 p-3 bg-white rounded border border-slate-200">
                                       <p className="text-sm text-slate-700">{activity.details.content}</p>
                                     </div>
                                   )}
-                                  {activity.type === 'outcome_updated' && (
+                                  {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed') && (
                                     <div className="mt-2">
                                       <div className="flex flex-wrap items-center gap-2">
                                         <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
@@ -539,11 +525,59 @@ export default function LeadDetailsPage() {
                                             ${Number(activity.details.saleValue).toFixed(2)}
                                           </span>
                                         )}
+                                        
+                                        {/* Dropdown button for call details */}
+                                        {(activity.details.recordingLink || activity.details.notes) && (
+                                          <button
+                                            onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
+                                            className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center ml-auto"
+                                          >
+                                            {expandedActivity === activity.id ? (
+                                              <>
+                                                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                                </svg>
+                                                Hide call details
+                                              </>
+                                            ) : (
+                                              <>
+                                                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                                View call details
+                                              </>
+                                            )}
+                                          </button>
+                                        )}
                                       </div>
-                                      {activity.details.notes && (
-                                        <div className="mt-2 p-3 bg-white rounded border border-slate-200">
-                                          <p className="text-xs font-semibold text-slate-700 mb-1">Notes:</p>
-                                          <p className="text-sm text-slate-600">{activity.details.notes}</p>
+                                      
+                                      {/* Expanded Call Details */}
+                                      {expandedActivity === activity.id && (activity.details.recordingLink || activity.details.notes) && (
+                                        <div className="mt-3 space-y-3 p-4 bg-white rounded-lg border border-slate-200">
+                                          {/* Recording Link */}
+                                          {activity.details.recordingLink && (
+                                            <div>
+                                              <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Recording Link</label>
+                                              <a 
+                                                href={activity.details.recordingLink} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                className="text-blue-600 hover:text-blue-800 text-sm font-medium underline break-all"
+                                              >
+                                                {activity.details.recordingLink}
+                                              </a>
+                                            </div>
+                                          )}
+                                          
+                                          {/* Call Notes */}
+                                          {activity.details.notes && (
+                                            <div>
+                                              <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Call Notes</label>
+                                              <div className="p-3 bg-slate-50 rounded border border-slate-200">
+                                                <p className="text-sm text-slate-700">{activity.details.notes}</p>
+                                              </div>
+                                            </div>
+                                          )}
                                         </div>
                                       )}
                                     </div>

@@ -128,13 +128,41 @@ export async function GET(
           return details?.appointmentId === appointment.id;
         });
 
-        // Add each outcome change as an activity
+        // Add each outcome change as an activity with call details
         appointmentOutcomeLogs.forEach((log, index) => {
           const details = log.details as any;
           const outcome = details?.outcome;
           
           // Skip converted outcomes (they'll be shown as "deal_closed" instead)
           if (outcome === 'converted') return;
+
+          // Get recording link and notes for this outcome
+          let recordingLink = null;
+          switch (outcome) {
+            case 'converted':
+              recordingLink = appointment.recordingLinkConverted;
+              break;
+            case 'not_interested':
+              recordingLink = appointment.recordingLinkNotInterested;
+              break;
+            case 'needs_follow_up':
+              recordingLink = appointment.recordingLinkNeedsFollowUp;
+              break;
+            case 'wrong_number':
+              recordingLink = appointment.recordingLinkWrongNumber;
+              break;
+            case 'no_answer':
+              recordingLink = appointment.recordingLinkNoAnswer;
+              break;
+            case 'callback_requested':
+              recordingLink = appointment.recordingLinkCallbackRequested;
+              break;
+            case 'rescheduled':
+              recordingLink = appointment.recordingLinkRescheduled;
+              break;
+            default:
+              recordingLink = appointment.recordingLink;
+          }
 
           // First outcome = "marked", subsequent = "updated"
           const isFirstOutcome = index === 0;
@@ -148,7 +176,9 @@ export async function GET(
             details: {
               outcome: outcome,
               saleValue: details?.saleValue ? Number(details.saleValue) : null,
-              isFirstOutcome
+              isFirstOutcome,
+              recordingLink: recordingLink || null,
+              notes: appointment.notes || null
             }
           });
         });
@@ -176,7 +206,54 @@ export async function GET(
             actor: appointment.closer?.name || 'Unknown',
             details: {
               amount: appointment.saleValue ? Number(appointment.saleValue) : null,
-              commission: appointment.commissionAmount ? Number(appointment.commissionAmount) : null
+              commission: appointment.commissionAmount ? Number(appointment.commissionAmount) : null,
+              recordingLink: appointment.recordingLinkConverted || appointment.recordingLink || null,
+              notes: appointment.notes || null
+            }
+          });
+        }
+        
+        // If appointment has outcome but no audit logs yet, still show call details
+        if (appointment.outcome && appointmentOutcomeLogs.length === 0 && appointment.outcome !== 'converted') {
+          let recordingLink = null;
+          switch (appointment.outcome) {
+            case 'converted':
+              recordingLink = appointment.recordingLinkConverted;
+              break;
+            case 'not_interested':
+              recordingLink = appointment.recordingLinkNotInterested;
+              break;
+            case 'needs_follow_up':
+              recordingLink = appointment.recordingLinkNeedsFollowUp;
+              break;
+            case 'wrong_number':
+              recordingLink = appointment.recordingLinkWrongNumber;
+              break;
+            case 'no_answer':
+              recordingLink = appointment.recordingLinkNoAnswer;
+              break;
+            case 'callback_requested':
+              recordingLink = appointment.recordingLinkCallbackRequested;
+              break;
+            case 'rescheduled':
+              recordingLink = appointment.recordingLinkRescheduled;
+              break;
+            default:
+              recordingLink = appointment.recordingLink;
+          }
+
+          activities.push({
+            id: `outcome_${appointment.id}`,
+            type: 'outcome_marked',
+            timestamp: appointment.updatedAt.toISOString(),
+            leadName,
+            actor: appointment.closer?.name || 'Unknown',
+            details: {
+              outcome: appointment.outcome,
+              saleValue: appointment.saleValue ? Number(appointment.saleValue) : null,
+              isFirstOutcome: true,
+              recordingLink: recordingLink || null,
+              notes: appointment.notes || null
             }
           });
         }
