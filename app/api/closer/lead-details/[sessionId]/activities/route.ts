@@ -119,14 +119,11 @@ export async function GET(
           },
         });
 
-        // Get ALL audit logs (outcome updates AND notes) from CloserAuditLog
-        const allAuditLogs = await prisma.closerAuditLog.findMany({
+        // Get outcome updates from CloserAuditLog
+        const outcomeAuditLogs = await prisma.closerAuditLog.findMany({
           where: {
-            closerId: appointment.closerId || undefined,
-            OR: [
-              { action: 'appointment_outcome_updated' },
-              { type: 'note_added' }
-            ]
+            action: 'appointment_outcome_updated',
+            closerId: appointment.closerId || undefined
           },
           include: {
             closer: {
@@ -141,7 +138,27 @@ export async function GET(
           }
         });
 
-        // Filter logs for this specific appointment
+        // Get note activities from CloserAuditLog
+        const noteAuditLogs = await prisma.closerAuditLog.findMany({
+          where: {
+            type: 'note_added',
+            closerId: appointment.closerId || undefined
+          },
+          include: {
+            closer: {
+              select: {
+                id: true,
+                name: true
+              }
+            }
+          },
+          orderBy: {
+            createdAt: 'asc'
+          }
+        });
+
+        // Combine and filter logs for this specific appointment
+        const allAuditLogs = [...outcomeAuditLogs, ...noteAuditLogs];
         const appointmentLogs = allAuditLogs.filter(log => {
           const details = log.details as any;
           return details?.appointmentId === appointment.id;
