@@ -77,16 +77,16 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
       <AnimatePresence mode="wait">
         <motion.div
           key={index}
-          className="w-full h-full flex flex-col items-center justify-center relative px-4 pb-16 sm:pb-8"
+          className="w-full h-full flex flex-col items-center justify-center relative px-4"
           style={{ backgroundColor: current.bg }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1, ease: "easeInOut" }}
         >
-          {/* Content wrapper - centered vertically */}
+          {/* Content wrapper - centered vertically with reduced top padding */}
           <motion.div
-            className="flex flex-col items-center justify-center text-center max-w-2xl"
+            className="flex flex-col items-center justify-center text-center max-w-2xl -mt-12 sm:mt-0"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index === 0 ? 1 : 0.5, duration: 0.8 }}
@@ -152,6 +152,32 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
                   opacity: i <= index ? 1 : 0.3
                 }}
                 transition={{ duration: 0.3 }}
+              />
+            ))}
+          </motion.div>
+
+          {/* Loading dots - mobile only */}
+          <motion.div
+            className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex space-x-2 sm:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 0.6 }}
+          >
+            {[0, 1, 2, 3].map((i) => (
+              <motion.div
+                key={i}
+                className="w-2 h-2 rounded-full"
+                style={{ backgroundColor: current.color }}
+                animate={{
+                  opacity: [0.3, 1, 0.3],
+                  scale: [1, 1.2, 1]
+                }}
+                transition={{
+                  duration: 1.2,
+                  repeat: Infinity,
+                  delay: i * 0.2,
+                  ease: "easeInOut"
+                }}
               />
             ))}
           </motion.div>
