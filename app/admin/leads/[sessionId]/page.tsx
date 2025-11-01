@@ -467,23 +467,9 @@ export default function LeadDetailsPage() {
                                 })}
                               </p>
                               
-                              {/* Outcome activities - Always show button, even if details are missing */}
-                              {(() => {
-                                const conditionResult = activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed';
-                                if (isOutcomeActivity) {
-                                  console.log(`🔴 BUTTON CONDITION DEBUG for ${activity.id}:`, {
-                                    activityType: activity.type,
-                                    conditionResult,
-                                    typeCheck1: activity.type === 'outcome_updated',
-                                    typeCheck2: activity.type === 'outcome_marked',
-                                    typeCheck3: activity.type === 'deal_closed',
-                                    willRender: conditionResult
-                                  });
-                                }
-                                return conditionResult;
-                              })() && (
+                              {/* Show "View Details" for outcome updates */}
+                              {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed') && (
                                 <div className="mt-3">
-                                  {/* Outcome Badges */}
                                   <div className="flex flex-wrap items-center gap-2 mb-2">
                                     {activity.details?.outcome && (
                                       <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
@@ -502,56 +488,28 @@ export default function LeadDetailsPage() {
                                     )}
                                   </div>
                                   
-                                  {/* TEST: Always visible div to confirm rendering */}
-                                  <div className="mt-2 p-2 bg-red-500 text-white text-xs font-bold">
-                                    TEST: Button should appear below this
-                                  </div>
-                                  
-                                  {/* View call details button - MUST APPEAR FOR ALL OUTCOME ACTIVITIES */}
                                   <button
-                                    onClick={() => {
-                                      setExpandedActivity(expandedActivity === activity.id ? null : activity.id);
-                                    }}
-                                    className="mt-2 text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center bg-yellow-200 border-2 border-blue-500 px-3 py-2 rounded"
+                                    onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
+                                    className="mt-2 text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center"
                                   >
-                                    {expandedActivity === activity.id ? (
-                                      <>
-                                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                                        </svg>
-                                        Hide call details
-                                      </>
-                                    ) : (
-                                      <>
-                                        View call details
-                                        <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                        </svg>
-                                      </>
-                                    )}
+                                    {expandedActivity === activity.id ? 'Hide call details' : 'View call details'}
+                                    <svg className={`w-4 h-4 ml-1 transition-transform ${expandedActivity === activity.id ? '-rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
                                   </button>
-                                  
-                                  {/* Expanded Call Details */}
+
                                   {expandedActivity === activity.id && (
                                     <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-                                      {/* Recording Link */}
                                       <div className="bg-white rounded-lg p-3 border border-slate-300">
                                         <p className="text-xs font-semibold text-slate-900 mb-1">Recording Link</p>
                                         {activity.details?.recordingLink ? (
-                                          <a 
-                                            href={activity.details.recordingLink} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            className="text-sm text-blue-600 hover:text-blue-800 underline break-all"
-                                          >
+                                          <a href={activity.details.recordingLink} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:text-blue-800 underline break-all">
                                             {activity.details.recordingLink}
                                           </a>
                                         ) : (
                                           <p className="text-sm text-slate-400 italic">No recording available</p>
                                         )}
                                       </div>
-                                      
-                                      {/* Call Notes */}
                                       <div className="bg-white rounded-lg p-3 border border-slate-300">
                                         <p className="text-xs font-semibold text-slate-900 mb-1">Call Notes</p>
                                         {activity.details?.notes ? (
@@ -565,7 +523,7 @@ export default function LeadDetailsPage() {
                                 </div>
                               )}
                               
-                              {/* Activity details - EXCLUDE outcome activities (they're handled above) */}
+                              {/* Activity details for other types */}
                               {activity.details && !(activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed') && (
                                 <div className="mt-3 text-sm text-slate-600">
                                   {activity.type === 'quiz_completed' && (
