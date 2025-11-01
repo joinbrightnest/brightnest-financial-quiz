@@ -235,8 +235,8 @@ export default function CloserDashboard() {
             });
             if (response.ok) {
                 const data = await response.json();
-                if (data.lead && data.lead.sessionId) {
-                    router.push(`/closers/leads/${data.lead.sessionId}`);
+                if (data.lead && data.lead.id) {
+                    router.push(`/closers/leads/${data.lead.id}`);
                 } else {
                     setError('Could not find a valid session for this lead.');
                 }

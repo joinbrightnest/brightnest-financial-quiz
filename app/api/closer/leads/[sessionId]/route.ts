@@ -19,7 +19,7 @@ export async function GET(
 
     const lead = await prisma.quizCompletion.findUnique({
       where: {
-        sessionId,
+        id: sessionId,
       },
       select: {
         id: true,
@@ -59,6 +59,7 @@ export async function GET(
 
     const formattedLead = {
       ...lead,
+      sessionId: lead.id, // Ensure sessionId is in the response for the page
       answers: lead.answers.map(a => ({
         questionText: a.question?.prompt || 'Unknown Question',
         answer: a.value,
