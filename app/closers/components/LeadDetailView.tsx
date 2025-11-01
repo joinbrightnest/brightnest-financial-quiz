@@ -417,28 +417,6 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
 
           {activeTab === 'notes' && (
             <div className="space-y-6">
-                {/* Call Details */}
-                <div className="bg-white rounded-xl border border-slate-200 p-6">
-                    <div className="flex items-center mb-6">
-                        <Phone className="w-6 h-6 text-slate-500 mr-3" />
-                        <h3 className="text-lg font-semibold text-slate-900">Call Details</h3>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Recording Link</h4>
-                            <p className="text-sm text-slate-600 mt-1">
-                                {leadData.appointment?.recordingLink || 'No recording available'}
-                            </p>
-                        </div>
-                        <div>
-                            <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Call Notes</h4>
-                            <p className="text-sm text-slate-600 mt-1">
-                                {leadData.appointment?.closerNotes || 'No notes available'}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
                 {/* Notes Section */}
                 <div className="bg-white rounded-xl border border-slate-200 p-6">
                     <div className="flex justify-between items-center mb-6">
