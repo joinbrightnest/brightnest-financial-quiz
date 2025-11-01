@@ -49,6 +49,13 @@ export default function BookCallPage() {
     window.dispatchEvent(new MessageEvent('message', testEvent));
   };
 
+  // Clear affiliate cookie on normal (non-affiliate) book-call page
+  useEffect(() => {
+    // Clear any existing affiliate cookie since this is the normal booking page (not an affiliate link)
+    document.cookie = 'affiliate_ref=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    console.log('✅ Cleared affiliate cookie (normal booking page)');
+  }, []);
+
   // Fetch active closer's Calendly link and quiz session data
   useEffect(() => {
     const fetchDataAndPreFillCalendly = async () => {
@@ -224,14 +231,16 @@ export default function BookCallPage() {
           sessionId
         });
         
-        // Get affiliate code from cookie
+        // Get affiliate code from cookie (should be null on normal booking page since we clear it)
         const affiliateCode = document.cookie
           .split('; ')
           .find(row => row.startsWith('affiliate_ref='))
           ?.split('=')[1];
 
         // Track the booking if there's an affiliate
+        // Note: On normal booking page, this should be null since we clear the cookie
         if (affiliateCode) {
+          console.log("⚠️ WARNING: Affiliate code found on normal booking page:", affiliateCode);
           try {
             console.log("📞 Tracking booking for affiliate:", affiliateCode);
             await fetch('/api/track-booking', {
