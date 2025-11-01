@@ -2800,10 +2800,50 @@ export default function AdminDashboard() {
                                         </div>
                                       )}
 
-                                      {activity.type === 'call_booked' && activity.details?.closerName && (
-                                        <p className="text-xs text-slate-600 mt-2">
-                                          <span className="font-medium">Assigned to:</span> {activity.details.closerName}
-                                        </p>
+                                      {activity.type === 'call_booked' && (
+                                        <div className="mt-2">
+                                          {activity.details?.closerName && (
+                                            <p className="text-xs text-slate-600 mb-2">
+                                              <span className="font-medium">Assigned to:</span> {activity.details.closerName}
+                                            </p>
+                                          )}
+                                          
+                                          {/* Show dropdown if there's a closer and recording link or notes */}
+                                          {activity.details?.closerName && (activity.details?.recordingLink || activity.details?.notes) && (
+                                            <>
+                                              <button 
+                                                onClick={() => {
+                                                  const modal = document.getElementById(`call-details-${activity.id}`);
+                                                  if (modal) modal.classList.toggle('hidden');
+                                                }}
+                                                className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                                              >
+                                                View call details →
+                                              </button>
+                                              <div id={`call-details-${activity.id}`} className="hidden mt-3 bg-white rounded-lg p-3 border border-slate-300 space-y-3">
+                                                {activity.details?.recordingLink && (
+                                                  <div>
+                                                    <p className="text-xs font-semibold text-slate-900 mb-1">Recording Link:</p>
+                                                    <a 
+                                                      href={activity.details.recordingLink} 
+                                                      target="_blank" 
+                                                      rel="noopener noreferrer"
+                                                      className="text-sm text-blue-600 hover:text-blue-700 hover:underline break-all"
+                                                    >
+                                                      {activity.details.recordingLink}
+                                                    </a>
+                                                  </div>
+                                                )}
+                                                {activity.details?.notes && (
+                                                  <div>
+                                                    <p className="text-xs font-semibold text-slate-900 mb-1">Call Notes:</p>
+                                                    <p className="text-sm text-slate-700 whitespace-pre-wrap">{activity.details.notes}</p>
+                                                  </div>
+                                                )}
+                                              </div>
+                                            </>
+                                          )}
+                                        </div>
                                       )}
 
                                       {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated') && activity.details?.outcome && (

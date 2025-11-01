@@ -111,6 +111,39 @@ export async function GET(
       });
 
       if (appointment) {
+        // Determine which recording link to use (priority: outcome-specific > general)
+        let recordingLink = null;
+        if (appointment.outcome) {
+          switch (appointment.outcome) {
+            case 'converted':
+              recordingLink = appointment.recordingLinkConverted;
+              break;
+            case 'not_interested':
+              recordingLink = appointment.recordingLinkNotInterested;
+              break;
+            case 'needs_follow_up':
+              recordingLink = appointment.recordingLinkNeedsFollowUp;
+              break;
+            case 'wrong_number':
+              recordingLink = appointment.recordingLinkWrongNumber;
+              break;
+            case 'no_answer':
+              recordingLink = appointment.recordingLinkNoAnswer;
+              break;
+            case 'callback_requested':
+              recordingLink = appointment.recordingLinkCallbackRequested;
+              break;
+            case 'rescheduled':
+              recordingLink = appointment.recordingLinkRescheduled;
+              break;
+            default:
+              recordingLink = appointment.recordingLink;
+          }
+        } else {
+          // No outcome set yet, use general recording link
+          recordingLink = appointment.recordingLink;
+        }
+
         activities.push({
           id: `call_${appointment.id}`,
           type: 'call_booked',
@@ -118,7 +151,11 @@ export async function GET(
           leadName,
           details: {
             scheduledAt: appointment.scheduledAt.toISOString(),
-            closerName: appointment.closer?.name || null
+            closerName: appointment.closer?.name || null,
+            closerId: appointment.closerId || null,
+            recordingLink: recordingLink || null,
+            notes: appointment.notes || null,
+            outcome: appointment.outcome || null
           }
         });
 
