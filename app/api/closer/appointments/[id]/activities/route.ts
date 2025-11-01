@@ -120,39 +120,9 @@ export async function GET(
 
     // 2. Call booked activity
     if (appointment) {
-      // Determine which recording link to use (priority: outcome-specific > general)
-      let recordingLink = null;
-      if (appointment.outcome) {
-        switch (appointment.outcome) {
-          case 'converted':
-            recordingLink = appointment.recordingLinkConverted;
-            break;
-          case 'not_interested':
-            recordingLink = appointment.recordingLinkNotInterested;
-            break;
-          case 'needs_follow_up':
-            recordingLink = appointment.recordingLinkNeedsFollowUp;
-            break;
-          case 'wrong_number':
-            recordingLink = appointment.recordingLinkWrongNumber;
-            break;
-          case 'no_answer':
-            recordingLink = appointment.recordingLinkNoAnswer;
-            break;
-          case 'callback_requested':
-            recordingLink = appointment.recordingLinkCallbackRequested;
-            break;
-          case 'rescheduled':
-            recordingLink = appointment.recordingLinkRescheduled;
-            break;
-          default:
-            recordingLink = appointment.recordingLink;
-        }
-      } else {
-        // No outcome set yet, use general recording link
-        recordingLink = appointment.recordingLink;
-      }
-
+      // For call_booked, we only show the initial booking info
+      // Don't include recording link/notes here - those belong to outcome updates
+      // This ensures call_booked shows when the call was scheduled, not call details
       activities.push({
         id: `call_${appointment.id}`,
         type: 'call_booked',
@@ -162,9 +132,8 @@ export async function GET(
           scheduledAt: appointment.scheduledAt.toISOString(),
           closerName: appointment.closer?.name || null,
           closerId: appointment.closerId || null,
-          recordingLink: recordingLink || null,
-          notes: appointment.notes || null,
-          outcome: appointment.outcome || null
+          // Don't include recordingLink/notes here - those are specific to outcome updates
+          // Call details should only be shown in outcome_marked/outcome_updated activities
         }
       });
 
