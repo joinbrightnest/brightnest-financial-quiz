@@ -130,34 +130,9 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
             )}
           </motion.div>
 
-          {/* Loading dots - mobile only - must be visible above progress indicators */}
-          <div className="absolute bottom-[140px] sm:bottom-20 left-1/2 -translate-x-1/2 flex space-x-4 sm:hidden z-[100] items-center pointer-events-none">
-            {[0, 1, 2, 3].map((i) => (
-              <motion.div
-                key={`dot-${i}-${index}`}
-                className="w-5 h-5 rounded-full shadow-lg"
-                style={{ 
-                  backgroundColor: current.color,
-                  opacity: 0.8,
-                  boxShadow: `0 2px 4px rgba(0,0,0,0.2)`
-                }}
-                animate={{
-                  opacity: [0.6, 1, 0.6],
-                  scale: [1, 1.4, 1]
-                }}
-                transition={{
-                  duration: 1.2,
-                  repeat: Infinity,
-                  delay: i * 0.15,
-                  ease: "easeInOut"
-                }}
-              />
-            ))}
-          </div>
-
           {/* Progress indicator - always at bottom, visible */}
           <motion.div
-            className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 z-40"
+            className="absolute bottom-12 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 z-40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.6 }}
