@@ -31,14 +31,29 @@ export async function POST(req: NextRequest) {
     }
     
     const closer = await prisma.closer.findUnique({ where: { id: closerId } });
+    const closerName = closer?.name || `Closer ${closerId}`;
 
     const newNote = await prisma.note.create({
       data: {
         leadEmail,
         content,
-        createdBy: closer?.name || `Closer ${closerId}`,
+        createdBy: closerName,
         createdByType: 'closer',
       },
+    });
+
+    // Also create an audit log for this event
+    await prisma.closerAuditLog.create({
+      data: {
+        closerId: closerId,
+        type: 'note_added',
+        description: `${closerName} added a note.`,
+        details: {
+          appointmentId: appointment.id,
+          noteId: newNote.id,
+          content: newNote.content,
+        }
+      }
     });
 
     return NextResponse.json(newNote, { status: 201 });
