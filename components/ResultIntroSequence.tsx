@@ -132,7 +132,7 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
 
           {/* Progress indicator - always at bottom, visible - higher on mobile to clear browser chrome */}
           <motion.div
-            className="absolute bottom-24 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 z-40"
+            className="absolute bottom-32 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 z-40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.6 }}
