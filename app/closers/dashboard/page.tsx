@@ -1145,22 +1145,27 @@ export default function CloserDashboard() {
                                           <div className="mt-3 text-sm text-slate-600 space-y-2">
                                             {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated' || activity.type === 'deal_closed') && (
                                               <div>
-                                                <div className="flex flex-wrap items-center gap-2 mb-2 justify-between">
-                                                  <div className="flex flex-wrap items-center gap-2">
-                                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
-                                                      {activity.details.outcome?.replace(/_/g, ' ').toUpperCase()}
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
+                                                    {activity.details.outcome?.replace(/_/g, ' ').toUpperCase()}
+                                                  </span>
+                                                  {activity.details.previousOutcome && (
+                                                    <span className="text-xs text-slate-500">
+                                                      (was: {activity.details.previousOutcome.replace(/_/g, ' ')})
                                                     </span>
-                                                    {activity.details.saleValue && (
-                                                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                        ${Number(activity.details.saleValue).toFixed(2)}
-                                                      </span>
-                                                    )}
-                                                  </div>
-                                                  
-                                                  {/* Dropdown button for call details - Always show for outcome activities */}
+                                                  )}
+                                                  {activity.details.saleValue && (
+                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                      ${Number(activity.details.saleValue).toFixed(2)}
+                                                    </span>
+                                                  )}
+                                                </div>
+                                                
+                                                {/* View call details button - Same style and placement as "View quiz answers" */}
+                                                <div className="mt-2">
                                                   <button
                                                     onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
-                                                    className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center whitespace-nowrap"
+                                                    className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center"
                                                   >
                                                     {expandedActivity === activity.id ? (
                                                       <>
@@ -1171,10 +1176,10 @@ export default function CloserDashboard() {
                                                       </>
                                                     ) : (
                                                       <>
-                                                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                                        </svg>
                                                         View call details
+                                                        <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                        </svg>
                                                       </>
                                                     )}
                                                   </button>
@@ -1182,16 +1187,16 @@ export default function CloserDashboard() {
                                                 
                                                 {/* Expanded Call Details */}
                                                 {expandedActivity === activity.id && (
-                                                  <div className="mt-3 space-y-3 p-4 bg-white rounded-lg border border-slate-200">
+                                                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
                                                     {/* Recording Link */}
-                                                    <div>
-                                                      <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Recording Link</label>
-                                                      {activity.details.recordingLink ? (
+                                                    <div className="bg-white rounded-lg p-3 border border-slate-300">
+                                                      <p className="text-xs font-semibold text-slate-900 mb-1">Recording Link</p>
+                                                      {activity.details?.recordingLink ? (
                                                         <a 
                                                           href={activity.details.recordingLink} 
                                                           target="_blank" 
                                                           rel="noopener noreferrer"
-                                                          className="text-blue-600 hover:text-blue-800 text-sm font-medium underline break-all"
+                                                          className="text-sm text-blue-600 hover:text-blue-800 underline break-all"
                                                         >
                                                           {activity.details.recordingLink}
                                                         </a>
@@ -1201,12 +1206,10 @@ export default function CloserDashboard() {
                                                     </div>
                                                     
                                                     {/* Call Notes */}
-                                                    <div>
-                                                      <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Call Notes</label>
-                                                      {activity.details.notes ? (
-                                                        <div className="p-3 bg-slate-50 rounded border border-slate-200">
-                                                          <p className="text-sm text-slate-700">{activity.details.notes}</p>
-                                                        </div>
+                                                    <div className="bg-white rounded-lg p-3 border border-slate-300">
+                                                      <p className="text-xs font-semibold text-slate-900 mb-1">Call Notes</p>
+                                                      {activity.details?.notes ? (
+                                                        <p className="text-sm text-slate-700 whitespace-pre-wrap">{activity.details.notes}</p>
                                                       ) : (
                                                         <p className="text-sm text-slate-400 italic">No notes available</p>
                                                       )}

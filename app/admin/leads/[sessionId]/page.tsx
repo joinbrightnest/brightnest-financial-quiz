@@ -478,27 +478,29 @@ export default function LeadDetailsPage() {
                                     )}
                                   </div>
                                   
-                                  {/* View call details button - Same style as "View quiz answers" */}
-                                  <button
-                                    onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
-                                    className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center mt-2"
-                                  >
-                                    {expandedActivity === activity.id ? (
-                                      <>
-                                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                                        </svg>
-                                        Hide call details
-                                      </>
-                                    ) : (
-                                      <>
-                                        View call details
-                                        <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                        </svg>
-                                      </>
-                                    )}
-                                  </button>
+                                  {/* View call details button - Same style and placement as "View quiz answers" */}
+                                  <div className="mt-2">
+                                    <button
+                                      onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
+                                      className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center"
+                                    >
+                                      {expandedActivity === activity.id ? (
+                                        <>
+                                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                          </svg>
+                                          Hide call details
+                                        </>
+                                      ) : (
+                                        <>
+                                          View call details
+                                          <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                          </svg>
+                                        </>
+                                      )}
+                                    </button>
+                                  </div>
                                   
                                   {/* Expanded Call Details */}
                                   {expandedActivity === activity.id && (
