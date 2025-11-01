@@ -129,17 +129,21 @@ export async function GET(request: NextRequest) {
         // For the funnel:
         // - "Completed" counts only completed quiz sessions (strict sequential requirement)
         // - "Booked Calls" counts appointments with completed quiz sessions (sequential flow)
-        // - "Sales" counts ALL affiliate sales (includes direct bookings without quiz completion)
-        // This ensures we show all affiliate sales while maintaining the quiz completion flow for bookings
+        // - "Sales" counts ALL affiliate sales to match Lead Analytics
+        // Note: Some sales may not have completed quiz sessions due to:
+        //   1. Direct Calendly bookings with affiliate codes entered in form
+        //   2. Manual appointment creation with affiliate codes
+        //   3. Email mismatches (different emails used for quiz vs booking)
         
-        // Booked calls: only count appointments with completed quiz sessions (sequential flow)
+        // Match appointments to completed quiz sessions by email (with normalization)
         const validBookedAppointments = allAppointments.filter(apt => {
-          const appointmentEmail = apt.customerEmail?.toLowerCase().trim();
-          return appointmentEmail && completedSessionEmails.has(appointmentEmail);
+          if (!apt.customerEmail) return false;
+          const appointmentEmail = apt.customerEmail.toLowerCase().trim();
+          return completedSessionEmails.has(appointmentEmail);
         });
         
-        // Sales: count ALL affiliate sales (all appointments with affiliate code and outcome='converted')
-        // This matches Lead Analytics and shows all affiliate sales, even if they didn't complete the quiz
+        // Sales: count ALL affiliate sales (matches Lead Analytics)
+        // This includes sales from direct bookings, manual appointments, or email mismatches
         const allAffiliateSales = allAppointments.filter(apt => apt.outcome === 'converted');
 
         // Calculate conversion rates
@@ -148,11 +152,11 @@ export async function GET(request: NextRequest) {
         const quizCount = quizSessions.length;
         const completionCount = completedQuizSessions.length;
         
-        // Count bookings (from appointments with completed quiz sessions) and sales (all affiliate sales)
+        // Count bookings (from completed quiz flow) and sales (all affiliate sales)
         const bookingCount = validBookedAppointments.length;
         const saleCount = allAffiliateSales.length;
 
-        // Calculate actual revenue from ALL converted affiliate appointments (total sale values)
+        // Calculate actual revenue from ALL converted affiliate appointments
         const convertedAppointments = allAffiliateSales.filter(apt => apt.saleValue);
         const totalRevenue = convertedAppointments.reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
 
