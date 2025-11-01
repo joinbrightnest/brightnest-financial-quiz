@@ -102,6 +102,21 @@ export default function LeadDetailsPage() {
         throw new Error("Failed to fetch activities");
       }
       const data = await response.json();
+      console.log('Activities data:', data.activities);
+      // Log outcome activities to verify call details are included
+      const outcomeActivities = (data.activities || []).filter((a: any) => 
+        a.type === 'outcome_marked' || a.type === 'outcome_updated' || a.type === 'deal_closed'
+      );
+      outcomeActivities.forEach((activity: any) => {
+        console.log(`Activity ${activity.id}:`, {
+          type: activity.type,
+          outcome: activity.details?.outcome,
+          hasRecordingLink: !!activity.details?.recordingLink,
+          hasNotes: !!activity.details?.notes,
+          recordingLink: activity.details?.recordingLink,
+          notes: activity.details?.notes
+        });
+      });
       setActivities(data.activities || []);
     } catch (err) {
       console.error("Error fetching activities:", err);
