@@ -68,6 +68,81 @@ export async function GET(
       );
     }
 
+    // Determine status based on appointment outcome (same logic as admin dashboard)
+    let status = 'Completed'; // Default for completed quiz sessions
+    if (appointment) {
+      if (appointment.outcome) {
+        // Show actual call outcome (same as admin basic-stats route)
+        switch (appointment.outcome) {
+          case 'converted':
+            status = 'Purchased (Call)';
+            break;
+          case 'not_interested':
+            status = 'Not Interested';
+            break;
+          case 'needs_follow_up':
+            status = 'Needs Follow Up';
+            break;
+          case 'wrong_number':
+            status = 'Wrong Number';
+            break;
+          case 'no_answer':
+            status = 'No Answer';
+            break;
+          case 'callback_requested':
+            status = 'Callback Requested';
+            break;
+          case 'rescheduled':
+            status = 'Rescheduled';
+            break;
+          default:
+            status = 'Booked';
+        }
+      } else {
+        // Appointment exists but no outcome yet
+        status = 'Booked';
+      }
+    }
+
+    // Determine source based on affiliate code (same logic as admin)
+    // Check both quiz session affiliate code AND appointment affiliate code (like admin basic-stats)
+    let source = 'Website'; // Default
+    let affiliate = null;
+    const affiliateCodeToCheck = quizSession.affiliateCode || appointment?.affiliateCode;
+    
+    if (affiliateCodeToCheck) {
+      // First try to find by referral code
+      affiliate = await prisma.affiliate.findUnique({
+        where: { referralCode: affiliateCodeToCheck },
+        select: {
+          name: true,
+          referralCode: true,
+        }
+      });
+
+      // If not found, try to find by custom tracking link
+      if (!affiliate) {
+        const affiliateResult = await prisma.$queryRaw`
+          SELECT "name", "referral_code"
+          FROM "affiliates"
+          WHERE "custom_tracking_link" = ${`/${affiliateCodeToCheck}`}
+          LIMIT 1
+        `;
+        
+        if (Array.isArray(affiliateResult) && affiliateResult.length > 0) {
+          affiliate = {
+            name: affiliateResult[0].name,
+            referralCode: affiliateResult[0].referral_code,
+          };
+        }
+      }
+      
+      // Set source from affiliate name if found
+      if (affiliate) {
+        source = affiliate.name;
+      }
+    }
+
     // Transform the data for the lead details view (EXACT COPY FROM ADMIN)
     const leadData = {
       id: quizSession.id,
@@ -75,7 +150,7 @@ export async function GET(
       quizType: quizSession.quizType,
       startedAt: quizSession.startedAt.toISOString(),
       completedAt: quizSession.completedAt?.toISOString() || null,
-      status: quizSession.status,
+      status: status, // Use calculated status, not raw quizSession.status
       durationMs: quizSession.durationMs,
       result: quizSession.result ? {
         archetype: quizSession.result.archetype,
@@ -93,6 +168,10 @@ export async function GET(
         name: nameAnswer?.value || nameAnswer?.answer || nameAnswer?.answerValue || "N/A",
         role: "user",
       },
+      closer: appointment?.closer ? {
+        id: appointment.closer.id,
+        name: appointment.closer.name,
+      } : null,
       appointment: appointment ? {
         id: appointment.id,
         outcome: appointment.outcome,
@@ -102,6 +181,7 @@ export async function GET(
         updatedAt: appointment.updatedAt.toISOString(),
       } : null,
       dealClosedAt: appointment?.outcome === 'converted' ? appointment.updatedAt.toISOString() : null,
+      source: source, // Include calculated source
     };
 
     return NextResponse.json(leadData);
