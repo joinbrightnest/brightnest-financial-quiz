@@ -60,8 +60,7 @@ export async function POST(req: NextRequest) {
     await prisma.closerAuditLog.create({
       data: {
         closerId: closerId,
-        type: 'note_added',
-        description: `${closerName} added a note.`,
+        action: 'note_added',
         details: {
           appointmentId: appointment.id,
           noteId: newNote.id,
