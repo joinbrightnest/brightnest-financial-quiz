@@ -130,9 +130,33 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
             )}
           </motion.div>
 
+          {/* Loading dots - mobile only - must be visible */}
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex space-x-3 sm:hidden z-50 items-center">
+            {[0, 1, 2, 3].map((i) => (
+              <motion.div
+                key={i}
+                className="w-4 h-4 rounded-full"
+                style={{ 
+                  backgroundColor: current.color,
+                  opacity: 0.7
+                }}
+                animate={{
+                  opacity: [0.7, 1, 0.7],
+                  scale: [1, 1.3, 1]
+                }}
+                transition={{
+                  duration: 1.2,
+                  repeat: Infinity,
+                  delay: i * 0.15,
+                  ease: "easeInOut"
+                }}
+              />
+            ))}
+          </div>
+
           {/* Progress indicator - always at bottom, visible */}
           <motion.div
-            className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2"
+            className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 z-40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.6 }}
@@ -152,34 +176,6 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
                   opacity: i <= index ? 1 : 0.3
                 }}
                 transition={{ duration: 0.3 }}
-              />
-            ))}
-          </motion.div>
-
-          {/* Loading dots - mobile only */}
-          <motion.div
-            className="absolute bottom-20 left-1/2 -translate-x-1/2 flex space-x-3 sm:hidden z-50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.6 }}
-          >
-            {[0, 1, 2, 3].map((i) => (
-              <motion.div
-                key={i}
-                className="w-3 h-3 rounded-full"
-                style={{ 
-                  backgroundColor: current.color
-                }}
-                animate={{
-                  opacity: [0.4, 1, 0.4],
-                  scale: [1, 1.4, 1]
-                }}
-                transition={{
-                  duration: 1.2,
-                  repeat: Infinity,
-                  delay: i * 0.15,
-                  ease: "easeInOut"
-                }}
               />
             ))}
           </motion.div>
