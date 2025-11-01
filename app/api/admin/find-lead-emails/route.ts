@@ -11,18 +11,22 @@ export async function GET(request: NextRequest) {
     );
   }
   
-  try {
+    try {
     const { searchParams } = new URL(request.url);
     const name = searchParams.get("name");
+    const email = searchParams.get("email");
     
-    if (!name) {
+    if (!name && !email) {
       return NextResponse.json(
-        { error: "Name parameter is required (e.g., ?name=aluna)" },
+        { error: "Name or email parameter is required (e.g., ?name=aluna or ?email=afdd@gma.yi)" },
         { status: 400 }
       );
     }
 
-    // Search for quiz sessions with this name in answers
+    const searchTerm = name || email;
+    const searchByEmail = !!email;
+
+    // Search for quiz sessions with this name or email in answers
     const allQuizSessions = await prisma.quizSession.findMany({
       include: {
         answers: {
@@ -37,11 +41,19 @@ export async function GET(request: NextRequest) {
       take: 100
     });
 
-    // Filter sessions that have the name in any answer
+    // Filter sessions that have the name or email in any answer
     const matchingSessions = allQuizSessions.filter(session => {
       return session.answers.some(answer => {
         const value = String(answer.value || '').toLowerCase();
-        return value.includes(name.toLowerCase());
+        const searchLower = searchTerm.toLowerCase();
+        
+        if (searchByEmail) {
+          // For email search, be more precise - match the full email
+          return value === searchLower || value.includes(searchLower);
+        } else {
+          // For name search, check if name is contained
+          return value.includes(searchLower);
+        }
       });
     });
 
@@ -52,7 +64,7 @@ export async function GET(request: NextRequest) {
       const nameAnswer = session.answers.find(a => 
         (a.question?.prompt?.toLowerCase().includes('name') || 
          a.question?.type === 'text') &&
-        String(a.value || '').toLowerCase().includes(name.toLowerCase())
+        (!name || String(a.value || '').toLowerCase().includes(name.toLowerCase()))
       );
       
       const emailAnswer = session.answers.find(a => 
@@ -65,13 +77,32 @@ export async function GET(request: NextRequest) {
 
       // Find appointments matching the quiz email or name
       let appointment = null;
+      
+      // Build search conditions
+      const appointmentWhere: any[] = [];
+      
       if (quizEmail) {
+        appointmentWhere.push({ customerEmail: { equals: quizEmail, mode: 'insensitive' } });
+      }
+      
+      if (quizName && quizName !== 'Unknown') {
+        appointmentWhere.push({ customerName: { contains: quizName, mode: 'insensitive' } });
+      }
+      
+      // Also search by the original search term if it's an email
+      if (searchByEmail && searchTerm) {
+        appointmentWhere.push({ customerEmail: { equals: searchTerm, mode: 'insensitive' } });
+      }
+      
+      // Also search by the original search term if it's a name
+      if (!searchByEmail && searchTerm) {
+        appointmentWhere.push({ customerName: { contains: searchTerm, mode: 'insensitive' } });
+      }
+      
+      if (appointmentWhere.length > 0) {
         appointment = await prisma.appointment.findFirst({
           where: {
-            OR: [
-              { customerEmail: { equals: quizEmail, mode: 'insensitive' } },
-              { customerName: { contains: quizName, mode: 'insensitive' } }
-            ]
+            OR: appointmentWhere
           },
           select: {
             id: true,
@@ -134,7 +165,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      searchName: name,
+      searchTerm: searchTerm,
+      searchByEmail,
       resultsFound: results.length,
       results: results
     });
