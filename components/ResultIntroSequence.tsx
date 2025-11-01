@@ -84,10 +84,10 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
           exit={{ opacity: 0 }}
           transition={{ duration: 1, ease: "easeInOut" }}
         >
-          {/* Logo for first slide - positioned at top on mobile */}
+          {/* Logo for first slide - minimal top spacing on mobile */}
           {index === 0 && (
             <motion.div
-              className="flex items-center space-x-2 sm:space-x-3 mt-6 sm:mt-0 mb-2 sm:mb-8"
+              className="flex items-center space-x-2 sm:space-x-3 mt-3 sm:mt-0 mb-1 sm:mb-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
@@ -101,12 +101,13 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
             </motion.div>
           )}
 
-          {/* Main text - positioned in upper-middle on mobile, centered on desktop */}
+          {/* Main text - positioned higher on mobile to balance spacing */}
           <motion.div
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center px-4 sm:px-8 max-w-2xl sm:static sm:transform-none sm:translate-y-0"
+            className="absolute left-1/2 transform -translate-x-1/2 text-center px-4 sm:px-8 max-w-2xl sm:static sm:transform-none sm:translate-y-0"
             style={{ 
-              top: index === 0 ? '45%' : '50%',
-              marginTop: 'sm:0'
+              top: index === 0 ? '38%' : '42%',
+              transform: 'translate(-50%, -50%)',
+              sm: { top: 'auto', transform: 'none' }
             }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
