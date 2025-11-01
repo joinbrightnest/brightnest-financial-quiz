@@ -12,25 +12,45 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const leadEmail = searchParams.get('leadEmail');
 
-    if (!leadEmail) {
-      return NextResponse.json({ error: 'Lead email is required' }, { status: 400 });
-    }
+    // If leadEmail is provided, fetch tasks for that specific lead
+    if (leadEmail) {
+      // Security check: Verify the closer is assigned to this lead
+      const appointment = await prisma.appointment.findFirst({
+        where: {
+          customerEmail: leadEmail,
+          closerId: closerId
+        }
+      });
 
-    // Security check: Verify the closer is assigned to this lead
-    const appointment = await prisma.appointment.findFirst({
-      where: {
-        customerEmail: leadEmail,
-        closerId: closerId
+      if (!appointment) {
+        return NextResponse.json({ error: 'Forbidden: You are not assigned to this lead.' }, { status: 403 });
       }
-    });
 
-    if (!appointment) {
-      return NextResponse.json({ error: 'Forbidden: You are not assigned to this lead.' }, { status: 403 });
+      // Fetch tasks for this lead
+      const tasks = await prisma.task.findMany({
+        where: { leadEmail },
+        include: {
+          closer: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: [
+          { status: 'asc' },
+          { dueDate: 'asc' },
+          { createdAt: 'desc' },
+        ],
+      });
+
+      return NextResponse.json({ tasks });
     }
 
-    // Fetch tasks for this lead
+    // If no leadEmail, fetch ALL tasks for this closer across all their leads
     const tasks = await prisma.task.findMany({
-      where: { leadEmail },
+      where: { closerId: closerId },
       include: {
         closer: {
           select: {
@@ -41,13 +61,13 @@ export async function GET(request: NextRequest) {
         },
       },
       orderBy: [
-        { status: 'asc' }, // pending, in_progress, completed, cancelled
+        { status: 'asc' },
         { dueDate: 'asc' },
         { createdAt: 'desc' },
       ],
     });
 
-    return NextResponse.json({ tasks });
+    return NextResponse.json(tasks);
   } catch (error) {
     console.error('Error fetching tasks:', error);
     return NextResponse.json(
