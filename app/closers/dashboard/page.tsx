@@ -459,6 +459,10 @@ export default function CloserDashboard() {
                           <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getOutcomeColor(appointment.outcome)}`}>
                             {appointment.outcome.replace('_', ' ')}
                           </span>
+                        ) : appointment.status === 'scheduled' || appointment.status === 'confirmed' ? (
+                          <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                            Booked
+                          </span>
                         ) : (
                           <span className="text-sm text-gray-500">Not set</span>
                         )}
