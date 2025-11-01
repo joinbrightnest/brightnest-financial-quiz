@@ -89,6 +89,37 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
     fetchLeadDetails();
   }, [sessionId]);
 
+  const handleDeleteNote = async (noteId: string) => {
+        if (!sessionId) return;
+        
+        try {
+            const token = localStorage.getItem('closerToken');
+            const response = await fetch(`/api/closer/notes/${noteId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.ok) {
+                 // Refetch all data to ensure UI is in sync
+                 const detailsResponse = await fetch(`/api/closer/lead-details/${sessionId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (detailsResponse.ok) {
+                    const updatedData = await detailsResponse.json();
+                    setLeadData(updatedData);
+                }
+            } else {
+                const errorData = await response.json();
+                setError(errorData.error || 'Failed to delete note.');
+            }
+        } catch (error) {
+            setError('An unexpected error occurred while deleting the note.');
+        }
+    };
+
+
   const handleCreateNote = async (e: React.FormEvent) => {
       e.preventDefault();
       if (!newNoteContent.trim() || !sessionId) return;
@@ -328,81 +359,98 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
 
           {activeTab === 'notes' && (
             <div className="space-y-6">
-              {/* Call Details */}
-              <div className="bg-white rounded-xl border border-slate-200 p-6">
-                <div className="flex items-center mb-6">
-                  <Phone className="w-6 h-6 text-slate-500 mr-3" />
-                  <h3 className="text-lg font-semibold text-slate-900">Call Details</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Recording Link</h4>
-                    <p className="text-sm text-slate-600 mt-1">
-                      {leadData.appointment?.recordingLink || 'No recording available'}
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Call Notes</h4>
-                    <p className="text-sm text-slate-600 mt-1">
-                      {leadData.appointment?.closerNotes || 'No notes available'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Notes Section */}
-              <div className="bg-white rounded-xl border border-slate-200 p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <div className="flex items-center">
-                    <MessageSquare className="w-6 h-6 text-slate-500 mr-3" />
-                    <h3 className="text-lg font-semibold text-slate-900">Notes ({leadData.notes?.length || 0})</h3>
-                  </div>
-                  <button
-                    onClick={() => setShowNoteForm(!showNoteForm)}
-                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
-                  >
-                    <PlusCircle className="-ml-1 mr-2 h-5 w-5" />
-                    {showNoteForm ? 'Cancel' : 'Create Note'}
-                  </button>
-                </div>
-
-                {showNoteForm && (
-                  <form onSubmit={handleCreateNote} className="mb-6">
-                    <textarea
-                      value={newNoteContent}
-                      onChange={(e) => setNewNoteContent(e.target.value)}
-                      rows={4}
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-slate-500 focus:border-slate-500"
-                      placeholder="Add a new note..."
-                      disabled={isSubmittingNote}
-                    />
-                    <div className="mt-2 text-right">
-                      <button
-                        type="submit"
-                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 disabled:bg-slate-400"
-                        disabled={isSubmittingNote || !newNoteContent.trim()}
-                      >
-                        {isSubmittingNote ? 'Saving...' : 'Save Note'}
-                      </button>
+                {/* Call Details */}
+                <div className="bg-white rounded-xl border border-slate-200 p-6">
+                    <div className="flex items-center mb-6">
+                        <Phone className="w-6 h-6 text-slate-500 mr-3" />
+                        <h3 className="text-lg font-semibold text-slate-900">Call Details</h3>
                     </div>
-                  </form>
-                )}
-
-                <div className="space-y-4">
-                  {leadData.notes && leadData.notes.length > 0 ? (
-                    leadData.notes.map((note: Note) => (
-                      <div key={note.id} className="p-4 bg-slate-50 rounded-lg border border-slate-200">
-                        <p className="text-sm text-slate-800 whitespace-pre-wrap">{note.content}</p>
-                        <p className="text-xs text-slate-500 mt-2">
-                          - {note.createdBy || 'System'} on {new Date(note.createdAt).toLocaleString()}
-                        </p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-sm text-slate-600">No notes have been added for this lead.</p>
-                  )}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Recording Link</h4>
+                            <p className="text-sm text-slate-600 mt-1">
+                                {leadData.appointment?.recordingLink || 'No recording available'}
+                            </p>
+                        </div>
+                        <div>
+                            <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Call Notes</h4>
+                            <p className="text-sm text-slate-600 mt-1">
+                                {leadData.appointment?.closerNotes || 'No notes available'}
+                            </p>
+                        </div>
+                    </div>
                 </div>
-              </div>
+
+                {/* Notes Section */}
+                <div className="bg-white rounded-xl border border-slate-200 p-6">
+                    <div className="flex justify-between items-center mb-6">
+                        <div className="flex items-center">
+                            <MessageSquare className="w-6 h-6 text-slate-500 mr-3" />
+                            <h3 className="text-lg font-semibold text-slate-900">Notes ({leadData.notes?.length || 0})</h3>
+                        </div>
+                        <button
+                            onClick={() => setShowNoteForm(!showNoteForm)}
+                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
+                        >
+                            <PlusCircle className="-ml-1 mr-2 h-5 w-5" />
+                            {showNoteForm ? 'Cancel' : 'Create Note'}
+                        </button>
+                    </div>
+
+                    {showNoteForm && (
+                        <form onSubmit={handleCreateNote} className="mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                            <textarea
+                                value={newNoteContent}
+                                onChange={(e) => setNewNoteContent(e.target.value)}
+                                rows={4}
+                                className="w-full p-2 border border-gray-300 rounded-md focus:ring-slate-500 focus:border-slate-500"
+                                placeholder="Add a new note..."
+                                disabled={isSubmittingNote}
+                            />
+                            <div className="mt-2 flex justify-end gap-2">
+                                 <button
+                                    type="button"
+                                    onClick={() => setShowNoteForm(false)}
+                                    className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50"
+                                    disabled={isSubmittingNote}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 disabled:bg-slate-400"
+                                    disabled={isSubmittingNote || !newNoteContent.trim()}
+                                >
+                                    {isSubmittingNote ? 'Saving...' : 'Save Note'}
+                                </button>
+                            </div>
+                        </form>
+                    )}
+
+                    <div className="space-y-4">
+                        {leadData.notes && leadData.notes.length > 0 ? (
+                            leadData.notes.map((note: Note) => (
+                                <div key={note.id} className="group p-4 bg-white rounded-lg border border-slate-200 flex justify-between items-start">
+                                    <div>
+                                        <p className="text-sm text-slate-500">
+                                            {new Date(note.createdAt).toLocaleString([], { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                        </p>
+                                        <p className="text-sm text-slate-800 whitespace-pre-wrap mt-1">{note.content}</p>
+                                    </div>
+                                    <button 
+                                      onClick={() => handleDeleteNote(note.id)}
+                                      className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-50 transition-opacity"
+                                      aria-label="Delete note"
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            ))
+                        ) : (
+                            !showNoteForm && <p className="text-sm text-slate-600 text-center py-4">No notes have been added for this lead.</p>
+                        )}
+                    </div>
+                </div>
             </div>
           )}
 
