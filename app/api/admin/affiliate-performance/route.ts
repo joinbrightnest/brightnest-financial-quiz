@@ -126,12 +126,21 @@ export async function GET(request: NextRequest) {
           },
         });
 
-        // Only count appointments that have a corresponding completed quiz session
-        // This ensures the funnel is sequential: Completed → Booked Calls → Sales
-        const validAppointments = allAppointments.filter(apt => {
+        // For the funnel:
+        // - "Completed" counts only completed quiz sessions (strict sequential requirement)
+        // - "Booked Calls" counts appointments with completed quiz sessions (sequential flow)
+        // - "Sales" counts ALL affiliate sales (includes direct bookings without quiz completion)
+        // This ensures we show all affiliate sales while maintaining the quiz completion flow for bookings
+        
+        // Booked calls: only count appointments with completed quiz sessions (sequential flow)
+        const validBookedAppointments = allAppointments.filter(apt => {
           const appointmentEmail = apt.customerEmail?.toLowerCase().trim();
           return appointmentEmail && completedSessionEmails.has(appointmentEmail);
         });
+        
+        // Sales: count ALL affiliate sales (all appointments with affiliate code and outcome='converted')
+        // This matches Lead Analytics and shows all affiliate sales, even if they didn't complete the quiz
+        const allAffiliateSales = allAppointments.filter(apt => apt.outcome === 'converted');
 
         // Calculate conversion rates
         const clickCount = clicks.length;
@@ -139,13 +148,12 @@ export async function GET(request: NextRequest) {
         const quizCount = quizSessions.length;
         const completionCount = completedQuizSessions.length;
         
-        // Count bookings and sales only from appointments with completed quiz sessions
-        const bookingCount = validAppointments.length;
-        const saleCount = validAppointments.filter(apt => apt.outcome === 'converted').length;
+        // Count bookings (from appointments with completed quiz sessions) and sales (all affiliate sales)
+        const bookingCount = validBookedAppointments.length;
+        const saleCount = allAffiliateSales.length;
 
-        // Calculate actual revenue from converted appointments (total sale values)
-        // Only count appointments that have corresponding completed quiz sessions
-        const convertedAppointments = validAppointments.filter(apt => apt.outcome === 'converted' && apt.saleValue);
+        // Calculate actual revenue from ALL converted affiliate appointments (total sale values)
+        const convertedAppointments = allAffiliateSales.filter(apt => apt.saleValue);
         const totalRevenue = convertedAppointments.reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
 
         // Calculate EARNED commission from converted appointments (respects date filter)
