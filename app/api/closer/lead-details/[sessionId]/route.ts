@@ -9,7 +9,7 @@ export async function GET(
   { params }: { params: { sessionId: string } }
 ) {
   try {
-    const closerId = getCloserIdFromToken(request);
+    const closerId = await getCloserIdFromToken(request);
     if (!closerId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
