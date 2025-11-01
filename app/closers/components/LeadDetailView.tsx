@@ -55,39 +55,103 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'activity' | 'notes' | 'tasks'>('activity');
   const [expandedActivity, setExpandedActivity] = useState<string | null>(null);
+  const [activities, setActivities] = useState<any[]>([]);
+  const [loadingActivities, setLoadingActivities] = useState(false);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [loadingNotes, setLoadingNotes] = useState(false);
 
   // States for note creation
   const [showNoteForm, setShowNoteForm] = useState(false);
   const [newNoteContent, setNewNoteContent] = useState('');
   const [isSubmittingNote, setIsSubmittingNote] = useState(false);
 
+  useEffect(() => {
+    if (sessionId) {
+      fetchLeadData();
+    }
+  }, [sessionId]);
 
   useEffect(() => {
-    const token = localStorage.getItem('closerToken');
-    if (!token || !sessionId) return;
+    if (sessionId && activeTab === 'activity') {
+      fetchActivities();
+    }
+  }, [sessionId, activeTab]);
 
-    const fetchLeadDetails = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/closer/lead-details/${sessionId}`, {
-          headers: { 'Authorization': `Bearer ${token}` },
-        });
+  useEffect(() => {
+    if (sessionId && activeTab === 'notes') {
+      fetchNotes();
+    }
+  }, [sessionId, activeTab]);
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch lead details');
+  const fetchLeadData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const token = localStorage.getItem('closerToken');
+
+      // Fetch lead data from the dedicated API endpoint
+      const response = await fetch(`/api/closer/lead-details/${sessionId}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error("Lead not found");
         }
-
-        const data = await response.json();
-        setLeadData(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
-      } finally {
-        setLoading(false);
+        throw new Error("Failed to fetch lead data");
       }
-    };
+      
+      const leadData = await response.json();
+      setLeadData(leadData);
+    } catch (err) {
+      console.error("Error fetching lead data:", err);
+      setError(err instanceof Error ? err.message : "Failed to load lead data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchLeadDetails();
-  }, [sessionId]);
+  const fetchActivities = async () => {
+    try {
+      setLoadingActivities(true);
+      const token = localStorage.getItem('closerToken');
+      const response = await fetch(`/api/closer/lead-details/${sessionId}/activities`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch activities");
+      }
+      
+      const data = await response.json();
+      setActivities(data.activities || []);
+    } catch (err) {
+      console.error("Error fetching activities:", err);
+    } finally {
+      setLoadingActivities(false);
+    }
+  };
+
+  const fetchNotes = async () => {
+    try {
+      setLoadingNotes(true);
+      const token = localStorage.getItem('closerToken');
+      const response = await fetch(`/api/closer/lead-details/${sessionId}/notes`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch notes");
+      }
+      
+      const data = await response.json();
+      setNotes(data.notes || []);
+    } catch (err) {
+      console.error("Error fetching notes:", err);
+    } finally {
+      setLoadingNotes(false);
+    }
+  };
 
   const handleDeleteNote = async (noteId: string) => {
         if (!sessionId) return;
@@ -102,14 +166,9 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
             });
 
             if (response.ok) {
-                 // Refetch all data to ensure UI is in sync
-                 const detailsResponse = await fetch(`/api/closer/lead-details/${sessionId}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (detailsResponse.ok) {
-                    const updatedData = await detailsResponse.json();
-                    setLeadData(updatedData);
-                }
+                 // Refetch notes and activities
+                 await fetchNotes();
+                 await fetchActivities();
             } else {
                 const errorData = await response.json();
                 setError(errorData.error || 'Failed to delete note.');
@@ -119,50 +178,43 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
         }
     };
 
+    const handleCreateNote = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newNoteContent.trim() || !sessionId) return;
+        
+        setIsSubmittingNote(true);
+        try {
+            const token = localStorage.getItem('closerToken');
+            const response = await fetch('/api/closer/notes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    sessionId: sessionId,
+                    content: newNoteContent,
+                }),
+            });
 
-  const handleCreateNote = async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!newNoteContent.trim() || !sessionId) return;
-      
-      setIsSubmittingNote(true);
-      try {
-          const token = localStorage.getItem('closerToken');
-          const response = await fetch('/api/closer/notes', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                  sessionId: sessionId, // Use sessionId
-                  content: newNoteContent,
-              }),
-          });
-
-          if (response.ok) {
-              const newNote = await response.json();
-              // To reflect the new note and the new activity log entry, we should refetch all data.
-              const detailsResponse = await fetch(`/api/closer/lead-details/${sessionId}`, {
-                  headers: { 'Authorization': `Bearer ${token}` }
-              });
-              if (detailsResponse.ok) {
-                  const updatedData = await detailsResponse.json();
-                  setLeadData(updatedData);
-              }
-              
-              // Reset form
-              setNewNoteContent('');
-              setShowNoteForm(false);
-          } else {
-              const errorData = await response.json();
-              setError(errorData.error || 'Failed to create note.');
-          }
-      } catch (error) {
-          setError('An unexpected error occurred while creating the note.');
-      } finally {
-          setIsSubmittingNote(false);
-      }
-  };
+            if (response.ok) {
+                // Refetch notes and activities
+                await fetchNotes();
+                await fetchActivities();
+                
+                // Reset form
+                setNewNoteContent('');
+                setShowNoteForm(false);
+            } else {
+                const errorData = await response.json();
+                setError(errorData.error || 'Failed to create note.');
+            }
+        } catch (error) {
+            setError('An unexpected error occurred while creating the note.');
+        } finally {
+            setIsSubmittingNote(false);
+        }
+    };
 
    if (loading) {
     return (
@@ -288,7 +340,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
               <div className="relative">
                 <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-slate-200"></div>
                 <div className="space-y-6">
-                  {leadData.activities.map((activity: any) => (
+                  {activities.map((activity: any) => (
                     <div key={activity.id} className="relative flex items-start space-x-4">
                        <div className={`flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center z-10 ${
                             activity.type === 'quiz_completed' ? 'bg-purple-100' :
@@ -386,7 +438,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center">
                             <MessageSquare className="w-6 h-6 text-slate-500 mr-3" />
-                            <h3 className="text-lg font-semibold text-slate-900">Notes ({leadData.notes?.length || 0})</h3>
+                            <h3 className="text-lg font-semibold text-slate-900">Notes ({notes.length})</h3>
                         </div>
                         <button
                             onClick={() => setShowNoteForm(!showNoteForm)}
@@ -428,8 +480,8 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                     )}
 
                     <div className="space-y-4">
-                        {leadData.notes && leadData.notes.length > 0 ? (
-                            leadData.notes.map((note: Note) => (
+                        {notes.length > 0 ? (
+                            notes.map((note: Note) => (
                                 <div key={note.id} className="group p-4 bg-white rounded-lg border border-slate-200 flex justify-between items-start">
                                     <div>
                                         <p className="text-sm text-slate-500">
