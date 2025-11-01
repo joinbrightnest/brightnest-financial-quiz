@@ -144,14 +144,22 @@ export async function GET(
           return details?.appointmentId === appointment.id;
         });
 
-        // Add each outcome change as an activity with call details
-        appointmentOutcomeLogs.forEach((log, index) => {
+        // Separate converted and non-converted logs
+        const nonConvertedLogs = appointmentOutcomeLogs.filter(log => {
+          const details = log.details as any;
+          return details?.outcome !== 'converted';
+        });
+
+        const convertedLogs = appointmentOutcomeLogs.filter(log => {
+          const details = log.details as any;
+          return details?.outcome === 'converted';
+        });
+
+        // Add each non-converted outcome change as an activity with call details
+        nonConvertedLogs.forEach((log, index) => {
           const details = log.details as any;
           const outcome = details?.outcome;
           
-          // Skip converted outcomes (they'll be shown as "deal_closed" instead)
-          if (outcome === 'converted') return;
-
           // First outcome = "marked", subsequent = "updated"
           const isFirstOutcome = index === 0;
           
@@ -171,6 +179,14 @@ export async function GET(
 
         // 4. Deal closed activity (ONLY if appointment outcome is converted)
         if (appointment.outcome === 'converted') {
+          // Find the most recent audit log entry for this appointment with "converted" outcome
+          // to get the recording link and notes that were saved when it was marked as closed
+          const convertedLog = convertedLogs.length > 0 
+            ? convertedLogs[convertedLogs.length - 1] // Get the most recent converted log
+            : null;
+
+          const logDetails = convertedLog?.details as any;
+          
           activities.push({
             id: `deal_${appointment.id}`,
             type: 'deal_closed',
@@ -179,7 +195,9 @@ export async function GET(
             actor: appointment.closer?.name || 'Unknown',
             details: {
               outcome: 'converted',
-              amount: appointment.saleValue ? Number(appointment.saleValue) : null
+              amount: appointment.saleValue ? Number(appointment.saleValue) : null,
+              recordingLink: logDetails?.recordingLink || null,
+              notes: logDetails?.notes || null
             }
           });
         }
