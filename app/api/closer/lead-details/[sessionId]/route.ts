@@ -16,64 +16,85 @@ export async function GET(
 
     const { sessionId } = params;
 
-    // 1. Fetch the core lead data (QuizCompletion) and verify ownership
-    const lead = await prisma.quizCompletion.findUnique({
+    // 1. Fetch the core lead data (QuizSession)
+    const quizSession = await prisma.quizSession.findUnique({
       where: { id: sessionId },
       include: {
         answers: { include: { question: true } },
-        appointment: { include: { closer: true } },
       },
     });
 
-    if (!lead || lead.appointment?.closerId !== closerId) {
-      return NextResponse.json({ error: 'Lead not found or access denied' }, { status: 404 });
+    if (!quizSession) {
+      return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
+    }
+    
+    const emailAnswer = quizSession.answers.find(a => a.question?.prompt.toLowerCase().includes('email'));
+    const leadEmail = emailAnswer?.value as string;
+
+    if (!leadEmail) {
+        return NextResponse.json({ error: 'Lead email not found' }, { status: 404 });
+    }
+
+    const appointment = await prisma.appointment.findFirst({
+        where: { customerEmail: leadEmail },
+        include: { closer: true }
+    });
+
+    // Verify ownership
+    if (appointment?.closerId !== closerId) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     // 2. Construct the detailed activity timeline
-    const leadName = lead.answers.find(a => a.question?.prompt.toLowerCase().includes('name'))?.value || 'Lead';
+    const leadName = quizSession.answers.find(a => a.question?.prompt.toLowerCase().includes('name'))?.value as string || 'Lead';
     const activities: any[] = [];
 
     // Quiz completed activity
-    if (lead.completedAt) {
+    if (quizSession.completedAt) {
       activities.push({
-        id: `quiz_${lead.id}`,
+        id: `quiz_${quizSession.id}`,
         type: 'quiz_completed',
-        timestamp: lead.completedAt.toISOString(),
+        timestamp: quizSession.completedAt.toISOString(),
         leadName,
         details: {
-          quizType: lead.quizType,
-          answersCount: lead.answers.length,
+          quizType: quizSession.quizType,
+          answersCount: quizSession.answers.length,
         },
       });
     }
 
     // Call booked activity
-    if (lead.appointment) {
+    if (appointment) {
       activities.push({
-        id: `call_${lead.appointment.id}`,
+        id: `call_${appointment.id}`,
         type: 'call_booked',
-        timestamp: lead.appointment.createdAt.toISOString(),
+        timestamp: appointment.createdAt.toISOString(),
         leadName,
         details: {
-          scheduledAt: lead.appointment.scheduledAt.toISOString(),
-          closerName: lead.appointment.closer?.name || null,
+          scheduledAt: appointment.scheduledAt.toISOString(),
+          closerName: appointment.closer?.name || null,
         },
       });
 
-      // Outcome history from ActivityLog
-      const outcomeLogs = await prisma.activityLog.findMany({
-        where: { sessionId: sessionId, type: { in: ['outcome_updated', 'outcome_marked', 'deal_closed'] } },
-        orderBy: { timestamp: 'asc' },
+      const outcomeLogs = await prisma.closerAuditLog.findMany({
+        where: {
+            details: {
+                path: ['appointmentId'],
+                equals: appointment.id
+            }
+        },
+        orderBy: { createdAt: 'asc' },
+        include: { closer: true }
       });
 
       outcomeLogs.forEach((log) => {
         const details = log.details as any;
         activities.push({
           id: log.id,
-          type: details?.outcome === 'converted' ? 'deal_closed' : log.type,
-          timestamp: log.timestamp.toISOString(),
+          type: details?.outcome === 'converted' ? 'deal_closed' : 'outcome_updated',
+          timestamp: log.createdAt.toISOString(),
           leadName,
-          actor: log.actor || lead.appointment.closer?.name || 'Unknown',
+          actor: log.closer?.name || 'Unknown',
           details: { ...details },
         });
       });
@@ -84,19 +105,19 @@ export async function GET(
 
     // 3. Assemble the final payload
     const leadData = {
-      id: lead.id,
-      sessionId: lead.id,
-      quizType: lead.quizType,
-      completedAt: lead.completedAt,
-      status: lead.status,
-      answers: lead.answers.map(a => ({
+      id: quizSession.id,
+      sessionId: quizSession.id,
+      quizType: quizSession.quizType,
+      completedAt: quizSession.completedAt,
+      status: appointment?.status || quizSession.status,
+      answers: quizSession.answers.map(a => ({
         questionText: a.question?.prompt,
         answer: a.value,
       })),
-      appointment: lead.appointment,
-      dealClosedAt: lead.appointment?.outcome === 'converted' ? lead.appointment.updatedAt : null,
-      closer: lead.appointment?.closer,
-      source: lead.source,
+      appointment: appointment,
+      dealClosedAt: appointment?.outcome === 'converted' ? appointment.updatedAt : null,
+      closer: appointment?.closer,
+      source: quizSession.affiliateCode ? 'Affiliate' : 'Website', // Simplified
       activities: activities,
     };
 
