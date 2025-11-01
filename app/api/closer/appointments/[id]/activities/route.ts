@@ -85,26 +85,39 @@ export async function GET(
 
     // 3. Outcome history from audit logs
     const outcomeAuditLogs = await prisma.closerAuditLog.findMany({
-      where: {
-        action: 'appointment_outcome_updated',
-        details: { path: ['appointmentId'], equals: appointment.id }
-      },
-      include: { closer: { select: { id: true, name: true } } },
-      orderBy: { createdAt: 'asc' }
+        where: {
+          action: 'appointment_outcome_updated',
+          closerId: decoded.closerId
+        },
+        include: { closer: { select: { id: true, name: true } } },
+        orderBy: { createdAt: 'asc' }
+    });
+
+    // Filter logs for this specific appointment
+    const appointmentOutcomeLogs = outcomeAuditLogs.filter(log => {
+      const details = log.details as any;
+      return details?.appointmentId === appointment.id;
     });
 
     const getLegacyRecordingLink = (outcome: string | null): string | null => {
         if (!outcome) return null;
-        const links: any = appointment;
-        const key = `recordingLink${outcome.charAt(0).toUpperCase() + outcome.slice(1).replace(/_/g, '')}`;
-        return links[key] || null;
+        switch (outcome) {
+            case 'converted': return appointment.recordingLinkConverted;
+            case 'not_interested': return appointment.recordingLinkNotInterested;
+            case 'needs_follow_up': return appointment.recordingLinkNeedsFollowUp;
+            case 'wrong_number': return appointment.recordingLinkWrongNumber;
+            case 'no_answer': return appointment.recordingLinkNoAnswer;
+            case 'callback_requested': return appointment.recordingLinkCallbackRequested;
+            case 'rescheduled': return appointment.recordingLinkRescheduled;
+            default: return null;
+        }
     };
 
     appointmentOutcomeLogs.forEach((log, index) => {
       const details = log.details as any;
       const outcome = details?.outcome;
       
-      if (outcome === 'converted') return; // Skip "converted", it will be shown as "deal_closed"
+      if (outcome === 'converted') return;
 
       const recordingLink = details?.hasOwnProperty('recordingLink') ? details.recordingLink : getLegacyRecordingLink(outcome);
       const notes = details?.hasOwnProperty('notes') ? details.notes : appointment.notes || null;
