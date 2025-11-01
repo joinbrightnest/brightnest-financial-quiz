@@ -117,28 +117,28 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
       </nav>
 
       {/* Hero Section */}
-      <div className="flex flex-col px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8 pb-16 sm:pb-24" style={{backgroundColor: '#FAF8F4'}}>
+      <div className="flex flex-col px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-8 pb-0" style={{backgroundColor: '#FAF8F4'}}>
         <div className="max-w-4xl mx-auto text-center">
           {/* 1️⃣ Microline */}
-          <p className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-3 font-medium">
+          <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-2 font-medium">
             The behavior-based system for lasting financial peace.
           </p>
           
           {/* 2️⃣ Headline */}
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-serif text-gray-900 mb-6 sm:mb-8 leading-tight">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-serif text-gray-900 mb-4 sm:mb-5 lg:mb-6 leading-tight">
             <div>Real results.</div>
             <div>Built one habit at a time.</div>
           </h1>
           
           {/* 3️⃣ Subheadline */}
-          <p className="text-base sm:text-lg lg:text-xl text-gray-700 mb-12 sm:mb-16 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-700 mb-6 sm:mb-8 lg:mb-10 max-w-2xl mx-auto leading-relaxed">
             Because wealth isn't about math — it's about behavior.
           </p>
           
           {/* 4️⃣ Visual Element - Family-Friendly Illustration */}
-          <div className="mb-12 sm:mb-16">
+          <div className="mb-6 sm:mb-8 lg:mb-10">
             <div className="relative inline-block w-full max-w-sm sm:max-w-lg mx-auto">
-              <div className="bg-gradient-to-br from-teal-50 via-white to-amber-50 rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-14 shadow-xl border border-slate-200/60 w-full overflow-hidden relative">
+              <div className="bg-gradient-to-br from-teal-50 via-white to-amber-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl border border-slate-200/60 w-full overflow-hidden relative">
                 {/* Decorative Elements */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-teal-200/20 rounded-full blur-2xl"></div>
                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-amber-200/20 rounded-full blur-2xl"></div>
@@ -146,8 +146,8 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                 {/* Illustration Content */}
                 <div className="relative z-10">
                   {/* Centered Illustration */}
-                  <div className="flex justify-center items-center mb-6 sm:mb-8">
-                    <svg className="w-full max-w-[280px] sm:max-w-[320px] h-auto" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <div className="flex justify-center items-center mb-4 sm:mb-5">
+                    <svg className="w-full max-w-[240px] sm:max-w-[280px] lg:max-w-[320px] h-auto" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg">
                       {/* House Base */}
                       <rect x="80" y="100" width="160" height="120" rx="8" fill="#14b8a6" opacity="0.15" stroke="#14b8a6" strokeWidth="2"/>
                       <rect x="100" y="140" width="120" height="80" rx="4" fill="#14b8a6" opacity="0.2"/>
@@ -185,11 +185,11 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                   </div>
                   
                   {/* Inspirational Message */}
-                  <div className="text-center space-y-2 sm:space-y-3">
-                    <h3 className="text-xl sm:text-2xl font-bold text-slate-800 leading-tight">
+                  <div className="text-center space-y-1.5 sm:space-y-2">
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-800 leading-tight">
                       Financial Peace for Your Family
                     </h3>
-                    <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-xs mx-auto">
+                    <p className="text-xs sm:text-sm lg:text-base text-slate-600 leading-relaxed max-w-xs mx-auto">
                       Build lasting habits that protect what matters most
                     </p>
                   </div>
@@ -206,14 +206,14 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
               
           
           {/* 6️⃣ Primary CTA */}
-          <div className="mb-12 sm:mb-16">
+          <div className="mb-0">
             <Link
               href={getLink("/quiz/financial-profile")}
               className="inline-block bg-[#FF5C41] text-white px-8 py-4 sm:px-12 sm:py-5 lg:px-16 lg:py-6 text-base sm:text-lg font-semibold hover:bg-[#e54a2f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 rounded-lg w-full sm:w-auto"
             >
               Start My Money Reset
             </Link>
-            <p className="text-xs text-gray-500 mt-4 sm:mt-8 px-4 sm:px-0">
+            <p className="text-xs text-gray-500 mt-3 sm:mt-4 px-4 sm:px-0">
               Based on results from real BrightNest members. Your data stays 100% private and secure.
             </p>
                 </div>
