@@ -120,6 +120,39 @@ export async function GET(
 
     // 2. Call booked activity
     if (appointment) {
+      // Determine which recording link to use (priority: outcome-specific > general)
+      let recordingLink = null;
+      if (appointment.outcome) {
+        switch (appointment.outcome) {
+          case 'converted':
+            recordingLink = appointment.recordingLinkConverted;
+            break;
+          case 'not_interested':
+            recordingLink = appointment.recordingLinkNotInterested;
+            break;
+          case 'needs_follow_up':
+            recordingLink = appointment.recordingLinkNeedsFollowUp;
+            break;
+          case 'wrong_number':
+            recordingLink = appointment.recordingLinkWrongNumber;
+            break;
+          case 'no_answer':
+            recordingLink = appointment.recordingLinkNoAnswer;
+            break;
+          case 'callback_requested':
+            recordingLink = appointment.recordingLinkCallbackRequested;
+            break;
+          case 'rescheduled':
+            recordingLink = appointment.recordingLinkRescheduled;
+            break;
+          default:
+            recordingLink = appointment.recordingLink;
+        }
+      } else {
+        // No outcome set yet, use general recording link
+        recordingLink = appointment.recordingLink;
+      }
+
       activities.push({
         id: `call_${appointment.id}`,
         type: 'call_booked',
@@ -127,7 +160,11 @@ export async function GET(
         leadName,
         details: {
           scheduledAt: appointment.scheduledAt.toISOString(),
-          closerName: appointment.closer?.name || null
+          closerName: appointment.closer?.name || null,
+          closerId: appointment.closerId || null,
+          recordingLink: recordingLink || null,
+          notes: appointment.notes || null,
+          outcome: appointment.outcome || null
         }
       });
 
@@ -164,33 +201,42 @@ export async function GET(
         // Skip converted outcomes (they'll be shown as "deal_closed" instead)
         if (outcome === 'converted') return;
 
-        // Get recording link and notes for this outcome
-        let recordingLink = null;
-        switch (outcome) {
-          case 'converted':
-            recordingLink = appointment.recordingLinkConverted;
-            break;
-          case 'not_interested':
-            recordingLink = appointment.recordingLinkNotInterested;
-            break;
-          case 'needs_follow_up':
-            recordingLink = appointment.recordingLinkNeedsFollowUp;
-            break;
-          case 'wrong_number':
-            recordingLink = appointment.recordingLinkWrongNumber;
-            break;
-          case 'no_answer':
-            recordingLink = appointment.recordingLinkNoAnswer;
-            break;
-          case 'callback_requested':
-            recordingLink = appointment.recordingLinkCallbackRequested;
-            break;
-          case 'rescheduled':
-            recordingLink = appointment.recordingLinkRescheduled;
-            break;
-          default:
-            recordingLink = appointment.recordingLink;
+        // Get recording link and notes from the audit log details first (like admin API)
+        // This ensures we show the recording link and notes that were set at the time of this specific outcome update
+        let recordingLink = details?.recordingLink || null;
+        
+        // Fallback to appointment fields if not in audit log (for older records)
+        if (!recordingLink) {
+          switch (outcome) {
+            case 'converted':
+              recordingLink = appointment.recordingLinkConverted;
+              break;
+            case 'not_interested':
+              recordingLink = appointment.recordingLinkNotInterested;
+              break;
+            case 'needs_follow_up':
+              recordingLink = appointment.recordingLinkNeedsFollowUp;
+              break;
+            case 'wrong_number':
+              recordingLink = appointment.recordingLinkWrongNumber;
+              break;
+            case 'no_answer':
+              recordingLink = appointment.recordingLinkNoAnswer;
+              break;
+            case 'callback_requested':
+              recordingLink = appointment.recordingLinkCallbackRequested;
+              break;
+            case 'rescheduled':
+              recordingLink = appointment.recordingLinkRescheduled;
+              break;
+            default:
+              recordingLink = appointment.recordingLink;
+          }
         }
+
+        // Get notes from audit log (stored when outcome was updated)
+        // Fallback to appointment notes for older records
+        const notes = details?.notes !== undefined ? details.notes : (appointment.notes || null);
 
         // First outcome = "marked", subsequent = "updated"
         const isFirstOutcome = index === 0;
@@ -204,9 +250,10 @@ export async function GET(
           details: {
             outcome: outcome,
             saleValue: details?.saleValue ? Number(details.saleValue) : null,
+            previousOutcome: details?.previousOutcome || null,
             isFirstOutcome,
             recordingLink: recordingLink || null,
-            notes: appointment.notes || null
+            notes: notes
           }
         });
       });
@@ -226,6 +273,17 @@ export async function GET(
 
         const closeDate = conversion?.createdAt || appointment.updatedAt;
 
+        // Find the audit log entry for the "converted" outcome to get the notes and recording link
+        const convertedOutcomeLog = appointmentOutcomeLogs.find((log) => {
+          const details = log.details as any;
+          return details?.outcome === 'converted';
+        });
+
+        // Get recording link and notes from audit log if available, otherwise fallback to appointment
+        const convertedDetails = convertedOutcomeLog?.details as any;
+        const recordingLink = convertedDetails?.recordingLink || appointment.recordingLinkConverted || appointment.recordingLink || null;
+        const notes = convertedDetails?.notes !== undefined ? convertedDetails.notes : (appointment.notes || null);
+
         activities.push({
           id: `deal_${appointment.id}`,
           type: 'deal_closed',
@@ -233,10 +291,12 @@ export async function GET(
           leadName,
           actor: appointment.closer?.name || 'Unknown',
           details: {
+            outcome: 'converted', // Include outcome for consistent UI display
             amount: appointment.saleValue ? Number(appointment.saleValue) : null,
+            saleValue: appointment.saleValue ? Number(appointment.saleValue) : null, // Also include saleValue for consistency
             commission: appointment.commissionAmount ? Number(appointment.commissionAmount) : null,
-            recordingLink: appointment.recordingLinkConverted || appointment.recordingLink || null,
-            notes: appointment.notes || null
+            recordingLink: recordingLink,
+            notes: notes
           }
         });
       }
