@@ -77,16 +77,16 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
       <AnimatePresence mode="wait">
         <motion.div
           key={index}
-          className="w-full h-full flex flex-col items-center relative px-4 pb-24 sm:pb-8"
+          className="w-full h-full flex flex-col items-center justify-center relative px-4 pb-16 sm:pb-8"
           style={{ backgroundColor: current.bg }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1, ease: "easeInOut" }}
         >
-          {/* Content wrapper - centered vertically using flex */}
+          {/* Content wrapper - centered vertically */}
           <motion.div
-            className="flex flex-col items-center justify-center text-center max-w-2xl flex-1 mt-8 sm:mt-0"
+            className="flex flex-col items-center justify-center text-center max-w-2xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index === 0 ? 1 : 0.5, duration: 0.8 }}
@@ -158,7 +158,7 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
 
           {/* Loading dots - mobile only */}
           <motion.div
-            className="absolute bottom-24 left-1/2 transform -translate-x-1/2 flex space-x-2.5 sm:hidden z-10"
+            className="absolute bottom-20 left-1/2 -translate-x-1/2 flex space-x-3 sm:hidden z-50"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.6 }}
@@ -166,14 +166,13 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
             {[0, 1, 2, 3].map((i) => (
               <motion.div
                 key={i}
-                className="w-2.5 h-2.5 rounded-full"
+                className="w-3 h-3 rounded-full"
                 style={{ 
-                  backgroundColor: current.color,
-                  opacity: 0.4
+                  backgroundColor: current.color
                 }}
                 animate={{
                   opacity: [0.4, 1, 0.4],
-                  scale: [1, 1.3, 1]
+                  scale: [1, 1.4, 1]
                 }}
                 transition={{
                   duration: 1.2,
