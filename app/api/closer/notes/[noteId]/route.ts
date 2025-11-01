@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { getCloserIdFromToken } from '@/lib/closer-auth';
-
-const prisma = new PrismaClient();
 
 // DELETE a note
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ noteId: string }> }) {
