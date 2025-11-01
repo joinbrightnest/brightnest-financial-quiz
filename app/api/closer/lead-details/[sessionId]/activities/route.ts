@@ -119,11 +119,14 @@ export async function GET(
           },
         });
 
-        // Get ALL outcome updates from CloserAuditLog (matching admin logic)
-        const outcomeAuditLogs = await prisma.closerAuditLog.findMany({
+        // Get ALL audit logs (outcome updates AND notes) from CloserAuditLog
+        const allAuditLogs = await prisma.closerAuditLog.findMany({
           where: {
-            action: 'appointment_outcome_updated',
-            closerId: appointment.closerId || undefined
+            closerId: appointment.closerId || undefined,
+            OR: [
+              { action: 'appointment_outcome_updated' },
+              { type: 'note_added' }
+            ]
           },
           include: {
             closer: {
@@ -139,21 +142,21 @@ export async function GET(
         });
 
         // Filter logs for this specific appointment
-        const appointmentOutcomeLogs = outcomeAuditLogs.filter(log => {
+        const appointmentLogs = allAuditLogs.filter(log => {
           const details = log.details as any;
           return details?.appointmentId === appointment.id;
         });
 
-        // Add each outcome change as an activity
-        appointmentOutcomeLogs.forEach((log) => {
+        // Add each log as an activity
+        appointmentLogs.forEach((log) => {
           const details = log.details as any;
-          const outcome = details?.outcome;
           
+          // Determine activity type
           let activityType: 'outcome_updated' | 'outcome_marked' | 'deal_closed' | 'note_added' = 'outcome_marked';
           
           if (log.type === 'note_added') {
             activityType = 'note_added';
-          } else if (outcome === 'converted') {
+          } else if (details?.outcome === 'converted') {
             activityType = 'deal_closed';
           }
 
@@ -163,12 +166,14 @@ export async function GET(
             timestamp: log.createdAt.toISOString(),
             leadName,
             actor: log.closer?.name || 'Unknown',
-            details: { 
-              outcome: outcome,
-              recordingLink: details?.recordingLink,
-              notes: details?.notes,
-              ...details 
-            },
+            details: log.type === 'note_added' 
+              ? { content: details?.content, noteId: details?.noteId }
+              : { 
+                  outcome: details?.outcome,
+                  recordingLink: details?.recordingLink,
+                  notes: details?.notes,
+                  ...details 
+                },
           });
         });
       }
