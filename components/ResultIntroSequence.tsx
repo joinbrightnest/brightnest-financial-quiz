@@ -131,7 +131,8 @@ export default function ResultIntroSequence({ name = "there", onComplete }: Resu
           </motion.div>
 
           {/* Loading dots - mobile only - must be visible */}
-          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex space-x-4 sm:hidden z-[100] items-center pointer-events-none">
+          {/* Temporarily showing on all screens for testing - change back to sm:hidden after verification */}
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex space-x-4 z-[100] items-center pointer-events-none">
             {[0, 1, 2, 3].map((i) => (
               <motion.div
                 key={`dot-${i}-${index}`}
