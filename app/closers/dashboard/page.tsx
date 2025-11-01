@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import CloserHeader from '../components/CloserHeader';
+import LeadDetailView from '../components/LeadDetailView'; // Import the new component
 
 interface Closer {
   id: string;
@@ -37,36 +38,6 @@ interface Appointment {
   recordingLinkRescheduled?: string | null;
 }
 
-interface LeadDetails {
-  id: string;
-  answers: Array<{
-    questionId: string;
-    value: string;
-    question: {
-      prompt: string;
-    } | null;
-  }>;
-  appointment?: {
-    notes: string | null;
-    outcome: string | null;
-    recordingLinkConverted?: string | null;
-    recordingLinkNotInterested?: string | null;
-    recordingLinkNeedsFollowUp?: string | null;
-    recordingLinkWrongNumber?: string | null;
-    recordingLinkNoAnswer?: string | null;
-    recordingLinkCallbackRequested?: string | null;
-    recordingLinkRescheduled?: string | null;
-    recordingLink?: string | null;
-    saleValue?: number | null;
-  };
-  status: string;
-  createdAt: string;
-  completedAt: string | null;
-  dealClosedAt?: string | null;
-  affiliateCode?: string | null;
-  source?: string;
-}
-
 export default function CloserDashboard() {
   const [closer, setCloser] = useState<Closer | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -82,6 +53,7 @@ export default function CloserDashboard() {
     saleValue: '',
     recordingLink: ''
   });
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null); // State to control the overlay
   const router = useRouter();
 
   useEffect(() => {
@@ -218,36 +190,26 @@ export default function CloserDashboard() {
     setShowOutcomeModal(true);
   };
 
-  const viewLeadDetails = (appointment: Appointment) => {
-    // Navigate to the new details page
-    // We need a unique identifier for the lead, let's try to find it.
-    // Assuming the lead can be identified by the appointment id for now.
-    // This might need adjustment if the session ID is stored differently.
-    // Let's assume we can derive the session from the appointment or customer email.
-    // For now, let's find the lead by email as the old code did, then get the session ID.
-    const findLeadAndNavigate = async () => {
-        try {
-            const token = localStorage.getItem('closerToken');
-            const response = await fetch(`/api/leads/by-email?email=${encodeURIComponent(appointment.customerEmail)}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
-            if (response.ok) {
-                const data = await response.json();
-                if (data.lead && data.lead.id) {
-                    router.push(`/closers/leads/${data.lead.id}`);
-                } else {
-                    setError('Could not find a valid session for this lead.');
-                }
+  const viewLeadDetails = async (appointment: Appointment) => {
+    // This function now just needs to find the lead ID and set it in state
+    try {
+        const token = localStorage.getItem('closerToken');
+        const response = await fetch(`/api/leads/by-email?email=${encodeURIComponent(appointment.customerEmail)}`, {
+            headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (response.ok) {
+            const data = await response.json();
+            if (data.lead && data.lead.id) {
+                setSelectedLeadId(data.lead.id); // Set the lead ID to show the overlay
             } else {
-                setError('Failed to retrieve lead session details.');
+                setError('Could not find a valid session for this lead.');
             }
-        } catch (e) {
-            setError('Error navigating to lead details.');
+        } else {
+            setError('Failed to retrieve lead session details.');
         }
-    };
-    findLeadAndNavigate();
+    } catch (e) {
+        setError('Error preparing to view lead details.');
+    }
   };
 
   const getDisplayedAppointments = () => {
@@ -334,6 +296,14 @@ export default function CloserDashboard() {
 
   return (
     <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
+      {/* If a lead is selected, render the detail view overlay */}
+      {selectedLeadId && (
+        <LeadDetailView 
+          sessionId={selectedLeadId} 
+          onClose={() => setSelectedLeadId(null)} 
+        />
+      )}
+
       <CloserHeader closer={closer} onLogout={handleLogout} taskCount={activeTaskCount} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
