@@ -60,12 +60,14 @@ export default function LeadDetailsPage() {
 
   useEffect(() => {
     if (sessionId) {
+      console.log('[DEBUG] Effect for fetching lead data is running.');
       fetchLeadData();
     }
   }, [sessionId]);
 
   useEffect(() => {
     if (sessionId && activeTab === 'activity') {
+      console.log('[DEBUG] Effect for fetching activities is running.');
       fetchActivities();
     }
   }, [sessionId, activeTab]);
@@ -123,6 +125,8 @@ export default function LeadDetailsPage() {
       setLoadingActivities(false);
     }
   };
+
+  console.log('[DEBUG] LeadDetailsPage component is rendering.');
 
   if (loading) {
     return (
