@@ -119,26 +119,41 @@ export async function GET(
           },
         });
 
-        // Get outcome updates from CloserAuditLog
-        const outcomeLogs = await prisma.closerAuditLog.findMany({
+        // Get ALL outcome updates from CloserAuditLog (matching admin logic)
+        const outcomeAuditLogs = await prisma.closerAuditLog.findMany({
           where: {
-            details: {
-              path: ['appointmentId'],
-              equals: appointment.id
+            action: 'appointment_outcome_updated',
+            closerId: appointment.closerId || undefined
+          },
+          include: {
+            closer: {
+              select: {
+                id: true,
+                name: true
+              }
             }
           },
-          orderBy: { createdAt: 'asc' },
-          include: { closer: true }
+          orderBy: {
+            createdAt: 'asc'
+          }
         });
 
-        outcomeLogs.forEach((log) => {
+        // Filter logs for this specific appointment
+        const appointmentOutcomeLogs = outcomeAuditLogs.filter(log => {
           const details = log.details as any;
+          return details?.appointmentId === appointment.id;
+        });
+
+        // Add each outcome change as an activity
+        appointmentOutcomeLogs.forEach((log) => {
+          const details = log.details as any;
+          const outcome = details?.outcome;
           
-          let activityType: 'outcome_updated' | 'deal_closed' | 'note_added' = 'outcome_updated';
+          let activityType: 'outcome_updated' | 'outcome_marked' | 'deal_closed' | 'note_added' = 'outcome_marked';
           
           if (log.type === 'note_added') {
             activityType = 'note_added';
-          } else if (details?.outcome === 'converted') {
+          } else if (outcome === 'converted') {
             activityType = 'deal_closed';
           }
 
@@ -148,7 +163,12 @@ export async function GET(
             timestamp: log.createdAt.toISOString(),
             leadName,
             actor: log.closer?.name || 'Unknown',
-            details: { ...details },
+            details: { 
+              outcome: outcome,
+              recordingLink: details?.recordingLink,
+              notes: details?.notes,
+              ...details 
+            },
           });
         });
       }
