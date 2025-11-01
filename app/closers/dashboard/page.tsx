@@ -100,6 +100,9 @@ export default function CloserDashboard() {
   const [isLoadingNotes, setIsLoadingNotes] = useState(false);
   const [showNoteForm, setShowNoteForm] = useState(false);
   const [noteContent, setNoteContent] = useState('');
+  const [activities, setActivities] = useState<any[]>([]);
+  const [loadingActivities, setLoadingActivities] = useState(false);
+  const [expandedActivity, setExpandedActivity] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -115,6 +118,16 @@ export default function CloserDashboard() {
     fetchAppointments(token);
     fetchActiveTaskCount(token);
   }, [router]);
+
+  // Fetch activities when activity tab is active and we have an appointment
+  useEffect(() => {
+    if (activeTab === 'activity' && leadDetails?.appointment?.id) {
+      const token = localStorage.getItem('closerToken');
+      if (token) {
+        fetchActivities(leadDetails.appointment.id, token);
+      }
+    }
+  }, [activeTab, leadDetails?.appointment?.id]);
 
   const fetchCloserStats = async (token: string) => {
     try {
@@ -240,6 +253,7 @@ export default function CloserDashboard() {
     setIsLoadingLeadDetails(true);
     setShowLeadDetailsModal(true);
     setActiveTab('activity');
+    setActivities([]);
     
     try {
       const token = localStorage.getItem('closerToken');
@@ -253,9 +267,10 @@ export default function CloserDashboard() {
       if (response.ok) {
         const data = await response.json();
         setLeadDetails(data.lead);
-        // Also load tasks and notes for this lead
+        // Also load tasks, notes, and activities for this lead
         fetchTasks(appointment.customerEmail);
         fetchNotes(appointment.customerEmail);
+        fetchActivities(appointment.id, token);
       } else {
         setError('Failed to load lead details');
       }
@@ -264,6 +279,29 @@ export default function CloserDashboard() {
       setError('Network error loading lead details');
     } finally {
       setIsLoadingLeadDetails(false);
+    }
+  };
+
+  const fetchActivities = async (appointmentId: string, token: string) => {
+    try {
+      setLoadingActivities(true);
+      const response = await fetch(`/api/closer/appointments/${appointmentId}/activities`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setActivities(data.activities || []);
+      } else {
+        console.error('Failed to fetch activities');
+      }
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+    } finally {
+      setLoadingActivities(false);
     }
   };
 
@@ -990,99 +1028,260 @@ export default function CloserDashboard() {
                     {activeTab === 'activity' && (
                       <div>
                         <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
-                          <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                          <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
-                          Quiz Responses
-                          <span className="ml-2 text-sm text-slate-500 font-normal">({leadDetails.answers.length} Questions)</span>
+                          Activity Timeline
                         </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {leadDetails.answers.map((answer: any, index: number) => (
-                            <div key={index} className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                              <p className="text-sm font-semibold text-slate-900 mb-2">{answer.question?.prompt || `Question ${index + 1}`}</p>
-                              <p className="text-sm text-slate-700">{answer.value || 'No answer provided'}</p>
+                        
+                        {loadingActivities ? (
+                          <div className="text-center py-8">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                            <p className="text-sm text-slate-600 mt-4">Loading activity...</p>
+                          </div>
+                        ) : activities.length === 0 ? (
+                          <div className="text-center py-8">
+                            <svg className="w-12 h-12 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <p className="text-sm text-slate-600">No activity recorded yet</p>
+                          </div>
+                        ) : (
+                          <div className="relative">
+                            {/* Timeline line */}
+                            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-slate-200"></div>
+                            
+                            {/* Activity items */}
+                            <div className="space-y-6">
+                              {activities.map((activity) => (
+                                <div key={activity.id} className="relative flex items-start space-x-4">
+                                  {/* Icon */}
+                                  <div className={`flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center z-10 ${
+                                    activity.type === 'quiz_completed' ? 'bg-purple-100' :
+                                    activity.type === 'call_booked' ? 'bg-blue-100' :
+                                    activity.type === 'deal_closed' ? 'bg-green-100' :
+                                    activity.type === 'outcome_marked' ? 'bg-orange-100' :
+                                    activity.type === 'outcome_updated' ? 'bg-orange-100' :
+                                    activity.type === 'task_created' ? 'bg-indigo-100' :
+                                    activity.type === 'task_started' ? 'bg-cyan-100' :
+                                    activity.type === 'task_completed' ? 'bg-teal-100' :
+                                    'bg-amber-100'
+                                  }`}>
+                                    {activity.type === 'quiz_completed' && (
+                                      <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                      </svg>
+                                    )}
+                                    {activity.type === 'call_booked' && (
+                                      <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                      </svg>
+                                    )}
+                                    {activity.type === 'deal_closed' && (
+                                      <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                      </svg>
+                                    )}
+                                    {activity.type === 'note_added' && (
+                                      <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                      </svg>
+                                    )}
+                                    {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated') && (
+                                      <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                      </svg>
+                                    )}
+                                    {(activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_completed') && (
+                                      <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                      </svg>
+                                    )}
+                                  </div>
+                                  
+                                  {/* Content */}
+                                  <div className="flex-1 bg-slate-50 rounded-lg p-4 border border-slate-200">
+                                    <div className="flex items-start justify-between">
+                                      <div className="flex-1">
+                                        <p className="text-sm font-semibold text-slate-900">
+                                          {activity.type === 'quiz_completed' && (
+                                            <span><span className="text-blue-600">{activity.leadName}</span> completed the quiz</span>
+                                          )}
+                                          {activity.type === 'call_booked' && (
+                                            <span><span className="text-blue-600">{activity.leadName}</span> booked a call{activity.details?.closerName && ` with ${activity.details.closerName}`}</span>
+                                          )}
+                                          {activity.type === 'deal_closed' && (
+                                            <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as closed</span>
+                                          )}
+                                          {activity.type === 'note_added' && (
+                                            <span><span className="text-green-600">{activity.actor}</span> added a note</span>
+                                          )}
+                                          {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated') && (
+                                            <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
+                                          )}
+                                          {activity.type === 'task_created' && (
+                                            <span><span className="text-green-600">{activity.actor}</span> created a task</span>
+                                          )}
+                                          {activity.type === 'task_started' && (
+                                            <span><span className="text-green-600">{activity.actor}</span> started a task</span>
+                                          )}
+                                          {activity.type === 'task_completed' && (
+                                            <span><span className="text-green-600">{activity.actor}</span> completed a task</span>
+                                          )}
+                                        </p>
+                                        <p className="text-xs text-slate-500 mt-1">
+                                          {new Date(activity.timestamp).toLocaleString('en-US', {
+                                            month: 'short',
+                                            day: 'numeric',
+                                            year: 'numeric',
+                                            hour: 'numeric',
+                                            minute: '2-digit',
+                                            hour12: true
+                                          })}
+                                        </p>
+                                        
+                                        {/* Activity details */}
+                                        {activity.details && (
+                                          <div className="mt-3 text-sm text-slate-600 space-y-2">
+                                            {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated' || activity.type === 'deal_closed') && (
+                                              <div>
+                                                <div className="flex flex-wrap items-center gap-2 mb-2">
+                                                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
+                                                    {activity.details.outcome?.replace(/_/g, ' ').toUpperCase()}
+                                                  </span>
+                                                  {activity.details.saleValue && (
+                                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                      ${Number(activity.details.saleValue).toFixed(2)}
+                                                    </span>
+                                                  )}
+                                                </div>
+                                                
+                                                {/* Call Details: Recording Link */}
+                                                {activity.details.recordingLink && (
+                                                  <div className="mt-2">
+                                                    <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Recording Link</label>
+                                                    <a 
+                                                      href={activity.details.recordingLink} 
+                                                      target="_blank" 
+                                                      rel="noopener noreferrer"
+                                                      className="text-blue-600 hover:text-blue-800 text-sm font-medium underline break-all"
+                                                    >
+                                                      {activity.details.recordingLink}
+                                                    </a>
+                                                  </div>
+                                                )}
+                                                
+                                                {/* Call Details: Notes */}
+                                                {activity.details.notes && (
+                                                  <div className="mt-2">
+                                                    <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Call Notes</label>
+                                                    <div className="p-3 bg-white rounded border border-slate-200">
+                                                      <p className="text-sm text-slate-700">{activity.details.notes}</p>
+                                                    </div>
+                                                  </div>
+                                                )}
+                                              </div>
+                                            )}
+                                            
+                                            {activity.type === 'call_booked' && activity.details.scheduledAt && (
+                                              <div className="text-xs text-slate-600">
+                                                Scheduled for: {new Date(activity.details.scheduledAt).toLocaleString('en-US', {
+                                                  month: 'short',
+                                                  day: 'numeric',
+                                                  hour: 'numeric',
+                                                  minute: '2-digit'
+                                                })}
+                                              </div>
+                                            )}
+                                            
+                                            {activity.type === 'deal_closed' && (
+                                              <div className="flex items-center space-x-2">
+                                                {activity.details.amount && (
+                                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    ${Number(activity.details.amount).toFixed(2)}
+                                                  </span>
+                                                )}
+                                                {activity.details.commission && (
+                                                  <span className="text-xs text-slate-500">
+                                                    Commission: ${Number(activity.details.commission).toFixed(2)}
+                                                  </span>
+                                                )}
+                                              </div>
+                                            )}
+                                            
+                                            {activity.type === 'note_added' && activity.details.content && (
+                                              <div className="mt-2 p-3 bg-white rounded border border-slate-200">
+                                                <p className="text-sm text-slate-700">{activity.details.content}</p>
+                                              </div>
+                                            )}
+                                            
+                                            {(activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_completed') && activity.details.title && (
+                                              <div className="mt-2">
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+                                                  {activity.details.title}
+                                                </span>
+                                              </div>
+                                            )}
+                                            
+                                            {activity.type === 'quiz_completed' && (
+                                              <div className="flex items-center space-x-4">
+                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                                  {activity.details.quizType?.replace('-', ' ')}
+                                                </span>
+                                                <span className="text-xs text-slate-500">
+                                                  {activity.details.answersCount} questions answered
+                                                </span>
+                                                <button
+                                                  onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
+                                                  className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center"
+                                                >
+                                                  {expandedActivity === activity.id ? (
+                                                    <>
+                                                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                                      </svg>
+                                                      Hide answers
+                                                    </>
+                                                  ) : (
+                                                    <>
+                                                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                      </svg>
+                                                      View answers
+                                                    </>
+                                                  )}
+                                                </button>
+                                              </div>
+                                            )}
+                                          </div>
+                                        )}
+                                        
+                                        {/* Expanded quiz answers */}
+                                        {expandedActivity === activity.id && activity.type === 'quiz_completed' && leadDetails && (
+                                          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            {leadDetails.answers.map((answer: any, idx: number) => (
+                                              <div key={idx} className="bg-white rounded-lg p-3 border border-slate-300">
+                                                <p className="text-xs font-semibold text-slate-900 mb-1">
+                                                  {answer.question?.prompt || `Question ${idx + 1}`}
+                                                </p>
+                                                <p className="text-sm text-slate-700">{answer.value || 'No answer provided'}</p>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
+                          </div>
+                        )}
                       </div>
                     )}
 
                     {activeTab === 'notes' && (
                       <div className="space-y-6">
-                        {/* Call Details Section */}
-                        <div className="bg-slate-50 rounded-lg p-6 border border-slate-200">
-                          <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center">
-                            <svg className="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                            </svg>
-                            Call Details
-                          </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Recording Link</label>
-                          <div className="mt-1">
-                            {(() => {
-                              let recordingLink = null;
-                              if (leadDetails.appointment?.outcome) {
-                                switch (leadDetails.appointment.outcome) {
-                                  case 'converted':
-                                    recordingLink = leadDetails.appointment.recordingLinkConverted;
-                                    break;
-                                  case 'not_interested':
-                                    recordingLink = leadDetails.appointment.recordingLinkNotInterested;
-                                    break;
-                                  case 'needs_follow_up':
-                                    recordingLink = leadDetails.appointment.recordingLinkNeedsFollowUp;
-                                    break;
-                                  case 'wrong_number':
-                                    recordingLink = leadDetails.appointment.recordingLinkWrongNumber;
-                                    break;
-                                  case 'no_answer':
-                                    recordingLink = leadDetails.appointment.recordingLinkNoAnswer;
-                                    break;
-                                  case 'callback_requested':
-                                    recordingLink = leadDetails.appointment.recordingLinkCallbackRequested;
-                                    break;
-                                  case 'rescheduled':
-                                    recordingLink = leadDetails.appointment.recordingLinkRescheduled;
-                                    break;
-                                  default:
-                                    recordingLink = leadDetails.appointment?.recordingLink;
-                                }
-                              } else {
-                                recordingLink = leadDetails.appointment?.recordingLink;
-                              }
-
-                              return recordingLink ? (
-                                <a 
-                                  href={recordingLink} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
-                                >
-                                  {recordingLink}
-                                </a>
-                              ) : (
-                                <p className="text-sm text-slate-400 italic">No recording available</p>
-                              );
-                            })()}
-                          </div>
-                        </div>
-                        <div>
-                          <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Call Notes</label>
-                          <div className="mt-1">
-                            {leadDetails.appointment?.notes ? (
-                                  <p className="text-sm text-slate-900 bg-white rounded-lg p-3 border border-slate-200">
-                                {leadDetails.appointment.notes}
-                              </p>
-                            ) : (
-                              <p className="text-sm text-slate-400 italic">No notes available</p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
                         {/* Notes Section */}
                         <div>
                           <div className="flex justify-between items-center mb-4">
