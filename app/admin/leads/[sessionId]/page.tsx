@@ -457,6 +457,86 @@ export default function LeadDetailsPage() {
                                 })}
                               </p>
                               
+                              {/* Outcome activities - Always show button, even if details are missing */}
+                              {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed') && (
+                                <div className="mt-2">
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    {activity.details?.outcome && (
+                                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
+                                        {activity.details.outcome.replace(/_/g, ' ').toUpperCase()}
+                                      </span>
+                                    )}
+                                    {activity.details?.previousOutcome && (
+                                      <span className="text-xs text-slate-500">
+                                        (was: {activity.details.previousOutcome.replace(/_/g, ' ')})
+                                      </span>
+                                    )}
+                                    {activity.details?.saleValue && (
+                                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        ${Number(activity.details.saleValue).toFixed(2)}
+                                      </span>
+                                    )}
+                                    
+                                    {/* Dropdown button for call details - Always show for outcome activities */}
+                                    <button
+                                      onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
+                                      className="ml-auto text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center whitespace-nowrap px-3 py-1.5 hover:bg-blue-50 rounded transition-colors border border-blue-200 hover:border-blue-300"
+                                      title="View recording link and call notes"
+                                    >
+                                      {expandedActivity === activity.id ? (
+                                        <>
+                                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                          </svg>
+                                          Hide call details
+                                        </>
+                                      ) : (
+                                        <>
+                                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                          </svg>
+                                          View call details
+                                        </>
+                                      )}
+                                    </button>
+                                  </div>
+                                  
+                                  {/* Expanded Call Details */}
+                                  {expandedActivity === activity.id && (
+                                    <div className="mt-3 space-y-3 p-4 bg-white rounded-lg border border-slate-200">
+                                      {/* Recording Link */}
+                                      <div>
+                                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Recording Link</label>
+                                        {activity.details?.recordingLink ? (
+                                          <a 
+                                            href={activity.details.recordingLink} 
+                                            target="_blank" 
+                                            rel="noopener noreferrer"
+                                            className="text-blue-600 hover:text-blue-800 text-sm font-medium underline break-all"
+                                          >
+                                            {activity.details.recordingLink}
+                                          </a>
+                                        ) : (
+                                          <p className="text-sm text-slate-400 italic">No recording available</p>
+                                        )}
+                                      </div>
+                                      
+                                      {/* Call Notes */}
+                                      <div>
+                                        <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Call Notes</label>
+                                        {activity.details?.notes ? (
+                                          <div className="p-3 bg-slate-50 rounded border border-slate-200">
+                                            <p className="text-sm text-slate-700">{activity.details.notes}</p>
+                                          </div>
+                                        ) : (
+                                          <p className="text-sm text-slate-400 italic">No notes available</p>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                              
                               {/* Activity details */}
                               {activity.details && (
                                 <div className="mt-3 text-sm text-slate-600">
@@ -522,84 +602,6 @@ export default function LeadDetailsPage() {
                                   {activity.type === 'note_added' && activity.details.content && (
                                     <div className="mt-2 p-3 bg-white rounded border border-slate-200">
                                       <p className="text-sm text-slate-700">{activity.details.content}</p>
-                                    </div>
-                                  )}
-                                  {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked' || activity.type === 'deal_closed') && (
-                                    <div className="mt-2">
-                                      <div className="flex flex-wrap items-center gap-2 justify-between">
-                                        <div className="flex flex-wrap items-center gap-2">
-                                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
-                                            {activity.details.outcome?.replace(/_/g, ' ').toUpperCase()}
-                                          </span>
-                                          {activity.details.previousOutcome && (
-                                            <span className="text-xs text-slate-500">
-                                              (was: {activity.details.previousOutcome.replace(/_/g, ' ')})
-                                            </span>
-                                          )}
-                                          {activity.details.saleValue && (
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                              ${Number(activity.details.saleValue).toFixed(2)}
-                                            </span>
-                                          )}
-                                        </div>
-                                        
-                                        {/* Dropdown button for call details - Always show for outcome activities */}
-                                        <button
-                                          onClick={() => setExpandedActivity(expandedActivity === activity.id ? null : activity.id)}
-                                          className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center whitespace-nowrap px-2 py-1 hover:bg-blue-50 rounded transition-colors"
-                                          title="View recording link and call notes"
-                                        >
-                                          {expandedActivity === activity.id ? (
-                                            <>
-                                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                                              </svg>
-                                              Hide call details
-                                            </>
-                                          ) : (
-                                            <>
-                                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                              </svg>
-                                              View call details
-                                            </>
-                                          )}
-                                        </button>
-                                      </div>
-                                      
-                                      {/* Expanded Call Details */}
-                                      {expandedActivity === activity.id && (
-                                        <div className="mt-3 space-y-3 p-4 bg-white rounded-lg border border-slate-200">
-                                          {/* Recording Link */}
-                                          <div>
-                                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Recording Link</label>
-                                            {activity.details.recordingLink ? (
-                                              <a 
-                                                href={activity.details.recordingLink} 
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
-                                                className="text-blue-600 hover:text-blue-800 text-sm font-medium underline break-all"
-                                              >
-                                                {activity.details.recordingLink}
-                                              </a>
-                                            ) : (
-                                              <p className="text-sm text-slate-400 italic">No recording available</p>
-                                            )}
-                                          </div>
-                                          
-                                          {/* Call Notes */}
-                                          <div>
-                                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide block mb-1">Call Notes</label>
-                                            {activity.details.notes ? (
-                                              <div className="p-3 bg-slate-50 rounded border border-slate-200">
-                                                <p className="text-sm text-slate-700">{activity.details.notes}</p>
-                                              </div>
-                                            ) : (
-                                              <p className="text-sm text-slate-400 italic">No notes available</p>
-                                            )}
-                                          </div>
-                                        </div>
-                                      )}
                                     </div>
                                   )}
                                   {(activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_finished') && activity.details.title && (
