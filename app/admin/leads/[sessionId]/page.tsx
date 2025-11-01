@@ -464,12 +464,17 @@ export default function LeadDetailsPage() {
                                     )}
                                   </div>
                                   
+                                  {/* TEST: Always visible div to confirm rendering */}
+                                  <div className="mt-2 p-2 bg-red-500 text-white text-xs font-bold">
+                                    TEST: Button should appear below this
+                                  </div>
+                                  
                                   {/* View call details button - MUST APPEAR FOR ALL OUTCOME ACTIVITIES */}
                                   <button
                                     onClick={() => {
                                       setExpandedActivity(expandedActivity === activity.id ? null : activity.id);
                                     }}
-                                    className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center mt-2"
+                                    className="mt-2 text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center bg-yellow-200 border-2 border-blue-500 px-3 py-2 rounded"
                                   >
                                     {expandedActivity === activity.id ? (
                                       <>
