@@ -464,18 +464,56 @@ export default async function BlogArticlePage({ params }: PageProps) {
                               i++;
                             }
                             
+                            // Separate description from "Sign:" text
+                            let description = '';
+                            let signText = '';
+                            restOfContent.forEach(content => {
+                              // Match "Sign:" in various formats: "Sign: text", "*Sign: text*", "*Sign: text"
+                              const signMatch = content.match(/^\*?Sign:\s*([^*]+?)\*?$/i) || content.match(/Sign:\s*([^*]+?)(?:\*|$)/i);
+                              if (signMatch && signMatch[1]) {
+                                signText = signMatch[1].trim().replace(/\*$/, '').trim();
+                              } else {
+                                const cleanedContent = content.replace(/^\*Sign:\s*(.+?)\*$/i, '').trim();
+                                if (cleanedContent && cleanedContent !== content) {
+                                  // Content was a sign line, skip it
+                                } else if (cleanedContent) {
+                                  description += (description ? ' ' : '') + cleanedContent;
+                                }
+                              }
+                            });
+                            
+                            // Fallback: try to extract sign from any remaining content
+                            if (!signText && restOfContent.length > 0) {
+                              const allContent = restOfContent.join(' ');
+                              const signMatch = allContent.match(/Sign:\s*([^*]+?)(?:\*|$)/i);
+                              if (signMatch && signMatch[1]) {
+                                signText = signMatch[1].trim().replace(/\*$/, '').trim();
+                                description = allContent.replace(/Sign:\s*[^*]+?\*/i, '').trim();
+                              }
+                            }
+                            
                             result.push(
-                              <div key={i} className="bg-white rounded-lg p-5 border border-slate-200 shadow-sm hover:border-teal-300 transition-all">
-                                <div className="flex items-start gap-3 mb-3">
-                                  <div className="flex-shrink-0 w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center text-teal-700">
+                              <div key={i} className="bg-gradient-to-r from-white to-slate-50 rounded-lg p-4 border-l-4 border-teal-500 shadow-sm hover:shadow-md transition-all">
+                                <div className="flex items-start gap-3">
+                                  <div className="flex-shrink-0 w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center text-white shadow-sm">
                                     {getReasonIcon(num)}
                                   </div>
-                                  <h3 className="font-semibold text-slate-900 text-lg flex-1">{title}</h3>
-                                </div>
-                                <div className="space-y-2 pl-11">
-                                  {restOfContent.map((content, idx) => (
-                                    <p key={idx}>{parseMarkdown(content)}</p>
-                                  ))}
+                                  <div className="flex-1 min-w-0">
+                                    <h3 className="font-semibold text-slate-900 text-base mb-1.5">{title}</h3>
+                                    {description && (
+                                      <p className="text-slate-600 text-sm leading-relaxed mb-2">{parseMarkdown(description)}</p>
+                                    )}
+                                    {signText && (
+                                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 border border-amber-200 rounded-md">
+                                        <svg className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                        </svg>
+                                        <span className="text-xs font-medium text-amber-800">
+                                          <span className="font-semibold">Sign:</span> {signText}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             );
