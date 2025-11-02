@@ -5,19 +5,20 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 
 // National average percentages for each category (as starting point)
+// These percentages reflect realistic budgeting based on Ramsey's approach
 const NATIONAL_AVERAGES = {
   giving: 0.10,           // 10% (recommended)
-  savings: 0.10,          // 10%
-  food: 0.12,             // 12%
-  utilities: 0.05,        // 5%
+  savings: 0.00,          // 0% (paused if you have debt - Baby Step 2)
+  food: 0.13,             // 13%
+  utilities: 0.06,        // 6%
   housing: 0.25,          // 25% (recommended max)
-  transportation: 0.10,    // 10%
-  insurance: 0.08,        // 8%
-  householdItems: 0.03,   // 3%
-  debt: 0.12,             // 12% (average)
-  retirement: 0.15,       // 15% (if debt-free)
-  personal: 0.05,         // 5%
-  other: 0.05             // 5%
+  transportation: 0.03,    // 3%
+  insurance: 0.11,        // 11%
+  householdItems: 0.01,   // 1%
+  debt: 0.24,             // 24% (average debt payment)
+  retirement: 0.00,       // 0% (paused if you have debt - Baby Step 2)
+  personal: 0.07,         // 7%
+  other: 0.00             // 0% (fill as needed)
 };
 
 const CATEGORY_COLORS = {
@@ -50,8 +51,24 @@ const CATEGORY_LABELS = {
   other: "Other"
 };
 
+const CATEGORY_DESCRIPTIONS = {
+  giving: "Be intentional about making generosity a regular part of your life. Start your budget by giving 10% of your income.",
+  savings: "If you're in debt, save $1,000 in a starter emergency fund. Then pause saving and focus on paying off that debt. Once you're debt-free, save up 3–6 months of expenses for a fully funded emergency fund. These are the first three of the 7 Baby Steps, and taking each of these steps one at a time is how you make real progress with your money goals.",
+  food: "Food is the easiest budget line to bust—and the hardest to plan for that first month. Open your bank account and see how much you spent on food last month. Then, you can tweak this number in the EveryDollar budget app as you plan your spending for this month.",
+  utilities: "Utilities are the essential expenses that keep your house running. The amounts can change, but check your bank account and see what you spent last month on electricity, water, the phone bill, natural gas, etc. Add those up and start with that number here.",
+  housing: "Pro tip: When you spend 25% (or less) of your take-home pay on housing (mortgage or rent plus insurance, property taxes and HOA fees), one of your biggest blessings (your home) won't turn into a financial burden.",
+  transportation: "Look back through your bank account and add up how much you spent on gas last month as a starting number for this category. Then don't forget auto insurance, maintenance, and anything else you spend on transportation.",
+  insurance: "You planned for homeowners/renters and auto coverage in other categories. Here, add what you spend on other insurances you need: term life, health, long-term disability, long-term care (if you're age 60+), identity theft, and umbrella (if you've got a net worth of $500,000 or more).",
+  householdItems: "Toothpaste, shampoo, laundry supplies: How much do you spend on these things each month? This is another hard one to pin down at first—but soon you'll be a pro here. (Not literally. No one goes pro planning toilet paper spending. Yet.)",
+  debt: "Debt is any money you owe to anyone for any reason. So, add up all your car payments, credit card bills, student loans, medical debt and other payment plans and put that total here. Then start hustling to pay it off and really make progress with your money.",
+  retirement: "When you're debt-free and your fully funded emergency fund is, well, fully funded, it's time for retirement savings! Start prepping for your future by investing 15% of your income.",
+  personal: "This is what you plan to spend on all the fun stuff: concert tickets, family trips to the ballpark, bagpipe lessons, salon visits—all those exciting extras. (Just remember, needs come before wants.)",
+  other: "This budget calculator only has the most common categories, but it probably doesn't cover everything you spend money on. Go ahead and add any other expenses here. When you start budgeting with EveryDollar, you can customize and add as many categories as you need."
+};
+
 export default function BudgetCalculatorPage() {
   const [income, setIncome] = useState("");
+  const [showInfoTooltip, setShowInfoTooltip] = useState<string | null>(null);
   const [expenses, setExpenses] = useState({
     giving: "",
     savings: "",
@@ -77,10 +94,13 @@ export default function BudgetCalculatorPage() {
         const percentage = NATIONAL_AVERAGES[categoryKey];
         const calculatedValue = incomeNum * percentage;
         // Only auto-fill if the field is empty
-        if (!expenses[categoryKey as keyof typeof expenses]) {
+        // If the percentage is 0, don't auto-fill (user can add if needed)
+        if (!expenses[categoryKey as keyof typeof expenses] && percentage > 0) {
           newExpenses[categoryKey] = Math.round(calculatedValue).toString();
-        } else {
+        } else if (expenses[categoryKey as keyof typeof expenses]) {
           newExpenses[categoryKey] = expenses[categoryKey as keyof typeof expenses];
+        } else {
+          newExpenses[categoryKey] = "";
         }
       });
       setExpenses(prev => ({ ...prev, ...newExpenses }));
@@ -221,9 +241,30 @@ export default function BudgetCalculatorPage() {
                             style={{ backgroundColor: color }}
                           />
                           <div className="flex-1">
-                            <label className="block text-sm font-medium text-slate-700 mb-1">
-                              {CATEGORY_LABELS[categoryKey]}
-                            </label>
+                            <div className="flex items-center gap-2 mb-1">
+                              <label className="block text-sm font-medium text-slate-700">
+                                {CATEGORY_LABELS[categoryKey]}
+                              </label>
+                              <div className="relative">
+                                <button
+                                  type="button"
+                                  onMouseEnter={() => setShowInfoTooltip(key)}
+                                  onMouseLeave={() => setShowInfoTooltip(null)}
+                                  className="w-4 h-4 rounded-full border border-slate-400 text-slate-400 hover:border-teal-600 hover:text-teal-600 flex items-center justify-center transition-colors text-[10px] font-bold"
+                                  aria-label={`Information about ${CATEGORY_LABELS[categoryKey]}`}
+                                >
+                                  i
+                                </button>
+                                {showInfoTooltip === key && (
+                                  <div className="absolute left-0 top-full mt-2 z-50 w-80 bg-white rounded-lg shadow-xl border border-slate-200 p-4">
+                                    <p className="text-sm text-slate-700 leading-relaxed">
+                                      {CATEGORY_DESCRIPTIONS[categoryKey as keyof typeof CATEGORY_DESCRIPTIONS]}
+                                    </p>
+                                    <div className="absolute -top-2 left-4 w-4 h-4 bg-white border-l border-t border-slate-200 transform rotate-45"></div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
                             <div className="relative">
                               <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-sm">$</span>
                               <input
