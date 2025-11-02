@@ -491,19 +491,52 @@ export default async function BlogArticlePage({ params }: PageProps) {
                               i++;
                             }
                             
-                            const boldMatch = para.match(/^\*\*(.+?)\*\*/);
-                            const boldText = boldMatch ? boldMatch[1] : para;
-                            
-                            result.push(
-                              <div key={i} className="bg-white rounded-lg p-5 border-l-4 border-teal-500 shadow-sm">
-                                <h3 className="font-semibold text-slate-900 text-lg mb-3">{boldText}</h3>
-                                <div className="space-y-2">
-                                  {restOfContent.map((content, idx) => (
-                                    <p key={idx}>{parseMarkdown(content)}</p>
-                                  ))}
+                            // Parse "From X to Y" format
+                            const fromToMatch = para.match(/^\*\*From\s+"([^"]+)"\s+to\s+"([^"]+)"\*\*/);
+                            if (fromToMatch) {
+                              const fromText = fromToMatch[1];
+                              const toText = fromToMatch[2];
+                              
+                              result.push(
+                                <div key={i} className="bg-gradient-to-r from-slate-50 to-teal-50 rounded-lg p-4 border border-teal-200/50 shadow-sm">
+                                  <div className="flex items-center gap-3 flex-wrap">
+                                    <span className="px-3 py-1.5 bg-slate-200 rounded-md text-sm font-medium text-slate-700 line-through decoration-slate-500">
+                                      {fromText}
+                                    </span>
+                                    <svg className="w-5 h-5 text-teal-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                    </svg>
+                                    <span className="px-3 py-1.5 bg-teal-600 text-white rounded-md text-sm font-semibold">
+                                      {toText}
+                                    </span>
+                                  </div>
+                                  {restOfContent.length > 0 && (
+                                    <div className="mt-3 space-y-2">
+                                      {restOfContent.map((content, idx) => (
+                                        <p key={idx} className="text-slate-600 text-sm leading-relaxed">
+                                          {parseMarkdown(content)}
+                                        </p>
+                                      ))}
+                                    </div>
+                                  )}
                                 </div>
-                              </div>
-                            );
+                              );
+                            } else {
+                              // Fallback for non-standard format
+                              const boldMatch = para.match(/^\*\*(.+?)\*\*/);
+                              const boldText = boldMatch ? boldMatch[1] : para;
+                              
+                              result.push(
+                                <div key={i} className="bg-white rounded-lg p-5 border-l-4 border-teal-500 shadow-sm">
+                                  <h3 className="font-semibold text-slate-900 text-lg mb-3">{boldText}</h3>
+                                  <div className="space-y-2">
+                                    {restOfContent.map((content, idx) => (
+                                      <p key={idx}>{parseMarkdown(content)}</p>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            }
                             continue;
                           }
                           
