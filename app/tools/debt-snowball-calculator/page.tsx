@@ -46,6 +46,7 @@ export default function DebtSnowballCalculatorPage() {
   const [sliderDebtFreeDate, setSliderDebtFreeDate] = useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   const [linkCopied, setLinkCopied] = useState(false);
+  const [error, setError] = useState("");
 
   const copyLinkToClipboard = () => {
     const url = typeof window !== 'undefined' ? window.location.href : '';
@@ -181,9 +182,12 @@ export default function DebtSnowballCalculatorPage() {
     );
 
     if (validDebts.length === 0) {
-      alert("Please add at least one valid debt");
+      setError("Please add at least one valid debt");
       return;
     }
+    
+    // Clear error if we have valid debts
+    setError("");
 
     // Group debts by type
     const grouped: { [key: string]: Debt[] } = {};
@@ -790,6 +794,18 @@ export default function DebtSnowballCalculatorPage() {
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
                 </div>
               </div>
+
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p className="text-red-700 font-medium">{error}</p>
+                  </div>
+                </div>
+              )}
 
               {/* CTA Button */}
               <button
