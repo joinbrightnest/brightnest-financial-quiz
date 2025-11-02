@@ -438,28 +438,20 @@ export default async function BlogArticlePage({ params }: PageProps) {
                               }
                             
                             result.push(
-                              <div key={`step-${stepNum}`} className="relative bg-white rounded-lg p-4 border-l-4 border-teal-500 shadow-sm hover:shadow-md transition-all overflow-hidden group mb-4">
-                                {/* Subtle background accent */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-teal-50/30 via-white to-white pointer-events-none"></div>
-                                
-                                <div className="relative">
-                                  {/* Header with number and title */}
-                                  <div className="flex items-start gap-3 mb-3 pb-3 border-b border-teal-100/60">
-                                    <div className="flex-shrink-0">
-                                      <div className="w-12 h-12 bg-gradient-to-br from-teal-600 to-teal-700 rounded-lg flex items-center justify-center text-white shadow-md group-hover:shadow-lg transition-shadow">
-                                        <span className="text-lg font-bold">{stepNum}</span>
-                                      </div>
-                                    </div>
-                                    <div className="flex-1 pt-0.5">
-                                      <h3 className="font-bold text-slate-900 text-lg leading-snug">{stepTitle}</h3>
+                              <div key={`step-${stepNum}`} className="mb-6">
+                                <div className="flex items-start gap-4 mb-3">
+                                  <div className="flex-shrink-0">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-teal-600 to-teal-700 rounded-lg flex items-center justify-center text-white shadow-md">
+                                      <span className="text-lg font-bold">{stepNum}</span>
                                     </div>
                                   </div>
-                                  
-                                  {/* Explanation content - compact */}
-                                  <div className="space-y-2 pl-[3.5rem]">
-                                    {restOfContent.map((content, idx) => (
-                                      <p key={idx} className="text-slate-700 text-sm leading-relaxed">{parseMarkdown(content)}</p>
-                                    ))}
+                                  <div className="flex-1 pt-1">
+                                    <h3 className="font-bold text-slate-900 text-xl leading-tight mb-3">{stepTitle}</h3>
+                                    <div className="space-y-3">
+                                      {restOfContent.map((content, idx) => (
+                                        <p key={idx} className="text-slate-700 leading-relaxed">{parseMarkdown(content)}</p>
+                                      ))}
+                                    </div>
                                   </div>
                                 </div>
                               </div>
