@@ -304,68 +304,22 @@ export default function BlogPage() {
         <div className="mb-10 sm:mb-12">
           <div className="flex items-center justify-between mb-5 sm:mb-6">
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">watch</h2>
-            <Link href="#" className="text-sm sm:text-base text-teal-600 font-semibold hover:text-teal-700 transition-colors">
-              view more
-            </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            <Link href="/blog/why-your-budget-keeps-failing" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
-              <div className="h-48 bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                </div>
+          <div className="bg-white rounded-xl border border-slate-200/60 shadow-sm p-8 sm:p-12 md:p-16">
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="w-24 h-24 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center mb-6 shadow-lg">
+                <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
               </div>
-              <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
-                  The Real Cost of Lifestyle Inflation
-                </h3>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  You're making more money but feeling just as broke? Here's why — and how to break the cycle.
-                </p>
-              </div>
-            </Link>
-
-            <Link href="/blog/three-account-system" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
-              <div className="h-48 bg-gradient-to-br from-teal-400 to-teal-500 flex items-center justify-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                </div>
-              </div>
-              <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
-                  3 Money Habits That Build Wealth Automatically
-                </h3>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  Stop relying on willpower. These automated systems work while you sleep.
-                </p>
-              </div>
-            </Link>
-
-            <Link href="/blog/hidden-cost-of-bnpl" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
-              <div className="h-48 bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                </div>
-              </div>
-              <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
-                  How to Handle Financial Setbacks
-                </h3>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  Lost your job? Unexpected expense? Here's your step-by-step recovery plan.
-                </p>
-              </div>
-            </Link>
+              <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">
+                Coming Soon
+              </h3>
+              <p className="text-base sm:text-lg text-slate-600 max-w-md leading-relaxed">
+                We're working on bringing you valuable video content to help you build lasting wealth. Check back soon!
+              </p>
+            </div>
           </div>
         </div>
 
@@ -373,68 +327,22 @@ export default function BlogPage() {
         <div className="mb-10 sm:mb-12">
           <div className="flex items-center justify-between mb-5 sm:mb-6">
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">listen</h2>
-            <Link href="#" className="text-sm sm:text-base text-teal-600 font-semibold hover:text-teal-700 transition-colors">
-              view more
-            </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            <Link href="/blog/why-your-budget-keeps-failing" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
-              <div className="h-48 bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                  </svg>
-                </div>
+          <div className="bg-white rounded-xl border border-slate-200/60 shadow-sm p-8 sm:p-12 md:p-16">
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="w-24 h-24 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center mb-6 shadow-lg">
+                <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                </svg>
               </div>
-              <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
-                  Episode 47: Breaking Free From Debt Shame
-                </h3>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  Debt isn't a moral failing. In this episode, we talk about overcoming shame and building a real payoff strategy.
-                </p>
-              </div>
-            </Link>
-
-            <Link href="/blog/three-account-system" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
-              <div className="h-48 bg-gradient-to-br from-teal-400 to-teal-500 flex items-center justify-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                  </svg>
-                </div>
-              </div>
-              <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
-                  Episode 52: The Truth About Investing for Beginners
-                </h3>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  Stocks, ETFs, index funds — where do you even start? We break it down in plain English.
-                </p>
-              </div>
-            </Link>
-
-            <Link href="/blog/hidden-cost-of-bnpl" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
-              <div className="h-48 bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                <div className="relative z-10 w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                  <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                  </svg>
-                </div>
-              </div>
-              <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
-                  Episode 58: Money and Marriage — The Honest Conversation
-                </h3>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  Financial compatibility matters. Here's how to navigate money as a team without losing yourself.
-                </p>
-              </div>
-            </Link>
+              <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">
+                Coming Soon
+              </h3>
+              <p className="text-base sm:text-lg text-slate-600 max-w-md leading-relaxed">
+                Exciting podcast episodes are on the way! We're preparing engaging conversations about money, mindset, and building wealth.
+              </p>
+            </div>
           </div>
         </div>
 
