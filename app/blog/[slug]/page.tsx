@@ -429,19 +429,29 @@ export default async function BlogArticlePage({ params }: PageProps) {
                               }
                             
                             result.push(
-                              <div key={`step-${stepNum}`} className="bg-gradient-to-br from-teal-50 to-slate-50 rounded-xl p-6 border border-teal-200/50 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="flex items-start gap-4 mb-4">
-                                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-teal-600 to-teal-700 rounded-lg flex items-center justify-center text-white shadow-md">
-                                    <span className="text-xl font-bold">{stepNum}</span>
+                              <div key={`step-${stepNum}`} className="relative bg-white rounded-xl p-6 border-l-4 border-teal-500 shadow-sm hover:shadow-lg transition-all overflow-hidden group">
+                                {/* Subtle background accent */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-teal-50/40 via-white to-white pointer-events-none"></div>
+                                
+                                <div className="relative">
+                                  {/* Header with number and title */}
+                                  <div className="flex items-start gap-4 mb-4 pb-4 border-b border-teal-100">
+                                    <div className="flex-shrink-0">
+                                      <div className="w-16 h-16 bg-gradient-to-br from-teal-600 to-teal-700 rounded-xl flex items-center justify-center text-white shadow-lg group-hover:shadow-xl transition-shadow">
+                                        <span className="text-2xl font-bold">{stepNum}</span>
+                                      </div>
+                                    </div>
+                                    <div className="flex-1 pt-1">
+                                      <h3 className="font-bold text-slate-900 text-xl leading-tight">{stepTitle}</h3>
+                                    </div>
                                   </div>
-                                  <div className="flex-1">
-                                    <h3 className="font-bold text-slate-900 text-xl mb-2">{stepTitle}</h3>
+                                  
+                                  {/* Explanation content - clearly separated */}
+                                  <div className="space-y-3">
+                                    {restOfContent.map((content, idx) => (
+                                      <p key={idx} className="text-slate-700 leading-relaxed">{parseMarkdown(content)}</p>
+                                    ))}
                                   </div>
-                                </div>
-                                <div className="space-y-3">
-                                  {restOfContent.map((content, idx) => (
-                                    <p key={idx}>{parseMarkdown(content)}</p>
-                                  ))}
                                 </div>
                               </div>
                             );
