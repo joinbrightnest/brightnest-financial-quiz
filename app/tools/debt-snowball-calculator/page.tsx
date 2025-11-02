@@ -296,8 +296,8 @@ export default function DebtSnowballCalculatorPage() {
                 </div>
 
                 <div className="space-y-4 mb-6">
-                  {Object.keys(debtsByType).map(type => {
-                    const typeDebts = debtsByType[type];
+                  {DEBT_TYPES.filter(type => type !== "Choose a Debt Type").map(type => {
+                    const typeDebts = debtsByType[type] || [];
                     const typeTotal = typeDebts.reduce((sum, debt) => sum + parseFloat(debt.balance), 0);
                     
                     return (
@@ -307,24 +307,28 @@ export default function DebtSnowballCalculatorPage() {
                             {getDebtTypeIcon(type)}
                             <h3 className="font-medium text-slate-900">{type}s</h3>
                           </div>
-                          <span className="text-teal-600 font-medium">{formatCurrency(typeTotal)}</span>
+                          <span className={`font-medium ${typeTotal > 0 ? 'text-teal-600' : 'text-slate-900'}`}>
+                            {formatCurrency(typeTotal)}
+                          </span>
                         </div>
-                        <div className="pl-7 space-y-1 mt-2">
-                          {typeDebts.map((debt, idx) => (
-                            <div key={debt.id} className="text-sm text-slate-600">
-                              {debt.name || `${type} ${idx + 1}`}: {formatCurrency(parseFloat(debt.balance))}
-                            </div>
-                          ))}
-                        </div>
+                        {typeDebts.length > 0 && (
+                          <div className="pl-7 space-y-1 mt-2">
+                            {typeDebts.map((debt, idx) => (
+                              <div key={debt.id} className="text-sm text-slate-600">
+                                {debt.name || `${type} ${idx + 1}`}: {formatCurrency(parseFloat(debt.balance))}
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     );
                   })}
                 </div>
 
                 <div className="border-t-2 border-slate-200 pt-4">
-                  <div className="flex justify-between items-start">
-                    <span className="text-teal-700 font-bold uppercase">TOTAL DEBT</span>
-                    <span className="text-5xl font-bold text-slate-900">{formatCurrency(totalDebt)}</span>
+                  <div className="text-center">
+                    <div className="text-teal-700 font-bold uppercase mb-2">TOTAL DEBT</div>
+                    <div className="text-5xl font-bold text-slate-900">{formatCurrency(totalDebt)}</div>
                   </div>
                 </div>
 
