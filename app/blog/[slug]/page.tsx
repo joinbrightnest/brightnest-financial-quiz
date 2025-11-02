@@ -31,15 +31,15 @@ const articlesMap: Record<string, {
         },
         {
           title: "Why budgets fail",
-          body: "The numbers tell the story: About 83% of U.S. adults say they overspend at least sometimes. Among those who have a monthly budget, 84% admit to exceeding it at some point. 57% of Americans report they don't have enough savings to cover a $1,000 emergency. 17% of U.S. adults said they did not pay all their bills in full in the previous month — and among those earning under $25k, the number jumps to 36%.\n\nThese numbers show: it's not just you. Budgeting failure is widespread. But more importantly: it's largely preventable if we understand the real reasons behind the breakdown.\n\nBelow are the most common behavioural traps that sabotage a budget:\n\n📌 Unrealistic goals or too-strict limits: Many budgets are built on ideal months — \"I'll spend only $50 on eating out\" when in reality you go out 3 nights a week. The mismatch between real life behaviour and budget assumptions causes immediate failure. Sign: You blow one category and then everything else collapses.\n\n📌 Failure to plan for irregular expenses & emergencies: If your budget doesn't include \"fun money\", surprise bills, seasonal gifts, car repairs — you'll either bust your budget or ignore the unexpected. Sign: You hit mid-month and suddenly feel like \"nothing left\" or you dip into debt.\n\n📌 Lack of monitoring / feedback: A budget isn't \"set and forget\". If you don't review your spending and adjust, you'll drift off track. Sign: You forget to check in on your budget until the month is over — then you're in the red.\n\n📌 Misalignment with your values & behaviours: If your budget restricts what truly matters to you, you'll rebel. For instance: you hate cooking at home but budget forces 90% at-home meals. That causes resentment and abandonment. Sign: You feel deprived, resentful, or you repeatedly rationalise \"just this once\".\n\n📌 Behavioural triggers: emotional spending, habit overspending. Budgeting often fails when it assumes rational behaviour — yet humans are emotional, impulsive. If you don't identify your spending triggers (stress, reward, convenience) the budget will lose. Sign: You know you overspend when triggered (bad day, social outing, boredom) and budget didn't guard against that."
+          body: "The numbers tell the story: About 83% of U.S. adults say they overspend at least sometimes. Among those who have a monthly budget, 84% admit to exceeding it at some point. 57% of Americans report they don't have enough savings to cover a $1,000 emergency. 17% of U.S. adults said they did not pay all their bills in full in the previous month — and among those earning under $25k, the number jumps to 36%.\n\nThese numbers show: it's not just you. Budgeting failure is widespread. But more importantly: it's largely preventable if we understand the real reasons behind the breakdown.\n\nBelow are the most common behavioural traps that sabotage a budget:\n\n**1. Unrealistic goals or too-strict limits**\nMany budgets are built on ideal months — \"I'll spend only $50 on eating out\" when in reality you go out 3 nights a week. The mismatch between real life behaviour and budget assumptions causes immediate failure.\n\n*Sign: You blow one category and then everything else collapses.*\n\n**2. Failure to plan for irregular expenses & emergencies**\nIf your budget doesn't include \"fun money\", surprise bills, seasonal gifts, car repairs — you'll either bust your budget or ignore the unexpected.\n\n*Sign: You hit mid-month and suddenly feel like \"nothing left\" or you dip into debt.*\n\n**3. Lack of monitoring / feedback**\nA budget isn't \"set and forget\". If you don't review your spending and adjust, you'll drift off track.\n\n*Sign: You forget to check in on your budget until the month is over — then you're in the red.*\n\n**4. Misalignment with your values & behaviours**\nIf your budget restricts what truly matters to you, you'll rebel. For instance: you hate cooking at home but budget forces 90% at-home meals. That causes resentment and abandonment.\n\n*Sign: You feel deprived, resentful, or you repeatedly rationalise \"just this once\".*\n\n**5. Behavioural triggers: emotional spending, habit overspending**\nBudgeting often fails when it assumes rational behaviour — yet humans are emotional, impulsive. If you don't identify your spending triggers (stress, reward, convenience) the budget will lose.\n\n*Sign: You know you overspend when triggered (bad day, social outing, boredom) and budget didn't guard against that.*"
         },
         {
           title: "How to fix it — a behaviour-based roadmap",
-          body: "Here's how to build a budgeting system that works with your behaviour, not against it:\n\n✅ Step 1: Track real behaviour for 30–90 days. Start by simply tracking — no changes yet. What do you really spend on groceries, eating out, entertainment, subscriptions? Use bank statements, receipt photos, spending apps. Why? Because your budget must reflect reality, not idealism. \"Start with 3 months of real expenses (yes, the coffee counts) … Treat your budget as a living tool — not a prison.\"\n\n✅ Step 2: Build in flexibility and \"fun money\". Rather than zero-fun, carve out a category for flexible spending (\"treats\", \"going out\") that fits your values. When people feel deprived, they rebel. Allow latitude. Also build in \"emergency/irregular\" funds (seasonal gifts, car repairs) by dividing annual costs into monthly budgeting.\n\n✅ Step 3: Set realistic targets and adjust frequently. After you track actual behaviour, set targets that challenge yet are achievable. If you regularly spend $400 on groceries, don't budget $250 immediately — maybe $350 then reduce gradually. Review monthly and adjust. Sense of progress builds motivation.\n\n✅ Step 4: Align budget with your values and goals. Ask yourself: What matters? The gym, travel, home-cooking, books? Your budget should reflect those priorities. If the budget starves what you value, it won't last. Also link each spending category to a bigger goal — savings, debt reduction, experience — so that the budget feels purposeful.\n\n✅ Step 5: Use behavioural \"guardrails\". Automate savings and emergency-fund deposits so you pay yourself first. Use separate accounts or \"pots\" for specific goals (vacation, repairs). Monitor weekly, not just monthly — small check-ins catch drift early. Recognise and plan for your personal triggers: if you overspend when stressed, plan \"stress buffer\" money or alternative activity.\n\n✅ Step 6: Make the budget a living tool, not a fixed prison. The best budgets evolve. Life changes: income shifts, cost of living rises, priorities change. Review and reshape. \"Budgets don't inherently get you to stop spending money… The problem is that restrictions are the ultimate fun-killer.\" So aim for consistency over perfection. Adjust rather than abandon."
+          body: "Here's how to build a budgeting system that works with your behaviour, not against it:\n\n**Step 1: Track real behaviour for 30–90 days**\nStart by simply tracking — no changes yet. What do you really spend on groceries, eating out, entertainment, subscriptions? Use bank statements, receipt photos, spending apps.\n\nWhy? Because your budget must reflect reality, not idealism.\n\n\"Start with 3 months of real expenses (yes, the coffee counts) … Treat your budget as a living tool — not a prison.\"\n\n**Step 2: Build in flexibility and \"fun money\"**\nRather than zero-fun, carve out a category for flexible spending (\"treats\", \"going out\") that fits your values. When people feel deprived, they rebel. Allow latitude.\n\nAlso build in \"emergency/irregular\" funds (seasonal gifts, car repairs) by dividing annual costs into monthly budgeting.\n\n**Step 3: Set realistic targets and adjust frequently**\nAfter you track actual behaviour, set targets that challenge yet are achievable. If you regularly spend $400 on groceries, don't budget $250 immediately — maybe $350 then reduce gradually.\n\nReview monthly and adjust. Sense of progress builds motivation.\n\n**Step 4: Align budget with your values and goals**\nAsk yourself: What matters? The gym, travel, home-cooking, books? Your budget should reflect those priorities. If the budget starves what you value, it won't last.\n\nAlso link each spending category to a bigger goal — savings, debt reduction, experience — so that the budget feels purposeful.\n\n**Step 5: Use behavioural \"guardrails\"**\nAutomate savings and emergency-fund deposits so you pay yourself first. Use separate accounts or \"pots\" for specific goals (vacation, repairs). Monitor weekly, not just monthly — small check-ins catch drift early.\n\nRecognise and plan for your personal triggers: if you overspend when stressed, plan \"stress buffer\" money or alternative activity.\n\n**Step 6: Make the budget a living tool, not a fixed prison**\nThe best budgets evolve. Life changes: income shifts, cost of living rises, priorities change. Review and reshape.\n\n\"Budgets don't inherently get you to stop spending money… The problem is that restrictions are the ultimate fun-killer.\"\n\nSo aim for consistency over perfection. Adjust rather than abandon."
         },
         {
           title: "Behaviour change mindset – the key to lasting success",
-          body: "Building the right budget structure is only part of the solution. The other part: adopting a mindset of behaviour change. Here are some mindset switches that matter:\n\n🔄 From \"must cut\" to \"choose better\": Rather than seeing budget as deprivation, view it as empowerment: choosing where you want your money to go.\n\n🔄 From \"one perfect month\" to \"progress over time\": Rarely does one month change everything; incremental adjustments lead to lasting change.\n\n🔄 From \"I blew it – I quit\" to \"I drifted – I adjust\": If you overspend, don't abandon the budget; recognise and correct.\n\n🔄 From \"spending equals fun\" to \"spending aligned with mission\": When you link spending to your values (what you truly care about), you make decisions more consciously."
+          body: "Building the right budget structure is only part of the solution. The other part: adopting a mindset of behaviour change. Here are some mindset switches that matter:\n\n**From \"must cut\" to \"choose better\"**\nRather than seeing budget as deprivation, view it as empowerment: choosing where you want your money to go.\n\n**From \"one perfect month\" to \"progress over time\"**\nRarely does one month change everything; incremental adjustments lead to lasting change.\n\n**From \"I blew it – I quit\" to \"I drifted – I adjust\"**\nIf you overspend, don't abandon the budget; recognise and correct.\n\n**From \"spending equals fun\" to \"spending aligned with mission\"**\nWhen you link spending to your values (what you truly care about), you make decisions more consciously."
         },
         {
           title: "Quick checklist for your next budget",
@@ -272,6 +272,42 @@ export default async function BlogArticlePage({ params }: PageProps) {
                         const result = [];
                         let i = 0;
                         
+                        // Helper function to parse markdown-style bold and italic
+                        const parseMarkdown = (text: string) => {
+                          const parts: (string | JSX.Element)[] = [];
+                          let currentIndex = 0;
+                          
+                          // Match **bold** and *italic*
+                          const regex = /(\*\*[^*]+\*\*|\*[^*]+\*)/g;
+                          let match;
+                          
+                          while ((match = regex.exec(text)) !== null) {
+                            // Add text before match
+                            if (match.index > currentIndex) {
+                              parts.push(text.substring(currentIndex, match.index));
+                            }
+                            
+                            // Process match
+                            const matchText = match[0];
+                            if (matchText.startsWith('**') && matchText.endsWith('**')) {
+                              // Bold
+                              parts.push(<strong key={`bold-${match.index}`} className="font-semibold text-slate-900">{matchText.slice(2, -2)}</strong>);
+                            } else if (matchText.startsWith('*') && matchText.endsWith('*')) {
+                              // Italic
+                              parts.push(<em key={`italic-${match.index}`} className="italic text-slate-600">{matchText.slice(1, -1)}</em>);
+                            }
+                            
+                            currentIndex = match.index + match[0].length;
+                          }
+                          
+                          // Add remaining text
+                          if (currentIndex < text.length) {
+                            parts.push(text.substring(currentIndex));
+                          }
+                          
+                          return parts.length > 0 ? parts : [text];
+                        };
+                        
                         while (i < paragraphs.length) {
                           const para = paragraphs[i].trim();
                           
@@ -285,19 +321,18 @@ export default async function BlogArticlePage({ params }: PageProps) {
                             result.push(
                               <ul key={`bullets-${i}`} className="list-disc list-inside space-y-2 pl-6">
                                 {bullets.map((bullet, idx) => (
-                                  <li key={idx} className="mb-1">{bullet}</li>
+                                  <li key={idx} className="mb-1">{parseMarkdown(bullet)}</li>
                                 ))}
                               </ul>
                             );
                             continue;
                           }
                           
-                          // Handle items with icons (📌, ✅, 🔄)
-                          if (para.match(/^[📌✅🔄]/)) {
+                          // Check if paragraph starts with bold (like "**Step 1:**" or "**1. Title**")
+                          if (para.match(/^\*\*/)) {
                             result.push(
-                              <div key={i} className="flex items-start gap-3 py-2">
-                                <span className="text-xl flex-shrink-0 mt-1">{para.charAt(0)}</span>
-                                <p className="flex-1">{para.substring(1).trim()}</p>
+                              <div key={i} className="mt-4 mb-2">
+                                <p className="font-semibold text-slate-900 text-lg">{parseMarkdown(para)}</p>
                               </div>
                             );
                             i++;
@@ -305,7 +340,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                           }
                           
                           // Regular paragraphs
-                          result.push(<p key={i}>{para}</p>);
+                          result.push(<p key={i}>{parseMarkdown(para)}</p>);
                           i++;
                         }
                         
