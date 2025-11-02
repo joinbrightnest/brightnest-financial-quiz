@@ -546,9 +546,9 @@ export default async function BlogArticlePage({ params }: PageProps) {
                               const fromText = fromToMatch[1];
                               const toText = fromToMatch[2];
                               
-                              result.push(
-                                <div key={i} className="bg-gradient-to-r from-slate-50 to-teal-50 rounded-lg p-4 border border-teal-200/50 shadow-sm">
-                                  <div className="flex items-center gap-3 flex-wrap">
+                            result.push(
+                              <div key={i} className="bg-gradient-to-r from-slate-50 to-teal-50 rounded-lg p-4 border border-teal-200/50 shadow-sm">
+                                <div className="flex items-center justify-center gap-3 flex-wrap">
                                     <span className="px-3 py-1.5 bg-slate-200 rounded-md text-sm font-medium text-slate-700 line-through decoration-slate-500">
                                       {fromText}
                                     </span>
