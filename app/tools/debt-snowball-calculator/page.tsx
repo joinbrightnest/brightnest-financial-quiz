@@ -44,6 +44,7 @@ export default function DebtSnowballCalculatorPage() {
   const [monthsToPayoff, setMonthsToPayoff] = useState<number>(0);
   const [sliderExtraPayment, setSliderExtraPayment] = useState<string>("0");
   const [sliderDebtFreeDate, setSliderDebtFreeDate] = useState<string | null>(null);
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
 
   const addDebt = () => {
     const newId = (debts.length + 1).toString();
@@ -287,18 +288,37 @@ export default function DebtSnowballCalculatorPage() {
                     const typeDebts = debtsByType[type] || [];
                     const typeTotal = typeDebts.reduce((sum, debt) => sum + parseFloat(debt.balance), 0);
                     
+                    const isExpanded = expandedCategories.has(type);
+                    
                     return (
                       <div key={type} className="border-b border-slate-200 pb-3">
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-1 cursor-pointer" onClick={() => {
+                            if (typeDebts.length > 0) {
+                              setExpandedCategories(prev => {
+                                const newSet = new Set(prev);
+                                if (isExpanded) {
+                                  newSet.delete(type);
+                                } else {
+                                  newSet.add(type);
+                                }
+                                return newSet;
+                              });
+                            }
+                          }}>
                             {getDebtTypeIcon(type)}
                             <h3 className="font-bold text-teal-600">{type}s</h3>
+                            {typeDebts.length > 0 && (
+                              <svg className={`w-4 h-4 text-teal-600 transition-transform ${isExpanded ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                              </svg>
+                            )}
                           </div>
                           <span className={`font-medium ${typeTotal > 0 ? 'text-teal-600' : 'text-slate-900'}`}>
                             {formatCurrency(typeTotal)}
                           </span>
                         </div>
-                        {typeDebts.length > 0 && (
+                        {typeDebts.length > 0 && isExpanded && (
                           <div className="pl-7 space-y-1 mt-2">
                             {typeDebts.map((debt, idx) => (
                               <div key={debt.id} className="text-sm text-slate-600">
@@ -348,7 +368,7 @@ export default function DebtSnowballCalculatorPage() {
                         Want to be debt-free sooner? Of course you do! Add an extra monthly payment to see how much faster you'll pay off your debt.
                       </p>
                       <p className="text-teal-600 font-bold text-center mb-4">
-                        Boost your payments to pay off your debt even faster! →
+                        Boost your payments to pay off your debt even faster!
                       </p>
                       
                       <div>
