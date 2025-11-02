@@ -89,21 +89,12 @@ export default function BudgetCalculatorPage() {
 
   // Auto-populate with national averages when income is entered (debounced)
   useEffect(() => {
-    if (!income || income.trim() === "") {
-      return;
-    }
-    
     const incomeNum = parseFloat(income);
-    
-    // Only proceed if income is a valid positive number
-    if (isNaN(incomeNum) || incomeNum <= 0) {
-      return;
-    }
+    const hasValidIncome = income && income.trim() !== "" && !isNaN(incomeNum) && incomeNum > 0;
     
     // Debounce: wait for user to finish typing (300ms delay - shorter for better responsiveness)
     const timeoutId = setTimeout(() => {
-      // Auto-populate fields with calculated values
-      // Only update fields that haven't been manually edited
+      // Auto-populate or clear fields based on income
       setExpenses(prev => {
         const newExpenses: { [key: string]: string } = { ...prev };
         let hasChanges = false;
@@ -117,19 +108,27 @@ export default function BudgetCalculatorPage() {
             return; // Keep user's manual input
           }
           
-          // Calculate new value based on current income
-          if (percentage > 0) {
-            const calculatedValue = incomeNum * percentage;
-            const roundedValue = Math.round(calculatedValue);
-            const newValue = roundedValue > 0 ? roundedValue.toString() : "";
-            
-            // Update if value changed
-            if (prev[categoryKey as keyof typeof prev] !== newValue) {
-              newExpenses[categoryKey] = newValue;
-              hasChanges = true;
+          if (hasValidIncome) {
+            // Calculate new value based on current income
+            if (percentage > 0) {
+              const calculatedValue = incomeNum * percentage;
+              const roundedValue = Math.round(calculatedValue);
+              const newValue = roundedValue > 0 ? roundedValue.toString() : "";
+              
+              // Update if value changed
+              if (prev[categoryKey as keyof typeof prev] !== newValue) {
+                newExpenses[categoryKey] = newValue;
+                hasChanges = true;
+              }
+            } else {
+              // For 0% categories, clear if not manually edited
+              if (prev[categoryKey as keyof typeof prev] !== "") {
+                newExpenses[categoryKey] = "";
+                hasChanges = true;
+              }
             }
           } else {
-            // For 0% categories, clear if not manually edited
+            // Income is empty or 0 - clear all auto-populated fields
             if (prev[categoryKey as keyof typeof prev] !== "") {
               newExpenses[categoryKey] = "";
               hasChanges = true;
