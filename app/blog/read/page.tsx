@@ -4,37 +4,10 @@ import Link from "next/link";
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
-// All blog articles
+// All blog articles - Only the 5 featured posts
 const allArticles = [
   {
     id: 1,
-    title: "The Psychology Behind Impulse Buying",
-    category: "MINDSET",
-    readTime: "5 min read",
-    description: "Understanding the triggers that make you spend isn't about willpower — it's about awareness. Let's dive into the science.",
-    slug: "psychology-impulse-buying",
-    gradient: "from-teal-500 to-teal-600"
-  },
-  {
-    id: 2,
-    title: "How to Build an Emergency Fund From Zero",
-    category: "PLANNING",
-    readTime: "4 min read",
-    description: "No matter your income, you can start building financial security today. Here's the exact roadmap to your first $1,000.",
-    slug: "build-emergency-fund",
-    gradient: "from-teal-400 to-teal-500"
-  },
-  {
-    id: 3,
-    title: "Money Scripts: What Your Parents Taught You",
-    category: "MINDSET",
-    readTime: "6 min read",
-    description: "The beliefs you inherited about money are running your financial life. Let's identify and rewrite them.",
-    slug: "money-scripts-parents",
-    gradient: "from-teal-600 to-teal-700"
-  },
-  {
-    id: 4,
     title: "Why Your Budget Keeps Failing (And How to Fix It)",
     category: "HABITS",
     readTime: "4 min read",
@@ -43,7 +16,7 @@ const allArticles = [
     gradient: "from-teal-500 to-teal-600"
   },
   {
-    id: 5,
+    id: 2,
     title: "The Hidden Cost of 'Buy Now, Pay Later'",
     category: "MINDSET",
     readTime: "3 min read",
@@ -52,7 +25,7 @@ const allArticles = [
     gradient: "from-teal-400 to-teal-500"
   },
   {
-    id: 6,
+    id: 3,
     title: "How to Talk About Money With Your Partner",
     category: "RELATIONSHIPS",
     readTime: "5 min read",
@@ -61,7 +34,7 @@ const allArticles = [
     gradient: "from-teal-600 to-teal-700"
   },
   {
-    id: 7,
+    id: 4,
     title: "The 3-Account System That Changed Everything",
     category: "PLANNING",
     readTime: "4 min read",
@@ -70,107 +43,17 @@ const allArticles = [
     gradient: "from-teal-500 to-teal-600"
   },
   {
-    id: 8,
+    id: 5,
     title: "Building Wealth on a Variable Income",
     category: "PLANNING",
     readTime: "6 min read",
     description: "Freelancer? Commission-based? Entrepreneur? Here's how to build financial stability when your income fluctuates.",
     slug: "build-wealth-on-variable-income",
     gradient: "from-teal-400 to-teal-500"
-  },
-  {
-    id: 9,
-    title: "The Real Cost of Lifestyle Inflation",
-    category: "HABITS",
-    readTime: "4 min read",
-    description: "You're making more money but feeling just as broke? Here's why — and how to break the cycle.",
-    slug: "lifestyle-inflation",
-    gradient: "from-teal-600 to-teal-700"
-  },
-  {
-    id: 10,
-    title: "3 Money Habits That Build Wealth Automatically",
-    category: "HABITS",
-    readTime: "5 min read",
-    description: "Stop relying on willpower. These automated systems work while you sleep.",
-    slug: "automated-wealth-habits",
-    gradient: "from-teal-500 to-teal-600"
-  },
-  {
-    id: 11,
-    title: "How to Handle Financial Setbacks",
-    category: "PLANNING",
-    readTime: "4 min read",
-    description: "Lost your job? Unexpected expense? Here's your step-by-step recovery plan.",
-    slug: "handle-financial-setbacks",
-    gradient: "from-teal-400 to-teal-500"
-  },
-  {
-    id: 12,
-    title: "Breaking Free From Debt Shame",
-    category: "MINDSET",
-    readTime: "6 min read",
-    description: "Debt isn't a moral failing. In this article, we talk about overcoming shame and building a real payoff strategy.",
-    slug: "debt-shame",
-    gradient: "from-teal-600 to-teal-700"
-  },
-  {
-    id: 13,
-    title: "The Truth About Investing for Beginners",
-    category: "PLANNING",
-    readTime: "5 min read",
-    description: "Stocks, ETFs, index funds — where do you even start? We break it down in plain English.",
-    slug: "investing-beginners",
-    gradient: "from-teal-500 to-teal-600"
-  },
-  {
-    id: 14,
-    title: "Money and Marriage — The Honest Conversation",
-    category: "RELATIONSHIPS",
-    readTime: "5 min read",
-    description: "Financial compatibility matters. Here's how to navigate money as a team without losing yourself.",
-    slug: "money-marriage",
-    gradient: "from-teal-400 to-teal-500"
-  },
-  {
-    id: 15,
-    title: "Why Your Savings Rate Matters More Than Your Income",
-    category: "MINDSET",
-    readTime: "4 min read",
-    description: "It's not about how much you make — it's about how much you keep. Here's the math that changes everything.",
-    slug: "savings-rate-income",
-    gradient: "from-teal-600 to-teal-700"
-  },
-  {
-    id: 16,
-    title: "The Retirement Planning Mistake Most People Make",
-    category: "PLANNING",
-    readTime: "5 min read",
-    description: "Saving for retirement isn't enough. Here's what you're missing and how to fix it.",
-    slug: "retirement-planning-mistake",
-    gradient: "from-teal-500 to-teal-600"
-  },
-  {
-    id: 17,
-    title: "How to Negotiate Your First Raise",
-    category: "HABITS",
-    readTime: "4 min read",
-    description: "Ready to get paid what you're worth? Here's your step-by-step guide to asking for more.",
-    slug: "negotiate-raise",
-    gradient: "from-teal-400 to-teal-500"
-  },
-  {
-    id: 18,
-    title: "The Side Hustle That Actually Scales",
-    category: "PLANNING",
-    readTime: "6 min read",
-    description: "Not all side hustles are created equal. Here's how to build one that can replace your income.",
-    slug: "scalable-side-hustle",
-    gradient: "from-teal-600 to-teal-700"
   }
 ];
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 9; // Will show all 5 articles on one page
 
 function BlogReadContent() {
   const searchParams = useSearchParams();
