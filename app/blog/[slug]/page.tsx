@@ -99,19 +99,35 @@ const articlesMap: Record<string, {
         { color: "from-teal-500 to-teal-600" },
         { color: "from-teal-400 to-teal-500" }
       ],
-      heroText: "BUILDING FINANCIAL TRUST AND ALIGNMENT",
+      heroText: "BUILDING TRUST, ALIGNING GOALS & CHANGING MONEY HABITS TOGETHER",
       sections: [
         {
-          title: "1. Start with values, not numbers",
-          body: "Before diving into budgets and bills, talk about what money means to each of you. What does financial security look like? What are your shared goals? When you align on values first, the numbers become a tool for achieving something meaningful together, not a source of conflict."
+          title: "Introduction",
+          body: "Money might not be the most romantic topic—but it is one of the most important conversations couples avoid. And when it's ignored, budget stress, hidden debt and frustration often creep in. According to recent research, over 60 % of people say that talking about money with their partner is challenging.\n\nIf you're serious about changing how you manage money—and doing it together—then this post is for you. We'll dig into why these conversations matter, back it up with solid data, and provide a step-by-step, behaviour-based roadmap to talk money without the drama."
         },
         {
-          title: "2. Make it a regular conversation",
-          body: "Money talks shouldn't be emergency meetings or annual reviews. Schedule regular check-ins — monthly works for most couples — where you discuss goals, spending, and concerns in a low-pressure setting. When money conversations become routine, they lose their tension and become collaborative planning sessions."
+          title: "Section 1: Why these conversations matter",
+          body: "Financial communication is frequent in relationships: one study found couples have on average about 12 money-talks per month.\n\nYet it's also one of the least comfortable topics for partners: 60.1% of people say discussing money in a romantic relationship is difficult.\n\nIn a survey of U.S. adults, 32% felt uncomfortable talking finances with their partner, and 44% feared it would lead to disagreements. On average the couples reported 58 money-related arguments per year.\n\nAccording to UK guidance from MoneyHelper, talking about money with your partner helps create security, align spending, save jointly and avoid surprises.\n\nThe upshot: If you skip the conversation, you may be leaving your budget, your shared goals and even your relationship exposed. If you lean in instead, you build trust, reduce stress and create financial momentum as a team."
         },
         {
-          title: "3. Separate individual and shared spending",
-          body: "You don't have to merge everything. Maintain individual accounts for personal spending while having a shared account for joint expenses. This gives each person autonomy and prevents resentment over personal purchases. Clear boundaries around 'yours, mine, and ours' actually reduce financial conflict, not increase it."
+          title: "Section 2: The common stumbling blocks",
+          body: "Here are the behavioural patterns and hidden traps that often derail couples when money talk avoids or goes wrong.\n\n**2.1 Different money-styles**\nOne partner may be a saver and planner, the other a spontaneous spender. MoneyHelper outlines that differing styles are normal—but must be understood.\n\n*Sign: Without awareness, frustration builds and judgement creeps in.*\n\n**2.2 Poor timing & avoidance**\nBecause money feels weighty or emotional, couples postpone the talk until something goes wrong. Research shows many recognise the benefits of financial communication, yet still find it difficult.\n\n*Sign: Problems accumulate, trust erodes, and the conversation finally comes in crisis mode.*\n\n**2.3 Lack of clarity on shared goals & roles**\nWithout clear shared goals or defined roles for expenses/budgeting, you end up with mis-aligned expectations.\n\n*Sign: Resentment builds when one partner feels they carry more, or the other feels ignored.*\n\n**2.4 Hidden debt or secrets**\nFinancial \"infidelity\" (hiding spending/debt) is surprisingly common. One overview found about 27% admitted hiding a financial secret.\n\n*Sign: When the truth comes out it hits trust, and creates extra financial burdens and emotional consequences.*"
+        },
+        {
+          title: "Section 3: How to talk about money the right way",
+          body: "Here's your step-by-step guide to create productive, respectful, value-aligned money conversations with your partner. Follow the roadmap like you're building a new habit together.\n\n**Set the stage**\nChoose when and where: pick a calm moment, without distractions—coffee table rather than dinner table for example.\n\nApproach it with curiosity, not accusation: \"I'd like to understand how you feel about money\" rather than \"We need to fix your spending\".\n\nAgree both will listen and share openly.\n\n**Explore your money stories**\nAsk: \"How did your family treat money when you were young?\"\n\nExplore your attitudes: saver vs spender, risk-taker vs planner.\n\nThese root stories shape how you behave today.\n\n**Share the data**\nUse your real numbers: income, expenses, debt, savings.\n\nIdentify what you jointly spend and what is individual.\n\nUse simple visuals or tracking to make this concrete.\n\nTransparency builds trust.\n\n**Define your shared goals and budget structure**\nAsk: What are we working toward together? (e.g., home, travel, security)\n\nSet SMART goals: Specific, Measurable, Achievable, Relevant, Time-bound. (E.g., Save €10,000 in 18 months).\n\nDecide how expenses will be handled: equal split, proportional to income, hybrids.\n\nCreate a budget together that reflects joint priorities and allows personal spending freedom.\n\n**Establish regular check-ins & adjust**\nChoose a monthly \"money date\": review how things went, what needs adjusting.\n\nAsk questions like: \"What surprised us? What felt good? What could we change?\"\n\nTreat the budget as flexible—not fixed in stone.\n\nBehaviour-change means iteration.\n\n**Build behavioural guards and autonomy**\nAllow each partner a \"fun-money\" allowance—so personal spending doesn't feel punished.\n\nAutomate savings and joint goals so money moves before temptation hits.\n\nIf one partner has debt or a risk behaviour (e.g., gambling), consider external coaching or counselling. MoneyHelper outlines how hidden behaviours erode joint finances."
+        },
+        {
+          title: "Section 4: Mindset shifts that support lasting change",
+          body: "This goes beyond the mechanics. For real change you'll need new ways of thinking—and together.\n\n**From \"my money vs your money\" to \"our money, our future.\"**\n\n**From \"I'm ashamed of my spending\" to \"I'm learning how I spend and choosing differently.\"**\n\n**From \"We must stop spending\" to \"We want to choose what we spend on together.\"**\n\n**From \"money causes fights\" to \"money conversations build trust.\"**\n\nResearch supports this: couples who talk about money more openly report less stress and better financial well-being."
+        },
+        {
+          title: "Section 5: Quick checklist for your next money-conversation",
+          body: "Use this as a tool before your next partner-money talk:\n\n• We scheduled a time and place for our money talk (not just \"whenever\").\n• We both shared our money histories and styles.\n• We reviewed our real numbers together (income/debt/expenses).\n• We set at least one shared financial goal with a deadline.\n• We agreed how we'll share expenses fairly and sustainably.\n• We created a fun-money allowance for each partner.\n• We set our next money-date and agreed how we'll review our progress.\n• We agreed to revisit & adjust the plan if life changes (job, children, move)."
+        },
+        {
+          title: "Conclusion",
+          body: "Talking about money with your partner isn't optional—it's foundational. Done well, it can deepen your connection, free you from hidden stress and build a stronger financial future together.\n\nWhen you lean in—exploring not just what you spend but why, aligning your values, creating shared goals and behaviours—you move from managing money in parallel to managing it as a team.\n\nYour next money conversation might feel awkward—but that's the point. Because it means growth. Set the date. Speak openly. Align together. Your financial behaviours, and your relationship, will thank you."
         }
       ]
     },
@@ -269,7 +285,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
             <article className="prose max-w-none">
               {article.sections.map((s, i) => {
                 // Only show colored bar on main sections (Introduction, main topic sections, Conclusion)
-                const mainSections = ["Introduction", "Why budgets fail", "How to fix it — a behaviour-based roadmap", "Behaviour change mindset – the key to lasting success", "Quick checklist for your next budget", "Conclusion", "How big is the issue?", "Why your budget can get sabotaged by BNPL", "How to fix it—or better: how to use BNPL safely (if you must)", "Behaviour-change mindset: shifting the frame", "Quick checklist for your next BNPL decision"];
+                const mainSections = ["Introduction", "Why budgets fail", "How to fix it — a behaviour-based roadmap", "Behaviour change mindset – the key to lasting success", "Quick checklist for your next budget", "Conclusion", "How big is the issue?", "Why your budget can get sabotaged by BNPL", "How to fix it—or better: how to use BNPL safely (if you must)", "Behaviour-change mindset: shifting the frame", "Quick checklist for your next BNPL decision", "Section 1: Why these conversations matter", "Section 2: The common stumbling blocks", "Section 3: How to talk about money the right way", "Section 4: Mindset shifts that support lasting change", "Section 5: Quick checklist for your next money-conversation"];
                 const isMainSection = mainSections.includes(s.title);
                 
                 return (
@@ -422,8 +438,8 @@ export default async function BlogArticlePage({ params }: PageProps) {
                             continue;
                           }
                           
-                          // Check if paragraph starts with bold text in "How to fix it" section - create a step card
-                          if (para.match(/^\*\*/) && s.title.toLowerCase().includes('fix it')) {
+                          // Check if paragraph starts with bold text in "How to fix it" section or "How to talk about money" section - create a step card
+                          if (para.match(/^\*\*/) && (s.title.toLowerCase().includes('fix it') || s.title.toLowerCase().includes('how to talk about money'))) {
                             // Check if it's not a numbered item (which would be 1., 2., etc.) or regular paragraph
                             // Match paragraph that STARTS with bold text (even if there's more content after)
                             const boldMatch = para.match(/^\*\*(.+?)\*\*/);
