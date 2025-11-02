@@ -23,6 +23,15 @@ const DEBT_TYPES = [
   "Other"
 ];
 
+const DEFAULT_INTEREST_RATES: { [key: string]: number } = {
+  "Credit Card": 18,
+  "Car Loan": 5,
+  "Student Loan": 4,
+  "Personal Loan": 6,
+  "Medical Bill": 0,
+  "Other": 6
+};
+
 export default function DebtSnowballCalculatorPage() {
   const [debts, setDebts] = useState<Debt[]>([
     { id: "1", type: "Choose a Debt Type", name: "", balance: "", interestRate: "", minimumPayment: "" }
@@ -48,9 +57,16 @@ export default function DebtSnowballCalculatorPage() {
   };
 
   const updateDebt = (id: string, field: keyof Debt, value: string) => {
-    setDebts(debts.map(debt => 
-      debt.id === id ? { ...debt, [field]: value } : debt
-    ));
+    setDebts(debts.map(debt => {
+      if (debt.id === id) {
+        // If changing the debt type, auto-populate interest rate if the rate field is empty
+        if (field === 'type' && value !== "Choose a Debt Type" && !debt.interestRate) {
+          return { ...debt, type: value, interestRate: DEFAULT_INTEREST_RATES[value]?.toString() || "" };
+        }
+        return { ...debt, [field]: value };
+      }
+      return debt;
+    }));
   };
 
   // Calculate debt snowball
