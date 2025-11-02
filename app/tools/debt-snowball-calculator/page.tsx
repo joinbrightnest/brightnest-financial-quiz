@@ -55,8 +55,8 @@ export default function DebtSnowballCalculatorPage() {
   const updateDebt = (id: string, field: keyof Debt, value: string) => {
     setDebts(debts.map(debt => {
       if (debt.id === id) {
-        // If changing the debt type, auto-populate interest rate if the rate field is empty
-        if (field === 'type' && value !== "Choose a Debt Type" && !debt.interestRate) {
+        // If changing the debt type, auto-populate interest rate
+        if (field === 'type' && value !== "Choose a Debt Type") {
           return { ...debt, type: value, interestRate: DEFAULT_INTEREST_RATES[value]?.toString() || "" };
         }
         return { ...debt, [field]: value };
