@@ -84,54 +84,37 @@ export default function BudgetCalculatorPage() {
     other: ""
   });
 
-  // Track if this is the first render to avoid clearing on initial mount
-  const [hasIncomeBeenSet, setHasIncomeBeenSet] = useState(false);
-
   // Auto-populate with national averages when income is entered
   useEffect(() => {
     const incomeNum = parseFloat(income);
-    const hasIncome = income && income.trim() !== "" && incomeNum > 0;
-    
-    // Mark that income has been set at least once
-    if (hasIncome) {
-      setHasIncomeBeenSet(true);
-    }
+    const hasIncome = income && income.trim() !== "" && !isNaN(incomeNum) && incomeNum > 0;
     
     // Only auto-populate if income is actually entered (not empty string or 0)
     if (hasIncome) {
       setExpenses(prev => {
         const newExpenses: { [key: string]: string } = { ...prev };
+        let hasChanges = false;
+        
         Object.keys(NATIONAL_AVERAGES).forEach((key) => {
           const categoryKey = key as keyof typeof NATIONAL_AVERAGES;
           const percentage = NATIONAL_AVERAGES[categoryKey];
+          const currentValue = prev[categoryKey as keyof typeof prev];
           
-          // Only auto-fill if the field is currently empty
+          // Only auto-fill if the field is currently empty (empty string, null, or undefined)
           // If the percentage is 0, don't auto-fill (user can add if needed)
-          if (!prev[categoryKey as keyof typeof prev] && percentage > 0) {
+          const isEmpty = !currentValue || (typeof currentValue === 'string' && currentValue.trim() === "");
+          if (isEmpty && percentage > 0) {
             const calculatedValue = incomeNum * percentage;
             newExpenses[categoryKey] = Math.round(calculatedValue).toString();
+            hasChanges = true;
           }
         });
-        return newExpenses;
-      });
-    } else if (hasIncomeBeenSet && (!income || income.trim() === "" || incomeNum === 0 || isNaN(incomeNum))) {
-      // Only clear if income was previously set and now cleared
-      setExpenses({
-        giving: "",
-        savings: "",
-        food: "",
-        utilities: "",
-        housing: "",
-        transportation: "",
-        insurance: "",
-        householdItems: "",
-        debt: "",
-        retirement: "",
-        personal: "",
-        other: ""
+        
+        // Only update state if there were actual changes
+        return hasChanges ? newExpenses : prev;
       });
     }
-  }, [income, hasIncomeBeenSet]);
+  }, [income]);
 
   const handleExpenseChange = (category: string, value: string) => {
     // Remove leading zeros - convert to number then back to string to strip leading zeros
