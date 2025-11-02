@@ -86,6 +86,9 @@ export default function BudgetCalculatorPage() {
 
   // Track which fields were manually edited by the user
   const [manuallyEditedFields, setManuallyEditedFields] = useState<Set<string>>(new Set());
+  
+  // Track selected segment in donut chart
+  const [selectedSegment, setSelectedSegment] = useState<string | null>(null);
 
   // Auto-populate with national averages when income is entered (debounced)
   useEffect(() => {
@@ -391,15 +394,36 @@ export default function BudgetCalculatorPage() {
                               const segmentAngle = (item.value / totalExpenses) * 360;
                               const startAngle = currentAngle;
                               const endAngle = currentAngle + segmentAngle;
+                              const isSelected = selectedSegment === item.key;
+                              const percentage = totalExpenses > 0 ? (item.value / totalExpenses) * 100 : 0;
                               currentAngle = endAngle;
                               
+                              // Calculate opacity for selected/hover effect
+                              const opacity = isSelected ? 1 : 0.85;
+                              
                               return (
-                                <path
-                                  key={item.key}
-                                  d={createArc(startAngle, endAngle, radius, innerRadius)}
-                                  fill={item.color}
-                                  className="transition-all duration-300"
-                                />
+                                <g key={item.key}>
+                                  <path
+                                    d={createArc(startAngle, endAngle, radius, innerRadius)}
+                                    fill={item.color}
+                                    opacity={opacity}
+                                    className="transition-all duration-300 cursor-pointer hover:opacity-100"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedSegment(isSelected ? null : item.key);
+                                    }}
+                                  />
+                                  {/* Invisible larger hit area for easier clicking */}
+                                  <path
+                                    d={createArc(startAngle, endAngle, radius + 5, innerRadius - 5)}
+                                    fill="transparent"
+                                    className="cursor-pointer"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedSegment(isSelected ? null : item.key);
+                                    }}
+                                  />
+                                </g>
                               );
                             })}
                             
@@ -415,9 +439,41 @@ export default function BudgetCalculatorPage() {
                         );
                       })()}
                     </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                      <p className="text-xs text-slate-600 font-medium">Total Expenses</p>
-                      <p className="text-2xl font-bold text-slate-900 mt-0.5">{formatCurrency(totalExpenses)}</p>
+                    {/* Center Display - Animated */}
+                    <div 
+                      className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
+                      onClick={() => setSelectedSegment(null)}
+                    >
+                      {selectedSegment && expenseData.find(item => item.key === selectedSegment) ? (
+                        <div className="animate-slide-up">
+                          {(() => {
+                            const selectedItem = expenseData.find(item => item.key === selectedSegment)!;
+                            const percentage = totalExpenses > 0 ? (selectedItem.value / totalExpenses) * 100 : 0;
+                            return (
+                              <>
+                                <div 
+                                  className="w-3 h-3 rounded-full mb-2 mx-auto transition-all duration-300"
+                                  style={{ backgroundColor: selectedItem.color }}
+                                />
+                                <p className="text-xs sm:text-sm font-medium text-slate-700 mb-1 transition-all duration-300">
+                                  {selectedItem.label}
+                                </p>
+                                <p className="text-xl sm:text-2xl font-bold text-slate-900 mb-0.5 transition-all duration-300">
+                                  {formatCurrency(selectedItem.value)}
+                                </p>
+                                <p className="text-xs text-slate-500 transition-all duration-300">
+                                  {percentage.toFixed(1)}%
+                                </p>
+                              </>
+                            );
+                          })()}
+                        </div>
+                      ) : (
+                        <div className="transform transition-all duration-200 ease-out">
+                          <p className="text-xs text-slate-600 font-medium">Total Expenses</p>
+                          <p className="text-2xl font-bold text-slate-900 mt-0.5">{formatCurrency(totalExpenses)}</p>
+                        </div>
+                      )}
                     </div>
                   </div>
 
