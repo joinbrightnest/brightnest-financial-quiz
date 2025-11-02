@@ -88,10 +88,34 @@ export default function BudgetCalculatorPage() {
   }, [income]);
 
   const handleExpenseChange = (category: string, value: string) => {
+    // Remove leading zeros - convert to number then back to string to strip leading zeros
+    let cleanedValue = value;
+    if (value !== "" && value !== ".") {
+      // Remove leading zeros, but allow "0." for decimal input
+      cleanedValue = value.replace(/^0+(?=\d)/, '');
+      // If it's just "0", keep it, but if it's "0233", convert to "233"
+      if (cleanedValue === "" && value.startsWith("0")) {
+        cleanedValue = "0";
+      }
+    }
     setExpenses(prev => ({
       ...prev,
-      [category]: value
+      [category]: cleanedValue
     }));
+  };
+
+  const handleIncomeChange = (value: string) => {
+    // Remove leading zeros - convert to number then back to string to strip leading zeros
+    let cleanedValue = value;
+    if (value !== "" && value !== ".") {
+      // Remove leading zeros, but allow "0." for decimal input
+      cleanedValue = value.replace(/^0+(?=\d)/, '');
+      // If it's just "0", keep it, but if it's "0233", convert to "233"
+      if (cleanedValue === "" && value.startsWith("0")) {
+        cleanedValue = "0";
+      }
+    }
+    setIncome(cleanedValue);
   };
 
   const calculateTotalExpenses = () => {
@@ -174,7 +198,7 @@ export default function BudgetCalculatorPage() {
                       <input
                         type="number"
                         value={income}
-                        onChange={(e) => setIncome(e.target.value)}
+                        onChange={(e) => handleIncomeChange(e.target.value)}
                         placeholder="0.00"
                         step="0.01"
                         className="w-full pl-10 pr-4 py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-lg font-medium text-slate-900"
