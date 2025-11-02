@@ -84,7 +84,10 @@ export default function BudgetCalculatorPage() {
     other: ""
   });
 
-  // Auto-populate with national averages when income is entered
+  // Track last income value that was used for auto-population
+  const [lastPopulatedIncome, setLastPopulatedIncome] = useState<string>("");
+
+  // Auto-populate with national averages when income is entered (debounced)
   useEffect(() => {
     if (!income || income.trim() === "") {
       return;
@@ -97,36 +100,55 @@ export default function BudgetCalculatorPage() {
       return;
     }
     
-    // Auto-populate empty fields with calculated values
-    setExpenses(prev => {
-      const newExpenses: { [key: string]: string } = { ...prev };
-      let hasChanges = false;
+    // Debounce: wait for user to finish typing (500ms delay)
+    const timeoutId = setTimeout(() => {
+      const incomeStr = incomeNum.toString();
       
-      Object.keys(NATIONAL_AVERAGES).forEach((key) => {
-        const categoryKey = key as keyof typeof NATIONAL_AVERAGES;
-        const percentage = NATIONAL_AVERAGES[categoryKey];
-        const currentValue = prev[categoryKey as keyof typeof prev];
+      // Only auto-populate if income has changed significantly
+      // This prevents recalculation on every keystroke
+      if (lastPopulatedIncome === incomeStr) {
+        return; // Already populated for this income value
+      }
+      
+      // Auto-populate empty fields with calculated values
+      setExpenses(prev => {
+        const newExpenses: { [key: string]: string } = { ...prev };
+        let hasChanges = false;
         
-        // Check if field is empty (empty string, undefined, or null)
-        const isEmpty = currentValue === undefined || currentValue === null || currentValue === "" || (typeof currentValue === 'string' && currentValue.trim() === "");
-        
-        // Only auto-fill empty fields with non-zero percentages
-        if (isEmpty && percentage > 0) {
-          const calculatedValue = incomeNum * percentage;
-          const roundedValue = Math.round(calculatedValue);
-          if (roundedValue > 0) {
-            newExpenses[categoryKey] = roundedValue.toString();
-            hasChanges = true;
+        Object.keys(NATIONAL_AVERAGES).forEach((key) => {
+          const categoryKey = key as keyof typeof NATIONAL_AVERAGES;
+          const percentage = NATIONAL_AVERAGES[categoryKey];
+          const currentValue = prev[categoryKey as keyof typeof prev];
+          
+          // Check if field is empty (empty string, undefined, or null)
+          const isEmpty = currentValue === undefined || currentValue === null || currentValue === "" || (typeof currentValue === 'string' && currentValue.trim() === "");
+          
+          // Only auto-fill empty fields with non-zero percentages
+          if (isEmpty && percentage > 0) {
+            const calculatedValue = incomeNum * percentage;
+            const roundedValue = Math.round(calculatedValue);
+            if (roundedValue > 0) {
+              newExpenses[categoryKey] = roundedValue.toString();
+              hasChanges = true;
+            }
           }
+          // If field already has value, keep it (don't overwrite user input)
+          // If field is empty and percentage is 0, leave it empty
+        });
+        
+        // Mark this income as populated
+        if (hasChanges) {
+          setLastPopulatedIncome(incomeStr);
         }
-        // If field already has value, keep it (don't overwrite user input)
-        // If field is empty and percentage is 0, leave it empty
+        
+        // Only update state if there were actual changes
+        return hasChanges ? newExpenses : prev;
       });
-      
-      // Only update state if there were actual changes
-      return hasChanges ? newExpenses : prev;
-    });
-  }, [income]);
+    }, 500); // Wait 500ms after user stops typing
+    
+    // Cleanup timeout if income changes again
+    return () => clearTimeout(timeoutId);
+  }, [income, lastPopulatedIncome]);
 
   const handleExpenseChange = (category: string, value: string) => {
     // Remove leading zeros - convert to number then back to string to strip leading zeros
@@ -157,37 +179,9 @@ export default function BudgetCalculatorPage() {
       }
     }
     setIncome(cleanedValue);
-    
-    // Auto-populate expenses immediately when income changes
-    if (cleanedValue && cleanedValue.trim() !== "") {
-      const incomeNum = parseFloat(cleanedValue);
-      if (!isNaN(incomeNum) && incomeNum > 0) {
-        // Use functional update to ensure we're working with latest expenses state
-        setExpenses(prev => {
-          const newExpenses: { [key: string]: string } = { ...prev };
-          let hasChanges = false;
-          
-          Object.keys(NATIONAL_AVERAGES).forEach((key) => {
-            const categoryKey = key as keyof typeof NATIONAL_AVERAGES;
-            const percentage = NATIONAL_AVERAGES[categoryKey];
-            const currentValue = prev[categoryKey as keyof typeof prev];
-            
-            const isEmpty = !currentValue || currentValue === "" || (typeof currentValue === 'string' && currentValue.trim() === "");
-            
-            if (isEmpty && percentage > 0) {
-              const calculatedValue = incomeNum * percentage;
-              const roundedValue = Math.round(calculatedValue);
-              if (roundedValue > 0) {
-                newExpenses[categoryKey] = roundedValue.toString();
-                hasChanges = true;
-              }
-            }
-          });
-          
-          return hasChanges ? newExpenses : prev;
-        });
-      }
-    }
+    // Reset last populated income so useEffect can recalculate when income changes
+    // This allows recalculation if user changes income value
+    setLastPopulatedIncome("");
   };
 
   const calculateTotalExpenses = () => {
