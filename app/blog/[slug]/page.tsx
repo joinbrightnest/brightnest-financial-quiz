@@ -272,10 +272,6 @@ export default async function BlogArticlePage({ params }: PageProps) {
                         const result = [];
                         let i = 0;
                         let stepCounter = 0;
-                        // Reset step counter for "How to fix it" section
-                        if (s.title.includes('fix it')) {
-                          stepCounter = 0;
-                        }
                         
                         // Helper function to parse markdown-style bold and italic
                         const parseMarkdown = (text: string) => {
@@ -406,6 +402,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                               </div>
                             );
                             continue;
+                          }
                           }
                           
                           // Check if paragraph starts with numbered bold (like "**1. Title**") - create a card with icon
