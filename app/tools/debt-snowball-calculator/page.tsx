@@ -385,10 +385,10 @@ export default function DebtSnowballCalculatorPage() {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-50 via-white to-slate-50">
       <SiteHeader />
       
-      <main className="flex-1 py-6 sm:py-8">
+      <main className="flex-1 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header Section */}
-          <div className="relative py-8 sm:py-10 mb-6 overflow-hidden rounded-2xl border border-slate-200/50 shadow-sm">
+          <div className="relative py-6 mb-4 overflow-hidden rounded-2xl border border-slate-200/50 shadow-sm">
             <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-teal-50 to-amber-50"></div>
             <div className="absolute top-0 right-0 w-72 h-72 bg-teal-100/60 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-72 h-72 bg-amber-100/60 rounded-full blur-3xl"></div>
@@ -405,18 +405,18 @@ export default function DebtSnowballCalculatorPage() {
 
           {/* Main Calculator Section - Compact Form */}
           <div className="max-w-3xl mx-auto">
-            <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-8 mb-12">
+            <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 mb-12">
               {/* Your Debts Section */}
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">Your Debts</h2>
-                <p className="text-sm text-slate-600 mb-6">
+              <div className="mb-6">
+                <h2 className="text-xl font-bold text-slate-900 mb-1">Your Debts</h2>
+                <p className="text-sm text-slate-600 mb-4">
                   Start by listing out your <strong>non-mortgage</strong> debts.
                 </p>
 
                 {debts.map((debt, index) => (
-                  <div key={debt.id} className="mb-6">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-lg font-bold text-teal-600">Debt {index + 1}</span>
+                  <div key={debt.id} className="mb-4">
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-base font-bold text-teal-600">Debt {index + 1}</span>
                       {debts.length > 1 && (
                         <button
                           onClick={() => removeDebt(debt.id)}
@@ -427,15 +427,15 @@ export default function DebtSnowballCalculatorPage() {
                       )}
                     </div>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                        <label className="block text-xs font-medium text-slate-700 mb-1">
                           Debt Type
                         </label>
                         <select
                           value={debt.type}
                           onChange={(e) => updateDebt(debt.id, 'type', e.target.value)}
-                          className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium"
+                          className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium"
                         >
                           {DEBT_TYPES.map(type => (
                             <option key={type} value={type}>{type}</option>
@@ -444,7 +444,7 @@ export default function DebtSnowballCalculatorPage() {
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                        <label className="block text-xs font-medium text-slate-700 mb-1">
                           Interest Rate
                         </label>
                         <div className="relative">
@@ -454,14 +454,14 @@ export default function DebtSnowballCalculatorPage() {
                             onChange={(e) => updateDebt(debt.id, 'interestRate', e.target.value)}
                             placeholder="0"
                             step="0.01"
-                            className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium"
+                            className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium"
                           />
-                          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium">%</span>
+                          <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium text-xs">%</span>
                         </div>
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                        <label className="block text-xs font-medium text-slate-700 mb-1">
                           Balance
                         </label>
                         <div className="relative">
@@ -471,14 +471,14 @@ export default function DebtSnowballCalculatorPage() {
                             onChange={(e) => updateDebt(debt.id, 'balance', e.target.value)}
                             placeholder="0"
                             step="0.01"
-                            className="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium"
+                            className="w-full pl-6 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium"
                           />
-                          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium">$</span>
+                          <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium text-xs">$</span>
                         </div>
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                        <label className="block text-xs font-medium text-slate-700 mb-1">
                           Minimum Payment
                         </label>
                         <div className="relative">
@@ -488,15 +488,15 @@ export default function DebtSnowballCalculatorPage() {
                             onChange={(e) => updateDebt(debt.id, 'minimumPayment', e.target.value)}
                             placeholder="0"
                             step="0.01"
-                            className="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium"
+                            className="w-full pl-6 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium"
                           />
-                          <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium">$</span>
+                          <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium text-xs">$</span>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="mt-4">
-                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <div className="mt-3">
+                      <label className="block text-xs font-medium text-slate-700 mb-1">
                         Account Name (Optional)
                       </label>
                       <input
@@ -504,7 +504,7 @@ export default function DebtSnowballCalculatorPage() {
                         value={debt.name}
                         onChange={(e) => updateDebt(debt.id, 'name', e.target.value)}
                         placeholder="Visa, Discover Card, Lender Name"
-                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900"
                       />
                     </div>
                   </div>
@@ -512,9 +512,9 @@ export default function DebtSnowballCalculatorPage() {
 
                 <button
                   onClick={addDebt}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition-colors mb-8"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-teal-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-teal-700 transition-colors mb-6"
                 >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                   </svg>
                   Add Debt
@@ -522,9 +522,9 @@ export default function DebtSnowballCalculatorPage() {
               </div>
 
               {/* Household Income Section */}
-              <div className="mb-8 border-t border-slate-200 pt-8">
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">Your Household Income</h2>
-                <p className="text-sm text-slate-600 mb-4">
+              <div className="mb-6 border-t border-slate-200 pt-6">
+                <h2 className="text-xl font-bold text-slate-900 mb-1">Your Household Income</h2>
+                <p className="text-sm text-slate-600 mb-3">
                   This includes <strong>any income</strong> you make each month after taxes (your paycheck, your side hustle—it all counts).
                 </p>
                 <div className="relative">
@@ -534,16 +534,16 @@ export default function DebtSnowballCalculatorPage() {
                     onChange={(e) => setIncome(e.target.value)}
                     placeholder="0"
                     step="0.01"
-                    className="w-full pl-10 pr-4 py-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900"
+                    className="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900"
                   />
-                  <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
                 </div>
               </div>
 
               {/* Additional Payment Section */}
-              <div className="mb-8 border-t border-slate-200 pt-8">
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">Additional Payment</h2>
-                <p className="text-sm text-slate-600 mb-4">
+              <div className="mb-6 border-t border-slate-200 pt-6">
+                <h2 className="text-xl font-bold text-slate-900 mb-1">Additional Payment</h2>
+                <p className="text-sm text-slate-600 mb-3">
                   Next, to snowball your debt, enter the <strong>additional amount</strong> you want to pay above the minimum required payment.
                 </p>
                 <div className="relative">
@@ -553,16 +553,16 @@ export default function DebtSnowballCalculatorPage() {
                     onChange={(e) => setExtraPayment(e.target.value)}
                     placeholder="0"
                     step="0.01"
-                    className="w-full pl-10 pr-4 py-4 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900"
+                    className="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900"
                   />
-                  <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
                 </div>
               </div>
 
               {/* CTA Button */}
               <button
                 onClick={calculateResults}
-                className="w-full bg-teal-600 text-white px-8 py-4 rounded-lg font-bold text-xl hover:bg-teal-700 transition-colors"
+                className="w-full bg-teal-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-teal-700 transition-colors"
               >
                 Get Your Debt-Free Date
               </button>
