@@ -267,8 +267,24 @@ export default function DebtSnowballCalculatorPage() {
       <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-50 via-white to-slate-50">
         <SiteHeader />
         
-        <main className="flex-1 py-8 sm:py-12">
+        <main className="flex-1 py-4">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Header Section */}
+            <div className="relative py-6 mb-6 overflow-hidden rounded-2xl border border-slate-200/50 shadow-sm">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-teal-50 to-amber-50"></div>
+              <div className="absolute top-0 right-0 w-72 h-72 bg-teal-100/60 rounded-full blur-3xl"></div>
+              <div className="absolute bottom-0 left-0 w-72 h-72 bg-amber-100/60 rounded-full blur-3xl"></div>
+              
+              <div className="relative text-center">
+                <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
+                  Your <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Debt Results</span>
+                </h1>
+                <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+                  See your complete debt picture and find out exactly when you'll be debt-free!
+                </p>
+              </div>
+            </div>
+
             {/* Results Grid */}
             <div className="grid lg:grid-cols-2 gap-6 mb-6">
               {/* Left Column - Debt Breakdown */}
@@ -277,7 +293,7 @@ export default function DebtSnowballCalculatorPage() {
                   <h2 className="text-2xl font-bold text-slate-900">Your Debt Breakdown</h2>
                   <button
                     onClick={() => setShowResults(false)}
-                    className="text-teal-600 hover:text-teal-700 text-sm font-medium"
+                    className="text-teal-600 hover:text-teal-700 text-sm font-bold"
                   >
                     ← Back to Your Debts
                   </button>
