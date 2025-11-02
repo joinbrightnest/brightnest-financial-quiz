@@ -228,39 +228,39 @@ export default function BudgetCalculatorPage() {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-50 via-white to-slate-50">
       <SiteHeader />
       
-      <main className="flex-1 py-12 sm:py-16">
+      <main className="flex-1 py-6 sm:py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
-          <div className="text-center mb-10">
-            <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-4">
+          <div className="text-center mb-6">
+            <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
               Budget Calculator
             </h1>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto mb-4">
+            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
               If you've never budgeted before—or it's been a while—this budget calculator is a solid starting point. Type in your monthly take-home pay and get a budget example to begin.
             </p>
           </div>
 
           {/* Calculator Section */}
-          <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 sm:p-8 mb-8">
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">
+          <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-4 sm:p-6">
+            <h2 className="text-xl font-bold text-slate-900 mb-2">
               Budget Calculator
             </h2>
-            <p className="text-slate-600 mb-8">
+            <p className="text-sm text-slate-600 mb-4">
               Enter your income and the calculator will show the national averages for most budget categories as a starting point. A few of these are recommendations (like giving). Most just reflect average spending (like debt). Don't have debt? Yay! Move that money to your current money goal.
             </p>
 
-            <div className="grid lg:grid-cols-2 gap-8">
+            <div className="grid lg:grid-cols-2 gap-6">
               {/* Left Column - Input Fields */}
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {/* Income */}
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-4">Income</h3>
+                  <h3 className="text-base font-bold text-slate-900 mb-2">Income</h3>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
                       Monthly Income (after taxes)
                     </label>
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium">$</span>
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium text-sm">$</span>
                       <input
                         type="number"
                         value={income}
@@ -270,7 +270,7 @@ export default function BudgetCalculatorPage() {
                         }}
                         placeholder="0.00"
                         step="0.01"
-                        className="w-full pl-10 pr-4 py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-lg font-medium text-slate-900"
+                        className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900"
                       />
                     </div>
                   </div>
@@ -278,51 +278,49 @@ export default function BudgetCalculatorPage() {
 
                 {/* Expenses */}
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900 mb-4">Expenses</h3>
-                  <div className="space-y-4">
+                  <h3 className="text-base font-bold text-slate-900 mb-2">Expenses</h3>
+                  <div className="space-y-2">
                     {Object.keys(CATEGORY_LABELS).map((key) => {
                       const categoryKey = key as keyof typeof CATEGORY_LABELS;
                       const color = CATEGORY_COLORS[categoryKey];
                       return (
-                        <div key={key} className="flex items-center gap-3">
+                        <div key={key} className="flex items-center gap-2">
                           <div 
-                            className="w-3 h-3 rounded-full flex-shrink-0" 
+                            className="w-2.5 h-2.5 rounded-full flex-shrink-0" 
                             style={{ backgroundColor: color }}
                           />
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <label className="block text-sm font-medium text-slate-700">
-                                {CATEGORY_LABELS[categoryKey]}
-                              </label>
-                              <div className="relative">
-                                <button
-                                  type="button"
-                                  onMouseEnter={() => setShowInfoTooltip(key)}
-                                  onMouseLeave={() => setShowInfoTooltip(null)}
-                                  className="w-4 h-4 rounded-full border border-slate-400 text-slate-400 hover:border-teal-600 hover:text-teal-600 flex items-center justify-center transition-colors text-[10px] font-bold"
-                                  aria-label={`Information about ${CATEGORY_LABELS[categoryKey]}`}
-                                >
-                                  i
-                                </button>
-                                {showInfoTooltip === key && (
-                                  <div className="absolute left-0 top-full mt-2 z-50 w-80 bg-white rounded-lg shadow-xl border border-slate-200 p-4">
-                                    <p className="text-sm text-slate-700 leading-relaxed">
-                                      {CATEGORY_DESCRIPTIONS[categoryKey as keyof typeof CATEGORY_DESCRIPTIONS]}
-                                    </p>
-                                    <div className="absolute -top-2 left-4 w-4 h-4 bg-white border-l border-t border-slate-200 transform rotate-45"></div>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
+                          <div className="flex-1 flex items-center gap-2">
+                            <label className="block text-xs sm:text-sm font-medium text-slate-700 whitespace-nowrap">
+                              {CATEGORY_LABELS[categoryKey]}
+                            </label>
                             <div className="relative">
-                              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-sm">$</span>
+                              <button
+                                type="button"
+                                onMouseEnter={() => setShowInfoTooltip(key)}
+                                onMouseLeave={() => setShowInfoTooltip(null)}
+                                className="w-3.5 h-3.5 rounded-full border border-slate-400 text-slate-400 hover:border-teal-600 hover:text-teal-600 flex items-center justify-center transition-colors text-[9px] font-bold"
+                                aria-label={`Information about ${CATEGORY_LABELS[categoryKey]}`}
+                              >
+                                i
+                              </button>
+                              {showInfoTooltip === key && (
+                                <div className="absolute left-0 top-full mt-1 z-50 w-80 bg-white rounded-lg shadow-xl border border-slate-200 p-3">
+                                  <p className="text-xs text-slate-700 leading-relaxed">
+                                    {CATEGORY_DESCRIPTIONS[categoryKey as keyof typeof CATEGORY_DESCRIPTIONS]}
+                                  </p>
+                                  <div className="absolute -top-1.5 left-3 w-3 h-3 bg-white border-l border-t border-slate-200 transform rotate-45"></div>
+                                </div>
+                              )}
+                            </div>
+                            <div className="relative flex-1">
+                              <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-500 text-xs">$</span>
                               <input
                                 type="number"
                                 value={expenses[categoryKey] || ""}
                                 onChange={(e) => handleExpenseChange(categoryKey, e.target.value)}
                                 placeholder="0.00"
                                 step="0.01"
-                                className="w-full pl-8 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-900"
+                                className="w-full pl-6 pr-2 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900"
                               />
                             </div>
                           </div>
@@ -337,7 +335,7 @@ export default function BudgetCalculatorPage() {
               <div className="flex flex-col items-center justify-center">
                 <div className="w-full max-w-sm">
                   {/* Donut Chart */}
-                  <div className="relative w-full aspect-square mb-6">
+                  <div className="relative w-full aspect-square mb-4">
                     <svg className="w-full h-full transform -rotate-90" viewBox="0 0 200 200">
                       {/* Background circle */}
                       <circle
@@ -384,19 +382,19 @@ export default function BudgetCalculatorPage() {
                       )}
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <p className="text-sm text-slate-600 font-medium">Total Expenses</p>
-                      <p className="text-3xl font-bold text-slate-900 mt-1">{formatCurrency(totalExpenses)}</p>
+                      <p className="text-xs text-slate-600 font-medium">Total Expenses</p>
+                      <p className="text-2xl font-bold text-slate-900 mt-0.5">{formatCurrency(totalExpenses)}</p>
                     </div>
                   </div>
 
                   {/* Difference */}
-                  <div className="bg-slate-50 rounded-lg p-6 border border-slate-200">
+                  <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
                     <div className="text-center">
-                      <h3 className="text-lg font-bold text-slate-900 mb-2">Difference</h3>
-                      <p className={`text-4xl font-bold ${difference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      <h3 className="text-base font-bold text-slate-900 mb-1">Difference</h3>
+                      <p className={`text-3xl font-bold ${difference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                         {formatCurrency(Math.abs(difference))}
                       </p>
-                      <p className="text-sm text-slate-600 mt-2">
+                      <p className="text-xs text-slate-600 mt-1">
                         {difference >= 0 ? 'Remaining' : 'Over Budget'}
                       </p>
                     </div>
@@ -404,9 +402,9 @@ export default function BudgetCalculatorPage() {
 
                   {/* Category Breakdown */}
                   {expenseData.length > 0 && (
-                    <div className="mt-6 bg-slate-50 rounded-lg p-6 border border-slate-200">
-                      <h3 className="text-sm font-bold text-slate-900 mb-4">Expense Breakdown</h3>
-                      <div className="space-y-2 max-h-64 overflow-y-auto">
+                    <div className="mt-4 bg-slate-50 rounded-lg p-4 border border-slate-200">
+                      <h3 className="text-sm font-bold text-slate-900 mb-3">Expense Breakdown</h3>
+                      <div className="space-y-1.5 max-h-48 overflow-y-auto">
                         {expenseData.map((item) => {
                           const percentage = totalExpenses > 0 ? (item.value / totalExpenses) * 100 : 0;
                           return (
@@ -435,27 +433,27 @@ export default function BudgetCalculatorPage() {
 
           {/* Insights Section */}
           {incomeNum > 0 && (
-            <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 sm:p-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">Budget Insights</h2>
+            <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-4 sm:p-6 mt-4">
+              <h2 className="text-xl font-bold text-slate-900 mb-4">Budget Insights</h2>
               
               {difference < 0 ? (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <svg className="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-red-900 mb-2">
+                      <h3 className="text-base font-bold text-red-900 mb-1">
                         You're overspending by {formatCurrency(Math.abs(difference))} per month
                       </h3>
-                      <p className="text-red-800 mb-4">
+                      <p className="text-sm text-red-800 mb-3">
                         Don't freak out. This is just a wake-up call! You can get that number to zero. Just give every dollar a job—giving, saving and spending—without overspending! It's time to make some changes.
                       </p>
-                      <div className="space-y-2 text-sm text-red-700">
+                      <div className="space-y-1.5 text-xs text-red-700">
                         <p className="font-semibold">Try this:</p>
-                        <ul className="list-disc list-inside space-y-1">
+                        <ul className="list-disc list-inside space-y-0.5">
                           <li>Review your expenses and identify areas to cut back</li>
                           <li>Consider reducing discretionary spending</li>
                           <li>Find ways to increase your income</li>
@@ -466,23 +464,23 @@ export default function BudgetCalculatorPage() {
                   </div>
                 </div>
               ) : difference > 0 ? (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-green-900 mb-2">
+                      <h3 className="text-base font-bold text-green-900 mb-1">
                         Great! You have {formatCurrency(difference)} remaining each month
                       </h3>
-                      <p className="text-green-800 mb-4">
+                      <p className="text-sm text-green-800 mb-3">
                         Bravo! Time to give those dollars a job—build up your savings or pay off your debt. Whatever your current money goal is, get after it!
                       </p>
-                      <div className="space-y-2 text-sm text-green-700">
+                      <div className="space-y-1.5 text-xs text-green-700">
                         <p className="font-semibold">Consider allocating this surplus to:</p>
-                        <ul className="list-disc list-inside space-y-1">
+                        <ul className="list-disc list-inside space-y-0.5">
                           <li>Emergency fund (3-6 months of expenses)</li>
                           <li>Debt payoff (if you have debt)</li>
                           <li>Retirement savings (15% of income recommended)</li>
@@ -493,18 +491,18 @@ export default function BudgetCalculatorPage() {
                   </div>
                 </div>
               ) : (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold text-blue-900 mb-2">
+                      <h3 className="text-base font-bold text-blue-900 mb-1">
                         Your income and expenses are balanced!
                       </h3>
-                      <p className="text-blue-800">
+                      <p className="text-sm text-blue-800">
                         Perfect! Your budget is working. Consider building an emergency fund and investing for long-term wealth if you haven't already.
                       </p>
                     </div>
