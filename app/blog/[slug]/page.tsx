@@ -565,14 +565,14 @@ export default async function BlogArticlePage({ params }: PageProps) {
                             result.push(
                               <div key={i} className="bg-gradient-to-r from-slate-50 to-teal-50 rounded-lg p-4 border border-teal-200/50 shadow-sm">
                                 <div className="flex items-center justify-center">
-                                  <div className="flex items-center gap-3" style={{ maxWidth: '600px', width: '100%' }}>
-                                    <span className="px-3 py-1.5 bg-slate-200 rounded-md text-sm font-medium text-slate-700 line-through decoration-slate-500 whitespace-nowrap w-[160px] flex-shrink-0 text-center">
+                                  <div className="flex items-center gap-3 max-w-4xl w-full">
+                                    <span className="px-3 py-1.5 bg-slate-200 rounded-md text-sm font-medium text-slate-700 line-through decoration-slate-500 flex-shrink-0 min-w-[180px] max-w-[180px] text-center break-words">
                                       {fromText}
                                     </span>
                                     <svg className="w-5 h-5 text-teal-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                     </svg>
-                                    <span className="px-3 py-1.5 bg-teal-600 text-white rounded-md text-sm font-semibold whitespace-nowrap flex-1 text-center">
+                                    <span className="px-3 py-1.5 bg-teal-600 text-white rounded-md text-sm font-semibold flex-1 text-center break-words">
                                       {toText}
                                     </span>
                                   </div>
