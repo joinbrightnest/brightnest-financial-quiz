@@ -409,20 +409,28 @@ export default async function BlogArticlePage({ params }: PageProps) {
                           // Check if paragraph starts with bold text in "How to fix it" section - create a step card
                           if (para.match(/^\*\*/) && s.title.toLowerCase().includes('fix it')) {
                             // Check if it's not a numbered item (which would be 1., 2., etc.) or regular paragraph
-                            // And it's a standalone bold line (not part of a longer sentence)
-                            if (!para.match(/^\*\*\d+\./) && para.match(/^\*\*[^*]+\*\*$/)) {
+                            // Match paragraph that STARTS with bold text (even if there's more content after)
+                            const boldMatch = para.match(/^\*\*(.+?)\*\*/);
+                            if (boldMatch && !para.match(/^\*\*\d+\./)) {
                               stepCounter++;
-                              const boldMatch = para.match(/^\*\*(.+?)\*\*/);
-                              const stepTitle = boldMatch ? boldMatch[1].trim() : para.replace(/\*\*/g, '').trim();
+                              const stepTitle = boldMatch[1].trim();
                               const stepNum = stepCounter;
                               const restOfContent = [];
+                              
+                              // Extract any content after the bold title in the same paragraph
+                              const afterBold = para.substring(boldMatch[0].length).trim();
+                              if (afterBold) {
+                                // Split by newlines within the paragraph to separate multiple lines
+                                const linesAfterBold = afterBold.split('\n').filter(l => l.trim());
+                                restOfContent.push(...linesAfterBold);
+                              }
                               
                               // Collect following paragraphs until next bold step or numbered item
                               i++;
                               while (i < paragraphs.length) {
                                 const nextPara = paragraphs[i].trim();
                                 // Stop if we hit another bold step or numbered item
-                                if ((nextPara.match(/^\*\*[^*]+\*\*$/) && !nextPara.match(/^\*\*\d+\./) && !nextPara.match(/From/)) || nextPara.match(/^\*\*\d+\./)) {
+                                if ((nextPara.match(/^\*\*/) && !nextPara.match(/^\*\*\d+\./) && !nextPara.match(/^\*\*From/)) || nextPara.match(/^\*\*\d+\./)) {
                                   break;
                                 }
                                 restOfContent.push(nextPara);
