@@ -292,7 +292,7 @@ export default function DebtSnowballCalculatorPage() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             {getDebtTypeIcon(type)}
-                            <h3 className="font-medium text-slate-900">{type}s</h3>
+                            <h3 className="font-bold text-teal-600">{type}s</h3>
                           </div>
                           <span className={`font-medium ${typeTotal > 0 ? 'text-teal-600' : 'text-slate-900'}`}>
                             {formatCurrency(typeTotal)}
@@ -347,7 +347,7 @@ export default function DebtSnowballCalculatorPage() {
                       <p className="text-sm text-slate-600 mb-4">
                         Want to be debt-free sooner? Of course you do! Add an extra monthly payment to see how much faster you'll pay off your debt.
                       </p>
-                      <p className="text-teal-600 hover:text-teal-700 font-medium text-sm cursor-pointer mb-4">
+                      <p className="text-teal-600 font-bold text-sm mb-4">
                         Boost your payments to pay off your debt even faster! →
                       </p>
                       
