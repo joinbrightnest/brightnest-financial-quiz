@@ -336,52 +336,84 @@ export default function BudgetCalculatorPage() {
                 <div className="w-full max-w-sm">
                   {/* Donut Chart */}
                   <div className="relative w-full aspect-square mb-4">
-                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 200 200">
-                      {/* Background circle */}
-                      <circle
-                        cx="100"
-                        cy="100"
-                        r="80"
-                        fill="none"
-                        stroke="#e2e8f0"
-                        strokeWidth="20"
-                      />
-                      {/* Expenses circle */}
-                      <circle
-                        cx="100"
-                        cy="100"
-                        r="80"
-                        fill="none"
-                        stroke="#14b8a6"
-                        strokeWidth="20"
-                        strokeDasharray={`${2 * Math.PI * 80}`}
-                        strokeDashoffset={`${2 * Math.PI * 80 * (1 - expensesPercentage / 100)}`}
-                        strokeLinecap="round"
-                        className="transition-all duration-500"
-                      />
-                      {/* Remaining circle (if positive) - starts after expenses */}
-                      {difference > 0 && (
-                        <circle
-                          cx="100"
-                          cy="100"
-                          r="80"
-                          fill="none"
-                          stroke="#22c55e"
-                          strokeWidth="20"
-                          strokeDasharray={`${2 * Math.PI * 80}`}
-                          strokeDashoffset={`${2 * Math.PI * 80 * (1 - remainingPercentage / 100)}`}
-                          strokeLinecap="round"
-                          className="transition-all duration-500"
-                          style={{
-                            strokeDasharray: `${2 * Math.PI * 80}`,
-                            strokeDashoffset: `${2 * Math.PI * 80 * (1 - remainingPercentage / 100)}`
-                          }}
-                          transform="rotate(-90 100 100)"
-                          transformOrigin="100 100"
-                        />
-                      )}
+                    <svg className="w-full h-full" viewBox="0 0 200 200">
+                      {/* Helper function to convert angle to cartesian coordinates */}
+                      {(() => {
+                        const centerX = 100;
+                        const centerY = 100;
+                        const radius = 80;
+                        const innerRadius = 60;
+                        
+                        // Convert angle from degrees to cartesian coordinates
+                        const getCoordinates = (angle: number, r: number) => {
+                          const radians = ((angle - 90) * Math.PI) / 180;
+                          return {
+                            x: centerX + r * Math.cos(radians),
+                            y: centerY + r * Math.sin(radians)
+                          };
+                        };
+                        
+                        // Create arc path for a segment
+                        const createArc = (startAngle: number, endAngle: number, outerR: number, innerR: number) => {
+                          const startOuter = getCoordinates(startAngle, outerR);
+                          const endOuter = getCoordinates(endAngle, outerR);
+                          const startInner = getCoordinates(startAngle, innerR);
+                          const endInner = getCoordinates(endAngle, innerR);
+                          
+                          const largeArcFlag = endAngle - startAngle > 180 ? 1 : 0;
+                          
+                          return `M ${startOuter.x} ${startOuter.y} A ${outerR} ${outerR} 0 ${largeArcFlag} 1 ${endOuter.x} ${endOuter.y} L ${endInner.x} ${endInner.y} A ${innerR} ${innerR} 0 ${largeArcFlag} 0 ${startInner.x} ${startInner.y} Z`;
+                        };
+                        
+                        let currentAngle = 0;
+                        
+                        return (
+                          <>
+                            {/* Background circle */}
+                            <circle
+                              cx={centerX}
+                              cy={centerY}
+                              r={radius}
+                              fill="#e2e8f0"
+                            />
+                            {/* Inner circle for donut hole */}
+                            <circle
+                              cx={centerX}
+                              cy={centerY}
+                              r={innerRadius}
+                              fill="white"
+                            />
+                            
+                            {/* Render expense segments */}
+                            {totalExpenses > 0 && expenseData.map((item) => {
+                              const segmentAngle = (item.value / totalExpenses) * 360;
+                              const startAngle = currentAngle;
+                              const endAngle = currentAngle + segmentAngle;
+                              currentAngle = endAngle;
+                              
+                              return (
+                                <path
+                                  key={item.key}
+                                  d={createArc(startAngle, endAngle, radius, innerRadius)}
+                                  fill={item.color}
+                                  className="transition-all duration-300"
+                                />
+                              );
+                            })}
+                            
+                            {/* Remaining segment (if difference > 0) */}
+                            {difference > 0 && currentAngle < 360 && (
+                              <path
+                                d={createArc(currentAngle, 360, radius, innerRadius)}
+                                fill="#e2e8f0"
+                                className="transition-all duration-300"
+                              />
+                            )}
+                          </>
+                        );
+                      })()}
                     </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                       <p className="text-xs text-slate-600 font-medium">Total Expenses</p>
                       <p className="text-2xl font-bold text-slate-900 mt-0.5">{formatCurrency(totalExpenses)}</p>
                     </div>
