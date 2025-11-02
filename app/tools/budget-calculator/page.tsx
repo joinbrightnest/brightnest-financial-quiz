@@ -84,8 +84,8 @@ export default function BudgetCalculatorPage() {
     other: ""
   });
 
-  // Track last income value that was used for auto-population
-  const [lastPopulatedIncome, setLastPopulatedIncome] = useState<string>("");
+  // Track which fields were manually edited by the user
+  const [manuallyEditedFields, setManuallyEditedFields] = useState<Set<string>>(new Set());
 
   // Auto-populate with national averages when income is entered (debounced)
   useEffect(() => {
@@ -100,17 +100,10 @@ export default function BudgetCalculatorPage() {
       return;
     }
     
-    // Debounce: wait for user to finish typing (500ms delay)
+    // Debounce: wait for user to finish typing (300ms delay - shorter for better responsiveness)
     const timeoutId = setTimeout(() => {
-      const incomeStr = incomeNum.toString();
-      
-      // Only auto-populate if income has changed significantly
-      // This prevents recalculation on every keystroke
-      if (lastPopulatedIncome === incomeStr) {
-        return; // Already populated for this income value
-      }
-      
-      // Auto-populate empty fields with calculated values
+      // Auto-populate fields with calculated values
+      // Only update fields that haven't been manually edited
       setExpenses(prev => {
         const newExpenses: { [key: string]: string } = { ...prev };
         let hasChanges = false;
@@ -118,37 +111,40 @@ export default function BudgetCalculatorPage() {
         Object.keys(NATIONAL_AVERAGES).forEach((key) => {
           const categoryKey = key as keyof typeof NATIONAL_AVERAGES;
           const percentage = NATIONAL_AVERAGES[categoryKey];
-          const currentValue = prev[categoryKey as keyof typeof prev];
           
-          // Check if field is empty (empty string, undefined, or null)
-          const isEmpty = currentValue === undefined || currentValue === null || currentValue === "" || (typeof currentValue === 'string' && currentValue.trim() === "");
+          // Skip if this field was manually edited by the user
+          if (manuallyEditedFields.has(categoryKey)) {
+            return; // Keep user's manual input
+          }
           
-          // Only auto-fill empty fields with non-zero percentages
-          if (isEmpty && percentage > 0) {
+          // Calculate new value based on current income
+          if (percentage > 0) {
             const calculatedValue = incomeNum * percentage;
             const roundedValue = Math.round(calculatedValue);
-            if (roundedValue > 0) {
-              newExpenses[categoryKey] = roundedValue.toString();
+            const newValue = roundedValue > 0 ? roundedValue.toString() : "";
+            
+            // Update if value changed
+            if (prev[categoryKey as keyof typeof prev] !== newValue) {
+              newExpenses[categoryKey] = newValue;
+              hasChanges = true;
+            }
+          } else {
+            // For 0% categories, clear if not manually edited
+            if (prev[categoryKey as keyof typeof prev] !== "") {
+              newExpenses[categoryKey] = "";
               hasChanges = true;
             }
           }
-          // If field already has value, keep it (don't overwrite user input)
-          // If field is empty and percentage is 0, leave it empty
         });
-        
-        // Mark this income as populated
-        if (hasChanges) {
-          setLastPopulatedIncome(incomeStr);
-        }
         
         // Only update state if there were actual changes
         return hasChanges ? newExpenses : prev;
       });
-    }, 500); // Wait 500ms after user stops typing
+    }, 300); // Wait 300ms after user stops typing
     
     // Cleanup timeout if income changes again
     return () => clearTimeout(timeoutId);
-  }, [income, lastPopulatedIncome]);
+  }, [income, manuallyEditedFields]);
 
   const handleExpenseChange = (category: string, value: string) => {
     // Remove leading zeros - convert to number then back to string to strip leading zeros
@@ -161,6 +157,14 @@ export default function BudgetCalculatorPage() {
         cleanedValue = "0";
       }
     }
+    
+    // Mark this field as manually edited
+    setManuallyEditedFields(prev => {
+      const newSet = new Set(prev);
+      newSet.add(category);
+      return newSet;
+    });
+    
     setExpenses(prev => ({
       ...prev,
       [category]: cleanedValue
@@ -179,9 +183,8 @@ export default function BudgetCalculatorPage() {
       }
     }
     setIncome(cleanedValue);
-    // Reset last populated income so useEffect can recalculate when income changes
-    // This allows recalculation if user changes income value
-    setLastPopulatedIncome("");
+    // Note: Auto-population will trigger via useEffect when income changes
+    // It will only update fields that weren't manually edited
   };
 
   const calculateTotalExpenses = () => {
