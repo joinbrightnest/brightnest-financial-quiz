@@ -7,9 +7,138 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-  // Simple in-file map so list cards can route somewhere meaningful today.
-  // Replace with real CMS/data source later.
-  const FALLBACK_ARTICLE = {
+// Article content mapped by slug
+const articlesMap: Record<string, {
+    category: string;
+    title: string;
+    heroImages: Array<{ color: string }>;
+    sections: Array<{ title: string; body: string }>;
+    heroText?: string;
+  }> = {
+    "why-your-budget-keeps-failing": {
+      category: "Habits",
+      title: "Why Your Budget Keeps Failing (And How to Fix It)",
+      heroImages: [
+        { color: "from-teal-500 to-teal-600" },
+        { color: "from-teal-600 to-teal-700" },
+        { color: "from-teal-400 to-teal-500" }
+      ],
+      heroText: "3 BEHAVIOR SHIFTS THAT MAKE BUDGETING WORK",
+      sections: [
+        {
+          title: "1. Shift from restriction to intention",
+          body: "Budgets aren't about saying no — they're about saying yes to what matters. When you budget from a place of intention, you're not depriving yourself; you're making space for your priorities. The difference is mindset: restriction feels like punishment, intention feels like empowerment."
+        },
+        {
+          title: "2. Track what matters, not everything",
+          body: "You don't need to count every penny. Focus on the big three: fixed expenses, variable spending, and savings. Know these numbers intimately, and the rest falls into place. Over-tracking leads to burnout; smart tracking leads to freedom."
+        },
+        {
+          title: "3. Budget for life, not perfection",
+          body: "Your budget should account for the unexpected, the spontaneous, and yes, even the mistakes. Build buffer zones for reality. When you create a budget that actually works with your life (not against it), you'll stick with it long-term. Flexibility isn't failure — it's sustainability."
+        }
+      ]
+    },
+    "hidden-cost-of-bnpl": {
+      category: "Mindset",
+      title: "The Hidden Cost of 'Buy Now, Pay Later'",
+      heroImages: [
+        { color: "from-teal-400 to-teal-500" },
+        { color: "from-teal-600 to-teal-700" },
+        { color: "from-teal-500 to-teal-600" }
+      ],
+      heroText: "THE PSYCHOLOGICAL TRAP OF DEFERRED PAYMENTS",
+      sections: [
+        {
+          title: "1. The illusion of affordability",
+          body: "When you split a $200 purchase into four $50 payments, your brain registers it as 'only $50' — not the full $200. This mental accounting trick makes spending feel smaller than it is. You're not avoiding the cost; you're just delaying when you feel it, which often leads to spending more than you would have otherwise."
+        },
+        {
+          title: "2. The compound interest trap",
+          body: "Buy now, pay later services make money from late fees and interest. One missed payment can cascade into a cycle of fees that cost more than the original purchase. What starts as a $50 payment plan can easily become $75 or $100 with fees, turning a manageable purchase into financial stress."
+        },
+        {
+          title: "3. The detachment from real cost",
+          body: "When payment is abstracted and delayed, you lose connection to the actual money leaving your account. Cash feels real; a future payment feels like a concept. This psychological distance makes it easier to overspend and harder to make mindful financial decisions. The best purchase is one you can afford today, not one you hope to afford later."
+        }
+      ]
+    },
+    "talk-about-money-with-your-partner": {
+      category: "Relationships",
+      title: "How to Talk About Money With Your Partner",
+      heroImages: [
+        { color: "from-teal-600 to-teal-700" },
+        { color: "from-teal-500 to-teal-600" },
+        { color: "from-teal-400 to-teal-500" }
+      ],
+      heroText: "BUILDING FINANCIAL TRUST AND ALIGNMENT",
+      sections: [
+        {
+          title: "1. Start with values, not numbers",
+          body: "Before diving into budgets and bills, talk about what money means to each of you. What does financial security look like? What are your shared goals? When you align on values first, the numbers become a tool for achieving something meaningful together, not a source of conflict."
+        },
+        {
+          title: "2. Make it a regular conversation",
+          body: "Money talks shouldn't be emergency meetings or annual reviews. Schedule regular check-ins — monthly works for most couples — where you discuss goals, spending, and concerns in a low-pressure setting. When money conversations become routine, they lose their tension and become collaborative planning sessions."
+        },
+        {
+          title: "3. Separate individual and shared spending",
+          body: "You don't have to merge everything. Maintain individual accounts for personal spending while having a shared account for joint expenses. This gives each person autonomy and prevents resentment over personal purchases. Clear boundaries around 'yours, mine, and ours' actually reduce financial conflict, not increase it."
+        }
+      ]
+    },
+    "three-account-system": {
+      category: "Planning",
+      title: "The 3-Account System That Changed Everything",
+      heroImages: [
+        { color: "from-teal-500 to-teal-600" },
+        { color: "from-teal-400 to-teal-500" },
+        { color: "from-teal-600 to-teal-700" }
+      ],
+      heroText: "A SIMPLE SYSTEM FOR EFFORTLESS MONEY MANAGEMENT",
+      sections: [
+        {
+          title: "1. The Bills Account",
+          body: "This is where your fixed expenses live: rent, utilities, insurance, subscriptions — everything that's predictable and recurring. Calculate your monthly total, divide it by your pay frequency, and automate that transfer. Once it's set up, you never think about bills again. They just get paid."
+        },
+        {
+          title: "2. The Goals Account",
+          body: "Separate savings by purpose: emergency fund, vacation, down payment, whatever matters to you. This isn't one vague 'savings' account — it's specific goals with specific timelines. When you can see progress toward each goal separately, saving becomes tangible and motivating. You're not just saving; you're saving for something."
+        },
+        {
+          title: "3. The Life Account",
+          body: "Everything else goes here: groceries, gas, entertainment, discretionary spending. This is your flexible spending money, and when it's gone, it's gone. Having clear boundaries between fixed expenses, savings goals, and daily life makes decision-making automatic. No more wondering if you can afford something — the account balance tells you clearly."
+        }
+      ]
+    },
+    "build-wealth-on-variable-income": {
+      category: "Planning",
+      title: "Building Wealth on a Variable Income",
+      heroImages: [
+        { color: "from-teal-400 to-teal-500" },
+        { color: "from-teal-600 to-teal-700" },
+        { color: "from-teal-500 to-teal-600" }
+      ],
+      heroText: "FINANCIAL STABILITY WHEN YOUR INCOME FLUCTUATES",
+      sections: [
+        {
+          title: "1. Base your budget on your worst month",
+          body: "Don't budget for the average — budget for the leanest month you've had. This creates automatic buffer space when income is higher. When good months happen, the excess goes straight to savings, not lifestyle inflation. Living below your variable income is how you create stability in instability."
+        },
+        {
+          title: "2. Build a larger emergency fund",
+          body: "While traditional advice suggests 3-6 months of expenses, with variable income, aim for 6-12 months. This larger cushion smooths out income fluctuations and prevents panic during slower periods. Your emergency fund isn't just for emergencies — it's your income volatility buffer."
+        },
+        {
+          title: "3. Smooth income with a 'salary' system",
+          body: "Pay yourself a consistent monthly 'salary' from a separate income account. When high months happen, the surplus builds in that account. During low months, you draw from the accumulated surplus. You get consistent monthly payouts while your actual income can fluctuate wildly. Consistency comes from planning, not luck."
+        }
+      ]
+    }
+  };
+
+// Get article by slug or use fallback
+const FALLBACK_ARTICLE = {
     category: "Mindset",
     title: "Why The Weight Keeps Coming Back",
     heroImages: [
@@ -17,31 +146,28 @@ interface PageProps {
       { color: "from-teal-600 to-teal-700" },
       { color: "from-teal-400 to-teal-500" }
     ],
-  sections: [
-    {
-      title: "1. Habits",
-      body:
-        "We all carry around the habits we’ve ingrained over the course of years — and it takes time and concerted effort to entrain new ones. If you slip back into your old habits for a moment, that’s normal; if you don’t pull yourself back out of them, that’s where you’ll run into trouble."
-    },
-    {
-      title: "2. The pull of the ‘old you’",
-      body:
-        "As habits become ingrained, they start to define the way we see ourselves. If you have no proof yet of the person you want to be, it’s easy to think this is simply who you are. Intentional choices, consistently, create the new you."
-    },
-    {
-      title: "3. Discipline as freedom vs. punishment",
-      body:
-        "You can white‑knuckle discipline for a bit; to sustain it for years, you have to associate it with freedom and your deeper ‘why’."
-    }
-  ]
-};
+    heroText: "3 HABITS THAT BRING THE WEIGHT BACK",
+    sections: [
+      {
+        title: "1. Habits",
+        body: "We all carry around the habits we've ingrained over the course of years — and it takes time and concerted effort to entrain new ones. If you slip back into your old habits for a moment, that's normal; if you don't pull yourself back out of them, that's where you'll run into trouble."
+      },
+      {
+        title: "2. The pull of the 'old you'",
+        body: "As habits become ingrained, they start to define the way we see ourselves. If you have no proof yet of the person you want to be, it's easy to think this is simply who you are. Intentional choices, consistently, create the new you."
+      },
+      {
+        title: "3. Discipline as freedom vs. punishment",
+        body: "You can white‑knuckle discipline for a bit; to sustain it for years, you have to associate it with freedom and your deeper 'why'."
+      }
+    ]
+  };
 
 export default async function BlogArticlePage({ params }: PageProps) {
   const { slug } = await params;
 
-  // In the absence of a data layer, use a single article template.
-  // The structure matches the reference page, with BrightNest styling.
-  const article = FALLBACK_ARTICLE;
+  // Get article by slug or use fallback
+  const article = articlesMap[slug] || FALLBACK_ARTICLE;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
@@ -103,9 +229,11 @@ export default async function BlogArticlePage({ params }: PageProps) {
                 ))}
               </div>
               <div className="px-5 sm:px-8 pb-5 sm:pb-7">
-                <div className="inline-flex items-center justify-center mt-4 bg-gradient-to-r from-slate-900 to-slate-800 text-white text-xs sm:text-sm font-semibold px-4 sm:px-6 py-2 rounded-lg shadow-md">
-                  3 HABITS THAT BRING THE WEIGHT BACK
-                </div>
+                {article.heroText && (
+                  <div className="inline-flex items-center justify-center mt-4 bg-gradient-to-r from-slate-900 to-slate-800 text-white text-xs sm:text-sm font-semibold px-4 sm:px-6 py-2 rounded-lg shadow-md">
+                    {article.heroText}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -156,9 +284,9 @@ export default async function BlogArticlePage({ params }: PageProps) {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
                 <div className="p-5">
-                  <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-teal-600 transition-colors">How To Balance Your Macros For Sustained Energy</h3>
-                  <p className="text-sm text-slate-600 line-clamp-3 mb-3 leading-relaxed">Macronutrients aren't just about what & how much you eat in a day — there's an art to supporting your body's natural rhythms, giving you sustained energy and lasting results. Let's look at how to do it!</p>
-                  <div className="text-xs text-slate-500">3 min read</div>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-teal-600 transition-colors">{articlesMap["why-your-budget-keeps-failing"]?.title || "Why Your Budget Keeps Failing (And How to Fix It)"}</h3>
+                  <p className="text-sm text-slate-600 line-clamp-3 mb-3 leading-relaxed">Budgets aren't about restriction — they're about freedom. Discover the 3 behavior shifts that make budgeting actually work.</p>
+                  <div className="text-xs text-slate-500">4 min read</div>
                 </div>
               </div>
             </Link>
@@ -169,22 +297,22 @@ export default async function BlogArticlePage({ params }: PageProps) {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
                 <div className="p-5">
-                  <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-teal-600 transition-colors">How To *Guarantee* You'll Never Change Your Body Composition</h3>
-                  <p className="text-sm text-slate-600 line-clamp-3 mb-3 leading-relaxed">We talk a lot about what you can do to transform your body composition — this time, here are 3 things that will ensure you never build the body you want, so you can avoid them completely.</p>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-teal-600 transition-colors">{articlesMap["hidden-cost-of-bnpl"]?.title || "The Hidden Cost of 'Buy Now, Pay Later'"}</h3>
+                  <p className="text-sm text-slate-600 line-clamp-3 mb-3 leading-relaxed">That innocent payment plan could be costing you more than money. Let's talk about the psychological trap of deferred payments.</p>
                   <div className="text-xs text-slate-500">3 min read</div>
                 </div>
               </div>
             </Link>
 
-            <Link href="/blog/three-account-system" className="group block">
+            <Link href="/blog/talk-about-money-with-your-partner" className="group block">
               <div className="rounded-xl overflow-hidden bg-white shadow-sm border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all duration-300">
                 <div className="h-44 bg-gradient-to-br from-teal-400 to-teal-500 relative overflow-hidden group-hover:opacity-95 transition-opacity">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
                 <div className="p-5">
-                  <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-teal-600 transition-colors">Why You Need Carbs To Tone</h3>
-                  <p className="text-sm text-slate-600 line-clamp-3 mb-3 leading-relaxed">If you're serious about building a body composition you love, carbs aren't just helpful — they're essential. Here's why they drive performance and results.</p>
-                  <div className="text-xs text-slate-500">3 min read</div>
+                  <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-teal-600 transition-colors">{articlesMap["talk-about-money-with-your-partner"]?.title || "How to Talk About Money With Your Partner"}</h3>
+                  <p className="text-sm text-slate-600 line-clamp-3 mb-3 leading-relaxed">Money conversations don't have to be awkward. Here's how to build financial trust and alignment in your relationship.</p>
+                  <div className="text-xs text-slate-500">5 min read</div>
                 </div>
               </div>
             </Link>
