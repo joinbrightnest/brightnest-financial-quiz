@@ -25,9 +25,23 @@ export default function BecomePartnerPage() {
               >
                 Apply to Become a Partner
               </Link>
-              <p className="text-sm text-teal-200">
+              <p className="text-sm text-teal-200 mb-6">
                 Limited partner spots available — we only accept aligned creators and educators.
               </p>
+              <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-teal-100">
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-teal-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Certified financial behavior experts</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg className="w-5 h-5 text-teal-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                  <span>100K+ data points analyzed</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -45,9 +59,33 @@ export default function BecomePartnerPage() {
               <p className="text-lg text-slate-700 leading-relaxed mb-6">
                 You don't need to manage fulfillment, create programs, or offer support.
               </p>
-              <p className="text-lg text-slate-700 leading-relaxed">
+              <p className="text-lg text-slate-700 leading-relaxed mb-8">
                 We do it all. You simply share a proven system that helps people finally change their financial habits — and get rewarded for the impact you create.
               </p>
+              
+              {/* Expert Authority & Numbers */}
+              <div className="bg-teal-50 rounded-lg p-6 border border-teal-200">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 mb-3">Built by Experts</h3>
+                    <p className="text-slate-700 leading-relaxed mb-4">
+                      Our certified financial behavior experts have helped thousands of people change their financial habits through proven frameworks.
+                    </p>
+                    <p className="text-slate-700 leading-relaxed">
+                      Our coaches are certified professionals with 5+ years in personal finance and behavioral science.
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-slate-900 mb-3">Proven System</h3>
+                    <p className="text-slate-700 leading-relaxed mb-4">
+                      Over 100,000 data points analyzed to design our financial behavior system — backed by psychology and real results.
+                    </p>
+                    <p className="text-slate-700 leading-relaxed">
+                      Average partner earns $300–$1,000 per referral, depending on client package.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -175,14 +213,27 @@ export default function BecomePartnerPage() {
                 At BrightNest, we believe real wealth starts with behavior change.
               </p>
               <p className="text-lg text-slate-700 leading-relaxed mb-6">
+                BrightNest was built by educators, marketers, and behavioral experts obsessed with helping people master their finances through psychology, not hype.
+              </p>
+              <p className="text-lg text-slate-700 leading-relaxed mb-6">
                 Our certified coaches help people rewire their financial habits, gain control, and build long-term stability.
               </p>
               <p className="text-lg text-slate-700 leading-relaxed mb-6">
                 As a partner, you're not just earning commissions — you're spreading a movement.
               </p>
-              <p className="text-lg text-slate-700 leading-relaxed">
+              <p className="text-lg text-slate-700 leading-relaxed mb-6">
                 You'll help people make lasting financial transformations through a system backed by psychology and proven results.
               </p>
+              
+              {/* Market Validation */}
+              <div className="bg-white rounded-lg p-6 border-l-4 border-teal-600 shadow-sm">
+                <p className="text-slate-700 leading-relaxed mb-3">
+                  <span className="font-bold text-slate-900">The behavior-change market is projected to exceed $100B globally by 2030</span> — and we're building the financial branch of it.
+                </p>
+                <p className="text-slate-600 text-sm italic">
+                  As seen in our latest research on financial behavior change — BrightNest applies evidence-based methods that actually work.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -231,6 +282,79 @@ export default function BecomePartnerPage() {
           </div>
         </section>
 
+        {/* Become a Founding Partner Section */}
+        <section className="py-16 sm:py-20 bg-gradient-to-br from-teal-50 to-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-4xl mx-auto text-center">
+              <div className="inline-flex items-center gap-2 bg-teal-100 text-teal-700 px-4 py-2 rounded-full mb-6">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <span className="font-semibold text-sm">Founding Partner Opportunity</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
+                Become a Founding Partner
+              </h2>
+              <p className="text-xl text-slate-700 leading-relaxed mb-6">
+                Join the first generation of BrightNest partners shaping the future of financial education.
+              </p>
+              <p className="text-lg text-slate-700 leading-relaxed mb-8">
+                We're accepting only 30 founding partners in 2025 to grow with us. Founding partners receive higher commission tiers, early access to updates, and lifetime status inside the network.
+              </p>
+              <div className="bg-white rounded-lg p-8 shadow-lg border border-slate-200 max-w-2xl mx-auto">
+                <p className="text-lg text-slate-800 leading-relaxed italic mb-4">
+                  "We're not just building another affiliate program — we're building a movement to help people live financially free lives."
+                </p>
+                <p className="text-slate-600">
+                  The earlier you join, the bigger your impact (and your upside).
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Why Early Partners Love BrightNest */}
+        <section className="py-16 sm:py-20 bg-slate-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-12 text-center">
+              Why Early Partners Love BrightNest
+            </h2>
+            <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-lg p-6 shadow-md border border-slate-200">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
+                    <svg className="w-6 h-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-slate-700 leading-relaxed mb-3 italic">
+                      "BrightNest handles everything — from client delivery to retention — while I focus on sharing their message."
+                    </p>
+                    <p className="text-sm text-slate-500">— Early Partner Feedback</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-lg p-6 shadow-md border border-slate-200">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
+                    <svg className="w-6 h-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-slate-700 leading-relaxed mb-3 italic">
+                      "Finally a program that lets creators earn from impact, not just clicks."
+                    </p>
+                    <p className="text-sm text-slate-500">— Founding Partner Insight</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* CTA Section */}
         <section className="py-16 sm:py-20 bg-gradient-to-br from-teal-600 via-teal-700 to-teal-800 text-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -258,6 +382,22 @@ export default function BecomePartnerPage() {
               Frequently Asked Questions
             </h2>
             <FAQAccordion />
+          </div>
+        </section>
+
+        {/* Partner Success Stories Coming Soon */}
+        <section className="py-12 bg-white border-t border-slate-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-4xl mx-auto text-center">
+              <div className="bg-slate-50 rounded-lg p-8 border-2 border-dashed border-slate-300">
+                <h3 className="text-xl font-bold text-slate-900 mb-3">
+                  Partner Success Stories Coming Soon
+                </h3>
+                <p className="text-slate-600 leading-relaxed">
+                  We're currently onboarding our first wave of partners — their results will be featured here.
+                </p>
+              </div>
+            </div>
           </div>
         </section>
       </main>
