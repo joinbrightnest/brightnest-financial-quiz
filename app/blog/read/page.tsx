@@ -321,6 +321,30 @@ function BlogReadContent() {
           </Link>
         </div>
 
+        {/* Tabs - READ, WATCH, LISTEN */}
+        <div className="mb-6 sm:mb-8">
+          <div className="flex gap-4 sm:gap-6 border-b border-slate-200">
+            <Link 
+              href="/blog/read" 
+              className="px-2 sm:px-4 py-3 text-lg sm:text-xl font-bold text-teal-600 border-b-2 border-teal-600"
+            >
+              READ
+            </Link>
+            <Link 
+              href="/blog/watch" 
+              className="px-2 sm:px-4 py-3 text-lg sm:text-xl font-bold text-slate-900 hover:text-teal-600 transition-colors"
+            >
+              WATCH
+            </Link>
+            <Link 
+              href="/blog/listen" 
+              className="px-2 sm:px-4 py-3 text-lg sm:text-xl font-bold text-slate-900 hover:text-teal-600 transition-colors"
+            >
+              LISTEN
+            </Link>
+          </div>
+        </div>
+
         {/* Page Header */}
         <div className="mb-8 sm:mb-12">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-4">read</h1>
