@@ -319,7 +319,7 @@ export default function DebtSnowballCalculatorPage() {
                   </div>
                 </div>
 
-                <div className="mt-6 p-4 bg-amber-50 border border-amber-200 rounded-lg text-center">
+                <div className="mt-6 text-center">
                   <p className="text-sm text-slate-700">
                     Debt is stealing <strong>{formatCurrency(monthlyPayment)}</strong> of your income every month!
                   </p>
@@ -347,7 +347,7 @@ export default function DebtSnowballCalculatorPage() {
                       <p className="text-sm text-slate-600 mb-4">
                         Want to be debt-free sooner? Of course you do! Add an extra monthly payment to see how much faster you'll pay off your debt.
                       </p>
-                      <p className="text-teal-600 font-bold text-sm mb-4">
+                      <p className="text-teal-600 font-bold text-center mb-4">
                         Boost your payments to pay off your debt even faster! →
                       </p>
                       
@@ -403,15 +403,6 @@ export default function DebtSnowballCalculatorPage() {
               </div>
             </div>
 
-            {/* Quick Action to Recalculate */}
-            <div className="text-center">
-              <button
-                onClick={calculateResults}
-                className="bg-teal-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-teal-700 transition-colors text-base"
-              >
-                Recalculate Debt-Free Date
-              </button>
-            </div>
           </div>
         </main>
 
