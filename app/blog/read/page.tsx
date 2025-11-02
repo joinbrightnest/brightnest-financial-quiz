@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 // All blog articles
@@ -172,7 +172,7 @@ const allArticles = [
 
 const ITEMS_PER_PAGE = 9;
 
-export default function BlogReadPage() {
+function BlogReadContent() {
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [activeCategory, setActiveCategory] = useState('all');
@@ -483,6 +483,21 @@ export default function BlogReadPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function BlogReadPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
+          <p className="text-slate-600">Loading articles...</p>
+        </div>
+      </div>
+    }>
+      <BlogReadContent />
+    </Suspense>
   );
 }
 
