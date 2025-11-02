@@ -271,7 +271,8 @@ export default async function BlogArticlePage({ params }: PageProps) {
                         const paragraphs = s.body.split('\n\n').filter(p => p.trim());
                         const result = [];
                         let i = 0;
-                        let stepCounter = 0;
+                        // Reset step counter for "How to fix it" section
+                        let stepCounter = s.title.toLowerCase().includes('fix it') ? 0 : 0;
                         
                         // Helper function to parse markdown-style bold and italic
                         const parseMarkdown = (text: string) => {
@@ -406,7 +407,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                           }
                           
                           // Check if paragraph starts with bold text in "How to fix it" section - create a step card
-                          if (para.match(/^\*\*/) && s.title.includes('fix it')) {
+                          if (para.match(/^\*\*/) && s.title.toLowerCase().includes('fix it')) {
                             // Check if it's not a numbered item (which would be 1., 2., etc.) or regular paragraph
                             // And it's a standalone bold line (not part of a longer sentence)
                             if (!para.match(/^\*\*\d+\./) && para.match(/^\*\*[^*]+\*\*$/)) {
