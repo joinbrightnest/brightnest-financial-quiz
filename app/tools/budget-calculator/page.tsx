@@ -596,7 +596,7 @@ export default function BudgetCalculatorPage() {
           )}
 
           {/* Get the Most out of the Budget Calculator */}
-          <div className="mt-8">
+          <div className="mt-8 bg-slate-50 rounded-2xl p-8 lg:p-12">
             <h2 className="text-2xl font-bold text-slate-900 mb-4 text-center">
               Get the Most out of the Budget Calculator
             </h2>
