@@ -233,27 +233,26 @@ export default function DebtSnowballCalculatorPage() {
     switch(type) {
       case "Credit Card":
         return (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
           </svg>
         );
       case "Car Loan":
         return (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
+          <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         );
       case "Student Loan":
         return (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path d="M12 14l9-5-9-5-9 5 9 5z" />
             <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14v9M4.98 20.832l1.01.352 1.99-.5L12 14l4.02 6.684 1.99.5 1.01-.352M12 14l-1-2M12 14l1-2" />
           </svg>
         );
       case "Other Non-Mortgage Debt":
         return (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         );
@@ -302,15 +301,15 @@ export default function DebtSnowballCalculatorPage() {
                     const typeTotal = typeDebts.reduce((sum, debt) => sum + parseFloat(debt.balance), 0);
                     
                     return (
-                      <div key={type} className="border-b border-slate-200 pb-4">
-                        <div className="flex items-center justify-between mb-2">
+                      <div key={type} className="border-b border-slate-200 pb-3">
+                        <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             {getDebtTypeIcon(type)}
-                            <h3 className="font-semibold text-slate-900">{type}s</h3>
+                            <h3 className="font-medium text-slate-900">{type}s</h3>
                           </div>
-                          <span className="text-teal-600 font-bold">{formatCurrency(typeTotal)}</span>
+                          <span className="text-teal-600 font-medium">{formatCurrency(typeTotal)}</span>
                         </div>
-                        <div className="pl-7 space-y-2">
+                        <div className="pl-7 space-y-1 mt-2">
                           {typeDebts.map((debt, idx) => (
                             <div key={debt.id} className="text-sm text-slate-600">
                               {debt.name || `${type} ${idx + 1}`}: {formatCurrency(parseFloat(debt.balance))}
@@ -323,9 +322,9 @@ export default function DebtSnowballCalculatorPage() {
                 </div>
 
                 <div className="border-t-2 border-slate-200 pt-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-teal-600 font-bold">TOTAL DEBT</span>
-                    <span className="text-3xl font-bold text-slate-900">{formatCurrency(totalDebt)}</span>
+                  <div className="flex justify-between items-start">
+                    <span className="text-teal-700 font-bold uppercase">TOTAL DEBT</span>
+                    <span className="text-5xl font-bold text-slate-900">{formatCurrency(totalDebt)}</span>
                   </div>
                 </div>
 
