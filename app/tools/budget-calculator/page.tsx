@@ -608,8 +608,8 @@ export default function BudgetCalculatorPage() {
               {/* See if you're overspending */}
               <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <div className="flex-shrink-0 w-12 h-12 bg-slate-900 rounded-lg flex items-center justify-center">
+                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                   </div>
@@ -625,8 +625,8 @@ export default function BudgetCalculatorPage() {
               {/* Find ways to cut expenses */}
               <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-teal-50 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <div className="flex-shrink-0 w-12 h-12 bg-teal-700 rounded-lg flex items-center justify-center">
+                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                     </svg>
                   </div>
@@ -642,8 +642,8 @@ export default function BudgetCalculatorPage() {
               {/* Put extra money to work */}
               <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <div className="flex-shrink-0 w-12 h-12 bg-slate-700 rounded-lg flex items-center justify-center">
+                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
@@ -659,8 +659,8 @@ export default function BudgetCalculatorPage() {
               {/* Make your first budget */}
               <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <div className="flex-shrink-0 w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center">
+                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                   </div>
@@ -686,117 +686,117 @@ export default function BudgetCalculatorPage() {
 
             <div className="grid md:grid-cols-2 gap-6">
               {/* Monthly Income */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Monthly Income</h3>
-                <div className="w-12 h-0.5 bg-teal-600 mb-3"></div>
+                <div className="w-16 h-1 bg-gradient-to-r from-teal-600 to-teal-700 mb-4 rounded-full"></div>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   This is your take-home pay after taxes. Put in your regular paycheck plus any extra money you plan to bring in (hello, side hustle).
                 </p>
               </div>
 
               {/* Giving */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Giving</h3>
-                <div className="w-12 h-0.5 bg-teal-600 mb-3"></div>
+                <div className="w-16 h-1 bg-gradient-to-r from-teal-600 to-teal-700 mb-4 rounded-full"></div>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   Be intentional about making generosity a regular part of your life. Start your budget by giving 10% of your income.
                 </p>
               </div>
 
               {/* Savings */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Savings</h3>
-                <div className="w-12 h-0.5 bg-teal-600 mb-3"></div>
+                <div className="w-16 h-1 bg-gradient-to-r from-teal-600 to-teal-700 mb-4 rounded-full"></div>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   If you're in debt, save $1,000 in a starter emergency fund. Then pause saving and focus on paying off that debt. Once you're debt-free, save up 3–6 months of expenses for a fully funded emergency fund. These are the first steps of your financial journey, and taking each step one at a time is how you make real progress with your money goals.
                 </p>
               </div>
 
               {/* Food */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Food</h3>
-                <div className="w-12 h-0.5 bg-teal-600 mb-3"></div>
+                <div className="w-16 h-1 bg-gradient-to-r from-teal-600 to-teal-700 mb-4 rounded-full"></div>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   Food is the easiest budget line to bust—and the hardest to plan for that first month. Open your bank account and see how much you spent on food last month. Then, you can tweak this number as you plan your spending for this month.
                 </p>
               </div>
 
               {/* Utilities */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Utilities</h3>
-                <div className="w-12 h-0.5 bg-teal-600 mb-3"></div>
+                <div className="w-16 h-1 bg-gradient-to-r from-teal-600 to-teal-700 mb-4 rounded-full"></div>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   Utilities are the essential expenses that keep your house running. The amounts can change, but check your bank account and see what you spent last month on electricity, water, the phone bill, natural gas, etc. Add those up and start with that number here.
                 </p>
               </div>
 
               {/* Housing */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Housing</h3>
-                <div className="w-12 h-0.5 bg-teal-600 mb-3"></div>
+                <div className="w-16 h-1 bg-gradient-to-r from-teal-600 to-teal-700 mb-4 rounded-full"></div>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   Pro tip: When you spend 25% (or less) of your take-home pay on housing (mortgage or rent plus insurance, property taxes and HOA fees), one of your biggest blessings (your home) won't turn into a financial burden.
                 </p>
               </div>
 
               {/* Transportation */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Transportation</h3>
-                <div className="w-12 h-0.5 bg-teal-600 mb-3"></div>
+                <div className="w-16 h-1 bg-gradient-to-r from-teal-600 to-teal-700 mb-4 rounded-full"></div>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   Look back through your bank account and add up how much you spent on gas last month as a starting number for this category. Then don't forget auto insurance, maintenance, and anything else you spend on transportation.
                 </p>
               </div>
 
               {/* Insurance */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Insurance</h3>
-                <div className="w-12 h-0.5 bg-teal-600 mb-3"></div>
+                <div className="w-16 h-1 bg-gradient-to-r from-teal-600 to-teal-700 mb-4 rounded-full"></div>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   You planned for homeowners/renters and auto coverage in other categories. Here, add what you spend on other insurances you need: term life, health, long-term disability, long-term care (if you're age 60+), identity theft, and umbrella (if you've got a net worth of $500,000 or more).
                 </p>
               </div>
 
               {/* Household Items */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Household Items</h3>
-                <div className="w-12 h-0.5 bg-teal-600 mb-3"></div>
+                <div className="w-16 h-1 bg-gradient-to-r from-teal-600 to-teal-700 mb-4 rounded-full"></div>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   Toothpaste, shampoo, laundry supplies: How much do you spend on these things each month? This is another hard one to pin down at first—but soon you'll be a pro here. (Not literally. No one goes pro planning toilet paper spending. Yet.)
                 </p>
               </div>
 
               {/* Debt */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Debt</h3>
-                <div className="w-12 h-0.5 bg-teal-600 mb-3"></div>
+                <div className="w-16 h-1 bg-gradient-to-r from-teal-600 to-teal-700 mb-4 rounded-full"></div>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   Debt is any money you owe to anyone for any reason. So, add up all your car payments, credit card bills, student loans, medical debt and other payment plans and put that total here. Then start hustling to pay it off and really make progress with your money.
                 </p>
               </div>
 
               {/* Retirement */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Retirement</h3>
-                <div className="w-12 h-0.5 bg-teal-600 mb-3"></div>
+                <div className="w-16 h-1 bg-gradient-to-r from-teal-600 to-teal-700 mb-4 rounded-full"></div>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   When you're debt-free and your fully funded emergency fund is, well, fully funded, it's time for retirement savings! Start prepping for your future by investing 15% of your income.
                 </p>
               </div>
 
               {/* Personal and Entertainment */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Personal and Entertainment</h3>
-                <div className="w-12 h-0.5 bg-teal-600 mb-3"></div>
+                <div className="w-16 h-1 bg-gradient-to-r from-teal-600 to-teal-700 mb-4 rounded-full"></div>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   This is what you plan to spend on all the fun stuff: concert tickets, family trips to the ballpark, bagpipe lessons, salon visits—all those exciting extras. (Just remember, needs come before wants.)
                 </p>
               </div>
 
               {/* Other */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Other</h3>
-                <div className="w-12 h-0.5 bg-teal-600 mb-3"></div>
+                <div className="w-16 h-1 bg-gradient-to-r from-teal-600 to-teal-700 mb-4 rounded-full"></div>
                 <p className="text-slate-600 text-sm leading-relaxed">
                   This budget calculator only has the most common categories, but it probably doesn't cover everything you spend money on. Go ahead and add any other expenses here. When you start budgeting regularly, you can customize and add as many categories as you need.
                 </p>
