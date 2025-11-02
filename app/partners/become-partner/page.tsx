@@ -1,6 +1,7 @@
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import FAQAccordion from "./FAQAccordion";
 
 export default function BecomePartnerPage() {
   return (
@@ -256,43 +257,7 @@ export default function BecomePartnerPage() {
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-12 text-center">
               Frequently Asked Questions
             </h2>
-            <div className="max-w-4xl mx-auto space-y-6">
-              <div className="bg-white rounded-lg p-6 shadow-md border border-slate-200">
-                <h3 className="text-xl font-bold text-slate-900 mb-3">
-                  Do I need to sell or coach anyone?
-                </h3>
-                <p className="text-slate-700 leading-relaxed">
-                  No. You simply refer people through your unique link. We handle onboarding, delivery, and customer support.
-                </p>
-              </div>
-
-              <div className="bg-white rounded-lg p-6 shadow-md border border-slate-200">
-                <h3 className="text-xl font-bold text-slate-900 mb-3">
-                  How do I get paid?
-                </h3>
-                <p className="text-slate-700 leading-relaxed">
-                  You'll receive automatic monthly payouts for all confirmed sales through your affiliate dashboard.
-                </p>
-              </div>
-
-              <div className="bg-white rounded-lg p-6 shadow-md border border-slate-200">
-                <h3 className="text-xl font-bold text-slate-900 mb-3">
-                  Is there a cost to join?
-                </h3>
-                <p className="text-slate-700 leading-relaxed">
-                  No, it's free. We only accept partners aligned with our mission.
-                </p>
-              </div>
-
-              <div className="bg-white rounded-lg p-6 shadow-md border border-slate-200">
-                <h3 className="text-xl font-bold text-slate-900 mb-3">
-                  How do I know my referrals are tracked?
-                </h3>
-                <p className="text-slate-700 leading-relaxed">
-                  Every partner has a unique link and their own dashboard to track traffic, leads, and sales in real time.
-                </p>
-              </div>
-            </div>
+            <FAQAccordion />
           </div>
         </section>
       </main>
