@@ -338,26 +338,70 @@ export default async function BlogArticlePage({ params }: PageProps) {
                           const para = paragraphs[i].trim();
                           
                           // Check if this and following paragraphs are bullets - group them
-                          if (para.startsWith('•')) {
+                          if (para.startsWith('•') || para.includes('•')) {
                             const bullets = [];
-                            while (i < paragraphs.length && paragraphs[i].trim().startsWith('•')) {
-                              bullets.push(paragraphs[i].trim().substring(1).trim());
+                            
+                            // If paragraph contains multiple bullets separated by newlines, split them
+                            if (para.includes('\n') && para.includes('•')) {
+                              const lines = para.split('\n').filter(line => line.trim());
+                              lines.forEach(line => {
+                                const trimmed = line.trim();
+                                if (trimmed.startsWith('•')) {
+                                  bullets.push(trimmed.substring(1).trim());
+                                } else if (trimmed) {
+                                  // If line doesn't start with bullet but is part of a bullet list context, add it
+                                  bullets.push(trimmed);
+                                }
+                              });
                               i++;
+                            } else {
+                              // Original logic: collect separate paragraphs that start with bullets
+                              while (i < paragraphs.length && (paragraphs[i].trim().startsWith('•') || paragraphs[i].trim().includes('•'))) {
+                                const currentPara = paragraphs[i].trim();
+                                // Split by newlines if this paragraph contains multiple bullets
+                                if (currentPara.includes('\n') && currentPara.includes('•')) {
+                                  const lines = currentPara.split('\n').filter(line => line.trim());
+                                  lines.forEach(line => {
+                                    const trimmed = line.trim();
+                                    if (trimmed.startsWith('•')) {
+                                      bullets.push(trimmed.substring(1).trim());
+                                    }
+                                  });
+                                } else if (currentPara.startsWith('•')) {
+                                  bullets.push(currentPara.substring(1).trim());
+                                }
+                                i++;
+                              }
                             }
-                            result.push(
-                              <div key={`bullets-${i}`} className="bg-slate-50 rounded-lg p-6 border border-slate-200">
-                                <ul className="space-y-3">
-                                  {bullets.map((bullet, idx) => (
-                                    <li key={idx} className="flex items-start gap-3">
-                                      <svg className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                                      </svg>
-                                      <span className="flex-1">{parseMarkdown(bullet)}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
-                            );
+                            
+                            // Only render if we found bullets
+                            if (bullets.length > 0) {
+                              // Check if this is a checklist section - render with checkboxes
+                              const isChecklist = s.title.toLowerCase().includes('checklist');
+                              
+                              result.push(
+                                <div key={`bullets-${i}`} className={isChecklist ? "bg-slate-50 rounded-lg p-6 border border-slate-200" : "bg-slate-50 rounded-lg p-6 border border-slate-200"}>
+                                  <ul className="space-y-3">
+                                    {bullets.map((bullet, idx) => (
+                                      <li key={idx} className="flex items-start gap-3">
+                                        {isChecklist ? (
+                                          <div className="flex-shrink-0 w-5 h-5 mt-0.5 border-2 border-slate-400 rounded-sm bg-white flex items-center justify-center">
+                                            <svg className="w-3 h-3 text-teal-600 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                          </div>
+                                        ) : (
+                                          <svg className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                          </svg>
+                                        )}
+                                        <span className="flex-1">{parseMarkdown(bullet)}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              );
+                            }
                             continue;
                           }
                           
