@@ -221,7 +221,7 @@ export default function DebtSnowballCalculatorPage() {
                       <select
                         value={debt.type}
                         onChange={(e) => updateDebt(debt.id, 'type', e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900"
                       >
                         {DEBT_TYPES.map(type => (
                           <option key={type} value={type}>{type}</option>
@@ -240,7 +240,7 @@ export default function DebtSnowballCalculatorPage() {
                           onChange={(e) => updateDebt(debt.id, 'interestRate', e.target.value)}
                           placeholder="0"
                           step="0.01"
-                          className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
+                          className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium"
                         />
                         <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-xs">%</span>
                       </div>
@@ -257,7 +257,7 @@ export default function DebtSnowballCalculatorPage() {
                           onChange={(e) => updateDebt(debt.id, 'balance', e.target.value)}
                           placeholder="0"
                           step="0.01"
-                          className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
+                          className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium"
                         />
                         <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-xs">$</span>
                       </div>
@@ -274,7 +274,7 @@ export default function DebtSnowballCalculatorPage() {
                           onChange={(e) => updateDebt(debt.id, 'minimumPayment', e.target.value)}
                           placeholder="0"
                           step="0.01"
-                          className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
+                          className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium"
                         />
                         <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-xs">$</span>
                       </div>
@@ -290,7 +290,7 @@ export default function DebtSnowballCalculatorPage() {
                       value={debt.name}
                       onChange={(e) => updateDebt(debt.id, 'name', e.target.value)}
                       placeholder="Visa, Discover Card, Lender Name"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900"
                     />
                   </div>
                 </div>
@@ -318,7 +318,7 @@ export default function DebtSnowballCalculatorPage() {
                     onChange={(e) => setIncome(e.target.value)}
                     placeholder="0"
                     step="0.01"
-                    className="w-full pl-8 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium"
+                    className="w-full pl-8 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900"
                   />
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-sm">$</span>
                 </div>
