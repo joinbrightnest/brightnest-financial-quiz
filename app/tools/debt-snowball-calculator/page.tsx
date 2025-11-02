@@ -659,7 +659,6 @@ export default function DebtSnowballCalculatorPage() {
               </div>
             </div>
           </div>
-        </div>
 
         {/* Share Section */}
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -1083,31 +1082,29 @@ export default function DebtSnowballCalculatorPage() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Share Section */}
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-slate-900 mb-6">Share the Debt Snowball Calculator</h2>
-            <div className="flex items-center gap-2">
-              <div className="flex-1">
-                <input
-                  type="text"
-                  readOnly
-                  value={typeof window !== 'undefined' ? window.location.href : ''}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm"
-                />
+            {/* Share Section */}
+            <div className="mt-12">
+              <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Share the Debt Snowball Calculator</h2>
+              <div className="flex items-center gap-2">
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    readOnly
+                    value={typeof window !== 'undefined' ? window.location.href : ''}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm"
+                  />
+                </div>
+                <button
+                  onClick={copyLinkToClipboard}
+                  className="flex items-center gap-2 bg-teal-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-700 transition-colors whitespace-nowrap"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                  {linkCopied ? "Copied!" : "Copy"}
+                </button>
               </div>
-              <button
-                onClick={copyLinkToClipboard}
-                className="flex items-center gap-2 bg-teal-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-700 transition-colors whitespace-nowrap"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                </svg>
-                {linkCopied ? "Copied!" : "Copy"}
-              </button>
             </div>
           </div>
         </div>
