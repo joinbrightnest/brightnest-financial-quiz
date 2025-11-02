@@ -84,28 +84,54 @@ export default function BudgetCalculatorPage() {
     other: ""
   });
 
+  // Track if this is the first render to avoid clearing on initial mount
+  const [hasIncomeBeenSet, setHasIncomeBeenSet] = useState(false);
+
   // Auto-populate with national averages when income is entered
   useEffect(() => {
     const incomeNum = parseFloat(income);
-    if (incomeNum > 0) {
-      const newExpenses: { [key: string]: string } = {};
-      Object.keys(NATIONAL_AVERAGES).forEach((key) => {
-        const categoryKey = key as keyof typeof NATIONAL_AVERAGES;
-        const percentage = NATIONAL_AVERAGES[categoryKey];
-        const calculatedValue = incomeNum * percentage;
-        // Only auto-fill if the field is empty
-        // If the percentage is 0, don't auto-fill (user can add if needed)
-        if (!expenses[categoryKey as keyof typeof expenses] && percentage > 0) {
-          newExpenses[categoryKey] = Math.round(calculatedValue).toString();
-        } else if (expenses[categoryKey as keyof typeof expenses]) {
-          newExpenses[categoryKey] = expenses[categoryKey as keyof typeof expenses];
-        } else {
-          newExpenses[categoryKey] = "";
-        }
-      });
-      setExpenses(prev => ({ ...prev, ...newExpenses }));
+    const hasIncome = income && income.trim() !== "" && incomeNum > 0;
+    
+    // Mark that income has been set at least once
+    if (hasIncome) {
+      setHasIncomeBeenSet(true);
     }
-  }, [income]);
+    
+    // Only auto-populate if income is actually entered (not empty string or 0)
+    if (hasIncome) {
+      setExpenses(prev => {
+        const newExpenses: { [key: string]: string } = { ...prev };
+        Object.keys(NATIONAL_AVERAGES).forEach((key) => {
+          const categoryKey = key as keyof typeof NATIONAL_AVERAGES;
+          const percentage = NATIONAL_AVERAGES[categoryKey];
+          
+          // Only auto-fill if the field is currently empty
+          // If the percentage is 0, don't auto-fill (user can add if needed)
+          if (!prev[categoryKey as keyof typeof prev] && percentage > 0) {
+            const calculatedValue = incomeNum * percentage;
+            newExpenses[categoryKey] = Math.round(calculatedValue).toString();
+          }
+        });
+        return newExpenses;
+      });
+    } else if (hasIncomeBeenSet && (!income || income.trim() === "" || incomeNum === 0 || isNaN(incomeNum))) {
+      // Only clear if income was previously set and now cleared
+      setExpenses({
+        giving: "",
+        savings: "",
+        food: "",
+        utilities: "",
+        housing: "",
+        transportation: "",
+        insurance: "",
+        householdItems: "",
+        debt: "",
+        retirement: "",
+        personal: "",
+        other: ""
+      });
+    }
+  }, [income, hasIncomeBeenSet]);
 
   const handleExpenseChange = (category: string, value: string) => {
     // Remove leading zeros - convert to number then back to string to strip leading zeros
