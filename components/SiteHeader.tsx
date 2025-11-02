@@ -86,109 +86,32 @@ export default function SiteHeader() {
               
               {/* Dropdown Menu */}
               {isFreeToolsOpen && (
-                <div className="absolute left-0 top-full mt-2 w-[600px] bg-white rounded-lg shadow-xl border border-slate-200 py-6 z-50">
-                  <div className="grid grid-cols-4 gap-6 px-6">
-                    {/* Column 1 */}
-                    <div>
-                      <h3 className="font-bold text-slate-900 mb-3 text-sm">Getting Started</h3>
-                      <ul className="space-y-2 text-sm">
-                        <li><Link href="/quiz/financial-profile" className="text-slate-600 hover:text-teal-600 transition-colors">Get Started Assessment</Link></li>
-                      </ul>
-                      
-                      <h3 className="font-bold text-slate-900 mt-6 mb-3 text-sm">Budgeting</h3>
-                      <ul className="space-y-2 text-sm">
-                        <li><Link href="/tools/budget-calculator" className="text-teal-600 hover:text-teal-700 font-medium">Budget Calculator</Link></li>
-                        <li><Link href="/tools/budget-calculator" className="text-slate-600 hover:text-teal-600 transition-colors">Budgeting Guide</Link></li>
-                        <li><Link href="/tools/budget-calculator" className="text-slate-600 hover:text-teal-600 transition-colors">Budgeting Forms</Link></li>
-                      </ul>
-                      
-                      <h3 className="font-bold text-slate-900 mt-6 mb-3 text-sm">Saving</h3>
-                      <ul className="space-y-2 text-sm">
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Money Finder Challenge</Link></li>
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">College Savings Calculator</Link></li>
-                      </ul>
-                    </div>
+                <div className="absolute left-0 top-full mt-2 w-[300px] bg-white rounded-lg shadow-xl border border-slate-200 py-6 z-50">
+                  <div className="px-6">
+                    <h3 className="font-bold text-slate-900 mb-4 text-sm">Budgeting</h3>
+                    <ul className="space-y-2 text-sm">
+                      <li>
+                        <Link href="/tools/budget-calculator" className="text-teal-600 hover:text-teal-700 font-medium flex items-center gap-2 group">
+                          <svg className="w-4 h-4 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                          </svg>
+                          Budget Calculator
+                          <svg className="w-3 h-3 ml-auto text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </Link>
+                      </li>
+                    </ul>
                     
-                    {/* Column 2 */}
-                    <div>
-                      <h3 className="font-bold text-slate-900 mb-3 text-sm">Debt</h3>
-                      <ul className="space-y-2 text-sm">
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Debt Snowball Calculator</Link></li>
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Student Loan Payoff Calculator</Link></li>
-                      </ul>
-                      
-                      <h3 className="font-bold text-slate-900 mt-6 mb-3 text-sm">Retirement</h3>
-                      <ul className="space-y-2 text-sm">
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Retirement Calculator</Link></li>
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Investment Calculator</Link></li>
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Net Worth Calculator</Link></li>
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Compound Interest Calculator</Link></li>
-                      </ul>
-                      
-                      <h3 className="font-bold text-slate-900 mt-6 mb-3 text-sm">Investing</h3>
-                      <ul className="space-y-2 text-sm">
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Investing Guide</Link></li>
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Estate Planning Guide</Link></li>
-                      </ul>
+                    <div className="mt-6 pt-6 border-t border-slate-200">
+                      <p className="text-xs text-slate-500 mb-2">More tools coming soon!</p>
+                      <Link href="/tools/budget-calculator" className="text-teal-600 hover:text-teal-700 font-medium text-sm flex items-center gap-2">
+                        See All Tools
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                      </Link>
                     </div>
-                    
-                    {/* Column 3 */}
-                    <div>
-                      <h3 className="font-bold text-slate-900 mb-3 text-sm">Insurance</h3>
-                      <ul className="space-y-2 text-sm">
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Coverage Checkup</Link></li>
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Term Life Insurance Calculator</Link></li>
-                      </ul>
-                      
-                      <h3 className="font-bold text-slate-900 mt-6 mb-3 text-sm">Real Estate</h3>
-                      <ul className="space-y-2 text-sm">
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Mortgage Calculator</Link></li>
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Mortgage Payoff Calculator</Link></li>
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Cost of Living Calculator</Link></li>
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Home Sellers Guide</Link></li>
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Home Buyers Guide</Link></li>
-                      </ul>
-                      
-                      <h3 className="font-bold text-slate-900 mt-6 mb-3 text-sm">Wills</h3>
-                      <ul className="space-y-2 text-sm">
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Online Will vs. Lawyer? Quiz</Link></li>
-                      </ul>
-                    </div>
-                    
-                    {/* Column 4 */}
-                    <div>
-                      <h3 className="font-bold text-slate-900 mb-3 text-sm">Taxes</h3>
-                      <ul className="space-y-2 text-sm">
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Tax Pro or Self-File? Quiz</Link></li>
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Tax Guide</Link></li>
-                      </ul>
-                      
-                      <h3 className="font-bold text-slate-900 mt-6 mb-3 text-sm">Career</h3>
-                      <ul className="space-y-2 text-sm">
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Career Clarity Guide</Link></li>
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Resumé Guide</Link></li>
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Interview Guide</Link></li>
-                      </ul>
-                      
-                      <h3 className="font-bold text-slate-900 mt-6 mb-3 text-sm">Business</h3>
-                      <ul className="space-y-2 text-sm">
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Business Assessment</Link></li>
-                      </ul>
-                      
-                      <h3 className="font-bold text-slate-900 mt-6 mb-3 text-sm">Mental Health</h3>
-                      <ul className="space-y-2 text-sm">
-                        <li><Link href="#" className="text-slate-400 cursor-not-allowed">Anxiety Test</Link></li>
-                      </ul>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-6 pt-6 border-t border-slate-200 px-6">
-                    <Link href="/tools" className="text-teal-600 hover:text-teal-700 font-medium text-sm flex items-center gap-2">
-                      See All Free Tools
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                      </svg>
-                    </Link>
                   </div>
                 </div>
               )}
