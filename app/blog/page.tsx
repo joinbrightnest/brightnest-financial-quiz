@@ -253,48 +253,48 @@ export default function BlogPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            <Link href="/blog/why-your-budget-keeps-failing" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
-              <div className="h-48 bg-gradient-to-br from-teal-500 to-teal-600 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-              </div>
-              <div className="p-4 sm:p-6">
-                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
-                  The Psychology Behind Impulse Buying
-                </h3>
-                <p className="text-sm text-slate-600 mb-4 leading-relaxed">
-                  Understanding the triggers that make you spend isn't about willpower — it's about awareness. Let's dive into the science.
-                </p>
-                <div className="text-xs text-slate-500">5 min read</div>
-              </div>
-            </Link>
-
-            <Link href="/blog/hidden-cost-of-bnpl" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
+            <Link href={`/blog/${featuredPosts[1].slug}`} className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
               <div className="h-48 bg-gradient-to-br from-teal-400 to-teal-500 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
               </div>
               <div className="p-4 sm:p-6">
                 <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
-                  How to Build an Emergency Fund From Zero
+                  {featuredPosts[1].title}
                 </h3>
                 <p className="text-sm text-slate-600 mb-4 leading-relaxed">
-                  No matter your income, you can start building financial security today. Here's the exact roadmap to your first $1,000.
+                  {featuredPosts[1].description}
                 </p>
-                <div className="text-xs text-slate-500">4 min read</div>
+                <div className="text-xs text-slate-500">{featuredPosts[1].readTime}</div>
               </div>
             </Link>
 
-            <Link href="/blog/three-account-system" className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
+            <Link href={`/blog/${featuredPosts[2].slug}`} className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
               <div className="h-48 bg-gradient-to-br from-teal-600 to-teal-700 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
               </div>
               <div className="p-4 sm:p-6">
                 <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
-                  Money Scripts: What Your Parents Taught You
+                  {featuredPosts[2].title}
                 </h3>
                 <p className="text-sm text-slate-600 mb-4 leading-relaxed">
-                  The beliefs you inherited about money are running your financial life. Let's identify and rewrite them.
+                  {featuredPosts[2].description}
                 </p>
-                <div className="text-xs text-slate-500">6 min read</div>
+                <div className="text-xs text-slate-500">{featuredPosts[2].readTime}</div>
+              </div>
+            </Link>
+
+            <Link href={`/blog/${featuredPosts[3].slug}`} className="block bg-white rounded-xl overflow-hidden border border-slate-200/60 shadow-sm hover:shadow-lg hover:border-teal-300 transition-all duration-300 group">
+              <div className="h-48 bg-gradient-to-br from-teal-500 to-teal-600 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+              </div>
+              <div className="p-4 sm:p-6">
+                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-600 transition-colors">
+                  {featuredPosts[3].title}
+                </h3>
+                <p className="text-sm text-slate-600 mb-4 leading-relaxed">
+                  {featuredPosts[3].description}
+                </p>
+                <div className="text-xs text-slate-500">{featuredPosts[3].readTime}</div>
               </div>
             </Link>
           </div>
