@@ -456,209 +456,129 @@ export default function DebtSnowballCalculatorPage() {
             </div>
 
             {/* Educational Content Below Results */}
-            <div className="space-y-16 max-w-3xl mx-auto mt-12">
+            <div className="space-y-12 max-w-3xl mx-auto py-8">
               {/* What Is the Debt Snowball? */}
               <div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
                   What Is the Debt Snowball?
                 </h2>
-                <p className="text-lg text-slate-600 mb-4 leading-relaxed">
-                  The Debt Snowball is one of the simplest — and most effective — ways to get out of debt.
+                <p className="text-lg text-slate-700 mb-4 leading-relaxed">
+                  The debt snowball is a debt payoff method where you pay your debts from smallest to largest, regardless of interest rate. Knock out the smallest debt first. Then, take what you were paying on that debt and add it to the payment of your next smallest debt.
                 </p>
-                <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                  Instead of worrying about interest rates or complex spreadsheets, you focus on one thing: momentum.
-                </p>
-
-                <div className="bg-slate-50 rounded-lg p-6 mb-6">
-                  <p className="text-lg font-medium text-slate-900 mb-3">Here's how it works:</p>
-                  <p className="text-lg text-slate-600 mb-3 leading-relaxed">
-                    You pay off your debts from the smallest to the largest balance, regardless of interest rate. Once the smallest is gone, you take the money you were putting toward it and roll it into the next one.
-                  </p>
-                  <p className="text-lg text-slate-600 leading-relaxed">
-                    Little by little, your payments grow — and so does your motivation. That's why we call it a snowball.
-                  </p>
-                </div>
-
-                <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                  Each win gives you energy to tackle the next. Eventually, you're not just managing debt — you're destroying it.
+                <p className="text-lg text-slate-700 mb-8 leading-relaxed">
+                  Why a snowball? Because just like a snowball rolling downhill, paying off debt is all about momentum. With every debt you pay off, you gain speed until you're an unstoppable, debt-crushing force.
                 </p>
 
-                <div className="border-l-4 border-teal-600 pl-6">
-                  <h3 className="text-2xl font-bold text-slate-900 mb-4">How to Start the Debt Snowball</h3>
-                  <ol className="space-y-4 text-lg text-slate-700">
-                    <li className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-base mt-0.5">1</span>
-                      <span><strong className="text-slate-900">Write down all your debts,</strong> from smallest to largest — no exceptions.</span>
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-8 mb-8">
+                  <h3 className="text-2xl font-bold text-slate-900 mb-6">Here's how the debt snowball works:</h3>
+                  <ol className="space-y-4">
+                    <li className="flex items-start gap-4">
+                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">1</span>
+                      <div>
+                        <p className="text-lg font-bold text-slate-900 mb-1">List your debts from smallest to largest regardless of interest rate.</p>
+                      </div>
                     </li>
-                    <li className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-base mt-0.5">2</span>
-                      <span><strong className="text-slate-900">Make the minimum payments</strong> on everything except the smallest one.</span>
+                    <li className="flex items-start gap-4">
+                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">2</span>
+                      <div>
+                        <p className="text-lg font-bold text-slate-900 mb-1">Make minimum payments on all your debts except the smallest.</p>
+                      </div>
                     </li>
-                    <li className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-base mt-0.5">3</span>
-                      <span><strong className="text-slate-900">Throw every extra dollar</strong> you can at that smallest balance.</span>
+                    <li className="flex items-start gap-4">
+                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">3</span>
+                      <div>
+                        <p className="text-lg font-bold text-slate-900 mb-1">Pay as much as possible on your smallest debt.</p>
+                      </div>
                     </li>
-                    <li className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-base mt-0.5">4</span>
-                      <span><strong className="text-slate-900">When it's gone, move to the next.</strong> Repeat until you're free.</span>
+                    <li className="flex items-start gap-4">
+                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">4</span>
+                      <div>
+                        <p className="text-lg font-bold text-slate-900 mb-1">Repeat until each debt is paid in full.</p>
+                      </div>
                     </li>
                   </ol>
-                  <p className="text-lg text-slate-600 mt-6 italic">
-                    That's it. No fancy formulas, no guessing games.<br />
-                    Just focus, discipline, and progress you can actually see.
+                  <p className="text-lg text-slate-700 mt-6 leading-relaxed">
+                    What happens then? Freedom. No more payments. No more answering to collectors. No more watching your paychecks disappear.
+                  </p>
+                  <p className="text-lg text-slate-700 mt-4 leading-relaxed">
+                    Because when you get hyper-focused and start chucking every dollar you can at your debt, you'll see how much faster you can pay it all off. Sorry, minimum payments. You're just not good enough.
                   </p>
                 </div>
-              </div>
-
-              {/* What Happens When the Snowball Starts Rolling */}
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-                  What Happens When the Snowball Starts Rolling
-                </h2>
-                <p className="text-lg text-slate-600 mb-4 leading-relaxed">
-                  Something powerful shifts — not just in your wallet, but in your behavior.
-                </p>
-                <p className="text-lg text-slate-600 mb-4 leading-relaxed">
-                  You start to realize how capable you are.
-                </p>
-                <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                  You stop feeling stuck, and you start believing change is possible.
-                </p>
-                <div className="bg-slate-50 rounded-lg p-6 text-center">
-                  <p className="text-xl font-bold text-teal-700 mb-3 leading-relaxed">
-                    That's the real magic of the Debt Snowball:
-                  </p>
-                  <p className="text-xl text-slate-900 font-semibold leading-relaxed">
-                    It's not about math. It's about momentum and mindset.
-                  </p>
-                </div>
-                <p className="text-lg text-slate-600 mt-6 leading-relaxed">
-                  Because once you taste progress, you'll never go back to minimum payments again.
-                </p>
               </div>
 
               {/* Debt Snowball vs Debt Avalanche */}
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+              <div className="border-t border-slate-200 pt-12">
+                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
                   Debt Snowball vs. Debt Avalanche
                 </h2>
-                <p className="text-lg text-slate-600 mb-4 leading-relaxed">
-                  You might've heard of another payoff method called the Debt Avalanche, where you tackle debts with the highest interest rate first.
+                <p className="text-lg text-slate-700 mb-4 leading-relaxed">
+                  Maybe you've heard of another way to pay off debt—the debt avalanche. Sounds epic, right? Wrong. With the debt avalanche, you pay your debts in order from the highest interest rate to the lowest, regardless of the balance.
                 </p>
-                <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                  On paper, it saves more money. But in real life, most people quit before they ever see results.
+                <p className="text-lg text-slate-700 mb-6 leading-relaxed">
+                  That might sound like smart math. Here's why it's not: <strong className="text-slate-900">Debt isn't a math problem. It's a behavior problem.</strong>
                 </p>
-                <div className="bg-slate-50 rounded-lg p-6 mb-6">
-                  <p className="text-xl font-bold text-slate-900 mb-4 leading-relaxed">
-                    Why? Because debt isn't a numbers problem — it's a behavior problem.
-                  </p>
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-lg font-medium text-slate-900 mb-1">When you start small and win early,</p>
-                      <p className="text-lg text-slate-600 leading-relaxed">you build emotional momentum.</p>
-                    </div>
-                    <div>
-                      <p className="text-lg font-medium text-slate-900 mb-1">When you start big and wait months for progress,</p>
-                      <p className="text-lg text-slate-600 leading-relaxed">you lose steam.</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="border-t-2 border-slate-200 pt-6">
-                  <p className="text-lg text-slate-600 mb-2 leading-relaxed">
-                    The Avalanche appeals to <strong className="text-slate-900">logic</strong>.
-                  </p>
-                  <p className="text-lg text-slate-600 mb-4 leading-relaxed">
-                    The Snowball works with <strong className="text-slate-900">human nature</strong>.
-                  </p>
-                  <p className="text-lg text-slate-600 leading-relaxed">
-                    And at BrightNest, that's what we teach: systems that align with how people actually behave, not how they wish they did.
-                  </p>
-                </div>
+                <p className="text-lg text-slate-700 mb-4 leading-relaxed">
+                  If you want to change your behavior and get out of debt, you need to stay motivated. With the debt avalanche, you may not see progress on your first debt for a long time. That's motivating nobody. You're way more likely to lose steam and give up.
+                </p>
+                <p className="text-lg text-slate-700 leading-relaxed">
+                  But when you use the debt snowball, you get quick wins sooner. Crush the first debt fast. Boom. On to the next. Now, you're cooking. Suddenly, you start believing that getting out of debt is within reach. Motivation is the key to becoming debt-free, not math.
+                </p>
               </div>
 
-              {/* Common Debt Terms */}
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-                  Common Debt Terms — Explained Simply
+              {/* Debt Terms */}
+              <div className="border-t border-slate-200 pt-12">
+                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
+                  Debt Terms
                 </h2>
-                <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                  We don't believe financial terms should sound like another language.
+                <p className="text-lg text-slate-700 mb-8 leading-relaxed">
+                  Debt terminology can be confusing and overly complicated—but it doesn't have to be! Let's break these down in a way you can actually understand.
                 </p>
-                <p className="text-xl font-bold text-slate-900 mb-6">Here's what you need to know:</p>
 
                 <div className="space-y-8">
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 mb-2">Minimum Payment</h3>
-                    <p className="text-lg text-slate-600 leading-relaxed">
-                      The smallest amount you're required to pay each month. It keeps your account current — but it won't get you out of debt anytime soon.
+                    <p className="text-lg text-slate-700 leading-relaxed">
+                      This is the lowest amount you are required to pay on a debt every month (includes principal and interest). Pay any less and you might get slapped with some hefty penalties.
                     </p>
                   </div>
 
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 mb-2">Balance</h3>
-                    <p className="text-lg text-slate-600 leading-relaxed">
-                      How much you still owe. If you borrowed $10,000 and have paid $3,000, your balance is $7,000.
+                    <p className="text-lg text-slate-700 leading-relaxed">
+                      It's the amount you still have to pay on your debt. If your original loan was $20,000 and you've paid $5,000 already, your balance would be $15,000.
                     </p>
                   </div>
 
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 mb-2">Interest Rate</h3>
-                    <p className="text-lg text-slate-600 leading-relaxed">
-                      The cost of borrowing money. It's how lenders make a profit — shown as a percentage of what you owe.
+                    <p className="text-lg text-slate-700 leading-relaxed">
+                      When it comes to borrowing money, there's no such thing as free. Lenders are interested in letting you borrow their money because they make money on what they loan you. Your interest rate is how much they charge, usually shown as a percentage of the principal balance.
                     </p>
                   </div>
 
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 mb-2">Principal</h3>
-                    <p className="text-lg text-slate-600 leading-relaxed">
-                      The original amount you borrowed — before interest is added.
+                    <p className="text-lg text-slate-700 leading-relaxed">
+                      No, it's not that elementary school principal you were terrified of as a kid. We're talking about the amount of money you borrowed without the interest added. So, if you borrowed $20,000 over 10 years, your principal payment would be about $167 per month.
                     </p>
                   </div>
 
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Non-Mortgage Debt</h3>
-                    <p className="text-lg text-slate-600 leading-relaxed">
-                      All your consumer debt: credit cards, car loans, student loans, personal loans. Your home loan comes later, once you've cleared the rest.
+                    <h3 className="text-xl font-bold text-slate-900 mb-2">Nonmortgage Debt</h3>
+                    <p className="text-lg text-slate-700 leading-relaxed">
+                      This one is simple. It's everything you owe, except for loans related to the purchase of your home. Yes, that includes your car notes and student loans. It's all debt. Why don't we ask you to list your mortgage in your debt snowball? Because after you've knocked out your consumer debt, you've got other important steps to take before tackling the house.
                     </p>
                   </div>
 
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 mb-2">Debt-Free Date</h3>
-                    <p className="text-lg text-slate-600 leading-relaxed">
-                      The day every cent of your consumer debt is gone.
-                    </p>
-                    <p className="text-lg text-slate-600 mt-2 leading-relaxed">
-                      No more balances. No more bills you dread opening.
-                    </p>
-                    <p className="text-lg text-slate-600 mt-2 leading-relaxed">
-                      That's the day freedom stops being a dream — and becomes your new normal.
+                    <p className="text-lg text-slate-700 leading-relaxed">
+                      It's the day when every single cent of your consumer debt is history. Bye, credit cards. See you never, student loans. If you've got a mortgage, you'll hit that hard later. But for now, it's time to celebrate.
                     </p>
                   </div>
                 </div>
               </div>
-
-              {/* Final Thought */}
-              <div className="bg-slate-50 rounded-lg p-8 border border-slate-200">
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-                  Final Thought
-                </h2>
-                <p className="text-xl text-slate-600 mb-4 leading-relaxed">
-                  The Debt Snowball isn't just about numbers — it's about behavior change.
-                </p>
-                <p className="text-xl text-slate-600 mb-6 leading-relaxed">
-                  And that's exactly what BrightNest is built on: helping you rebuild the habits, beliefs, and systems that shape your financial life.
-                </p>
-                <div className="text-center pt-4 border-t border-slate-200">
-                  <p className="text-2xl font-bold text-slate-900 leading-relaxed">
-                    Start small. Stay consistent.
-                  </p>
-                  <p className="text-xl text-slate-600 mt-4 leading-relaxed">
-                    Because once your snowball starts rolling, there's no stopping it.
-                  </p>
-                </div>
-              </div>
             </div>
-          </div>
 
         {/* Share Section */}
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -685,6 +605,7 @@ export default function DebtSnowballCalculatorPage() {
             </div>
           </div>
         </div>
+          </div>
       </main>
 
       <SiteFooter />
@@ -880,205 +801,126 @@ export default function DebtSnowballCalculatorPage() {
             </div>
 
             {/* Educational Content */}
-            <div className="space-y-16 max-w-3xl mx-auto">
+            <div className="space-y-12 max-w-3xl mx-auto py-8">
               {/* What Is the Debt Snowball? */}
               <div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
                   What Is the Debt Snowball?
                 </h2>
-                <p className="text-lg text-slate-600 mb-4 leading-relaxed">
-                  The Debt Snowball is one of the simplest — and most effective — ways to get out of debt.
+                <p className="text-lg text-slate-700 mb-4 leading-relaxed">
+                  The debt snowball is a debt payoff method where you pay your debts from smallest to largest, regardless of interest rate. Knock out the smallest debt first. Then, take what you were paying on that debt and add it to the payment of your next smallest debt.
                 </p>
-                <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                  Instead of worrying about interest rates or complex spreadsheets, you focus on one thing: momentum.
-                </p>
-
-                <div className="bg-slate-50 rounded-lg p-6 mb-6">
-                  <p className="text-lg font-medium text-slate-900 mb-3">Here's how it works:</p>
-                  <p className="text-lg text-slate-600 mb-3 leading-relaxed">
-                    You pay off your debts from the smallest to the largest balance, regardless of interest rate. Once the smallest is gone, you take the money you were putting toward it and roll it into the next one.
-                  </p>
-                  <p className="text-lg text-slate-600 leading-relaxed">
-                    Little by little, your payments grow — and so does your motivation. That's why we call it a snowball.
-                  </p>
-                </div>
-
-                <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                  Each win gives you energy to tackle the next. Eventually, you're not just managing debt — you're destroying it.
+                <p className="text-lg text-slate-700 mb-8 leading-relaxed">
+                  Why a snowball? Because just like a snowball rolling downhill, paying off debt is all about momentum. With every debt you pay off, you gain speed until you're an unstoppable, debt-crushing force.
                 </p>
 
-                <div className="border-l-4 border-teal-600 pl-6">
-                  <h3 className="text-2xl font-bold text-slate-900 mb-4">How to Start the Debt Snowball</h3>
-                  <ol className="space-y-4 text-lg text-slate-700">
-                    <li className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-base mt-0.5">1</span>
-                      <span><strong className="text-slate-900">Write down all your debts,</strong> from smallest to largest — no exceptions.</span>
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-8 mb-8">
+                  <h3 className="text-2xl font-bold text-slate-900 mb-6">Here's how the debt snowball works:</h3>
+                  <ol className="space-y-4">
+                    <li className="flex items-start gap-4">
+                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">1</span>
+                      <div>
+                        <p className="text-lg font-bold text-slate-900 mb-1">List your debts from smallest to largest regardless of interest rate.</p>
+                      </div>
                     </li>
-                    <li className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-base mt-0.5">2</span>
-                      <span><strong className="text-slate-900">Make the minimum payments</strong> on everything except the smallest one.</span>
+                    <li className="flex items-start gap-4">
+                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">2</span>
+                      <div>
+                        <p className="text-lg font-bold text-slate-900 mb-1">Make minimum payments on all your debts except the smallest.</p>
+                      </div>
                     </li>
-                    <li className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-base mt-0.5">3</span>
-                      <span><strong className="text-slate-900">Throw every extra dollar</strong> you can at that smallest balance.</span>
+                    <li className="flex items-start gap-4">
+                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">3</span>
+                      <div>
+                        <p className="text-lg font-bold text-slate-900 mb-1">Pay as much as possible on your smallest debt.</p>
+                      </div>
                     </li>
-                    <li className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-base mt-0.5">4</span>
-                      <span><strong className="text-slate-900">When it's gone, move to the next.</strong> Repeat until you're free.</span>
+                    <li className="flex items-start gap-4">
+                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">4</span>
+                      <div>
+                        <p className="text-lg font-bold text-slate-900 mb-1">Repeat until each debt is paid in full.</p>
+                      </div>
                     </li>
                   </ol>
-                  <p className="text-lg text-slate-600 mt-6 italic">
-                    That's it. No fancy formulas, no guessing games.<br />
-                    Just focus, discipline, and progress you can actually see.
+                  <p className="text-lg text-slate-700 mt-6 leading-relaxed">
+                    What happens then? Freedom. No more payments. No more answering to collectors. No more watching your paychecks disappear.
+                  </p>
+                  <p className="text-lg text-slate-700 mt-4 leading-relaxed">
+                    Because when you get hyper-focused and start chucking every dollar you can at your debt, you'll see how much faster you can pay it all off. Sorry, minimum payments. You're just not good enough.
                   </p>
                 </div>
-              </div>
-
-              {/* What Happens When the Snowball Starts Rolling */}
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-                  What Happens When the Snowball Starts Rolling
-                </h2>
-                <p className="text-lg text-slate-600 mb-4 leading-relaxed">
-                  Something powerful shifts — not just in your wallet, but in your behavior.
-                </p>
-                <p className="text-lg text-slate-600 mb-4 leading-relaxed">
-                  You start to realize how capable you are.
-                </p>
-                <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                  You stop feeling stuck, and you start believing change is possible.
-                </p>
-                <div className="bg-slate-50 rounded-lg p-6 text-center">
-                  <p className="text-xl font-bold text-teal-700 mb-3 leading-relaxed">
-                    That's the real magic of the Debt Snowball:
-                  </p>
-                  <p className="text-xl text-slate-900 font-semibold leading-relaxed">
-                    It's not about math. It's about momentum and mindset.
-                  </p>
-                </div>
-                <p className="text-lg text-slate-600 mt-6 leading-relaxed">
-                  Because once you taste progress, you'll never go back to minimum payments again.
-                </p>
               </div>
 
               {/* Debt Snowball vs Debt Avalanche */}
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+              <div className="border-t border-slate-200 pt-12">
+                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
                   Debt Snowball vs. Debt Avalanche
                 </h2>
-                <p className="text-lg text-slate-600 mb-4 leading-relaxed">
-                  You might've heard of another payoff method called the Debt Avalanche, where you tackle debts with the highest interest rate first.
+                <p className="text-lg text-slate-700 mb-4 leading-relaxed">
+                  Maybe you've heard of another way to pay off debt—the debt avalanche. Sounds epic, right? Wrong. With the debt avalanche, you pay your debts in order from the highest interest rate to the lowest, regardless of the balance.
                 </p>
-                <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-                  On paper, it saves more money. But in real life, most people quit before they ever see results.
+                <p className="text-lg text-slate-700 mb-6 leading-relaxed">
+                  That might sound like smart math. Here's why it's not: <strong className="text-slate-900">Debt isn't a math problem. It's a behavior problem.</strong>
                 </p>
-                <div className="bg-slate-50 rounded-lg p-6 mb-6">
-                  <p className="text-xl font-bold text-slate-900 mb-4 leading-relaxed">
-                    Why? Because debt isn't a numbers problem — it's a behavior problem.
-                  </p>
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-lg font-medium text-slate-900 mb-1">When you start small and win early,</p>
-                      <p className="text-lg text-slate-600 leading-relaxed">you build emotional momentum.</p>
-                    </div>
-                    <div>
-                      <p className="text-lg font-medium text-slate-900 mb-1">When you start big and wait months for progress,</p>
-                      <p className="text-lg text-slate-600 leading-relaxed">you lose steam.</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="border-t-2 border-slate-200 pt-6">
-                  <p className="text-lg text-slate-600 mb-2 leading-relaxed">
-                    The Avalanche appeals to <strong className="text-slate-900">logic</strong>.
-                  </p>
-                  <p className="text-lg text-slate-600 mb-4 leading-relaxed">
-                    The Snowball works with <strong className="text-slate-900">human nature</strong>.
-                  </p>
-                  <p className="text-lg text-slate-600 leading-relaxed">
-                    And at BrightNest, that's what we teach: systems that align with how people actually behave, not how they wish they did.
-                  </p>
-                </div>
+                <p className="text-lg text-slate-700 mb-4 leading-relaxed">
+                  If you want to change your behavior and get out of debt, you need to stay motivated. With the debt avalanche, you may not see progress on your first debt for a long time. That's motivating nobody. You're way more likely to lose steam and give up.
+                </p>
+                <p className="text-lg text-slate-700 leading-relaxed">
+                  But when you use the debt snowball, you get quick wins sooner. Crush the first debt fast. Boom. On to the next. Now, you're cooking. Suddenly, you start believing that getting out of debt is within reach. Motivation is the key to becoming debt-free, not math.
+                </p>
               </div>
 
-              {/* Common Debt Terms */}
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-                  Common Debt Terms — Explained Simply
+              {/* Debt Terms */}
+              <div className="border-t border-slate-200 pt-12">
+                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
+                  Debt Terms
                 </h2>
-                <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                  We don't believe financial terms should sound like another language.
+                <p className="text-lg text-slate-700 mb-8 leading-relaxed">
+                  Debt terminology can be confusing and overly complicated—but it doesn't have to be! Let's break these down in a way you can actually understand.
                 </p>
-                <p className="text-xl font-bold text-slate-900 mb-6">Here's what you need to know:</p>
 
                 <div className="space-y-8">
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 mb-2">Minimum Payment</h3>
-                    <p className="text-lg text-slate-600 leading-relaxed">
-                      The smallest amount you're required to pay each month. It keeps your account current — but it won't get you out of debt anytime soon.
+                    <p className="text-lg text-slate-700 leading-relaxed">
+                      This is the lowest amount you are required to pay on a debt every month (includes principal and interest). Pay any less and you might get slapped with some hefty penalties.
                     </p>
                   </div>
 
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 mb-2">Balance</h3>
-                    <p className="text-lg text-slate-600 leading-relaxed">
-                      How much you still owe. If you borrowed $10,000 and have paid $3,000, your balance is $7,000.
+                    <p className="text-lg text-slate-700 leading-relaxed">
+                      It's the amount you still have to pay on your debt. If your original loan was $20,000 and you've paid $5,000 already, your balance would be $15,000.
                     </p>
                   </div>
 
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 mb-2">Interest Rate</h3>
-                    <p className="text-lg text-slate-600 leading-relaxed">
-                      The cost of borrowing money. It's how lenders make a profit — shown as a percentage of what you owe.
+                    <p className="text-lg text-slate-700 leading-relaxed">
+                      When it comes to borrowing money, there's no such thing as free. Lenders are interested in letting you borrow their money because they make money on what they loan you. Your interest rate is how much they charge, usually shown as a percentage of the principal balance.
                     </p>
                   </div>
 
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 mb-2">Principal</h3>
-                    <p className="text-lg text-slate-600 leading-relaxed">
-                      The original amount you borrowed — before interest is added.
+                    <p className="text-lg text-slate-700 leading-relaxed">
+                      No, it's not that elementary school principal you were terrified of as a kid. We're talking about the amount of money you borrowed without the interest added. So, if you borrowed $20,000 over 10 years, your principal payment would be about $167 per month.
                     </p>
                   </div>
 
                   <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Non-Mortgage Debt</h3>
-                    <p className="text-lg text-slate-600 leading-relaxed">
-                      All your consumer debt: credit cards, car loans, student loans, personal loans. Your home loan comes later, once you've cleared the rest.
+                    <h3 className="text-xl font-bold text-slate-900 mb-2">Nonmortgage Debt</h3>
+                    <p className="text-lg text-slate-700 leading-relaxed">
+                      This one is simple. It's everything you owe, except for loans related to the purchase of your home. Yes, that includes your car notes and student loans. It's all debt. Why don't we ask you to list your mortgage in your debt snowball? Because after you've knocked out your consumer debt, you've got other important steps to take before tackling the house.
                     </p>
                   </div>
 
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 mb-2">Debt-Free Date</h3>
-                    <p className="text-lg text-slate-600 leading-relaxed">
-                      The day every cent of your consumer debt is gone.
-                    </p>
-                    <p className="text-lg text-slate-600 mt-2 leading-relaxed">
-                      No more balances. No more bills you dread opening.
-                    </p>
-                    <p className="text-lg text-slate-600 mt-2 leading-relaxed">
-                      That's the day freedom stops being a dream — and becomes your new normal.
+                    <p className="text-lg text-slate-700 leading-relaxed">
+                      It's the day when every single cent of your consumer debt is history. Bye, credit cards. See you never, student loans. If you've got a mortgage, you'll hit that hard later. But for now, it's time to celebrate.
                     </p>
                   </div>
-                </div>
-              </div>
-
-              {/* Final Thought */}
-              <div className="bg-slate-50 rounded-lg p-8 border border-slate-200">
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
-                  Final Thought
-                </h2>
-                <p className="text-xl text-slate-600 mb-4 leading-relaxed">
-                  The Debt Snowball isn't just about numbers — it's about behavior change.
-                </p>
-                <p className="text-xl text-slate-600 mb-6 leading-relaxed">
-                  And that's exactly what BrightNest is built on: helping you rebuild the habits, beliefs, and systems that shape your financial life.
-                </p>
-                <div className="text-center pt-4 border-t border-slate-200">
-                  <p className="text-2xl font-bold text-slate-900 leading-relaxed">
-                    Start small. Stay consistent.
-                  </p>
-                  <p className="text-xl text-slate-600 mt-4 leading-relaxed">
-                    Because once your snowball starts rolling, there's no stopping it.
-                  </p>
                 </div>
               </div>
             </div>
