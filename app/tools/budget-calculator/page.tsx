@@ -87,8 +87,8 @@ export default function BudgetCalculatorPage() {
   // Track which fields were manually edited by the user
   const [manuallyEditedFields, setManuallyEditedFields] = useState<Set<string>>(new Set());
   
-  // Track selected segment in donut chart
-  const [selectedSegment, setSelectedSegment] = useState<string | null>(null);
+  // Track hovered segment in donut chart
+  const [hoveredSegment, setHoveredSegment] = useState<string | null>(null);
 
   // Auto-populate with national averages when income is entered (debounced)
   useEffect(() => {
@@ -394,12 +394,12 @@ export default function BudgetCalculatorPage() {
                               const segmentAngle = (item.value / totalExpenses) * 360;
                               const startAngle = currentAngle;
                               const endAngle = currentAngle + segmentAngle;
-                              const isSelected = selectedSegment === item.key;
+                              const isHovered = hoveredSegment === item.key;
                               const percentage = totalExpenses > 0 ? (item.value / totalExpenses) * 100 : 0;
                               currentAngle = endAngle;
                               
-                              // Calculate opacity for selected/hover effect
-                              const opacity = isSelected ? 1 : 0.85;
+                              // Calculate opacity for hover effect - brighten on hover
+                              const opacity = isHovered ? 1 : 0.85;
                               
                               return (
                                 <g key={item.key}>
@@ -407,21 +407,17 @@ export default function BudgetCalculatorPage() {
                                     d={createArc(startAngle, endAngle, radius, innerRadius)}
                                     fill={item.color}
                                     opacity={opacity}
-                                    className="transition-all duration-300 cursor-pointer hover:opacity-100"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setSelectedSegment(isSelected ? null : item.key);
-                                    }}
+                                    className="transition-all duration-300 cursor-pointer"
+                                    onMouseEnter={() => setHoveredSegment(item.key)}
+                                    onMouseLeave={() => setHoveredSegment(null)}
                                   />
-                                  {/* Invisible larger hit area for easier clicking */}
+                                  {/* Invisible larger hit area for easier hovering */}
                                   <path
                                     d={createArc(startAngle, endAngle, radius + 5, innerRadius - 5)}
                                     fill="transparent"
                                     className="cursor-pointer"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setSelectedSegment(isSelected ? null : item.key);
-                                    }}
+                                    onMouseEnter={() => setHoveredSegment(item.key)}
+                                    onMouseLeave={() => setHoveredSegment(null)}
                                   />
                                 </g>
                               );
@@ -439,27 +435,24 @@ export default function BudgetCalculatorPage() {
                         );
                       })()}
                     </svg>
-                    {/* Center Display - Animated */}
-                    <div 
-                      className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
-                      onClick={() => setSelectedSegment(null)}
-                    >
-                      {selectedSegment && expenseData.find(item => item.key === selectedSegment) ? (
+                    {/* Center Display - Animated on Hover */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                      {hoveredSegment && expenseData.find(item => item.key === hoveredSegment) ? (
                         <div className="animate-slide-up">
                           {(() => {
-                            const selectedItem = expenseData.find(item => item.key === selectedSegment)!;
-                            const percentage = totalExpenses > 0 ? (selectedItem.value / totalExpenses) * 100 : 0;
+                            const hoveredItem = expenseData.find(item => item.key === hoveredSegment)!;
+                            const percentage = totalExpenses > 0 ? (hoveredItem.value / totalExpenses) * 100 : 0;
                             return (
                               <>
                                 <div 
                                   className="w-3 h-3 rounded-full mb-2 mx-auto transition-all duration-300"
-                                  style={{ backgroundColor: selectedItem.color }}
+                                  style={{ backgroundColor: hoveredItem.color }}
                                 />
                                 <p className="text-xs sm:text-sm font-medium text-slate-700 mb-1 transition-all duration-300">
-                                  {selectedItem.label}
+                                  {hoveredItem.label}
                                 </p>
                                 <p className="text-xl sm:text-2xl font-bold text-slate-900 mb-0.5 transition-all duration-300">
-                                  {formatCurrency(selectedItem.value)}
+                                  {formatCurrency(hoveredItem.value)}
                                 </p>
                                 <p className="text-xs text-slate-500 transition-all duration-300">
                                   {percentage.toFixed(1)}%
