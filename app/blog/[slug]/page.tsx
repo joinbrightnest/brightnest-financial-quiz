@@ -2,6 +2,7 @@ import Link from "next/link";
 import PostContents from "@/components/PostContents";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import ChecklistItem from "./ChecklistItem";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -222,7 +223,7 @@ const articlesMap: Record<string, {
   };
 
 // Get article by slug or use fallback
-const FALLBACK_ARTICLE = {
+  const FALLBACK_ARTICLE = {
     category: "Mindset",
     title: "Why The Weight Keeps Coming Back",
     heroImages: [
@@ -231,21 +232,21 @@ const FALLBACK_ARTICLE = {
       { color: "from-teal-400 to-teal-500" }
     ],
     heroText: "3 HABITS THAT BRING THE WEIGHT BACK",
-    sections: [
-      {
-        title: "1. Habits",
+  sections: [
+    {
+      title: "1. Habits",
         body: "We all carry around the habits we've ingrained over the course of years — and it takes time and concerted effort to entrain new ones. If you slip back into your old habits for a moment, that's normal; if you don't pull yourself back out of them, that's where you'll run into trouble."
-      },
-      {
+    },
+    {
         title: "2. The pull of the 'old you'",
         body: "As habits become ingrained, they start to define the way we see ourselves. If you have no proof yet of the person you want to be, it's easy to think this is simply who you are. Intentional choices, consistently, create the new you."
-      },
-      {
-        title: "3. Discipline as freedom vs. punishment",
+    },
+    {
+      title: "3. Discipline as freedom vs. punishment",
         body: "You can white‑knuckle discipline for a bit; to sustain it for years, you have to associate it with freedom and your deeper 'why'."
-      }
-    ]
-  };
+    }
+  ]
+};
 
 export default async function BlogArticlePage({ params }: PageProps) {
   const { slug } = await params;
@@ -314,9 +315,9 @@ export default async function BlogArticlePage({ params }: PageProps) {
               </div>
               <div className="px-5 sm:px-8 pb-5 sm:pb-7">
                 {article.heroText && (
-                  <div className="inline-flex items-center justify-center mt-4 bg-gradient-to-r from-slate-900 to-slate-800 text-white text-xs sm:text-sm font-semibold px-4 sm:px-6 py-2 rounded-lg shadow-md">
+                <div className="inline-flex items-center justify-center mt-4 bg-gradient-to-r from-slate-900 to-slate-800 text-white text-xs sm:text-sm font-semibold px-4 sm:px-6 py-2 rounded-lg shadow-md">
                     {article.heroText}
-                  </div>
+                </div>
                 )}
               </div>
             </div>
@@ -329,14 +330,14 @@ export default async function BlogArticlePage({ params }: PageProps) {
                 const isMainSection = mainSections.includes(s.title);
                 
                 return (
-                  <section key={i} id={`section-${i + 1}`} className="mb-10 scroll-mt-24 sm:scroll-mt-28 md:scroll-mt-32">
+                <section key={i} id={`section-${i + 1}`} className="mb-10 scroll-mt-24 sm:scroll-mt-28 md:scroll-mt-32">
                     {isMainSection ? (
                       <div className="relative pl-4 sm:pl-6 mb-4">
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-teal-500 to-amber-400 rounded-full"></div>
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-teal-500 to-amber-400 rounded-full"></div>
                         <h2 className="text-lg sm:text-2xl font-bold text-slate-900">{s.title}</h2>
                       </div>
                     ) : (
-                      <h2 className="text-lg sm:text-2xl font-bold text-slate-900 mb-4">{s.title}</h2>
+                    <h2 className="text-lg sm:text-2xl font-bold text-slate-900 mb-4">{s.title}</h2>
                     )}
                     <div className="text-slate-700 leading-relaxed text-base sm:text-lg space-y-6">
                       {(() => {
@@ -456,20 +457,16 @@ export default async function BlogArticlePage({ params }: PageProps) {
                                 <div key={`bullets-${i}`} className={isChecklist ? "bg-slate-50 rounded-lg p-6 border border-slate-200" : "bg-slate-50 rounded-lg p-6 border border-slate-200"}>
                                   <ul className="space-y-3">
                                     {bullets.map((bullet, idx) => (
-                                      <li key={idx} className="flex items-start gap-3">
-                                        {isChecklist ? (
-                                          <div className="flex-shrink-0 w-5 h-5 mt-0.5 border-2 border-slate-400 rounded-sm bg-white flex items-center justify-center">
-                                            <svg className="w-3 h-3 text-teal-600 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                          </div>
-                                        ) : (
+                                      isChecklist ? (
+                                        <ChecklistItem key={idx} bullet={bullet} idx={idx} parsedContent={parseMarkdown(bullet)} />
+                                      ) : (
+                                        <li key={idx} className="flex items-start gap-3">
                                           <svg className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
                                             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                                           </svg>
-                                        )}
-                                        <span className="flex-1">{parseMarkdown(bullet)}</span>
-                                      </li>
+                                          <span className="flex-1">{parseMarkdown(bullet)}</span>
+                                        </li>
+                                      )
                                     ))}
                                   </ul>
                                 </div>
@@ -670,8 +667,8 @@ export default async function BlogArticlePage({ params }: PageProps) {
                         
                         return result;
                       })()}
-                    </div>
-                  </section>
+                  </div>
+                </section>
                 );
               })}
             </article>
