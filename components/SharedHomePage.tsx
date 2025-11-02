@@ -92,7 +92,20 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                       </ul>
                       
                       <div className="mt-6 pt-6 border-t border-slate-200">
-                        <p className="text-xs text-slate-500">More tools coming soon!</p>
+                        <h3 className="font-bold text-slate-900 mb-4 text-sm">Debt</h3>
+                        <ul className="space-y-2 text-sm">
+                          <li>
+                            <Link href="/tools/debt-snowball-calculator" className="text-teal-600 hover:text-teal-700 font-medium flex items-center gap-2 group">
+                              <svg className="w-4 h-4 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                              </svg>
+                              Debt Snowball Calculator
+                              <svg className="w-3 h-3 ml-auto text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                              </svg>
+                            </Link>
+                          </li>
+                        </ul>
                       </div>
                     </div>
                   </div>
@@ -167,6 +180,13 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Budget Calculator
+                    </Link>
+                    <Link 
+                      href="/tools/debt-snowball-calculator" 
+                      className="block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 text-slate-600 hover:bg-gray-50 hover:text-teal-600"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Debt Snowball Calculator
                     </Link>
                   </div>
                   
