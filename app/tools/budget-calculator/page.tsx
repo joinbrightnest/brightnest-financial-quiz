@@ -597,7 +597,7 @@ export default function BudgetCalculatorPage() {
 
           {/* Get the Most out of the Budget Calculator */}
           <div className="mt-8 bg-slate-50 rounded-2xl p-8 lg:p-12">
-            <h2 className="text-2xl font-bold text-slate-900 mb-4 text-center">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 text-center">
               Get the Most out of the Budget Calculator
             </h2>
             <p className="text-slate-600 mb-6 text-center max-w-3xl mx-auto">
@@ -677,7 +677,7 @@ export default function BudgetCalculatorPage() {
 
           {/* Best Practices for the Budget Categories */}
           <div className="mt-12">
-            <h2 className="text-2xl font-bold text-slate-900 mb-4 text-center">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 text-center">
               Best Practices for the Budget Categories
             </h2>
             <p className="text-slate-600 mb-8 text-center max-w-3xl mx-auto">
