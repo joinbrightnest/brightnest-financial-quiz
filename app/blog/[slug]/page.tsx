@@ -548,7 +548,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                               
                             result.push(
                               <div key={i} className="bg-gradient-to-r from-slate-50 to-teal-50 rounded-lg p-4 border border-teal-200/50 shadow-sm">
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center justify-center gap-3">
                                     <span className="px-3 py-1.5 bg-slate-200 rounded-md text-sm font-medium text-slate-700 line-through decoration-slate-500 whitespace-nowrap min-w-[140px] flex-shrink-0">
                                       {fromText}
                                     </span>
