@@ -348,12 +348,12 @@ export default function DebtSnowballCalculatorPage() {
 
               {/* Right Column - Debt-Free Date */}
               <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
-                <h2 className="text-2xl font-bold text-slate-900 mb-6">Your Debt-Free Date</h2>
+                <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Your Debt-Free Date</h2>
                 
                 {debtFreeDate ? (
                   <div className="space-y-6">
                     <div>
-                      <p className="text-sm text-slate-600 mb-4">
+                      <p className="text-sm text-slate-600 mb-4 text-center">
                         If you continue making only minimum payments, you'll be debt-free:
                       </p>
                       <div className="bg-slate-100 rounded-xl p-8 text-center mb-4">
@@ -364,7 +364,7 @@ export default function DebtSnowballCalculatorPage() {
                     </div>
 
                     <div className="border-t border-slate-200 pt-4">
-                      <p className="text-sm text-slate-600 mb-4">
+                      <p className="text-sm text-slate-600 mb-4 text-center">
                         Want to be debt-free sooner? Of course you do! Add an extra monthly payment to see how much faster you'll pay off your debt.
                       </p>
                       <p className="text-teal-600 font-bold text-center mb-4">
@@ -372,7 +372,7 @@ export default function DebtSnowballCalculatorPage() {
                       </p>
                       
                       <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-2 text-center">
                           Extra Monthly Payment
                         </label>
                         <div className="relative mb-3">
