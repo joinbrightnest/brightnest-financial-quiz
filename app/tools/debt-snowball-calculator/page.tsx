@@ -42,6 +42,8 @@ export default function DebtSnowballCalculatorPage() {
   const [monthlyPayment, setMonthlyPayment] = useState<number>(0);
   const [debtFreeDate, setDebtFreeDate] = useState<string | null>(null);
   const [monthsToPayoff, setMonthsToPayoff] = useState<number>(0);
+  const [sliderExtraPayment, setSliderExtraPayment] = useState<string>("0");
+  const [sliderDebtFreeDate, setSliderDebtFreeDate] = useState<string | null>(null);
 
   const addDebt = () => {
     const newId = (debts.length + 1).toString();
@@ -68,6 +70,95 @@ export default function DebtSnowballCalculatorPage() {
       }
       return debt;
     }));
+  };
+
+  // Calculate debt snowball with optional extra payment
+  const calculatePayoff = (extraPaymentAmount: number = 0) => {
+    const validDebts = debts.filter(debt => 
+      debt.type !== "Choose a Debt Type" &&
+      debt.balance && parseFloat(debt.balance) > 0 &&
+      debt.minimumPayment && parseFloat(debt.minimumPayment) > 0
+    );
+
+    if (validDebts.length === 0) {
+      return null;
+    }
+
+    // Sort debts by balance (smallest first - debt snowball method)
+    const sortedDebts = [...validDebts].map(debt => ({
+      balance: parseFloat(debt.balance),
+      interestRate: parseFloat(debt.interestRate) || 0,
+      minimumPayment: parseFloat(debt.minimumPayment)
+    })).sort((a, b) => a.balance - b.balance);
+
+    const totalMonthlyPayment = sortedDebts.reduce((sum, debt) => sum + debt.minimumPayment, 0);
+    const incomeNum = parseFloat(income) || 0;
+    
+    // Calculate available payment: either from income or from minimums + extra payment
+    const totalAvailable = incomeNum > 0 ? incomeNum : totalMonthlyPayment + extraPaymentAmount;
+    
+    let months = 0;
+    let workingDebts = sortedDebts.map(debt => ({
+      balance: debt.balance,
+      interestRate: debt.interestRate / 100 / 12, // Monthly interest rate
+      minimumPayment: debt.minimumPayment
+    }));
+
+    // Calculate snowball payoff
+    while (workingDebts.length > 0) {
+      months++;
+      
+      // Apply interest to all debts first
+      workingDebts = workingDebts.map(debt => ({
+        ...debt,
+        balance: debt.balance * (1 + debt.interestRate)
+      }));
+      
+      // Calculate total minimum payments needed this month
+      const currentMinPayments = workingDebts.reduce((sum, debt) => sum + debt.minimumPayment, 0);
+      
+      // If we can't cover minimums, break
+      if (totalAvailable < currentMinPayments) {
+        break;
+      }
+      
+      // Pay minimums on all debts except the smallest
+      const otherDebtsMin = workingDebts.slice(1).reduce((sum, debt) => sum + debt.minimumPayment, 0);
+      
+      // Pay minimum on other debts
+      workingDebts = workingDebts.map((debt, index) => 
+        index === 0 
+          ? debt // Skip smallest for now
+          : {
+              ...debt,
+              balance: Math.max(0, debt.balance - debt.minimumPayment)
+            }
+      );
+      
+      // Pay everything left on smallest debt
+      const paymentToSmallest = totalAvailable - otherDebtsMin;
+      if (workingDebts[0]) {
+        workingDebts[0].balance = Math.max(0, workingDebts[0].balance - paymentToSmallest);
+      }
+      
+      // Remove paid off debts
+      workingDebts = workingDebts.filter(debt => debt.balance >= 0.01);
+      
+      // Safety check to prevent infinite loop
+      if (months > 600) {
+        break;
+      }
+    }
+
+    // Calculate debt-free date
+    if (months > 0) {
+      const today = new Date();
+      const payoffDate = new Date(today);
+      payoffDate.setMonth(payoffDate.getMonth() + months);
+      return payoffDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    }
+
+    return null;
   };
 
   // Calculate debt snowball
@@ -107,80 +198,27 @@ export default function DebtSnowballCalculatorPage() {
     setTotalDebt(totalDebtAmount);
     setMonthlyPayment(totalMonthlyPayment);
 
-    // Calculate payoff if we have income or extra payment
+    // Calculate payoff using the reusable function
     const extraPaymentNum = parseFloat(extraPayment) || 0;
-    const incomeNum = parseFloat(income) || 0;
-    
-    if (incomeNum > 0 || extraPaymentNum > 0) {
-      // Use extra payment as additional funds if provided, otherwise use income as total available
-      const totalAvailable = incomeNum > 0 ? incomeNum : totalMonthlyPayment + extraPaymentNum;
-      
-      let months = 0;
-      let workingDebts = sortedDebts.map(debt => ({
-        balance: debt.balance,
-        interestRate: debt.interestRate / 100 / 12, // Monthly interest rate
-        minimumPayment: debt.minimumPayment
-      }));
+    const calculatedDate = calculatePayoff(extraPaymentNum);
+    setDebtFreeDate(calculatedDate);
 
-      // Calculate snowball payoff
-      while (workingDebts.length > 0) {
-        months++;
-        
-        // Apply interest to all debts first
-        workingDebts = workingDebts.map(debt => ({
-          ...debt,
-          balance: debt.balance * (1 + debt.interestRate)
-        }));
-        
-        // Calculate total minimum payments needed this month
-        const currentMinPayments = workingDebts.reduce((sum, debt) => sum + debt.minimumPayment, 0);
-        
-        // If we can't cover minimums, break
-        if (totalAvailable < currentMinPayments) {
-          break;
-        }
-        
-        // Pay minimums on all debts except the smallest
-        const otherDebtsMin = workingDebts.slice(1).reduce((sum, debt) => sum + debt.minimumPayment, 0);
-        
-        // Pay minimum on other debts
-        workingDebts = workingDebts.map((debt, index) => 
-          index === 0 
-            ? debt // Skip smallest for now
-            : {
-                ...debt,
-                balance: Math.max(0, debt.balance - debt.minimumPayment)
-              }
-        );
-        
-        // Pay everything left on smallest debt
-        const paymentToSmallest = totalAvailable - otherDebtsMin;
-        if (workingDebts[0]) {
-          workingDebts[0].balance = Math.max(0, workingDebts[0].balance - paymentToSmallest);
-        }
-        
-        // Remove paid off debts
-        workingDebts = workingDebts.filter(debt => debt.balance >= 0.01);
-        
-        // Safety check to prevent infinite loop
-        if (months > 600) {
-          break;
-        }
-      }
-
-      setMonthsToPayoff(months);
-
-      // Calculate debt-free date
-      if (months > 0) {
-        const today = new Date();
-        const payoffDate = new Date(today);
-        payoffDate.setMonth(payoffDate.getMonth() + months);
-        setDebtFreeDate(payoffDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }));
-      }
-    }
+    // Also calculate for slider (0 extra)
+    const sliderDate = calculatePayoff(0);
+    setSliderDebtFreeDate(sliderDate);
 
     setShowResults(true);
   };
+
+  // Recalculate when slider changes
+  useEffect(() => {
+    if (showResults && debts.length > 0) {
+      const sliderAmount = parseFloat(sliderExtraPayment) || 0;
+      const newDate = calculatePayoff(sliderAmount);
+      setSliderDebtFreeDate(newDate);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sliderExtraPayment, showResults]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -330,8 +368,8 @@ export default function DebtSnowballCalculatorPage() {
                         <div className="relative mb-3">
                           <input
                             type="number"
-                            value={extraPayment}
-                            onChange={(e) => setExtraPayment(e.target.value)}
+                            value={sliderExtraPayment}
+                            onChange={(e) => setSliderExtraPayment(e.target.value)}
                             placeholder="0"
                             step="100"
                             className="w-full pl-8 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900"
@@ -343,8 +381,8 @@ export default function DebtSnowballCalculatorPage() {
                           min="0"
                           max="5000"
                           step="100"
-                          value={parseFloat(extraPayment) || 0}
-                          onChange={(e) => setExtraPayment(e.target.value)}
+                          value={parseFloat(sliderExtraPayment) || 0}
+                          onChange={(e) => setSliderExtraPayment(e.target.value)}
                           className="w-full"
                         />
                         <div className="flex justify-between text-xs text-slate-500 mt-1">
@@ -352,6 +390,17 @@ export default function DebtSnowballCalculatorPage() {
                           <span>$5,000</span>
                         </div>
                       </div>
+
+                      {sliderDebtFreeDate && sliderExtraPayment !== "0" && (
+                        <div className="mt-4 pt-4 border-t border-slate-200">
+                          <p className="text-xs text-slate-600 mb-2">With this extra payment:</p>
+                          <div className="bg-teal-50 rounded-lg p-4 text-center">
+                            <div className="text-2xl font-bold text-teal-700">
+                              {sliderDebtFreeDate}
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ) : (
