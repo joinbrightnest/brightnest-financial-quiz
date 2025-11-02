@@ -86,34 +86,46 @@ export default function BudgetCalculatorPage() {
 
   // Auto-populate with national averages when income is entered
   useEffect(() => {
-    const incomeNum = parseFloat(income);
-    const hasIncome = income && income.trim() !== "" && !isNaN(incomeNum) && incomeNum > 0;
+    if (!income || income.trim() === "") {
+      return;
+    }
     
-    // Only auto-populate if income is actually entered (not empty string or 0)
-    if (hasIncome) {
-      setExpenses(prev => {
-        const newExpenses: { [key: string]: string } = { ...prev };
-        let hasChanges = false;
+    const incomeNum = parseFloat(income);
+    
+    // Only proceed if income is a valid positive number
+    if (isNaN(incomeNum) || incomeNum <= 0) {
+      return;
+    }
+    
+    // Auto-populate empty fields with calculated values
+    setExpenses(prev => {
+      const newExpenses: { [key: string]: string } = { ...prev };
+      let hasChanges = false;
+      
+      Object.keys(NATIONAL_AVERAGES).forEach((key) => {
+        const categoryKey = key as keyof typeof NATIONAL_AVERAGES;
+        const percentage = NATIONAL_AVERAGES[categoryKey];
+        const currentValue = prev[categoryKey as keyof typeof prev];
         
-        Object.keys(NATIONAL_AVERAGES).forEach((key) => {
-          const categoryKey = key as keyof typeof NATIONAL_AVERAGES;
-          const percentage = NATIONAL_AVERAGES[categoryKey];
-          const currentValue = prev[categoryKey as keyof typeof prev];
-          
-          // Only auto-fill if the field is currently empty (empty string, null, or undefined)
-          // If the percentage is 0, don't auto-fill (user can add if needed)
-          const isEmpty = !currentValue || (typeof currentValue === 'string' && currentValue.trim() === "");
-          if (isEmpty && percentage > 0) {
-            const calculatedValue = incomeNum * percentage;
-            newExpenses[categoryKey] = Math.round(calculatedValue).toString();
+        // Check if field is empty (empty string, undefined, or null)
+        const isEmpty = currentValue === undefined || currentValue === null || currentValue === "" || (typeof currentValue === 'string' && currentValue.trim() === "");
+        
+        // Only auto-fill empty fields with non-zero percentages
+        if (isEmpty && percentage > 0) {
+          const calculatedValue = incomeNum * percentage;
+          const roundedValue = Math.round(calculatedValue);
+          if (roundedValue > 0) {
+            newExpenses[categoryKey] = roundedValue.toString();
             hasChanges = true;
           }
-        });
-        
-        // Only update state if there were actual changes
-        return hasChanges ? newExpenses : prev;
+        }
+        // If field already has value, keep it (don't overwrite user input)
+        // If field is empty and percentage is 0, leave it empty
       });
-    }
+      
+      // Only update state if there were actual changes
+      return hasChanges ? newExpenses : prev;
+    });
   }, [income]);
 
   const handleExpenseChange = (category: string, value: string) => {
@@ -145,6 +157,37 @@ export default function BudgetCalculatorPage() {
       }
     }
     setIncome(cleanedValue);
+    
+    // Auto-populate expenses immediately when income changes
+    if (cleanedValue && cleanedValue.trim() !== "") {
+      const incomeNum = parseFloat(cleanedValue);
+      if (!isNaN(incomeNum) && incomeNum > 0) {
+        // Use functional update to ensure we're working with latest expenses state
+        setExpenses(prev => {
+          const newExpenses: { [key: string]: string } = { ...prev };
+          let hasChanges = false;
+          
+          Object.keys(NATIONAL_AVERAGES).forEach((key) => {
+            const categoryKey = key as keyof typeof NATIONAL_AVERAGES;
+            const percentage = NATIONAL_AVERAGES[categoryKey];
+            const currentValue = prev[categoryKey as keyof typeof prev];
+            
+            const isEmpty = !currentValue || currentValue === "" || (typeof currentValue === 'string' && currentValue.trim() === "");
+            
+            if (isEmpty && percentage > 0) {
+              const calculatedValue = incomeNum * percentage;
+              const roundedValue = Math.round(calculatedValue);
+              if (roundedValue > 0) {
+                newExpenses[categoryKey] = roundedValue.toString();
+                hasChanges = true;
+              }
+            }
+          });
+          
+          return hasChanges ? newExpenses : prev;
+        });
+      }
+    }
   };
 
   const calculateTotalExpenses = () => {
@@ -227,7 +270,10 @@ export default function BudgetCalculatorPage() {
                       <input
                         type="number"
                         value={income}
-                        onChange={(e) => handleIncomeChange(e.target.value)}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          handleIncomeChange(value);
+                        }}
                         placeholder="0.00"
                         step="0.01"
                         className="w-full pl-10 pr-4 py-3 border-2 border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-lg font-medium text-slate-900"
