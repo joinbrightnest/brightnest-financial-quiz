@@ -35,7 +35,7 @@ const articlesMap: Record<string, {
         },
         {
           title: "How to fix it — a behaviour-based roadmap",
-          body: "Here's how to build a budgeting system that works with your behaviour, not against it:\n\n**Step 1: Track real behaviour for 30–90 days**\nStart by simply tracking — no changes yet. What do you really spend on groceries, eating out, entertainment, subscriptions? Use bank statements, receipt photos, spending apps.\n\nWhy? Because your budget must reflect reality, not idealism.\n\n\"Start with 3 months of real expenses (yes, the coffee counts) … Treat your budget as a living tool — not a prison.\"\n\n**Step 2: Build in flexibility and \"fun money\"**\nRather than zero-fun, carve out a category for flexible spending (\"treats\", \"going out\") that fits your values. When people feel deprived, they rebel. Allow latitude.\n\nAlso build in \"emergency/irregular\" funds (seasonal gifts, car repairs) by dividing annual costs into monthly budgeting.\n\n**Step 3: Set realistic targets and adjust frequently**\nAfter you track actual behaviour, set targets that challenge yet are achievable. If you regularly spend $400 on groceries, don't budget $250 immediately — maybe $350 then reduce gradually.\n\nReview monthly and adjust. Sense of progress builds motivation.\n\n**Step 4: Align budget with your values and goals**\nAsk yourself: What matters? The gym, travel, home-cooking, books? Your budget should reflect those priorities. If the budget starves what you value, it won't last.\n\nAlso link each spending category to a bigger goal — savings, debt reduction, experience — so that the budget feels purposeful.\n\n**Step 5: Use behavioural \"guardrails\"**\nAutomate savings and emergency-fund deposits so you pay yourself first. Use separate accounts or \"pots\" for specific goals (vacation, repairs). Monitor weekly, not just monthly — small check-ins catch drift early.\n\nRecognise and plan for your personal triggers: if you overspend when stressed, plan \"stress buffer\" money or alternative activity.\n\n**Step 6: Make the budget a living tool, not a fixed prison**\nThe best budgets evolve. Life changes: income shifts, cost of living rises, priorities change. Review and reshape.\n\n\"Budgets don't inherently get you to stop spending money… The problem is that restrictions are the ultimate fun-killer.\"\n\nSo aim for consistency over perfection. Adjust rather than abandon."
+          body: "Here's how to build a budgeting system that works with your behaviour, not against it:\n\n**Track real behaviour for 30–90 days**\nStart by simply tracking — no changes yet. What do you really spend on groceries, eating out, entertainment, subscriptions? Use bank statements, receipt photos, spending apps.\n\nWhy? Because your budget must reflect reality, not idealism.\n\n\"Start with 3 months of real expenses (yes, the coffee counts) … Treat your budget as a living tool — not a prison.\"\n\n**Build in flexibility and \"fun money\"**\nRather than zero-fun, carve out a category for flexible spending (\"treats\", \"going out\") that fits your values. When people feel deprived, they rebel. Allow latitude.\n\nAlso build in \"emergency/irregular\" funds (seasonal gifts, car repairs) by dividing annual costs into monthly budgeting.\n\n**Set realistic targets and adjust frequently**\nAfter you track actual behaviour, set targets that challenge yet are achievable. If you regularly spend $400 on groceries, don't budget $250 immediately — maybe $350 then reduce gradually.\n\nReview monthly and adjust. Sense of progress builds motivation.\n\n**Align budget with your values and goals**\nAsk yourself: What matters? The gym, travel, home-cooking, books? Your budget should reflect those priorities. If the budget starves what you value, it won't last.\n\nAlso link each spending category to a bigger goal — savings, debt reduction, experience — so that the budget feels purposeful.\n\n**Use behavioural \"guardrails\"**\nAutomate savings and emergency-fund deposits so you pay yourself first. Use separate accounts or \"pots\" for specific goals (vacation, repairs). Monitor weekly, not just monthly — small check-ins catch drift early.\n\nRecognise and plan for your personal triggers: if you overspend when stressed, plan \"stress buffer\" money or alternative activity.\n\n**Make the budget a living tool, not a fixed prison**\nThe best budgets evolve. Life changes: income shifts, cost of living rises, priorities change. Review and reshape.\n\n\"Budgets don't inherently get you to stop spending money… The problem is that restrictions are the ultimate fun-killer.\"\n\nSo aim for consistency over perfection. Adjust rather than abandon."
         },
         {
           title: "Behaviour change mindset – the key to lasting success",
@@ -272,6 +272,10 @@ export default async function BlogArticlePage({ params }: PageProps) {
                         const result = [];
                         let i = 0;
                         let stepCounter = 0;
+                        // Reset step counter for "How to fix it" section
+                        if (s.title.includes('fix it')) {
+                          stepCounter = 0;
+                        }
                         
                         // Helper function to parse markdown-style bold and italic
                         const parseMarkdown = (text: string) => {
@@ -361,20 +365,28 @@ export default async function BlogArticlePage({ params }: PageProps) {
                             continue;
                           }
                           
-                          // Check if paragraph starts with "**Step" - create a card with icon
-                          if (para.match(/^\*\*Step \d+:/)) {
-                            stepCounter++;
-                            const stepMatch = para.match(/^\*\*Step (\d+):\s*\*\*(.+)\*\*/);
-                            const stepNum = stepMatch ? parseInt(stepMatch[1]) : stepCounter;
-                            const stepTitle = stepMatch ? stepMatch[2].trim() : para.replace(/^\*\*Step \d+:\s*\*\*/, '').replace(/\*\*$/, '').trim();
-                            const restOfContent = [];
-                            
-                            // Collect following paragraphs until next step or end
-                            i++;
-                            while (i < paragraphs.length && !paragraphs[i].trim().match(/^\*\*Step \d+:/) && !paragraphs[i].trim().match(/^\*\*\d+\./)) {
-                              restOfContent.push(paragraphs[i].trim());
+                          // Check if paragraph starts with bold text in "How to fix it" section - create a step card
+                          if (para.match(/^\*\*/) && s.title.includes('fix it')) {
+                            // Check if it's not a numbered item (which would be 1., 2., etc.) or regular paragraph
+                            // And it's a standalone bold line (not part of a longer sentence)
+                            if (!para.match(/^\*\*\d+\./) && para.match(/^\*\*[^*]+\*\*$/)) {
+                              stepCounter++;
+                              const boldMatch = para.match(/^\*\*(.+?)\*\*/);
+                              const stepTitle = boldMatch ? boldMatch[1].trim() : para.replace(/\*\*/g, '').trim();
+                              const stepNum = stepCounter;
+                              const restOfContent = [];
+                              
+                              // Collect following paragraphs until next bold step or numbered item
                               i++;
-                            }
+                              while (i < paragraphs.length) {
+                                const nextPara = paragraphs[i].trim();
+                                // Stop if we hit another bold step or numbered item
+                                if ((nextPara.match(/^\*\*[^*]+\*\*$/) && !nextPara.match(/^\*\*\d+\./) && !nextPara.match(/From/)) || nextPara.match(/^\*\*\d+\./)) {
+                                  break;
+                                }
+                                restOfContent.push(nextPara);
+                                i++;
+                              }
                             
                             result.push(
                               <div key={`step-${stepNum}`} className="bg-gradient-to-br from-teal-50 to-slate-50 rounded-xl p-6 border border-teal-200/50 shadow-sm hover:shadow-md transition-shadow">
