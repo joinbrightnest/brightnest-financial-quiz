@@ -221,6 +221,13 @@ export default function DebtSnowballCalculatorPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sliderExtraPayment, showResults]);
 
+  // Scroll to top when results page loads
+  useEffect(() => {
+    if (showResults) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [showResults]);
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
