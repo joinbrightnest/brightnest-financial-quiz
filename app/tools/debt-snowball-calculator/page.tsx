@@ -295,25 +295,25 @@ export default function DebtSnowballCalculatorPage() {
               <div className="absolute top-0 right-0 w-72 h-72 bg-teal-100/60 rounded-full blur-3xl"></div>
               <div className="absolute bottom-0 left-0 w-72 h-72 bg-amber-100/60 rounded-full blur-3xl"></div>
               
-              <div className="relative text-center">
-                <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
+              <div className="relative text-center px-2">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
                   Your <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Debt Results</span>
                 </h1>
-                <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+                <p className="text-sm sm:text-base lg:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
                   See your complete debt picture and find out exactly when you'll be debt-free!
                 </p>
               </div>
             </div>
 
             {/* Results Grid */}
-            <div className="grid lg:grid-cols-2 gap-6 mb-6">
+            <div className="grid lg:grid-cols-2 gap-4 lg:gap-6 mb-6">
               {/* Left Column - Debt Breakdown */}
-              <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-2xl font-bold text-slate-900">Your Debt Breakdown</h2>
+              <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-3">
+                  <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Your Debt Breakdown</h2>
                   <button
                     onClick={() => setShowResults(false)}
-                    className="text-teal-600 hover:text-teal-700 text-sm font-bold"
+                    className="text-teal-600 hover:text-teal-700 text-sm font-bold self-start sm:self-auto touch-friendly px-2 py-1"
                   >
                     ← Back to Your Debts
                   </button>
@@ -383,8 +383,8 @@ export default function DebtSnowballCalculatorPage() {
               </div>
 
               {/* Right Column - Debt-Free Date */}
-              <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6">
-                <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Your Debt-Free Date</h2>
+              <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-4 sm:p-6">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6 text-center">Your Debt-Free Date</h2>
                 
                 {debtFreeDate ? (
                   <div className="space-y-6">
@@ -418,7 +418,7 @@ export default function DebtSnowballCalculatorPage() {
                             onChange={(e) => setSliderExtraPayment(e.target.value)}
                             placeholder="0"
                             step="100"
-                            className="w-full pl-8 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900"
+                            className="w-full pl-8 pr-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900 touch-friendly"
                           />
                           <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
                         </div>
@@ -588,19 +588,19 @@ export default function DebtSnowballCalculatorPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-slate-900 mb-6">Share the Debt Snowball Calculator</h2>
-            <div className="flex items-center gap-2">
-              <div className="flex-1">
-                <input
-                  type="text"
-                  readOnly
-                  value={typeof window !== 'undefined' ? window.location.href : ''}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm"
-                />
-              </div>
-              <button
-                onClick={copyLinkToClipboard}
-                className="flex items-center gap-2 bg-teal-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-700 transition-colors whitespace-nowrap"
-              >
+              <div className="flex items-center gap-2">
+                <div className="flex-1 min-w-0">
+                  <input
+                    type="text"
+                    readOnly
+                    value={typeof window !== 'undefined' ? window.location.href : ''}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm"
+                  />
+                </div>
+                <button
+                  onClick={copyLinkToClipboard}
+                  className="flex items-center gap-2 bg-teal-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-700 transition-colors whitespace-nowrap touch-friendly flex-shrink-0"
+                >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                 </svg>
@@ -629,11 +629,11 @@ export default function DebtSnowballCalculatorPage() {
             <div className="absolute top-0 right-0 w-72 h-72 bg-teal-100/60 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-72 h-72 bg-amber-100/60 rounded-full blur-3xl"></div>
             
-            <div className="relative text-center">
-              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
+            <div className="relative text-center px-2">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
                 Debt Snowball <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Calculator</span>
               </h1>
-              <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+              <p className="text-sm sm:text-base lg:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
                 Find out your debt-free date and accelerate your progress with the debt snowball method—the fastest way to pay off debt.
               </p>
             </div>
@@ -656,7 +656,7 @@ export default function DebtSnowballCalculatorPage() {
                       {debts.length > 1 && (
                         <button
                           onClick={() => removeDebt(debt.id)}
-                          className="text-red-500 hover:text-red-700 text-sm font-medium"
+                          className="text-red-500 hover:text-red-700 text-sm font-medium touch-friendly px-2 py-1"
                         >
                           Remove
                         </button>
@@ -671,7 +671,7 @@ export default function DebtSnowballCalculatorPage() {
                         <select
                           value={debt.type}
                           onChange={(e) => updateDebt(debt.id, 'type', e.target.value)}
-                          className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium"
+                          className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium touch-friendly"
                         >
                           {DEBT_TYPES.map(type => (
                             <option key={type} value={type}>{type}</option>
@@ -690,7 +690,7 @@ export default function DebtSnowballCalculatorPage() {
                             onChange={(e) => updateDebt(debt.id, 'interestRate', e.target.value)}
                             placeholder="0"
                             step="0.01"
-                            className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium"
+                            className="w-full pl-8 pr-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium touch-friendly"
                           />
                           <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium text-xs">%</span>
                         </div>
@@ -707,7 +707,7 @@ export default function DebtSnowballCalculatorPage() {
                             onChange={(e) => updateDebt(debt.id, 'balance', e.target.value)}
                             placeholder="0"
                             step="0.01"
-                            className="w-full pl-6 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium"
+                            className="w-full pl-6 pr-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium touch-friendly"
                           />
                           <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium text-xs">$</span>
                         </div>
@@ -724,7 +724,7 @@ export default function DebtSnowballCalculatorPage() {
                             onChange={(e) => updateDebt(debt.id, 'minimumPayment', e.target.value)}
                             placeholder="0"
                             step="0.01"
-                            className="w-full pl-6 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium"
+                            className="w-full pl-6 pr-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 font-medium touch-friendly"
                           />
                           <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium text-xs">$</span>
                         </div>
@@ -740,7 +740,7 @@ export default function DebtSnowballCalculatorPage() {
                         value={debt.name}
                         onChange={(e) => updateDebt(debt.id, 'name', e.target.value)}
                         placeholder="Visa, Discover Card, Lender Name"
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900"
+                        className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 touch-friendly"
                       />
                     </div>
                   </div>
@@ -770,7 +770,7 @@ export default function DebtSnowballCalculatorPage() {
                     onChange={(e) => setIncome(e.target.value)}
                     placeholder="0"
                     step="0.01"
-                    className="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900"
+                    className="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900 touch-friendly"
                   />
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
                 </div>
@@ -789,7 +789,7 @@ export default function DebtSnowballCalculatorPage() {
                     onChange={(e) => setExtraPayment(e.target.value)}
                     placeholder="0"
                     step="0.01"
-                    className="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900"
+                    className="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900 touch-friendly"
                   />
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
                 </div>
@@ -810,7 +810,7 @@ export default function DebtSnowballCalculatorPage() {
               {/* CTA Button */}
               <button
                 onClick={calculateResults}
-                className="w-full bg-teal-600 text-white px-8 py-3 rounded-lg font-bold text-lg hover:bg-teal-700 transition-colors"
+                className="w-full bg-teal-600 text-white px-8 py-3.5 rounded-lg font-bold text-lg hover:bg-teal-700 transition-colors touch-friendly"
               >
                 Get Your Debt-Free Date
               </button>
@@ -945,7 +945,7 @@ export default function DebtSnowballCalculatorPage() {
             <div className="mt-12">
               <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Share the Debt Snowball Calculator</h2>
               <div className="flex items-center gap-2">
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <input
                     type="text"
                     readOnly
@@ -955,7 +955,7 @@ export default function DebtSnowballCalculatorPage() {
                 </div>
                 <button
                   onClick={copyLinkToClipboard}
-                  className="flex items-center gap-2 bg-teal-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-700 transition-colors whitespace-nowrap"
+                  className="flex items-center gap-2 bg-teal-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-700 transition-colors whitespace-nowrap touch-friendly flex-shrink-0"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />

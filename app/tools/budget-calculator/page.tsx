@@ -89,6 +89,17 @@ export default function BudgetCalculatorPage() {
   
   // Track hovered segment in donut chart
   const [hoveredSegment, setHoveredSegment] = useState<string | null>(null);
+  
+  // Share functionality
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  const copyLinkToClipboard = () => {
+    const url = typeof window !== 'undefined' ? window.location.href : '';
+    navigator.clipboard.writeText(url).then(() => {
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    });
+  };
 
   // Auto-populate with national averages when income is entered (debounced)
   useEffect(() => {
@@ -276,18 +287,18 @@ export default function BudgetCalculatorPage() {
       <main className="flex-1 py-6 sm:py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header Section with Background Design */}
-          <div className="relative py-8 sm:py-10 mb-6 overflow-hidden rounded-2xl border border-slate-200/50 shadow-sm">
+          <div className="relative py-6 sm:py-8 lg:py-10 mb-6 overflow-hidden rounded-2xl border border-slate-200/50 shadow-sm">
             {/* Background decoration */}
             <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-teal-50 to-amber-50"></div>
             <div className="absolute top-0 right-0 w-72 h-72 bg-teal-100/60 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-72 h-72 bg-amber-100/60 rounded-full blur-3xl"></div>
             
             {/* Content */}
-            <div className="relative text-center">
-              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
+            <div className="relative text-center px-2">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
                 Budget <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Calculator</span>
               </h1>
-              <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+              <p className="text-sm sm:text-base lg:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
                 If you've never budgeted before—or it's been a while—this budget calculator is a solid starting point. Type in your monthly take-home pay and get a budget example to begin.
               </p>
             </div>
@@ -298,13 +309,13 @@ export default function BudgetCalculatorPage() {
             <h2 className="text-xl font-bold text-slate-900 mb-2">
               Budget Calculator
             </h2>
-            <p className="text-sm text-slate-600 mb-4">
+            <p className="text-sm text-slate-600 mb-6">
               Enter your income and the calculator will show the national averages for most budget categories as a starting point. A few of these are recommendations (like giving). Most just reflect average spending (like debt). Don't have debt? Yay! Move that money to your current money goal.
             </p>
 
-            <div className="grid lg:grid-cols-2 gap-6">
+            <div className="grid lg:grid-cols-2 gap-4 lg:gap-6">
               {/* Left Column - Input Fields */}
-              <div className="space-y-4">
+              <div className="space-y-4 order-2 lg:order-1">
                 {/* Income */}
                 <div>
                   <h3 className="text-base font-bold text-slate-900 mb-2">Income</h3>
@@ -323,7 +334,7 @@ export default function BudgetCalculatorPage() {
                         }}
                         placeholder="0.00"
                         step="0.01"
-                        className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900"
+                        className="w-full pl-8 pr-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900 touch-friendly"
                       />
                     </div>
                   </div>
@@ -342,30 +353,34 @@ export default function BudgetCalculatorPage() {
                             className="w-2.5 h-2.5 rounded-full flex-shrink-0" 
                             style={{ backgroundColor: color }}
                           />
-                          <div className="flex-1 flex items-center gap-2">
-                            <label className="block text-xs sm:text-sm font-medium text-slate-700 whitespace-nowrap">
-                              {CATEGORY_LABELS[categoryKey]}
-                            </label>
-                            <div className="relative">
-                              <button
-                                type="button"
-                                onMouseEnter={() => setShowInfoTooltip(key)}
-                                onMouseLeave={() => setShowInfoTooltip(null)}
-                                className="w-3.5 h-3.5 rounded-full border border-slate-400 text-slate-400 hover:border-teal-600 hover:text-teal-600 flex items-center justify-center transition-colors text-[9px] font-bold"
-                                aria-label={`Information about ${CATEGORY_LABELS[categoryKey]}`}
-                              >
-                                i
-                              </button>
-                              {showInfoTooltip === key && (
-                                <div className="absolute left-0 top-full mt-1 z-50 w-80 bg-white rounded-lg shadow-xl border border-slate-200 p-3">
-                                  <p className="text-xs text-slate-700 leading-relaxed">
-                                    {CATEGORY_DESCRIPTIONS[categoryKey as keyof typeof CATEGORY_DESCRIPTIONS]}
-                                  </p>
-                                  <div className="absolute -top-1.5 left-3 w-3 h-3 bg-white border-l border-t border-slate-200 transform rotate-45"></div>
-                                </div>
-                              )}
+                          <div className="flex-1 flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                            <div className="flex items-center gap-1.5 w-full sm:w-auto">
+                              <label className="block text-xs sm:text-sm font-medium text-slate-700 whitespace-nowrap">
+                                {CATEGORY_LABELS[categoryKey]}
+                              </label>
+                              <div className="relative">
+                                <button
+                                  type="button"
+                                  onMouseEnter={() => setShowInfoTooltip(key)}
+                                  onMouseLeave={() => setShowInfoTooltip(null)}
+                                  onFocus={() => setShowInfoTooltip(key)}
+                                  onBlur={() => setShowInfoTooltip(null)}
+                                  className="w-3.5 h-3.5 rounded-full border border-slate-400 text-slate-400 hover:border-teal-600 hover:text-teal-600 flex items-center justify-center transition-colors text-[9px] font-bold touch-friendly"
+                                  aria-label={`Information about ${CATEGORY_LABELS[categoryKey]}`}
+                                >
+                                  i
+                                </button>
+                                {showInfoTooltip === key && (
+                                  <div className="absolute left-0 sm:left-auto sm:right-0 top-full mt-1 z-50 w-72 sm:w-80 bg-white rounded-lg shadow-xl border border-slate-200 p-3">
+                                    <p className="text-xs text-slate-700 leading-relaxed">
+                                      {CATEGORY_DESCRIPTIONS[categoryKey as keyof typeof CATEGORY_DESCRIPTIONS]}
+                                    </p>
+                                    <div className="absolute -top-1.5 left-3 sm:right-3 w-3 h-3 bg-white border-l border-t border-slate-200 transform rotate-45"></div>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                            <div className="relative flex-1">
+                            <div className="relative w-full sm:flex-1 min-w-0">
                               <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-500 text-xs">$</span>
                               <input
                                 type="number"
@@ -373,7 +388,7 @@ export default function BudgetCalculatorPage() {
                                 onChange={(e) => handleExpenseChange(categoryKey, e.target.value)}
                                 placeholder="0.00"
                                 step="0.01"
-                                className="w-full pl-6 pr-2 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900"
+                                className="w-full pl-6 pr-2 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 touch-friendly"
                               />
                             </div>
                           </div>
@@ -385,10 +400,10 @@ export default function BudgetCalculatorPage() {
               </div>
 
               {/* Right Column - Visual Display */}
-              <div className="flex flex-col items-center justify-center">
+              <div className="flex flex-col items-center justify-center order-1 lg:order-2 mb-6 lg:mb-0">
                 <div className="w-full max-w-sm">
                   {/* Donut Chart */}
-                  <div className="relative w-full aspect-square mb-4">
+                  <div className="relative w-full aspect-square mb-4 max-w-xs mx-auto">
                     <svg className="w-full h-full" viewBox="0 0 200 200">
                       {/* Helper function to convert angle to cartesian coordinates */}
                       {(() => {
@@ -652,7 +667,7 @@ export default function BudgetCalculatorPage() {
               The budget calculator helps you see where you stand with your money right <strong>now</strong>. But what if your income and expenses don't balance out? Great question. Try this:
             </p>
 
-            <div className="grid md:grid-cols-2 gap-6 mt-8">
+            <div className="grid md:grid-cols-2 gap-4 lg:gap-6 mt-8">
               {/* See if you're overspending */}
               <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-start gap-4">
@@ -724,15 +739,15 @@ export default function BudgetCalculatorPage() {
           </div>
 
           {/* Best Practices for the Budget Categories */}
-          <div className="mt-12">
+          <div className="mt-12 max-w-3xl mx-auto">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 text-center">
               Best Practices for the <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Budget Categories</span>
             </h2>
-            <p className="text-slate-600 mb-8 text-center max-w-3xl mx-auto">
+            <p className="text-slate-600 mb-8 text-center">
               Maybe you're still wondering how to find <strong>your</strong> budget numbers, or you want to know how to build the best budget. Here's even more info on the budget categories to help!
             </p>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
               {/* Monthly Income */}
               <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Monthly Income</h3>
@@ -848,6 +863,30 @@ export default function BudgetCalculatorPage() {
                 <p className="text-slate-600 text-sm leading-relaxed">
                   This budget calculator only has the most common categories, but it probably doesn't cover everything you spend money on. Go ahead and add any other expenses here. When you start budgeting regularly, you can customize and add as many categories as you need.
                 </p>
+              </div>
+            </div>
+
+            {/* Share Section */}
+            <div className="mt-12">
+              <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Share the Budget Calculator</h2>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 min-w-0">
+                  <input
+                    type="text"
+                    readOnly
+                    value={typeof window !== 'undefined' ? window.location.href : ''}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm"
+                  />
+                </div>
+                <button
+                  onClick={copyLinkToClipboard}
+                  className="flex items-center gap-2 bg-teal-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-700 transition-colors whitespace-nowrap touch-friendly flex-shrink-0"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                  {linkCopied ? "Copied!" : "Copy"}
+                </button>
               </div>
             </div>
           </div>
