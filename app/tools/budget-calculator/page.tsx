@@ -275,14 +275,26 @@ export default function BudgetCalculatorPage() {
       
       <main className="flex-1 py-6 sm:py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="text-center mb-6">
-            <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
-              Budget Calculator
-            </h1>
-            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
-              If you've never budgeted before—or it's been a while—this budget calculator is a solid starting point. Type in your monthly take-home pay and get a budget example to begin.
-            </p>
+          {/* Header Section with Background Design */}
+          <div className="relative py-12 sm:py-16 lg:py-20 mb-8 overflow-hidden rounded-2xl">
+            {/* Background decoration */}
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-50/40 via-amber-50/30 to-teal-50/40"></div>
+            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-teal-100/30 to-transparent rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-amber-100/30 to-transparent rounded-full blur-3xl"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-teal-50/20 to-transparent rounded-full blur-3xl"></div>
+            
+            {/* Content */}
+            <div className="relative text-center">
+              <div className="inline-block mb-4">
+                <span className="text-xs font-semibold text-teal-600 uppercase tracking-wider bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-teal-100">Free Tool</span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
+                Budget <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Calculator</span>
+              </h1>
+              <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+                If you've never budgeted before—or it's been a while—this budget calculator is a solid starting point. Type in your monthly take-home pay and get a budget example to begin.
+              </p>
+            </div>
           </div>
 
           {/* Calculator Section */}
