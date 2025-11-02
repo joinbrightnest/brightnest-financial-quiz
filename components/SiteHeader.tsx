@@ -104,13 +104,7 @@ export default function SiteHeader() {
                     </ul>
                     
                     <div className="mt-6 pt-6 border-t border-slate-200">
-                      <p className="text-xs text-slate-500 mb-2">More tools coming soon!</p>
-                      <Link href="/tools/budget-calculator" className="text-teal-600 hover:text-teal-700 font-medium text-sm flex items-center gap-2">
-                        See All Tools
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                        </svg>
-                      </Link>
+                      <p className="text-xs text-slate-500">More tools coming soon!</p>
                     </div>
                   </div>
                 </div>
@@ -218,13 +212,6 @@ export default function SiteHeader() {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Budget Calculator
-                  </Link>
-                  <Link 
-                    href="/tools" 
-                    className="block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 text-slate-600 hover:bg-gray-50 hover:text-teal-600"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    See All Tools
                   </Link>
                 </div>
                 <div className="pt-2">
