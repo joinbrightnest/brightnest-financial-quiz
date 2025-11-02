@@ -101,7 +101,10 @@ export default function BudgetCalculatorPage() {
       setExpenses(prev => {
         const newExpenses: { [key: string]: string } = { ...prev };
         let hasChanges = false;
+        let totalCalculated = 0;
+        const calculatedValues: { [key: string]: number } = {};
         
+        // First pass: calculate all values and track total
         Object.keys(NATIONAL_AVERAGES).forEach((key) => {
           const categoryKey = key as keyof typeof NATIONAL_AVERAGES;
           const percentage = NATIONAL_AVERAGES[categoryKey];
@@ -111,33 +114,70 @@ export default function BudgetCalculatorPage() {
             return; // Keep user's manual input
           }
           
-          if (hasValidIncome) {
-            // Calculate new value based on current income
-            if (percentage > 0) {
-              const calculatedValue = incomeNum * percentage;
-              const roundedValue = Math.round(calculatedValue);
-              const newValue = roundedValue > 0 ? roundedValue.toString() : "";
-              
-              // Update if value changed
-              if (prev[categoryKey as keyof typeof prev] !== newValue) {
-                newExpenses[categoryKey] = newValue;
-                hasChanges = true;
-              }
-            } else {
-              // For 0% categories, clear if not manually edited
-              if (prev[categoryKey as keyof typeof prev] !== "") {
-                newExpenses[categoryKey] = "";
-                hasChanges = true;
+          if (hasValidIncome && percentage > 0) {
+            const calculatedValue = incomeNum * percentage;
+            calculatedValues[categoryKey] = calculatedValue;
+            totalCalculated += calculatedValue;
+          }
+        });
+        
+        // If there are calculated values, adjust for rounding
+        if (Object.keys(calculatedValues).length > 0) {
+          const totalRounded = Object.values(calculatedValues).reduce((sum, val) => sum + Math.round(val), 0);
+          const adjustment = Math.round(incomeNum) - totalRounded;
+          
+          // Apply rounding with adjustment to make total match income
+          Object.keys(NATIONAL_AVERAGES).forEach((key) => {
+            const categoryKey = key as keyof typeof NATIONAL_AVERAGES;
+            const percentage = NATIONAL_AVERAGES[categoryKey];
+            
+            // Skip if this field was manually edited by the user
+            if (manuallyEditedFields.has(categoryKey)) {
+              return; // Keep user's manual input
+            }
+            
+            if (hasValidIncome) {
+              if (percentage > 0) {
+                let roundedValue = Math.round(calculatedValues[categoryKey] || 0);
+                
+                // Apply adjustment to the largest category to balance the total
+                if (adjustment !== 0 && key === 'housing') {
+                  roundedValue += adjustment;
+                  roundedValue = Math.max(0, roundedValue); // Ensure non-negative
+                }
+                
+                const newValue = roundedValue > 0 ? roundedValue.toString() : "";
+                
+                // Update if value changed
+                if (prev[categoryKey as keyof typeof prev] !== newValue) {
+                  newExpenses[categoryKey] = newValue;
+                  hasChanges = true;
+                }
+              } else {
+                // For 0% categories, clear if not manually edited
+                if (prev[categoryKey as keyof typeof prev] !== "") {
+                  newExpenses[categoryKey] = "";
+                  hasChanges = true;
+                }
               }
             }
-          } else {
-            // Income is empty or 0 - clear all auto-populated fields
+          });
+        } else {
+          // No calculated values, just clear all fields
+          Object.keys(NATIONAL_AVERAGES).forEach((key) => {
+            const categoryKey = key as keyof typeof NATIONAL_AVERAGES;
+            
+            // Skip if this field was manually edited by the user
+            if (manuallyEditedFields.has(categoryKey)) {
+              return; // Keep user's manual input
+            }
+            
             if (prev[categoryKey as keyof typeof prev] !== "") {
               newExpenses[categoryKey] = "";
               hasChanges = true;
             }
-          }
-        });
+          });
+        }
         
         // Only update state if there were actual changes
         return hasChanges ? newExpenses : prev;
