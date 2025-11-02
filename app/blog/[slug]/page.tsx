@@ -266,11 +266,12 @@ export default async function BlogArticlePage({ params }: PageProps) {
                     ) : (
                       <h2 className="text-lg sm:text-2xl font-bold text-slate-900 mb-4">{s.title}</h2>
                     )}
-                    <div className="text-slate-700 leading-relaxed text-base sm:text-lg space-y-4">
+                    <div className="text-slate-700 leading-relaxed text-base sm:text-lg space-y-6">
                       {(() => {
                         const paragraphs = s.body.split('\n\n').filter(p => p.trim());
                         const result = [];
                         let i = 0;
+                        let stepCounter = 0;
                         
                         // Helper function to parse markdown-style bold and italic
                         const parseMarkdown = (text: string) => {
@@ -308,6 +309,31 @@ export default async function BlogArticlePage({ params }: PageProps) {
                           return parts.length > 0 ? parts : [text];
                         };
                         
+                        // Helper to get icon for step number
+                        const getStepIcon = (stepNum: number) => {
+                          const icons = [
+                            <svg key="1" className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>, // clipboard
+                            <svg key="2" className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>, // settings
+                            <svg key="3" className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>, // chart
+                            <svg key="4" className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>, // target
+                            <svg key="5" className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>, // lock
+                            <svg key="6" className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg> // refresh
+                          ];
+                          return icons[stepNum - 1] || icons[0];
+                        };
+                        
+                        // Helper to get icon for reason number
+                        const getReasonIcon = (reasonNum: number) => {
+                          const icons = [
+                            <svg key="1" className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>, // alert
+                            <svg key="2" className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>,
+                            <svg key="3" className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>, // check
+                            <svg key="4" className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>, // lightning
+                            <svg key="5" className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg> // trend
+                          ];
+                          return icons[reasonNum - 1] || icons[0];
+                        };
+                        
                         while (i < paragraphs.length) {
                           const para = paragraphs[i].trim();
                           
@@ -319,23 +345,112 @@ export default async function BlogArticlePage({ params }: PageProps) {
                               i++;
                             }
                             result.push(
-                              <ul key={`bullets-${i}`} className="list-disc list-inside space-y-2 pl-6">
-                                {bullets.map((bullet, idx) => (
-                                  <li key={idx} className="mb-1">{parseMarkdown(bullet)}</li>
-                                ))}
-                              </ul>
+                              <div key={`bullets-${i}`} className="bg-slate-50 rounded-lg p-6 border border-slate-200">
+                                <ul className="space-y-3">
+                                  {bullets.map((bullet, idx) => (
+                                    <li key={idx} className="flex items-start gap-3">
+                                      <svg className="w-5 h-5 text-teal-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                      </svg>
+                                      <span className="flex-1">{parseMarkdown(bullet)}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
                             );
                             continue;
                           }
                           
-                          // Check if paragraph starts with bold (like "**Step 1:**" or "**1. Title**")
-                          if (para.match(/^\*\*/)) {
+                          // Check if paragraph starts with "**Step" - create a card with icon
+                          if (para.match(/^\*\*Step \d+:/)) {
+                            stepCounter++;
+                            const stepMatch = para.match(/^\*\*Step (\d+):\s*\*\*(.+)\*\*/);
+                            const stepNum = stepMatch ? parseInt(stepMatch[1]) : stepCounter;
+                            const stepTitle = stepMatch ? stepMatch[2].trim() : para.replace(/^\*\*Step \d+:\s*\*\*/, '').replace(/\*\*$/, '').trim();
+                            const restOfContent = [];
+                            
+                            // Collect following paragraphs until next step or end
+                            i++;
+                            while (i < paragraphs.length && !paragraphs[i].trim().match(/^\*\*Step \d+:/) && !paragraphs[i].trim().match(/^\*\*\d+\./)) {
+                              restOfContent.push(paragraphs[i].trim());
+                              i++;
+                            }
+                            
                             result.push(
-                              <div key={i} className="mt-4 mb-2">
-                                <p className="font-semibold text-slate-900 text-lg">{parseMarkdown(para)}</p>
+                              <div key={`step-${stepNum}`} className="bg-gradient-to-br from-teal-50 to-slate-50 rounded-xl p-6 border border-teal-200/50 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="flex items-start gap-4 mb-4">
+                                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-teal-600 to-teal-700 rounded-lg flex items-center justify-center text-white shadow-md">
+                                    <span className="text-xl font-bold">{stepNum}</span>
+                                  </div>
+                                  <div className="flex-1">
+                                    <h3 className="font-bold text-slate-900 text-xl mb-2">{stepTitle}</h3>
+                                  </div>
+                                </div>
+                                <div className="space-y-3">
+                                  {restOfContent.map((content, idx) => (
+                                    <p key={idx}>{parseMarkdown(content)}</p>
+                                  ))}
+                                </div>
                               </div>
                             );
+                            continue;
+                          }
+                          
+                          // Check if paragraph starts with numbered bold (like "**1. Title**") - create a card with icon
+                          if (para.match(/^\*\*\d+\./)) {
+                            const numMatch = para.match(/^\*\*(\d+)\./);
+                            const num = numMatch ? parseInt(numMatch[1]) : 0;
+                            const titleMatch = para.match(/^\*\*\d+\.\s*([^*]+)\*\*/);
+                            const title = titleMatch ? titleMatch[1].trim() : '';
+                            const restOfContent = [];
+                            
+                            // Collect following paragraphs until next numbered item
                             i++;
+                            while (i < paragraphs.length && !paragraphs[i].trim().match(/^\*\*\d+\./) && !paragraphs[i].trim().match(/^\*\*Step \d+:/)) {
+                              restOfContent.push(paragraphs[i].trim());
+                              i++;
+                            }
+                            
+                            result.push(
+                              <div key={i} className="bg-white rounded-lg p-5 border border-slate-200 shadow-sm hover:border-teal-300 transition-all">
+                                <div className="flex items-start gap-3 mb-3">
+                                  <div className="flex-shrink-0 w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center text-teal-700">
+                                    {getReasonIcon(num)}
+                                  </div>
+                                  <h3 className="font-semibold text-slate-900 text-lg flex-1">{title}</h3>
+                                </div>
+                                <div className="space-y-2 pl-11">
+                                  {restOfContent.map((content, idx) => (
+                                    <p key={idx}>{parseMarkdown(content)}</p>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                            continue;
+                          }
+                          
+                          // Check if paragraph starts with bold mindset shift
+                          if (para.match(/^\*\*From/) && s.title.includes('mindset')) {
+                            const restOfContent = [];
+                            i++;
+                            while (i < paragraphs.length && !paragraphs[i].trim().match(/^\*\*From/)) {
+                              restOfContent.push(paragraphs[i].trim());
+                              i++;
+                            }
+                            
+                            const boldMatch = para.match(/^\*\*(.+?)\*\*/);
+                            const boldText = boldMatch ? boldMatch[1] : para;
+                            
+                            result.push(
+                              <div key={i} className="bg-white rounded-lg p-5 border-l-4 border-teal-500 shadow-sm">
+                                <h3 className="font-semibold text-slate-900 text-lg mb-3">{boldText}</h3>
+                                <div className="space-y-2">
+                                  {restOfContent.map((content, idx) => (
+                                    <p key={idx}>{parseMarkdown(content)}</p>
+                                  ))}
+                                </div>
+                              </div>
+                            );
                             continue;
                           }
                           
