@@ -548,17 +548,19 @@ export default async function BlogArticlePage({ params }: PageProps) {
                               
                             result.push(
                               <div key={i} className="bg-gradient-to-r from-slate-50 to-teal-50 rounded-lg p-4 border border-teal-200/50 shadow-sm">
-                                <div className="flex items-center justify-center gap-3">
-                                    <span className="px-3 py-1.5 bg-slate-200 rounded-md text-sm font-medium text-slate-700 line-through decoration-slate-500 whitespace-nowrap min-w-[140px] flex-shrink-0">
+                                <div className="flex items-center justify-center">
+                                  <div className="flex items-center gap-3">
+                                    <span className="px-3 py-1.5 bg-slate-200 rounded-md text-sm font-medium text-slate-700 line-through decoration-slate-500 whitespace-nowrap min-w-[140px] flex-shrink-0 text-center">
                                       {fromText}
                                     </span>
                                     <svg className="w-5 h-5 text-teal-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                     </svg>
-                                    <span className="px-3 py-1.5 bg-teal-600 text-white rounded-md text-sm font-semibold whitespace-nowrap flex-shrink-0">
+                                    <span className="px-3 py-1.5 bg-teal-600 text-white rounded-md text-sm font-semibold whitespace-nowrap flex-shrink-0 text-center">
                                       {toText}
                                     </span>
                                   </div>
+                                </div>
                                   {restOfContent.length > 0 && (
                                     <div className="mt-3 space-y-2">
                                       {restOfContent.map((content, idx) => (
