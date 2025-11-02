@@ -15,21 +15,17 @@ interface Debt {
 
 const DEBT_TYPES = [
   "Choose a Debt Type",
-  "Credit Card",
   "Car Loan",
+  "Credit Card",
   "Student Loan",
-  "Personal Loan",
-  "Medical Bill",
-  "Other"
+  "Other Non-Mortgage Debt"
 ];
 
 const DEFAULT_INTEREST_RATES: { [key: string]: number } = {
-  "Credit Card": 18,
   "Car Loan": 5,
+  "Credit Card": 18,
   "Student Loan": 4,
-  "Personal Loan": 6,
-  "Medical Bill": 0,
-  "Other": 6
+  "Other Non-Mortgage Debt": 6
 };
 
 export default function DebtSnowballCalculatorPage() {
