@@ -598,7 +598,7 @@ export default function BudgetCalculatorPage() {
           {/* Get the Most out of the Budget Calculator */}
           <div className="mt-8 bg-slate-50 rounded-2xl p-8 lg:p-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 text-center">
-              Get the Most out of the Budget Calculator
+              Get the Most out of the <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Budget Calculator</span>
             </h2>
             <p className="text-slate-600 mb-6 text-center max-w-3xl mx-auto">
               The budget calculator helps you see where you stand with your money right <strong>now</strong>. But what if your income and expenses don't balance out? Great question. Try this:
@@ -678,7 +678,7 @@ export default function BudgetCalculatorPage() {
           {/* Best Practices for the Budget Categories */}
           <div className="mt-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 text-center">
-              Best Practices for the Budget Categories
+              Best Practices for the <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Budget Categories</span>
             </h2>
             <p className="text-slate-600 mb-8 text-center max-w-3xl mx-auto">
               Maybe you're still wondering how to find <strong>your</strong> budget numbers, or you want to know how to build the best budget. Here's even more info on the budget categories to help!
