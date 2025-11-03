@@ -79,8 +79,8 @@ export default function BlogPage() {
               {/* Text Banner Overlay - Positioned over image */}
               <div className="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 right-4 sm:right-8">
                 <div className="inline-block bg-gradient-to-r from-teal-700 to-teal-800 px-3 sm:px-6 py-2 sm:py-3 rounded-lg shadow-xl">
-                  <h2 className="text-lg sm:text-2xl md:text-3xl font-bold text-white uppercase leading-tight">
-                    A BEHAVIOUR-CHANGE APPROACH TO PERSONAL FINANCES
+                  <h2 className="text-lg sm:text-2xl md:text-3xl font-bold text-white leading-tight">
+                    A Behaviour-Change Approach to Personal Finances
                   </h2>
                 </div>
               </div>
