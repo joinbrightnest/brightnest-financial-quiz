@@ -4,7 +4,6 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 
 export default function AboutPage() {
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
       <SiteHeader />
@@ -18,30 +17,48 @@ export default function AboutPage() {
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center mb-16">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-8 leading-tight">
+            <div className="inline-block mb-6">
+              <span className="text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full">About Us</span>
+            </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
               About BrightNest
             </h1>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-8 leading-tight">
+            <p className="text-lg sm:text-xl text-slate-600 leading-relaxed max-w-3xl mx-auto mb-8">
               Helping People Rebuild Their Relationship With Money
-            </h2>
+            </p>
           </div>
 
-          <div className="max-w-4xl mx-auto space-y-6 mb-16">
-            <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
-              Money isn't just numbers.
-            </p>
-            <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
-              It's emotion, habit, and identity — all tangled together.
-            </p>
-            <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
-              Most people don't struggle because they don't know what to do.
-            </p>
-            <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
-              They struggle because they can't make themselves do it consistently.
-            </p>
-            <p className="text-lg sm:text-xl text-slate-700 leading-relaxed font-semibold">
-              That's where BrightNest comes in.
-            </p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-16">
+            <div className="space-y-6 relative">
+              <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-teal-500 to-amber-400 rounded-full"></div>
+              <p className="text-base text-slate-700 leading-relaxed">
+                Money isn't just numbers.
+              </p>
+              <p className="text-base text-slate-700 leading-relaxed">
+                It's emotion, habit, and identity — all tangled together.
+              </p>
+              <p className="text-base text-slate-700 leading-relaxed">
+                Most people don't struggle because they don't know what to do.
+              </p>
+              <p className="text-base text-slate-700 leading-relaxed">
+                They struggle because they can't make themselves do it consistently.
+              </p>
+              <p className="text-base text-slate-700 leading-relaxed font-semibold">
+                That's where BrightNest comes in.
+              </p>
+            </div>
+            <div className="relative h-64 sm:h-80 lg:h-96 group">
+              <div className="absolute inset-0 bg-gradient-to-br from-teal-100 to-teal-50 rounded-xl shadow-lg border border-teal-200/50 flex items-center justify-center transform group-hover:scale-[1.02] transition-transform duration-300">
+                <div className="text-center p-8">
+                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 mb-6 shadow-lg">
+                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <p className="text-slate-700 font-semibold text-sm uppercase tracking-wider">Your Financial Journey</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -54,6 +71,7 @@ export default function AboutPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
+              <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full mb-4">Our Mission</span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4 mb-6 leading-tight">
                 Our Mission
               </h2>
@@ -93,35 +111,90 @@ export default function AboutPage() {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-50/30 rounded-full blur-3xl"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4 mb-6 leading-tight">
-                What Makes BrightNest Different
-              </h2>
+          <div className="text-center mb-16">
+            <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full mb-4">What Makes Us Different</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4 mb-6 max-w-4xl mx-auto leading-tight">
+              What Makes BrightNest Different
+            </h2>
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed mb-8">
+              Most financial advice focuses on spreadsheets, apps, or tips. We focus on human behaviour.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            <div className="group bg-gradient-to-br from-white to-teal-50/30 rounded-xl p-8 border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-teal-100/20 rounded-full -mr-12 -mt-12"></div>
+              <div className="flex items-start space-x-4 relative z-10">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Behavioural Science</h3>
+                  <p className="text-sm text-slate-600 leading-relaxed">Because lasting change starts with mindset.</p>
+                </div>
+              </div>
             </div>
-            <div className="space-y-6">
-              <p className="text-lg text-slate-700 leading-relaxed">
-                Most financial advice focuses on spreadsheets, apps, or tips.
-              </p>
-              <p className="text-lg text-slate-700 leading-relaxed font-semibold">
-                We focus on human behaviour.
-              </p>
-              <p className="text-lg text-slate-700 leading-relaxed">
-                Our system blends:
-              </p>
-              <ul className="space-y-4 text-lg text-slate-700 leading-relaxed list-disc list-inside ml-4">
-                <li><strong>Behavioural science</strong> — because lasting change starts with mindset.</li>
-                <li><strong>Proven frameworks</strong> — to simplify decisions and remove guesswork.</li>
-                <li><strong>Accountability & coaching</strong> — to help you follow through, not just plan.</li>
-                <li><strong>Clear tracking dashboards</strong> — so you can see your progress in real time.</li>
-              </ul>
-              <p className="text-lg text-slate-700 leading-relaxed">
-                You don't need to become a finance expert.
-              </p>
-              <p className="text-lg text-slate-700 leading-relaxed font-semibold">
-                You just need the right environment, habits, and support — that's what BrightNest gives you.
-              </p>
+            <div className="group bg-gradient-to-br from-white to-teal-50/30 rounded-xl p-8 border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-teal-100/20 rounded-full -mr-12 -mt-12"></div>
+              <div className="flex items-start space-x-4 relative z-10">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Proven Frameworks</h3>
+                  <p className="text-sm text-slate-600 leading-relaxed">To simplify decisions and remove guesswork.</p>
+                </div>
+              </div>
             </div>
+            <div className="group bg-gradient-to-br from-white to-teal-50/30 rounded-xl p-8 border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-teal-100/20 rounded-full -mr-12 -mt-12"></div>
+              <div className="flex items-start space-x-4 relative z-10">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Accountability & Coaching</h3>
+                  <p className="text-sm text-slate-600 leading-relaxed">To help you follow through, not just plan.</p>
+                </div>
+              </div>
+            </div>
+            <div className="group bg-gradient-to-br from-white to-teal-50/30 rounded-xl p-8 border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-teal-100/20 rounded-full -mr-12 -mt-12"></div>
+              <div className="flex items-start space-x-4 relative z-10">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Clear Tracking Dashboards</h3>
+                  <p className="text-sm text-slate-600 leading-relaxed">So you can see your progress in real time.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="max-w-4xl mx-auto mt-12 text-center">
+            <p className="text-lg text-slate-700 leading-relaxed">
+              You don't need to become a finance expert.
+            </p>
+            <p className="text-lg text-slate-700 leading-relaxed font-semibold mt-2">
+              You just need the right environment, habits, and support — that's what BrightNest gives you.
+            </p>
           </div>
         </div>
       </section>
@@ -262,20 +335,17 @@ export default function AboutPage() {
         <div className="absolute top-0 right-0 w-96 h-96 bg-teal-50/20 rounded-full blur-3xl"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4 mb-6 leading-tight">
-                Our Vision
-              </h2>
-            </div>
-            <div className="space-y-6 text-center">
-              <p className="text-lg text-slate-700 leading-relaxed">
-                To make behaviour change in personal finance as accessible and natural as fitness coaching.
-              </p>
-              <p className="text-lg text-slate-700 leading-relaxed font-semibold">
-                Because when people feel in control of their money, everything else gets better — confidence, relationships, freedom, and peace of mind.
-              </p>
-            </div>
+          <div className="text-center mb-16">
+            <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full mb-4">Our Vision</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4 mb-6 max-w-4xl mx-auto leading-tight">
+              Our Vision
+            </h2>
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
+              To make behaviour change in personal finance as accessible and natural as fitness coaching.
+            </p>
+            <p className="text-lg text-slate-700 leading-relaxed font-semibold mt-4 max-w-3xl mx-auto">
+              Because when people feel in control of their money, everything else gets better — confidence, relationships, freedom, and peace of mind.
+            </p>
           </div>
         </div>
       </section>
