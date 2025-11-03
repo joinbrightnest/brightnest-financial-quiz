@@ -58,23 +58,23 @@ export default function CareersPage() {
   const coreValues = [
     {
       icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
-      title: "Future-Focused",
-      description: "Long-term financial freedom instead of short-term quick fixes."
+      title: "Clarity",
+      description: "Making the complex simple, actionable and human."
     },
     {
       icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
-      title: "Extreme Ownership",
-      description: "We own our results. There's no one else to blame for our success or failure."
+      title: "Courage",
+      description: "Facing money fears, shifting behaviour and changing lives."
     },
     {
       icon: "M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z",
-      title: "Radical Transparency",
-      description: "Honesty, especially when difficult, builds trust and informed decision-making."
+      title: "Consistency",
+      description: "Because transformation is built by small wins over time."
     },
     {
       icon: "M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z",
-      title: "World-Class Standards",
-      description: "Excellence is our standard in everything we do and offer."
+      title: "Impact",
+      description: "We measure success not by transactions but by changed lives."
     }
   ];
 
@@ -129,16 +129,12 @@ export default function CareersPage() {
             <span className="text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full">Careers</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-slate-900">
-            <span className="block mb-1">Join Our Team.</span>
-            <span className="block bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent mb-1">Empower Women.</span>
-            <span className="block">Transform Lives.</span>
+            Join the BrightNest Team
           </h1>
           
           <p className="text-sm sm:text-base lg:text-lg text-slate-600 max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed px-2">
-            At BrightNest, we're on a mission to inspire and empower women to achieve their financial, wealth, and life goals. Join a passionate, driven team that's changing lives every day—one transformation at a time.
+            Change behaviour. Change lives. Build more than a job.
           </p>
-
-          <p className="text-base sm:text-lg font-semibold mb-6 sm:mb-8 text-slate-700">Ready to make an impact?</p>
 
           <button
             onClick={handleSeePositions}
@@ -165,19 +161,58 @@ export default function CareersPage() {
         </div>
       </section>
 
-      {/* Your Next Big Career Shift */}
+      {/* Our Mission */}
+      <section className="py-10 sm:py-16 lg:py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-teal-50/20"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8 sm:mb-12">
+              <span className="inline-block text-xs sm:text-sm text-teal-600 uppercase tracking-wide mb-4 font-semibold bg-teal-50 px-4 py-2 rounded-full">Our Mission</span>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 px-2 mt-4">
+                Our Mission
+              </h2>
+            </div>
+            <div className="bg-white rounded-xl p-6 sm:p-8 lg:p-12 border border-slate-200/60 shadow-lg relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500"></div>
+              <div className="space-y-4 relative z-10">
+                <p className="text-base sm:text-lg text-slate-700 leading-relaxed">
+                  At BrightNest, we're not just helping people manage money — we're guiding them to transform how they think, feel, and act about their finances.
+                </p>
+                <p className="text-base sm:text-lg text-slate-700 leading-relaxed">
+                  We believe lasting change happens when the habits beneath the numbers are rewired. And we're building the team to make that possible.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Who We're Looking For */}
       <section className="py-10 sm:py-16 lg:py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-teal-50/20"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
-            <span className="inline-block text-xs sm:text-sm text-teal-600 uppercase tracking-wide mb-4 font-semibold bg-teal-50 px-4 py-2 rounded-full">Are you Ready?</span>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 px-2 mt-4">
-              Your Next Big Career Shift
+              Who We're Looking For
             </h2>
-            <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto px-4">
-              Join BrightNest, where <span className="text-teal-600 font-semibold">passionate innovators</span> transform women's financial lives. We foster a <span className="text-teal-600 font-semibold">supportive, inclusive environment,</span> pushing boundaries and empowering women worldwide.
-            </p>
+            <div className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto px-4 space-y-4">
+              <p>
+                We want people who care deeply about human behaviour, real results and genuine impact. If you're someone who:
+              </p>
+              <ul className="list-disc list-inside space-y-2 ml-4">
+                <li>believes in the power of clarity over confusion</li>
+                <li>gets energy from helping others move from stuck → free</li>
+                <li>wants to work in a team that values growth, integrity and transformation</li>
+              </ul>
+              <p className="font-semibold">
+                then you might be a perfect fit.
+              </p>
+              <p>
+                Whether your strength lies in coaching, operations, tech, content or client experience — there's an opportunity here to help build something meaningful.
+              </p>
+            </div>
           </div>
 
           {/* Testimonials Carousel */}
@@ -272,9 +307,9 @@ export default function CareersPage() {
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
-            <span className="inline-block text-xs sm:text-sm text-teal-600 uppercase tracking-wide mb-4 font-semibold bg-teal-50 px-4 py-2 rounded-full">The Values That Guide Us</span>
+            <span className="inline-block text-xs sm:text-sm text-teal-600 uppercase tracking-wide mb-4 font-semibold bg-teal-50 px-4 py-2 rounded-full">Our Values</span>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 px-2 mt-4">
-              BrightNest <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Core Values</span>
+              Our Values
             </h2>
           </div>
 
@@ -379,18 +414,40 @@ export default function CareersPage() {
                   work with us
                 </h2>
 
-                {/* Benefits List */}
-                <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-                  {benefits.map((benefit, index) => (
-                    <div key={index} className="flex items-start space-x-2 sm:space-x-3 group">
-                      <div className="flex-shrink-0 mt-0.5">
-                        <svg className="w-5 h-5 sm:w-6 sm:h-6 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <p className="text-xs sm:text-sm text-white font-light italic">{benefit}</p>
+                {/* Content */}
+                <div className="space-y-4 mb-6 sm:mb-8">
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 mt-0.5">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
                     </div>
-                  ))}
+                    <p className="text-xs sm:text-sm text-white font-light italic"><strong className="font-semibold">Purpose over process:</strong> Every role connects back to helping someone live with more financial freedom.</p>
+                  </div>
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 mt-0.5">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <p className="text-xs sm:text-sm text-white font-light italic"><strong className="font-semibold">Team of experts:</strong> You'll work alongside certified behaviour & finance coaches, tech builders and change-makers.</p>
+                  </div>
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 mt-0.5">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <p className="text-xs sm:text-sm text-white font-light italic"><strong className="font-semibold">Supportive culture:</strong> We value accountability, transparency, continuous learning and the courage to try new things.</p>
+                  </div>
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 mt-0.5">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <p className="text-xs sm:text-sm text-white font-light italic"><strong className="font-semibold">Growth mindset:</strong> We're growing rapidly, and with growth comes opportunity — for you and for our clients.</p>
+                  </div>
                 </div>
 
                 {/* Button */}
@@ -429,23 +486,69 @@ export default function CareersPage() {
               </div>
 
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-4 sm:mb-5 px-2">
-                No Open Positions at This Time
+                Roles & Opportunities
               </h2>
               
               <p className="text-sm sm:text-base text-slate-600 mb-4 sm:mb-5 max-w-2xl mx-auto leading-relaxed px-2">
-                We're not currently hiring, but we're always interested in connecting with <span className="text-teal-600 font-semibold">talented individuals</span> who are passionate about <span className="text-teal-600 font-semibold">empowering women</span> and making a real difference.
+                We have openings (or will have openings) across:
               </p>
 
-              <p className="text-sm sm:text-base text-slate-600 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-2">
-                If you'd like to be considered for future opportunities, please send your resume and a brief introduction to <a href="mailto:careers@joinbrightnest.com" className="text-teal-600 hover:text-teal-700 font-semibold underline break-all">careers@joinbrightnest.com</a>. We'll keep your information on file and reach out when a position that matches your skills becomes available.
+              <ul className="text-sm sm:text-base text-slate-600 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-2 space-y-2 list-disc list-inside">
+                <li>Client Coaching & Behaviour Change Specialists</li>
+                <li>Marketing & Content Creators (focused on mindset & finance)</li>
+                <li>Operations & Client Success</li>
+                <li>Product & Technology (platforms, dashboards, data)</li>
+                <li>Partnerships & Growth</li>
+              </ul>
+
+              <p className="text-sm sm:text-base text-slate-600 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-2 italic">
+                (Even if you don't see your exact fit listed yet, we encourage you to apply — let's connect and find where your strengths meet our mission.)
               </p>
+
+              <div className="mb-8 sm:mb-10 pt-6 sm:pt-8 border-t border-slate-200">
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-5 px-2">
+                  Why Join Now
+                </h3>
+                <p className="text-sm sm:text-base text-slate-600 mb-4 sm:mb-5 max-w-2xl mx-auto leading-relaxed px-2">
+                  This is more than a job-board listing. This is an invitation to join at a critical moment in our journey.
+                </p>
+                <p className="text-sm sm:text-base text-slate-600 mb-4 sm:mb-5 max-w-2xl mx-auto leading-relaxed px-2">
+                  You'll have the chance to help shape our systems, culture and impact.
+                </p>
+                <p className="text-sm sm:text-base text-slate-600 mb-4 sm:mb-5 max-w-2xl mx-auto leading-relaxed px-2">
+                  And in doing so, you'll build experience, mastery and fulfilment.
+                </p>
+              </div>
+
+              <div className="mb-8 sm:mb-10 pt-6 sm:pt-8 border-t border-slate-200">
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-5 px-2">
+                  How to Apply
+                </h3>
+                <div className="text-sm sm:text-base text-slate-600 mb-4 sm:mb-5 max-w-2xl mx-auto leading-relaxed px-2 space-y-3">
+                  <p>
+                    Email your CV (or LinkedIn) and a short note: <strong>Why does financial behaviour change matter to you?</strong>
+                  </p>
+                  <p>
+                    Include which role(s) interest you and how your skills align.
+                  </p>
+                  <p>
+                    We'll respond quickly and share next steps: a chat + a short task so we can see if we're a great match.
+                  </p>
+                  <p className="font-semibold">
+                    Send your application to <a href="mailto:careers@brightnest.com" className="text-teal-600 hover:text-teal-700 underline break-all">careers@brightnest.com</a>
+                  </p>
+                  <p className="text-xs sm:text-sm text-slate-500 italic">
+                    (We'll treat every application personally and appreciate your time.)
+                  </p>
+                </div>
+              </div>
 
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center px-2">
                 <a
-                  href="mailto:careers@joinbrightnest.com"
+                  href="mailto:careers@brightnest.com"
                   className="w-full sm:w-auto bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 sm:px-10 py-3 rounded-lg font-semibold text-sm sm:text-base hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300 text-center"
                 >
-                  Send Resume
+                  Apply Now
                 </a>
                 <Link
                   href="/"
@@ -453,13 +556,6 @@ export default function CareersPage() {
                 >
                   Back to Home
                 </Link>
-              </div>
-
-              {/* Additional Message */}
-              <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-slate-200">
-                <p className="text-xs sm:text-sm text-slate-500 italic px-2">
-                  Thank you for your interest in BrightNest. We're building something special, and we'd love to have you be part of it when the time is right.
-                </p>
               </div>
             </div>
           </div>
