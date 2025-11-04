@@ -47,7 +47,40 @@ export async function GET(request: NextRequest) {
       ],
     });
 
-    return NextResponse.json({ tasks });
+    // Fetch appointments for tasks that don't have appointmentId set but have leadEmail
+    // Match by leadEmail to customerEmail (same logic as closers API)
+    const tasksWithAppointments = await Promise.all(
+      tasks.map(async (task) => {
+        // If task already has appointment, use it
+        if (task.appointment) {
+          return task;
+        }
+
+        // Otherwise, find appointment by matching leadEmail to customerEmail
+        // For admin, we don't filter by closerId since admins can see all appointments
+        if (task.leadEmail) {
+          const appointment = await prisma.appointment.findFirst({
+            where: {
+              customerEmail: task.leadEmail,
+            },
+            select: {
+              id: true,
+              customerName: true,
+              customerEmail: true,
+            },
+          });
+
+          return {
+            ...task,
+            appointment: appointment || null,
+          };
+        }
+
+        return task;
+      })
+    );
+
+    return NextResponse.json({ tasks: tasksWithAppointments });
   } catch (error) {
     console.error('Error fetching tasks:', error);
     return NextResponse.json(
