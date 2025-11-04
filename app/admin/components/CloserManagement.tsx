@@ -70,6 +70,9 @@ export default function CloserManagement() {
   const [editingCloserId, setEditingCloserId] = useState<string | null>(null);
   const [editingCalendlyLink, setEditingCalendlyLink] = useState('');
   const [showTaskForm, setShowTaskForm] = useState(false);
+  const [resettingPasswordFor, setResettingPasswordFor] = useState<string | null>(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [showPasswordResetModal, setShowPasswordResetModal] = useState(false);
   const [taskForm, setTaskForm] = useState({
     leadEmail: '',
     title: '',
@@ -197,6 +200,43 @@ export default function CloserManagement() {
       }
     } catch (error) {
       setError('Network error deleting closer');
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!resettingPasswordFor || !newPassword) {
+      setError('Please enter a new password');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/closers/${resettingPasswordFor}/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          newPassword: newPassword,
+        }),
+      });
+
+      if (response.ok) {
+        setShowPasswordResetModal(false);
+        setResettingPasswordFor(null);
+        setNewPassword('');
+        setError('');
+        alert('Password reset successfully!');
+      } else {
+        const data = await response.json();
+        setError(data.error || 'Failed to reset password');
+      }
+    } catch (error) {
+      setError('Network error resetting password');
     }
   };
 
@@ -584,6 +624,17 @@ export default function CloserManagement() {
                           }`}
                         >
                           {closer.isActive ? 'Deactivate' : 'Activate'}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setResettingPasswordFor(closer.id);
+                            setShowPasswordResetModal(true);
+                            setNewPassword('');
+                          }}
+                          className="px-4 py-2 bg-yellow-100 text-yellow-700 text-sm font-medium rounded-lg hover:bg-yellow-200 transition-colors border border-yellow-300"
+                          title="Reset closer password"
+                        >
+                          Reset Password
                         </button>
                         <button
                           onClick={() => handleDeleteCloser(closer.id)}
@@ -1518,6 +1569,59 @@ export default function CloserManagement() {
                 </div>
               );
             })()}
+          </div>
+        </div>
+      )}
+
+      {/* Password Reset Modal */}
+      {showPasswordResetModal && resettingPasswordFor && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+            <div className="p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Reset Password</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Enter a new password for {closers.find(c => c.id === resettingPasswordFor)?.name || 'this closer'}.
+                The password must be at least 6 characters long.
+              </p>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Enter new password"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                  autoFocus
+                />
+                {newPassword && newPassword.length < 6 && (
+                  <p className="mt-1 text-sm text-red-600">Password must be at least 6 characters</p>
+                )}
+              </div>
+
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => {
+                    setShowPasswordResetModal(false);
+                    setResettingPasswordFor(null);
+                    setNewPassword('');
+                    setError('');
+                  }}
+                  className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleResetPassword}
+                  disabled={!newPassword || newPassword.length < 6}
+                  className="flex-1 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                >
+                  Reset Password
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
