@@ -413,196 +413,189 @@ export default function CloserTasks() {
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredTasks.map((task) => (
-                <div
-                  key={task.id}
-                  className="border border-gray-200 rounded-lg p-6 hover:border-gray-300 hover:shadow-sm transition-all bg-white"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          {task.title}
-                        </h3>
-                        <span className={`px-3 py-1.5 rounded-md text-xs ${getPriorityColor(task.priority)}`}>
-                          {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                        </span>
-                        <span className={`px-3 py-1.5 rounded-md text-xs ${getStatusColor(task.status)}`}>
-                          {task.status === 'in_progress' ? 'In Progress' : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-                        </span>
-                        <button
-                          onClick={() => openEditTask(task)}
-                          className="ml-2 p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
-                          title="Edit task"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                          </svg>
-                        </button>
+              {filteredTasks.map((task) => {
+                const isEditing = editingTask?.id === task.id;
+                return (
+                  <div
+                    key={task.id}
+                    className="border border-gray-200 rounded-lg p-6 hover:border-gray-300 hover:shadow-sm transition-all bg-white"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        {isEditing ? (
+                          // Edit Mode
+                          <div className="space-y-3">
+                            <div className="flex items-center space-x-3 mb-2">
+                              <input
+                                type="text"
+                                value={taskForm.title}
+                                onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
+                                className="flex-1 text-lg font-semibold px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                placeholder="Task title"
+                              />
+                              <select
+                                value={taskForm.priority}
+                                onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value as 'low' | 'medium' | 'high' | 'urgent' })}
+                                className={`px-3 py-1.5 rounded-md text-xs border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${getPriorityColor(taskForm.priority)}`}
+                              >
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                              </select>
+                              <span className={`px-3 py-1.5 rounded-md text-xs ${getStatusColor(task.status)}`}>
+                                {task.status === 'in_progress' ? 'In Progress' : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                              </span>
+                            </div>
+                            <textarea
+                              value={taskForm.description}
+                              onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
+                              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-600 mb-2"
+                              placeholder="Task description"
+                              rows={2}
+                            />
+                            <div className="flex items-center space-x-6 text-sm">
+                              <div className="flex items-center">
+                                <svg className="w-4 h-4 mr-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <input
+                                  type="date"
+                                  value={taskForm.dueDate}
+                                  onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
+                                  className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                                />
+                              </div>
+                              {task.leadEmail && (
+                                <div className="flex items-center text-gray-500">
+                                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                  </svg>
+                                  {task.leadEmail}
+                                </div>
+                              )}
+                              {task.closer && (
+                                <div className="flex items-center text-gray-500">
+                                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                  </svg>
+                                  Deal Owner: {task.closer.name}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          // View Mode
+                          <>
+                            <div className="flex items-center space-x-3 mb-2">
+                              <h3 className="text-lg font-semibold text-gray-900">
+                                {task.title}
+                              </h3>
+                              <span className={`px-3 py-1.5 rounded-md text-xs ${getPriorityColor(task.priority)}`}>
+                                {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                              </span>
+                              <span className={`px-3 py-1.5 rounded-md text-xs ${getStatusColor(task.status)}`}>
+                                {task.status === 'in_progress' ? 'In Progress' : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                              </span>
+                              <button
+                                onClick={() => openEditTask(task)}
+                                className="ml-2 p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                                title="Edit task"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </button>
+                            </div>
+                            {task.description && (
+                              <p className="text-gray-600 mb-3">{task.description}</p>
+                            )}
+                            <div className="flex items-center space-x-6 text-sm text-gray-500">
+                              {task.dueDate && (
+                                <div className="flex items-center">
+                                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                  </svg>
+                                  {new Date(task.dueDate).toLocaleDateString()}
+                                </div>
+                              )}
+                              {task.leadEmail && (
+                                <div className="flex items-center">
+                                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                  </svg>
+                                  {task.leadEmail}
+                                </div>
+                              )}
+                              {task.closer && (
+                                <div className="flex items-center">
+                                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                  </svg>
+                                  Deal Owner: {task.closer.name}
+                                </div>
+                              )}
+                            </div>
+                          </>
+                        )}
                       </div>
-                      {task.description && (
-                        <p className="text-gray-600 mb-3">{task.description}</p>
-                      )}
-                      <div className="flex items-center space-x-6 text-sm text-gray-500">
-                        {task.dueDate && (
-                          <div className="flex items-center">
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            {new Date(task.dueDate).toLocaleDateString()}
-                          </div>
-                        )}
-                        {task.leadEmail && (
-                          <div className="flex items-center">
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                            {task.leadEmail}
-                          </div>
-                        )}
-                        {task.closer && (
-                          <div className="flex items-center">
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                            Deal Owner: {task.closer.name}
-                          </div>
+                      
+                      {/* Action Buttons */}
+                      <div className="flex items-center space-x-2 ml-4">
+                        {isEditing ? (
+                          // Edit mode buttons
+                          <>
+                            <button
+                              onClick={closeEditTask}
+                              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={handleUpdateTask}
+                              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors shadow-sm"
+                            >
+                              Save
+                            </button>
+                          </>
+                        ) : (
+                          // View mode buttons
+                          <>
+                            {task.status !== 'in_progress' && task.status !== 'completed' && (
+                              <button
+                                onClick={() => handleUpdateStatus(task.id, 'in_progress')}
+                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors shadow-sm"
+                              >
+                                Start
+                              </button>
+                            )}
+                            {task.status === 'in_progress' && (
+                              <button
+                                onClick={() => handleUpdateStatus(task.id, 'completed')}
+                                className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 transition-colors shadow-sm"
+                              >
+                                Complete
+                              </button>
+                            )}
+                            {task.status !== 'completed' && (
+                              <button
+                                onClick={() => handleUpdateStatus(task.id, 'cancelled')}
+                                className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            )}
+                          </>
                         )}
                       </div>
-                    </div>
-                    
-                    {/* Action Buttons */}
-                    <div className="flex items-center space-x-2 ml-4">
-                      {task.status !== 'in_progress' && task.status !== 'completed' && (
-                        <button
-                          onClick={() => handleUpdateStatus(task.id, 'in_progress')}
-                          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors shadow-sm"
-                        >
-                          Start
-                        </button>
-                      )}
-                      {task.status === 'in_progress' && (
-                        <button
-                          onClick={() => handleUpdateStatus(task.id, 'completed')}
-                          className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 transition-colors shadow-sm"
-                        >
-                          Complete
-                        </button>
-                      )}
-                      {task.status !== 'completed' && (
-                        <button
-                          onClick={() => handleUpdateStatus(task.id, 'cancelled')}
-                          className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors"
-                        >
-                          Cancel
-                        </button>
-                      )}
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
       </div>
-
-      {/* Edit Task Modal */}
-      {editingTask && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-          onClick={closeEditTask}
-        >
-          <div 
-            className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">Edit Task</h2>
-                <button
-                  onClick={closeEditTask}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Title <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={taskForm.title}
-                    onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    placeholder="Task title"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Description
-                  </label>
-                  <textarea
-                    value={taskForm.description}
-                    onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    placeholder="Task description"
-                    rows={3}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Priority
-                  </label>
-                  <select
-                    value={taskForm.priority}
-                    onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value as 'low' | 'medium' | 'high' | 'urgent' })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="urgent">Urgent</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Due Date
-                  </label>
-                  <input
-                    type="date"
-                    value={taskForm.dueDate}
-                    onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end space-x-3 mt-6">
-                <button
-                  onClick={closeEditTask}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleUpdateTask}
-                  className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
