@@ -81,7 +81,40 @@ export async function GET(request: NextRequest) {
       ],
     });
 
-    return NextResponse.json(tasks);
+    // Fetch appointments for tasks that don't have appointmentId set but have leadEmail
+    // Match by leadEmail to customerEmail
+    const tasksWithAppointments = await Promise.all(
+      tasks.map(async (task) => {
+        // If task already has appointment, use it
+        if (task.appointment) {
+          return task;
+        }
+
+        // Otherwise, find appointment by matching leadEmail to customerEmail
+        if (task.leadEmail) {
+          const appointment = await prisma.appointment.findFirst({
+            where: {
+              customerEmail: task.leadEmail,
+              closerId: closerId,
+            },
+            select: {
+              id: true,
+              customerName: true,
+              customerEmail: true,
+            },
+          });
+
+          return {
+            ...task,
+            appointment: appointment || null,
+          };
+        }
+
+        return task;
+      })
+    );
+
+    return NextResponse.json(tasksWithAppointments);
   } catch (error) {
     console.error('Error fetching tasks:', error);
     return NextResponse.json(
