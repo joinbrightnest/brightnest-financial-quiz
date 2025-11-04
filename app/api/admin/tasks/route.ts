@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
       where.leadEmail = leadEmail;
     }
 
-    // Fetch tasks with closer details
+    // Fetch tasks with closer details and appointment
     const tasks = await prisma.task.findMany({
       where,
       include: {
@@ -32,9 +32,16 @@ export async function GET(request: NextRequest) {
             email: true,
           },
         },
+        appointment: {
+          select: {
+            id: true,
+            customerName: true,
+            customerEmail: true,
+          },
+        },
       },
       orderBy: [
-        { status: 'asc' }, // pending, in_progress, completed, cancelled
+        { status: 'asc' }, // pending, in_progress, completed
         { dueDate: 'asc' },
         { createdAt: 'desc' },
       ],
