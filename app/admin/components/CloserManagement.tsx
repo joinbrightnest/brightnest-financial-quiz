@@ -67,6 +67,15 @@ export default function CloserManagement() {
   });
   const [editingCloserId, setEditingCloserId] = useState<string | null>(null);
   const [editingCalendlyLink, setEditingCalendlyLink] = useState('');
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [taskForm, setTaskForm] = useState({
+    leadEmail: '',
+    title: '',
+    description: '',
+    priority: 'medium' as 'low' | 'medium' | 'high' | 'urgent',
+    dueDate: '',
+    closerId: ''
+  });
 
   useEffect(() => {
     fetchClosers();
@@ -1102,6 +1111,179 @@ export default function CloserManagement() {
       {/* Tasks Tab */}
       {activeTab === 'tasks' && (
         <div className="space-y-6">
+          {/* Tasks Header with Create Button */}
+          <div className="bg-white rounded-lg border border-gray-200 p-6">
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center">
+                <svg className="w-6 h-6 text-slate-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+                <h3 className="text-lg font-semibold text-slate-900">
+                  Tasks ({allTasks.length})
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowTaskForm(!showTaskForm)}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
+              >
+                <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                {showTaskForm ? 'Cancel' : 'Create Task'}
+              </button>
+            </div>
+
+            {/* Collapsible Task Form */}
+            {showTaskForm && (
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 mb-6">
+                <h4 className="text-base font-semibold text-slate-900 mb-4">
+                  Create New Task
+                </h4>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      Lead Email *
+                    </label>
+                    <input
+                      type="email"
+                      value={taskForm.leadEmail}
+                      onChange={(e) => setTaskForm({ ...taskForm, leadEmail: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
+                      placeholder="lead@example.com"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      Task Title *
+                    </label>
+                    <input
+                      type="text"
+                      value={taskForm.title}
+                      onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
+                      placeholder="e.g., Follow up on product demo"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      Description
+                    </label>
+                    <textarea
+                      value={taskForm.description}
+                      onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-slate-900"
+                      rows={3}
+                      placeholder="Add any additional details..."
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Priority
+                      </label>
+                      <select
+                        value={taskForm.priority}
+                        onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value as 'low' | 'medium' | 'high' | 'urgent' })}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
+                      >
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="urgent">Urgent</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Due Date
+                      </label>
+                      <input
+                        type="date"
+                        value={taskForm.dueDate}
+                        onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Assign to Closer (Optional)
+                      </label>
+                      <select
+                        value={taskForm.closerId}
+                        onChange={(e) => setTaskForm({ ...taskForm, closerId: e.target.value })}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
+                      >
+                        <option value="">Unassigned</option>
+                        {closers.map((closer) => (
+                          <option key={closer.id} value={closer.id}>
+                            {closer.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3 mt-6">
+                  <button
+                    onClick={() => {
+                      setTaskForm({ leadEmail: '', title: '', description: '', priority: 'medium', dueDate: '', closerId: '' });
+                      setShowTaskForm(false);
+                    }}
+                    className="px-4 py-2 text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors font-medium"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (!taskForm.title || !taskForm.leadEmail) {
+                        alert('Lead email and task title are required');
+                        return;
+                      }
+
+                      try {
+                        const response = await fetch('/api/admin/tasks', {
+                          method: 'POST',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: JSON.stringify({
+                            leadEmail: taskForm.leadEmail,
+                            title: taskForm.title,
+                            description: taskForm.description || null,
+                            priority: taskForm.priority,
+                            dueDate: taskForm.dueDate || null,
+                            closerId: taskForm.closerId || null,
+                          }),
+                        });
+
+                        if (response.ok) {
+                          setTaskForm({ leadEmail: '', title: '', description: '', priority: 'medium', dueDate: '', closerId: '' });
+                          setShowTaskForm(false);
+                          await fetchAllTasks();
+                        } else {
+                          alert('Failed to create task. Please try again.');
+                        }
+                      } catch (error) {
+                        console.error('Error creating task:', error);
+                        alert('An error occurred while creating the task.');
+                      }
+                    }}
+                    disabled={!taskForm.title || !taskForm.leadEmail}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                  >
+                    Create Task
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Filter Tabs */}
           <div className="bg-white rounded-lg border border-gray-200 p-4">
             <div className="flex space-x-2">
