@@ -14,11 +14,15 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const leadEmail = searchParams.get('leadEmail');
+    const closerId = searchParams.get('closerId');
 
     // Build where clause
     const where: any = {};
     if (leadEmail) {
       where.leadEmail = leadEmail;
+    }
+    if (closerId) {
+      where.closerId = closerId;
     }
 
     // Fetch tasks with closer details and appointment

@@ -226,7 +226,9 @@ async function autoAssignToCloser(appointmentId: string) {
     })));
 
     if (availableClosers.length === 0) {
-      console.log('⚠️ No available closers for auto-assignment');
+      console.warn('⚠️ No available closers for auto-assignment. Appointment will remain unassigned.');
+      // Log appointment ID for later retry via fix-unassigned-appointments endpoint
+      console.warn(`📋 Unassigned appointment ID: ${appointmentId} - can be fixed via /api/admin/fix-unassigned-appointments`);
       return;
     }
 

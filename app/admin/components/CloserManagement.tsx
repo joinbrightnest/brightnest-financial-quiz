@@ -54,6 +54,7 @@ export default function CloserManagement() {
   const [allTasks, setAllTasks] = useState<any[]>([]);
   const [isLoadingTasks, setIsLoadingTasks] = useState(false);
   const [taskFilter, setTaskFilter] = useState<'not_completed' | 'completed'>('not_completed');
+  const [taskCloserFilter, setTaskCloserFilter] = useState<string>('all'); // 'all' or closer ID
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [selectedCloser, setSelectedCloser] = useState<string>('');
   const [showAssignmentModal, setShowAssignmentModal] = useState(false);
@@ -86,7 +87,7 @@ export default function CloserManagement() {
     if (activeTab === 'tasks') {
       fetchAllTasks();
     }
-  }, [activeTab]);
+  }, [activeTab, taskCloserFilter]);
 
   const fetchClosers = async () => {
     try {
@@ -267,7 +268,14 @@ export default function CloserManagement() {
   const fetchAllTasks = async () => {
     setIsLoadingTasks(true);
     try {
-      const response = await fetch('/api/admin/tasks');
+      // Build query params
+      const params = new URLSearchParams();
+      if (taskCloserFilter && taskCloserFilter !== 'all') {
+        params.append('closerId', taskCloserFilter);
+      }
+      
+      const url = `/api/admin/tasks${params.toString() ? `?${params.toString()}` : ''}`;
+      const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
         // API returns { tasks: [...] }, extract the tasks array
@@ -1113,27 +1121,51 @@ export default function CloserManagement() {
         <div className="space-y-6">
           {/* Filter Tabs */}
           <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setTaskFilter('not_completed')}
-                className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
-                  taskFilter === 'not_completed'
-                    ? 'bg-slate-900 text-white shadow-sm'
-                    : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
-                }`}
-              >
-                Not Completed ({allTasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length})
-              </button>
-              <button
-                onClick={() => setTaskFilter('completed')}
-                className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
-                  taskFilter === 'completed'
-                    ? 'bg-slate-900 text-white shadow-sm'
-                    : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
-                }`}
-              >
-                Completed ({allTasks.filter(t => t.status === 'completed').length})
-              </button>
+            <div className="flex flex-col space-y-4">
+              {/* Status Filter */}
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setTaskFilter('not_completed')}
+                  className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+                    taskFilter === 'not_completed'
+                      ? 'bg-slate-900 text-white shadow-sm'
+                      : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
+                  }`}
+                >
+                  Not Completed ({allTasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length})
+                </button>
+                <button
+                  onClick={() => setTaskFilter('completed')}
+                  className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+                    taskFilter === 'completed'
+                      ? 'bg-slate-900 text-white shadow-sm'
+                      : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
+                  }`}
+                >
+                  Completed ({allTasks.filter(t => t.status === 'completed').length})
+                </button>
+              </div>
+              
+              {/* Closer Filter */}
+              <div className="flex items-center space-x-3">
+                <label className="text-sm font-medium text-slate-700 whitespace-nowrap">
+                  Filter by Closer:
+                </label>
+                <select
+                  value={taskCloserFilter}
+                  onChange={(e) => setTaskCloserFilter(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-sm text-slate-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-[200px]"
+                >
+                  <option value="all">All Closers</option>
+                  {closers
+                    .filter(c => c.isActive && c.isApproved)
+                    .map(closer => (
+                      <option key={closer.id} value={closer.id}>
+                        {closer.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
             </div>
           </div>
 
@@ -1145,7 +1177,20 @@ export default function CloserManagement() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                 </svg>
                 <h3 className="text-lg font-semibold text-slate-900">
-                  Tasks ({allTasks.length})
+                  Tasks ({(() => {
+                    // Filter tasks based on current filters
+                    const validTasks = allTasks.filter(t => t.status === 'pending' || t.status === 'in_progress' || t.status === 'completed');
+                    const filteredTasks = taskFilter === 'completed' 
+                      ? validTasks.filter(t => t.status === 'completed')
+                      : validTasks.filter(t => t.status !== 'completed');
+                    
+                    // Apply closer filter
+                    const closerFilteredTasks = taskCloserFilter === 'all' 
+                      ? filteredTasks
+                      : filteredTasks.filter(t => t.closer?.id === taskCloserFilter);
+                    
+                    return closerFilteredTasks.length;
+                  })()})
                 </h3>
               </div>
               <button
@@ -1297,9 +1342,14 @@ export default function CloserManagement() {
             ) : (() => {
               // Filter tasks
               const validTasks = allTasks.filter(t => t.status === 'pending' || t.status === 'in_progress' || t.status === 'completed');
-              const filteredTasks = taskFilter === 'completed' 
+              let filteredTasks = taskFilter === 'completed' 
                 ? validTasks.filter(t => t.status === 'completed')
                 : validTasks.filter(t => t.status !== 'completed');
+              
+              // Apply closer filter (already applied in API, but also filter client-side for consistency)
+              if (taskCloserFilter !== 'all') {
+                filteredTasks = filteredTasks.filter(t => t.closer?.id === taskCloserFilter);
+              }
               
               // Helper function to check if due date is overdue or today
               const isDueDateOverdueOrToday = (dueDate: string | null): boolean => {

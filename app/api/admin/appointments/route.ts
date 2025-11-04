@@ -169,3 +169,160 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+export async function POST(request: NextRequest) {
+  // 🔒 SECURITY: Require admin authentication
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json(
+      { error: 'Unauthorized - Admin authentication required' },
+      { status: 401 }
+    );
+  }
+
+  try {
+    const body = await request.json();
+    const {
+      customerName,
+      customerEmail,
+      customerPhone,
+      scheduledAt,
+      duration = 30,
+      calendlyEventId,
+      affiliateCode,
+      closerId: providedCloserId
+    } = body;
+
+    // Validate required fields
+    if (!customerName || !customerEmail || !scheduledAt) {
+      return NextResponse.json(
+        { error: 'customerName, customerEmail, and scheduledAt are required' },
+        { status: 400 }
+      );
+    }
+
+    // Create appointment
+    const appointment = await prisma.appointment.create({
+      data: {
+        calendlyEventId: calendlyEventId || `manual-${Date.now()}`,
+        customerName,
+        customerEmail: customerEmail.toLowerCase(), // Normalize email
+        customerPhone: customerPhone || null,
+        scheduledAt: new Date(scheduledAt),
+        duration,
+        status: 'scheduled',
+        affiliateCode: affiliateCode || null,
+        closerId: providedCloserId || null // If provided, use it; otherwise will be auto-assigned
+      }
+    });
+
+    console.log('✅ Appointment created:', {
+      appointmentId: appointment.id,
+      customerName,
+      customerEmail,
+      hasCloserId: !!providedCloserId
+    });
+
+    // Auto-assign closer if not provided
+    if (!providedCloserId) {
+      await autoAssignToCloser(appointment.id);
+    }
+
+    // Fetch the created appointment with closer info
+    const createdAppointment = await prisma.appointment.findUnique({
+      where: { id: appointment.id },
+      include: {
+        closer: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        }
+      }
+    });
+
+    return NextResponse.json({
+      success: true,
+      appointment: createdAppointment
+    });
+
+  } catch (error) {
+    console.error('❌ Error creating appointment:', error);
+    return NextResponse.json(
+      { error: 'Failed to create appointment', details: error instanceof Error ? error.message : 'Unknown error' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * Auto-assign appointment to available closer (round-robin)
+ * Same logic as Calendly webhook
+ */
+async function autoAssignToCloser(appointmentId: string): Promise<void> {
+  try {
+    console.log('🔄 Starting auto-assignment for appointment:', appointmentId);
+
+    // Find all active, approved closers
+    const availableClosers = await prisma.closer.findMany({
+      where: {
+        isActive: true,
+        isApproved: true
+      },
+      select: {
+        id: true,
+        name: true,
+        totalCalls: true
+      },
+      orderBy: {
+        totalCalls: 'asc' // Round-robin: assign to closer with fewer calls
+      }
+    });
+
+    console.log('👥 Available closers:', availableClosers.map(c => ({
+      name: c.name,
+      totalCalls: c.totalCalls
+    })));
+
+    if (availableClosers.length === 0) {
+      console.warn('⚠️ No available closers for auto-assignment. Appointment will remain unassigned.');
+      // Log for monitoring - could send alert here
+      return;
+    }
+
+    // Get the closer with the least calls (round-robin)
+    const assignedCloser = availableClosers[0];
+
+    // Assign the appointment to the closer
+    await prisma.appointment.update({
+      where: { id: appointmentId },
+      data: {
+        closerId: assignedCloser.id,
+        status: 'confirmed'
+      }
+    });
+
+    // Increment the closer's total calls count
+    await prisma.closer.update({
+      where: { id: assignedCloser.id },
+      data: {
+        totalCalls: {
+          increment: 1
+        }
+      }
+    });
+
+    console.log('✅ Auto-assigned appointment to closer (round-robin):', {
+      appointmentId,
+      closerId: assignedCloser.id,
+      closerName: assignedCloser.name,
+      previousTotalCalls: assignedCloser.totalCalls,
+      newTotalCalls: assignedCloser.totalCalls + 1
+    });
+
+  } catch (error) {
+    console.error('❌ Error in auto-assignment:', error);
+    // Don't throw - appointment was created successfully, just assignment failed
+    // Could be retried later via fix-unassigned-appointments endpoint
+  }
+}
