@@ -1468,7 +1468,6 @@ export default function CloserManagement() {
                 </div>
               );
             })()}
-            </div>
           </div>
         </div>
       )}
