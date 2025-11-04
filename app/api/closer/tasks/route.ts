@@ -37,6 +37,13 @@ export async function GET(request: NextRequest) {
               email: true,
             },
           },
+          appointment: {
+            select: {
+              id: true,
+              customerName: true,
+              customerEmail: true,
+            },
+          },
         },
         orderBy: [
           { status: 'asc' },
@@ -57,6 +64,13 @@ export async function GET(request: NextRequest) {
             id: true,
             name: true,
             email: true,
+          },
+        },
+        appointment: {
+          select: {
+            id: true,
+            customerName: true,
+            customerEmail: true,
           },
         },
       },

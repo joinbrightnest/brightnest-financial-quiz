@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import CloserHeader from '../components/CloserHeader';
 
@@ -29,6 +29,11 @@ interface Task {
     id: string;
     name: string;
     email: string;
+  } | null;
+  appointment?: {
+    id: string;
+    customerName: string;
+    customerEmail: string;
   } | null;
 }
 
@@ -415,8 +420,8 @@ export default function CloserTasks() {
           </div>
         </div>
 
-        {/* Tasks List */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        {/* Tasks Table */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
@@ -431,225 +436,255 @@ export default function CloserTasks() {
               <p className="text-gray-500 text-sm">Create tasks from lead details to see them here</p>
             </div>
           ) : (
-            <div className="space-y-3">
-              {filteredTasks.map((task) => {
-                const isEditing = editingTask?.id === task.id;
-                const isExpanded = expandedTasks.has(task.id);
-                return (
-                  <div
-                    key={task.id}
-                    className="border border-gray-200 rounded-lg bg-white hover:border-gray-300 hover:shadow-sm transition-all overflow-hidden"
-                  >
-                    {/* Compact Header - Always Visible */}
-                    <div 
-                      className={`flex items-center justify-between p-4 cursor-pointer ${!isEditing ? 'hover:bg-gray-50' : ''}`}
-                      onClick={() => !isEditing && toggleTaskExpand(task.id)}
-                    >
-                      <div className="flex items-center space-x-3 flex-1 min-w-0">
-                        <div className="flex items-center space-x-2 flex-shrink-0">
-                          <svg 
-                            className={`w-4 h-4 text-gray-400 transition-transform flex-shrink-0 ${isExpanded ? 'rotate-90' : ''}`}
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </div>
-                        <h3 className="text-base font-semibold text-gray-900 truncate">
-                          {task.title}
-                        </h3>
-                        <span className={`px-2 py-1 rounded-md text-xs flex-shrink-0 ${getPriorityColor(task.priority)}`}>
-                          {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                        </span>
-                        <span className={`px-2 py-1 rounded-md text-xs flex-shrink-0 ${getStatusColor(task.status)}`}>
-                          {task.status === 'in_progress' ? 'In Progress' : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-                        </span>
-                        {task.dueDate && (
-                          <div className="flex items-center text-xs text-gray-500 flex-shrink-0">
-                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                            {new Date(task.dueDate).toLocaleDateString()}
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex items-center space-x-2 ml-3 flex-shrink-0">
-                        {!isEditing && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openEditTask(task);
-                            }}
-                            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
-                            title="Edit task"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                          </button>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Expandable Content */}
-                    <div className={`transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}>
-                      <div className="px-4 pb-4 border-t border-gray-100">
-                        <div className="pt-4">
-                          {isEditing ? (
-                            // Edit Mode
-                            <div className="space-y-3">
-                              <div className="flex items-center space-x-3 mb-2">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Title
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Associated Contact
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Due Date
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredTasks.map((task) => {
+                    const isEditing = editingTask?.id === task.id;
+                    const isExpanded = expandedTasks.has(task.id);
+                    const associatedContact = task.appointment?.customerName || task.leadEmail;
+                    
+                    return (
+                      <React.Fragment key={task.id}>
+                        <tr 
+                          className={`hover:bg-gray-50 transition-colors ${isExpanded ? 'bg-gray-50' : ''}`}
+                        >
+                          {/* Status Column */}
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              {task.status === 'completed' ? (
+                                <div className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center">
+                                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                </div>
+                              ) : task.status === 'in_progress' ? (
+                                <div className="w-6 h-6 rounded-full bg-indigo-100 border-2 border-indigo-500"></div>
+                              ) : task.status === 'cancelled' ? (
+                                <div className="w-6 h-6 rounded-full bg-gray-200 border-2 border-gray-400"></div>
+                              ) : (
+                                <div className="w-6 h-6 rounded-full bg-amber-100 border-2 border-amber-400"></div>
+                              )}
+                            </div>
+                          </td>
+                          
+                          {/* Title Column */}
+                          <td className="px-6 py-4">
+                            <div className="flex items-center">
+                              <button
+                                onClick={() => !isEditing && toggleTaskExpand(task.id)}
+                                className="mr-2 p-1 hover:bg-gray-200 rounded transition-colors"
+                                disabled={isEditing}
+                              >
+                                <svg 
+                                  className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                                  fill="none" 
+                                  stroke="currentColor" 
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                              </button>
+                              {isEditing ? (
                                 <input
                                   type="text"
                                   value={taskForm.title}
                                   onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
-                                  className="flex-1 text-base font-semibold px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                                  className="flex-1 px-3 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 text-sm"
                                   placeholder="Task title"
+                                  autoFocus
                                 />
-                                <select
-                                  value={taskForm.priority}
-                                  onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value as 'low' | 'medium' | 'high' | 'urgent' })}
-                                  className={`px-3 py-1.5 rounded-md text-xs border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${getPriorityColor(taskForm.priority)}`}
-                                >
-                                  <option value="low">Low</option>
-                                  <option value="medium">Medium</option>
-                                  <option value="high">High</option>
-                                  <option value="urgent">Urgent</option>
-                                </select>
-                                <span className={`px-3 py-1.5 rounded-md text-xs ${getStatusColor(task.status)}`}>
-                                  {task.status === 'in_progress' ? 'In Progress' : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-                                </span>
-                              </div>
-                              <textarea
-                                value={taskForm.description}
-                                onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
-                                className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 mb-2"
-                                placeholder="Task description"
-                                rows={3}
-                              />
-                              <div className="flex items-center space-x-6 text-sm">
-                                <div className="flex items-center">
-                                  <svg className="w-4 h-4 mr-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                  </svg>
-                                  <input
-                                    type="date"
-                                    value={taskForm.dueDate}
-                                    onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
-                                    className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-gray-900"
-                                  />
-                                </div>
-                                {task.leadEmail && (
-                                  <div className="flex items-center text-gray-500">
-                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                    </svg>
-                                    {task.leadEmail}
-                                  </div>
-                                )}
-                                {task.closer && (
-                                  <div className="flex items-center text-gray-500">
-                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                    </svg>
-                                    Deal Owner: {task.closer.name}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          ) : (
-                            // View Mode - Expanded Details
-                            <div className="space-y-3">
-                              {task.description && (
-                                <div>
-                                  <p className="text-sm font-medium text-gray-700 mb-1">Description:</p>
-                                  <p className="text-gray-600 text-sm whitespace-pre-wrap">{task.description}</p>
-                                </div>
+                              ) : (
+                                <span className="text-sm font-medium text-gray-900">{task.title}</span>
                               )}
-                              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                                {task.dueDate && (
-                                  <div className="flex items-center">
-                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                    </svg>
-                                    Due: {new Date(task.dueDate).toLocaleDateString()}
+                            </div>
+                          </td>
+                          
+                          {/* Associated Contact Column */}
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center">
+                              {associatedContact ? (
+                                <>
+                                  <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mr-2 flex-shrink-0">
+                                    <span className="text-xs font-medium text-indigo-700">
+                                      {associatedContact.charAt(0).toUpperCase()}
+                                    </span>
                                   </div>
-                                )}
-                                {task.leadEmail && (
-                                  <div className="flex items-center">
-                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                  <span className="text-sm text-gray-900">{associatedContact}</span>
+                                </>
+                              ) : (
+                                <span className="text-sm text-gray-400">--</span>
+                              )}
+                            </div>
+                          </td>
+                          
+                          {/* Due Date Column */}
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {isEditing ? (
+                              <input
+                                type="date"
+                                value={taskForm.dueDate}
+                                onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
+                                className="px-3 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-gray-900"
+                              />
+                            ) : task.dueDate ? (
+                              <span className="text-sm text-gray-900">
+                                {new Date(task.dueDate).toLocaleDateString()}
+                              </span>
+                            ) : (
+                              <span className="text-sm text-gray-400">--</span>
+                            )}
+                          </td>
+                          
+                          {/* Actions Column */}
+                          <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div className="flex items-center justify-end space-x-2">
+                              {isEditing ? (
+                                <>
+                                  <button
+                                    onClick={closeEditTask}
+                                    className="px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors"
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    onClick={handleUpdateTask}
+                                    className="px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors"
+                                  >
+                                    Save
+                                  </button>
+                                </>
+                              ) : (
+                                <>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      openEditTask(task);
+                                    }}
+                                    className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                                    title="Edit task"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                     </svg>
-                                    {task.leadEmail}
+                                  </button>
+                                  {task.status !== 'in_progress' && task.status !== 'completed' && (
+                                    <button
+                                      onClick={() => handleUpdateStatus(task.id, 'in_progress')}
+                                      className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors"
+                                    >
+                                      Start
+                                    </button>
+                                  )}
+                                  {task.status === 'in_progress' && (
+                                    <button
+                                      onClick={() => handleUpdateStatus(task.id, 'completed')}
+                                      className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 transition-colors"
+                                    >
+                                      Complete
+                                    </button>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                        
+                        {/* Expandable Row - Details */}
+                        {isExpanded && (
+                          <tr className="bg-gray-50">
+                            <td colSpan={5} className="px-6 py-4">
+                              <div className={`transition-all duration-300 ease-in-out ${isExpanded ? 'opacity-100' : 'opacity-0'}`}>
+                                {isEditing ? (
+                                  <div className="space-y-4 pb-4">
+                                    <div className="flex items-center space-x-3">
+                                      <label className="text-sm font-medium text-gray-700 w-24">Priority:</label>
+                                      <select
+                                        value={taskForm.priority}
+                                        onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value as 'low' | 'medium' | 'high' | 'urgent' })}
+                                        className={`px-3 py-1.5 rounded-md text-xs border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${getPriorityColor(taskForm.priority)}`}
+                                      >
+                                        <option value="low">Low</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="high">High</option>
+                                        <option value="urgent">Urgent</option>
+                                      </select>
+                                    </div>
+                                    <div>
+                                      <label className="text-sm font-medium text-gray-700 mb-1 block">Description:</label>
+                                      <textarea
+                                        value={taskForm.description}
+                                        onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 text-sm"
+                                        placeholder="Task description"
+                                        rows={3}
+                                      />
+                                    </div>
                                   </div>
-                                )}
-                                {task.closer && (
-                                  <div className="flex items-center">
-                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                    </svg>
-                                    Deal Owner: {task.closer.name}
+                                ) : (
+                                  <div className="space-y-3 pb-4">
+                                    {task.description && (
+                                      <div>
+                                        <p className="text-sm font-medium text-gray-700 mb-1">Description:</p>
+                                        <p className="text-sm text-gray-600 whitespace-pre-wrap">{task.description}</p>
+                                      </div>
+                                    )}
+                                    <div className="flex items-center space-x-6 text-sm text-gray-500">
+                                      <div className="flex items-center">
+                                        <span className="font-medium text-gray-700 mr-2">Priority:</span>
+                                        <span className={`px-2 py-1 rounded-md text-xs ${getPriorityColor(task.priority)}`}>
+                                          {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                                        </span>
+                                      </div>
+                                      {task.leadEmail && (
+                                        <div className="flex items-center">
+                                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                          </svg>
+                                          <span className="mr-2">Email:</span>
+                                          <span className="text-gray-900">{task.leadEmail}</span>
+                                        </div>
+                                      )}
+                                      {task.closer && (
+                                        <div className="flex items-center">
+                                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                          </svg>
+                                          <span className="mr-2">Deal Owner:</span>
+                                          <span className="text-gray-900">{task.closer.name}</span>
+                                        </div>
+                                      )}
+                                    </div>
                                   </div>
                                 )}
                               </div>
-                            </div>
-                          )}
-                        </div>
-                        
-                        {/* Action Buttons */}
-                        <div className="flex items-center justify-end space-x-2 mt-4 pt-4 border-t border-gray-100">
-                        {isEditing ? (
-                          // Edit mode buttons
-                          <>
-                            <button
-                              onClick={closeEditTask}
-                              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors"
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              onClick={handleUpdateTask}
-                              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors shadow-sm"
-                            >
-                              Save
-                            </button>
-                          </>
-                        ) : (
-                          // View mode buttons
-                          <>
-                            {task.status !== 'in_progress' && task.status !== 'completed' && (
-                              <button
-                                onClick={() => handleUpdateStatus(task.id, 'in_progress')}
-                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors shadow-sm"
-                              >
-                                Start
-                              </button>
-                            )}
-                            {task.status === 'in_progress' && (
-                              <button
-                                onClick={() => handleUpdateStatus(task.id, 'completed')}
-                                className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 transition-colors shadow-sm"
-                              >
-                                Complete
-                              </button>
-                            )}
-                            {task.status !== 'completed' && (
-                              <button
-                                onClick={() => handleUpdateStatus(task.id, 'cancelled')}
-                                className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors"
-                              >
-                                Cancel
-                              </button>
-                            )}
-                          </>
+                            </td>
+                          </tr>
                         )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+                      </React.Fragment>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
