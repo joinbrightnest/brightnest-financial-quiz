@@ -141,7 +141,7 @@ export default function AdminDashboard() {
   const [crmActivities, setCrmActivities] = useState<any[] | null>(null);
   const [adminTasks, setAdminTasks] = useState<any[]>([]);
   const [isLoadingAdminTasks, setIsLoadingAdminTasks] = useState(false);
-  const [adminShowTaskForm, setAdminShowTaskForm] = useState(true);
+  const [adminShowTaskForm, setAdminShowTaskForm] = useState(false);
   const [adminEditingTask, setAdminEditingTask] = useState<any>(null);
   const [adminTaskForm, setAdminTaskForm] = useState({
     title: '',
@@ -877,6 +877,7 @@ export default function AdminDashboard() {
 
       if (response.ok) {
         setAdminTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
+        setAdminShowTaskForm(false);
         fetchAdminTasks(crmSelectedLead);
       }
     } catch (error) {
@@ -946,6 +947,7 @@ export default function AdminDashboard() {
 
     setAdminEditingTask(null);
     setAdminTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
+    setAdminShowTaskForm(false);
   };
 
   const handleCrmToggleColumn = (column: string) => {
@@ -3146,20 +3148,31 @@ export default function AdminDashboard() {
                         {crmLeadModalTab === 'tasks' && (
                           <div>
                             <div className="flex justify-between items-center mb-6">
-                              <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-                                <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <div className="flex items-center">
+                                <svg className="w-6 h-6 text-slate-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                                 </svg>
-                                Tasks
-                                <span className="ml-2 text-sm text-slate-500 font-normal">({adminTasks.length})</span>
-                              </h3>
-                          </div>
+                                <h3 className="text-lg font-semibold text-slate-900">
+                                  Tasks ({adminTasks.length})
+                                </h3>
+                              </div>
+                              <button
+                                onClick={() => setAdminShowTaskForm(!adminShowTaskForm)}
+                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
+                              >
+                                <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                </svg>
+                                {adminShowTaskForm ? 'Cancel' : 'Create Task'}
+                              </button>
+                            </div>
 
-                            {/* Inline Task Form - Always Visible */}
-                            <div className="bg-white border-2 border-blue-200 rounded-lg p-6 mb-6">
-                              <h4 className="text-lg font-semibold text-slate-900 mb-4">
-                                {adminEditingTask ? 'Edit Task' : 'Create New Task'}
-                              </h4>
+                            {/* Collapsible Task Form */}
+                            {adminShowTaskForm && (
+                              <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 mb-6">
+                                <h4 className="text-base font-semibold text-slate-900 mb-4">
+                                  {adminEditingTask ? 'Edit Task' : 'Create New Task'}
+                                </h4>
                               
                               <div className="space-y-4">
                                 <div>
@@ -3219,25 +3232,27 @@ export default function AdminDashboard() {
                                 </div>
                               </div>
 
-                              <div className="flex justify-end space-x-3 mt-6">
-                                <button
-                                  onClick={() => {
-                                    setAdminEditingTask(null);
-                                    setAdminTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
-                                  }}
-                                  className="px-4 py-2 text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors font-medium"
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  onClick={adminEditingTask ? handleAdminSaveEditedTask : handleAdminCreateTask}
-                                  disabled={!adminTaskForm.title}
-                                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
-                                >
-                                  {adminEditingTask ? 'Save Changes' : 'Create Task'}
-                                </button>
+                                <div className="flex justify-end space-x-3 mt-6">
+                                  <button
+                                    onClick={() => {
+                                      setAdminEditingTask(null);
+                                      setAdminTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
+                                      setAdminShowTaskForm(false);
+                                    }}
+                                    className="px-4 py-2 text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors font-medium"
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    onClick={adminEditingTask ? handleAdminSaveEditedTask : handleAdminCreateTask}
+                                    disabled={!adminTaskForm.title}
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                                  >
+                                    {adminEditingTask ? 'Save Changes' : 'Create Task'}
+                                  </button>
+                                </div>
                               </div>
-                            </div>
+                            )}
 
                             {isLoadingAdminTasks ? (
                               <div className="flex items-center justify-center py-12">
