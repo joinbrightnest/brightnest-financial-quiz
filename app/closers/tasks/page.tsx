@@ -112,7 +112,9 @@ export default function CloserTasks() {
 
       if (response.ok) {
         const data = await response.json();
-        setTasks(data);
+        // Handle both response formats: array directly or { tasks: [...] }
+        const tasksArray = Array.isArray(data) ? data : (data.tasks || []);
+        setTasks(tasksArray);
       } else {
         setError('Failed to fetch tasks');
       }
@@ -134,8 +136,8 @@ export default function CloserTasks() {
   };
 
   const getFilteredTasks = () => {
-    // Filter out cancelled tasks - they don't matter anymore
-    const validTasks = tasks.filter(t => t.status !== 'cancelled');
+    // Filter out cancelled tasks (removed status)
+    const validTasks = tasks.filter(t => t.status === 'pending' || t.status === 'in_progress' || t.status === 'completed');
     
     let filtered = filter === 'completed' 
       ? validTasks.filter(t => t.status === 'completed')
@@ -351,7 +353,7 @@ export default function CloserTasks() {
 
   return (
     <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
-      <CloserHeader closer={closer} onLogout={handleLogout} taskCount={tasks.filter(t => t.status !== 'completed').length} />
+      <CloserHeader closer={closer} onLogout={handleLogout} taskCount={tasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
@@ -400,7 +402,7 @@ export default function CloserTasks() {
               </div>
               <div>
                 <div className="text-2xl font-bold text-gray-900">
-                  {tasks.filter(t => t.status !== 'completed' && t.status !== 'cancelled').length}
+                  {tasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length}
                 </div>
                 <div className="text-sm text-gray-500">Not Completed</div>
               </div>
@@ -451,7 +453,7 @@ export default function CloserTasks() {
                   : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
               }`}
             >
-              Not Completed ({tasks.filter(t => t.status !== 'completed').length})
+              Not Completed ({tasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length})
             </button>
             <button
               onClick={() => setFilter('completed')}

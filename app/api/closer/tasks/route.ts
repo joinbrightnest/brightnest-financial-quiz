@@ -26,9 +26,12 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Forbidden: You are not assigned to this lead.' }, { status: 403 });
       }
 
-      // Fetch tasks for this lead
+      // Fetch tasks for this lead (exclude cancelled status)
       const tasks = await prisma.task.findMany({
-        where: { leadEmail },
+        where: { 
+          leadEmail,
+          status: { in: ['pending', 'in_progress', 'completed'] } // Only valid statuses
+        },
         include: {
           closer: {
             select: {
@@ -55,9 +58,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ tasks });
     }
 
-    // If no leadEmail, fetch ALL tasks for this closer across all their leads
+    // If no leadEmail, fetch ALL tasks for this closer across all their leads (exclude cancelled status)
     const tasks = await prisma.task.findMany({
-      where: { closerId: closerId },
+      where: { 
+        closerId: closerId,
+        status: { in: ['pending', 'in_progress', 'completed'] } // Only valid statuses
+      },
       include: {
         closer: {
           select: {
