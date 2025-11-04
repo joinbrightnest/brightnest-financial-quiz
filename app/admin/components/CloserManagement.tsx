@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { PlusCircle } from 'lucide-react';
 
 interface Closer {
   id: string;
@@ -73,8 +74,7 @@ export default function CloserManagement() {
     title: '',
     description: '',
     priority: 'medium' as 'low' | 'medium' | 'high' | 'urgent',
-    dueDate: '',
-    closerId: ''
+    dueDate: ''
   });
 
   useEffect(() => {
@@ -1111,9 +1111,35 @@ export default function CloserManagement() {
       {/* Tasks Tab */}
       {activeTab === 'tasks' && (
         <div className="space-y-6">
-          {/* Tasks Header with Create Button */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <div className="flex justify-between items-center mb-4">
+          {/* Filter Tabs */}
+          <div className="bg-white rounded-lg border border-gray-200 p-4">
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setTaskFilter('not_completed')}
+                className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+                  taskFilter === 'not_completed'
+                    ? 'bg-slate-900 text-white shadow-sm'
+                    : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
+                }`}
+              >
+                Not Completed ({allTasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length})
+              </button>
+              <button
+                onClick={() => setTaskFilter('completed')}
+                className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+                  taskFilter === 'completed'
+                    ? 'bg-slate-900 text-white shadow-sm'
+                    : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
+                }`}
+              >
+                Completed ({allTasks.filter(t => t.status === 'completed').length})
+              </button>
+            </div>
+          </div>
+
+          {/* Tasks Container with Header and Create Button */}
+          <div className="bg-white rounded-xl border border-slate-200 p-6">
+            <div className="flex justify-between items-center mb-6">
               <div className="flex items-center">
                 <svg className="w-6 h-6 text-slate-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
@@ -1126,9 +1152,7 @@ export default function CloserManagement() {
                 onClick={() => setShowTaskForm(!showTaskForm)}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
               >
-                <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
+                <PlusCircle className="-ml-1 mr-2 h-5 w-5" />
                 {showTaskForm ? 'Cancel' : 'Create Task'}
               </button>
             </div>
@@ -1180,7 +1204,7 @@ export default function CloserManagement() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-2">
                         Priority
@@ -1208,31 +1232,13 @@ export default function CloserManagement() {
                         className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
                       />
                     </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Assign to Closer (Optional)
-                      </label>
-                      <select
-                        value={taskForm.closerId}
-                        onChange={(e) => setTaskForm({ ...taskForm, closerId: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
-                      >
-                        <option value="">Unassigned</option>
-                        {closers.map((closer) => (
-                          <option key={closer.id} value={closer.id}>
-                            {closer.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
                   </div>
                 </div>
 
                 <div className="flex justify-end space-x-3 mt-6">
                   <button
                     onClick={() => {
-                      setTaskForm({ leadEmail: '', title: '', description: '', priority: 'medium', dueDate: '', closerId: '' });
+                      setTaskForm({ leadEmail: '', title: '', description: '', priority: 'medium', dueDate: '' });
                       setShowTaskForm(false);
                     }}
                     className="px-4 py-2 text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors font-medium"
@@ -1258,12 +1264,11 @@ export default function CloserManagement() {
                             description: taskForm.description || null,
                             priority: taskForm.priority,
                             dueDate: taskForm.dueDate || null,
-                            closerId: taskForm.closerId || null,
                           }),
                         });
 
                         if (response.ok) {
-                          setTaskForm({ leadEmail: '', title: '', description: '', priority: 'medium', dueDate: '', closerId: '' });
+                          setTaskForm({ leadEmail: '', title: '', description: '', priority: 'medium', dueDate: '' });
                           setShowTaskForm(false);
                           await fetchAllTasks();
                         } else {
@@ -1282,36 +1287,8 @@ export default function CloserManagement() {
                 </div>
               </div>
             )}
-          </div>
 
-          {/* Filter Tabs */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <div className="flex space-x-2">
-              <button
-                onClick={() => setTaskFilter('not_completed')}
-                className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
-                  taskFilter === 'not_completed'
-                    ? 'bg-slate-900 text-white shadow-sm'
-                    : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
-                }`}
-              >
-                Not Completed ({allTasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length})
-              </button>
-              <button
-                onClick={() => setTaskFilter('completed')}
-                className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
-                  taskFilter === 'completed'
-                    ? 'bg-slate-900 text-white shadow-sm'
-                    : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
-                }`}
-              >
-                Completed ({allTasks.filter(t => t.status === 'completed').length})
-              </button>
-            </div>
-          </div>
-
-          {/* Tasks Table */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            {/* Tasks Table */}
             {isLoadingTasks ? (
               <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
@@ -1491,6 +1468,7 @@ export default function CloserManagement() {
                 </div>
               );
             })()}
+            </div>
           </div>
         </div>
       )}
