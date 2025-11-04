@@ -42,6 +42,10 @@ export async function PUT(
     if (description !== undefined) updateData.description = description;
     if (priority !== undefined) updateData.priority = priority;
     if (status !== undefined) {
+      // Reject cancelled status - it's no longer supported
+      if (status === 'cancelled') {
+        return NextResponse.json({ error: 'Cancelled status is no longer supported' }, { status: 400 });
+      }
       updateData.status = status;
       if (status === 'completed' && !existingTask.completedAt) {
         updateData.completedAt = new Date();

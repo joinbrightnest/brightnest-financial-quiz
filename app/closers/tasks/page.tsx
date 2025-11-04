@@ -21,7 +21,7 @@ interface Task {
   title: string;
   description: string | null;
   priority: 'low' | 'medium' | 'high' | 'urgent';
-  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+  status: 'pending' | 'in_progress' | 'completed';
   dueDate: string | null;
   completedAt: string | null;
   leadEmail: string;
@@ -134,9 +134,12 @@ export default function CloserTasks() {
   };
 
   const getFilteredTasks = () => {
+    // Filter out cancelled tasks - they don't matter anymore
+    const validTasks = tasks.filter(t => t.status !== 'cancelled');
+    
     let filtered = filter === 'completed' 
-      ? tasks.filter(t => t.status === 'completed')
-      : tasks.filter(t => t.status !== 'completed');
+      ? validTasks.filter(t => t.status === 'completed')
+      : validTasks.filter(t => t.status !== 'completed');
     
     // Sort: overdue/today tasks first, then by due date ascending
     filtered.sort((a, b) => {
@@ -165,7 +168,7 @@ export default function CloserTasks() {
     router.push('/closers/login');
   };
 
-  const handleUpdateStatus = async (taskId: string, newStatus: 'pending' | 'in_progress' | 'completed' | 'cancelled') => {
+  const handleUpdateStatus = async (taskId: string, newStatus: 'pending' | 'in_progress' | 'completed') => {
     try {
       const token = localStorage.getItem('closerToken');
       if (!token) {
@@ -324,8 +327,6 @@ export default function CloserTasks() {
         return 'bg-emerald-100 text-emerald-800 font-semibold';
       case 'in_progress':
         return 'bg-indigo-100 text-indigo-800 font-semibold';
-      case 'cancelled':
-        return 'bg-slate-200 text-slate-700';
       default:
         return 'bg-amber-100 text-amber-800 font-semibold';
     }
@@ -399,7 +400,7 @@ export default function CloserTasks() {
               </div>
               <div>
                 <div className="text-2xl font-bold text-gray-900">
-                  {tasks.filter(t => t.status !== 'completed').length}
+                  {tasks.filter(t => t.status !== 'completed' && t.status !== 'cancelled').length}
                 </div>
                 <div className="text-sm text-gray-500">Not Completed</div>
               </div>
@@ -536,8 +537,6 @@ export default function CloserTasks() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                   </svg>
                                 </div>
-                              ) : task.status === 'cancelled' ? (
-                                <div className="w-6 h-6 rounded-full bg-gray-200 border-2 border-gray-400"></div>
                               ) : (
                                 <div className="w-6 h-6 rounded-full bg-amber-100 border-2 border-amber-400 hover:border-amber-500 transition-colors"></div>
                               )}

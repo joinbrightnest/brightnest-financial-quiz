@@ -125,8 +125,8 @@ export default function CloserDashboard() {
 
       if (response.ok) {
         const tasks = await response.json();
-        // Count all non-completed tasks (pending, in_progress, cancelled) to match tasks page
-        const activeCount = tasks.filter((t: any) => t.status !== 'completed').length;
+        // Count all non-completed tasks (excluding cancelled - they don't matter anymore)
+        const activeCount = tasks.filter((t: any) => t.status !== 'completed' && t.status !== 'cancelled').length;
         setActiveTaskCount(activeCount);
       }
     } catch (error) {
