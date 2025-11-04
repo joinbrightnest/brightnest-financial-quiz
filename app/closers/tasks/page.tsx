@@ -40,6 +40,7 @@ export default function CloserTasks() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
   const [taskForm, setTaskForm] = useState({
     title: '',
     description: '',
@@ -171,6 +172,12 @@ export default function CloserTasks() {
       priority: task.priority,
       dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
     });
+    // Automatically expand when editing
+    setExpandedTasks(prev => {
+      const newSet = new Set(prev);
+      newSet.add(task.id);
+      return newSet;
+    });
   };
 
   const closeEditTask = () => {
@@ -180,6 +187,18 @@ export default function CloserTasks() {
       description: '',
       priority: 'medium',
       dueDate: '',
+    });
+  };
+
+  const toggleTaskExpand = (taskId: string) => {
+    setExpandedTasks(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(taskId)) {
+        newSet.delete(taskId);
+      } else {
+        newSet.add(taskId);
+      }
+      return newSet;
     });
   };
 
@@ -412,136 +431,174 @@ export default function CloserTasks() {
               <p className="text-gray-500 text-sm">Create tasks from lead details to see them here</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {filteredTasks.map((task) => {
                 const isEditing = editingTask?.id === task.id;
+                const isExpanded = expandedTasks.has(task.id);
                 return (
                   <div
                     key={task.id}
-                    className="border border-gray-200 rounded-lg p-6 hover:border-gray-300 hover:shadow-sm transition-all bg-white"
+                    className="border border-gray-200 rounded-lg bg-white hover:border-gray-300 hover:shadow-sm transition-all overflow-hidden"
                   >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        {isEditing ? (
-                          // Edit Mode
-                          <div className="space-y-3">
-                            <div className="flex items-center space-x-3 mb-2">
-                              <input
-                                type="text"
-                                value={taskForm.title}
-                                onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
-                                className="flex-1 text-lg font-semibold px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900"
-                                placeholder="Task title"
-                              />
-                              <select
-                                value={taskForm.priority}
-                                onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value as 'low' | 'medium' | 'high' | 'urgent' })}
-                                className={`px-3 py-1.5 rounded-md text-xs border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${getPriorityColor(taskForm.priority)}`}
-                              >
-                                <option value="low">Low</option>
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
-                                <option value="urgent">Urgent</option>
-                              </select>
-                              <span className={`px-3 py-1.5 rounded-md text-xs ${getStatusColor(task.status)}`}>
-                                {task.status === 'in_progress' ? 'In Progress' : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-                              </span>
-                            </div>
-                            <textarea
-                              value={taskForm.description}
-                              onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
-                              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 mb-2"
-                              placeholder="Task description"
-                              rows={2}
-                            />
-                            <div className="flex items-center space-x-6 text-sm">
-                              <div className="flex items-center">
-                                <svg className="w-4 h-4 mr-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                                <input
-                                  type="date"
-                                  value={taskForm.dueDate}
-                                  onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
-                                  className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-gray-900"
-                                />
-                              </div>
-                              {task.leadEmail && (
-                                <div className="flex items-center text-gray-500">
-                                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                  </svg>
-                                  {task.leadEmail}
-                                </div>
-                              )}
-                              {task.closer && (
-                                <div className="flex items-center text-gray-500">
-                                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                  </svg>
-                                  Deal Owner: {task.closer.name}
-                                </div>
-                              )}
-                            </div>
+                    {/* Compact Header - Always Visible */}
+                    <div 
+                      className={`flex items-center justify-between p-4 cursor-pointer ${!isEditing ? 'hover:bg-gray-50' : ''}`}
+                      onClick={() => !isEditing && toggleTaskExpand(task.id)}
+                    >
+                      <div className="flex items-center space-x-3 flex-1 min-w-0">
+                        <div className="flex items-center space-x-2 flex-shrink-0">
+                          <svg 
+                            className={`w-4 h-4 text-gray-400 transition-transform flex-shrink-0 ${isExpanded ? 'rotate-90' : ''}`}
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                        <h3 className="text-base font-semibold text-gray-900 truncate">
+                          {task.title}
+                        </h3>
+                        <span className={`px-2 py-1 rounded-md text-xs flex-shrink-0 ${getPriorityColor(task.priority)}`}>
+                          {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                        </span>
+                        <span className={`px-2 py-1 rounded-md text-xs flex-shrink-0 ${getStatusColor(task.status)}`}>
+                          {task.status === 'in_progress' ? 'In Progress' : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                        </span>
+                        {task.dueDate && (
+                          <div className="flex items-center text-xs text-gray-500 flex-shrink-0">
+                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            {new Date(task.dueDate).toLocaleDateString()}
                           </div>
-                        ) : (
-                          // View Mode
-                          <>
-                            <div className="flex items-center space-x-3 mb-2">
-                              <h3 className="text-lg font-semibold text-gray-900">
-                                {task.title}
-                              </h3>
-                              <span className={`px-3 py-1.5 rounded-md text-xs ${getPriorityColor(task.priority)}`}>
-                                {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                              </span>
-                              <span className={`px-3 py-1.5 rounded-md text-xs ${getStatusColor(task.status)}`}>
-                                {task.status === 'in_progress' ? 'In Progress' : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-                              </span>
-                              <button
-                                onClick={() => openEditTask(task)}
-                                className="ml-2 p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
-                                title="Edit task"
-                              >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                </svg>
-                              </button>
-                            </div>
-                            {task.description && (
-                              <p className="text-gray-600 mb-3">{task.description}</p>
-                            )}
-                            <div className="flex items-center space-x-6 text-sm text-gray-500">
-                              {task.dueDate && (
-                                <div className="flex items-center">
-                                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                  </svg>
-                                  {new Date(task.dueDate).toLocaleDateString()}
-                                </div>
-                              )}
-                              {task.leadEmail && (
-                                <div className="flex items-center">
-                                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                  </svg>
-                                  {task.leadEmail}
-                                </div>
-                              )}
-                              {task.closer && (
-                                <div className="flex items-center">
-                                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                  </svg>
-                                  Deal Owner: {task.closer.name}
-                                </div>
-                              )}
-                            </div>
-                          </>
                         )}
                       </div>
-                      
-                      {/* Action Buttons */}
-                      <div className="flex items-center space-x-2 ml-4">
+                      <div className="flex items-center space-x-2 ml-3 flex-shrink-0">
+                        {!isEditing && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openEditTask(task);
+                            }}
+                            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                            title="Edit task"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Expandable Content */}
+                    <div className={`transition-all duration-300 ease-in-out ${isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'} overflow-hidden`}>
+                      <div className="px-4 pb-4 border-t border-gray-100">
+                        <div className="pt-4">
+                          {isEditing ? (
+                            // Edit Mode
+                            <div className="space-y-3">
+                              <div className="flex items-center space-x-3 mb-2">
+                                <input
+                                  type="text"
+                                  value={taskForm.title}
+                                  onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
+                                  className="flex-1 text-base font-semibold px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900"
+                                  placeholder="Task title"
+                                />
+                                <select
+                                  value={taskForm.priority}
+                                  onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value as 'low' | 'medium' | 'high' | 'urgent' })}
+                                  className={`px-3 py-1.5 rounded-md text-xs border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${getPriorityColor(taskForm.priority)}`}
+                                >
+                                  <option value="low">Low</option>
+                                  <option value="medium">Medium</option>
+                                  <option value="high">High</option>
+                                  <option value="urgent">Urgent</option>
+                                </select>
+                                <span className={`px-3 py-1.5 rounded-md text-xs ${getStatusColor(task.status)}`}>
+                                  {task.status === 'in_progress' ? 'In Progress' : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                                </span>
+                              </div>
+                              <textarea
+                                value={taskForm.description}
+                                onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
+                                className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 mb-2"
+                                placeholder="Task description"
+                                rows={3}
+                              />
+                              <div className="flex items-center space-x-6 text-sm">
+                                <div className="flex items-center">
+                                  <svg className="w-4 h-4 mr-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                  </svg>
+                                  <input
+                                    type="date"
+                                    value={taskForm.dueDate}
+                                    onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
+                                    className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-gray-900"
+                                  />
+                                </div>
+                                {task.leadEmail && (
+                                  <div className="flex items-center text-gray-500">
+                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                    {task.leadEmail}
+                                  </div>
+                                )}
+                                {task.closer && (
+                                  <div className="flex items-center text-gray-500">
+                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    Deal Owner: {task.closer.name}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ) : (
+                            // View Mode - Expanded Details
+                            <div className="space-y-3">
+                              {task.description && (
+                                <div>
+                                  <p className="text-sm font-medium text-gray-700 mb-1">Description:</p>
+                                  <p className="text-gray-600 text-sm whitespace-pre-wrap">{task.description}</p>
+                                </div>
+                              )}
+                              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
+                                {task.dueDate && (
+                                  <div className="flex items-center">
+                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Due: {new Date(task.dueDate).toLocaleDateString()}
+                                  </div>
+                                )}
+                                {task.leadEmail && (
+                                  <div className="flex items-center">
+                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                    {task.leadEmail}
+                                  </div>
+                                )}
+                                {task.closer && (
+                                  <div className="flex items-center">
+                                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    Deal Owner: {task.closer.name}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Action Buttons */}
+                        <div className="flex items-center justify-end space-x-2 mt-4 pt-4 border-t border-gray-100">
                         {isEditing ? (
                           // Edit mode buttons
                           <>
@@ -587,6 +644,7 @@ export default function CloserTasks() {
                             )}
                           </>
                         )}
+                        </div>
                       </div>
                     </div>
                   </div>
