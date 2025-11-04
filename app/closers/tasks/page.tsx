@@ -479,7 +479,7 @@ export default function CloserTasks() {
                   {filteredTasks.map((task) => {
                     const isEditing = editingTask?.id === task.id;
                     const isExpanded = expandedTasks.has(task.id);
-                    const associatedContact = task.appointment?.customerName || task.leadEmail;
+                    const associatedContact = task.appointment?.customerName || null;
                     
                     return (
                       <React.Fragment key={task.id}>
