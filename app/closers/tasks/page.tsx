@@ -458,21 +458,30 @@ export default function CloserTasks() {
                         >
                           {/* Status Column */}
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center">
+                            <button
+                              onClick={() => {
+                                if (task.status === 'completed') {
+                                  handleUpdateStatus(task.id, 'pending');
+                                } else {
+                                  handleUpdateStatus(task.id, 'completed');
+                                }
+                              }}
+                              className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
+                              disabled={isEditing}
+                              title={task.status === 'completed' ? 'Mark as not completed' : 'Mark as completed'}
+                            >
                               {task.status === 'completed' ? (
                                 <div className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center">
                                   <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                   </svg>
                                 </div>
-                              ) : task.status === 'in_progress' ? (
-                                <div className="w-6 h-6 rounded-full bg-indigo-100 border-2 border-indigo-500"></div>
                               ) : task.status === 'cancelled' ? (
                                 <div className="w-6 h-6 rounded-full bg-gray-200 border-2 border-gray-400"></div>
                               ) : (
-                                <div className="w-6 h-6 rounded-full bg-amber-100 border-2 border-amber-400"></div>
+                                <div className="w-6 h-6 rounded-full bg-amber-100 border-2 border-amber-400 hover:border-amber-500 transition-colors"></div>
                               )}
-                            </div>
+                            </button>
                           </td>
                           
                           {/* Title Column */}
@@ -562,36 +571,18 @@ export default function CloserTasks() {
                                   </button>
                                 </>
                               ) : (
-                                <>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      openEditTask(task);
-                                    }}
-                                    className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
-                                    title="Edit task"
-                                  >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                  </button>
-                                  {task.status !== 'in_progress' && task.status !== 'completed' && (
-                                    <button
-                                      onClick={() => handleUpdateStatus(task.id, 'in_progress')}
-                                      className="px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors"
-                                    >
-                                      Start
-                                    </button>
-                                  )}
-                                  {task.status === 'in_progress' && (
-                                    <button
-                                      onClick={() => handleUpdateStatus(task.id, 'completed')}
-                                      className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 transition-colors"
-                                    >
-                                      Complete
-                                    </button>
-                                  )}
-                                </>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    openEditTask(task);
+                                  }}
+                                  className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                                  title="Edit task"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                  </svg>
+                                </button>
                               )}
                             </div>
                           </td>
