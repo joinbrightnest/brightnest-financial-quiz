@@ -43,7 +43,7 @@ export default function CloserTasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<'all' | 'pending' | 'completed'>('all');
+  const [filter, setFilter] = useState<'not_completed' | 'completed'>('not_completed');
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
   const [taskForm, setTaskForm] = useState({
@@ -123,13 +123,11 @@ export default function CloserTasks() {
   };
 
   const getFilteredTasks = () => {
-    if (filter === 'pending') {
-      return tasks.filter(t => t.status === 'pending' || t.status === 'in_progress');
-    }
     if (filter === 'completed') {
       return tasks.filter(t => t.status === 'completed');
     }
-    return tasks;
+    // Default: not_completed - show everything except completed
+    return tasks.filter(t => t.status !== 'completed');
   };
 
   const handleLogout = () => {
@@ -295,7 +293,7 @@ export default function CloserTasks() {
 
   return (
     <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
-      <CloserHeader closer={closer} onLogout={handleLogout} taskCount={tasks.filter(t => t.status === 'pending' || t.status === 'in_progress').length} />
+      <CloserHeader closer={closer} onLogout={handleLogout} taskCount={tasks.filter(t => t.status !== 'completed').length} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
@@ -344,9 +342,9 @@ export default function CloserTasks() {
               </div>
               <div>
                 <div className="text-2xl font-bold text-gray-900">
-                  {tasks.filter(t => t.status === 'pending' || t.status === 'in_progress').length}
+                  {tasks.filter(t => t.status !== 'completed').length}
                 </div>
-                <div className="text-sm text-gray-500">Active</div>
+                <div className="text-sm text-gray-500">Not Completed</div>
               </div>
             </div>
           </div>
@@ -388,24 +386,14 @@ export default function CloserTasks() {
         <div className="bg-white rounded-lg border border-gray-200 p-4 mb-8">
           <div className="flex space-x-2">
             <button
-              onClick={() => setFilter('all')}
+              onClick={() => setFilter('not_completed')}
               className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
-                filter === 'all'
+                filter === 'not_completed'
                   ? 'bg-slate-900 text-white shadow-sm'
                   : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
               }`}
             >
-              All Tasks ({tasks.length})
-            </button>
-            <button
-              onClick={() => setFilter('pending')}
-              className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
-                filter === 'pending'
-                  ? 'bg-slate-900 text-white shadow-sm'
-                  : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
-              }`}
-            >
-              Active ({tasks.filter(t => t.status === 'pending' || t.status === 'in_progress').length})
+              Not Completed ({tasks.filter(t => t.status !== 'completed').length})
             </button>
             <button
               onClick={() => setFilter('completed')}
