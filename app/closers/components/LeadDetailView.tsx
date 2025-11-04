@@ -65,7 +65,10 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
   const [newNoteContent, setNewNoteContent] = useState('');
   const [isSubmittingNote, setIsSubmittingNote] = useState(false);
 
-  // States for task management (creation only)
+  // States for task management
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [loadingTasks, setLoadingTasks] = useState(false);
   const [taskForm, setTaskForm] = useState({
     title: '',
     description: '',
@@ -90,6 +93,12 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
       fetchNotes();
     }
   }, [sessionId, activeTab]);
+
+  useEffect(() => {
+    if (sessionId && activeTab === 'tasks' && leadData?.user?.email) {
+      fetchTasks();
+    }
+  }, [sessionId, activeTab, leadData]);
 
   const fetchLeadData = async () => {
     try {
@@ -225,7 +234,32 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
     };
 
     // Task creation function
-    const handleCreateTask = async () => {
+  const fetchTasks = async () => {
+    if (!leadData?.user?.email) return;
+    
+    try {
+      setLoadingTasks(true);
+      const token = localStorage.getItem('closerToken');
+      const response = await fetch(`/api/closer/tasks?leadEmail=${encodeURIComponent(leadData.user.email)}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Handle both response formats: array directly or { tasks: [...] }
+        const tasksArray = Array.isArray(data) ? data : (data.tasks || []);
+        setTasks(tasksArray);
+      }
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    } finally {
+      setLoadingTasks(false);
+    }
+  };
+
+  const handleCreateTask = async () => {
         if (!taskForm.title || !leadData?.user?.email) return;
 
         try {
@@ -247,9 +281,9 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
 
             if (response.ok) {
                 setTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
+                setShowTaskForm(false);
                 await fetchActivities();
-                // Show success message
-                alert('Task created successfully! You can view and manage it in the Tasks page.');
+                await fetchTasks(); // Refresh tasks list
             } else {
                 alert('Failed to create task. Please try again.');
             }
@@ -258,6 +292,55 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
             alert('An error occurred while creating the task.');
         }
     };
+
+  const handleUpdateTaskStatus = async (taskId: string, newStatus: 'pending' | 'in_progress' | 'completed') => {
+    try {
+      const token = localStorage.getItem('closerToken');
+      const response = await fetch(`/api/closer/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          status: newStatus,
+        }),
+      });
+
+      if (response.ok) {
+        await fetchTasks();
+        await fetchActivities();
+      }
+    } catch (error) {
+      console.error('Error updating task status:', error);
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'urgent':
+        return 'bg-red-100 text-red-800 font-semibold';
+      case 'high':
+        return 'bg-orange-100 text-orange-800 font-semibold';
+      case 'medium':
+        return 'bg-amber-100 text-amber-800 font-semibold';
+      case 'low':
+        return 'bg-slate-100 text-slate-700';
+      default:
+        return 'bg-slate-100 text-slate-700';
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return 'bg-emerald-100 text-emerald-800 font-semibold';
+      case 'in_progress':
+        return 'bg-indigo-100 text-indigo-800 font-semibold';
+      default:
+        return 'bg-amber-100 text-amber-800 font-semibold';
+    }
+  };
 
    if (loading) {
     return (
@@ -603,98 +686,189 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
           {activeTab === 'tasks' && (
             <div className="space-y-6">
               <div className="bg-white rounded-xl border border-slate-200 p-6">
-                <div className="flex items-center mb-6">
-                  <svg className="w-6 h-6 text-slate-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                  </svg>
-                  <h3 className="text-lg font-semibold text-slate-900">
-                    Create Task for this Lead
-                  </h3>
+                <div className="flex justify-between items-center mb-6">
+                  <div className="flex items-center">
+                    <svg className="w-6 h-6 text-slate-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    </svg>
+                    <h3 className="text-lg font-semibold text-slate-900">
+                      Tasks ({tasks.length})
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setShowTaskForm(!showTaskForm)}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
+                  >
+                    <PlusCircle className="-ml-1 mr-2 h-5 w-5" />
+                    {showTaskForm ? 'Cancel' : 'Create Task'}
+                  </button>
                 </div>
 
-                {/* Inline Task Form */}
-                <div className="bg-white border-2 border-blue-200 rounded-lg p-6 mb-6">
-                  <h4 className="text-lg font-semibold text-slate-900 mb-4">
-                    Create New Task
-                  </h4>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Task Title *
-                      </label>
-                      <input
-                        type="text"
-                        value={taskForm.title}
-                        onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
-                        placeholder="e.g., Follow up on product demo"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Description
-                      </label>
-                      <textarea
-                        value={taskForm.description}
-                        onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-slate-900"
-                        rows={3}
-                        placeholder="Add any additional details..."
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
+                {/* Collapsible Task Form */}
+                {showTaskForm && (
+                  <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 mb-6">
+                    <h4 className="text-base font-semibold text-slate-900 mb-4">
+                      Create New Task
+                    </h4>
+                    
+                    <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">
-                          Priority
-                        </label>
-                        <select
-                          value={taskForm.priority}
-                          onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value })}
-                          className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
-                        >
-                          <option value="low">Low</option>
-                          <option value="medium">Medium</option>
-                          <option value="high">High</option>
-                          <option value="urgent">Urgent</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">
-                          Due Date
+                          Task Title *
                         </label>
                         <input
-                          type="date"
-                          value={taskForm.dueDate}
-                          onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
+                          type="text"
+                          value={taskForm.title}
+                          onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
                           className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
+                          placeholder="e.g., Follow up on product demo"
                         />
                       </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          Description
+                        </label>
+                        <textarea
+                          value={taskForm.description}
+                          onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
+                          className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-slate-900"
+                          rows={3}
+                          placeholder="Add any additional details..."
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">
+                            Priority
+                          </label>
+                          <select
+                            value={taskForm.priority}
+                            onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value })}
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
+                          >
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-2">
+                            Due Date
+                          </label>
+                          <input
+                            type="date"
+                            value={taskForm.dueDate}
+                            onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end space-x-3 mt-6">
+                      <button
+                        onClick={() => {
+                          setTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
+                          setShowTaskForm(false);
+                        }}
+                        className="px-4 py-2 text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors font-medium"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleCreateTask}
+                        disabled={!taskForm.title}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                      >
+                        Create Task
+                      </button>
                     </div>
                   </div>
+                )}
 
-                  <div className="flex justify-end space-x-3 mt-6">
-                    <button
-                      onClick={() => {
-                        setTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
-                      }}
-                      className="px-4 py-2 text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors font-medium"
-                    >
-                      Clear
-                    </button>
-                    <button
-                      onClick={handleCreateTask}
-                      disabled={!taskForm.title}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
-                    >
-                      Create Task
-                    </button>
+                {/* Tasks List */}
+                {loadingTasks ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                    <p className="text-sm text-slate-600 mt-4">Loading tasks...</p>
                   </div>
-                </div>
-
+                ) : tasks.length === 0 ? (
+                  <div className="text-center py-8">
+                    <svg className="w-12 h-12 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    </svg>
+                    <p className="text-sm text-slate-600">No tasks have been created for this lead.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {tasks.map((task) => (
+                      <div key={task.id} className="bg-white border border-slate-200 rounded-lg p-4 hover:border-slate-300 transition-colors">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <button
+                                onClick={() => {
+                                  if (task.status === 'completed') {
+                                    handleUpdateTaskStatus(task.id, 'pending');
+                                  } else {
+                                    handleUpdateTaskStatus(task.id, 'completed');
+                                  }
+                                }}
+                                className="flex-shrink-0"
+                                title={task.status === 'completed' ? 'Mark as not completed' : 'Mark as completed'}
+                              >
+                                {task.status === 'completed' ? (
+                                  <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+                                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                  </div>
+                                ) : (
+                                  <div className="w-6 h-6 rounded-full bg-amber-100 border-2 border-amber-400 hover:border-amber-500 transition-colors"></div>
+                                )}
+                              </button>
+                              <div className="flex-1">
+                                <h4 className={`text-sm font-semibold text-slate-900 ${task.status === 'completed' ? 'line-through text-slate-500' : ''}`}>
+                                  {task.title}
+                                </h4>
+                                {task.description && (
+                                  <p className={`text-sm text-slate-600 mt-1 ${task.status === 'completed' ? 'line-through text-slate-400' : ''}`}>
+                                    {task.description}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 mt-3">
+                              <span className={`px-2 py-1 rounded-md text-xs ${getPriorityColor(task.priority)}`}>
+                                {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                              </span>
+                              <span className={`px-2 py-1 rounded-md text-xs ${getStatusColor(task.status)}`}>
+                                {task.status === 'completed' ? 'Completed' : task.status === 'in_progress' ? 'In Progress' : 'Pending'}
+                              </span>
+                              {task.dueDate && (
+                                <span className={`text-xs ${new Date(task.dueDate) < new Date() && task.status !== 'completed' ? 'text-red-600 font-semibold' : 'text-slate-500'}`}>
+                                  Due: {new Date(task.dueDate).toLocaleDateString()}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          {task.status === 'pending' && (
+                            <button
+                              onClick={() => handleUpdateTaskStatus(task.id, 'in_progress')}
+                              className="ml-4 px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors"
+                            >
+                              Start
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
