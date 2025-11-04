@@ -2768,18 +2768,6 @@ export default function AdminDashboard() {
                                       {/* View Call Details for outcome/deal activities */}
                                       {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated' || activity.type === 'deal_closed') && (
                                         <div className="mt-3">
-                                          <div className="flex flex-wrap items-center gap-2 mb-2">
-                                            {activity.details?.outcome && (
-                                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-300">
-                                                {activity.details.outcome.replace(/_/g, ' ').toUpperCase()}
-                                              </span>
-                                            )}
-                                            {activity.details?.saleValue && (
-                                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                ${Number(activity.details.saleValue).toFixed(2)}
-                                              </span>
-                                            )}
-                                          </div>
                                           <button
                                             onClick={() => {
                                               const detailsEl = document.getElementById(`call-details-${activity.id}`);
