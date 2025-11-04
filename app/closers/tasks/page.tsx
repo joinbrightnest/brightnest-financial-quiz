@@ -122,12 +122,39 @@ export default function CloserTasks() {
     }
   };
 
+  const isDueDateOverdueOrToday = (dueDate: string | null): boolean => {
+    if (!dueDate) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const due = new Date(dueDate);
+    due.setHours(0, 0, 0, 0);
+    return due <= today;
+  };
+
   const getFilteredTasks = () => {
-    if (filter === 'completed') {
-      return tasks.filter(t => t.status === 'completed');
-    }
-    // Default: not_completed - show everything except completed
-    return tasks.filter(t => t.status !== 'completed');
+    let filtered = filter === 'completed' 
+      ? tasks.filter(t => t.status === 'completed')
+      : tasks.filter(t => t.status !== 'completed');
+    
+    // Sort: overdue/today tasks first, then by due date ascending
+    filtered.sort((a, b) => {
+      const aOverdue = a.dueDate ? isDueDateOverdueOrToday(a.dueDate) : false;
+      const bOverdue = b.dueDate ? isDueDateOverdueOrToday(b.dueDate) : false;
+      
+      // If one is overdue/today and the other isn't, prioritize overdue
+      if (aOverdue && !bOverdue) return -1;
+      if (!aOverdue && bOverdue) return 1;
+      
+      // If both are overdue or both are not, sort by due date
+      if (a.dueDate && b.dueDate) {
+        return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+      }
+      if (a.dueDate) return -1;
+      if (b.dueDate) return 1;
+      return 0;
+    });
+    
+    return filtered;
   };
 
   const handleLogout = () => {
@@ -435,6 +462,9 @@ export default function CloserTasks() {
                       Title
                     </th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Priority
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Associated Contact
                     </th>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -516,6 +546,26 @@ export default function CloserTasks() {
                             </div>
                           </td>
                           
+                          {/* Priority Column */}
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            {isEditing ? (
+                              <select
+                                value={taskForm.priority}
+                                onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value as 'low' | 'medium' | 'high' | 'urgent' })}
+                                className={`px-2 py-1 rounded-md text-xs border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 ${getPriorityColor(taskForm.priority)}`}
+                              >
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                              </select>
+                            ) : (
+                              <span className={`px-2 py-1 rounded-md text-xs ${getPriorityColor(task.priority)}`}>
+                                {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                              </span>
+                            )}
+                          </td>
+                          
                           {/* Associated Contact Column */}
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
@@ -544,7 +594,7 @@ export default function CloserTasks() {
                                 className="px-3 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-gray-900"
                               />
                             ) : task.dueDate ? (
-                              <span className="text-sm text-gray-900">
+                              <span className={`text-sm ${isDueDateOverdueOrToday(task.dueDate) ? 'text-red-600 font-semibold' : 'text-gray-900'}`}>
                                 {new Date(task.dueDate).toLocaleDateString()}
                               </span>
                             ) : (
@@ -591,7 +641,7 @@ export default function CloserTasks() {
                         {/* Expandable Row - Details */}
                         {isExpanded && (
                           <tr className="bg-gray-50">
-                            <td colSpan={5} className="px-6 py-4">
+                            <td colSpan={6} className="px-6 py-4">
                               <div className={`transition-all duration-300 ease-in-out ${isExpanded ? 'opacity-100' : 'opacity-0'}`}>
                                 {isEditing ? (
                                   <div className="space-y-4 pb-4">
