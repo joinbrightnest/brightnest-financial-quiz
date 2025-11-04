@@ -430,7 +430,7 @@ export default function CloserTasks() {
                                 type="text"
                                 value={taskForm.title}
                                 onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
-                                className="flex-1 text-lg font-semibold px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="flex-1 text-lg font-semibold px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900"
                                 placeholder="Task title"
                               />
                               <select
@@ -450,7 +450,7 @@ export default function CloserTasks() {
                             <textarea
                               value={taskForm.description}
                               onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
-                              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-600 mb-2"
+                              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-900 mb-2"
                               placeholder="Task description"
                               rows={2}
                             />
@@ -463,7 +463,7 @@ export default function CloserTasks() {
                                   type="date"
                                   value={taskForm.dueDate}
                                   onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
-                                  className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                                  className="px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-gray-900"
                                 />
                               </div>
                               {task.leadEmail && (
