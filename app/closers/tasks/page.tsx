@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import CloserHeader from '../components/CloserHeader';
+import LeadDetailView from '../components/LeadDetailView';
 
 interface Closer {
   id: string;
@@ -46,6 +47,7 @@ export default function CloserTasks() {
   const [filter, setFilter] = useState<'not_completed' | 'completed'>('not_completed');
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [taskForm, setTaskForm] = useState({
     title: '',
     description: '',
@@ -230,6 +232,34 @@ export default function CloserTasks() {
       }
       return newSet;
     });
+  };
+
+  const viewLeadDetails = async (leadEmail: string) => {
+    try {
+      const token = localStorage.getItem('closerToken');
+      if (!token) {
+        setError('Not authenticated');
+        return;
+      }
+
+      const response = await fetch(`/api/leads/by-email?email=${encodeURIComponent(leadEmail)}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.lead && data.lead.id) {
+          setSelectedLeadId(data.lead.id);
+        } else {
+          setError('Could not find a valid session for this lead.');
+        }
+      } else {
+        setError('Failed to retrieve lead session details.');
+      }
+    } catch (e) {
+      console.error('Error viewing lead details:', e);
+      setError('Error preparing to view lead details.');
+    }
   };
 
   const handleUpdateTask = async () => {
@@ -576,7 +606,18 @@ export default function CloserTasks() {
                                       {associatedContact.charAt(0).toUpperCase()}
                                     </span>
                                   </div>
-                                  <span className="text-sm text-gray-900">{associatedContact}</span>
+                                  <button
+                                    onClick={() => {
+                                      const email = task.appointment?.customerEmail || task.leadEmail;
+                                      if (email) {
+                                        viewLeadDetails(email);
+                                      }
+                                    }}
+                                    className="text-sm text-gray-900 hover:text-indigo-600 hover:underline transition-colors cursor-pointer"
+                                    title="View lead details"
+                                  >
+                                    {associatedContact}
+                                  </button>
                                 </>
                               ) : (
                                 <span className="text-sm text-gray-400">--</span>
@@ -718,6 +759,14 @@ export default function CloserTasks() {
           )}
         </div>
       </div>
+
+      {/* Lead Detail View Overlay */}
+      {selectedLeadId && (
+        <LeadDetailView 
+          sessionId={selectedLeadId} 
+          onClose={() => setSelectedLeadId(null)} 
+        />
+      )}
     </div>
   );
 }
