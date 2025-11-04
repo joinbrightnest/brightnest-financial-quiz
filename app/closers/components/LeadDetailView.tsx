@@ -856,14 +856,6 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                               )}
                             </div>
                           </div>
-                          {task.status === 'pending' && (
-                            <button
-                              onClick={() => handleUpdateTaskStatus(task.id, 'in_progress')}
-                              className="ml-4 px-3 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors"
-                            >
-                              Start
-                            </button>
-                          )}
                         </div>
                       </div>
                     ))}
