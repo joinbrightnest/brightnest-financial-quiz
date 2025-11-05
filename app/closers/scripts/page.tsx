@@ -268,7 +268,7 @@ What happens after a client signs up:
 5. Regular Reviews
    - Quarterly or monthly reviews (plan dependent)
    - Strategy adjustments as needed
-   - Goal progress assessment`;
+   - Goal progress assessment`
   };
 
   // Email Templates by Stage
