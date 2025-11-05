@@ -76,6 +76,19 @@ export default function CloserHeader({ closer, onLogout, taskCount = 0 }: Closer
               )}
             </Link>
             <Link
+              href="/closers/scripts"
+              className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 group ${
+                isActive('/closers/scripts')
+                  ? 'text-indigo-600 bg-indigo-50 border border-indigo-200'
+                  : 'text-gray-700 hover:text-indigo-600 hover:bg-indigo-50'
+              }`}
+            >
+              <span className="relative z-10">Scripts</span>
+              {!isActive('/closers/scripts') && (
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+              )}
+            </Link>
+            <Link
               href="/closers/tasks"
               className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 group ${
                 isActive('/closers/tasks')
@@ -163,6 +176,20 @@ export default function CloserHeader({ closer, onLogout, taskCount = 0 }: Closer
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
                     </svg>
                     Database
+                  </Link>
+                  <Link
+                    href="/closers/scripts"
+                    className={`flex items-center px-4 py-3 text-sm transition-all duration-200 group ${
+                      isActive('/closers/scripts')
+                        ? 'text-indigo-600 bg-indigo-50 border-l-4 border-indigo-500'
+                        : 'text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50'
+                    }`}
+                    onClick={() => setShowMenu(false)}
+                  >
+                    <svg className={`w-4 h-4 mr-3 ${isActive('/closers/scripts') ? 'text-indigo-600' : 'text-gray-500 group-hover:text-indigo-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Scripts
                   </Link>
                   <Link
                     href="/closers/tasks"
