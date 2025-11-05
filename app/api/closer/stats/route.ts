@@ -70,7 +70,8 @@ export async function GET(request: NextRequest) {
 
     // Calculate real stats from appointments
     const actualTotalCalls = appointments.length;
-    const actualTotalConversions = appointments.filter(apt => apt.outcome === 'converted').length;
+    // Only count conversions where outcome is 'converted' AND saleValue exists (actual closed sales)
+    const actualTotalConversions = appointments.filter(apt => apt.outcome === 'converted' && apt.saleValue).length;
     const actualTotalRevenue = appointments
       .filter(apt => apt.outcome === 'converted' && apt.saleValue)
       .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
