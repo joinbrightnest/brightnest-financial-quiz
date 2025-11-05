@@ -17,7 +17,12 @@ export async function GET(request: NextRequest) {
     const closerId = searchParams.get('closerId');
 
     // Build where clause
-    const where: any = {};
+    const where: any = {
+      // Only include valid task statuses (exclude 'cancelled' which isn't in the enum)
+      status: {
+        in: ['pending', 'in_progress', 'completed']
+      }
+    };
     if (leadEmail) {
       where.leadEmail = leadEmail;
     }
