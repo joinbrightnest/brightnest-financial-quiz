@@ -2565,7 +2565,7 @@ export default function AdminDashboard() {
                             <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Status</label>
                             <div className="mt-1">
                               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                crmSelectedLead.status === 'Stage' || crmSelectedLead.status === 'Booked' 
+                                crmSelectedLead.status === 'Completed' || crmSelectedLead.status === 'Booked' 
                                   ? 'bg-green-100 text-green-800' 
                                   : crmSelectedLead.status === 'In Progress'
                                   ? 'bg-blue-100 text-blue-800'

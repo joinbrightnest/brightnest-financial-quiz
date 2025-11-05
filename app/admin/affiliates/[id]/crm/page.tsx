@@ -485,11 +485,11 @@ export default function AffiliateCRMView() {
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap">
                           <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${
-                            lead.status === "Stage" || lead.status === "stage"
+                            lead.status === "Completed" || lead.status === "completed"
                               ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg" 
                               : "bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-lg"
                           }`}>
-                            {lead.status === "Stage" || lead.status === "stage" ? "Stage" : "In Progress"}
+                            {lead.status === "Completed" || lead.status === "completed" ? "Completed" : "In Progress"}
                           </span>
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">

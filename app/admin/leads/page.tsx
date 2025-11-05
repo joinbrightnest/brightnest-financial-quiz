@@ -299,7 +299,7 @@ export default function LeadsPage() {
     const archetypeStats = getArchetypeStats();
     const quizTypeStats = getQuizTypeStats();
     const totalLeads = leads.length;
-    const completedLeads = leads.filter(l => l.status === 'Stage' || l.status === 'Booked').length;
+    const completedLeads = leads.filter(l => l.status === 'Completed' || l.status === 'Booked').length;
     const completionRate = totalLeads > 0 ? Math.round((completedLeads / totalLeads) * 100) : 0;
 
     return (
@@ -557,7 +557,7 @@ export default function LeadsPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                        lead.status === "Stage" 
+                        lead.status === "Completed" 
                           ? "bg-green-100 text-green-800 border border-green-200" 
                           : lead.status === "Booked"
                           ? "bg-blue-100 text-blue-800 border border-blue-200"
@@ -738,7 +738,7 @@ export default function LeadsPage() {
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        lead.status === "Stage" 
+                        lead.status === "Completed" 
                           ? "bg-green-100 text-green-800" 
                           : lead.status === "Booked"
                           ? "bg-blue-100 text-blue-800"
@@ -836,7 +836,7 @@ export default function LeadsPage() {
                   <div className="font-semibold text-sm text-green-800 mb-1">Qualified Leads</div>
                   <div className="text-xs text-green-600 mb-3">Completed assessments</div>
                   <div className="text-2xl font-bold text-green-700">
-                    {leads.filter(l => l.status === 'Stage').length}
+                    {leads.filter(l => l.status === 'Completed').length}
                   </div>
                 </div>
                 <div className="w-10 h-10 bg-green-200 rounded-lg flex items-center justify-center">
@@ -1098,7 +1098,7 @@ export default function LeadsPage() {
                     { key: 'quizType', label: 'Quiz Type' },
                     { key: 'name', label: 'Name' },
                     { key: 'email', label: 'Email' },
-                    { key: 'status', label: 'Stage' },
+                    { key: 'status', label: 'Stage' }, // Column header is 'Stage' but status value is 'Completed'
                     { key: 'archetype', label: 'Archetype' },
                     { key: 'answers', label: 'Answers' },
                     { key: 'createdAt', label: 'Created Date' },
