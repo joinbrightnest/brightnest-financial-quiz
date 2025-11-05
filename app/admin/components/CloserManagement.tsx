@@ -464,10 +464,27 @@ export default function CloserManagement() {
     setScriptForm({
       name: script.name,
       callScript: script.callScript,
-      programDetails: script.programDetails || {},
-      emailTemplates: script.emailTemplates || {},
+      programDetails: script.programDetails || {
+        companyOverview: '',
+        programBenefits: '',
+        pricing: '',
+        commonQuestions: '',
+        process: ''
+      },
+      emailTemplates: script.emailTemplates || {
+        initial: { title: 'Initial Contact / Confirmation', subject: '', content: '' },
+        converted: { title: 'Purchase Confirmation / Thank You', subject: '', content: '' },
+        not_interested: { title: 'Not Interested - Follow Up', subject: '', content: '' },
+        needs_follow_up: { title: 'Needs Follow Up', subject: '', content: '' },
+        callback_requested: { title: 'Callback Requested', subject: '', content: '' },
+        rescheduled: { title: 'Rescheduled Appointment', subject: '', content: '' },
+        no_answer: { title: 'No Answer - Follow Up', subject: '', content: '' }
+      },
       isDefault: script.isDefault || false
     });
+    setScriptEditTab('call');
+    setExpandedProgramSection(null);
+    setExpandedEmailSection(null);
     setShowScriptModal(true);
   };
 
@@ -476,10 +493,27 @@ export default function CloserManagement() {
     setScriptForm({
       name: '',
       callScript: '',
-      programDetails: {},
-      emailTemplates: {},
+      programDetails: {
+        companyOverview: '',
+        programBenefits: '',
+        pricing: '',
+        commonQuestions: '',
+        process: ''
+      },
+      emailTemplates: {
+        initial: { title: 'Initial Contact / Confirmation', subject: '', content: '' },
+        converted: { title: 'Purchase Confirmation / Thank You', subject: '', content: '' },
+        not_interested: { title: 'Not Interested - Follow Up', subject: '', content: '' },
+        needs_follow_up: { title: 'Needs Follow Up', subject: '', content: '' },
+        callback_requested: { title: 'Callback Requested', subject: '', content: '' },
+        rescheduled: { title: 'Rescheduled Appointment', subject: '', content: '' },
+        no_answer: { title: 'No Answer - Follow Up', subject: '', content: '' }
+      },
       isDefault: false
     });
+    setScriptEditTab('call');
+    setExpandedProgramSection(null);
+    setExpandedEmailSection(null);
     setShowScriptModal(true);
   };
 
@@ -1858,35 +1892,12 @@ export default function CloserManagement() {
       {/* Script Edit/Create Modal */}
       {showScriptModal && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full my-8">
+          <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full my-8">
             <div className="p-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">
-                {editingScript ? 'Edit Script' : 'Create New Script'}
-              </h3>
-              
-              <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Script Name *</label>
-                  <input
-                    type="text"
-                    value={scriptForm.name}
-                    onChange={(e) => setScriptForm({ ...scriptForm, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
-                    placeholder="e.g., Standard Script, Premium Script"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Call Script *</label>
-                  <textarea
-                    value={scriptForm.callScript}
-                    onChange={(e) => setScriptForm({ ...scriptForm, callScript: e.target.value })}
-                    rows={15}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 font-mono text-sm"
-                    placeholder="Paste the call script here..."
-                  />
-                </div>
-
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">
+                  {editingScript ? 'Edit Script' : 'Create New Script'}
+                </h3>
                 <div className="flex items-center">
                   <input
                     type="checkbox"
@@ -1896,9 +1907,187 @@ export default function CloserManagement() {
                     className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                   />
                   <label htmlFor="isDefault" className="ml-2 block text-sm text-gray-700">
-                    Set as default script (for new closers)
+                    Default
                   </label>
                 </div>
+              </div>
+
+              {/* Script Name */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Script Name *</label>
+                <input
+                  type="text"
+                  value={scriptForm.name}
+                  onChange={(e) => setScriptForm({ ...scriptForm, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                  placeholder="e.g., Standard Script, Premium Script"
+                />
+              </div>
+
+              {/* Tabs */}
+              <div className="border-b border-gray-200 mb-4">
+                <nav className="flex space-x-8">
+                  <button
+                    onClick={() => setScriptEditTab('call')}
+                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                      scriptEditTab === 'call'
+                        ? 'border-indigo-500 text-indigo-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    Call Script
+                  </button>
+                  <button
+                    onClick={() => setScriptEditTab('program')}
+                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                      scriptEditTab === 'program'
+                        ? 'border-indigo-500 text-indigo-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    Program Details
+                  </button>
+                  <button
+                    onClick={() => setScriptEditTab('email')}
+                    className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                      scriptEditTab === 'email'
+                        ? 'border-indigo-500 text-indigo-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    }`}
+                  >
+                    Email Templates
+                  </button>
+                </nav>
+              </div>
+
+              {/* Tab Content */}
+              <div className="max-h-[60vh] overflow-y-auto pr-2">
+                {/* Call Script Tab */}
+                {scriptEditTab === 'call' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Call Script *</label>
+                    <textarea
+                      value={scriptForm.callScript}
+                      onChange={(e) => setScriptForm({ ...scriptForm, callScript: e.target.value })}
+                      rows={20}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 font-mono text-sm"
+                      placeholder="Paste the call script here..."
+                    />
+                  </div>
+                )}
+
+                {/* Program Details Tab */}
+                {scriptEditTab === 'program' && (
+                  <div className="space-y-3">
+                    {['companyOverview', 'programBenefits', 'pricing', 'commonQuestions', 'process'].map((key) => {
+                      const labels: { [key: string]: string } = {
+                        companyOverview: 'Company Overview',
+                        programBenefits: 'Program Benefits & Features',
+                        pricing: 'Pricing Information',
+                        commonQuestions: 'Common Questions & Answers',
+                        process: 'The Process'
+                      };
+                      return (
+                        <div key={key} className="border border-gray-200 rounded-lg">
+                          <button
+                            type="button"
+                            onClick={() => setExpandedProgramSection(expandedProgramSection === key ? null : key)}
+                            className="w-full px-4 py-3 flex items-center justify-between text-left bg-gray-50 hover:bg-gray-100 rounded-t-lg"
+                          >
+                            <span className="font-medium text-sm text-gray-900">{labels[key]}</span>
+                            <svg
+                              className={`w-5 h-5 text-gray-500 transition-transform ${
+                                expandedProgramSection === key ? 'rotate-180' : ''
+                              }`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                          {expandedProgramSection === key && (
+                            <div className="p-4">
+                              <textarea
+                                value={scriptForm.programDetails[key] || ''}
+                                onChange={(e) => setScriptForm({
+                                  ...scriptForm,
+                                  programDetails: { ...scriptForm.programDetails, [key]: e.target.value }
+                                })}
+                                rows={12}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 font-mono text-sm"
+                                placeholder={`Enter ${labels[key]} content...`}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Email Templates Tab */}
+                {scriptEditTab === 'email' && (
+                  <div className="space-y-3">
+                    {Object.entries(scriptForm.emailTemplates || {}).map(([key, template]: [string, any]) => (
+                      <div key={key} className="border border-gray-200 rounded-lg">
+                        <button
+                          type="button"
+                          onClick={() => setExpandedEmailSection(expandedEmailSection === key ? null : key)}
+                          className="w-full px-4 py-3 flex items-center justify-between text-left bg-gray-50 hover:bg-gray-100 rounded-t-lg"
+                        >
+                          <span className="font-medium text-sm text-gray-900">{template.title || key}</span>
+                          <svg
+                            className={`w-5 h-5 text-gray-500 transition-transform ${
+                              expandedEmailSection === key ? 'rotate-180' : ''
+                            }`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        {expandedEmailSection === key && (
+                          <div className="p-4 space-y-3">
+                            <div>
+                              <label className="block text-xs font-medium text-gray-700 mb-1">Subject</label>
+                              <input
+                                type="text"
+                                value={template.subject || ''}
+                                onChange={(e) => setScriptForm({
+                                  ...scriptForm,
+                                  emailTemplates: {
+                                    ...scriptForm.emailTemplates,
+                                    [key]: { ...template, subject: e.target.value }
+                                  }
+                                })}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 text-sm"
+                                placeholder="Email subject line"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs font-medium text-gray-700 mb-1">Content</label>
+                              <textarea
+                                value={template.content || ''}
+                                onChange={(e) => setScriptForm({
+                                  ...scriptForm,
+                                  emailTemplates: {
+                                    ...scriptForm.emailTemplates,
+                                    [key]: { ...template, content: e.target.value }
+                                  }
+                                })}
+                                rows={15}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 font-mono text-sm"
+                                placeholder="Email content..."
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="mt-6 flex justify-end space-x-3">

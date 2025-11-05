@@ -21,6 +21,8 @@ export default function CloserScripts() {
   const [activeTab, setActiveTab] = useState<'call' | 'email'>('call');
   const [activeEmailCategory, setActiveEmailCategory] = useState<string>('initial');
   const [activeCallCategory, setActiveCallCategory] = useState<'script' | 'program'>('script');
+  const [script, setScript] = useState<any>(null);
+  const [scriptLoading, setScriptLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -32,6 +34,7 @@ export default function CloserScripts() {
     }
 
     fetchCloserStats(token);
+    fetchScript(token);
   }, [router]);
 
   const fetchCloserStats = async (token: string) => {
@@ -54,14 +57,37 @@ export default function CloserScripts() {
     }
   };
 
+  const fetchScript = async (token: string) => {
+    try {
+      setScriptLoading(true);
+      const response = await fetch('/api/closer/scripts', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.script) {
+          setScript(data.script);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching script:', error);
+    } finally {
+      setScriptLoading(false);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('closerToken');
     localStorage.removeItem('closerData');
     router.push('/closers/login');
   };
 
-  // Call Script - Single flowing script
-  const callScript = `=== OPENING & INTRODUCTION ===
+  // Get script data from API or use defaults
+  const callScript = script?.callScript || `=== OPENING & INTRODUCTION ===
 
 Hi [Customer Name], this is [Your Name] from BrightNest. 
 
@@ -127,8 +153,8 @@ Urgency Close:
 Benefit Summary Close:
 "Based on everything we discussed, this will help you [benefit 1], [benefit 2], and [benefit 3]. Let's get you started, shall we?"`;
 
-  // Program Details - Reference for call questions
-  const programDetails = {
+  // Program Details - Get from API or use defaults
+  const programDetails = script?.programDetails || {
     companyOverview: `=== COMPANY OVERVIEW ===
 
 BrightNest is a financial advisory firm dedicated to helping individuals achieve their financial goals through personalized guidance and comprehensive financial planning.
@@ -271,8 +297,8 @@ What happens after a client signs up:
    - Goal progress assessment`
   };
 
-  // Email Templates by Stage
-  const emailTemplates = {
+  // Email Templates - Get from API or use defaults
+  const emailTemplates = script?.emailTemplates || {
     initial: {
       title: "Initial Contact / Confirmation",
       subject: "Welcome to BrightNest - Your Financial Profile Results",
