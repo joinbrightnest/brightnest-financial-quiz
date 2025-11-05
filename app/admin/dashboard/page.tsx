@@ -2167,43 +2167,97 @@ export default function AdminDashboard() {
               </div>
               </div>
 
-              {/* Metrics - Clean Text Layout */}
+              {/* Metrics - Professional Card Layout */}
               {crmShowMetrics && (
-              <div className="bg-white px-6 py-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">{formatCurrency(revenueMetrics.totalRevenue)}</div>
-                    <div className="text-sm font-medium text-black mb-1">TOTAL DEAL AMOUNT</div>
-                    <div className="text-xs text-black">Open + Closed deals</div>
+              <div className="bg-gradient-to-b from-gray-50 to-white px-6 py-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                  {/* Total Deal Amount */}
+                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 p-5">
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900 mb-2">{formatCurrency(revenueMetrics.totalRevenue)}</div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">TOTAL DEAL AMOUNT</div>
+                    <div className="text-xs text-gray-400">Open + Closed deals</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">$0.00</div>
-                    <div className="text-sm font-medium text-black mb-1">WEIGHTED DEAL AMOUNT</div>
-                    <div className="text-xs text-black">To be determined</div>
+
+                  {/* Weighted Deal Amount */}
+                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 p-5">
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900 mb-2">$0.00</div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">WEIGHTED DEAL AMOUNT</div>
+                    <div className="text-xs text-gray-400">To be determined</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">{formatCurrency(revenueMetrics.openDealAmount)}</div>
-                    <div className="text-sm font-medium text-black mb-1">OPEN DEAL AMOUNT</div>
-                    <div className="text-xs text-black">Potential + actual open deals</div>
+
+                  {/* Open Deal Amount */}
+                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 p-5">
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900 mb-2">{formatCurrency(revenueMetrics.openDealAmount)}</div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">OPEN DEAL AMOUNT</div>
+                    <div className="text-xs text-gray-400">Potential + actual open deals</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">{formatCurrency(revenueMetrics.closedDealAmount)}</div>
-                    <div className="text-sm font-medium text-black mb-1">CLOSED DEAL AMOUNT</div>
-                    <div className="text-xs text-black">Closed deals with sale values</div>
+
+                  {/* Closed Deal Amount */}
+                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 p-5">
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900 mb-2">{formatCurrency(revenueMetrics.closedDealAmount)}</div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">CLOSED DEAL AMOUNT</div>
+                    <div className="text-xs text-gray-400">Closed deals with sale values</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">{formatCurrency(revenueMetrics.newDealAmount)}</div>
-                    <div className="text-sm font-medium text-black mb-1">NEW DEAL AMOUNT</div>
-                    <div className="text-xs text-black">Deals with no outcome yet</div>
+
+                  {/* New Deal Amount */}
+                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 p-5">
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900 mb-2">{formatCurrency(revenueMetrics.newDealAmount)}</div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">NEW DEAL AMOUNT</div>
+                    <div className="text-xs text-gray-400">Deals with no outcome yet</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600 mb-1">{((stats?.averageTimeMs || 0) / (1000 * 60 * 60 * 24)).toFixed(1)} days</div>
-                    <div className="text-sm font-medium text-black mb-1">AVERAGE DEAL AGE</div>
-                    <div className="text-xs text-black">
-                      <svg className="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                  {/* Average Deal Age */}
+                  <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 p-5">
+                    <div className="flex items-center justify-center mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-slate-500 to-slate-600 rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-gray-900 mb-2">{((stats?.averageTimeMs || 0) / (1000 * 60 * 60 * 24)).toFixed(1)} days</div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">AVERAGE DEAL AGE</div>
+                    <div className="text-xs text-gray-400">
+                      <svg className="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
+                      </svg>
+                      Average time
                     </div>
                   </div>
                 </div>

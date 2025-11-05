@@ -32,11 +32,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get closer's appointments - only show uncontacted leads (no outcome yet)
+    // Get all closer's appointments regardless of outcome (for database view)
     const appointments = await prisma.appointment.findMany({
       where: {
-        closerId: decoded.closerId,
-        outcome: null // Only show appointments that haven't been contacted yet
+        closerId: decoded.closerId
       },
       orderBy: {
         scheduledAt: 'desc'
@@ -75,10 +74,11 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('❌ Error fetching closer appointments:', error);
+    console.error('❌ Error fetching all closer appointments:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
     );
   }
 }
+
