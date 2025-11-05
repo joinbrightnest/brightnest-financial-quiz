@@ -59,32 +59,33 @@ export default function CloserScripts() {
     router.push('/closers/login');
   };
 
-  // Call Scripts
-  const callScripts = {
-    opening: {
-      title: "Opening & Introduction",
-      content: `Hi [Customer Name], this is [Your Name] from BrightNest. 
+  // Call Script - Single flowing script
+  const callScript = `=== OPENING & INTRODUCTION ===
+
+Hi [Customer Name], this is [Your Name] from BrightNest. 
 
 I'm calling because you recently completed our financial profile quiz and scheduled a call with us. How are you doing today?
 
 [Pause for response]
 
-Great! I wanted to take a few minutes to discuss your results and see how we can help you achieve your financial goals. Does now work for you, or would you prefer to schedule a different time?`
-    },
-    discovery: {
-      title: "Discovery Questions",
-      content: `Before we dive into your results, I'd love to understand your situation a bit better:
+Great! I wanted to take a few minutes to discuss your results and see how we can help you achieve your financial goals. Does now work for you, or would you prefer to schedule a different time?
+
+
+=== DISCOVERY QUESTIONS ===
+
+Before we dive into your results, I'd love to understand your situation a bit better:
 
 1. What's your biggest financial challenge right now?
 2. What are you hoping to achieve in the next 6-12 months?
 3. What's currently keeping you from reaching those goals?
 4. Have you worked with a financial advisor before?
 
-[Take notes and listen actively - these answers will guide your pitch]`
-    },
-    presentation: {
-      title: "Presenting the Solution",
-      content: `Based on your quiz results and what you've shared, I think we can really help you. 
+[Take notes and listen actively - these answers will guide your pitch]
+
+
+=== PRESENTING THE SOLUTION ===
+
+Based on your quiz results and what you've shared, I think we can really help you. 
 
 Your financial profile shows you're a [archetype type], which means you typically [describe traits]. 
 
@@ -93,11 +94,10 @@ Here's how BrightNest can help:
 - [Specific benefit relevant to their goals]
 - [How it addresses their challenges]
 
-Does this sound like something that could help you achieve [their stated goal]?`
-    },
-    handling: {
-      title: "Objection Handling",
-      content: `Common Objections & Responses:
+Does this sound like something that could help you achieve [their stated goal]?
+
+
+=== OBJECTION HANDLING ===
 
 "I need to think about it"
 → I understand. What specifically would you like to think about? Is there something I haven't addressed yet?
@@ -109,11 +109,12 @@ Does this sound like something that could help you achieve [their stated goal]?`
 → Let's talk about that. What concerns you most? What would need to happen for you to feel confident this is the right fit?
 
 "I need to talk to my spouse/partner"
-→ Absolutely, that's important. When would be a good time for both of you to review this together?`
-    },
-    closing: {
-      title: "Closing Techniques",
-      content: `Assumptive Close:
+→ Absolutely, that's important. When would be a good time for both of you to review this together?
+
+
+=== CLOSING TECHNIQUES ===
+
+Assumptive Close:
 "Perfect! I'll get you set up today. What payment method works best for you?"
 
 Alternative Choice Close:
@@ -123,9 +124,7 @@ Urgency Close:
 "We have a limited number of spots available this month. Would you like to secure your spot today?"
 
 Benefit Summary Close:
-"Based on everything we discussed, this will help you [benefit 1], [benefit 2], and [benefit 3]. Let's get you started, shall we?"`
-    }
-  };
+"Based on everything we discussed, this will help you [benefit 1], [benefit 2], and [benefit 3]. Let's get you started, shall we?"`;
 
   // Email Templates by Stage
   const emailTemplates = {
@@ -354,28 +353,24 @@ BrightNest Financial Advisor`
           {/* Call Scripts Content */}
           {activeTab === 'call' && (
             <div className="p-6">
-              <div className="space-y-6">
-                {Object.entries(callScripts).map(([key, script]) => (
-                  <div key={key} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-xl font-bold text-gray-900">{script.title}</h3>
-                      <button
-                        onClick={() => copyToClipboard(script.content)}
-                        className="flex items-center space-x-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <span>Copy</span>
-                      </button>
-                    </div>
-                    <div className="prose max-w-none">
-                      <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-4 rounded border border-gray-200">
-                        {script.content}
-                      </pre>
-                    </div>
-                  </div>
-                ))}
+              <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                <div className="flex items-start justify-between mb-4">
+                  <h3 className="text-xl font-bold text-gray-900">Complete Call Script</h3>
+                  <button
+                    onClick={() => copyToClipboard(callScript)}
+                    className="flex items-center space-x-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                    </svg>
+                    <span>Copy Script</span>
+                  </button>
+                </div>
+                <div className="prose max-w-none">
+                  <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-6 rounded border border-gray-200 leading-relaxed">
+                    {callScript}
+                  </pre>
+                </div>
               </div>
             </div>
           )}
