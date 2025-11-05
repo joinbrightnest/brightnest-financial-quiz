@@ -20,6 +20,7 @@ export default function CloserScripts() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'call' | 'email'>('call');
   const [activeEmailCategory, setActiveEmailCategory] = useState<string>('initial');
+  const [activeCallCategory, setActiveCallCategory] = useState<'script' | 'program'>('script');
   const router = useRouter();
 
   useEffect(() => {
@@ -125,6 +126,150 @@ Urgency Close:
 
 Benefit Summary Close:
 "Based on everything we discussed, this will help you [benefit 1], [benefit 2], and [benefit 3]. Let's get you started, shall we?"`;
+
+  // Program Details - Reference for call questions
+  const programDetails = {
+    companyOverview: `=== COMPANY OVERVIEW ===
+
+BrightNest is a financial advisory firm dedicated to helping individuals achieve their financial goals through personalized guidance and comprehensive financial planning.
+
+Our mission is to simplify complex financial concepts and make wealth-building accessible to everyone, regardless of their current financial situation.
+
+We combine expert financial advice with modern technology to provide our clients with the tools and support they need to build lasting financial security.`;
+
+    programBenefits: `=== PROGRAM BENEFITS & FEATURES ===
+
+What clients receive with BrightNest:
+
+• Personalized Financial Plan
+  - Custom roadmap tailored to individual goals and risk tolerance
+  - Comprehensive analysis of current financial situation
+  - Clear action steps for achieving financial objectives
+
+• Expert Financial Guidance
+  - One-on-one consultations with certified financial advisors
+  - Ongoing support and accountability
+  - Regular check-ins to track progress and adjust strategies
+
+• Financial Education & Resources
+  - Educational materials and workshops
+  - Access to financial planning tools and calculators
+  - Stay informed about financial best practices
+
+• Investment Strategy & Management
+  - Diversified portfolio recommendations
+  - Risk management strategies
+  - Long-term wealth building approaches
+
+• Debt Management
+  - Strategies for debt reduction and elimination
+  - Budget planning and cash flow optimization
+  - Credit improvement guidance
+
+• Retirement Planning
+  - Retirement savings strategies
+  - 401(k) and IRA optimization
+  - Planning for financial independence
+
+• Tax Optimization
+  - Strategies to minimize tax liabilities
+  - Tax-efficient investment approaches
+  - Year-end tax planning`;
+
+    pricing: `=== PRICING INFORMATION ===
+
+BrightNest offers flexible pricing options to fit different needs and budgets:
+
+• Starter Plan - $[X]/month or $[Y]/annually (save 10%)
+  - Basic financial plan
+  - Access to core tools and resources
+  - Monthly group webinars
+  - Email support
+
+• Growth Plan - $[A]/month or $[B]/annually (save 15%)
+  - All Starter Plan features, plus:
+  - Dedicated advisor check-ins (quarterly)
+  - Personalized investment recommendations
+  - Advanced budgeting tools
+  - Priority support
+
+• Premium Plan - $[C]/month or $[D]/annually (save 20%)
+  - All Growth Plan features, plus:
+  - Monthly one-on-one advisor sessions
+  - Advanced tax planning strategies
+  - Estate planning guidance
+  - Exclusive investment opportunities
+  - 24/7 premium support
+
+All plans include:
+- 30-day money-back guarantee
+- No long-term contracts required
+- Easy plan upgrades or downgrades
+- Cancel anytime
+
+[Note: Update pricing amounts as needed]`;
+
+    commonQuestions: `=== COMMON QUESTIONS & ANSWERS ===
+
+Q: What makes BrightNest different from other financial advisors?
+A: We combine personalized human guidance with cutting-edge technology. We focus on actionable plans, continuous support, and empowering our clients with financial literacy, rather than just managing assets.
+
+Q: Is BrightNest suitable for beginners?
+A: Absolutely! Our Starter Plan is specifically designed for individuals new to financial planning, providing foundational knowledge and tools to get started.
+
+Q: How often will I meet with my financial advisor?
+A: This depends on your plan. Starter Plan includes group webinars, Growth Plan offers quarterly one-on-one check-ins, and Premium Plan provides monthly one-on-one sessions. Additional sessions can be scheduled as needed.
+
+Q: Is my financial data secure with BrightNest?
+A: Yes, data security is our top priority. We use industry-leading encryption and security protocols to protect all client information. We are fully compliant with relevant financial data protection regulations.
+
+Q: Can I upgrade or downgrade my plan?
+A: Yes, you can easily upgrade or downgrade your plan at any time through your dashboard or by contacting your advisor. Changes will take effect at the start of your next billing cycle.
+
+Q: What if I'm not satisfied with the service?
+A: We offer a 30-day money-back guarantee. If you're not completely satisfied within the first 30 days, we'll provide a full refund.
+
+Q: Do you work with people who have debt?
+A: Yes! Debt management is one of our core services. We help clients create strategies to pay off debt efficiently while building wealth.
+
+Q: What's the minimum investment required?
+A: There's no minimum investment required to get started. We work with clients at all financial levels, from those just starting out to those with substantial assets.
+
+Q: How quickly can I see results?
+A: Results vary based on individual situations and goals. Most clients see immediate benefits from having a clear financial plan. Long-term wealth building typically shows results over months and years.
+
+Q: Can I cancel anytime?
+A: Yes, there are no long-term contracts. You can cancel your subscription at any time.`;
+
+    process: `=== THE PROCESS ===
+
+What happens after a client signs up:
+
+1. Welcome & Onboarding (Week 1)
+   - Welcome email with account setup instructions
+   - Access to client dashboard and tools
+   - Initial financial assessment questionnaire
+
+2. First Consultation (Week 1-2)
+   - Review of financial assessment
+   - Discussion of goals and priorities
+   - Initial recommendations and strategy
+
+3. Custom Financial Plan Delivery (Week 2-3)
+   - Comprehensive financial plan created
+   - Detailed roadmap with action steps
+   - Review session to go over the plan
+
+4. Implementation & Support (Ongoing)
+   - Regular check-ins based on plan level
+   - Progress tracking and adjustments
+   - Ongoing education and resources
+
+5. Regular Reviews
+   - Quarterly or monthly reviews (plan dependent)
+   - Strategy adjustments as needed
+   - Goal progress assessment`;
+  };
 
   // Email Templates by Stage
   const emailTemplates = {
@@ -353,25 +498,89 @@ BrightNest Financial Advisor`
           {/* Call Scripts Content */}
           {activeTab === 'call' && (
             <div className="p-6">
-              <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-xl font-bold text-gray-900">Complete Call Script</h3>
-                  <button
-                    onClick={() => copyToClipboard(callScript)}
-                    className="flex items-center space-x-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                    <span>Copy Script</span>
-                  </button>
-                </div>
-                <div className="prose max-w-none">
-                  <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-6 rounded border border-gray-200 leading-relaxed">
-                    {callScript}
-                  </pre>
-                </div>
+              {/* Sub-navigation for Call Scripts */}
+              <div className="mb-6 flex space-x-4 border-b border-gray-200 pb-4">
+                <button
+                  onClick={() => setActiveCallCategory('script')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    activeCallCategory === 'script'
+                      ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  Call Script
+                </button>
+                <button
+                  onClick={() => setActiveCallCategory('program')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    activeCallCategory === 'program'
+                      ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                >
+                  Program Details
+                </button>
               </div>
+
+              {/* Call Script View */}
+              {activeCallCategory === 'script' && (
+                <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                  <div className="flex items-start justify-between mb-4">
+                    <h3 className="text-xl font-bold text-gray-900">Complete Call Script</h3>
+                    <button
+                      onClick={() => copyToClipboard(callScript)}
+                      className="flex items-center space-x-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      <span>Copy Script</span>
+                    </button>
+                  </div>
+                  <div className="prose max-w-none">
+                    <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-6 rounded border border-gray-200 leading-relaxed">
+                      {callScript}
+                    </pre>
+                  </div>
+                </div>
+              )}
+
+              {/* Program Details View */}
+              {activeCallCategory === 'program' && (
+                <div className="space-y-6">
+                  {Object.entries(programDetails).map(([key, content]) => {
+                    const titles: { [key: string]: string } = {
+                      companyOverview: 'Company Overview',
+                      programBenefits: 'Program Benefits & Features',
+                      pricing: 'Pricing Information',
+                      commonQuestions: 'Common Questions & Answers',
+                      process: 'The Process'
+                    };
+                    
+                    return (
+                      <div key={key} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                        <div className="flex items-start justify-between mb-4">
+                          <h3 className="text-xl font-bold text-gray-900">{titles[key]}</h3>
+                          <button
+                            onClick={() => copyToClipboard(content)}
+                            className="flex items-center space-x-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            <span>Copy Section</span>
+                          </button>
+                        </div>
+                        <div className="prose max-w-none">
+                          <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-6 rounded border border-gray-200 leading-relaxed">
+                            {content}
+                          </pre>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
