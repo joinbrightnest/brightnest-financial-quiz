@@ -2693,7 +2693,7 @@ export default function AdminDashboard() {
                               <div className="relative">
                                 <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-slate-200"></div>
                                 <div className="space-y-6">
-                                  {crmActivities.map((activity: any) => (
+                                  {[...crmActivities].sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).map((activity: any) => (
                                     <div key={activity.id} className="relative flex items-start space-x-4">
                                       {/* Icon */}
                                       <div className={`flex-shrink-0 w-16 h-16 rounded-full flex items-center justify-center z-10 ${
