@@ -411,7 +411,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
               <div>
                 <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Status</label>
                 <div className="mt-1">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${leadData.status === 'Completed' || leadData.status === 'completed' || leadData.status === 'Booked' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${leadData.status === 'Stage' || leadData.status === 'stage' || leadData.status === 'Booked' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
                     {leadData.status || 'N/A'}
                   </span>
                 </div>
