@@ -526,7 +526,7 @@ export default function LeadsPage() {
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Session ID</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Contact</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Assessment Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Stage</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Source</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
@@ -687,7 +687,7 @@ export default function LeadsPage() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Name</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Email</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Answers Count</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Stage</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
@@ -1098,7 +1098,7 @@ export default function LeadsPage() {
                     { key: 'quizType', label: 'Quiz Type' },
                     { key: 'name', label: 'Name' },
                     { key: 'email', label: 'Email' },
-                    { key: 'status', label: 'Status' },
+                    { key: 'status', label: 'Stage' },
                     { key: 'archetype', label: 'Archetype' },
                     { key: 'answers', label: 'Answers' },
                     { key: 'createdAt', label: 'Created Date' },
