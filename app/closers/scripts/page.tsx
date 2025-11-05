@@ -135,7 +135,7 @@ BrightNest is a financial advisory firm dedicated to helping individuals achieve
 
 Our mission is to simplify complex financial concepts and make wealth-building accessible to everyone, regardless of their current financial situation.
 
-We combine expert financial advice with modern technology to provide our clients with the tools and support they need to build lasting financial security.`;
+We combine expert financial advice with modern technology to provide our clients with the tools and support they need to build lasting financial security.`,
 
     programBenefits: `=== PROGRAM BENEFITS & FEATURES ===
 
@@ -174,7 +174,7 @@ What clients receive with BrightNest:
 • Tax Optimization
   - Strategies to minimize tax liabilities
   - Tax-efficient investment approaches
-  - Year-end tax planning`;
+  - Year-end tax planning`,
 
     pricing: `=== PRICING INFORMATION ===
 
@@ -207,7 +207,7 @@ All plans include:
 - Easy plan upgrades or downgrades
 - Cancel anytime
 
-[Note: Update pricing amounts as needed]`;
+[Note: Update pricing amounts as needed]`,
 
     commonQuestions: `=== COMMON QUESTIONS & ANSWERS ===
 
@@ -239,7 +239,7 @@ Q: How quickly can I see results?
 A: Results vary based on individual situations and goals. Most clients see immediate benefits from having a clear financial plan. Long-term wealth building typically shows results over months and years.
 
 Q: Can I cancel anytime?
-A: Yes, there are no long-term contracts. You can cancel your subscription at any time.`;
+A: Yes, there are no long-term contracts. You can cancel your subscription at any time.`,
 
     process: `=== THE PROCESS ===
 
