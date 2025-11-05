@@ -94,6 +94,9 @@ export default function CloserManagement() {
     emailTemplates: {} as any,
     isDefault: false
   });
+  const [scriptEditTab, setScriptEditTab] = useState<'call' | 'program' | 'email'>('call');
+  const [expandedProgramSection, setExpandedProgramSection] = useState<string | null>(null);
+  const [expandedEmailSection, setExpandedEmailSection] = useState<string | null>(null);
 
   useEffect(() => {
     fetchClosers();
