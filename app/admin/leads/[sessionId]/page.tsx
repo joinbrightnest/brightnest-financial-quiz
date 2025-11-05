@@ -257,10 +257,10 @@ export default function LeadDetailsPage() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
-                <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Status</label>
+                <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Stage</label>
                 <div className="mt-1">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    leadData.status === 'Stage' || leadData.status === 'stage' 
+                    leadData.status === 'Completed' || leadData.status === 'completed' 
                       ? 'bg-green-100 text-green-800' 
                       : leadData.status === 'Booked'
                       ? 'bg-blue-100 text-blue-800'

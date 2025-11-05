@@ -2575,7 +2575,7 @@ export default function AdminDashboard() {
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                           <div>
-                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Status</label>
+                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Stage</label>
                             <div className="mt-1">
                               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                 crmSelectedLead.status === 'Completed' || crmSelectedLead.status === 'Booked' 
