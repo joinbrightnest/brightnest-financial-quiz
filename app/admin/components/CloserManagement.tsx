@@ -953,7 +953,7 @@ export default function CloserManagement() {
                 <div>
                   <p className="text-sm font-semibold text-green-700 uppercase tracking-wide">Total Conversions</p>
                   <p className="text-3xl font-bold text-green-900 mt-1">
-                    {appointments.filter(a => a.outcome === 'converted' && a.saleValue).length}
+                    {appointments.filter(a => a.outcome === 'converted' && a.saleValue !== null && a.saleValue !== undefined).length}
                   </p>
                 </div>
                 <div className="p-3 bg-green-200 rounded-lg">
@@ -1001,7 +1001,7 @@ export default function CloserManagement() {
                 <div>
                   <p className="text-sm font-semibold text-blue-700 uppercase tracking-wide">Total Revenue</p>
                   <p className="text-3xl font-bold text-blue-900 mt-1">
-                    ${appointments.filter(a => a.outcome === 'converted' && a.saleValue).reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
+                    ${appointments.filter(a => a.outcome === 'converted' && a.saleValue !== null && a.saleValue !== undefined).reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0).toFixed(2)}
                   </p>
                 </div>
                 <div className="p-3 bg-blue-200 rounded-lg">
@@ -1049,7 +1049,9 @@ export default function CloserManagement() {
                       // Use closer object instead of closerId to match Call Outcomes logic
                       const closerAppointments = appointments.filter(a => a.closer?.id === closer.id);
                       // Only count conversions where outcome is 'converted' AND saleValue exists (actual closed sales)
-                      const conversions = closerAppointments.filter(a => a.outcome === 'converted' && a.saleValue);
+                      const conversions = closerAppointments.filter(a => 
+                        a.outcome === 'converted' && a.saleValue !== null && a.saleValue !== undefined
+                      );
                       const totalRevenue = conversions.reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0);
                       const conversionRate = closerAppointments.length > 0 ? (conversions.length / closerAppointments.length) * 100 : 0;
                       const avgSaleValue = conversions.length > 0 ? totalRevenue / conversions.length : 0;
