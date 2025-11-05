@@ -42,9 +42,12 @@ export async function GET(request: NextRequest) {
     // Calculate stats for each closer from actual appointment data
     const closersWithStats = closers.map(closer => {
       const closerAppointments = appointments.filter(a => a.closerId === closer.id);
-      // Only count conversions where outcome is 'converted' AND saleValue exists (actual closed sales)
+      // Only count conversions where outcome is 'converted' AND saleValue exists AND is > 0 (actual closed sales)
       const conversions = closerAppointments.filter(a => 
-        a.outcome === 'converted' && a.saleValue !== null && a.saleValue !== undefined
+        a.outcome === 'converted' && 
+        a.saleValue !== null && 
+        a.saleValue !== undefined && 
+        Number(a.saleValue) > 0
       );
       const totalRevenue = conversions.reduce((sum, a) => sum + (Number(a.saleValue) || 0), 0);
       const totalCalls = closerAppointments.length;
