@@ -375,7 +375,7 @@ export async function GET(request: NextRequest) {
       const appointment = email ? appointmentsByEmail[email] : null;
       
       // Determine status based on appointment outcome
-      let status = 'Stage'; // Default for completed quiz sessions
+      let status = 'Completed'; // Default for completed quiz sessions
       
       if (appointment) {
         if (appointment.outcome) {

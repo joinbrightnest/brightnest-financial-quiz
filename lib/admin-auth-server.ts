@@ -1,27 +1,40 @@
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
 
-// SECURITY: No fallback secrets - require environment variables
-const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-
-if (!JWT_SECRET) {
-  throw new Error('FATAL: JWT_SECRET or NEXTAUTH_SECRET environment variable is required');
-}
-
-if (!ADMIN_PASSWORD) {
-  throw new Error('FATAL: ADMIN_PASSWORD environment variable is required');
-}
-
 export interface AdminAuthPayload {
   isAdmin: true;
   authenticatedAt: number;
 }
 
 /**
+ * Get JWT secret from environment variables (lazy loading)
+ * Validates at runtime, not at module load time
+ */
+function getJWTSecret(): string {
+  const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
+  if (!JWT_SECRET) {
+    throw new Error('FATAL: JWT_SECRET or NEXTAUTH_SECRET environment variable is required');
+  }
+  return JWT_SECRET;
+}
+
+/**
+ * Get admin password from environment variables (lazy loading)
+ * Validates at runtime, not at module load time
+ */
+function getAdminPassword(): string {
+  const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+  if (!ADMIN_PASSWORD) {
+    throw new Error('FATAL: ADMIN_PASSWORD environment variable is required');
+  }
+  return ADMIN_PASSWORD;
+}
+
+/**
  * Verify admin credentials
  */
 export function verifyAdminPassword(password: string): boolean {
+  const ADMIN_PASSWORD = getAdminPassword();
   return password === ADMIN_PASSWORD;
 }
 
@@ -29,6 +42,7 @@ export function verifyAdminPassword(password: string): boolean {
  * Generate a JWT token for admin authentication
  */
 export function generateAdminToken(): string {
+  const JWT_SECRET = getJWTSecret();
   const payload: AdminAuthPayload = {
     isAdmin: true,
     authenticatedAt: Date.now(),
@@ -44,6 +58,7 @@ export function generateAdminToken(): string {
  */
 export function verifyAdminToken(token: string): AdminAuthPayload | null {
   try {
+    const JWT_SECRET = getJWTSecret();
     const decoded = jwt.verify(token, JWT_SECRET) as AdminAuthPayload;
     
     // Verify it's an admin token
