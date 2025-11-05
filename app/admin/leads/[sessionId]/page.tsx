@@ -374,7 +374,7 @@ export default function LeadDetailsPage() {
                   
                   {/* Activity items */}
                   <div className="space-y-6">
-                    {activities.map((activity, index) => {
+                    {[...activities].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).map((activity, index) => {
                       console.log(`➡️ [UI] Rendering activity #${index}:`, {
                         id: activity.id,
                         type: activity.type,
