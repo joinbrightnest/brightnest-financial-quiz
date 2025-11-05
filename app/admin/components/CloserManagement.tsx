@@ -340,9 +340,12 @@ export default function CloserManagement() {
         // API returns { tasks: [...] }, extract the tasks array
         const tasksArray = data.tasks || data;
         setAllTasks(Array.isArray(tasksArray) ? tasksArray : []);
+        setError(''); // Clear any previous errors
       } else {
-        setError('Failed to load tasks');
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        setError(`Failed to load tasks: ${errorData.error || errorData.details || 'Unknown error'}`);
         setAllTasks([]); // Reset to empty array on error
+        console.error('Tasks API error:', errorData);
       }
     } catch (error) {
       console.error('Error fetching tasks:', error);
