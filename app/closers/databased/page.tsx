@@ -85,13 +85,9 @@ export default function CloserDatabase() {
       );
     }
 
-    // Apply outcome filter
-    if (outcomeFilter !== 'all') {
-      if (outcomeFilter === 'uncontacted') {
-        filtered = filtered.filter(apt => apt.outcome === null);
-      } else {
-        filtered = filtered.filter(apt => apt.outcome === outcomeFilter);
-      }
+    // Apply outcome filter (database only shows contacted leads, so no need for uncontacted filter)
+    if (outcomeFilter !== 'all' && outcomeFilter !== 'uncontacted') {
+      filtered = filtered.filter(apt => apt.outcome === outcomeFilter);
     }
 
     setFilteredAppointments(filtered);
@@ -286,7 +282,8 @@ export default function CloserDatabase() {
   };
 
   const getOutcomeDisplayName = (outcome: string | null) => {
-    if (!outcome) return 'Uncontacted';
+    // This should never be null in the database view, but handle it just in case
+    if (!outcome) return 'Unknown';
     switch (outcome) {
       case 'converted': return 'Purchased (Call)';
       case 'not_interested': return 'Not Interested';
@@ -339,7 +336,7 @@ export default function CloserDatabase() {
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Lead Database</h1>
-              <p className="text-gray-600 mt-1">View and manage all your leads, including follow-ups and conversions</p>
+              <p className="text-gray-600 mt-1">View and manage all contacted leads for follow-ups and conversions</p>
             </div>
           </div>
         </div>
@@ -370,8 +367,7 @@ export default function CloserDatabase() {
                 onChange={(e) => setOutcomeFilter(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               >
-                <option value="all">All Leads</option>
-                <option value="uncontacted">Uncontacted</option>
+                <option value="all">All Contacted Leads</option>
                 <option value="converted">Purchased</option>
                 <option value="not_interested">Not Interested</option>
                 <option value="needs_follow_up">Needs Follow Up</option>
@@ -390,7 +386,7 @@ export default function CloserDatabase() {
         {/* Appointments Table */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="px-6 py-5 border-b border-gray-100">
-            <h3 className="text-xl font-bold text-gray-900">All Leads</h3>
+            <h3 className="text-xl font-bold text-gray-900">Contacted Leads</h3>
           </div>
           <div className="overflow-x-auto">
             {filteredAppointments.length === 0 ? (

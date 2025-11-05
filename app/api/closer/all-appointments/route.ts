@@ -32,10 +32,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get all closer's appointments regardless of outcome (for database view)
+    // Get all closer's appointments that have been contacted (have an outcome) - for database/follow-up view
     const appointments = await prisma.appointment.findMany({
       where: {
-        closerId: decoded.closerId
+        closerId: decoded.closerId,
+        outcome: {
+          not: null // Only show appointments that have been contacted (have an outcome)
+        }
       },
       orderBy: {
         scheduledAt: 'desc'
