@@ -270,6 +270,20 @@ export default function CloserDashboard() {
     }
   };
 
+  const getOutcomeDisplayName = (outcome: string | null) => {
+    if (!outcome) return 'Booked';
+    switch (outcome) {
+      case 'converted': return 'Purchased (Call)';
+      case 'not_interested': return 'Not Interested';
+      case 'needs_follow_up': return 'Needs Follow Up';
+      case 'wrong_number': return 'Wrong Number';
+      case 'no_answer': return 'No Answer';
+      case 'callback_requested': return 'Callback Requested';
+      case 'rescheduled': return 'Rescheduled';
+      default: return outcome.replace('_', ' ');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -462,7 +476,7 @@ export default function CloserDashboard() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {appointment.outcome ? (
                           <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getOutcomeColor(appointment.outcome)}`}>
-                            {appointment.outcome.replace('_', ' ')}
+                            {getOutcomeDisplayName(appointment.outcome)}
                           </span>
                         ) : appointment.status === 'scheduled' || appointment.status === 'confirmed' ? (
                           <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
