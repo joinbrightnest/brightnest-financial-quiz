@@ -431,7 +431,7 @@ export default function CloserDashboard() {
                       Scheduled
                     </th>
                     <th className="w-1/6 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Status
+                      Stage
                     </th>
                     <th className="w-1/6 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Sale Value
