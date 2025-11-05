@@ -50,7 +50,7 @@ export default function CloserManagement() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState<'closers' | 'assignments' | 'performance' | 'tasks'>('closers');
+  const [activeTab, setActiveTab] = useState<'closers' | 'assignments' | 'performance' | 'tasks' | 'scripts'>('closers');
   const [allTasks, setAllTasks] = useState<any[]>([]);
   const [isLoadingTasks, setIsLoadingTasks] = useState(false);
   const [taskFilter, setTaskFilter] = useState<'not_completed' | 'completed'>('not_completed');
@@ -80,6 +80,20 @@ export default function CloserManagement() {
     priority: 'medium' as 'low' | 'medium' | 'high' | 'urgent',
     dueDate: ''
   });
+  // Scripts management state
+  const [scripts, setScripts] = useState<any[]>([]);
+  const [isLoadingScripts, setIsLoadingScripts] = useState(false);
+  const [editingScript, setEditingScript] = useState<any | null>(null);
+  const [showScriptModal, setShowScriptModal] = useState(false);
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [selectedScriptForAssign, setSelectedScriptForAssign] = useState<string | null>(null);
+  const [scriptForm, setScriptForm] = useState({
+    name: '',
+    callScript: '',
+    programDetails: {} as any,
+    emailTemplates: {} as any,
+    isDefault: false
+  });
 
   useEffect(() => {
     fetchClosers();
@@ -89,6 +103,8 @@ export default function CloserManagement() {
   useEffect(() => {
     if (activeTab === 'tasks') {
       fetchAllTasks();
+    } else if (activeTab === 'scripts') {
+      fetchScripts();
     }
   }, [activeTab, taskCloserFilter]);
 
@@ -334,6 +350,139 @@ export default function CloserManagement() {
     }
   };
 
+  // Scripts management functions
+  const fetchScripts = async () => {
+    setIsLoadingScripts(true);
+    try {
+      const response = await fetch('/api/admin/closer-scripts');
+      if (response.ok) {
+        const data = await response.json();
+        setScripts(data.scripts || []);
+      } else {
+        setError('Failed to load scripts');
+      }
+    } catch (error) {
+      console.error('Error fetching scripts:', error);
+      setError('Network error loading scripts');
+    } finally {
+      setIsLoadingScripts(false);
+    }
+  };
+
+  const handleSaveScript = async () => {
+    if (!scriptForm.name || !scriptForm.callScript) {
+      setError('Name and call script are required');
+      return;
+    }
+
+    try {
+      const url = editingScript 
+        ? `/api/admin/closer-scripts/${editingScript.id}`
+        : '/api/admin/closer-scripts';
+      const method = editingScript ? 'PUT' : 'POST';
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(scriptForm)
+      });
+
+      if (response.ok) {
+        fetchScripts();
+        setShowScriptModal(false);
+        setEditingScript(null);
+        setScriptForm({
+          name: '',
+          callScript: '',
+          programDetails: {},
+          emailTemplates: {},
+          isDefault: false
+        });
+        setError('');
+      } else {
+        const data = await response.json();
+        setError(data.error || 'Failed to save script');
+      }
+    } catch (error) {
+      setError('Network error saving script');
+    }
+  };
+
+  const handleDeleteScript = async (scriptId: string, scriptName: string) => {
+    if (!confirm(`Are you sure you want to delete "${scriptName}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/closer-scripts/${scriptId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        fetchScripts();
+      } else {
+        setError('Failed to delete script');
+      }
+    } catch (error) {
+      setError('Network error deleting script');
+    }
+  };
+
+  const handleAssignScript = async (closerIds: string[]) => {
+    if (!selectedScriptForAssign || closerIds.length === 0) {
+      setError('Please select a script and at least one closer');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/admin/closer-scripts/assign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          scriptId: selectedScriptForAssign,
+          closerIds
+        })
+      });
+
+      if (response.ok) {
+        fetchScripts();
+        setShowAssignModal(false);
+        setSelectedScriptForAssign(null);
+        setError('');
+        alert('Script assigned successfully!');
+      } else {
+        const data = await response.json();
+        setError(data.error || 'Failed to assign script');
+      }
+    } catch (error) {
+      setError('Network error assigning script');
+    }
+  };
+
+  const openEditScript = (script: any) => {
+    setEditingScript(script);
+    setScriptForm({
+      name: script.name,
+      callScript: script.callScript,
+      programDetails: script.programDetails || {},
+      emailTemplates: script.emailTemplates || {},
+      isDefault: script.isDefault || false
+    });
+    setShowScriptModal(true);
+  };
+
+  const openNewScript = () => {
+    setEditingScript(null);
+    setScriptForm({
+      name: '',
+      callScript: '',
+      programDetails: {},
+      emailTemplates: {},
+      isDefault: false
+    });
+    setShowScriptModal(true);
+  };
+
   const handleAutoAssignAll = async () => {
     if (!confirm('Auto-assign all unassigned appointments to available closers using round-robin distribution?')) {
       return;
@@ -552,6 +701,19 @@ export default function CloserManagement() {
             }`}
           >
             Tasks
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('scripts');
+              fetchScripts();
+            }}
+            className={`py-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'scripts'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Scripts
           </button>
         </nav>
       </div>
@@ -1575,6 +1737,262 @@ export default function CloserManagement() {
                 </div>
               );
             })()}
+          </div>
+        </div>
+      )}
+
+      {/* Scripts Tab */}
+      {activeTab === 'scripts' && (
+        <div className="space-y-6">
+          <div className="bg-white shadow overflow-hidden sm:rounded-md">
+            <div className="px-4 py-5 sm:px-6 flex items-center justify-between">
+              <div>
+                <h3 className="text-lg leading-6 font-medium text-gray-900">Scripts Management</h3>
+                <p className="mt-1 max-w-2xl text-sm text-gray-500">Manage call scripts and email templates for closers</p>
+              </div>
+              <button
+                onClick={openNewScript}
+                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm font-medium"
+              >
+                + New Script
+              </button>
+            </div>
+
+            {isLoadingScripts ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                <p className="text-gray-600">Loading scripts...</p>
+              </div>
+            ) : scripts.length === 0 ? (
+              <div className="text-center py-12 px-4">
+                <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 className="mt-2 text-sm font-medium text-gray-900">No scripts</h3>
+                <p className="mt-1 text-sm text-gray-500">Get started by creating your first script.</p>
+                <div className="mt-6">
+                  <button
+                    onClick={openNewScript}
+                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                  >
+                    + New Script
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="border-t border-gray-200">
+                <div className="grid grid-cols-1 gap-4 p-4">
+                  {scripts.map((script) => {
+                    const assignedClosers = script.assignments?.map((a: any) => a.closer) || [];
+                    return (
+                      <div key={script.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-3">
+                              <h4 className="text-lg font-semibold text-gray-900">{script.name}</h4>
+                              {script.isDefault && (
+                                <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                  Default
+                                </span>
+                              )}
+                              {script.isActive ? (
+                                <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                  Active
+                                </span>
+                              ) : (
+                                <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                                  Inactive
+                                </span>
+                              )}
+                            </div>
+                            <p className="mt-2 text-sm text-gray-600">
+                              Call Script: {script.callScript?.substring(0, 100)}...
+                            </p>
+                            {assignedClosers.length > 0 && (
+                              <div className="mt-3">
+                                <p className="text-sm font-medium text-gray-700">Assigned to:</p>
+                                <div className="mt-1 flex flex-wrap gap-2">
+                                  {assignedClosers.map((closer: any) => (
+                                    <span key={closer.id} className="inline-flex px-2 py-1 text-xs font-medium rounded bg-purple-100 text-purple-800">
+                                      {closer.name}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-2 ml-4">
+                            <button
+                              onClick={() => {
+                                setSelectedScriptForAssign(script.id);
+                                setShowAssignModal(true);
+                              }}
+                              className="px-3 py-1.5 text-sm font-medium text-indigo-600 hover:text-indigo-800 border border-indigo-300 rounded-md hover:bg-indigo-50"
+                            >
+                              Assign
+                            </button>
+                            <button
+                              onClick={() => openEditScript(script)}
+                              className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteScript(script.id, script.name)}
+                              className="px-3 py-1.5 text-sm font-medium text-red-600 hover:text-red-800 border border-red-300 rounded-md hover:bg-red-50"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Script Edit/Create Modal */}
+      {showScriptModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full my-8">
+            <div className="p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">
+                {editingScript ? 'Edit Script' : 'Create New Script'}
+              </h3>
+              
+              <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Script Name *</label>
+                  <input
+                    type="text"
+                    value={scriptForm.name}
+                    onChange={(e) => setScriptForm({ ...scriptForm, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                    placeholder="e.g., Standard Script, Premium Script"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Call Script *</label>
+                  <textarea
+                    value={scriptForm.callScript}
+                    onChange={(e) => setScriptForm({ ...scriptForm, callScript: e.target.value })}
+                    rows={15}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 font-mono text-sm"
+                    placeholder="Paste the call script here..."
+                  />
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="isDefault"
+                    checked={scriptForm.isDefault}
+                    onChange={(e) => setScriptForm({ ...scriptForm, isDefault: e.target.checked })}
+                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="isDefault" className="ml-2 block text-sm text-gray-700">
+                    Set as default script (for new closers)
+                  </label>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end space-x-3">
+                <button
+                  onClick={() => {
+                    setShowScriptModal(false);
+                    setEditingScript(null);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveScript}
+                  className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+                >
+                  {editingScript ? 'Update' : 'Create'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assign Script Modal */}
+      {showAssignModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Assign Script to Closers</h3>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Select Script</label>
+                <select
+                  value={selectedScriptForAssign || ''}
+                  onChange={(e) => setSelectedScriptForAssign(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                >
+                  <option value="">Choose a script...</option>
+                  {scripts.filter(s => s.isActive).map((script) => (
+                    <option key={script.id} value={script.id}>{script.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Select Closers</label>
+                <div className="border border-gray-300 rounded-lg max-h-60 overflow-y-auto p-2">
+                  {closers.filter(c => c.isActive && c.isApproved).map((closer) => {
+                    const isAssigned = scripts
+                      .find(s => s.id === selectedScriptForAssign)
+                      ?.assignments?.some((a: any) => a.closerId === closer.id);
+                    return (
+                      <label key={closer.id} className="flex items-center p-2 hover:bg-gray-50 rounded">
+                        <input
+                          type="checkbox"
+                          defaultChecked={isAssigned}
+                          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                          id={`closer-${closer.id}`}
+                        />
+                        <span className="ml-2 text-sm text-gray-700">{closer.name} ({closer.email})</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => {
+                    setShowAssignModal(false);
+                    setSelectedScriptForAssign(null);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+                    const selectedCloserIds = Array.from(checkboxes)
+                      .map((cb: any) => {
+                        const id = cb.id.replace('closer-', '');
+                        return closers.find(c => c.id === id)?.id;
+                      })
+                      .filter(Boolean) as string[];
+                    handleAssignScript(selectedCloserIds);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700"
+                >
+                  Assign
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

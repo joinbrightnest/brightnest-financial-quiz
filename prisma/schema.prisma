@@ -393,6 +393,7 @@ model Closer {
   appointments Appointment[]
   tasks        Task[]
   auditLogs    CloserAuditLog[]
+  scriptAssignments CloserScriptAssignment[]
 
   @@map("closers")
 }
@@ -488,6 +489,39 @@ model CloserAuditLog {
   closer Closer? @relation(fields: [closerId], references: [id], onDelete: SetNull)
 
   @@map("closer_audit_logs")
+}
+
+// Closer Scripts System
+model CloserScript {
+  id          String   @id @default(cuid())
+  name        String   // Name/identifier for this script set
+  callScript  String   @db.Text @map("call_script")
+  programDetails Json? @map("program_details") // JSON object with all program detail sections
+  emailTemplates Json? @map("email_templates") // JSON object with all email templates
+  isDefault   Boolean  @default(false) @map("is_default") // Default script for new closers
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  assignments CloserScriptAssignment[]
+
+  @@map("closer_scripts")
+}
+
+model CloserScriptAssignment {
+  id        String   @id @default(cuid())
+  closerId  String   @map("closer_id")
+  scriptId  String   @map("script_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  closer Closer     @relation(fields: [closerId], references: [id], onDelete: Cascade)
+  script CloserScript @relation(fields: [scriptId], references: [id], onDelete: Cascade)
+
+  @@unique([closerId, scriptId])
+  @@index([closerId])
+  @@index([scriptId])
+  @@map("closer_script_assignments")
 }
 
 enum AppointmentStatus {
