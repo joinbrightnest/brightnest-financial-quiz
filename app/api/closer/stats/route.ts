@@ -71,16 +71,6 @@ export async function GET(request: NextRequest) {
     // Calculate real stats from appointments
     const actualTotalCalls = appointments.length;
     
-    // Debug: Log all appointments with outcome='converted'
-    const allConverted = appointments.filter(apt => apt.outcome === 'converted');
-    console.log('🔍 All appointments with outcome=converted:', allConverted.map(apt => ({
-      outcome: apt.outcome,
-      saleValue: apt.saleValue,
-      saleValueType: typeof apt.saleValue,
-      saleValueNumber: apt.saleValue ? Number(apt.saleValue) : null,
-      hasSaleValue: apt.saleValue !== null && apt.saleValue !== undefined
-    })));
-    
     // Only count conversions where outcome is 'converted' AND saleValue exists AND is > 0 (actual closed sales)
     const actualTotalConversions = appointments.filter(apt => {
       const isConverted = apt.outcome === 'converted';
