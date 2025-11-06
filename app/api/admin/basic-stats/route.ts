@@ -435,8 +435,47 @@ export async function GET(request: NextRequest) {
         ? appointment.updatedAt.toISOString() 
         : null;
       
+      // Transform answers to show labels instead of values for multiple choice questions
+      const transformedAnswers = lead.answers.map((answer: any) => {
+        const answerValue = answer.value;
+        let displayAnswer = answerValue;
+        
+        // Try to find the label from question options if question type is single/multiple choice
+        if (answer.question && (answer.question.type === 'single' || answer.question.type === 'multiple')) {
+          try {
+            const options = answer.question.options as any;
+            if (Array.isArray(options)) {
+              // Find matching option by value
+              const matchingOption = options.find((opt: any) => {
+                // Handle both string and JSON values
+                if (typeof opt.value === 'string' && typeof answerValue === 'string') {
+                  return opt.value === answerValue;
+                }
+                // Also try JSON string comparison
+                return JSON.stringify(opt.value) === JSON.stringify(answerValue);
+              });
+              
+              if (matchingOption && matchingOption.label) {
+                displayAnswer = matchingOption.label;
+              }
+            }
+          } catch (error) {
+            // If parsing fails, fall back to raw value
+            console.error('Error parsing question options:', error);
+          }
+        }
+        
+        // For text/email inputs, use the value directly (it's already the user's input)
+        return {
+          ...answer,
+          value: displayAnswer, // Replace value with label for display
+          originalValue: answerValue, // Keep original value for reference if needed
+        };
+      });
+      
       return {
         ...lead,
+        answers: transformedAnswers, // Use transformed answers with labels
         status,
         source,
         saleValue: appointment?.saleValue ? appointment.saleValue.toString() : null, // Include sale value from appointment

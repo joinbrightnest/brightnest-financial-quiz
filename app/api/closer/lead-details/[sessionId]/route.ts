@@ -157,12 +157,44 @@ export async function GET(
         score: quizSession.result.score,
         insights: quizSession.result.insights || [],
       } : null,
-      answers: quizSession.answers.map(answer => ({
-        questionId: answer.questionId,
-        questionText: answer.question?.prompt || answer.question?.text || "Unknown question",
-        answer: answer.value,
-        answerValue: answer.value,
-      })),
+      answers: quizSession.answers.map(answer => {
+        // Get the answer value (could be string, number, etc.)
+        const answerValue = answer.value;
+        let displayAnswer = answerValue;
+        
+        // Try to find the label from question options if question type is single/multiple choice
+        if (answer.question && (answer.question.type === 'single' || answer.question.type === 'multiple')) {
+          try {
+            const options = answer.question.options as any;
+            if (Array.isArray(options)) {
+              // Find matching option by value
+              const matchingOption = options.find((opt: any) => {
+                // Handle both string and JSON values
+                if (typeof opt.value === 'string' && typeof answerValue === 'string') {
+                  return opt.value === answerValue;
+                }
+                // Also try JSON string comparison
+                return JSON.stringify(opt.value) === JSON.stringify(answerValue);
+              });
+              
+              if (matchingOption && matchingOption.label) {
+                displayAnswer = matchingOption.label;
+              }
+            }
+          } catch (error) {
+            // If parsing fails, fall back to raw value
+            console.error('Error parsing question options:', error);
+          }
+        }
+        
+        // For text/email inputs, use the value directly (it's already the user's input)
+        return {
+          questionId: answer.questionId,
+          questionText: answer.question?.prompt || answer.question?.text || "Unknown question",
+          answer: displayAnswer,
+          answerValue: answerValue,
+        };
+      }),
       user: {
         email: email || "N/A",
         name: nameAnswer?.value || nameAnswer?.answer || nameAnswer?.answerValue || "N/A",
