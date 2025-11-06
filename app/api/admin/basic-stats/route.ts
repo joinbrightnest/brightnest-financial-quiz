@@ -689,6 +689,9 @@ export async function GET(request: NextRequest) {
         affiliateIdForFilter = affiliate?.id;
       }
 
+      // Declare allClicks outside the if/else block so it's accessible later
+      let allClicks: Array<{ createdAt: Date }> = [];
+
       // If filtering by quiz type, we need to match clicks to quiz sessions
       // Only count clicks that resulted in a quiz session of the specified type
       if (quizType) {
@@ -775,7 +778,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Combine filtered clicks
-        const allClicks = [
+        allClicks = [
           ...validAffiliateClicks.map(c => ({ createdAt: c.createdAt })),
           ...validNormalClicks
         ];
@@ -813,7 +816,7 @@ export async function GET(request: NextRequest) {
         });
 
         // Combine all clicks
-        const allClicks = [...affiliateClicks, ...normalClicks];
+        allClicks = [...affiliateClicks, ...normalClicks];
       }
 
       // Group clicks by hour (for 24h) or by day (for other periods)
@@ -839,6 +842,23 @@ export async function GET(request: NextRequest) {
           createdAt: key,
           _count: { id: count }
         }));
+      } else if (duration === 'all') {
+        // For 'all' duration, group all clicks by day (no limit on days)
+        allClicks.forEach(click => {
+          const date = new Date(click.createdAt);
+          const key = date.toISOString().slice(0, 10); // YYYY-MM-DD
+          groupedData[key] = (groupedData[key] || 0) + 1;
+        });
+
+        // Sort keys by date and return as array
+        const sortedKeys = Object.keys(groupedData).sort();
+        return sortedKeys.map(key => {
+          const formattedDate = new Date(key + 'T00:00:00.000Z').toISOString();
+          return {
+            createdAt: formattedDate,
+            _count: { id: groupedData[key] }
+          };
+        });
       } else {
         // For other periods, group by day
         allClicks.forEach(click => {
@@ -1121,11 +1141,14 @@ export async function GET(request: NextRequest) {
       archetypeStats: [],
       questionAnalytics: [],
       dailyActivity: [],
+      clicksActivity: [],
+      clicks: 0,
       visitors: 0,
       partialSubmissions: 0,
       leadsCollected: 0,
       averageTimeMs: 0,
       topDropOffQuestions: [],
+      quizTypes: [],
     });
   }
 }
