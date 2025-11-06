@@ -71,9 +71,55 @@ export async function GET(request: NextRequest) {
       }
     });
 
+    // Get unique affiliate codes from appointments
+    const affiliateCodes = appointments
+      .filter(apt => apt.affiliateCode)
+      .map(apt => apt.affiliateCode!)
+      .filter((code, index, self) => self.indexOf(code) === index); // Remove duplicates
+
+    // Create a map of affiliate codes to names
+    const affiliateMap: Record<string, string> = {};
+    
+    if (affiliateCodes.length > 0) {
+      // Get all affiliates to match against (more flexible than OR with IN)
+      const allAffiliates = await prisma.affiliate.findMany({
+        select: {
+          referralCode: true,
+          name: true,
+          customLink: true
+        }
+      });
+
+      // Map affiliate codes to names
+      affiliateCodes.forEach(code => {
+        // Try exact referral code match first
+        const exactMatch = allAffiliates.find(aff => aff.referralCode === code);
+        if (exactMatch) {
+          affiliateMap[code] = exactMatch.name;
+          return;
+        }
+
+        // Try custom link match (check both with and without leading slash)
+        const customMatch = allAffiliates.find(aff => 
+          aff.customLink === `/${code}` || aff.customLink === code
+        );
+        if (customMatch) {
+          affiliateMap[code] = customMatch.name;
+        }
+      });
+    }
+
+    // Add source information to each appointment
+    const appointmentsWithSource = appointments.map(apt => ({
+      ...apt,
+      source: apt.affiliateCode 
+        ? (affiliateMap[apt.affiliateCode] || 'Affiliate') 
+        : 'Website'
+    }));
+
     return NextResponse.json({
       success: true,
-      appointments
+      appointments: appointmentsWithSource
     });
 
   } catch (error) {

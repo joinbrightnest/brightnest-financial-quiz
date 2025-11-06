@@ -29,6 +29,7 @@ interface Appointment {
   saleValue: number | null;
   commissionAmount: number | null;
   affiliateCode: string | null;
+  source?: string; // Lead source (affiliate name or "Website")
   recordingLinkConverted?: string | null;
   recordingLinkNotInterested?: string | null;
   recordingLinkNeedsFollowUp?: string | null;
@@ -410,6 +411,9 @@ export default function CloserDatabase() {
                       Scheduled
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Lead Source
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Status
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -437,6 +441,15 @@ export default function CloserDatabase() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {formatDate(appointment.scheduledAt)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                          appointment.source === 'Website' 
+                            ? 'bg-gray-100 text-gray-800' 
+                            : 'bg-purple-100 text-purple-800'
+                        }`}>
+                          {appointment.source || 'Website'}
+                        </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${getOutcomeColor(appointment.outcome)}`}>
