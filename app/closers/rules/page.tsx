@@ -18,7 +18,8 @@ interface Closer {
 export default function CloserRules() {
   const [closer, setCloser] = useState<Closer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'training' | 'status' | 'procedures' | 'guidelines'>('training');
+  const [activeSection, setActiveSection] = useState<string>('onboarding');
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const router = useRouter();
 
   useEffect(() => {
@@ -58,593 +59,671 @@ export default function CloserRules() {
     router.push('/closers/login');
   };
 
-  // Training content outline
-  const trainingContent = {
-    onboarding: `=== ONBOARDING & ORIENTATION ===
-
-Welcome to BrightNest! This section covers everything you need to know to get started as a closer.
-
-BASIC RESPONSIBILITIES:
-• Make outbound calls to leads who completed the financial profile quiz
-• Understand customer needs and present BrightNest solutions
-• Update appointment status and outcome after each call
-• Document call notes and recording links
-• Follow up with leads as needed
-
-KEY TOOLS:
-• Dashboard: View your uncontacted appointments
-• Database: Access all contacted leads and their history
-• Scripts: Reference call scripts and email templates
-• Tasks: Manage follow-up tasks and reminders
-• Rules: This page - internal procedures and guidelines
-
-GETTING STARTED:
-1. Review your assigned script in the Scripts section
-2. Familiarize yourself with the BrightNest program details
-3. Review status explanations below to understand when to use each outcome
-4. Practice the call script before your first call
-5. Start with your first appointment from the Dashboard`,
-
-    callTechniques: `=== EFFECTIVE CALL TECHNIQUES ===
-
-OPENING THE CALL:
-• Always identify yourself and BrightNest clearly
-• Reference the quiz they completed to establish context
-• Ask permission before proceeding ("Does now work for you?")
-• Be warm, professional, and genuinely interested
-
-ACTIVE LISTENING:
-• Take notes during the call - capture key pain points
-• Repeat back what you heard to confirm understanding
-• Ask follow-up questions to dig deeper
-• Let the customer finish speaking before responding
-
-DISCOVERY QUESTIONS:
-• Focus on understanding their financial goals
-• Identify their biggest challenges
-• Understand what's preventing them from reaching goals
-• Determine if they've worked with advisors before
-
-PRESENTING SOLUTIONS:
-• Match BrightNest solutions to their specific needs
-• Use their quiz results to personalize the conversation
-• Address objections with empathy and understanding
-• Focus on benefits, not just features
-
-CLOSING:
-• Use assumptive language when appropriate
-• Offer choices rather than yes/no questions
-• Create urgency when genuine (limited spots, etc.)
-• Always ask for the sale if they're interested`,
-
-    objectionHandling: `=== OBJECTION HANDLING STRATEGIES ===
-
-"I need to think about it"
-→ Dig deeper: "What specifically would you like to think about? Is there something I haven't addressed yet?"
-→ Create urgency: "What would need to happen for you to feel confident moving forward today?"
-
-"I can't afford it right now"
-→ Understand their situation: "I appreciate your honesty. What would make this affordable for you?"
-→ Reframe value: "What would it cost you NOT to address [their challenge]?"
-→ Explore options: "What's your budget range? Let's see what we can work with."
-
-"I'm not sure if this is right for me"
-→ Address concerns: "Let's talk about that. What concerns you most?"
-→ Provide clarity: "What would need to happen for you to feel confident this is the right fit?"
-→ Social proof: "Many people with similar situations have found success with BrightNest."
-
-"I need to talk to my spouse/partner"
-→ Validate: "Absolutely, that's important. Financial decisions should be made together."
-→ Schedule: "When would be a good time for both of you to review this together?"
-→ Provide materials: "I can send you some information to review together."
-
-"It's too expensive"
-→ Break down value: "Let's think about this in terms of monthly investment. For [price]/month, you get..."
-→ Compare costs: "What are you currently spending on [related expenses]? This replaces/improves that."
-→ ROI perspective: "If this helps you [achieve goal], what's that worth to you?"`,
-
-    bestPractices: `=== BEST PRACTICES ===
-
-PRE-CALL PREPARATION:
-• Review the lead's quiz answers before calling
-• Understand their financial archetype
-• Prepare relevant talking points based on their answers
-• Have your script and program details ready
-
-DURING THE CALL:
-• Be present and focused - eliminate distractions
-• Take detailed notes - you'll need them for follow-up
-• Be authentic - don't sound scripted
-• Show genuine interest in helping them
-
-POST-CALL:
-• Update the outcome immediately after the call
-• Add detailed notes while the conversation is fresh
-• Upload recording link if available
-• Set follow-up tasks if needed
-• Send appropriate email template if applicable
-
-COMMUNICATION:
-• Always be professional and courteous
-• Respect their time - keep calls focused
-• Follow up in a timely manner
-• Be responsive to questions and concerns
-
-SELF-CARE:
-• Take breaks between calls
-• Stay organized with tasks and follow-ups
-• Track your performance and celebrate wins
-• Learn from each call to improve`,
-
-    roleplayScenarios: `=== ROLEPLAY SCENARIOS ===
-
-SCENARIO 1: Budget-Conscious Customer
-Situation: Customer completed quiz focused on "emergency savings" but mentions they're on a tight budget.
-
-Approach:
-• Acknowledge their financial responsibility
-• Emphasize how BrightNest can help them build savings faster
-• Highlight the Starter Plan as an affordable entry point
-• Focus on ROI and long-term savings
-
-SCENARIO 2: Debt-Focused Customer
-Situation: Customer's primary goal is paying off debt.
-
-Approach:
-• Validate their priority (debt elimination is important)
-• Explain how BrightNest includes debt management strategies
-• Show how proper financial planning prevents future debt
-• Connect debt payoff to their long-term goals
-
-SCENARIO 3: Investment-Interested Customer
-Situation: Customer wants to start investing but feels overwhelmed.
-
-Approach:
-• Educate without overwhelming
-• Highlight BrightNest's investment guidance
-• Show how we simplify complex concepts
-• Emphasize personalized approach vs. DIY
-
-SCENARIO 4: Skeptical Customer
-Situation: Customer has tried advisors before with poor results.
-
-Approach:
-• Acknowledge their previous experience
-• Explain what makes BrightNest different
-• Focus on our personalized, educational approach
-• Offer testimonials or case studies if available
-• Suggest starting with a smaller commitment`
-  };
-
-  // Status explanations
-  const statusExplanations = {
-    converted: {
-      title: 'Converted (Purchase Made)',
-      whenToUse: `Use this status when:
-• Customer agrees to purchase a BrightNest plan during the call
-• Payment has been processed or scheduled
-• Customer has committed to signing up
-• Sale is confirmed and documented`,
-      whatToDo: `Actions required:
-1. Record the sale value in the system
-2. Upload call recording link (if available)
-3. Add detailed notes about what they purchased
-4. Send "Purchase Confirmation" email template
-5. Ensure all commission and affiliate tracking is accurate`,
-      notes: `Important notes:
-• Always confirm the exact amount of the sale
-• Document which plan they selected
-• Note any special terms or arrangements
-• Record customer enthusiasm level and key decision factors`
-    },
-
-    not_interested: {
-      title: 'Not Interested',
-      whenToUse: `Use this status when:
-• Customer explicitly states they're not interested
-• They've heard the pitch and declined
-• They don't see value in BrightNest at this time
-• Timing is not right and they're firm about it`,
-      whatToDo: `Actions required:
-1. Add notes explaining why they weren't interested
-2. Upload call recording link (if available)
-3. Send "Not Interested - Follow Up" email template
-4. Note any specific objections for training purposes`,
-      notes: `Important notes:
-• Be respectful - they may become interested later
-• Document their objections for product improvement
-• Leave the door open for future contact
-• Some "not interested" can become "needs follow up" with nurturing`
-    },
-
-    needs_follow_up: {
-      title: 'Needs Follow Up',
-      whenToUse: `Use this status when:
-• Customer is interested but needs more information
-• They want to review materials before deciding
-• They have specific questions that need research
-• They're comparing options and need time
-• They want to discuss with spouse/partner`,
-      whatToDo: `Actions required:
-1. Create a follow-up task with a specific date
-2. Add detailed notes about what they need
-3. Upload call recording link (if available)
-4. Send "Needs Follow Up" email template with relevant info
-5. Schedule next contact in your calendar`,
-      notes: `Important notes:
-• This is often the most convertible status
-• Prompt follow-up is critical (within 24-48 hours)
-• Personalize follow-up based on their specific needs
-• Provide exactly what they asked for (materials, answers, etc.)`
-    },
-
-    callback_requested: {
-      title: 'Callback Requested',
-      whenToUse: `Use this status when:
-• Customer explicitly asks you to call them back
-• They need to check their schedule for a better time
-• They want to prepare before the conversation
-• Initial contact was not ideal timing for them`,
-      whatToDo: `Actions required:
-1. Schedule the callback in your calendar
-2. Create a task reminder for the callback
-3. Add notes about best time to call
-4. Send "Callback Requested" email confirming the callback
-5. Note any specific topics to cover in callback`,
-      notes: `Important notes:
-• Honor their requested callback time
-• Be prepared when you call back
-• Reference previous conversation to show you remember
-• This shows respect for their time and schedule`
-    },
-
-    rescheduled: {
-      title: 'Rescheduled',
-      whenToUse: `Use this status when:
-• Customer needs to move their scheduled appointment
-• They can't make the originally scheduled time
-• They request a different time that works better
-• Appointment time was changed at their request`,
-      whatToDo: `Actions required:
-1. Update the appointment time in the system
-2. Confirm the new time with the customer
-3. Send "Rescheduled Appointment" email template
-4. Add notes about the reason for rescheduling
-5. Update your calendar with the new time`,
-      notes: `Important notes:
-• Rescheduling is normal - don't take it personally
-• Confirm the new time clearly
-• Send confirmation to avoid confusion
-• Be flexible but also set boundaries`
-    },
-
-    no_answer: {
-      title: 'No Answer',
-      whenToUse: `Use this status when:
-• You called but the customer didn't answer
-• No voicemail was left or they didn't return call
-• Multiple attempts to reach them were unsuccessful
-• Customer's phone went straight to voicemail`,
-      whatToDo: `Actions required:
-1. Add notes about call attempts (time, result)
-2. Send "No Answer - Follow Up" email template
-3. Create a task to try again later
-4. Try alternative contact methods if available
-5. Note if voicemail was left`,
-      notes: `Important notes:
-• Don't give up after one attempt
-• Try different times of day
-• Email can be more effective if calls aren't working
-• Some customers prefer email communication
-• Document all contact attempts`
-    },
-
-    wrong_number: {
-      title: 'Wrong Number',
-      whenToUse: `Use this status when:
-• The phone number is incorrect or disconnected
-• You reached someone who isn't the customer
-• The number belongs to someone else entirely
-• Customer's contact information is invalid`,
-      whatToDo: `Actions required:
-1. Add notes explaining what happened
-2. Try to find alternative contact information
-3. Send email to customer (if email is valid)
-4. Note that contact information needs updating
-5. Flag for admin review if information is consistently wrong`,
-      notes: `Important notes:
-• Verify you dialed the correct number
-• Some customers may have multiple numbers
-• Try email contact if phone fails
-• Wrong numbers should be rare - flag patterns to admin`
+  const toggleSection = (section: string) => {
+    const newExpanded = new Set(expandedSections);
+    if (newExpanded.has(section)) {
+      newExpanded.delete(section);
+    } else {
+      newExpanded.add(section);
     }
+    setExpandedSections(newExpanded);
   };
 
-  // Procedures
-  const procedures = {
-    dailyWorkflow: `=== DAILY WORKFLOW PROCEDURES ===
-
-START OF DAY:
-1. Log in to your BrightNest dashboard
-2. Review your appointments for the day
-3. Check for any pending tasks or follow-ups
-4. Review any new leads assigned to you
-5. Prepare your workspace and materials
-
-BEFORE EACH CALL:
-1. Review the lead's quiz answers and profile
-2. Understand their financial archetype
-3. Review their stated goals and challenges
-4. Prepare relevant talking points
-5. Have your script and program details ready
-6. Ensure you have a quiet environment
-
-DURING THE CALL:
-1. Introduce yourself and BrightNest clearly
-2. Reference their quiz completion
-3. Ask permission to proceed
-4. Conduct discovery questions
-5. Present relevant solutions
-6. Handle objections professionally
-7. Attempt to close or schedule follow-up
-8. Take detailed notes throughout
-
-AFTER EACH CALL:
-1. Update appointment outcome immediately
-2. Enter sale value if converted
-3. Add comprehensive call notes
-4. Upload recording link if available
-5. Send appropriate email template
-6. Create follow-up tasks if needed
-7. Update your calendar with next steps
-
-END OF DAY:
-1. Complete all call documentation
-2. Review tasks for tomorrow
-3. Prepare for next day's appointments
-4. Update any pending items
-5. Log out securely`,
-
-    updatingStatus: `=== UPDATING APPOINTMENT STATUS ===
-
-STEP 1: ACCESS THE APPOINTMENT
-• Go to Dashboard or Database
-• Find the appointment you just completed
-• Click "Update Status" button
-
-STEP 2: SELECT OUTCOME
-• Choose the appropriate outcome from the dropdown
-• Refer to Status Explanations section if unsure
-• Select the outcome that best matches the call result
-
-STEP 3: ENTER DETAILS
-• Sale Value: Enter amount if customer converted (required for "converted")
-• Call Notes: Add detailed notes about the conversation
-• Recording Link: Paste the call recording URL if available
-
-STEP 4: SAVE AND FOLLOW UP
-• Click "Save" to update the appointment
-• System will automatically send appropriate email template
-• Create follow-up tasks if needed
-• Update your calendar with next steps
-
-IMPORTANT REMINDERS:
-• Always update status immediately after the call
-• Detailed notes help with follow-up and training
-• Recording links are valuable for review and quality
-• Accurate sale values ensure proper commission tracking`,
-
-    taskManagement: `=== TASK MANAGEMENT PROCEDURES ===
-
-CREATING TASKS:
-• Tasks help you track follow-ups and reminders
-• Create a task for any lead that needs follow-up
-• Set specific due dates based on urgency
-• Add detailed descriptions of what needs to be done
-
-TASK TYPES:
-• Follow-up calls: Customer needs more time or information
-• Email follow-ups: Send specific materials or answers
-• Research tasks: Look up information for customer
-• Appointment reminders: Don't forget scheduled calls
-
-PRIORITY LEVELS:
-• Urgent: Requires immediate attention (same day)
-• High: Important, complete within 24-48 hours
-• Medium: Standard priority, complete within 3-5 days
-• Low: Can be completed when time permits
-
-MANAGING TASKS:
-• Review your task list daily
-• Complete tasks in priority order
-• Update task status as you work
-• Mark tasks complete when finished
-• Delete tasks that are no longer needed`,
-
-    emailTemplates: `=== USING EMAIL TEMPLATES ===
-
-WHEN TO SEND EMAILS:
-• Initial Contact: Before the scheduled call
-• Purchase Confirmation: After successful conversion
-• Not Interested: After customer declines
-• Needs Follow Up: When follow-up is required
-• Callback Requested: When customer asks for callback
-• Rescheduled: When appointment time changes
-• No Answer: After unsuccessful call attempts
-
-HOW TO USE:
-1. Go to Scripts section
-2. Click on "Email Templates" tab
-3. Select the appropriate template
-4. Copy the template content
-5. Personalize with customer's name and details
-6. Send via your email system
-
-PERSONALIZATION:
-• Always use the customer's name
-• Reference specific details from your conversation
-• Customize based on their situation
-• Add relevant information they requested
-• Keep the tone professional but warm
-
-BEST PRACTICES:
-• Send emails promptly after the call
-• Personalize beyond just the template
-• Include next steps clearly
-• Make it easy for them to respond
-• Follow up if no response within 48 hours`,
-
-    qualityStandards: `=== QUALITY STANDARDS ===
-
-CALL QUALITY:
-• Professional and courteous at all times
-• Clear communication and articulation
-• Active listening and engagement
-• Appropriate pace and tone
-• Genuine interest in helping the customer
-
-DOCUMENTATION:
-• All calls must be documented within 24 hours
-• Notes should be comprehensive and detailed
-• Include key objections and responses
-• Document customer's goals and challenges
-• Record outcomes accurately
-
-FOLLOW-UP:
-• Follow up within 24-48 hours when required
-• Personalize follow-up communications
-• Provide requested information promptly
-• Maintain consistent communication
-• Respect customer's time and preferences
-
-ETHICS:
-• Always be honest and transparent
-• Don't make false promises
-• Respect customer's decisions
-• Maintain confidentiality
-• Follow all compliance requirements`
+  const isSectionExpanded = (sectionKey: string) => {
+    // If expandedSections is empty, all sections are expanded by default
+    // Otherwise, only expanded if explicitly in the set
+    return expandedSections.size === 0 || expandedSections.has(sectionKey);
   };
 
-  // Guidelines
-  const guidelines = {
-    communication: `=== COMMUNICATION GUIDELINES ===
-
-TONE AND MANNER:
-• Professional but approachable
-• Warm and genuine
-• Confident but not pushy
-• Respectful of their time
-• Empathetic to their situation
-
-LANGUAGE:
-• Use clear, simple language
-• Avoid financial jargon unless explaining
-• Speak at an appropriate pace
-• Pause to allow response
-• Confirm understanding
-
-LISTENING:
-• Give full attention to the customer
-• Don't interrupt or rush them
-• Take notes while they speak
-• Ask clarifying questions
-• Show you understand their situation
-
-QUESTIONING:
-• Ask open-ended questions
-• Dig deeper into their answers
-• Understand their motivations
-• Identify pain points
-• Discover decision-making factors`,
-
-    compliance: `=== COMPLIANCE & LEGAL ===
-
-REQUIRED DISCLOSURES:
-• Always identify yourself and BrightNest
-• Be transparent about services and pricing
-• Don't make guarantees or promises
-• Disclose any relevant terms or conditions
-• Follow all financial services regulations
-
-DO NOT:
-• Misrepresent BrightNest services
-• Make false claims about results
-• Pressure customers into decisions
-• Share customer information inappropriately
-• Violate any privacy regulations
-
-RECORDING:
-• Inform customers if calls are recorded
-• Follow local recording consent laws
-• Store recordings securely
-• Only share recordings with authorized personnel
-• Delete recordings per retention policy
-
-DATA PROTECTION:
-• Keep customer information confidential
-• Use secure systems for all data
-• Don't share customer details inappropriately
-• Follow data protection regulations
-• Report any data breaches immediately`,
-
-    performance: `=== PERFORMANCE EXPECTATIONS ===
-
-METRICS:
-• Conversion rate (target: [X]%)
-• Average call duration
-• Follow-up completion rate
-• Task completion rate
-• Customer satisfaction
-
-GOALS:
-• Make [X] calls per day
-• Convert [Y]% of calls
-• Follow up within 24 hours
-• Complete all tasks on time
-• Maintain high quality standards
-
-IMPROVEMENT:
-• Review call recordings regularly
-• Seek feedback from supervisors
-• Participate in training sessions
-• Learn from successful calls
-• Continuously improve your skills
-
-TRACKING:
-• Monitor your dashboard metrics
-• Review your conversion rates
-• Track your follow-up success
-• Measure task completion
-• Identify areas for improvement`,
-
-    escalation: `=== ESCALATION PROCEDURES ===
-
-WHEN TO ESCALATE:
-• Customer has complex financial situation beyond your expertise
-• Customer requests to speak with a supervisor
-• Technical issues preventing call completion
-• Customer complaints or concerns
-• Situations requiring specialized knowledge
-
-HOW TO ESCALATE:
-1. Document the situation in call notes
-2. Contact your supervisor immediately
-3. Provide all relevant details
-4. Follow supervisor's guidance
-5. Update the customer on next steps
-
-CONTACTS:
-• Supervisor: [Name] - [Email] - [Phone]
-• Technical Support: [Email] - [Phone]
-• Compliance: [Email]
-• Emergency: [Phone]
-
-DOCUMENTATION:
-• Always document escalations
-• Include reason for escalation
-• Note who was contacted
-• Record resolution or next steps
-• Follow up as needed`
+  // Organized content structure
+  const sections = {
+    training: {
+      title: 'Training & Development',
+      icon: '📚',
+      color: 'from-blue-500 to-blue-600',
+      bgColor: 'bg-blue-50',
+      borderColor: 'border-blue-200',
+      items: [
+        {
+          id: 'onboarding',
+          title: 'Onboarding & Orientation',
+          icon: '🚀',
+          content: {
+            intro: 'Welcome to BrightNest! This section covers everything you need to know to get started as a closer.',
+            sections: [
+              {
+                title: 'Basic Responsibilities',
+                items: [
+                  'Make outbound calls to leads who completed the financial profile quiz',
+                  'Understand customer needs and present BrightNest solutions',
+                  'Update appointment status and outcome after each call',
+                  'Document call notes and recording links',
+                  'Follow up with leads as needed'
+                ]
+              },
+              {
+                title: 'Key Tools',
+                items: [
+                  'Dashboard: View your uncontacted appointments',
+                  'Database: Access all contacted leads and their history',
+                  'Scripts: Reference call scripts and email templates',
+                  'Tasks: Manage follow-up tasks and reminders',
+                  'Rules: This page - internal procedures and guidelines'
+                ]
+              },
+              {
+                title: 'Getting Started',
+                items: [
+                  'Review your assigned script in the Scripts section',
+                  'Familiarize yourself with the BrightNest program details',
+                  'Review status explanations to understand when to use each outcome',
+                  'Practice the call script before your first call',
+                  'Start with your first appointment from the Dashboard'
+                ]
+              }
+            ]
+          }
+        },
+        {
+          id: 'call-techniques',
+          title: 'Effective Call Techniques',
+          icon: '📞',
+          content: {
+            intro: 'Master the art of effective phone communication to maximize your success.',
+            sections: [
+              {
+                title: 'Opening the Call',
+                items: [
+                  'Always identify yourself and BrightNest clearly',
+                  'Reference the quiz they completed to establish context',
+                  'Ask permission before proceeding ("Does now work for you?")',
+                  'Be warm, professional, and genuinely interested'
+                ]
+              },
+              {
+                title: 'Active Listening',
+                items: [
+                  'Take notes during the call - capture key pain points',
+                  'Repeat back what you heard to confirm understanding',
+                  'Ask follow-up questions to dig deeper',
+                  'Let the customer finish speaking before responding'
+                ]
+              },
+              {
+                title: 'Discovery Questions',
+                items: [
+                  'Focus on understanding their financial goals',
+                  'Identify their biggest challenges',
+                  'Understand what\'s preventing them from reaching goals',
+                  'Determine if they\'ve worked with advisors before'
+                ]
+              },
+              {
+                title: 'Presenting Solutions',
+                items: [
+                  'Match BrightNest solutions to their specific needs',
+                  'Use their quiz results to personalize the conversation',
+                  'Address objections with empathy and understanding',
+                  'Focus on benefits, not just features'
+                ]
+              },
+              {
+                title: 'Closing',
+                items: [
+                  'Use assumptive language when appropriate',
+                  'Offer choices rather than yes/no questions',
+                  'Create urgency when genuine (limited spots, etc.)',
+                  'Always ask for the sale if they\'re interested'
+                ]
+              }
+            ]
+          }
+        },
+        {
+          id: 'objection-handling',
+          title: 'Objection Handling',
+          icon: '🛡️',
+          content: {
+            intro: 'Learn how to handle common objections and turn them into opportunities.',
+            sections: [
+              {
+                title: '"I need to think about it"',
+                items: [
+                  'Dig deeper: "What specifically would you like to think about? Is there something I haven\'t addressed yet?"',
+                  'Create urgency: "What would need to happen for you to feel confident moving forward today?"'
+                ]
+              },
+              {
+                title: '"I can\'t afford it right now"',
+                items: [
+                  'Understand their situation: "I appreciate your honesty. What would make this affordable for you?"',
+                  'Reframe value: "What would it cost you NOT to address [their challenge]?"',
+                  'Explore options: "What\'s your budget range? Let\'s see what we can work with."'
+                ]
+              },
+              {
+                title: '"I\'m not sure if this is right for me"',
+                items: [
+                  'Address concerns: "Let\'s talk about that. What concerns you most?"',
+                  'Provide clarity: "What would need to happen for you to feel confident this is the right fit?"',
+                  'Social proof: "Many people with similar situations have found success with BrightNest."'
+                ]
+              },
+              {
+                title: '"I need to talk to my spouse/partner"',
+                items: [
+                  'Validate: "Absolutely, that\'s important. Financial decisions should be made together."',
+                  'Schedule: "When would be a good time for both of you to review this together?"',
+                  'Provide materials: "I can send you some information to review together."'
+                ]
+              }
+            ]
+          }
+        },
+        {
+          id: 'best-practices',
+          title: 'Best Practices',
+          icon: '⭐',
+          content: {
+            intro: 'Essential practices to maintain high performance and customer satisfaction.',
+            sections: [
+              {
+                title: 'Pre-Call Preparation',
+                items: [
+                  'Review the lead\'s quiz answers before calling',
+                  'Understand their financial archetype',
+                  'Prepare relevant talking points based on their answers',
+                  'Have your script and program details ready'
+                ]
+              },
+              {
+                title: 'During the Call',
+                items: [
+                  'Be present and focused - eliminate distractions',
+                  'Take detailed notes - you\'ll need them for follow-up',
+                  'Be authentic - don\'t sound scripted',
+                  'Show genuine interest in helping them'
+                ]
+              },
+              {
+                title: 'Post-Call',
+                items: [
+                  'Update the outcome immediately after the call',
+                  'Add detailed notes while the conversation is fresh',
+                  'Upload recording link if available',
+                  'Set follow-up tasks if needed',
+                  'Send appropriate email template if applicable'
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    status: {
+      title: 'Status Guide',
+      icon: '✅',
+      color: 'from-green-500 to-green-600',
+      bgColor: 'bg-green-50',
+      borderColor: 'border-green-200',
+      items: [
+        {
+          id: 'converted',
+          title: 'Converted',
+          subtitle: 'Purchase Made',
+          icon: '💰',
+          color: 'bg-green-100 text-green-800 border-green-300',
+          content: {
+            whenToUse: [
+              'Customer agrees to purchase a BrightNest plan during the call',
+              'Payment has been processed or scheduled',
+              'Customer has committed to signing up',
+              'Sale is confirmed and documented'
+            ],
+            actions: [
+              'Record the sale value in the system',
+              'Upload call recording link (if available)',
+              'Add detailed notes about what they purchased',
+              'Send "Purchase Confirmation" email template',
+              'Ensure all commission and affiliate tracking is accurate'
+            ],
+            notes: [
+              'Always confirm the exact amount of the sale',
+              'Document which plan they selected',
+              'Note any special terms or arrangements',
+              'Record customer enthusiasm level and key decision factors'
+            ]
+          }
+        },
+        {
+          id: 'not-interested',
+          title: 'Not Interested',
+          subtitle: '',
+          icon: '❌',
+          color: 'bg-red-100 text-red-800 border-red-300',
+          content: {
+            whenToUse: [
+              'Customer explicitly states they\'re not interested',
+              'They\'ve heard the pitch and declined',
+              'They don\'t see value in BrightNest at this time',
+              'Timing is not right and they\'re firm about it'
+            ],
+            actions: [
+              'Add notes explaining why they weren\'t interested',
+              'Upload call recording link (if available)',
+              'Send "Not Interested - Follow Up" email template',
+              'Note any specific objections for training purposes'
+            ],
+            notes: [
+              'Be respectful - they may become interested later',
+              'Document their objections for product improvement',
+              'Leave the door open for future contact',
+              'Some "not interested" can become "needs follow up" with nurturing'
+            ]
+          }
+        },
+        {
+          id: 'needs-follow-up',
+          title: 'Needs Follow Up',
+          subtitle: '',
+          icon: '📋',
+          color: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+          content: {
+            whenToUse: [
+              'Customer is interested but needs more information',
+              'They want to review materials before deciding',
+              'They have specific questions that need research',
+              'They\'re comparing options and need time',
+              'They want to discuss with spouse/partner'
+            ],
+            actions: [
+              'Create a follow-up task with a specific date',
+              'Add detailed notes about what they need',
+              'Upload call recording link (if available)',
+              'Send "Needs Follow Up" email template with relevant info',
+              'Schedule next contact in your calendar'
+            ],
+            notes: [
+              'This is often the most convertible status',
+              'Prompt follow-up is critical (within 24-48 hours)',
+              'Personalize follow-up based on their specific needs',
+              'Provide exactly what they asked for (materials, answers, etc.)'
+            ]
+          }
+        },
+        {
+          id: 'callback-requested',
+          title: 'Callback Requested',
+          subtitle: '',
+          icon: '📲',
+          color: 'bg-blue-100 text-blue-800 border-blue-300',
+          content: {
+            whenToUse: [
+              'Customer explicitly asks you to call them back',
+              'They need to check their schedule for a better time',
+              'They want to prepare before the conversation',
+              'Initial contact was not ideal timing for them'
+            ],
+            actions: [
+              'Schedule the callback in your calendar',
+              'Create a task reminder for the callback',
+              'Add notes about best time to call',
+              'Send "Callback Requested" email confirming the callback',
+              'Note any specific topics to cover in callback'
+            ],
+            notes: [
+              'Honor their requested callback time',
+              'Be prepared when you call back',
+              'Reference previous conversation to show you remember',
+              'This shows respect for their time and schedule'
+            ]
+          }
+        },
+        {
+          id: 'rescheduled',
+          title: 'Rescheduled',
+          subtitle: '',
+          icon: '🔄',
+          color: 'bg-purple-100 text-purple-800 border-purple-300',
+          content: {
+            whenToUse: [
+              'Customer needs to move their scheduled appointment',
+              'They can\'t make the originally scheduled time',
+              'They request a different time that works better',
+              'Appointment time was changed at their request'
+            ],
+            actions: [
+              'Update the appointment time in the system',
+              'Confirm the new time with the customer',
+              'Send "Rescheduled Appointment" email template',
+              'Add notes about the reason for rescheduling',
+              'Update your calendar with the new time'
+            ],
+            notes: [
+              'Rescheduling is normal - don\'t take it personally',
+              'Confirm the new time clearly',
+              'Send confirmation to avoid confusion',
+              'Be flexible but also set boundaries'
+            ]
+          }
+        },
+        {
+          id: 'no-answer',
+          title: 'No Answer',
+          subtitle: '',
+          icon: '📵',
+          color: 'bg-gray-100 text-gray-800 border-gray-300',
+          content: {
+            whenToUse: [
+              'You called but the customer didn\'t answer',
+              'No voicemail was left or they didn\'t return call',
+              'Multiple attempts to reach them were unsuccessful',
+              'Customer\'s phone went straight to voicemail'
+            ],
+            actions: [
+              'Add notes about call attempts (time, result)',
+              'Send "No Answer - Follow Up" email template',
+              'Create a task to try again later',
+              'Try alternative contact methods if available',
+              'Note if voicemail was left'
+            ],
+            notes: [
+              'Don\'t give up after one attempt',
+              'Try different times of day',
+              'Email can be more effective if calls aren\'t working',
+              'Some customers prefer email communication',
+              'Document all contact attempts'
+            ]
+          }
+        },
+        {
+          id: 'wrong-number',
+          title: 'Wrong Number',
+          subtitle: '',
+          icon: '📞',
+          color: 'bg-orange-100 text-orange-800 border-orange-300',
+          content: {
+            whenToUse: [
+              'The phone number is incorrect or disconnected',
+              'You reached someone who isn\'t the customer',
+              'The number belongs to someone else entirely',
+              'Customer\'s contact information is invalid'
+            ],
+            actions: [
+              'Add notes explaining what happened',
+              'Try to find alternative contact information',
+              'Send email to customer (if email is valid)',
+              'Note that contact information needs updating',
+              'Flag for admin review if information is consistently wrong'
+            ],
+            notes: [
+              'Verify you dialed the correct number',
+              'Some customers may have multiple numbers',
+              'Try email contact if phone fails',
+              'Wrong numbers should be rare - flag patterns to admin'
+            ]
+          }
+        }
+      ]
+    },
+    procedures: {
+      title: 'Procedures',
+      icon: '📝',
+      color: 'from-purple-500 to-purple-600',
+      bgColor: 'bg-purple-50',
+      borderColor: 'border-purple-200',
+      items: [
+        {
+          id: 'daily-workflow',
+          title: 'Daily Workflow',
+          icon: '🌅',
+          content: {
+            sections: [
+              {
+                title: 'Start of Day',
+                items: [
+                  'Log in to your BrightNest dashboard',
+                  'Review your appointments for the day',
+                  'Check for any pending tasks or follow-ups',
+                  'Review any new leads assigned to you',
+                  'Prepare your workspace and materials'
+                ]
+              },
+              {
+                title: 'Before Each Call',
+                items: [
+                  'Review the lead\'s quiz answers and profile',
+                  'Understand their financial archetype',
+                  'Review their stated goals and challenges',
+                  'Prepare relevant talking points',
+                  'Have your script and program details ready',
+                  'Ensure you have a quiet environment'
+                ]
+              },
+              {
+                title: 'During the Call',
+                items: [
+                  'Introduce yourself and BrightNest clearly',
+                  'Reference their quiz completion',
+                  'Ask permission to proceed',
+                  'Conduct discovery questions',
+                  'Present relevant solutions',
+                  'Handle objections professionally',
+                  'Attempt to close or schedule follow-up',
+                  'Take detailed notes throughout'
+                ]
+              },
+              {
+                title: 'After Each Call',
+                items: [
+                  'Update appointment outcome immediately',
+                  'Enter sale value if converted',
+                  'Add comprehensive call notes',
+                  'Upload recording link if available',
+                  'Send appropriate email template',
+                  'Create follow-up tasks if needed',
+                  'Update your calendar with next steps'
+                ]
+              },
+              {
+                title: 'End of Day',
+                items: [
+                  'Complete all call documentation',
+                  'Review tasks for tomorrow',
+                  'Prepare for next day\'s appointments',
+                  'Update any pending items',
+                  'Log out securely'
+                ]
+              }
+            ]
+          }
+        },
+        {
+          id: 'updating-status',
+          title: 'Updating Status',
+          icon: '✏️',
+          content: {
+            sections: [
+              {
+                title: 'Step 1: Access the Appointment',
+                items: [
+                  'Go to Dashboard or Database',
+                  'Find the appointment you just completed',
+                  'Click "Update Status" button'
+                ]
+              },
+              {
+                title: 'Step 2: Select Outcome',
+                items: [
+                  'Choose the appropriate outcome from the dropdown',
+                  'Refer to Status Guide section if unsure',
+                  'Select the outcome that best matches the call result'
+                ]
+              },
+              {
+                title: 'Step 3: Enter Details',
+                items: [
+                  'Sale Value: Enter amount if customer converted (required for "converted")',
+                  'Call Notes: Add detailed notes about the conversation',
+                  'Recording Link: Paste the call recording URL if available'
+                ]
+              },
+              {
+                title: 'Step 4: Save and Follow Up',
+                items: [
+                  'Click "Save" to update the appointment',
+                  'System will automatically send appropriate email template',
+                  'Create follow-up tasks if needed',
+                  'Update your calendar with next steps'
+                ]
+              }
+            ]
+          }
+        },
+        {
+          id: 'task-management',
+          title: 'Task Management',
+          icon: '✅',
+          content: {
+            sections: [
+              {
+                title: 'Creating Tasks',
+                items: [
+                  'Tasks help you track follow-ups and reminders',
+                  'Create a task for any lead that needs follow-up',
+                  'Set specific due dates based on urgency',
+                  'Add detailed descriptions of what needs to be done'
+                ]
+              },
+              {
+                title: 'Task Types',
+                items: [
+                  'Follow-up calls: Customer needs more time or information',
+                  'Email follow-ups: Send specific materials or answers',
+                  'Research tasks: Look up information for customer',
+                  'Appointment reminders: Don\'t forget scheduled calls'
+                ]
+              },
+              {
+                title: 'Priority Levels',
+                items: [
+                  'Urgent: Requires immediate attention (same day)',
+                  'High: Important, complete within 24-48 hours',
+                  'Medium: Standard priority, complete within 3-5 days',
+                  'Low: Can be completed when time permits'
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    guidelines: {
+      title: 'Guidelines',
+      icon: '📋',
+      color: 'from-indigo-500 to-indigo-600',
+      bgColor: 'bg-indigo-50',
+      borderColor: 'border-indigo-200',
+      items: [
+        {
+          id: 'communication',
+          title: 'Communication Guidelines',
+          icon: '💬',
+          content: {
+            sections: [
+              {
+                title: 'Tone and Manner',
+                items: [
+                  'Professional but approachable',
+                  'Warm and genuine',
+                  'Confident but not pushy',
+                  'Respectful of their time',
+                  'Empathetic to their situation'
+                ]
+              },
+              {
+                title: 'Language',
+                items: [
+                  'Use clear, simple language',
+                  'Avoid financial jargon unless explaining',
+                  'Speak at an appropriate pace',
+                  'Pause to allow response',
+                  'Confirm understanding'
+                ]
+              },
+              {
+                title: 'Listening',
+                items: [
+                  'Give full attention to the customer',
+                  'Don\'t interrupt or rush them',
+                  'Take notes while they speak',
+                  'Ask clarifying questions',
+                  'Show you understand their situation'
+                ]
+              }
+            ]
+          }
+        },
+        {
+          id: 'compliance',
+          title: 'Compliance & Legal',
+          icon: '⚖️',
+          content: {
+            sections: [
+              {
+                title: 'Required Disclosures',
+                items: [
+                  'Always identify yourself and BrightNest',
+                  'Be transparent about services and pricing',
+                  'Don\'t make guarantees or promises',
+                  'Disclose any relevant terms or conditions',
+                  'Follow all financial services regulations'
+                ]
+              },
+              {
+                title: 'Do Not',
+                items: [
+                  'Misrepresent BrightNest services',
+                  'Make false claims about results',
+                  'Pressure customers into decisions',
+                  'Share customer information inappropriately',
+                  'Violate any privacy regulations'
+                ]
+              }
+            ]
+          }
+        },
+        {
+          id: 'performance',
+          title: 'Performance Expectations',
+          icon: '📊',
+          content: {
+            sections: [
+              {
+                title: 'Metrics',
+                items: [
+                  'Conversion rate (target: varies)',
+                  'Average call duration',
+                  'Follow-up completion rate',
+                  'Task completion rate',
+                  'Customer satisfaction'
+                ]
+              },
+              {
+                title: 'Goals',
+                items: [
+                  'Make consistent calls per day',
+                  'Convert at target percentage',
+                  'Follow up within 24 hours',
+                  'Complete all tasks on time',
+                  'Maintain high quality standards'
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
   };
 
   if (isLoading) {
@@ -665,235 +744,198 @@ DOCUMENTATION:
     );
   }
 
+  // Get current section data
+  const getCurrentSection = () => {
+    for (const [categoryKey, category] of Object.entries(sections)) {
+      const item = category.items.find(i => i.id === activeSection);
+      if (item) {
+        return { category, item, categoryKey };
+      }
+    }
+    return null;
+  };
+
+  const current = getCurrentSection();
+  const currentCategory = current?.category;
+  const currentItem = current?.item;
+
   return (
     <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
       <CloserHeader closer={closer} onLogout={handleLogout} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header Section */}
+        {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mr-4">
-              <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
+          <div className="flex items-center mb-2">
+            <div className={`w-14 h-14 bg-gradient-to-br ${currentCategory?.color || 'from-indigo-500 to-indigo-600'} rounded-xl flex items-center justify-center mr-4 shadow-lg`}>
+              <span className="text-2xl">{currentCategory?.icon || '📚'}</span>
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Internal Rules & Guidelines</h1>
-              <p className="text-gray-600 mt-1">Training materials, status explanations, procedures, and best practices</p>
+              <p className="text-gray-600 mt-1">Training materials, procedures, and best practices</p>
             </div>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-          {/* Tabs */}
-          <div className="border-b border-gray-200">
-            <nav className="flex -mb-px">
-              <button
-                onClick={() => setActiveTab('training')}
-                className={`flex-1 py-4 px-6 text-center text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'training'
-                    ? 'border-indigo-500 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-center justify-center">
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                  Training
-                </div>
-              </button>
-              <button
-                onClick={() => setActiveTab('status')}
-                className={`flex-1 py-4 px-6 text-center text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'status'
-                    ? 'border-indigo-500 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-center justify-center">
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Status Guide
-                </div>
-              </button>
-              <button
-                onClick={() => setActiveTab('procedures')}
-                className={`flex-1 py-4 px-6 text-center text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'procedures'
-                    ? 'border-indigo-500 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-center justify-center">
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                  </svg>
-                  Procedures
-                </div>
-              </button>
-              <button
-                onClick={() => setActiveTab('guidelines')}
-                className={`flex-1 py-4 px-6 text-center text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'guidelines'
-                    ? 'border-indigo-500 text-indigo-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-center justify-center">
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                  Guidelines
-                </div>
-              </button>
-            </nav>
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Sidebar Navigation */}
+          <div className="lg:w-64 flex-shrink-0">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sticky top-4">
+              <nav className="space-y-2">
+                {Object.entries(sections).map(([categoryKey, category]) => (
+                  <div key={categoryKey} className="mb-4">
+                    <div className={`flex items-center px-3 py-2 mb-2 rounded-lg bg-gradient-to-r ${category.color} text-white text-sm font-semibold`}>
+                      <span className="mr-2">{category.icon}</span>
+                      {category.title}
+                    </div>
+                    <div className="space-y-1 pl-2">
+                      {category.items.map((item) => (
+                        <button
+                          key={item.id}
+                          onClick={() => setActiveSection(item.id)}
+                          className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-200 flex items-center ${
+                            activeSection === item.id
+                              ? `bg-gradient-to-r ${category.color} text-white shadow-md`
+                              : 'text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          <span className="mr-2">{item.icon}</span>
+                          <span className="flex-1">{item.title}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </nav>
+            </div>
           </div>
 
-          {/* Training Content */}
-          {activeTab === 'training' && (
-            <div className="p-6">
-              <div className="space-y-6">
-                {Object.entries(trainingContent).map(([key, content]) => {
-                  const titles: { [key: string]: string } = {
-                    onboarding: 'Onboarding & Orientation',
-                    callTechniques: 'Effective Call Techniques',
-                    objectionHandling: 'Objection Handling Strategies',
-                    bestPractices: 'Best Practices',
-                    roleplayScenarios: 'Roleplay Scenarios'
-                  };
-                  
-                  return (
-                    <div key={key} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                      <h3 className="text-xl font-bold text-gray-900 mb-4">{titles[key]}</h3>
-                      <div className="prose max-w-none">
-                        <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-6 rounded border border-gray-200 leading-relaxed">
-                          {content}
-                        </pre>
-                      </div>
+          {/* Main Content */}
+          <div className="flex-1">
+            {currentItem && (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                {/* Content Header */}
+                <div className={`bg-gradient-to-r ${currentCategory?.color} px-6 py-5`}>
+                  <div className="flex items-center">
+                    <span className="text-3xl mr-3">{currentItem.icon}</span>
+                    <div>
+                      <h2 className="text-2xl font-bold text-white">{currentItem.title}</h2>
+                      {currentItem.subtitle && (
+                        <p className="text-white/90 text-sm mt-1">{currentItem.subtitle}</p>
+                      )}
+                      {currentItem.content.intro && (
+                        <p className="text-white/90 text-sm mt-2">{currentItem.content.intro}</p>
+                      )}
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+                  </div>
+                </div>
 
-          {/* Status Guide Content */}
-          {activeTab === 'status' && (
-            <div className="p-6">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Appointment Status Guide</h2>
-                <p className="text-gray-600">Learn when and how to use each appointment outcome status</p>
-              </div>
-              <div className="space-y-6">
-                {Object.entries(statusExplanations).map(([key, status]) => {
-                  const statusColors: { [key: string]: string } = {
-                    converted: 'bg-green-100 text-green-800 border-green-200',
-                    not_interested: 'bg-red-100 text-red-800 border-red-200',
-                    needs_follow_up: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-                    callback_requested: 'bg-blue-100 text-blue-800 border-blue-200',
-                    rescheduled: 'bg-purple-100 text-purple-800 border-purple-200',
-                    no_answer: 'bg-gray-100 text-gray-800 border-gray-200',
-                    wrong_number: 'bg-orange-100 text-orange-800 border-orange-200'
-                  };
-                  
-                  return (
-                    <div key={key} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                      <div className="flex items-center mb-4">
-                        <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${statusColors[key] || 'bg-gray-100 text-gray-800'}`}>
-                          {status.title}
-                        </span>
+                {/* Content Body */}
+                <div className="p-6">
+                  {/* Status-specific content */}
+                  {currentItem.content.whenToUse && (
+                    <div className="space-y-6">
+                      <div className="bg-blue-50 rounded-lg p-5 border border-blue-200">
+                        <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
+                          <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          When to Use
+                        </h3>
+                        <ul className="space-y-2">
+                          {currentItem.content.whenToUse.map((item, idx) => (
+                            <li key={idx} className="flex items-start">
+                              <span className="text-blue-600 mr-2 mt-1">•</span>
+                              <span className="text-gray-700">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                      
-                      <div className="space-y-4">
-                        <div>
-                          <h4 className="font-semibold text-gray-900 mb-2">When to Use:</h4>
-                          <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-4 rounded border border-gray-200">
-                            {status.whenToUse}
-                          </pre>
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-semibold text-gray-900 mb-2">What to Do:</h4>
-                          <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-4 rounded border border-gray-200">
-                            {status.whatToDo}
-                          </pre>
-                        </div>
-                        
-                        <div>
-                          <h4 className="font-semibold text-gray-900 mb-2">Important Notes:</h4>
-                          <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-4 rounded border border-gray-200">
-                            {status.notes}
-                          </pre>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
 
-          {/* Procedures Content */}
-          {activeTab === 'procedures' && (
-            <div className="p-6">
-              <div className="space-y-6">
-                {Object.entries(procedures).map(([key, content]) => {
-                  const titles: { [key: string]: string } = {
-                    dailyWorkflow: 'Daily Workflow Procedures',
-                    updatingStatus: 'Updating Appointment Status',
-                    taskManagement: 'Task Management Procedures',
-                    emailTemplates: 'Using Email Templates',
-                    qualityStandards: 'Quality Standards'
-                  };
-                  
-                  return (
-                    <div key={key} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                      <h3 className="text-xl font-bold text-gray-900 mb-4">{titles[key]}</h3>
-                      <div className="prose max-w-none">
-                        <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-6 rounded border border-gray-200 leading-relaxed">
-                          {content}
-                        </pre>
+                      <div className="bg-green-50 rounded-lg p-5 border border-green-200">
+                        <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
+                          <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                          </svg>
+                          What to Do
+                        </h3>
+                        <ul className="space-y-2">
+                          {currentItem.content.actions.map((item, idx) => (
+                            <li key={idx} className="flex items-start">
+                              <span className="text-green-600 mr-2 mt-1">•</span>
+                              <span className="text-gray-700">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
 
-          {/* Guidelines Content */}
-          {activeTab === 'guidelines' && (
-            <div className="p-6">
-              <div className="space-y-6">
-                {Object.entries(guidelines).map(([key, content]) => {
-                  const titles: { [key: string]: string } = {
-                    communication: 'Communication Guidelines',
-                    compliance: 'Compliance & Legal',
-                    performance: 'Performance Expectations',
-                    escalation: 'Escalation Procedures'
-                  };
-                  
-                  return (
-                    <div key={key} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                      <h3 className="text-xl font-bold text-gray-900 mb-4">{titles[key]}</h3>
-                      <div className="prose max-w-none">
-                        <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-6 rounded border border-gray-200 leading-relaxed">
-                          {content}
-                        </pre>
+                      <div className="bg-amber-50 rounded-lg p-5 border border-amber-200">
+                        <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
+                          <svg className="w-5 h-5 mr-2 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Important Notes
+                        </h3>
+                        <ul className="space-y-2">
+                          {currentItem.content.notes.map((item, idx) => (
+                            <li key={idx} className="flex items-start">
+                              <span className="text-amber-600 mr-2 mt-1">•</span>
+                              <span className="text-gray-700">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
-                  );
-                })}
+                  )}
+
+                  {/* Training/Procedures content */}
+                  {currentItem.content.sections && (
+                    <div className="space-y-6">
+                      {currentItem.content.sections.map((section, sectionIdx) => (
+                        <div
+                          key={sectionIdx}
+                          className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"
+                        >
+                          <button
+                            onClick={() => toggleSection(`${currentItem.id}-${sectionIdx}`)}
+                            className="w-full px-5 py-4 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 transition-all flex items-center justify-between"
+                          >
+                            <h3 className="text-lg font-bold text-gray-900">{section.title}</h3>
+                            <svg
+                              className={`w-5 h-5 text-gray-600 transition-transform ${
+                                isSectionExpanded(`${currentItem.id}-${sectionIdx}`) ? 'rotate-180' : ''
+                              }`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                          {isSectionExpanded(`${currentItem.id}-${sectionIdx}`) && (
+                            <div className="p-5 bg-white">
+                              <ul className="space-y-3">
+                                {section.items.map((item, itemIdx) => (
+                                  <li key={itemIdx} className="flex items-start">
+                                    <span className={`flex-shrink-0 w-6 h-6 rounded-full ${currentCategory?.bgColor} ${currentCategory?.borderColor} border-2 flex items-center justify-center mr-3 mt-0.5`}>
+                                      <span className="text-xs font-bold" style={{ color: currentCategory?.color.includes('blue') ? '#2563eb' : currentCategory?.color.includes('green') ? '#16a34a' : currentCategory?.color.includes('purple') ? '#9333ea' : '#4f46e5' }}>{itemIdx + 1}</span>
+                                    </span>
+                                    <span className="text-gray-700 leading-relaxed">{item}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
