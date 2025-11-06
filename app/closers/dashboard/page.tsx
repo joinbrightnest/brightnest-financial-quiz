@@ -29,6 +29,7 @@ interface Appointment {
   saleValue: number | null;
   commissionAmount: number | null;
   affiliateCode: string | null;
+  source?: string; // Lead source (affiliate name or "Website")
   recordingLinkConverted?: string | null;
   recordingLinkNotInterested?: string | null;
   recordingLinkNeedsFollowUp?: string | null;
@@ -438,22 +439,25 @@ export default function CloserDashboard() {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="w-1/6 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Customer
                     </th>
-                    <th className="w-1/6 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Scheduled
                     </th>
-                    <th className="w-1/6 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      Lead Source
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Stage
                     </th>
-                    <th className="w-1/6 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Sale Value
                     </th>
-                    <th className="w-1/6 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Actions
                     </th>
-                    <th className="w-1/6 px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                       Details
                     </th>
                   </tr>
@@ -472,6 +476,15 @@ export default function CloserDashboard() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {formatDate(appointment.scheduledAt)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                          appointment.source === 'Website' 
+                            ? 'bg-gray-100 text-gray-800' 
+                            : 'bg-purple-100 text-purple-800'
+                        }`}>
+                          {appointment.source || 'Website'}
+                        </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {appointment.outcome ? (
