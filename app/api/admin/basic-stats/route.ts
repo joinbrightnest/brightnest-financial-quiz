@@ -689,39 +689,132 @@ export async function GET(request: NextRequest) {
         affiliateIdForFilter = affiliate?.id;
       }
 
-      // Get affiliate clicks and normal website clicks
-      const affiliateClicks = await prisma.affiliateClick.findMany({
-        where: {
-          createdAt: {
-            gte: startDate,
+      // If filtering by quiz type, we need to match clicks to quiz sessions
+      // Only count clicks that resulted in a quiz session of the specified type
+      if (quizType) {
+        // Get all quiz sessions with the specified quiz type and filters
+        // Use startDate (same as used for clicks) for consistency
+        const matchingQuizSessions = await prisma.quizSession.findMany({
+          where: {
+            quizType: quizType,
+            createdAt: {
+              gte: startDate,
+            },
+            ...(affiliateCode ? { affiliateCode: affiliateCode } : {})
           },
-          ...(affiliateIdForFilter ? { affiliateId: affiliateIdForFilter } : {})
-        },
-        select: {
-          createdAt: true
-        },
-        orderBy: {
-          createdAt: 'asc'
-        }
-      });
-
-      // Normal website clicks don't have affiliate association, so only include them if showing all affiliates
-      const normalClicks = affiliateCode ? [] : await prisma.normalWebsiteClick.findMany({
-        where: {
-          createdAt: {
-            gte: startDate,
+          select: {
+            id: true,
+            createdAt: true,
+            affiliateCode: true
           },
-        },
-        select: {
-          createdAt: true
-        },
-        orderBy: {
-          createdAt: 'asc'
-        }
-      });
+          orderBy: {
+            createdAt: 'asc'
+          }
+        });
 
-      // Combine all clicks
-      const allClicks = [...affiliateClicks, ...normalClicks];
+        // For affiliate clicks: match clicks to quiz sessions by referral code and time window (1 hour)
+        const affiliateClicksWithDetails = await prisma.affiliateClick.findMany({
+          where: {
+            createdAt: {
+              gte: startDate,
+            },
+            ...(affiliateIdForFilter ? { affiliateId: affiliateIdForFilter } : {})
+          },
+          select: {
+            id: true,
+            createdAt: true,
+            referralCode: true
+          },
+          orderBy: {
+            createdAt: 'asc'
+          }
+        });
+
+        // Filter affiliate clicks to only those that have a matching quiz session
+        const validAffiliateClicks = affiliateClicksWithDetails.filter(click => {
+          // Find quiz sessions with matching referral code that started within 1 hour after the click
+          const oneHourAfterClick = new Date(click.createdAt.getTime() + 60 * 60 * 1000);
+          const matchingSession = matchingQuizSessions.find(session => {
+            const sessionAfterClick = session.createdAt >= click.createdAt && session.createdAt <= oneHourAfterClick;
+            const referralCodeMatch = session.affiliateCode === click.referralCode;
+            return sessionAfterClick && referralCodeMatch;
+          });
+          return !!matchingSession;
+        });
+
+        // For normal website clicks: only include if showing all affiliates and no quiz type filter should include them
+        // But if we're filtering by quiz type, we need to match them to quiz sessions without affiliate codes
+        let validNormalClicks: Array<{ createdAt: Date }> = [];
+        if (!affiliateCode) {
+          const normalClicksWithDetails = await prisma.normalWebsiteClick.findMany({
+            where: {
+              createdAt: {
+                gte: startDate,
+              },
+            },
+            select: {
+              id: true,
+              createdAt: true
+            },
+            orderBy: {
+              createdAt: 'asc'
+            }
+          });
+
+          // Filter normal clicks to only those that have a matching quiz session without affiliate code
+          validNormalClicks = normalClicksWithDetails.filter(click => {
+            // Find quiz sessions without affiliate code that started within 1 hour after the click
+            const oneHourAfterClick = new Date(click.createdAt.getTime() + 60 * 60 * 1000);
+            const matchingSession = matchingQuizSessions.find(session => {
+              const sessionAfterClick = session.createdAt >= click.createdAt && session.createdAt <= oneHourAfterClick;
+              const noAffiliateCode = !session.affiliateCode;
+              return sessionAfterClick && noAffiliateCode;
+            });
+            return !!matchingSession;
+          });
+        }
+
+        // Combine filtered clicks
+        const allClicks = [
+          ...validAffiliateClicks.map(c => ({ createdAt: c.createdAt })),
+          ...validNormalClicks
+        ];
+      } else {
+        // No quiz type filter - get all clicks (existing logic)
+        // Get affiliate clicks and normal website clicks
+        const affiliateClicks = await prisma.affiliateClick.findMany({
+          where: {
+            createdAt: {
+              gte: startDate,
+            },
+            ...(affiliateIdForFilter ? { affiliateId: affiliateIdForFilter } : {})
+          },
+          select: {
+            createdAt: true
+          },
+          orderBy: {
+            createdAt: 'asc'
+          }
+        });
+
+        // Normal website clicks don't have affiliate association, so only include them if showing all affiliates
+        const normalClicks = affiliateCode ? [] : await prisma.normalWebsiteClick.findMany({
+          where: {
+            createdAt: {
+              gte: startDate,
+            },
+          },
+          select: {
+            createdAt: true
+          },
+          orderBy: {
+            createdAt: 'asc'
+          }
+        });
+
+        // Combine all clicks
+        const allClicks = [...affiliateClicks, ...normalClicks];
+      }
 
       // Group clicks by hour (for 24h) or by day (for other periods)
       const groupedData: { [key: string]: number } = {};
@@ -776,40 +869,130 @@ export async function GET(request: NextRequest) {
 
     const clicksActivity = await getClicksActivityData();
 
-    // Calculate clicks - count actual click records filtered by date and affiliate
+    // Calculate clicks - count actual click records filtered by date, affiliate, and quiz type
     let totalClicks = 0;
     
-    if (affiliateCode) {
-      // If filtering by affiliate, get the affiliate ID and count their clicks
-      const affiliate = await prisma.affiliate.findUnique({
-        where: { referralCode: affiliateCode },
-        select: { id: true }
+    // If filtering by quiz type, we need to match clicks to quiz sessions (same logic as getClicksActivityData)
+    if (quizType) {
+      // Get all quiz sessions with the specified quiz type and filters
+      const matchingQuizSessions = await prisma.quizSession.findMany({
+        where: {
+          quizType: quizType,
+          createdAt: dateFilter,
+          ...(affiliateCode ? { affiliateCode: affiliateCode } : {})
+        },
+        select: {
+          id: true,
+          createdAt: true,
+          affiliateCode: true
+        }
       });
+
+      // For affiliate clicks: match clicks to quiz sessions by referral code and time window (1 hour)
+      let affiliateClicksWithDetails: Array<{ id: string; createdAt: Date; referralCode: string }> = [];
       
-      if (affiliate) {
-        totalClicks = await prisma.affiliateClick.count({
+      if (affiliateCode) {
+        const affiliate = await prisma.affiliate.findUnique({
+          where: { referralCode: affiliateCode },
+          select: { id: true }
+        });
+        
+        if (affiliate) {
+          affiliateClicksWithDetails = await prisma.affiliateClick.findMany({
+            where: {
+              affiliateId: affiliate.id,
+              createdAt: dateFilter
+            },
+            select: {
+              id: true,
+              createdAt: true,
+              referralCode: true
+            }
+          });
+        }
+      } else {
+        affiliateClicksWithDetails = await prisma.affiliateClick.findMany({
           where: {
-            affiliateId: affiliate.id,
             createdAt: dateFilter
+          },
+          select: {
+            id: true,
+            createdAt: true,
+            referralCode: true
           }
         });
       }
+
+      // Filter affiliate clicks to only those that have a matching quiz session
+      const validAffiliateClicks = affiliateClicksWithDetails.filter(click => {
+        const oneHourAfterClick = new Date(click.createdAt.getTime() + 60 * 60 * 1000);
+        const matchingSession = matchingQuizSessions.find(session => {
+          const sessionAfterClick = session.createdAt >= click.createdAt && session.createdAt <= oneHourAfterClick;
+          const referralCodeMatch = session.affiliateCode === click.referralCode;
+          return sessionAfterClick && referralCodeMatch;
+        });
+        return !!matchingSession;
+      });
+
+      // For normal website clicks: match them to quiz sessions without affiliate codes
+      let validNormalClicks = 0;
+      if (!affiliateCode) {
+        const normalClicksWithDetails = await prisma.normalWebsiteClick.findMany({
+          where: {
+            createdAt: dateFilter
+          },
+          select: {
+            id: true,
+            createdAt: true
+          }
+        });
+
+        validNormalClicks = normalClicksWithDetails.filter(click => {
+          const oneHourAfterClick = new Date(click.createdAt.getTime() + 60 * 60 * 1000);
+          const matchingSession = matchingQuizSessions.find(session => {
+            const sessionAfterClick = session.createdAt >= click.createdAt && session.createdAt <= oneHourAfterClick;
+            const noAffiliateCode = !session.affiliateCode;
+            return sessionAfterClick && noAffiliateCode;
+          });
+          return !!matchingSession;
+        }).length;
+      }
+
+      totalClicks = validAffiliateClicks.length + validNormalClicks;
     } else {
-      // Count all affiliate clicks
-      const affiliateClicksCount = await prisma.affiliateClick.count({
-        where: {
-          createdAt: dateFilter
+      // No quiz type filter - use existing logic
+      if (affiliateCode) {
+        // If filtering by affiliate, get the affiliate ID and count their clicks
+        const affiliate = await prisma.affiliate.findUnique({
+          where: { referralCode: affiliateCode },
+          select: { id: true }
+        });
+        
+        if (affiliate) {
+          totalClicks = await prisma.affiliateClick.count({
+            where: {
+              affiliateId: affiliate.id,
+              createdAt: dateFilter
+            }
+          });
         }
-      });
-      
-      // Count normal website clicks (these don't have affiliate association)
-      const normalWebsiteClicksCount = await prisma.normalWebsiteClick.count({
-        where: {
-          createdAt: dateFilter
-        }
-      });
-      
-      totalClicks = affiliateClicksCount + normalWebsiteClicksCount;
+      } else {
+        // Count all affiliate clicks
+        const affiliateClicksCount = await prisma.affiliateClick.count({
+          where: {
+            createdAt: dateFilter
+          }
+        });
+        
+        // Count normal website clicks (these don't have affiliate association)
+        const normalWebsiteClicksCount = await prisma.normalWebsiteClick.count({
+          where: {
+            createdAt: dateFilter
+          }
+        });
+        
+        totalClicks = affiliateClicksCount + normalWebsiteClicksCount;
+      }
     }
     
     const clicks = totalClicks; // Total clicks (affiliate clicks + normal website clicks)
