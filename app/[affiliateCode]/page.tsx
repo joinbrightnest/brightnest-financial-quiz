@@ -1,8 +1,6 @@
 import { notFound } from "next/navigation";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import SharedHomePage from "../../components/SharedHomePage";
-
-const prisma = new PrismaClient();
 
 // In-memory cache to prevent duplicate requests within 30 seconds
 const requestCache = new Map<string, number>();
