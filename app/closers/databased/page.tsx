@@ -73,7 +73,12 @@ export default function CloserDatabase() {
       fetchCloserStats(token),
       fetchAllAppointments(token),
       fetchActiveTaskCount(token)
-    ]);
+    ]).then(() => {
+      setIsLoading(false);
+    }).catch((error) => {
+      console.error('Error fetching data:', error);
+      setIsLoading(false);
+    });
   }, [router]);
 
   useEffect(() => {
