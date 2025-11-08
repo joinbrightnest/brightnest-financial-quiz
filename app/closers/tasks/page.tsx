@@ -472,10 +472,10 @@ export default function CloserTasks() {
 
         {/* Filter Tabs */}
         <div className="bg-white rounded-lg border border-gray-200 p-4 mb-8">
-          <div className="flex space-x-2">
+          <div className="flex gap-2">
             <button
               onClick={() => setFilter('all')}
-              className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+              className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
                 filter === 'all'
                   ? 'bg-slate-900 text-white shadow-sm'
                   : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
@@ -485,7 +485,7 @@ export default function CloserTasks() {
             </button>
             <button
               onClick={() => setFilter('due_today')}
-              className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+              className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
                 filter === 'due_today'
                   ? 'bg-slate-900 text-white shadow-sm'
                   : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
@@ -495,7 +495,7 @@ export default function CloserTasks() {
             </button>
             <button
               onClick={() => setFilter('overdue')}
-              className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+              className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
                 filter === 'overdue'
                   ? 'bg-slate-900 text-white shadow-sm'
                   : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
@@ -505,7 +505,7 @@ export default function CloserTasks() {
             </button>
             <button
               onClick={() => setFilter('upcoming')}
-              className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+              className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
                 filter === 'upcoming'
                   ? 'bg-slate-900 text-white shadow-sm'
                   : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
