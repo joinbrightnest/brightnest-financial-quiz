@@ -823,12 +823,14 @@ export default function CloserTasks() {
           onClose={() => setSelectedLeadId(null)} 
         />
       )}
-        </>
-      )}
 
       {/* Create Task Modal */}
       {showCreateTaskModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-end z-50">
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-end z-50" onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            closeCreateTaskModal();
+          }
+        }}>
           <div className="bg-white h-full w-full max-w-2xl shadow-xl overflow-y-auto">
             {/* Modal Header */}
             <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
@@ -944,6 +946,8 @@ export default function CloserTasks() {
             </div>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );
