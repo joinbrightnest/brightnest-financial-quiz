@@ -25,16 +25,24 @@ export async function PUT(
       return NextResponse.json({ error: 'Task not found' }, { status: 404 });
     }
 
-    // Security check: Verify the closer is assigned to this lead
-    const appointment = await prisma.appointment.findFirst({
-      where: {
-        customerEmail: existingTask.leadEmail,
-        closerId: closerId
-      }
-    });
+    // Security check: Verify task ownership
+    if (existingTask.leadEmail) {
+      // Type 1: Lead-specific task - verify the closer is assigned to this lead
+      const appointment = await prisma.appointment.findFirst({
+        where: {
+          customerEmail: existingTask.leadEmail,
+          closerId: closerId
+        }
+      });
 
-    if (!appointment) {
-      return NextResponse.json({ error: 'Forbidden: You are not assigned to this lead.' }, { status: 403 });
+      if (!appointment) {
+        return NextResponse.json({ error: 'Forbidden: You are not assigned to this lead.' }, { status: 403 });
+      }
+    } else {
+      // Type 2: General task - verify the task belongs to this closer
+      if (existingTask.closerId !== closerId) {
+        return NextResponse.json({ error: 'Forbidden: This task does not belong to you.' }, { status: 403 });
+      }
     }
 
     const updateData: any = {};
@@ -97,16 +105,24 @@ export async function DELETE(
       return NextResponse.json({ error: 'Task not found' }, { status: 404 });
     }
 
-    // Security check: Verify the closer is assigned to this lead
-    const appointment = await prisma.appointment.findFirst({
-      where: {
-        customerEmail: existingTask.leadEmail,
-        closerId: closerId
-      }
-    });
+    // Security check: Verify task ownership
+    if (existingTask.leadEmail) {
+      // Type 1: Lead-specific task - verify the closer is assigned to this lead
+      const appointment = await prisma.appointment.findFirst({
+        where: {
+          customerEmail: existingTask.leadEmail,
+          closerId: closerId
+        }
+      });
 
-    if (!appointment) {
-      return NextResponse.json({ error: 'Forbidden: You are not assigned to this lead.' }, { status: 403 });
+      if (!appointment) {
+        return NextResponse.json({ error: 'Forbidden: You are not assigned to this lead.' }, { status: 403 });
+      }
+    } else {
+      // Type 2: General task - verify the task belongs to this closer
+      if (existingTask.closerId !== closerId) {
+        return NextResponse.json({ error: 'Forbidden: This task does not belong to you.' }, { status: 403 });
+      }
     }
 
     await prisma.task.delete({
