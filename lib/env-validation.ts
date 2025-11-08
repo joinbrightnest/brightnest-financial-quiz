@@ -23,7 +23,7 @@ const ENV_VARIABLES: EnvConfig[] = [
   },
   {
     name: 'DIRECT_URL',
-    required: true,
+    required: false, // Only needed for migrations, not runtime
     description: 'PostgreSQL direct connection (for migrations)'
   },
   
