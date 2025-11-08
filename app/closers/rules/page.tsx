@@ -21,6 +21,7 @@ export default function CloserRules() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeSection, setActiveSection] = useState<string>('onboarding');
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+  const [activeTaskCount, setActiveTaskCount] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -31,7 +32,10 @@ export default function CloserRules() {
       return;
     }
 
-    fetchCloserStats(token);
+    Promise.all([
+      fetchCloserStats(token),
+      fetchActiveTaskCount(token)
+    ]);
   }, [router]);
 
   const fetchCloserStats = async (token: string) => {
@@ -51,6 +55,30 @@ export default function CloserRules() {
       console.error('Error fetching closer stats:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchActiveTaskCount = async (token: string) => {
+    try {
+      const response = await fetch('/api/closer/tasks', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const tasks = await response.json();
+        // Handle both response formats: array directly or { tasks: [...] }
+        const tasksArray = Array.isArray(tasks) ? tasks : (tasks.tasks || []);
+        // Count all non-completed tasks (exclude cancelled)
+        const activeCount = tasksArray.filter((t: any) => 
+          (t.status === 'pending' || t.status === 'in_progress')
+        ).length;
+        setActiveTaskCount(activeCount);
+      }
+    } catch (error) {
+      console.error('Error fetching active task count:', error);
     }
   };
 
@@ -841,7 +869,7 @@ export default function CloserRules() {
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden">
       {/* Left Sidebar - Always visible */}
-      <CloserSidebar closer={closer} onLogout={handleLogout} />
+      <CloserSidebar closer={closer} onLogout={handleLogout} activeTaskCount={activeTaskCount} />
 
       {/* Show loading or content */}
       {isLoading || !closer ? (

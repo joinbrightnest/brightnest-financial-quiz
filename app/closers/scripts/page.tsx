@@ -24,6 +24,7 @@ export default function CloserScripts() {
   const [activeCallCategory, setActiveCallCategory] = useState<'script' | 'program'>('script');
   const [script, setScript] = useState<any>(null);
   const [scriptLoading, setScriptLoading] = useState(true);
+  const [activeTaskCount, setActiveTaskCount] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -34,8 +35,11 @@ export default function CloserScripts() {
       return;
     }
 
-    fetchCloserStats(token);
-    fetchScript(token);
+    Promise.all([
+      fetchCloserStats(token),
+      fetchScript(token),
+      fetchActiveTaskCount(token)
+    ]);
   }, [router]);
 
   const fetchCloserStats = async (token: string) => {
@@ -78,6 +82,30 @@ export default function CloserScripts() {
       console.error('Error fetching script:', error);
     } finally {
       setScriptLoading(false);
+    }
+  };
+
+  const fetchActiveTaskCount = async (token: string) => {
+    try {
+      const response = await fetch('/api/closer/tasks', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const tasks = await response.json();
+        // Handle both response formats: array directly or { tasks: [...] }
+        const tasksArray = Array.isArray(tasks) ? tasks : (tasks.tasks || []);
+        // Count all non-completed tasks (exclude cancelled)
+        const activeCount = tasksArray.filter((t: any) => 
+          (t.status === 'pending' || t.status === 'in_progress')
+        ).length;
+        setActiveTaskCount(activeCount);
+      }
+    } catch (error) {
+      console.error('Error fetching active task count:', error);
     }
   };
 
@@ -450,7 +478,7 @@ BrightNest Financial Advisor`
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden">
       {/* Left Sidebar - Always visible */}
-      <CloserSidebar closer={closer} onLogout={handleLogout} />
+      <CloserSidebar closer={closer} onLogout={handleLogout} activeTaskCount={activeTaskCount} />
 
       {/* Show loading or content */}
       {isLoading || !closer ? (
