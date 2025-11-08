@@ -18,20 +18,26 @@ interface CloserSidebarProps {
 
 export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }: CloserSidebarProps) {
   const pathname = usePathname();
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('sidebarCollapsed');
-      return saved === 'true';
-    }
-    return false;
-  });
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const isActive = (path: string) => pathname === path;
 
   useEffect(() => {
+    // Only access localStorage after component mounts (client-side only)
+    setMounted(true);
     if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('sidebarCollapsed');
+      if (saved === 'true') {
+        setIsCollapsed(true);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mounted && typeof window !== 'undefined') {
       localStorage.setItem('sidebarCollapsed', isCollapsed.toString());
     }
-  }, [isCollapsed]);
+  }, [isCollapsed, mounted]);
 
   return (
     <div className={`${isCollapsed ? 'w-16' : 'w-64'} h-screen bg-slate-800 border-r border-slate-700 flex-shrink-0 flex flex-col transition-all duration-300 overflow-visible`}>
