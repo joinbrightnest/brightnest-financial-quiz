@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { PlusCircle } from 'lucide-react';
 
 interface Closer {
@@ -81,6 +81,24 @@ export default function CloserManagement() {
     dueDate: '',
     closerId: ''
   });
+  const [leadSearchQuery, setLeadSearchQuery] = useState('');
+  const [showLeadDropdown, setShowLeadDropdown] = useState(false);
+  const leadDropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (leadDropdownRef.current && !leadDropdownRef.current.contains(event.target as Node)) {
+        setShowLeadDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  
   // Scripts management state
   const [scripts, setScripts] = useState<any[]>([]);
   const [isLoadingScripts, setIsLoadingScripts] = useState(false);
@@ -1569,17 +1587,90 @@ export default function CloserManagement() {
                 </h4>
                 
                 <div className="space-y-4">
-                  <div>
+                  <div className="relative" ref={leadDropdownRef}>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
                       Lead Email *
                     </label>
-                    <input
-                      type="email"
-                      value={taskForm.leadEmail}
-                      onChange={(e) => setTaskForm({ ...taskForm, leadEmail: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
-                      placeholder="lead@example.com"
-                    />
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={leadSearchQuery || taskForm.leadEmail}
+                        onChange={(e) => {
+                          setLeadSearchQuery(e.target.value);
+                          setShowLeadDropdown(true);
+                          if (!e.target.value) {
+                            setTaskForm({ ...taskForm, leadEmail: '' });
+                          }
+                        }}
+                        onFocus={() => setShowLeadDropdown(true)}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
+                        placeholder="Search by name or email..."
+                      />
+                      {showLeadDropdown && (() => {
+                        // Get unique leads from appointments
+                        const uniqueLeads = Array.from(
+                          new Map(
+                            appointments
+                              .filter(apt => apt.customerEmail && apt.customerName)
+                              .map(apt => [apt.customerEmail, { email: apt.customerEmail, name: apt.customerName }])
+                          ).values()
+                        );
+
+                        // Filter leads based on search query
+                        const filteredLeads = uniqueLeads.filter(lead =>
+                          lead.name.toLowerCase().includes(leadSearchQuery.toLowerCase()) ||
+                          lead.email.toLowerCase().includes(leadSearchQuery.toLowerCase())
+                        );
+
+                        if (filteredLeads.length === 0) {
+                          return null;
+                        }
+
+                        return (
+                          <div className="absolute z-50 w-full mt-1 bg-white border border-slate-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                            {filteredLeads.slice(0, 50).map((lead) => (
+                              <button
+                                key={lead.email}
+                                type="button"
+                                onClick={() => {
+                                  setTaskForm({ ...taskForm, leadEmail: lead.email });
+                                  setLeadSearchQuery('');
+                                  setShowLeadDropdown(false);
+                                }}
+                                className="w-full px-3 py-2 text-left hover:bg-slate-50 focus:bg-slate-50 focus:outline-none border-b border-slate-100 last:border-b-0"
+                              >
+                                <div className="font-medium text-slate-900">{lead.name}</div>
+                                <div className="text-sm text-slate-600">{lead.email}</div>
+                              </button>
+                            ))}
+                          </div>
+                        );
+                      })()}
+                    </div>
+                    {taskForm.leadEmail && !showLeadDropdown && (
+                      <div className="mt-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-sm font-medium text-blue-900">
+                              {appointments.find(a => a.customerEmail === taskForm.leadEmail)?.customerName || 'Selected Lead'}
+                            </div>
+                            <div className="text-xs text-blue-700">{taskForm.leadEmail}</div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setTaskForm({ ...taskForm, leadEmail: '' });
+                              setLeadSearchQuery('');
+                            }}
+                            className="text-blue-600 hover:text-blue-800"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -1663,6 +1754,8 @@ export default function CloserManagement() {
                   <button
                     onClick={() => {
                       setTaskForm({ leadEmail: '', title: '', description: '', priority: 'medium', dueDate: '', closerId: '' });
+                      setLeadSearchQuery('');
+                      setShowLeadDropdown(false);
                       setShowTaskForm(false);
                     }}
                     className="px-4 py-2 text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors font-medium"
@@ -1694,6 +1787,8 @@ export default function CloserManagement() {
 
                         if (response.ok) {
                           setTaskForm({ leadEmail: '', title: '', description: '', priority: 'medium', dueDate: '', closerId: '' });
+                          setLeadSearchQuery('');
+                          setShowLeadDropdown(false);
                           setShowTaskForm(false);
                           await fetchAllTasks();
                         } else {
