@@ -46,6 +46,16 @@ html {
   animation: fadeIn 0.6s ease-out forwards;
 }
 
+/* Slide in from right animation for modals */
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
 /* Slide up animation for donut chart segments */
 @keyframes slideUp {
   from {

@@ -55,7 +55,6 @@ export default function CloserTasks() {
     description: '',
     priority: 'medium' as 'low' | 'medium' | 'high' | 'urgent',
     dueDate: '',
-    leadEmail: '',
   });
 
   useEffect(() => {
@@ -247,7 +246,6 @@ export default function CloserTasks() {
       description: task.description || '',
       priority: task.priority,
       dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
-      leadEmail: task.leadEmail || '',
     });
     // Automatically expand when editing
     setExpandedTasks(prev => {
@@ -264,7 +262,6 @@ export default function CloserTasks() {
       description: '',
       priority: 'medium',
       dueDate: '',
-      leadEmail: '',
     });
   };
 
@@ -275,7 +272,6 @@ export default function CloserTasks() {
       description: '',
       priority: 'medium',
       dueDate: '',
-      leadEmail: '',
     });
     setError(null);
   };
@@ -304,7 +300,7 @@ export default function CloserTasks() {
           description: taskForm.description || null,
           priority: taskForm.priority,
           dueDate: taskForm.dueDate || null,
-          leadEmail: taskForm.leadEmail || null,
+          // Task will be automatically assigned to the closer from their account
         }),
       });
 
@@ -826,12 +822,20 @@ export default function CloserTasks() {
 
       {/* Create Task Modal */}
       {showCreateTaskModal && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-end z-50" onClick={(e) => {
-          if (e.target === e.currentTarget) {
-            closeCreateTaskModal();
-          }
-        }}>
-          <div className="bg-white h-full w-full max-w-2xl shadow-xl overflow-y-auto">
+        <div 
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-end z-50 transition-opacity duration-200" 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              closeCreateTaskModal();
+            }
+          }}
+        >
+          <div 
+            className="bg-white h-full w-full max-w-2xl shadow-xl overflow-y-auto"
+            style={{
+              animation: 'slideInFromRight 0.3s ease-out',
+            }}
+          >
             {/* Modal Header */}
             <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
               <h3 className="text-lg font-semibold text-white">Create task</h3>
@@ -876,21 +880,6 @@ export default function CloserTasks() {
                   <option value="high">High</option>
                   <option value="urgent">Urgent</option>
                 </select>
-              </div>
-
-              {/* Lead Email (Optional) */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Lead Email (Optional)
-                </label>
-                <input
-                  type="email"
-                  value={taskForm.leadEmail}
-                  onChange={(e) => setTaskForm({ ...taskForm, leadEmail: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
-                  placeholder="lead@example.com"
-                />
-                <p className="mt-1 text-xs text-gray-500">Associate this task with a lead by email</p>
               </div>
 
               {/* Due Date */}
