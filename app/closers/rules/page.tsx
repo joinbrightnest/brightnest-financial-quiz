@@ -886,11 +886,11 @@ export default function CloserRules() {
                           onClick={() => setActiveSection(item.id)}
                           className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all duration-200 flex items-center ${
                             activeSection === item.id
-                              ? `bg-gradient-to-r ${category.color} text-white shadow-sm`
+                              ? 'bg-slate-100 text-gray-900 border-l-4 border-slate-600 font-medium'
                               : 'text-gray-700 hover:bg-gray-50'
                           }`}
                         >
-                          <Icon name={item.icon} className={`w-4 h-4 mr-2 ${activeSection === item.id ? 'text-white' : 'text-gray-500'}`} />
+                          <Icon name={item.icon} className={`w-4 h-4 mr-2 ${activeSection === item.id ? 'text-slate-700' : 'text-gray-500'}`} />
                           <span className="flex-1">{item.title}</span>
                         </button>
                       ))}
