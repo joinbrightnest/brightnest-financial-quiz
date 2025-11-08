@@ -465,7 +465,7 @@ BrightNest Financial Advisor`
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="h-screen bg-gray-50 flex overflow-hidden">
       {/* Left Sidebar */}
       <CloserSidebar closer={closer} onLogout={handleLogout} />
 

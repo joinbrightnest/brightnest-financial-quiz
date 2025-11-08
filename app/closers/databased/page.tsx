@@ -316,7 +316,7 @@ export default function CloserDatabase() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="h-screen bg-gray-50 flex overflow-hidden">
       {selectedLeadId && (
         <LeadDetailView 
           sessionId={selectedLeadId} 

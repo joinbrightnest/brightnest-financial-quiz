@@ -304,7 +304,7 @@ export default function CloserDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="h-screen bg-gray-50 flex overflow-hidden">
       {/* If a lead is selected, render the detail view overlay */}
       {selectedLeadId && (
         <LeadDetailView 
