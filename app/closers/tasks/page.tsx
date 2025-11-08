@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import CloserSidebar from '../components/CloserSidebar';
 import LeadDetailView from '../components/LeadDetailView';
+import ContentLoader from '../components/ContentLoader';
 
 interface Closer {
   id: string;
@@ -345,17 +346,19 @@ export default function CloserTasks() {
     );
   }
 
-  if (!closer) {
-    return null;
-  }
-
   const filteredTasks = getFilteredTasks();
   const activeTaskCount = tasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length;
 
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden">
-      {/* Left Sidebar */}
+      {/* Left Sidebar - Always visible */}
       <CloserSidebar closer={closer} onLogout={handleLogout} activeTaskCount={activeTaskCount} />
+
+      {/* Show loading or content */}
+      {loading || !closer ? (
+        <ContentLoader />
+      ) : (
+        <>
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -769,6 +772,8 @@ export default function CloserTasks() {
           sessionId={selectedLeadId} 
           onClose={() => setSelectedLeadId(null)} 
         />
+      )}
+        </>
       )}
     </div>
   );

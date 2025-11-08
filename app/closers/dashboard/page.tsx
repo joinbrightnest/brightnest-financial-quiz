@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import CloserSidebar from '../components/CloserSidebar';
 import LeadDetailView from '../components/LeadDetailView';
+import ContentLoader from '../components/ContentLoader';
 
 interface Closer {
   id: string;
@@ -65,10 +66,12 @@ export default function CloserDashboard() {
       return;
     }
 
-    // Fetch fresh closer stats and appointments
-    fetchCloserStats(token);
-    fetchAppointments(token);
-    fetchActiveTaskCount(token);
+    // Fetch all data in parallel for faster loading
+    Promise.all([
+      fetchCloserStats(token),
+      fetchAppointments(token),
+      fetchActiveTaskCount(token)
+    ]);
   }, [router]);
 
   const fetchCloserStats = async (token: string) => {
@@ -285,24 +288,6 @@ export default function CloserDashboard() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-      </div>
-    );
-  }
-
-  if (!closer) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">Please log in to access your dashboard.</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden">
       {/* If a lead is selected, render the detail view overlay */}
@@ -313,9 +298,14 @@ export default function CloserDashboard() {
         />
       )}
 
-      {/* Left Sidebar */}
+      {/* Left Sidebar - Always visible */}
       <CloserSidebar closer={closer} onLogout={handleLogout} activeTaskCount={activeTaskCount} />
 
+      {/* Show loading or content */}
+      {isLoading || !closer ? (
+        <ContentLoader />
+      ) : (
+        <>
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Header Bar */}
@@ -614,6 +604,8 @@ export default function CloserDashboard() {
             </div>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );

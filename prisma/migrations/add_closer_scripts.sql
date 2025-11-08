@@ -42,3 +42,4 @@ ALTER TABLE "closer_script_assignments" ADD CONSTRAINT "closer_script_assignment
 
 
 
+

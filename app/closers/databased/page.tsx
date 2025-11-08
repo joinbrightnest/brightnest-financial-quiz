@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import CloserSidebar from '../components/CloserSidebar';
 import LeadDetailView from '../components/LeadDetailView';
+import ContentLoader from '../components/ContentLoader';
 
 interface Closer {
   id: string;
@@ -67,9 +68,12 @@ export default function CloserDatabase() {
       return;
     }
 
-    fetchCloserStats(token);
-    fetchAllAppointments(token);
-    fetchActiveTaskCount(token);
+    // Fetch in parallel for faster loading
+    Promise.all([
+      fetchCloserStats(token),
+      fetchAllAppointments(token),
+      fetchActiveTaskCount(token)
+    ]);
   }, [router]);
 
   useEffect(() => {
@@ -133,8 +137,6 @@ export default function CloserDatabase() {
     } catch (error) {
       console.error('Error fetching appointments:', error);
       setError('Network error loading appointments');
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -297,24 +299,6 @@ export default function CloserDatabase() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-      </div>
-    );
-  }
-
-  if (!closer) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">Please log in to access your database.</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden">
       {selectedLeadId && (
@@ -324,9 +308,14 @@ export default function CloserDatabase() {
         />
       )}
 
-      {/* Left Sidebar */}
+      {/* Left Sidebar - Always visible */}
       <CloserSidebar closer={closer} onLogout={handleLogout} activeTaskCount={activeTaskCount} />
 
+      {/* Show loading or content */}
+      {isLoading || !closer ? (
+        <ContentLoader />
+      ) : (
+        <>
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Header Bar */}
@@ -569,6 +558,8 @@ export default function CloserDatabase() {
             </div>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );
