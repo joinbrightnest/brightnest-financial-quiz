@@ -53,7 +53,7 @@ export default function CloserManagement() {
   const [activeTab, setActiveTab] = useState<'closers' | 'assignments' | 'performance' | 'tasks' | 'scripts'>('closers');
   const [allTasks, setAllTasks] = useState<any[]>([]);
   const [isLoadingTasks, setIsLoadingTasks] = useState(false);
-  const [taskFilter, setTaskFilter] = useState<'not_completed' | 'completed'>('not_completed');
+  const [taskFilter, setTaskFilter] = useState<'all' | 'due_today' | 'overdue' | 'upcoming'>('all');
   const [taskCloserFilter, setTaskCloserFilter] = useState<string>('all'); // 'all' or closer ID
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [selectedCloser, setSelectedCloser] = useState<string>('');
@@ -1376,34 +1376,90 @@ export default function CloserManagement() {
       )}
 
       {/* Tasks Tab */}
-      {activeTab === 'tasks' && (
-        <div className="space-y-6">
-          {/* Filter Tabs */}
-          <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <div className="flex flex-col space-y-4">
-              {/* Status Filter */}
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => setTaskFilter('not_completed')}
-                  className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
-                    taskFilter === 'not_completed'
-                      ? 'bg-slate-900 text-white shadow-sm'
-                      : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
-                  }`}
-                >
-                  Not Completed ({allTasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length})
-                </button>
-                <button
-                  onClick={() => setTaskFilter('completed')}
-                  className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
-                    taskFilter === 'completed'
-                      ? 'bg-slate-900 text-white shadow-sm'
-                      : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
-                  }`}
-                >
-                  Completed ({allTasks.filter(t => t.status === 'completed').length})
-                </button>
-              </div>
+      {activeTab === 'tasks' && (() => {
+        // Helper functions for date checking
+        const isDueDateToday = (dueDate: string | null): boolean => {
+          if (!dueDate) return false;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const due = new Date(dueDate);
+          due.setHours(0, 0, 0, 0);
+          return due.getTime() === today.getTime();
+        };
+
+        const isDueDateOverdue = (dueDate: string | null): boolean => {
+          if (!dueDate) return false;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const due = new Date(dueDate);
+          due.setHours(0, 0, 0, 0);
+          return due < today;
+        };
+
+        const isDueDateUpcoming = (dueDate: string | null): boolean => {
+          if (!dueDate) return false;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const due = new Date(dueDate);
+          due.setHours(0, 0, 0, 0);
+          return due > today;
+        };
+
+        // Calculate counts for each filter view
+        const activeTasks = allTasks.filter(t => t.status === 'pending' || t.status === 'in_progress');
+        const allCount = activeTasks.length;
+        const dueTodayCount = activeTasks.filter(t => isDueDateToday(t.dueDate)).length;
+        const overdueCount = activeTasks.filter(t => isDueDateOverdue(t.dueDate)).length;
+        const upcomingCount = activeTasks.filter(t => isDueDateUpcoming(t.dueDate)).length;
+
+        return (
+          <div className="space-y-6">
+            {/* Filter Tabs */}
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <div className="flex flex-col space-y-4">
+                {/* Status Filter */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setTaskFilter('all')}
+                    className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+                      taskFilter === 'all'
+                        ? 'bg-slate-900 text-white shadow-sm'
+                        : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    All ({allCount})
+                  </button>
+                  <button
+                    onClick={() => setTaskFilter('due_today')}
+                    className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+                      taskFilter === 'due_today'
+                        ? 'bg-slate-900 text-white shadow-sm'
+                        : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    Due Today ({dueTodayCount})
+                  </button>
+                  <button
+                    onClick={() => setTaskFilter('overdue')}
+                    className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+                      taskFilter === 'overdue'
+                        ? 'bg-slate-900 text-white shadow-sm'
+                        : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    Overdue ({overdueCount})
+                  </button>
+                  <button
+                    onClick={() => setTaskFilter('upcoming')}
+                    className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+                      taskFilter === 'upcoming'
+                        ? 'bg-slate-900 text-white shadow-sm'
+                        : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    Upcoming ({upcomingCount})
+                  </button>
+                </div>
               
               {/* Closer Filter */}
               <div className="flex items-center space-x-3">
@@ -1437,11 +1493,54 @@ export default function CloserManagement() {
                 </svg>
                 <h3 className="text-lg font-semibold text-slate-900">
                   Tasks ({(() => {
-                    // Filter tasks based on current filters
-                    const validTasks = allTasks.filter(t => t.status === 'pending' || t.status === 'in_progress' || t.status === 'completed');
-                    const filteredTasks = taskFilter === 'completed' 
-                      ? validTasks.filter(t => t.status === 'completed')
-                      : validTasks.filter(t => t.status !== 'completed');
+                    // Helper functions for date checking
+                    const isDueDateToday = (dueDate: string | null): boolean => {
+                      if (!dueDate) return false;
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      const due = new Date(dueDate);
+                      due.setHours(0, 0, 0, 0);
+                      return due.getTime() === today.getTime();
+                    };
+
+                    const isDueDateOverdue = (dueDate: string | null): boolean => {
+                      if (!dueDate) return false;
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      const due = new Date(dueDate);
+                      due.setHours(0, 0, 0, 0);
+                      return due < today;
+                    };
+
+                    const isDueDateUpcoming = (dueDate: string | null): boolean => {
+                      if (!dueDate) return false;
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      const due = new Date(dueDate);
+                      due.setHours(0, 0, 0, 0);
+                      return due > today;
+                    };
+
+                    // Filter out completed tasks (like HubSpot - only show active tasks)
+                    const activeTasks = allTasks.filter(t => t.status === 'pending' || t.status === 'in_progress');
+                    
+                    let filteredTasks: any[] = [];
+                    
+                    switch (taskFilter) {
+                      case 'due_today':
+                        filteredTasks = activeTasks.filter(t => isDueDateToday(t.dueDate));
+                        break;
+                      case 'overdue':
+                        filteredTasks = activeTasks.filter(t => isDueDateOverdue(t.dueDate));
+                        break;
+                      case 'upcoming':
+                        filteredTasks = activeTasks.filter(t => isDueDateUpcoming(t.dueDate));
+                        break;
+                      case 'all':
+                      default:
+                        filteredTasks = activeTasks;
+                        break;
+                    }
                     
                     // Apply closer filter
                     const closerFilteredTasks = taskCloserFilter === 'all' 
@@ -1599,34 +1698,72 @@ export default function CloserManagement() {
                 <p className="text-gray-600">Loading tasks...</p>
               </div>
             ) : (() => {
-              // Filter tasks
-              const validTasks = allTasks.filter(t => t.status === 'pending' || t.status === 'in_progress' || t.status === 'completed');
-              let filteredTasks = taskFilter === 'completed' 
-                ? validTasks.filter(t => t.status === 'completed')
-                : validTasks.filter(t => t.status !== 'completed');
-              
-              // Apply closer filter (already applied in API, but also filter client-side for consistency)
-              if (taskCloserFilter !== 'all') {
-                filteredTasks = filteredTasks.filter(t => t.closer?.id === taskCloserFilter);
-              }
-              
-              // Helper function to check if due date is overdue or today
-              const isDueDateOverdueOrToday = (dueDate: string | null): boolean => {
+              // Helper functions for date checking
+              const isDueDateToday = (dueDate: string | null): boolean => {
                 if (!dueDate) return false;
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 const due = new Date(dueDate);
                 due.setHours(0, 0, 0, 0);
-                return due <= today;
+                return due.getTime() === today.getTime();
               };
+
+              const isDueDateOverdue = (dueDate: string | null): boolean => {
+                if (!dueDate) return false;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const due = new Date(dueDate);
+                due.setHours(0, 0, 0, 0);
+                return due < today;
+              };
+
+              const isDueDateUpcoming = (dueDate: string | null): boolean => {
+                if (!dueDate) return false;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const due = new Date(dueDate);
+                due.setHours(0, 0, 0, 0);
+                return due > today;
+              };
+
+              // Filter out completed tasks (like HubSpot - only show active tasks)
+              const activeTasks = allTasks.filter(t => t.status === 'pending' || t.status === 'in_progress');
+              
+              let filteredTasks: any[] = [];
+              
+              switch (taskFilter) {
+                case 'due_today':
+                  filteredTasks = activeTasks.filter(t => isDueDateToday(t.dueDate));
+                  break;
+                case 'overdue':
+                  filteredTasks = activeTasks.filter(t => isDueDateOverdue(t.dueDate));
+                  break;
+                case 'upcoming':
+                  filteredTasks = activeTasks.filter(t => isDueDateUpcoming(t.dueDate));
+                  break;
+                case 'all':
+                default:
+                  filteredTasks = activeTasks;
+                  break;
+              }
+              
+              // Apply closer filter (already applied in API, but also filter client-side for consistency)
+              if (taskCloserFilter !== 'all') {
+                filteredTasks = filteredTasks.filter(t => t.closer?.id === taskCloserFilter);
+              }
 
               // Sort: overdue/today tasks first, then by due date ascending
               filteredTasks.sort((a, b) => {
-                const aOverdue = a.dueDate ? isDueDateOverdueOrToday(a.dueDate) : false;
-                const bOverdue = b.dueDate ? isDueDateOverdueOrToday(b.dueDate) : false;
+                const aOverdue = a.dueDate ? isDueDateOverdue(a.dueDate) : false;
+                const bOverdue = b.dueDate ? isDueDateOverdue(b.dueDate) : false;
+                const aToday = a.dueDate ? isDueDateToday(a.dueDate) : false;
+                const bToday = b.dueDate ? isDueDateToday(b.dueDate) : false;
                 
+                // Prioritize overdue, then today, then upcoming
                 if (aOverdue && !bOverdue) return -1;
                 if (!aOverdue && bOverdue) return 1;
+                if (aToday && !bToday) return -1;
+                if (!aToday && bToday) return 1;
                 
                 if (a.dueDate && b.dueDate) {
                   return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
@@ -1779,7 +1916,8 @@ export default function CloserManagement() {
             })()}
           </div>
         </div>
-      )}
+        );
+      })()}
 
       {/* Scripts Tab */}
       {activeTab === 'scripts' && (
