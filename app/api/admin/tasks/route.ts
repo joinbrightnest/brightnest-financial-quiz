@@ -132,6 +132,39 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!closerId) {
+      return NextResponse.json(
+        { error: 'Closer assignment is required' },
+        { status: 400 }
+      );
+    }
+
+    // Verify the closer exists and is active
+    const closer = await prisma.closer.findUnique({
+      where: { id: closerId }
+    });
+
+    if (!closer) {
+      return NextResponse.json(
+        { error: 'Closer not found' },
+        { status: 404 }
+      );
+    }
+
+    if (!closer.isActive || !closer.isApproved) {
+      return NextResponse.json(
+        { error: 'Closer is not active or approved' },
+        { status: 400 }
+      );
+    }
+
+    // Optional: Find the appointment for this lead to link the task
+    const appointment = await prisma.appointment.findFirst({
+      where: {
+        customerEmail: leadEmail
+      }
+    });
+
     const task = await prisma.task.create({
       data: {
         leadEmail,
@@ -140,7 +173,8 @@ export async function POST(request: NextRequest) {
         priority: priority || 'medium',
         dueDate: dueDate ? new Date(dueDate) : null,
         status: 'pending',
-        closerId: closerId || null,
+        closerId: closerId,
+        appointmentId: appointment?.id || null, // Link to appointment if it exists
       },
       include: {
         closer: {
@@ -148,6 +182,13 @@ export async function POST(request: NextRequest) {
             id: true,
             name: true,
             email: true,
+          },
+        },
+        appointment: {
+          select: {
+            id: true,
+            customerName: true,
+            customerEmail: true,
           },
         },
       },

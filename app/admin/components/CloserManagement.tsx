@@ -78,7 +78,8 @@ export default function CloserManagement() {
     title: '',
     description: '',
     priority: 'medium' as 'low' | 'medium' | 'high' | 'urgent',
-    dueDate: ''
+    dueDate: '',
+    closerId: ''
   });
   // Scripts management state
   const [scripts, setScripts] = useState<any[]>([]);
@@ -1583,6 +1584,26 @@ export default function CloserManagement() {
 
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
+                      Assign to Closer *
+                    </label>
+                    <select
+                      value={taskForm.closerId}
+                      onChange={(e) => setTaskForm({ ...taskForm, closerId: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
+                    >
+                      <option value="">Select a closer</option>
+                      {closers
+                        .filter(c => c.isActive && c.isApproved)
+                        .map(closer => (
+                          <option key={closer.id} value={closer.id}>
+                            {closer.name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
                       Task Title *
                     </label>
                     <input
@@ -1641,7 +1662,7 @@ export default function CloserManagement() {
                 <div className="flex justify-end space-x-3 mt-6">
                   <button
                     onClick={() => {
-                      setTaskForm({ leadEmail: '', title: '', description: '', priority: 'medium', dueDate: '' });
+                      setTaskForm({ leadEmail: '', title: '', description: '', priority: 'medium', dueDate: '', closerId: '' });
                       setShowTaskForm(false);
                     }}
                     className="px-4 py-2 text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors font-medium"
@@ -1650,8 +1671,8 @@ export default function CloserManagement() {
                   </button>
                   <button
                     onClick={async () => {
-                      if (!taskForm.title || !taskForm.leadEmail) {
-                        alert('Lead email and task title are required');
+                      if (!taskForm.title || !taskForm.leadEmail || !taskForm.closerId) {
+                        alert('Lead email, closer assignment, and task title are required');
                         return;
                       }
 
@@ -1667,22 +1688,24 @@ export default function CloserManagement() {
                             description: taskForm.description || null,
                             priority: taskForm.priority,
                             dueDate: taskForm.dueDate || null,
+                            closerId: taskForm.closerId,
                           }),
                         });
 
                         if (response.ok) {
-                          setTaskForm({ leadEmail: '', title: '', description: '', priority: 'medium', dueDate: '' });
+                          setTaskForm({ leadEmail: '', title: '', description: '', priority: 'medium', dueDate: '', closerId: '' });
                           setShowTaskForm(false);
                           await fetchAllTasks();
                         } else {
-                          alert('Failed to create task. Please try again.');
+                          const data = await response.json();
+                          alert(data.error || 'Failed to create task. Please try again.');
                         }
                       } catch (error) {
                         console.error('Error creating task:', error);
                         alert('An error occurred while creating the task.');
                       }
                     }}
-                    disabled={!taskForm.title || !taskForm.leadEmail}
+                    disabled={!taskForm.title || !taskForm.leadEmail || !taskForm.closerId}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
                   >
                     Create Task
