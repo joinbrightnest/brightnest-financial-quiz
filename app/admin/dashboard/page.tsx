@@ -1112,7 +1112,7 @@ export default function AdminDashboard() {
   const totalCrmPages = Math.ceil(filteredCrmLeads.length / crmItemsPerPage);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="h-screen bg-gray-50 flex overflow-hidden">
       {/* Sidebar - Fixed */}
       <div className={`${sidebarCollapsed ? 'w-16' : 'w-64'} h-screen bg-slate-800 border-r border-slate-700 flex-shrink-0 flex flex-col transition-all duration-300 overflow-visible`}>
         <div className={`${sidebarCollapsed ? 'p-4' : 'p-6'} border-b border-slate-700 flex-shrink-0`}>
@@ -1547,8 +1547,9 @@ export default function AdminDashboard() {
       </div>
 
       {/* Main Content - Scrollable */}
-      <div className={`flex-1 overflow-y-auto transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
-        <div className="p-8">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <div className="flex-1 overflow-y-auto">
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
 
           {/* Quiz Analytics Section */}
           {activeSection === 'quiz-analytics' && (
@@ -4171,6 +4172,7 @@ export default function AdminDashboard() {
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
     </div>
