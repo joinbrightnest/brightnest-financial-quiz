@@ -443,7 +443,7 @@ model Appointment {
 model Task {
   id            String       @id @default(cuid())
   appointmentId String?      @map("appointment_id")
-  leadEmail     String       @map("lead_email") // To identify which lead this task is for
+  leadEmail     String?      @map("lead_email") // To identify which lead this task is for (optional)
   closerId      String?      @map("closer_id")
   title         String
   description   String?

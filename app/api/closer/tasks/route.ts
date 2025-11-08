@@ -137,33 +137,33 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { leadEmail, title, description, priority, dueDate } = await request.json();
+    const { title, description, priority, dueDate } = await request.json();
 
-    // Only title is required - leadEmail is optional
-    if (!title) {
+    // Title, priority, and due date are required
+    if (!title || !title.trim()) {
       return NextResponse.json(
         { error: 'Task title is required' },
         { status: 400 }
       );
     }
 
-    // If leadEmail is provided, verify the closer is assigned to this lead
-    if (leadEmail) {
-      const appointment = await prisma.appointment.findFirst({
-        where: {
-          customerEmail: leadEmail,
-          closerId: closerId
-        }
-      });
+    if (!priority) {
+      return NextResponse.json(
+        { error: 'Priority is required' },
+        { status: 400 }
+      );
+    }
 
-      if (!appointment) {
-        return NextResponse.json({ error: 'Forbidden: You are not assigned to this lead.' }, { status: 403 });
-      }
+    if (!dueDate) {
+      return NextResponse.json(
+        { error: 'Due date is required' },
+        { status: 400 }
+      );
     }
 
     const task = await prisma.task.create({
       data: {
-        leadEmail: leadEmail || null,
+        leadEmail: null, // No email section - tasks are not associated with leads
         title,
         description: description || null,
         priority: priority || 'medium',

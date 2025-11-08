@@ -282,6 +282,16 @@ export default function CloserTasks() {
       return;
     }
 
+    if (!taskForm.priority) {
+      setError('Priority is required');
+      return;
+    }
+
+    if (!taskForm.dueDate) {
+      setError('Due date is required');
+      return;
+    }
+
     try {
       const token = localStorage.getItem('closerToken');
       if (!token) {
@@ -885,7 +895,7 @@ export default function CloserTasks() {
               {/* Due Date */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Due Date
+                  Due Date <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
@@ -926,7 +936,7 @@ export default function CloserTasks() {
                 </button>
                 <button
                   onClick={handleCreateTask}
-                  disabled={!taskForm.title.trim()}
+                  disabled={!taskForm.title.trim() || !taskForm.priority || !taskForm.dueDate}
                   className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Create
