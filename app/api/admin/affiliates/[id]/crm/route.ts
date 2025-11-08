@@ -68,12 +68,10 @@ export async function GET(
     // A lead is someone who completed the quiz AND provided contact information
     const quizSessionsWithContactInfo = allQuizSessions.filter(session => {
       const nameAnswer = session.answers.find(a => 
-        a.question?.prompt?.toLowerCase().includes("name") || 
-        a.question?.text?.toLowerCase().includes("name")
+        a.question?.prompt?.toLowerCase().includes("name")
       );
       const emailAnswer = session.answers.find(a => 
-        a.question?.prompt?.toLowerCase().includes("email") || 
-        a.question?.text?.toLowerCase().includes("email")
+        a.question?.prompt?.toLowerCase().includes("email")
       );
       
       return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
@@ -82,40 +80,64 @@ export async function GET(
     // Transform the data for the CRM view
     const leads = quizSessionsWithContactInfo.map(session => {
       // Extract name and email from quiz answers (like general admin CRM)
-      // Look for questions containing "name" or "email" in the text
+      // Look for questions containing "name" or "email" in the prompt
       const nameAnswer = session.answers.find(a => 
-        a.question?.prompt?.toLowerCase().includes("name") || 
-        a.question?.text?.toLowerCase().includes("name")
+        a.question?.prompt?.toLowerCase().includes("name")
       );
       const emailAnswer = session.answers.find(a => 
-        a.question?.prompt?.toLowerCase().includes("email") || 
-        a.question?.text?.toLowerCase().includes("email")
+        a.question?.prompt?.toLowerCase().includes("email")
       );
+      
+      // Extract value from JSON if needed
+      const getNameValue = (answer: typeof nameAnswer) => {
+        if (!answer?.value) return "N/A";
+        const value = answer.value as any;
+        if (typeof value === 'string') return value;
+        if (typeof value === 'object' && value !== null) {
+          return (value as any).value || (value as any).text || JSON.stringify(value);
+        }
+        return String(value);
+      };
+      
+      const getEmailValue = (answer: typeof emailAnswer) => {
+        if (!answer?.value) return "N/A";
+        const value = answer.value as any;
+        if (typeof value === 'string') return value;
+        if (typeof value === 'object' && value !== null) {
+          return (value as any).value || (value as any).text || JSON.stringify(value);
+        }
+        return String(value);
+      };
+      
+      const nameValue = getNameValue(nameAnswer);
+      const emailValue = getEmailValue(emailAnswer);
       
       return {
         id: session.id,
         sessionId: session.id,
         quizType: session.quizType,
-        name: nameAnswer?.value || nameAnswer?.answer || nameAnswer?.answerValue || "N/A",
-        email: emailAnswer?.value || emailAnswer?.answer || emailAnswer?.answerValue || "N/A",
+        name: nameValue,
+        email: emailValue,
         startedAt: session.startedAt.toISOString(),
         completedAt: session.completedAt?.toISOString() || null,
         status: session.status,
         durationMs: session.durationMs,
         result: session.result ? {
           archetype: session.result.archetype,
-          score: session.result.score,
-          insights: session.result.insights || [],
+          score: typeof session.result.scores === 'object' && session.result.scores !== null
+            ? (session.result.scores as any).total || 0
+            : 0,
+          insights: [],
         } : null,
         answers: session.answers.map(answer => ({
           questionId: answer.questionId,
           questionText: answer.question?.prompt || "Unknown question",
-          answer: answer.value,
-          answerValue: answer.value,
+          answer: JSON.stringify(answer.value),
+          answerValue: typeof answer.value === 'number' ? answer.value : 0,
         })),
         user: {
-          email: emailAnswer?.value || emailAnswer?.answer || emailAnswer?.answerValue || "N/A",
-          name: nameAnswer?.value || nameAnswer?.answer || nameAnswer?.answerValue || "N/A",
+          email: emailValue,
+          name: nameValue,
           role: "user",
         },
       };

@@ -343,7 +343,7 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       }, 0);
       
       // Filter leads data for this specific hour
-      const hourLeads = allLeadsData.leads.filter(lead => {
+      const hourLeads = allLeadsData.leads.filter((lead: any) => {
         const leadDate = new Date(lead.createdAt);
         return leadDate >= hourStart && leadDate <= hourEnd;
       });
@@ -427,7 +427,7 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       }, 0);
       
       // Filter leads data for this specific day
-      const dayLeads = allLeadsData.leads.filter(lead => {
+      const dayLeads = allLeadsData.leads.filter((lead: any) => {
         const leadDate = new Date(lead.createdAt);
         return leadDate >= dayStart && leadDate <= dayEnd;
       });

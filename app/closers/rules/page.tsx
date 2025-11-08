@@ -77,7 +77,7 @@ export default function CloserRules() {
 
   // Icon component helper
   const Icon = ({ name, className = "w-5 h-5" }: { name: string; className?: string }) => {
-    const icons: Record<string, JSX.Element> = {
+    const icons: Record<string, React.ReactElement> = {
       book: (
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -912,10 +912,10 @@ export default function CloserRules() {
                     </div>
                     <div>
                       <h2 className="text-2xl font-bold text-white">{currentItem.title}</h2>
-                      {currentItem.subtitle && (
+                      {'subtitle' in currentItem && currentItem.subtitle && (
                         <p className="text-white/90 text-sm mt-1">{currentItem.subtitle}</p>
                       )}
-                      {currentItem.content.intro && (
+                      {'intro' in currentItem.content && currentItem.content.intro && (
                         <p className="text-white/90 text-sm mt-2">{currentItem.content.intro}</p>
                       )}
                     </div>
@@ -925,7 +925,7 @@ export default function CloserRules() {
                 {/* Content Body */}
                 <div className="p-6">
                   {/* Status-specific content */}
-                  {currentItem.content.whenToUse && (
+                  {'whenToUse' in currentItem.content && currentItem.content.whenToUse && (
                     <div className="space-y-5">
                       <div className="bg-slate-50 rounded-lg p-5 border border-slate-200 shadow-sm">
                         <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
@@ -933,7 +933,7 @@ export default function CloserRules() {
                           When to Use
                         </h3>
                         <ul className="space-y-2.5">
-                          {currentItem.content.whenToUse.map((item, idx) => (
+                          {currentItem.content.whenToUse.map((item: string, idx: number) => (
                             <li key={idx} className="flex items-start">
                               <span className="text-slate-500 mr-3 mt-1.5">•</span>
                               <span className="text-gray-700 leading-relaxed">{item}</span>
@@ -948,7 +948,7 @@ export default function CloserRules() {
                           What to Do
                         </h3>
                         <ul className="space-y-2.5">
-                          {currentItem.content.actions.map((item, idx) => (
+                          {'actions' in currentItem.content && currentItem.content.actions.map((item: string, idx: number) => (
                             <li key={idx} className="flex items-start">
                               <span className="text-emerald-600 mr-3 mt-1.5">•</span>
                               <span className="text-gray-700 leading-relaxed">{item}</span>
@@ -963,7 +963,7 @@ export default function CloserRules() {
                           Important Notes
                         </h3>
                         <ul className="space-y-2.5">
-                          {currentItem.content.notes.map((item, idx) => (
+                          {'notes' in currentItem.content && currentItem.content.notes.map((item: string, idx: number) => (
                             <li key={idx} className="flex items-start">
                               <span className="text-amber-600 mr-3 mt-1.5">•</span>
                               <span className="text-gray-700 leading-relaxed">{item}</span>
@@ -975,9 +975,9 @@ export default function CloserRules() {
                   )}
 
                   {/* Training/Procedures content */}
-                  {currentItem.content.sections && (
+                  {'sections' in currentItem.content && currentItem.content.sections && (
                     <div className="space-y-6">
-                      {currentItem.content.sections.map((section, sectionIdx) => (
+                      {currentItem.content.sections.map((section: { title: string; items: string[] }, sectionIdx: number) => (
                         <div
                           key={sectionIdx}
                           className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow"

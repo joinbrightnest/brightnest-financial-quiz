@@ -64,10 +64,10 @@ export async function GET(
     }
 
     // Get related data with error handling
-    let clicks = [];
-    let conversions = [];
-    let quizSessions = [];
-    let appointments = [];
+    let clicks: any[] = [];
+    let conversions: any[] = [];
+    let quizSessions: any[] = [];
+    let appointments: any[] = [];
     
     try {
       [clicks, conversions, quizSessions, appointments] = await Promise.all([

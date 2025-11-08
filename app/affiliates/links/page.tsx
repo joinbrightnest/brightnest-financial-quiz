@@ -18,7 +18,10 @@ interface AffiliateData {
   isApproved: boolean;
   totalClicks: number;
   totalLeads: number;
+  totalBookings: number;
+  totalSales: number;
   totalCommission: number;
+  customLink: string;
   createdAt: string;
 }
 

@@ -53,13 +53,16 @@ export class ArticleService {
       throw new Error('Session not found');
     }
 
-    // Get all active article triggers
+    // Get all active article triggers with their articles
     const triggers = await prisma.articleTrigger.findMany({
-      where: { isActive: true },
-      include: {
+      where: { 
+        isActive: true,
         article: {
-          where: { isActive: true }
+          isActive: true
         }
+      },
+      include: {
+        article: true
       }
     });
 
@@ -203,7 +206,7 @@ export class ArticleService {
           articleId: article.id,
           questionId: trigger.questionId,
           optionValue: trigger.optionValue,
-          condition: trigger.condition,
+          condition: trigger.condition as any, // JSON type needs casting
           priority: trigger.priority
         }
       });
@@ -235,7 +238,7 @@ export class ArticleService {
           articleId: templateRecord.id, // Using template ID as article ID for now
           questionId: trigger.questionId,
           optionValue: trigger.optionValue,
-          condition: trigger.condition,
+          condition: trigger.condition as any, // JSON type needs casting
           priority: trigger.priority
         }
       });

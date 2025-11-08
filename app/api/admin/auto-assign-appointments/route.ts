@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
       where: {
         closerId: null,
         status: {
-          in: ['scheduled', 'booked', 'confirmed']
+          in: ['scheduled', 'confirmed']
         }
       },
       select: {

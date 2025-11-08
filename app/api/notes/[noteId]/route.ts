@@ -3,11 +3,12 @@ import { prisma } from '@/lib/prisma';
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { noteId: string } }
+  { params }: { params: Promise<{ noteId: string }> }
 ) {
   try {
+    const { noteId } = await params;
     await prisma.note.delete({
-      where: { id: params.noteId },
+      where: { id: noteId },
     });
 
     return NextResponse.json({ success: true });

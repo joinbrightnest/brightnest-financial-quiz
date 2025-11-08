@@ -200,8 +200,10 @@ export async function GET(
       durationMs: quizSession.durationMs,
       result: quizSession.result ? {
         archetype: quizSession.result.archetype,
-        score: quizSession.result.score,
-        insights: quizSession.result.insights || [],
+        score: typeof quizSession.result.scores === 'object' && quizSession.result.scores !== null
+          ? (quizSession.result.scores as any).total || 0
+          : 0,
+        insights: [],
       } : null,
       answers: quizSession.answers.map(answer => {
         // Get the answer value (could be string, number, etc.)
@@ -236,14 +238,14 @@ export async function GET(
         // For text/email inputs, use the value directly (it's already the user's input)
         return {
           questionId: answer.questionId,
-          questionText: answer.question?.prompt || answer.question?.text || "Unknown question",
+          questionText: answer.question?.prompt || "Unknown question",
           answer: displayAnswer,
           answerValue: answerValue,
         };
       }),
       user: {
         email: email || "N/A",
-        name: nameAnswer?.value || nameAnswer?.answer || nameAnswer?.answerValue || "N/A",
+        name: nameAnswer?.value ? (typeof nameAnswer.value === 'string' ? nameAnswer.value : JSON.stringify(nameAnswer.value)) : "N/A",
         role: "user",
       },
       closer: appointment?.closer ? {

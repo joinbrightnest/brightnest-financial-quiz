@@ -148,7 +148,7 @@ export default function BlogListenPage() {
               Coming Soon
             </h3>
             <p className="text-base sm:text-lg text-slate-600 max-w-md leading-relaxed">
-              Exciting podcast episodes are on the way! We're preparing engaging conversations about money, mindset, and building wealth.
+              Exciting podcast episodes are on the way! We&apos;re preparing engaging conversations about money, mindset, and building wealth.
             </p>
           </div>
         </div>
@@ -163,7 +163,7 @@ export default function BlogListenPage() {
               Begin Your Journey To Financial Peace
             </h2>
             <p className="text-sm sm:text-base md:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto opacity-95">
-              Uncover what's holding you back from building lasting wealth and feeling confident with your money!
+              Uncover what&apos;s holding you back from building lasting wealth and feeling confident with your money!
             </p>
             <Link
               href="/quiz/financial-profile"

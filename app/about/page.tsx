@@ -32,19 +32,19 @@ export default function AboutPage() {
             <div className="space-y-6 relative">
               <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-teal-500 to-amber-400 rounded-full"></div>
               <p className="text-base text-slate-700 leading-relaxed">
-                Money isn't just numbers.
+                Money isn&apos;t just numbers.
               </p>
               <p className="text-base text-slate-700 leading-relaxed">
-                It's emotion, habit, and identity — all tangled together.
+                It&apos;s emotion, habit, and identity — all tangled together.
               </p>
               <p className="text-base text-slate-700 leading-relaxed">
-                Most people don't struggle because they don't know what to do.
+                Most people don&apos;t struggle because they don&apos;t know what to do.
               </p>
               <p className="text-base text-slate-700 leading-relaxed">
-                They struggle because they can't make themselves do it consistently.
+                They struggle because they can&apos;t make themselves do it consistently.
               </p>
               <p className="text-base text-slate-700 leading-relaxed font-semibold">
-                That's where BrightNest comes in.
+                That&apos;s where BrightNest comes in.
               </p>
             </div>
             <div className="relative h-64 sm:h-80 lg:h-96 group">
@@ -89,16 +89,16 @@ export default function AboutPage() {
                   We combine psychology, structure, and guidance from certified experts to help you take back control of your money — step by step, without guilt or overwhelm.
                 </p>
                 <p className="text-lg text-slate-700 leading-relaxed">
-                  We don't just teach budgeting.
+                  We don&apos;t just teach budgeting.
                 </p>
                 <p className="text-lg text-slate-700 leading-relaxed">
                   We help you understand why you spend, how to change your habits, and what systems actually keep you consistent.
                 </p>
                 <p className="text-lg text-slate-700 leading-relaxed">
-                  The goal isn't perfection.
+                  The goal isn&apos;t perfection.
                 </p>
                 <p className="text-lg text-slate-700 leading-relaxed font-semibold">
-                  It's progress — and freedom.
+                  It&apos;s progress — and freedom.
                 </p>
               </div>
             </div>
@@ -190,10 +190,10 @@ export default function AboutPage() {
           
           <div className="max-w-4xl mx-auto mt-12 text-center">
             <p className="text-lg text-slate-700 leading-relaxed">
-              You don't need to become a finance expert.
+              You don&apos;t need to become a finance expert.
             </p>
             <p className="text-lg text-slate-700 leading-relaxed font-semibold mt-2">
-              You just need the right environment, habits, and support — that's what BrightNest gives you.
+              You just need the right environment, habits, and support — that&apos;s what BrightNest gives you.
             </p>
           </div>
         </div>
@@ -212,13 +212,13 @@ export default function AboutPage() {
             </div>
             <div className="space-y-6">
               <p className="text-lg text-slate-700 leading-relaxed">
-                Because money stress is one of the biggest causes of anxiety, conflict, and lost potential in people's lives.
+                Because money stress is one of the biggest causes of anxiety, conflict, and lost potential in people&apos;s lives.
               </p>
               <p className="text-lg text-slate-700 leading-relaxed">
-                We've seen what happens when people live paycheck to paycheck, avoid their bank apps, or feel trapped by debt.
+                We&apos;ve seen what happens when people live paycheck to paycheck, avoid their bank apps, or feel trapped by debt.
               </p>
               <p className="text-lg text-slate-700 leading-relaxed">
-                It's not about lacking discipline — it's about lacking a system that works with your behaviour, not against it.
+                It&apos;s not about lacking discipline — it&apos;s about lacking a system that works with your behaviour, not against it.
               </p>
               <p className="text-lg text-slate-700 leading-relaxed font-semibold">
                 BrightNest was built to change that — to make personal finance feel clear, actionable, and empowering again.
@@ -245,7 +245,7 @@ export default function AboutPage() {
                   Behaviour beats motivation.
                 </p>
                 <p className="text-lg text-slate-700 leading-relaxed">
-                  You don't need more willpower — you need better systems.
+                  You don&apos;t need more willpower — you need better systems.
                 </p>
               </div>
               <div>
@@ -269,7 +269,7 @@ export default function AboutPage() {
                   Freedom is the goal.
                 </p>
                 <p className="text-lg text-slate-700 leading-relaxed">
-                  Financial control isn't about restriction — it's about choice.
+                  Financial control isn&apos;t about restriction — it&apos;s about choice.
                 </p>
               </div>
             </div>
@@ -299,7 +299,7 @@ export default function AboutPage() {
                     Awareness
                   </p>
                   <p className="text-lg text-slate-700 leading-relaxed">
-                    — Understand your patterns and uncover what's really driving your financial behaviour.
+                    — Understand your patterns and uncover what&apos;s really driving your financial behaviour.
                   </p>
                 </div>
                 <div>
@@ -320,10 +320,10 @@ export default function AboutPage() {
                 </div>
               </div>
               <p className="text-lg text-slate-700 leading-relaxed">
-                This isn't a crash course. It's a transformation.
+                This isn&apos;t a crash course. It&apos;s a transformation.
               </p>
               <p className="text-lg text-slate-700 leading-relaxed font-semibold">
-                Our clients don't just fix their finances — they reshape how they think, act, and feel about money.
+                Our clients don&apos;t just fix their finances — they reshape how they think, act, and feel about money.
               </p>
             </div>
           </div>
@@ -364,13 +364,13 @@ export default function AboutPage() {
           </div>
           <div className="space-y-6 text-center">
             <p className="text-lg text-slate-700 leading-relaxed">
-              BrightNest isn't about quick fixes.
+              BrightNest isn&apos;t about quick fixes.
             </p>
             <p className="text-lg text-slate-700 leading-relaxed font-semibold">
-              It's about rewriting your story with money — for good.
+              It&apos;s about rewriting your story with money — for good.
             </p>
             <p className="text-lg text-slate-700 leading-relaxed">
-              If you're ready to break the cycle of stress, guilt, and confusion…
+              If you&apos;re ready to break the cycle of stress, guilt, and confusion…
             </p>
             <p className="text-lg text-slate-700 leading-relaxed">
               and finally build a financial system that fits you —

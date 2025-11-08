@@ -23,15 +23,17 @@ interface LeadData {
   id: string;
   sessionId: string;
   quizType: string;
+  name: string;
+  email: string;
   startedAt: string;
-  completedAt: string;
+  completedAt: string | null;
   status: string;
-  durationMs: number;
+  durationMs: number | null;
   result?: {
     archetype: string;
     score: number;
     insights: string[];
-  };
+  } | null;
   answers: Array<{
     questionId: string;
     questionText: string;
@@ -40,6 +42,7 @@ interface LeadData {
   }>;
   user?: {
     email: string;
+    name: string;
     role: string;
   };
 }

@@ -61,9 +61,11 @@ export async function GET(request: NextRequest) {
 
     // Filter sessions that have the email in their answers
     const matchingSession = quizSessions.find(session => {
-      return session.answers.some(answer => 
-        answer.value.toLowerCase().includes(emailLower)
-      );
+      return session.answers.some(answer => {
+        if (!answer.value) return false;
+        const valueStr = typeof answer.value === 'string' ? answer.value : JSON.stringify(answer.value);
+        return valueStr.toLowerCase().includes(emailLower);
+      });
     });
 
     if (!matchingSession) {

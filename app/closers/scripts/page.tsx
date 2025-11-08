@@ -569,13 +569,14 @@ BrightNest Financial Advisor`
                       commonQuestions: 'Common Questions & Answers',
                       process: 'The Process'
                     };
+                    const contentStr = typeof content === 'string' ? content : String(content);
                     
                     return (
                       <div key={key} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
                         <div className="flex items-start justify-between mb-4">
                           <h3 className="text-xl font-bold text-gray-900">{titles[key]}</h3>
                           <button
-                            onClick={() => copyToClipboard(content)}
+                            onClick={() => copyToClipboard(contentStr)}
                             className="flex items-center space-x-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -586,7 +587,7 @@ BrightNest Financial Advisor`
                         </div>
                         <div className="prose max-w-none">
                           <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-6 rounded border border-gray-200 leading-relaxed">
-                            {content}
+                            {contentStr}
                           </pre>
                         </div>
                       </div>
@@ -604,25 +605,28 @@ BrightNest Financial Advisor`
               <div className="mb-6">
                 <label className="block text-sm font-semibold text-gray-700 mb-3">Email Template by Stage:</label>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {Object.entries(emailTemplates).map(([key, template]) => (
-                    <button
-                      key={key}
-                      onClick={() => setActiveEmailCategory(key)}
-                      className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left ${
-                        activeEmailCategory === key
-                          ? 'bg-purple-100 text-purple-700 border-2 border-purple-500'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent'
-                      }`}
-                    >
-                      {template.title}
-                    </button>
-                  ))}
+                  {Object.entries(emailTemplates).map(([key, template]) => {
+                    const templateObj = template as { title: string; subject: string; content: string };
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => setActiveEmailCategory(key)}
+                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left ${
+                          activeEmailCategory === key
+                            ? 'bg-purple-100 text-purple-700 border-2 border-purple-500'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent'
+                        }`}
+                      >
+                        {templateObj.title}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
               {/* Selected Email Template */}
               {emailTemplates[activeEmailCategory as keyof typeof emailTemplates] && (() => {
-                const template = emailTemplates[activeEmailCategory as keyof typeof emailTemplates];
+                const template = emailTemplates[activeEmailCategory as keyof typeof emailTemplates] as { title: string; subject: string; content: string };
                 return (
                   <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
                     <div className="flex items-start justify-between mb-4">

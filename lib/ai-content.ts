@@ -330,7 +330,7 @@ OUTPUT FORMAT (JSON):
     // First generate the initial copy using the original approach
     const initialCopy = this.generateInitialCopy(request);
     
-    let prompt = `Name: ${request.userName || 'User'}
+    const prompt = `Name: ${request.userName || 'User'}
 Archetype: ${request.archetype}
 Original_Result_Page_Text: ${JSON.stringify(initialCopy, null, 2)}
 

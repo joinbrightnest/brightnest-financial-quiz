@@ -41,9 +41,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ n
     await prisma.closerAuditLog.create({
         data: {
           closerId: closerId,
-          type: 'note_deleted',
-          description: `${closer?.name || 'Closer'} deleted a note.`,
+          action: 'note_deleted',
           details: {
+            description: `${closer?.name || 'Closer'} deleted a note.`,
             appointmentId: appointment.id,
             noteId: note.id,
           }

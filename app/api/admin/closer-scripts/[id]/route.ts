@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 // PUT - Update a script
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   if (!verifyAdminAuth(request)) {
     return NextResponse.json(
@@ -15,6 +15,7 @@ export async function PUT(
   }
 
   try {
+    const { id } = await params;
     const body = await request.json();
     const { name, callScript, programDetails, emailTemplates, isDefault, isActive } = body;
 
@@ -23,14 +24,14 @@ export async function PUT(
       await prisma.closerScript.updateMany({
         where: { 
           isDefault: true,
-          id: { not: params.id }
+          id: { not: id }
         },
         data: { isDefault: false }
       });
     }
 
     const script = await prisma.closerScript.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...(name && { name }),
         ...(callScript !== undefined && { callScript }),
@@ -57,7 +58,7 @@ export async function PUT(
 // DELETE - Delete a script
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   if (!verifyAdminAuth(request)) {
     return NextResponse.json(
@@ -67,8 +68,9 @@ export async function DELETE(
   }
 
   try {
+    const { id } = await params;
     await prisma.closerScript.delete({
-      where: { id: params.id }
+      where: { id }
     });
 
     return NextResponse.json({

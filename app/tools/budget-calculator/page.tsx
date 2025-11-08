@@ -110,7 +110,7 @@ export default function BudgetCalculatorPage() {
     const timeoutId = setTimeout(() => {
       // Auto-populate or clear fields based on income
       setExpenses(prev => {
-        const newExpenses: { [key: string]: string } = { ...prev };
+        const newExpenses = { ...prev };
         let hasChanges = false;
         let totalCalculated = 0;
         const calculatedValues: { [key: string]: number } = {};

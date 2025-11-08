@@ -101,7 +101,7 @@ export default function BlogPage() {
                 </Link>
               </h3>
               <p className="text-slate-600 text-sm mb-3 sm:mb-4 leading-relaxed">
-                Budgets aren't about restriction — they're about freedom. Discover the 3 behavior shifts that make budgeting actually work.
+                Budgets aren&apos;t about restriction — they&apos;re about freedom. Discover the 3 behavior shifts that make budgeting actually work.
               </p>
               <div className="flex items-center space-x-3 sm:space-x-4 text-xs sm:text-sm">
                 <span className="text-teal-600 uppercase font-semibold bg-teal-50 px-3 py-1 rounded-full">HABITS</span>
@@ -226,7 +226,7 @@ export default function BlogPage() {
                 Coming Soon
               </h3>
               <p className="text-base sm:text-lg text-slate-600 max-w-md leading-relaxed">
-                We're working on bringing you valuable video content to help you build lasting wealth. Check back soon!
+                We&apos;re working on bringing you valuable video content to help you build lasting wealth. Check back soon!
               </p>
             </div>
           </div>
@@ -249,7 +249,7 @@ export default function BlogPage() {
                 Coming Soon
               </h3>
               <p className="text-base sm:text-lg text-slate-600 max-w-md leading-relaxed">
-                Exciting podcast episodes are on the way! We're preparing engaging conversations about money, mindset, and building wealth.
+                Exciting podcast episodes are on the way! We&apos;re preparing engaging conversations about money, mindset, and building wealth.
               </p>
             </div>
           </div>
@@ -265,7 +265,7 @@ export default function BlogPage() {
               Begin Your Journey To Financial Peace
             </h2>
             <p className="text-sm sm:text-base md:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto opacity-95">
-              Uncover what's holding you back from building lasting wealth and feeling confident with your money!
+              Uncover what&apos;s holding you back from building lasting wealth and feeling confident with your money!
             </p>
             <Link
               href="/quiz/financial-profile"

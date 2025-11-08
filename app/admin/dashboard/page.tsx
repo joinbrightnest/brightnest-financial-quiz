@@ -974,7 +974,7 @@ export default function AdminDashboard() {
           lead.status,
           lead.completedAt ? new Date(lead.completedAt).toLocaleDateString() : 'N/A',
           'Stefan',
-          lead.appointment?.outcome === 'converted' && lead.appointment?.saleValue ? `$${Number(lead.appointment.saleValue).toFixed(2)}` : '--',
+          lead.saleValue ? `$${Number(lead.saleValue).toFixed(2)}` : '--',
           lead.source || 'Direct'
         ].join(',');
       })
@@ -2461,13 +2461,13 @@ export default function AdminDashboard() {
                             )}
                             {crmVisibleColumns.owner && (
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-700 cursor-pointer">
-                              {lead.closerName || lead.appointment?.closer?.name || 'Unassigned'}
+                              {'Unassigned'}
                             </td>
                             )}
                             {crmVisibleColumns.amount && (
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {lead.appointment?.outcome === 'converted' && lead.appointment?.saleValue 
-                                ? `$${Number(lead.appointment.saleValue).toFixed(2)}` 
+                              {lead.saleValue 
+                                ? `$${Number(lead.saleValue).toFixed(2)}` 
                                 : '--'}
                             </td>
                             )}

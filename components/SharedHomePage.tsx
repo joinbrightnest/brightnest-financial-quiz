@@ -218,7 +218,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
           
           {/* 3️⃣ Subheadline */}
           <p className="text-base sm:text-lg lg:text-xl text-gray-700 mb-6 sm:mb-8 lg:mb-10 max-w-2xl mx-auto leading-relaxed">
-            Because wealth isn't about math — it's about behavior.
+            Because wealth isn&apos;t about math — it&apos;s about behavior.
           </p>
           
           {/* 4️⃣ Visual Element - Family-Friendly Illustration */}

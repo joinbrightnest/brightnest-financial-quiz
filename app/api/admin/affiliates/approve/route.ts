@@ -73,6 +73,13 @@ export async function POST(request: NextRequest) {
         where: { id: affiliateId },
       });
 
+      if (!updatedAffiliate) {
+        return NextResponse.json(
+          { error: "Affiliate not found after update" },
+          { status: 404 }
+        );
+      }
+
       return NextResponse.json({
         success: true,
         message: "Affiliate approved successfully",

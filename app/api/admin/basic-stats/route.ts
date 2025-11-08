@@ -156,46 +156,47 @@ export async function GET(request: NextRequest) {
 
     const dateFilter = buildDateFilter();
 
-    // Get total sessions (all quiz attempts)
-    const totalSessions = await prisma.quizSession.count({
-      where: {
-        createdAt: dateFilter,
-        ...(quizType ? { quizType } : {}),
-        ...(affiliateCode ? { affiliateCode } : {})
-      }
-    });
-    
-    // Calculate average duration for completed sessions
-    const avgDurationResult = await prisma.quizSession.aggregate({
-      _avg: { durationMs: true },
-      where: { 
-        createdAt: dateFilter,
-        status: "completed",
-        durationMs: { not: null },
-        ...(quizType ? { quizType } : {}),
-        ...(affiliateCode ? { affiliateCode } : {})
-      },
-    });
-
-    // Get all completed sessions first
-    const allCompletedSessions = await prisma.quizSession.findMany({
-      where: {
-        createdAt: dateFilter,
-        status: "completed",
-        ...(quizType ? { quizType } : {}),
-        ...(affiliateCode ? { affiliateCode } : {})
-      },
-      include: { 
-        result: true,
-        answers: {
-          include: {
-            question: true,
+    // 🚀 PERFORMANCE: Parallelize initial queries for better speed
+    const [totalSessions, avgDurationResult, allCompletedSessions] = await Promise.all([
+      // Get total sessions (all quiz attempts)
+      prisma.quizSession.count({
+        where: {
+          createdAt: dateFilter,
+          ...(quizType ? { quizType } : {}),
+          ...(affiliateCode ? { affiliateCode } : {})
+        }
+      }),
+      // Calculate average duration for completed sessions
+      prisma.quizSession.aggregate({
+        _avg: { durationMs: true },
+        where: { 
+          createdAt: dateFilter,
+          status: "completed",
+          durationMs: { not: null },
+          ...(quizType ? { quizType } : {}),
+          ...(affiliateCode ? { affiliateCode } : {})
+        },
+      }),
+      // Get all completed sessions first
+      prisma.quizSession.findMany({
+        where: {
+          createdAt: dateFilter,
+          status: "completed",
+          ...(quizType ? { quizType } : {}),
+          ...(affiliateCode ? { affiliateCode } : {})
+        },
+        include: { 
+          result: true,
+          answers: {
+            include: {
+              question: true,
+            },
           },
         },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 50,
-    });
+        orderBy: { createdAt: "desc" },
+        take: 50,
+      })
+    ]);
 
     // Use centralized lead calculation with filters
     // Convert duration parameter to format expected by calculateTotalLeads
@@ -264,15 +265,26 @@ export async function GET(request: NextRequest) {
         .map(lead => lead.affiliateCode!)
         .filter((code): code is string => code !== null);
       
-      const appointmentAffiliateCodes = await prisma.appointment.findMany({
-        where: {
-          affiliateCode: { not: null }
-        },
-        select: {
-          affiliateCode: true
-        },
-        distinct: ['affiliateCode']
-      });
+      // 🚀 PERFORMANCE: Parallelize affiliate queries
+      const [appointmentAffiliateCodes, allAffiliates] = await Promise.all([
+        prisma.appointment.findMany({
+          where: {
+            affiliateCode: { not: null }
+          },
+          select: {
+            affiliateCode: true
+          },
+          distinct: ['affiliateCode']
+        }),
+        // Get all affiliates to check against (fetch early for parallelization)
+        prisma.affiliate.findMany({
+          select: {
+            referralCode: true,
+            name: true,
+            customLink: true,
+          }
+        })
+      ]);
       
       const allAffiliateCodes = [
         ...leadsAffiliateCodes,
@@ -284,14 +296,6 @@ export async function GET(request: NextRequest) {
       console.log('🔍 Affiliate codes found in leads and appointments:', affiliateCodes);
       
       if (affiliateCodes.length > 0) {
-        // Get all affiliates to check against
-        const allAffiliates = await prisma.affiliate.findMany({
-          select: {
-            referralCode: true,
-            name: true,
-            customLink: true,
-          }
-        });
 
         console.log('👥 All affiliates:', allAffiliates.map((a: any) => ({ 
           name: a.name, 
@@ -414,7 +418,7 @@ export async function GET(request: NextRequest) {
       // Determine source with debugging
       // Check both quiz session affiliate code AND appointment affiliate code
       let source = 'Website'; // Default
-      let affiliateCodeToCheck = lead.affiliateCode || appointment?.affiliateCode;
+      const affiliateCodeToCheck = lead.affiliateCode || appointment?.affiliateCode;
       
       if (affiliateCodeToCheck) {
         const mappedName = affiliateMap[affiliateCodeToCheck];
@@ -496,34 +500,36 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // Get archetype distribution
-    const archetypeStats = await prisma.result.groupBy({
-      by: ["archetype"],
-      _count: { archetype: true },
-    });
-
     // Calculate completion rate (using actual leads as completed sessions)
     const completedSessions = allLeads.length;
     const completionRate = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;
 
-    // Get behavior analytics - drop-off rates per question
-    const totalQuestions = await prisma.quizQuestion.count({
-      where: { 
-        active: true
-      }
-    });
-
     // Get all questions ordered by their order field
     // Use quiz type filter if specified, otherwise default
-    let defaultQuizType = quizType || 'financial-profile';
+    const defaultQuizType = quizType || 'financial-profile';
     
-    const allQuestions = await prisma.quizQuestion.findMany({
-      where: { 
-        active: true,
-        quizType: defaultQuizType
-      },
-      orderBy: { order: 'asc' }
-    });
+    // 🚀 PERFORMANCE: Parallelize archetype and question queries
+    const [archetypeStats, totalQuestions, allQuestions] = await Promise.all([
+      // Get archetype distribution
+      prisma.result.groupBy({
+        by: ["archetype"],
+        _count: { archetype: true },
+      }),
+      // Get behavior analytics - drop-off rates per question
+      prisma.quizQuestion.count({
+        where: { 
+          active: true
+        }
+      }),
+      // Get all questions ordered by their order field
+      prisma.quizQuestion.findMany({
+        where: { 
+          active: true,
+          quizType: defaultQuizType
+        },
+        orderBy: { order: 'asc' }
+      })
+    ]);
 
     // Get filtered sessions first (applying date and affiliate filters)
     const filteredSessions = await prisma.quizSession.findMany({

@@ -10,6 +10,7 @@ interface QuizSession {
   status: string;
   createdAt: string;
   completedAt?: string;
+  source?: string;
   answers: QuizAnswer[];
   result?: {
     archetype: string;
@@ -535,11 +536,11 @@ export default function LeadsPage() {
               {filteredLeads.map((lead) => {
                 const nameAnswer = lead.answers.find(a => 
                   a.question?.prompt?.toLowerCase().includes('name') ||
-                  a.question?.text?.toLowerCase().includes('name')
+                  a.question?.prompt?.toLowerCase().includes('name')
                 );
                 const emailAnswer = lead.answers.find(a => 
                   a.question?.prompt?.toLowerCase().includes('email') ||
-                  a.question?.text?.toLowerCase().includes('email')
+                  a.question?.prompt?.toLowerCase().includes('email')
                 );
                 
                 return (
@@ -695,11 +696,11 @@ export default function LeadsPage() {
               {getFilteredLeads().map((lead) => {
                 const nameAnswer = lead.answers.find(a => 
                   a.question?.prompt?.toLowerCase().includes('name') ||
-                  a.question?.text?.toLowerCase().includes('name')
+                  a.question?.prompt?.toLowerCase().includes('name')
                 );
                 const emailAnswer = lead.answers.find(a => 
                   a.question?.prompt?.toLowerCase().includes('email') ||
-                  a.question?.text?.toLowerCase().includes('email')
+                  a.question?.prompt?.toLowerCase().includes('email')
                 );
                 
                 return (

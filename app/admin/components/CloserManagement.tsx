@@ -159,11 +159,11 @@ export default function CloserManagement() {
         console.log('📊 Appointments count:', data.appointments?.length || 0);
         
         // Debug: Check unassigned appointments
-        const allUnassigned = data.appointments?.filter(a => !a.closer) || [];
-        const actualAppointments = allUnassigned.filter(a => a.type !== 'quiz_session');
+        const allUnassigned = data.appointments?.filter((a: any) => !a.closer) || [];
+        const actualAppointments = allUnassigned.filter((a: any) => a.type !== 'quiz_session');
         console.log('🔍 All unassigned (including quiz):', allUnassigned.length);
         console.log('🔍 Actual unassigned appointments:', actualAppointments.length);
-        console.log('🔍 Actual appointments:', actualAppointments.map(a => ({ 
+        console.log('🔍 Actual appointments:', actualAppointments.map((a: any) => ({ 
           name: a.customerName, 
           type: a.type, 
           status: a.status,

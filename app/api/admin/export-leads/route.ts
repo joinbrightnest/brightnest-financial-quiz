@@ -142,11 +142,11 @@ export async function POST(request: NextRequest) {
     const csvRows = leads.map(lead => {
       const nameAnswer = lead.answers.find(a => 
         a.question?.prompt?.toLowerCase().includes('name') ||
-        a.question?.text?.toLowerCase().includes('name')
+        a.question?.prompt?.toLowerCase().includes('name')
       );
       const emailAnswer = lead.answers.find(a => 
         a.question?.prompt?.toLowerCase().includes('email') ||
-        a.question?.text?.toLowerCase().includes('email')
+        a.question?.prompt?.toLowerCase().includes('email')
       );
       
       const row: string[] = [];
@@ -159,10 +159,12 @@ export async function POST(request: NextRequest) {
         row.push(lead.quizType);
       }
       if (exportOptions.selectedFields.includes('name') && exportOptions.includeContactInfo) {
-        row.push(nameAnswer?.value || '');
+        const nameValue = nameAnswer?.value;
+        row.push(typeof nameValue === 'string' ? nameValue : (nameValue ? JSON.stringify(nameValue) : ''));
       }
       if (exportOptions.selectedFields.includes('email') && exportOptions.includeContactInfo) {
-        row.push(emailAnswer?.value || '');
+        const emailValue = emailAnswer?.value;
+        row.push(typeof emailValue === 'string' ? emailValue : (emailValue ? JSON.stringify(emailValue) : ''));
       }
       if (exportOptions.selectedFields.includes('status')) {
         row.push(lead.status);
@@ -191,7 +193,8 @@ export async function POST(request: NextRequest) {
           const answer = lead.answers.find(a => 
             `${a.question.order}_${a.question.prompt.slice(0, 30)}` === questionKey
           );
-          row.push(answer?.value || '');
+          const answerValue = answer?.value;
+          row.push(typeof answerValue === 'string' ? answerValue : (answerValue ? JSON.stringify(answerValue) : ''));
         });
       }
 

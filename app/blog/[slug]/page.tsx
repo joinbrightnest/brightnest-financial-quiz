@@ -282,7 +282,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                     Feel Like Your Body's Betraying You After 40?
                   </h3>
                   <p className="text-sm text-white/90 leading-relaxed mb-5">
-                    1‑on‑1 coaching. Personalized macros & workouts designed for your changing body. Join thousands proving it's never too late to become your strongest self.
+                    1‑on‑1 coaching. Personalized macros & workouts designed for your changing body. Join thousands proving it&apos;s never too late to become your strongest self.
                   </p>
                   <Link
                     href="/quiz/financial-profile"
@@ -349,7 +349,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                         
                         // Helper function to parse markdown-style bold and italic
                         const parseMarkdown = (text: string) => {
-                          const parts: (string | JSX.Element)[] = [];
+                          const parts: (string | React.ReactElement)[] = [];
                           let currentIndex = 0;
                           
                           // Match **bold** and *italic*
@@ -687,7 +687,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
             <div className="relative z-10">
               <div className="text-xs font-bold uppercase tracking-wider opacity-90 mb-2 bg-white/20 px-3 py-1 rounded-full inline-block">Limited Time</div>
               <h3 className="text-xl sm:text-2xl font-bold mb-2 mt-4">Begin Your Journey To A Stronger, Healthier You</h3>
-              <p className="text-sm text-white/90 mb-5 max-w-2xl mx-auto">Uncover what's holding you back from getting toned & feeling confident in your skin!</p>
+              <p className="text-sm text-white/90 mb-5 max-w-2xl mx-auto">Uncover what&apos;s holding you back from getting toned & feeling confident in your skin!</p>
               <Link href="/quiz/financial-profile" className="inline-block bg-white hover:bg-slate-50 text-teal-600 font-semibold px-6 py-3 rounded-lg transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300">APPLY NOW</Link>
             </div>
           </div>
@@ -708,7 +708,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                 </div>
                 <div className="p-5">
                   <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-teal-600 transition-colors">{articlesMap["why-your-budget-keeps-failing"]?.title || "Why Your Budget Keeps Failing (And How to Fix It)"}</h3>
-                  <p className="text-sm text-slate-600 line-clamp-3 mb-3 leading-relaxed">Budgets aren't about restriction — they're about freedom. Discover the 3 behavior shifts that make budgeting actually work.</p>
+                  <p className="text-sm text-slate-600 line-clamp-3 mb-3 leading-relaxed">Budgets aren&apos;t about restriction — they&apos;re about freedom. Discover the 3 behavior shifts that make budgeting actually work.</p>
                   <div className="text-xs text-slate-500">4 min read</div>
                 </div>
               </div>
@@ -721,7 +721,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                 </div>
                 <div className="p-5">
                   <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-teal-600 transition-colors">{articlesMap["hidden-cost-of-bnpl"]?.title || "The Hidden Cost of 'Buy Now, Pay Later'"}</h3>
-                  <p className="text-sm text-slate-600 line-clamp-3 mb-3 leading-relaxed">That innocent payment plan could be costing you more than money. Let's talk about the psychological trap of deferred payments.</p>
+                  <p className="text-sm text-slate-600 line-clamp-3 mb-3 leading-relaxed">That innocent payment plan could be costing you more than money. Let&apos;s talk about the psychological trap of deferred payments.</p>
                   <div className="text-xs text-slate-500">3 min read</div>
                 </div>
               </div>
@@ -734,7 +734,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
                 </div>
                 <div className="p-5">
                   <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-teal-600 transition-colors">{articlesMap["talk-about-money-with-your-partner"]?.title || "How to Talk About Money With Your Partner"}</h3>
-                  <p className="text-sm text-slate-600 line-clamp-3 mb-3 leading-relaxed">Money conversations don't have to be awkward. Here's how to build financial trust and alignment in your relationship.</p>
+                  <p className="text-sm text-slate-600 line-clamp-3 mb-3 leading-relaxed">Money conversations don&apos;t have to be awkward. Here&apos;s how to build financial trust and alignment in your relationship.</p>
                   <div className="text-xs text-slate-500">5 min read</div>
                 </div>
               </div>
@@ -750,7 +750,7 @@ export default async function BlogArticlePage({ params }: PageProps) {
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl"></div>
           <div className="relative z-10">
             <h3 className="text-2xl font-bold mb-2">Begin Your Journey To A Stronger, Healthier You</h3>
-            <p className="text-white/90 mb-5 max-w-2xl mx-auto">Uncover what's holding you back from getting toned & feeling confident in your skin!</p>
+            <p className="text-white/90 mb-5 max-w-2xl mx-auto">Uncover what&apos;s holding you back from getting toned & feeling confident in your skin!</p>
             <Link href="/quiz/financial-profile" className="inline-block bg-white hover:bg-slate-50 text-teal-600 font-semibold px-6 py-3 rounded-lg transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300">
               APPLY NOW
             </Link>

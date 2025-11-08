@@ -28,11 +28,11 @@ function CheckoutContent() {
     
     // Get quiz result from localStorage
     const storedResult = localStorage.getItem('quizResult');
-    let quizData = {};
+    let quizData: UserData = {};
     
     if (storedResult) {
       try {
-        quizData = JSON.parse(storedResult);
+        quizData = JSON.parse(storedResult) as UserData;
       } catch (error) {
         console.error('Error parsing quiz result:', error);
       }
@@ -50,7 +50,7 @@ function CheckoutContent() {
     }
 
     // Combine all user data
-    const combinedData = {
+    const combinedData: UserData = {
       email: email || quizData.email || '',
       name: name || quizData.name || '',
       archetype: quizData.archetype || 'Financial Explorer',

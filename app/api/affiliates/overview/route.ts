@@ -148,17 +148,17 @@ export async function GET(request: NextRequest) {
       // Calculate metrics using pre-fetched data
       const clickCount = clicks.length;
       const quizCount = quizSessions.length;
-      const completionCount = quizSessions.filter(s => s.status === "completed").length;
+      const completionCount = quizSessions.filter((s: any) => s.status === "completed").length;
       const bookingCount = appointments.length;
-      const saleCount = appointments.filter(apt => apt.outcome === CallOutcome.converted).length;
+      const saleCount = appointments.filter((apt: any) => apt.outcome === CallOutcome.converted).length;
       
       // Lead count = completed quiz sessions with results
-      const leadCount = quizSessions.filter(s => s.status === "completed" && s.result).length;
+      const leadCount = quizSessions.filter((s: any) => s.status === "completed" && s.result).length;
 
       // Calculate revenue from converted appointments
       const totalRevenue = appointments
-        .filter(apt => apt.outcome === CallOutcome.converted && apt.saleValue)
-        .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
+        .filter((apt: any) => apt.outcome === CallOutcome.converted && apt.saleValue)
+        .reduce((sum: number, apt: any) => sum + (Number(apt.saleValue) || 0), 0);
 
       // Calculate commission from actual revenue (don't use database field - it may be doubled)
       // Commission = Revenue × Commission Rate
@@ -186,15 +186,15 @@ export async function GET(request: NextRequest) {
     }).filter(Boolean);
     
     // Sort by revenue
-    topAffiliates.sort((a, b) => b.revenue - a.revenue);
+    topAffiliates.sort((a, b) => (b?.revenue || 0) - (a?.revenue || 0));
     
     // Calculate correct overview metrics from topAffiliates data
-    const totalLeadsFromAffiliates = topAffiliates.reduce((sum, aff) => sum + aff.leads, 0);
-    const totalBookedCalls = topAffiliates.reduce((sum, aff) => sum + aff.bookedCalls, 0);
-    const totalSalesValue = topAffiliates.reduce((sum, aff) => sum + aff.revenue, 0); // Use actual revenue, not commission
+    const totalLeadsFromAffiliates = topAffiliates.reduce((sum, aff) => sum + (aff?.leads || 0), 0);
+    const totalBookedCalls = topAffiliates.reduce((sum, aff) => sum + (aff?.bookedCalls || 0), 0);
+    const totalSalesValue = topAffiliates.reduce((sum, aff) => sum + (aff?.revenue || 0), 0); // Use actual revenue, not commission
     
     // Calculate total commissions from actual payouts (not arbitrary 70/30 split)
-    const totalCommissionsEarned = topAffiliates.reduce((sum, aff) => sum + Number(aff.commission), 0);
+    const totalCommissionsEarned = topAffiliates.reduce((sum, aff) => sum + Number(aff?.commission || 0), 0);
     
     // Get actual paid/pending from payout records for all affiliates
     const allPayouts = await prisma.affiliatePayout.findMany({
@@ -219,10 +219,10 @@ export async function GET(request: NextRequest) {
       totalCommissionsPaid,
       totalCommissionsPending,
       topAffiliatesSummary: topAffiliates.map(aff => ({
-        name: aff.name,
-        leads: aff.leads,
-        revenue: aff.revenue,
-        commission: aff.commission
+        name: aff?.name || '',
+        leads: aff?.leads || 0,
+        revenue: aff?.revenue || 0,
+        commission: aff?.commission || 0
       }))
     });
 
@@ -282,9 +282,9 @@ export async function GET(request: NextRequest) {
         if (data) {
           tierClicks += data.clicks.length;
           tierQuizStarts += data.quizSessions.length;
-          tierCompleted += data.quizSessions.filter(s => s.status === "completed").length;
+          tierCompleted += data.quizSessions.filter((s: any) => s.status === "completed").length;
           tierBooked += data.appointments.length;
-          tierClosed += data.appointments.filter(a => a.outcome === CallOutcome.converted).length;
+          tierClosed += data.appointments.filter((a: any) => a.outcome === CallOutcome.converted).length;
         }
       });
 

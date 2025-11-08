@@ -176,7 +176,13 @@ export async function rateLimit(
       console.warn(`🚫 Rate limit exceeded for ${identifier} (${type})`);
     }
 
-    return result;
+    // Normalize return type - Upstash returns RatelimitResponse, InMemory returns our custom type
+    return {
+      success: result.success,
+      limit: result.limit,
+      remaining: result.remaining,
+      reset: result.reset instanceof Date ? result.reset : new Date(result.reset),
+    };
   } catch (error) {
     console.error('Rate limit check failed:', error);
     // On error, allow the request (fail open for availability)

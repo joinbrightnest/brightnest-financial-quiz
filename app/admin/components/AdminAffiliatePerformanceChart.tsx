@@ -159,7 +159,7 @@ export default function AdminAffiliatePerformanceChart({ dailyStats, loading }: 
         max: Math.ceil(leftAxisMax * 1.1), // Add 10% padding
         ticks: {
           stepSize: Math.ceil(leftAxisMax / 10), // Dynamic step size
-          callback: function(value) {
+          callback: function(value: number | string) {
             return Number.isInteger(value) ? value : '';
           },
         },
@@ -175,8 +175,8 @@ export default function AdminAffiliatePerformanceChart({ dailyStats, loading }: 
         },
         ticks: {
           stepSize: Math.ceil(rightAxisMax / 10), // Dynamic step size
-          callback: function(value) {
-            return '$' + value.toFixed(0);
+          callback: function(value: number | string) {
+            return '$' + Number(value).toFixed(0);
           },
         },
       },
@@ -269,7 +269,7 @@ export default function AdminAffiliatePerformanceChart({ dailyStats, loading }: 
       </div>
 
       <div className="h-64">
-        <Line data={chartData} options={chartOptions} />
+        <Line data={chartData} options={chartOptions as any} />
       </div>
     </motion.div>
   );

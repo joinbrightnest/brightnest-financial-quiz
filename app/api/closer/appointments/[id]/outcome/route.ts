@@ -163,7 +163,7 @@ export async function PUT(
           previousOutcome: appointment.outcome,
           newOutcome: outcome,
           previousTotalCommission: Number(affiliate.totalCommission || 0),
-          newTotalCommission: Number(affiliate.totalCommission || 0) + affiliateCommissionAmount
+          newTotalCommission: Number(affiliate.totalCommission || 0) + (affiliateCommissionAmount || 0)
         });
       }
     } else if (saleValue && outcome === 'converted' && appointment.affiliateCode && appointment.outcome === 'converted') {

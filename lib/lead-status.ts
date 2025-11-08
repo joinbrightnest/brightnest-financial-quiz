@@ -15,12 +15,11 @@ export interface LeadStatusInfo {
 export async function getLeadStatus(sessionId: string): Promise<LeadStatusInfo> {
   try {
     // Check if there's an appointment linked to this session
+    const email = await getSessionEmail(sessionId);
     const appointment = await prisma.appointment.findFirst({
       where: { 
         // For now, we'll link by email since sessionId relation is not set up
-        customerEmail: {
-          in: await getSessionEmail(sessionId)
-        }
+        ...(email ? { customerEmail: email } : { id: 'never-match' })
       },
       orderBy: { createdAt: 'desc' }
     });

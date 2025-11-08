@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
     // Get qualification threshold from settings
     let qualificationThreshold = 17; // Default fallback
     try {
-      const settingsResult = await prisma.$queryRaw`
+      const settingsResult = await prisma.$queryRaw<Array<{ value: string }>>`
         SELECT value FROM "Settings" WHERE key = 'qualification_threshold'
       `;
       if (settingsResult && settingsResult[0]) {
