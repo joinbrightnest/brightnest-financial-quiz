@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateAdminToken } from "@/lib/admin-auth-server";
+import { rateLimit, rateLimitExceededResponse } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  // 🛡️ SECURITY: Rate limit authentication attempts (5 per 15 minutes)
+  const rateLimitResult = await rateLimit(request, 'auth');
+  if (!rateLimitResult.success) {
+    return rateLimitExceededResponse(rateLimitResult);
+  }
+
   try {
     const body = await request.json();
     const { code } = body;

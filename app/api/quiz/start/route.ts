@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { rateLimit, rateLimitExceededResponse } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  // 🛡️ SECURITY: Rate limit quiz starts (30 per minute)
+  const rateLimitResult = await rateLimit(request, 'api');
+  if (!rateLimitResult.success) {
+    return rateLimitExceededResponse(rateLimitResult);
+  }
+
   try {
     const { quizType = "financial-profile", affiliateCode: requestAffiliateCode } = await request.json();
 
