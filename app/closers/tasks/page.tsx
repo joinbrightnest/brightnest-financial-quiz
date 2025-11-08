@@ -373,6 +373,13 @@ export default function CloserTasks() {
 
   const filteredTasks = getFilteredTasks();
   const activeTaskCount = tasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length;
+  
+  // Calculate counts for each filter view
+  const activeTasks = tasks.filter(t => t.status === 'pending' || t.status === 'in_progress');
+  const allCount = activeTasks.length;
+  const dueTodayCount = activeTasks.filter(t => isDueDateToday(t.dueDate)).length;
+  const overdueCount = activeTasks.filter(t => isDueDateOverdue(t.dueDate)).length;
+  const upcomingCount = activeTasks.filter(t => isDueDateUpcoming(t.dueDate)).length;
 
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden">
@@ -405,71 +412,6 @@ export default function CloserTasks() {
           </div>
         )}
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mr-4">
-                <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900">{tasks.length}</div>
-                <div className="text-sm text-gray-500">Total Tasks</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mr-4">
-                <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900">
-                  {tasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length}
-                </div>
-                <div className="text-sm text-gray-500">Not Completed</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mr-4">
-                <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900">
-                  {tasks.filter(t => t.status === 'completed').length}
-                </div>
-                <div className="text-sm text-gray-500">Completed</div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center">
-              <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mr-4">
-                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900">
-                  {tasks.filter(t => t.priority === 'urgent' && (t.status === 'pending' || t.status === 'in_progress')).length}
-                </div>
-                <div className="text-sm text-gray-500">Urgent</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Filter Tabs */}
         <div className="bg-white rounded-lg border border-gray-200 p-4 mb-8">
           <div className="flex gap-2">
@@ -481,7 +423,7 @@ export default function CloserTasks() {
                   : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
               }`}
             >
-              All
+              All ({allCount})
             </button>
             <button
               onClick={() => setFilter('due_today')}
@@ -491,7 +433,7 @@ export default function CloserTasks() {
                   : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
               }`}
             >
-              Due Today
+              Due Today ({dueTodayCount})
             </button>
             <button
               onClick={() => setFilter('overdue')}
@@ -501,7 +443,7 @@ export default function CloserTasks() {
                   : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
               }`}
             >
-              Overdue
+              Overdue ({overdueCount})
             </button>
             <button
               onClick={() => setFilter('upcoming')}
@@ -511,7 +453,7 @@ export default function CloserTasks() {
                   : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
               }`}
             >
-              Upcoming
+              Upcoming ({upcomingCount})
             </button>
           </div>
         </div>
