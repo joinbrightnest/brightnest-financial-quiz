@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import CloserHeader from '../components/CloserHeader';
+import CloserSidebar from '../components/CloserSidebar';
 
 interface Closer {
   id: string;
@@ -760,22 +760,28 @@ export default function CloserRules() {
   const currentItem = current?.item;
 
   return (
-    <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
-      <CloserHeader closer={closer} onLogout={handleLogout} />
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Left Sidebar */}
+      <CloserSidebar closer={closer} onLogout={handleLogout} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center mb-2">
-            <div className={`w-14 h-14 bg-gradient-to-br ${currentCategory?.color || 'from-indigo-500 to-indigo-600'} rounded-xl flex items-center justify-center mr-4 shadow-lg`}>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Top Header Bar */}
+        <div className="bg-white border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center">
+            <div className={`w-12 h-12 bg-gradient-to-br ${currentCategory?.color || 'from-indigo-500 to-indigo-600'} rounded-xl flex items-center justify-center mr-4 shadow-lg`}>
               <span className="text-2xl">{currentCategory?.icon || '📚'}</span>
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Internal Rules & Guidelines</h1>
-              <p className="text-gray-600 mt-1">Training materials, procedures, and best practices</p>
+              <h2 className="text-xl font-bold text-gray-900">Internal Rules & Guidelines</h2>
+              <p className="text-sm text-gray-600 mt-1">Training materials, procedures, and best practices</p>
             </div>
           </div>
         </div>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar Navigation */}
@@ -933,6 +939,8 @@ export default function CloserRules() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
           </div>
         </div>
       </div>

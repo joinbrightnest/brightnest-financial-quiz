@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import CloserHeader from '../components/CloserHeader';
+import CloserSidebar from '../components/CloserSidebar';
 import LeadDetailView from '../components/LeadDetailView';
 
 interface Closer {
@@ -350,26 +350,26 @@ export default function CloserTasks() {
   }
 
   const filteredTasks = getFilteredTasks();
+  const activeTaskCount = tasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length;
 
   return (
-    <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
-      <CloserHeader closer={closer} onLogout={handleLogout} taskCount={tasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length} />
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Left Sidebar */}
+      <CloserSidebar closer={closer} onLogout={handleLogout} activeTaskCount={activeTaskCount} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-slate-100 rounded-lg flex items-center justify-center mr-4">
-              <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">My Tasks</h1>
-              <p className="text-gray-600 mt-1">Manage all your assigned tasks</p>
-            </div>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Top Header Bar */}
+        <div className="bg-white border-b border-gray-200 px-6 py-4">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">My Tasks</h2>
+            <p className="text-sm text-gray-600 mt-1">Manage all your assigned tasks</p>
           </div>
         </div>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">
@@ -758,6 +758,8 @@ export default function CloserTasks() {
               </table>
             </div>
           )}
+        </div>
+          </div>
         </div>
       </div>
 

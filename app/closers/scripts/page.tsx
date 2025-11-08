@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import CloserHeader from '../components/CloserHeader';
+import CloserSidebar from '../components/CloserSidebar';
 
 interface Closer {
   id: string;
@@ -465,24 +465,23 @@ BrightNest Financial Advisor`
   };
 
   return (
-    <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
-      <CloserHeader closer={closer} onLogout={handleLogout} />
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Left Sidebar */}
+      <CloserSidebar closer={closer} onLogout={handleLogout} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header Section */}
-        <div className="mb-8">
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Scripts & Templates</h1>
-              <p className="text-gray-600 mt-1">Call scripts and email templates organized by stage</p>
-            </div>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Top Header Bar */}
+        <div className="bg-white border-b border-gray-200 px-6 py-4">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">Scripts & Templates</h2>
+            <p className="text-sm text-gray-600 mt-1">Call scripts and email templates organized by stage</p>
           </div>
         </div>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Tabs */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
@@ -677,6 +676,8 @@ BrightNest Financial Advisor`
               })()}
             </div>
           )}
+        </div>
+          </div>
         </div>
       </div>
     </div>

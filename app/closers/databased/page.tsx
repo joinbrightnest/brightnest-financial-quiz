@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import CloserHeader from '../components/CloserHeader';
+import CloserSidebar from '../components/CloserSidebar';
 import LeadDetailView from '../components/LeadDetailView';
 
 interface Closer {
@@ -316,7 +316,7 @@ export default function CloserDatabase() {
   }
 
   return (
-    <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
+    <div className="min-h-screen bg-gray-50 flex">
       {selectedLeadId && (
         <LeadDetailView 
           sessionId={selectedLeadId} 
@@ -324,23 +324,22 @@ export default function CloserDatabase() {
         />
       )}
 
-      <CloserHeader closer={closer} onLogout={handleLogout} taskCount={activeTaskCount} />
+      {/* Left Sidebar */}
+      <CloserSidebar closer={closer} onLogout={handleLogout} activeTaskCount={activeTaskCount} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header Section */}
-        <div className="mb-8">
-          <div className="flex items-center">
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
-              <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Lead Database</h1>
-              <p className="text-gray-600 mt-1">View and manage all contacted leads for follow-ups and conversions</p>
-            </div>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        {/* Top Header Bar */}
+        <div className="bg-white border-b border-gray-200 px-6 py-4">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">Lead Database</h2>
+            <p className="text-sm text-gray-600 mt-1">View and manage all contacted leads for follow-ups and conversions</p>
           </div>
         </div>
+
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">
@@ -481,6 +480,7 @@ export default function CloserDatabase() {
               </table>
             )}
           </div>
+        </div>
         </div>
       </div>
 
