@@ -53,12 +53,26 @@ export async function GET(
     const leadName = nameAnswer?.value ? String(nameAnswer.value) : 'Lead';
 
     // Verify this closer has access to this lead
+    // Check if closer has either an appointment OR tasks for this lead
     if (leadEmail) {
       const appointment = await prisma.appointment.findFirst({
         where: { customerEmail: leadEmail },
       });
 
-      if (!appointment || appointment.closerId !== closerId) {
+      const hasAppointment = appointment && appointment.closerId === closerId;
+      
+      let hasTasks = false;
+      if (!hasAppointment) {
+        const tasksCount = await prisma.task.count({
+          where: {
+            leadEmail: leadEmail,
+            closerId: closerId
+          }
+        });
+        hasTasks = tasksCount > 0;
+      }
+
+      if (!hasAppointment && !hasTasks) {
         return NextResponse.json(
           { error: 'Forbidden - This lead is not assigned to you' },
           { status: 403 }

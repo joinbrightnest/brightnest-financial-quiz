@@ -86,7 +86,23 @@ export async function GET(
     }
 
     // 🔒 SECURITY: Verify this closer is assigned to this lead
-    if (!appointment || appointment.closerId !== closerId) {
+    // Check if closer has either:
+    // 1. An appointment for this lead, OR
+    // 2. Tasks assigned for this lead
+    const hasAppointment = appointment && appointment.closerId === closerId;
+    
+    let hasTasks = false;
+    if (email && !hasAppointment) {
+      const tasksCount = await prisma.task.count({
+        where: {
+          leadEmail: email,
+          closerId: closerId
+        }
+      });
+      hasTasks = tasksCount > 0;
+    }
+
+    if (!hasAppointment && !hasTasks) {
       return NextResponse.json(
         { error: "Forbidden - This lead is not assigned to you" },
         { status: 403 }
