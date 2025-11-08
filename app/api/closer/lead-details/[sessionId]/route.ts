@@ -47,15 +47,40 @@ export async function GET(
     const emailAnswer = quizSession.answers.find(
       a => a.question?.type === 'email' || a.question?.prompt.toLowerCase().includes('email')
     );
-    const email = emailAnswer?.value ? String(emailAnswer.value) : null;
+    let email = emailAnswer?.value ? String(emailAnswer.value) : null;
 
-    // Get appointment
+    // Get appointment - try by email first, then by session ID
     let appointment = null;
     if (email) {
       appointment = await prisma.appointment.findFirst({
-        where: { customerEmail: email },
+        where: { 
+          customerEmail: email,
+          closerId: closerId 
+        },
         include: {
           closer: true
+        }
+      });
+    }
+    
+    // If no appointment found by email, try finding by closer ID and session timeframe
+    if (!appointment) {
+      appointment = await prisma.appointment.findFirst({
+        where: {
+          closerId: closerId,
+          // Match by customer name if available
+          ...(nameAnswer?.value && { 
+            customerName: { 
+              contains: String(nameAnswer.value), 
+              mode: 'insensitive' as const
+            } 
+          })
+        },
+        include: {
+          closer: true
+        },
+        orderBy: {
+          createdAt: 'desc'
         }
       });
     }
@@ -66,6 +91,11 @@ export async function GET(
         { error: "Forbidden - This lead is not assigned to you" },
         { status: 403 }
       );
+    }
+
+    // Use appointment email if quiz answers don't have email
+    if (!email && appointment) {
+      email = appointment.customerEmail;
     }
 
     // Determine status based on appointment outcome (same logic as admin dashboard)
