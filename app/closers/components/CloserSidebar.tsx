@@ -51,10 +51,10 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
 
       {/* Navigation */}
       <div className={`flex-1 overflow-y-auto ${isCollapsed ? 'p-2' : 'p-4'}`}>
-        <nav className="space-y-1">
+        <nav className="space-y-2">
           <Link
             href="/closers/dashboard"
-            className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'} ${isCollapsed ? 'px-2 py-2' : 'px-3 py-2.5 rounded-lg'} text-sm font-medium transition-colors group relative ${
+            className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'} ${isCollapsed ? 'px-2 py-2.5' : 'px-3 py-3 rounded-lg'} text-sm font-medium transition-colors group relative ${
               isActive('/closers/dashboard')
                 ? isCollapsed 
                   ? 'bg-slate-700 text-white' 
@@ -77,7 +77,7 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
           </Link>
           <Link
             href="/closers/databased"
-            className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'} ${isCollapsed ? 'px-2 py-2' : 'px-3 py-2.5 rounded-lg'} text-sm font-medium transition-colors group relative ${
+            className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'} ${isCollapsed ? 'px-2 py-2.5' : 'px-3 py-3 rounded-lg'} text-sm font-medium transition-colors group relative ${
               isActive('/closers/databased')
                 ? isCollapsed 
                   ? 'bg-slate-700 text-white' 
@@ -100,7 +100,7 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
           </Link>
           <Link
             href="/closers/scripts"
-            className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'} ${isCollapsed ? 'px-2 py-2' : 'px-3 py-2.5 rounded-lg'} text-sm font-medium transition-colors group relative ${
+            className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'} ${isCollapsed ? 'px-2 py-2.5' : 'px-3 py-3 rounded-lg'} text-sm font-medium transition-colors group relative ${
               isActive('/closers/scripts')
                 ? isCollapsed 
                   ? 'bg-slate-700 text-white' 
@@ -123,7 +123,7 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
           </Link>
           <Link
             href="/closers/rules"
-            className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'} ${isCollapsed ? 'px-2 py-2' : 'px-3 py-2.5 rounded-lg'} text-sm font-medium transition-colors group relative ${
+            className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'} ${isCollapsed ? 'px-2 py-2.5' : 'px-3 py-3 rounded-lg'} text-sm font-medium transition-colors group relative ${
               isActive('/closers/rules')
                 ? isCollapsed 
                   ? 'bg-slate-700 text-white' 
@@ -146,7 +146,7 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
           </Link>
           <Link
             href="/closers/tasks"
-            className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'} ${isCollapsed ? 'px-2 py-2' : 'px-3 py-2.5 rounded-lg'} text-sm font-medium transition-colors group relative ${
+            className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'} ${isCollapsed ? 'px-2 py-2.5' : 'px-3 py-3 rounded-lg'} text-sm font-medium transition-colors group relative ${
               isActive('/closers/tasks')
                 ? isCollapsed 
                   ? 'bg-slate-700 text-white' 
