@@ -3,15 +3,11 @@
 # dependencies
 /node_modules
 /.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+.pnp.js
 
 # testing
 /coverage
+/.playwright
 
 # next.js
 /.next/
@@ -28,10 +24,13 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# local env files
+.env*.local
+.env
+.env.production
+.env.vercel
+.env.example
 
 # vercel
 .vercel
@@ -40,13 +39,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-/app/generated/prisma
-.env
-.env.*
-
-# Prisma
-/prisma/migrations/dev.db*
-/prisma/migrations/dev.db-journal
-/prisma/dev.db
-/prisma/dev.db-journal
-/prisma/migrations/migration_lock.toml
+# prisma
+prisma/migrations/*.sql
+!.backup/
