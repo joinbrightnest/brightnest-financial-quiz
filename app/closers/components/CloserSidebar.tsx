@@ -34,7 +34,7 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
   }, [isCollapsed]);
 
   return (
-    <div className={`${isCollapsed ? 'w-16' : 'w-64'} h-screen bg-slate-800 border-r border-slate-700 flex-shrink-0 flex flex-col transition-all duration-300`}>
+    <div className={`${isCollapsed ? 'w-16' : 'w-64'} h-screen bg-slate-800 border-r border-slate-700 flex-shrink-0 flex flex-col transition-all duration-300 overflow-visible`}>
       {/* Sidebar Header */}
       <div className={`${isCollapsed ? 'p-4' : 'p-6'} border-b border-slate-700 flex items-center justify-between`}>
         <Link href="/closers/dashboard" className={`flex items-center ${isCollapsed ? 'justify-center w-full' : 'space-x-3'}`}>
@@ -51,7 +51,7 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
       </div>
 
       {/* Navigation */}
-      <div className={`flex-1 overflow-y-auto ${isCollapsed ? 'p-2' : 'p-4'}`}>
+      <div className={`flex-1 overflow-y-auto overflow-x-visible ${isCollapsed ? 'p-2' : 'p-4'}`}>
         <nav className="space-y-3">
           <Link
             href="/closers/dashboard"
