@@ -214,6 +214,7 @@ export async function GET(
       } : null,
       dealClosedAt: appointment?.outcome === 'converted' ? appointment.updatedAt.toISOString() : null,
       source: source, // Include calculated source
+      extractedEmail: email, // Include extracted email for task creation
     };
 
     return NextResponse.json(leadData);

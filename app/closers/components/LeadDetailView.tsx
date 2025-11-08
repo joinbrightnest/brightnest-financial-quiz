@@ -95,8 +95,11 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
   }, [sessionId, activeTab]);
 
   useEffect(() => {
-    if (sessionId && activeTab === 'tasks' && leadData?.user?.email) {
-      fetchTasks();
+    if (sessionId && activeTab === 'tasks') {
+      const leadEmail = leadData?.extractedEmail || leadData?.user?.email;
+      if (leadEmail) {
+        fetchTasks();
+      }
     }
   }, [sessionId, activeTab, leadData]);
 
@@ -235,12 +238,13 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
 
     // Task creation function
   const fetchTasks = async () => {
-    if (!leadData?.user?.email) return;
+    const leadEmail = leadData?.extractedEmail || leadData?.user?.email;
+    if (!leadEmail) return;
     
     try {
       setLoadingTasks(true);
       const token = localStorage.getItem('closerToken');
-      const response = await fetch(`/api/closer/tasks?leadEmail=${encodeURIComponent(leadData.user.email)}`, {
+      const response = await fetch(`/api/closer/tasks?leadEmail=${encodeURIComponent(leadEmail)}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -261,8 +265,16 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
 
   const handleCreateTask = async () => {
         // Type 1: Task for a specific lead - requires title, priority, due date, and leadEmail
-        if (!taskForm.title || !taskForm.priority || !taskForm.dueDate || !leadData?.user?.email) {
+        // Get email from extracted email (from quiz answers) or user email
+        const leadEmail = leadData?.extractedEmail || leadData?.user?.email;
+        
+        if (!taskForm.title || !taskForm.priority || !taskForm.dueDate) {
             alert('Please fill in all required fields: Title, Priority, and Due Date');
+            return;
+        }
+
+        if (!leadEmail) {
+            alert('Unable to create task: Lead email not found');
             return;
         }
 
@@ -275,7 +287,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                     'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    leadEmail: leadData.user.email, // Type 1: Include leadEmail so task appears in activity log
+                    leadEmail: leadEmail, // Type 1: Include leadEmail so task appears in activity log
                     title: taskForm.title,
                     description: taskForm.description || null,
                     priority: taskForm.priority,
