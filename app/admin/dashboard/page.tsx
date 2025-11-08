@@ -1114,111 +1114,167 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar - Fixed */}
-      {!sidebarCollapsed && (
-      <div className="w-64 bg-slate-800 border-r border-slate-700 fixed h-full overflow-y-auto flex flex-col">
-        <div className="p-6 border-b border-slate-700 flex-shrink-0">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center shadow-md">
+      <div className={`${sidebarCollapsed ? 'w-16' : 'w-64'} h-screen bg-slate-800 border-r border-slate-700 flex-shrink-0 flex flex-col transition-all duration-300 overflow-visible`}>
+        <div className={`${sidebarCollapsed ? 'p-4' : 'p-6'} border-b border-slate-700 flex-shrink-0`}>
+          <div className={`flex items-center ${sidebarCollapsed ? 'justify-center w-full' : 'justify-between'}`}>
+            <div className={`flex items-center ${sidebarCollapsed ? 'justify-center w-full' : 'space-x-3'}`}>
+              <div className={`w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 ${sidebarCollapsed ? 'rounded' : 'rounded-lg'} flex items-center justify-center shadow-md`}>
                 <span className="text-white font-bold text-sm">B</span>
               </div>
-              <div>
-                <h1 className="text-lg font-bold text-white">BrightNest</h1>
-                <p className="text-xs text-slate-300">Admin Panel</p>
-              </div>
+              {!sidebarCollapsed && (
+                <div>
+                  <h1 className="text-lg font-bold text-white">BrightNest</h1>
+                  <p className="text-xs text-slate-300">Admin Panel</p>
+                </div>
+              )}
             </div>
           </div>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className={`flex-1 overflow-y-auto overflow-x-visible ${sidebarCollapsed ? 'p-2' : 'p-4'}`}>
 
           <nav className="space-y-3">
-            <div className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-              Analytics
-            </div>
+            {!sidebarCollapsed && (
+              <div className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                Analytics
+              </div>
+            )}
             <button 
               onClick={() => setActiveSection('quiz-analytics')}
-              className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'space-x-3'} ${sidebarCollapsed ? 'px-2 py-2.5' : 'px-3 py-3 rounded-lg'} transition-colors group relative ${
                 activeSection === 'quiz-analytics'
-                  ? 'bg-slate-700 text-white border-l-4 border-indigo-500' 
-                  : 'text-slate-300 hover:bg-slate-700'
+                  ? sidebarCollapsed
+                    ? 'bg-slate-700 text-white'
+                    : 'bg-slate-700 text-white border-l-4 border-indigo-500'
+                  : sidebarCollapsed
+                    ? 'text-slate-300 hover:bg-slate-700'
+                    : 'text-slate-300 hover:bg-slate-700'
               }`}
             >
               <svg className={`w-5 h-5 ${activeSection === 'quiz-analytics' ? 'text-white' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
-              <span className="text-sm font-medium">Quiz Analytics</span>
+              {!sidebarCollapsed && <span className="text-sm font-medium">Quiz Analytics</span>}
+              {sidebarCollapsed && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] transition-opacity shadow-lg" style={{ top: '50%', transform: 'translateY(-50%)' }}>
+                  Quiz Analytics
+                </div>
+              )}
             </button>
             <button
               onClick={() => setActiveSection('crm')}
-              className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'space-x-3'} ${sidebarCollapsed ? 'px-2 py-2.5' : 'px-3 py-3 rounded-lg'} transition-colors group relative ${
                 activeSection === 'crm'
-                  ? 'bg-slate-700 text-white border-l-4 border-indigo-500' 
-                  : 'text-slate-300 hover:bg-slate-700'
+                  ? sidebarCollapsed
+                    ? 'bg-slate-700 text-white'
+                    : 'bg-slate-700 text-white border-l-4 border-indigo-500'
+                  : sidebarCollapsed
+                    ? 'text-slate-300 hover:bg-slate-700'
+                    : 'text-slate-300 hover:bg-slate-700'
               }`}
             >
               <svg className={`w-5 h-5 ${activeSection === 'crm' ? 'text-white' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              <span className="text-sm font-medium">Lead Analytics</span>
+              {!sidebarCollapsed && <span className="text-sm font-medium">Lead Analytics</span>}
+              {sidebarCollapsed && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] transition-opacity shadow-lg" style={{ top: '50%', transform: 'translateY(-50%)' }}>
+                  Lead Analytics
+                </div>
+              )}
             </button>
             <button
               onClick={() => setActiveSection('ceo-analytics')}
-              className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'space-x-3'} ${sidebarCollapsed ? 'px-2 py-2.5' : 'px-3 py-3 rounded-lg'} transition-colors group relative ${
                 activeSection === 'ceo-analytics'
-                  ? 'bg-slate-700 text-white border-l-4 border-indigo-500' 
-                  : 'text-slate-300 hover:bg-slate-700'
+                  ? sidebarCollapsed
+                    ? 'bg-slate-700 text-white'
+                    : 'bg-slate-700 text-white border-l-4 border-indigo-500'
+                  : sidebarCollapsed
+                    ? 'text-slate-300 hover:bg-slate-700'
+                    : 'text-slate-300 hover:bg-slate-700'
               }`}
             >
               <svg className={`w-5 h-5 ${activeSection === 'ceo-analytics' ? 'text-white' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
-              <span className="text-sm font-medium">Affiliate Analytics</span>
+              {!sidebarCollapsed && <span className="text-sm font-medium">Affiliate Analytics</span>}
+              {sidebarCollapsed && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] transition-opacity shadow-lg" style={{ top: '50%', transform: 'translateY(-50%)' }}>
+                  Affiliate Analytics
+                </div>
+              )}
             </button>
           </nav>
 
           <div className="mt-8 pt-6 border-t border-slate-700">
-            <div className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-              Management
-            </div>
+            {!sidebarCollapsed && (
+              <div className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                Management
+              </div>
+            )}
             <button
               onClick={() => window.open('/admin/quiz-management', '_self')}
-              className="w-full flex items-center space-x-3 px-3 py-3 text-slate-300 hover:bg-slate-700 rounded-lg transition-colors"
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'space-x-3'} ${sidebarCollapsed ? 'px-2 py-2.5' : 'px-3 py-3 rounded-lg'} text-slate-300 hover:bg-slate-700 transition-colors group relative`}
             >
               <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
-              <span className="text-sm font-medium">Quiz Management</span>
+              {!sidebarCollapsed && <span className="text-sm font-medium">Quiz Management</span>}
+              {sidebarCollapsed && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] transition-opacity shadow-lg" style={{ top: '50%', transform: 'translateY(-50%)' }}>
+                  Quiz Management
+                </div>
+              )}
             </button>
             <button
               onClick={() => setActiveSection('closer-management')}
-              className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'space-x-3'} ${sidebarCollapsed ? 'px-2 py-2.5' : 'px-3 py-3 rounded-lg'} transition-colors group relative ${
                 activeSection === 'closer-management'
-                  ? 'bg-slate-700 text-white border-l-4 border-indigo-500' 
-                  : 'text-slate-300 hover:bg-slate-700'
+                  ? sidebarCollapsed
+                    ? 'bg-slate-700 text-white'
+                    : 'bg-slate-700 text-white border-l-4 border-indigo-500'
+                  : sidebarCollapsed
+                    ? 'text-slate-300 hover:bg-slate-700'
+                    : 'text-slate-300 hover:bg-slate-700'
               }`}
             >
               <svg className={`w-5 h-5 ${activeSection === 'closer-management' ? 'text-white' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              <span className="text-sm font-medium">Closer Management</span>
+              {!sidebarCollapsed && <span className="text-sm font-medium">Closer Management</span>}
+              {sidebarCollapsed && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] transition-opacity shadow-lg" style={{ top: '50%', transform: 'translateY(-50%)' }}>
+                  Closer Management
+                </div>
+              )}
             </button>
             <button
               onClick={() => setActiveSection('settings')}
-              className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors ${
+              className={`w-full flex items-center ${sidebarCollapsed ? 'justify-center' : 'space-x-3'} ${sidebarCollapsed ? 'px-2 py-2.5' : 'px-3 py-3 rounded-lg'} transition-colors group relative ${
                 activeSection === 'settings'
-                  ? 'bg-slate-700 text-white border-l-4 border-indigo-500' 
-                  : 'text-slate-300 hover:bg-slate-700'
+                  ? sidebarCollapsed
+                    ? 'bg-slate-700 text-white'
+                    : 'bg-slate-700 text-white border-l-4 border-indigo-500'
+                  : sidebarCollapsed
+                    ? 'text-slate-300 hover:bg-slate-700'
+                    : 'text-slate-300 hover:bg-slate-700'
               }`}
             >
               <svg className={`w-5 h-5 ${activeSection === 'settings' ? 'text-white' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <span className="text-sm font-medium">Settings</span>
+              {!sidebarCollapsed && <span className="text-sm font-medium">Settings</span>}
+              {sidebarCollapsed && (
+                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] transition-opacity shadow-lg" style={{ top: '50%', transform: 'translateY(-50%)' }}>
+                  Settings
+                </div>
+              )}
             </button>
           </div>
 
+          {!sidebarCollapsed && (
           <div className="mt-8 pt-6 border-t border-slate-700">
             <div className="px-3">
               <button
@@ -1324,7 +1380,9 @@ export default function AdminDashboard() {
               )}
             </div>
           </div>
+          )}
 
+          {!sidebarCollapsed && (
           <div className="mt-8 pt-6 border-t border-slate-700">
             <div className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
               Actions
@@ -1427,64 +1485,70 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
+          )}
         </div>
         
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-slate-700 flex-shrink-0">
+        <div className={`${sidebarCollapsed ? 'p-2' : 'p-4'} border-t border-slate-700 flex-shrink-0`}>
           {/* Collapse/Expand Button */}
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="w-full mb-4 p-2 text-slate-300 hover:bg-slate-700 rounded-lg transition-colors flex items-center justify-center space-x-2"
-            title="Collapse sidebar"
+            className={`${sidebarCollapsed ? 'mx-auto mb-3' : 'w-full mb-4'} p-2 text-slate-300 hover:bg-slate-700 rounded-lg transition-colors flex items-center ${sidebarCollapsed ? 'justify-center' : 'justify-center space-x-2'}`}
+            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
-            <svg className="w-4 h-4 text-slate-300 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-4 h-4 text-slate-300 ${sidebarCollapsed ? 'rotate-180' : ''} transition-transform`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
             </svg>
-            <span className="text-sm font-medium">Collapse</span>
+            {!sidebarCollapsed && <span className="text-sm font-medium">Collapse</span>}
           </button>
 
-          {/* User Profile */}
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
-              <span className="text-sm font-bold text-white">A</span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-white truncate">Admin</p>
-              <p className="text-xs text-slate-300 truncate">admin@brightnest.com</p>
-            </div>
-          </div>
-          
-          {/* Logout Button */}
-          <button
-            onClick={handleLogout}
-            className="w-full px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 rounded-lg transition-colors flex items-center space-x-2"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            <span>Logout</span>
-          </button>
-        </div>
-      </div>
-      )}
-
-      {/* Main Content - Scrollable */}
-      <div className={`flex-1 overflow-y-auto transition-all duration-300 ${sidebarCollapsed ? 'ml-0' : 'ml-64'}`}>
-        <div className="p-8">
-          {/* Expand Sidebar Button */}
-          {sidebarCollapsed && (
-            <div className="mb-8 flex justify-start">
+          {/* User Profile and Logout */}
+          {!sidebarCollapsed ? (
+            <>
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+                  <span className="text-sm font-bold text-white">A</span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-white truncate">Admin</p>
+                  <p className="text-xs text-slate-300 truncate">admin@brightnest.com</p>
+                </div>
+              </div>
               <button
-                onClick={() => setSidebarCollapsed(false)}
-                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                title="Show sidebar"
+                onClick={handleLogout}
+                className="w-full px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 rounded-lg transition-colors flex items-center space-x-2"
               >
-                <svg className="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
+                <span>Logout</span>
+              </button>
+            </>
+          ) : (
+            <div className="flex flex-col items-center space-y-3">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md">
+                <span className="text-sm font-bold text-white">A</span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="p-2 text-slate-300 hover:bg-slate-700 transition-colors group relative"
+                title="Logout"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity">
+                  Logout
+                </div>
               </button>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Main Content - Scrollable */}
+      <div className={`flex-1 overflow-y-auto transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
+        <div className="p-8">
 
           {/* Quiz Analytics Section */}
           {activeSection === 'quiz-analytics' && (
