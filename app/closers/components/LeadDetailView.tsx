@@ -260,7 +260,11 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
   };
 
   const handleCreateTask = async () => {
-        if (!taskForm.title || !leadData?.user?.email) return;
+        // Type 1: Task for a specific lead - requires title, priority, due date, and leadEmail
+        if (!taskForm.title || !taskForm.priority || !taskForm.dueDate || !leadData?.user?.email) {
+            alert('Please fill in all required fields: Title, Priority, and Due Date');
+            return;
+        }
 
         try {
             const token = localStorage.getItem('closerToken');
@@ -271,11 +275,11 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                     'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    leadEmail: leadData.user.email,
+                    leadEmail: leadData.user.email, // Type 1: Include leadEmail so task appears in activity log
                     title: taskForm.title,
-                    description: taskForm.description,
+                    description: taskForm.description || null,
                     priority: taskForm.priority,
-                    dueDate: taskForm.dueDate || null,
+                    dueDate: taskForm.dueDate,
                 }),
             });
 
@@ -741,7 +745,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Priority
+                            Priority <span className="text-red-500">*</span>
                           </label>
                           <select
                             value={taskForm.priority}
@@ -757,7 +761,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
 
                         <div>
                           <label className="block text-sm font-medium text-slate-700 mb-2">
-                            Due Date
+                            Due Date <span className="text-red-500">*</span>
                           </label>
                           <input
                             type="date"
@@ -781,7 +785,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                       </button>
                       <button
                         onClick={handleCreateTask}
-                        disabled={!taskForm.title}
+                        disabled={!taskForm.title || !taskForm.priority || !taskForm.dueDate}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
                       >
                         Create Task

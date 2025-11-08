@@ -571,6 +571,7 @@ export default function CloserTasks() {
                   {filteredTasks.map((task) => {
                     const isEditing = editingTask?.id === task.id;
                     const isExpanded = expandedTasks.has(task.id);
+                    // Associated contact: Type 1 tasks (with leadEmail) show contact via appointment, Type 2 (general tasks, no leadEmail) show --
                     const associatedContact = task.appointment?.customerName || null;
                     
                     return (
