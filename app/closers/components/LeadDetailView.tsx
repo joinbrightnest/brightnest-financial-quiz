@@ -268,31 +268,45 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
         // Get email from extracted email (from quiz answers) or user email
         const leadEmail = leadData?.extractedEmail || leadData?.user?.email;
         
+        console.log('🎯 Creating task with data:', {
+            leadEmail,
+            extractedEmail: leadData?.extractedEmail,
+            userEmail: leadData?.user?.email,
+            title: taskForm.title,
+            priority: taskForm.priority,
+            dueDate: taskForm.dueDate
+        });
+        
         if (!taskForm.title || !taskForm.priority || !taskForm.dueDate) {
             alert('Please fill in all required fields: Title, Priority, and Due Date');
             return;
         }
 
         if (!leadEmail) {
+            console.error('❌ No email found in leadData:', leadData);
             alert('Unable to create task: Lead email not found');
             return;
         }
 
         try {
             const token = localStorage.getItem('closerToken');
+            const payload = {
+                leadEmail: leadEmail, // Type 1: Include leadEmail so task appears in activity log
+                title: taskForm.title,
+                description: taskForm.description || null,
+                priority: taskForm.priority,
+                dueDate: taskForm.dueDate,
+            };
+            
+            console.log('📤 Sending task payload:', payload);
+            
             const response = await fetch('/api/closer/tasks', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({
-                    leadEmail: leadEmail, // Type 1: Include leadEmail so task appears in activity log
-                    title: taskForm.title,
-                    description: taskForm.description || null,
-                    priority: taskForm.priority,
-                    dueDate: taskForm.dueDate,
-                }),
+                body: JSON.stringify(payload),
             });
 
             if (response.ok) {
