@@ -183,7 +183,7 @@ export async function POST(request: NextRequest) {
         priority: priority || 'medium',
         dueDate: dueDate ? new Date(dueDate) : null,
         status: 'pending',
-        closerId: closerId, // Task is automatically assigned to the closer
+        closerId: closerId, // REQUIRED - every task must be assigned to a closer
       },
       include: {
         closer: {

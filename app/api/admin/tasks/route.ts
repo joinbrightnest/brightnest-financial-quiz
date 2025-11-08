@@ -136,9 +136,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Closer assignment is REQUIRED for all tasks
     if (!closerId) {
       return NextResponse.json(
-        { error: 'Closer assignment is required' },
+        { error: 'Closer assignment is required - every task must be assigned to a closer' },
         { status: 400 }
       );
     }
@@ -157,7 +158,7 @@ export async function POST(request: NextRequest) {
 
     if (!closer.isActive || !closer.isApproved) {
       return NextResponse.json(
-        { error: 'Closer is not active or approved' },
+        { error: 'Cannot assign task to inactive or unapproved closer' },
         { status: 400 }
       );
     }

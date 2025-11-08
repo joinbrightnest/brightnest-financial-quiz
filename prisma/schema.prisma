@@ -444,7 +444,7 @@ model Task {
   id            String       @id @default(cuid())
   appointmentId String?      @map("appointment_id")
   leadEmail     String?      @map("lead_email") // To identify which lead this task is for (optional)
-  closerId      String?      @map("closer_id")
+  closerId      String       @map("closer_id") // Required - every task must be assigned to a closer
   title         String
   description   String?
   priority      TaskPriority @default(medium)
@@ -455,7 +455,7 @@ model Task {
   updatedAt     DateTime     @updatedAt @map("updated_at")
 
   appointment Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
-  closer      Closer?      @relation(fields: [closerId], references: [id], onDelete: SetNull)
+  closer      Closer       @relation(fields: [closerId], references: [id], onDelete: Cascade)
 
   @@index([leadEmail, status])
   @@index([closerId, status])
