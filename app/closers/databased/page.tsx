@@ -481,6 +481,7 @@ export default function CloserDatabase() {
             )}
           </div>
         </div>
+          </div>
         </div>
       </div>
 
