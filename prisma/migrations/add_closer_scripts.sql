@@ -40,3 +40,5 @@ ALTER TABLE "closer_script_assignments" ADD CONSTRAINT "closer_script_assignment
 ALTER TABLE "closer_script_assignments" ADD CONSTRAINT "closer_script_assignments_script_id_fkey" FOREIGN KEY ("script_id") REFERENCES "closer_scripts"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 
+
+

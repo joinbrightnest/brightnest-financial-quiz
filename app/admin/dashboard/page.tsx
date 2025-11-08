@@ -2167,7 +2167,7 @@ export default function AdminDashboard() {
               </div>
               </div>
 
-              {/* Metrics - Professional Card Layout */}
+                {/* Metrics - Professional Card Layout */}
               {crmShowMetrics && (
               <div className="bg-gradient-to-b from-gray-50 to-white px-6 py-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
