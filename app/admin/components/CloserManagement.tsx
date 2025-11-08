@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PlusCircle } from 'lucide-react';
 
 interface Closer {
@@ -84,6 +84,9 @@ export default function CloserManagement() {
   const [leadSearchQuery, setLeadSearchQuery] = useState('');
   const [showLeadDropdown, setShowLeadDropdown] = useState(false);
   const leadDropdownRef = useRef<HTMLDivElement>(null);
+  const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
+  const [selectedLeadSessionId, setSelectedLeadSessionId] = useState<string | null>(null);
+  const [showLeadModal, setShowLeadModal] = useState(false);
   
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -342,6 +345,62 @@ export default function CloserManagement() {
     }
   };
 
+
+  const toggleTaskExpand = (taskId: string) => {
+    setExpandedTasks(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(taskId)) {
+        newSet.delete(taskId);
+      } else {
+        newSet.add(taskId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleUpdateTaskStatus = async (taskId: string, newStatus: 'pending' | 'in_progress' | 'completed') => {
+    try {
+      const response = await fetch(`/api/admin/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: newStatus,
+        }),
+      });
+
+      if (response.ok) {
+        await fetchAllTasks(); // Refresh tasks list
+      } else {
+        alert('Failed to update task status');
+      }
+    } catch (error) {
+      console.error('Error updating task status:', error);
+      alert('An error occurred while updating the task');
+    }
+  };
+
+  const viewLeadDetails = async (leadEmail: string) => {
+    try {
+      const response = await fetch(`/api/leads/by-email?email=${encodeURIComponent(leadEmail)}`);
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.lead && data.lead.id) {
+          setSelectedLeadSessionId(data.lead.id);
+          setShowLeadModal(true);
+        } else {
+          alert('Lead details not found');
+        }
+      } else {
+        alert('Failed to load lead details');
+      }
+    } catch (error) {
+      console.error('Error loading lead details:', error);
+      alert('An error occurred while loading lead details');
+    }
+  };
 
   const fetchAllTasks = async () => {
     setIsLoadingTasks(true);
@@ -1941,90 +2000,154 @@ export default function CloserManagement() {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {filteredTasks.map((task) => {
+                        const isExpanded = expandedTasks.has(task.id);
                         const associatedContact = task.appointment?.customerName || null;
+                        const leadEmail = task.appointment?.customerEmail || task.leadEmail;
                         
                         return (
-                          <tr key={task.id} className="hover:bg-gray-50 transition-colors">
-                            {/* Status Column */}
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              {task.status === 'completed' ? (
-                                <div className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center">
-                                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                  </svg>
-                                </div>
-                              ) : (
-                                <div className="w-6 h-6 rounded-full bg-amber-100 border-2 border-amber-400"></div>
-                              )}
-                            </td>
-                            
-                            {/* Title Column */}
-                            <td className="px-6 py-4">
-                              <div className="flex items-center">
-                                <svg 
-                                  className="w-4 h-4 text-gray-400 mr-2"
-                                  fill="none" 
-                                  stroke="currentColor" 
-                                  viewBox="0 0 24 24"
+                          <React.Fragment key={task.id}>
+                            <tr className={`hover:bg-gray-50 transition-colors ${isExpanded ? 'bg-gray-50' : ''}`}>
+                              {/* Status Column - Clickable */}
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <button
+                                  onClick={() => {
+                                    if (task.status === 'completed') {
+                                      handleUpdateTaskStatus(task.id, 'pending');
+                                    } else {
+                                      handleUpdateTaskStatus(task.id, 'completed');
+                                    }
+                                  }}
+                                  className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
+                                  title={task.status === 'completed' ? 'Mark as not completed' : 'Mark as completed'}
                                 >
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                </svg>
-                                <span className={`text-sm font-medium text-gray-900 ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
-                                  {task.title}
-                                </span>
-                              </div>
-                            </td>
-                            
-                            {/* Priority Column */}
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`px-2 py-1 rounded-md text-xs ${getPriorityColor(task.priority)}`}>
-                                {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                              </span>
-                            </td>
-                            
-                            {/* Associated Contact Column */}
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center">
-                                {associatedContact ? (
-                                  <>
-                                    <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mr-2 flex-shrink-0">
-                                      <span className="text-xs font-medium text-indigo-700">
-                                        {associatedContact.charAt(0).toUpperCase()}
-                                      </span>
+                                  {task.status === 'completed' ? (
+                                    <div className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center">
+                                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                      </svg>
                                     </div>
-                                    <span className="text-sm text-gray-900">
-                                      {associatedContact}
-                                    </span>
-                                  </>
+                                  ) : (
+                                    <div className="w-6 h-6 rounded-full bg-amber-100 border-2 border-amber-400 hover:border-amber-500 transition-colors"></div>
+                                  )}
+                                </button>
+                              </td>
+                              
+                              {/* Title Column - Expandable */}
+                              <td className="px-6 py-4">
+                                <div className="flex items-center">
+                                  <button
+                                    onClick={() => toggleTaskExpand(task.id)}
+                                    className="mr-2 p-1 hover:bg-gray-200 rounded transition-colors"
+                                  >
+                                    <svg 
+                                      className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                                      fill="none" 
+                                      stroke="currentColor" 
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                    </svg>
+                                  </button>
+                                  <span className={`text-sm font-medium text-gray-900 ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
+                                    {task.title}
+                                  </span>
+                                </div>
+                              </td>
+                              
+                              {/* Priority Column */}
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`px-2 py-1 rounded-md text-xs ${getPriorityColor(task.priority)}`}>
+                                  {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                                </span>
+                              </td>
+                              
+                              {/* Associated Contact Column - Clickable */}
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center">
+                                  {associatedContact && leadEmail ? (
+                                    <>
+                                      <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mr-2 flex-shrink-0">
+                                        <span className="text-xs font-medium text-indigo-700">
+                                          {associatedContact.charAt(0).toUpperCase()}
+                                        </span>
+                                      </div>
+                                      <button
+                                        onClick={() => viewLeadDetails(leadEmail)}
+                                        className="text-sm text-gray-900 hover:text-indigo-600 hover:underline transition-colors cursor-pointer"
+                                        title="View lead details"
+                                      >
+                                        {associatedContact}
+                                      </button>
+                                    </>
+                                  ) : (
+                                    <span className="text-sm text-gray-400">--</span>
+                                  )}
+                                </div>
+                              </td>
+                              
+                              {/* Due Date Column */}
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                {task.dueDate ? (
+                                  <span className={`text-sm ${(isDueDateOverdue(task.dueDate) || isDueDateToday(task.dueDate)) && task.status !== 'completed' ? 'text-red-600 font-semibold' : 'text-gray-900'}`}>
+                                    {new Date(task.dueDate).toLocaleDateString()}
+                                  </span>
                                 ) : (
                                   <span className="text-sm text-gray-400">--</span>
                                 )}
-                              </div>
-                            </td>
+                              </td>
+                              
+                              {/* Actions Column */}
+                              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button
+                                  onClick={() => toggleTaskExpand(task.id)}
+                                  className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                                  title={isExpanded ? "Collapse details" : "View details"}
+                                >
+                                  {isExpanded ? (
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                    </svg>
+                                  ) : (
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                  )}
+                                </button>
+                              </td>
+                            </tr>
                             
-                            {/* Due Date Column */}
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              {task.dueDate ? (
-                                <span className={`text-sm ${(isDueDateOverdue(task.dueDate) || isDueDateToday(task.dueDate)) && task.status !== 'completed' ? 'text-red-600 font-semibold' : 'text-gray-900'}`}>
-                                  {new Date(task.dueDate).toLocaleDateString()}
-                                </span>
-                              ) : (
-                                <span className="text-sm text-gray-400">--</span>
-                              )}
-                            </td>
-                            
-                            {/* Actions Column */}
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                              <button
-                                className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
-                                title="Edit task"
-                              >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                </svg>
-                              </button>
-                            </td>
-                          </tr>
+                            {/* Expanded Details Row */}
+                            {isExpanded && (
+                              <tr className="bg-slate-50">
+                                <td colSpan={6} className="px-6 py-4">
+                                  <div className="space-y-3">
+                                    {task.description && (
+                                      <div>
+                                        <span className="text-xs font-semibold text-slate-600 uppercase">Description</span>
+                                        <p className="text-sm text-slate-700 mt-1">{task.description}</p>
+                                      </div>
+                                    )}
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div>
+                                        <span className="text-xs font-semibold text-slate-600 uppercase">Assigned To</span>
+                                        <p className="text-sm text-slate-700 mt-1">{task.closer?.name || 'N/A'}</p>
+                                      </div>
+                                      <div>
+                                        <span className="text-xs font-semibold text-slate-600 uppercase">Created At</span>
+                                        <p className="text-sm text-slate-700 mt-1">{new Date(task.createdAt).toLocaleString()}</p>
+                                      </div>
+                                      {task.completedAt && (
+                                        <div>
+                                          <span className="text-xs font-semibold text-slate-600 uppercase">Completed At</span>
+                                          <p className="text-sm text-slate-700 mt-1">{new Date(task.completedAt).toLocaleString()}</p>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
                         );
                       })}
                     </tbody>
@@ -2496,6 +2619,41 @@ export default function CloserManagement() {
                   Reset Password
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Lead Detail Modal */}
+      {showLeadModal && selectedLeadSessionId && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100]"
+          onClick={() => setShowLeadModal(false)}
+        >
+          <div 
+            className="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 px-6 py-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-white">Lead Details</h3>
+              <button
+                onClick={() => setShowLeadModal(false)}
+                className="text-white hover:text-gray-200 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Modal Content - Iframe to admin lead detail page */}
+            <div className="h-[calc(90vh-64px)] overflow-y-auto">
+              <iframe
+                src={`/admin/leads/${selectedLeadSessionId}`}
+                className="w-full h-full border-0"
+                title="Lead Details"
+              />
             </div>
           </div>
         </div>
