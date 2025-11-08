@@ -22,27 +22,27 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
   const isActive = (path: string) => pathname === path;
 
   return (
-    <div className={`${isCollapsed ? 'w-16 bg-slate-800' : 'w-64 bg-white'} border-r border-gray-200 flex-shrink-0 flex flex-col transition-all duration-300`}>
+    <div className={`${isCollapsed ? 'w-16' : 'w-64'} bg-slate-800 border-r border-slate-700 flex-shrink-0 flex flex-col transition-all duration-300`}>
       {/* Sidebar Header */}
-      <div className={`${isCollapsed ? 'p-4 border-b border-slate-700' : 'p-6 border-b border-gray-200'} flex items-center justify-between`}>
+      <div className={`${isCollapsed ? 'p-4' : 'p-6'} border-b border-slate-700 flex items-center justify-between`}>
         <Link href="/closers/dashboard" className={`flex items-center ${isCollapsed ? 'justify-center w-full' : 'space-x-3'}`}>
           <div className={`w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 ${isCollapsed ? 'rounded' : 'rounded-lg'} flex items-center justify-center shadow-md`}>
             <span className="text-white font-bold text-sm">B</span>
           </div>
           {!isCollapsed && (
             <div>
-              <h1 className="text-lg font-bold text-gray-900">BrightNest</h1>
-              <p className="text-xs text-gray-500">Closer Portal</p>
+              <h1 className="text-lg font-bold text-white">BrightNest</h1>
+              <p className="text-xs text-slate-300">Closer Portal</p>
             </div>
           )}
         </Link>
         {!isCollapsed && (
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1.5 hover:bg-slate-700 rounded-lg transition-colors"
             title="Collapse sidebar"
           >
-            <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
             </svg>
           </button>
@@ -58,17 +58,14 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
               isActive('/closers/dashboard')
                 ? isCollapsed 
                   ? 'bg-slate-700 text-white' 
-                  : 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-600'
+                  : 'bg-slate-700 text-white border-l-4 border-indigo-500'
                 : isCollapsed
                   ? 'text-slate-300 hover:bg-slate-700'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  : 'text-slate-300 hover:bg-slate-700'
             }`}
             title={isCollapsed ? 'Dashboard' : ''}
           >
-            <svg className={`w-5 h-5 ${isCollapsed 
-              ? (isActive('/closers/dashboard') ? 'text-white' : 'text-slate-300')
-              : (isActive('/closers/dashboard') ? 'text-indigo-600' : 'text-gray-400')
-            }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-5 h-5 ${isActive('/closers/dashboard') ? 'text-white' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
             {!isCollapsed && <span>Dashboard</span>}
@@ -84,17 +81,14 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
               isActive('/closers/databased')
                 ? isCollapsed 
                   ? 'bg-slate-700 text-white' 
-                  : 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-600'
+                  : 'bg-slate-700 text-white border-l-4 border-indigo-500'
                 : isCollapsed
                   ? 'text-slate-300 hover:bg-slate-700'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  : 'text-slate-300 hover:bg-slate-700'
             }`}
             title={isCollapsed ? 'Database' : ''}
           >
-            <svg className={`w-5 h-5 ${isCollapsed 
-              ? (isActive('/closers/databased') ? 'text-white' : 'text-slate-300')
-              : (isActive('/closers/databased') ? 'text-indigo-600' : 'text-gray-400')
-            }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-5 h-5 ${isActive('/closers/databased') ? 'text-white' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
             </svg>
             {!isCollapsed && <span>Database</span>}
@@ -110,17 +104,14 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
               isActive('/closers/scripts')
                 ? isCollapsed 
                   ? 'bg-slate-700 text-white' 
-                  : 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-600'
+                  : 'bg-slate-700 text-white border-l-4 border-indigo-500'
                 : isCollapsed
                   ? 'text-slate-300 hover:bg-slate-700'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  : 'text-slate-300 hover:bg-slate-700'
             }`}
             title={isCollapsed ? 'Scripts' : ''}
           >
-            <svg className={`w-5 h-5 ${isCollapsed 
-              ? (isActive('/closers/scripts') ? 'text-white' : 'text-slate-300')
-              : (isActive('/closers/scripts') ? 'text-indigo-600' : 'text-gray-400')
-            }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-5 h-5 ${isActive('/closers/scripts') ? 'text-white' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             {!isCollapsed && <span>Scripts</span>}
@@ -136,17 +127,14 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
               isActive('/closers/rules')
                 ? isCollapsed 
                   ? 'bg-slate-700 text-white' 
-                  : 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-600'
+                  : 'bg-slate-700 text-white border-l-4 border-indigo-500'
                 : isCollapsed
                   ? 'text-slate-300 hover:bg-slate-700'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  : 'text-slate-300 hover:bg-slate-700'
             }`}
             title={isCollapsed ? 'Rules' : ''}
           >
-            <svg className={`w-5 h-5 ${isCollapsed 
-              ? (isActive('/closers/rules') ? 'text-white' : 'text-slate-300')
-              : (isActive('/closers/rules') ? 'text-indigo-600' : 'text-gray-400')
-            }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-5 h-5 ${isActive('/closers/rules') ? 'text-white' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
             {!isCollapsed && <span>Rules</span>}
@@ -162,17 +150,14 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
               isActive('/closers/tasks')
                 ? isCollapsed 
                   ? 'bg-slate-700 text-white' 
-                  : 'bg-indigo-50 text-indigo-700 border-l-4 border-indigo-600'
+                  : 'bg-slate-700 text-white border-l-4 border-indigo-500'
                 : isCollapsed
                   ? 'text-slate-300 hover:bg-slate-700'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  : 'text-slate-300 hover:bg-slate-700'
             }`}
             title={isCollapsed ? 'Tasks' : ''}
           >
-            <svg className={`w-5 h-5 ${isCollapsed 
-              ? (isActive('/closers/tasks') ? 'text-white' : 'text-slate-300')
-              : (isActive('/closers/tasks') ? 'text-indigo-600' : 'text-gray-400')
-            }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-5 h-5 ${isActive('/closers/tasks') ? 'text-white' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
             {!isCollapsed && (
@@ -200,7 +185,7 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
       </div>
 
       {/* Sidebar Footer */}
-      <div className={`${isCollapsed ? 'p-2 border-t border-slate-700' : 'p-4 border-t border-gray-200'}`}>
+      <div className={`${isCollapsed ? 'p-2' : 'p-4'} border-t border-slate-700`}>
         {!isCollapsed ? (
           <>
             <div className="flex items-center space-x-3 mb-4">
@@ -210,15 +195,15 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">
+                <p className="text-sm font-semibold text-white truncate">
                   {closer.name}
                 </p>
-                <p className="text-xs text-gray-500 truncate">{closer.email}</p>
+                <p className="text-xs text-slate-300 truncate">{closer.email}</p>
               </div>
             </div>
             <button
               onClick={onLogout}
-              className="w-full px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-2"
+              className="w-full px-3 py-2 text-sm font-medium text-slate-300 hover:bg-slate-700 rounded-lg transition-colors flex items-center space-x-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
