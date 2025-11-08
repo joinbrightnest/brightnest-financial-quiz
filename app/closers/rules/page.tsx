@@ -71,9 +71,8 @@ export default function CloserRules() {
   };
 
   const isSectionExpanded = (sectionKey: string) => {
-    // If expandedSections is empty, all sections are expanded by default
-    // Otherwise, only expanded if explicitly in the set
-    return expandedSections.size === 0 || expandedSections.has(sectionKey);
+    // Only expanded if explicitly in the set
+    return expandedSections.has(sectionKey);
   };
 
   // Icon component helper
