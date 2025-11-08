@@ -34,7 +34,7 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
   }, [isCollapsed]);
 
   return (
-    <div className={`${isCollapsed ? 'w-16' : 'w-64'} bg-slate-800 border-r border-slate-700 flex-shrink-0 flex flex-col transition-all duration-300`}>
+    <div className={`${isCollapsed ? 'w-16' : 'w-64'} h-screen bg-slate-800 border-r border-slate-700 flex-shrink-0 flex flex-col transition-all duration-300`}>
       {/* Sidebar Header */}
       <div className={`${isCollapsed ? 'p-4' : 'p-6'} border-b border-slate-700 flex items-center justify-between`}>
         <Link href="/closers/dashboard" className={`flex items-center ${isCollapsed ? 'justify-center w-full' : 'space-x-3'}`}>
@@ -186,7 +186,7 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
       </div>
 
       {/* Sidebar Footer */}
-      <div className={`${isCollapsed ? 'p-2' : 'p-4'} border-t border-slate-700`}>
+      <div className={`${isCollapsed ? 'p-2' : 'p-4'} border-t border-slate-700 flex-shrink-0`}>
         {/* Collapse/Expand Button - Always visible */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
