@@ -76,19 +76,116 @@ export default function CloserRules() {
     return expandedSections.size === 0 || expandedSections.has(sectionKey);
   };
 
+  // Icon component helper
+  const Icon = ({ name, className = "w-5 h-5" }: { name: string; className?: string }) => {
+    const icons: Record<string, JSX.Element> = {
+      book: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      ),
+      rocket: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      ),
+      phone: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+        </svg>
+      ),
+      shield: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+      ),
+      star: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+        </svg>
+      ),
+      check: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+      money: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      ),
+      x: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      ),
+      clipboard: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+      ),
+      phoneCall: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+        </svg>
+      ),
+      refresh: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+      ),
+      phoneOff: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M1 10.5a17.49 17.49 0 005 2.75M1 10.5a17.49 17.49 0 018 2.75m-8-2.75v1.5m8-2.75v1.5m-8 2.75h8m-8 0H3m5 5.5a17.49 17.49 0 005-2.75m0 0v-1.5m0 1.5h-5m5 0h5" />
+        </svg>
+      ),
+      document: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      ),
+      sun: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+      ),
+      pencil: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+        </svg>
+      ),
+      chat: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+      ),
+      scale: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+        </svg>
+      ),
+      chart: (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+      ),
+    };
+    return icons[name] || <span className={className}>?</span>;
+  };
+
   // Organized content structure
   const sections = {
     training: {
       title: 'Training & Development',
-      icon: '📚',
-      color: 'from-blue-500 to-blue-600',
-      bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200',
+      icon: 'book',
+      color: 'from-slate-600 to-slate-700',
+      bgColor: 'bg-slate-50',
+      borderColor: 'border-slate-200',
       items: [
         {
           id: 'onboarding',
           title: 'Onboarding & Orientation',
-          icon: '🚀',
+          icon: 'rocket',
           content: {
             intro: 'Welcome to BrightNest! This section covers everything you need to know to get started as a closer.',
             sections: [
@@ -128,7 +225,7 @@ export default function CloserRules() {
         {
           id: 'call-techniques',
           title: 'Effective Call Techniques',
-          icon: '📞',
+          icon: 'phone',
           content: {
             intro: 'Master the art of effective phone communication to maximize your success.',
             sections: [
@@ -183,7 +280,7 @@ export default function CloserRules() {
         {
           id: 'objection-handling',
           title: 'Objection Handling',
-          icon: '🛡️',
+          icon: 'shield',
           content: {
             intro: 'Learn how to handle common objections and turn them into opportunities.',
             sections: [
@@ -224,7 +321,7 @@ export default function CloserRules() {
         {
           id: 'best-practices',
           title: 'Best Practices',
-          icon: '⭐',
+          icon: 'star',
           content: {
             intro: 'Essential practices to maintain high performance and customer satisfaction.',
             sections: [
@@ -263,17 +360,17 @@ export default function CloserRules() {
     },
     status: {
       title: 'Status Guide',
-      icon: '✅',
-      color: 'from-green-500 to-green-600',
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200',
+      icon: 'check',
+      color: 'from-emerald-600 to-emerald-700',
+      bgColor: 'bg-emerald-50',
+      borderColor: 'border-emerald-200',
       items: [
         {
           id: 'converted',
           title: 'Converted',
           subtitle: 'Purchase Made',
-          icon: '💰',
-          color: 'bg-green-100 text-green-800 border-green-300',
+          icon: 'money',
+          color: 'bg-emerald-100 text-emerald-800 border-emerald-300',
           content: {
             whenToUse: [
               'Customer agrees to purchase a BrightNest plan during the call',
@@ -300,8 +397,8 @@ export default function CloserRules() {
           id: 'not-interested',
           title: 'Not Interested',
           subtitle: '',
-          icon: '❌',
-          color: 'bg-red-100 text-red-800 border-red-300',
+          icon: 'x',
+          color: 'bg-rose-100 text-rose-800 border-rose-300',
           content: {
             whenToUse: [
               'Customer explicitly states they\'re not interested',
@@ -327,8 +424,8 @@ export default function CloserRules() {
           id: 'needs-follow-up',
           title: 'Needs Follow Up',
           subtitle: '',
-          icon: '📋',
-          color: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+          icon: 'clipboard',
+          color: 'bg-amber-100 text-amber-800 border-amber-300',
           content: {
             whenToUse: [
               'Customer is interested but needs more information',
@@ -356,8 +453,8 @@ export default function CloserRules() {
           id: 'callback-requested',
           title: 'Callback Requested',
           subtitle: '',
-          icon: '📲',
-          color: 'bg-blue-100 text-blue-800 border-blue-300',
+          icon: 'phoneCall',
+          color: 'bg-indigo-100 text-indigo-800 border-indigo-300',
           content: {
             whenToUse: [
               'Customer explicitly asks you to call them back',
@@ -384,8 +481,8 @@ export default function CloserRules() {
           id: 'rescheduled',
           title: 'Rescheduled',
           subtitle: '',
-          icon: '🔄',
-          color: 'bg-purple-100 text-purple-800 border-purple-300',
+          icon: 'refresh',
+          color: 'bg-violet-100 text-violet-800 border-violet-300',
           content: {
             whenToUse: [
               'Customer needs to move their scheduled appointment',
@@ -412,8 +509,8 @@ export default function CloserRules() {
           id: 'no-answer',
           title: 'No Answer',
           subtitle: '',
-          icon: '📵',
-          color: 'bg-gray-100 text-gray-800 border-gray-300',
+          icon: 'phoneOff',
+          color: 'bg-slate-100 text-slate-800 border-slate-300',
           content: {
             whenToUse: [
               'You called but the customer didn\'t answer',
@@ -441,8 +538,8 @@ export default function CloserRules() {
           id: 'wrong-number',
           title: 'Wrong Number',
           subtitle: '',
-          icon: '📞',
-          color: 'bg-orange-100 text-orange-800 border-orange-300',
+          icon: 'phone',
+          color: 'bg-amber-100 text-amber-800 border-amber-300',
           content: {
             whenToUse: [
               'The phone number is incorrect or disconnected',
@@ -469,15 +566,15 @@ export default function CloserRules() {
     },
     procedures: {
       title: 'Procedures',
-      icon: '📝',
-      color: 'from-purple-500 to-purple-600',
-      bgColor: 'bg-purple-50',
-      borderColor: 'border-purple-200',
+      icon: 'document',
+      color: 'from-violet-600 to-violet-700',
+      bgColor: 'bg-violet-50',
+      borderColor: 'border-violet-200',
       items: [
         {
           id: 'daily-workflow',
           title: 'Daily Workflow',
-          icon: '🌅',
+          icon: 'sun',
           content: {
             sections: [
               {
@@ -542,7 +639,7 @@ export default function CloserRules() {
         {
           id: 'updating-status',
           title: 'Updating Status',
-          icon: '✏️',
+          icon: 'pencil',
           content: {
             sections: [
               {
@@ -584,7 +681,7 @@ export default function CloserRules() {
         {
           id: 'task-management',
           title: 'Task Management',
-          icon: '✅',
+          icon: 'check',
           content: {
             sections: [
               {
@@ -621,15 +718,15 @@ export default function CloserRules() {
     },
     guidelines: {
       title: 'Guidelines',
-      icon: '📋',
-      color: 'from-indigo-500 to-indigo-600',
+      icon: 'document',
+      color: 'from-indigo-600 to-indigo-700',
       bgColor: 'bg-indigo-50',
       borderColor: 'border-indigo-200',
       items: [
         {
           id: 'communication',
           title: 'Communication Guidelines',
-          icon: '💬',
+          icon: 'chat',
           content: {
             sections: [
               {
@@ -668,7 +765,7 @@ export default function CloserRules() {
         {
           id: 'compliance',
           title: 'Compliance & Legal',
-          icon: '⚖️',
+          icon: 'scale',
           content: {
             sections: [
               {
@@ -697,7 +794,7 @@ export default function CloserRules() {
         {
           id: 'performance',
           title: 'Performance Expectations',
-          icon: '📊',
+          icon: 'chart',
           content: {
             sections: [
               {
@@ -757,8 +854,8 @@ export default function CloserRules() {
         {/* Top Header Bar */}
         <div className="bg-white border-b border-gray-200 px-6 py-4">
           <div className="flex items-center">
-            <div className={`w-12 h-12 bg-gradient-to-br ${currentCategory?.color || 'from-indigo-500 to-indigo-600'} rounded-xl flex items-center justify-center mr-4 shadow-lg`}>
-              <span className="text-2xl">{currentCategory?.icon || '📚'}</span>
+            <div className={`w-12 h-12 bg-gradient-to-br ${currentCategory?.color || 'from-indigo-600 to-indigo-700'} rounded-xl flex items-center justify-center mr-4 shadow-md`}>
+              <Icon name={currentCategory?.icon || 'book'} className="w-6 h-6 text-white" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900">Internal Rules & Guidelines</h2>
@@ -778,8 +875,8 @@ export default function CloserRules() {
               <nav className="space-y-2">
                 {Object.entries(sections).map(([categoryKey, category]) => (
                   <div key={categoryKey} className="mb-4">
-                    <div className={`flex items-center px-3 py-2 mb-2 rounded-lg bg-gradient-to-r ${category.color} text-white text-sm font-semibold`}>
-                      <span className="mr-2">{category.icon}</span>
+                    <div className={`flex items-center px-3 py-2.5 mb-2 rounded-lg bg-gradient-to-r ${category.color} text-white text-sm font-semibold shadow-sm`}>
+                      <Icon name={category.icon} className="w-4 h-4 mr-2 text-white" />
                       {category.title}
                     </div>
                     <div className="space-y-1 pl-2">
@@ -787,13 +884,13 @@ export default function CloserRules() {
                         <button
                           key={item.id}
                           onClick={() => setActiveSection(item.id)}
-                          className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-200 flex items-center ${
+                          className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all duration-200 flex items-center ${
                             activeSection === item.id
-                              ? `bg-gradient-to-r ${category.color} text-white shadow-md`
+                              ? `bg-gradient-to-r ${category.color} text-white shadow-sm`
                               : 'text-gray-700 hover:bg-gray-50'
                           }`}
                         >
-                          <span className="mr-2">{item.icon}</span>
+                          <Icon name={item.icon} className={`w-4 h-4 mr-2 ${activeSection === item.id ? 'text-white' : 'text-gray-500'}`} />
                           <span className="flex-1">{item.title}</span>
                         </button>
                       ))}
@@ -809,9 +906,11 @@ export default function CloserRules() {
             {currentItem && (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 {/* Content Header */}
-                <div className={`bg-gradient-to-r ${currentCategory?.color} px-6 py-5`}>
+                <div className={`bg-gradient-to-r ${currentCategory?.color} px-6 py-5 shadow-sm`}>
                   <div className="flex items-center">
-                    <span className="text-3xl mr-3">{currentItem.icon}</span>
+                    <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                      <Icon name={currentItem.icon} className="w-6 h-6 text-white" />
+                    </div>
                     <div>
                       <h2 className="text-2xl font-bold text-white">{currentItem.title}</h2>
                       {currentItem.subtitle && (
@@ -828,53 +927,47 @@ export default function CloserRules() {
                 <div className="p-6">
                   {/* Status-specific content */}
                   {currentItem.content.whenToUse && (
-                    <div className="space-y-6">
-                      <div className="bg-blue-50 rounded-lg p-5 border border-blue-200">
-                        <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-                          <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
+                    <div className="space-y-5">
+                      <div className="bg-slate-50 rounded-lg p-5 border border-slate-200 shadow-sm">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                          <Icon name="check" className="w-5 h-5 mr-2 text-slate-600" />
                           When to Use
                         </h3>
-                        <ul className="space-y-2">
+                        <ul className="space-y-2.5">
                           {currentItem.content.whenToUse.map((item, idx) => (
                             <li key={idx} className="flex items-start">
-                              <span className="text-blue-600 mr-2 mt-1">•</span>
-                              <span className="text-gray-700">{item}</span>
+                              <span className="text-slate-500 mr-3 mt-1.5">•</span>
+                              <span className="text-gray-700 leading-relaxed">{item}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
 
-                      <div className="bg-green-50 rounded-lg p-5 border border-green-200">
-                        <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-                          <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                          </svg>
+                      <div className="bg-emerald-50 rounded-lg p-5 border border-emerald-200 shadow-sm">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                          <Icon name="check" className="w-5 h-5 mr-2 text-emerald-600" />
                           What to Do
                         </h3>
-                        <ul className="space-y-2">
+                        <ul className="space-y-2.5">
                           {currentItem.content.actions.map((item, idx) => (
                             <li key={idx} className="flex items-start">
-                              <span className="text-green-600 mr-2 mt-1">•</span>
-                              <span className="text-gray-700">{item}</span>
+                              <span className="text-emerald-600 mr-3 mt-1.5">•</span>
+                              <span className="text-gray-700 leading-relaxed">{item}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
 
-                      <div className="bg-amber-50 rounded-lg p-5 border border-amber-200">
-                        <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-                          <svg className="w-5 h-5 mr-2 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
+                      <div className="bg-amber-50 rounded-lg p-5 border border-amber-200 shadow-sm">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                          <Icon name="star" className="w-5 h-5 mr-2 text-amber-600" />
                           Important Notes
                         </h3>
-                        <ul className="space-y-2">
+                        <ul className="space-y-2.5">
                           {currentItem.content.notes.map((item, idx) => (
                             <li key={idx} className="flex items-start">
-                              <span className="text-amber-600 mr-2 mt-1">•</span>
-                              <span className="text-gray-700">{item}</span>
+                              <span className="text-amber-600 mr-3 mt-1.5">•</span>
+                              <span className="text-gray-700 leading-relaxed">{item}</span>
                             </li>
                           ))}
                         </ul>
@@ -892,9 +985,9 @@ export default function CloserRules() {
                         >
                           <button
                             onClick={() => toggleSection(`${currentItem.id}-${sectionIdx}`)}
-                            className="w-full px-5 py-4 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 transition-all flex items-center justify-between"
+                            className="w-full px-5 py-4 bg-gradient-to-r from-slate-50 to-slate-100 hover:from-slate-100 hover:to-slate-200 transition-all flex items-center justify-between border-b border-slate-200"
                           >
-                            <h3 className="text-lg font-bold text-gray-900">{section.title}</h3>
+                            <h3 className="text-lg font-semibold text-gray-900">{section.title}</h3>
                             <svg
                               className={`w-5 h-5 text-gray-600 transition-transform ${
                                 isSectionExpanded(`${currentItem.id}-${sectionIdx}`) ? 'rotate-180' : ''
@@ -911,8 +1004,8 @@ export default function CloserRules() {
                               <ul className="space-y-3">
                                 {section.items.map((item, itemIdx) => (
                                   <li key={itemIdx} className="flex items-start">
-                                    <span className={`flex-shrink-0 w-6 h-6 rounded-full ${currentCategory?.bgColor} ${currentCategory?.borderColor} border-2 flex items-center justify-center mr-3 mt-0.5`}>
-                                      <span className="text-xs font-bold" style={{ color: currentCategory?.color.includes('blue') ? '#2563eb' : currentCategory?.color.includes('green') ? '#16a34a' : currentCategory?.color.includes('purple') ? '#9333ea' : '#4f46e5' }}>{itemIdx + 1}</span>
+                                    <span className={`flex-shrink-0 w-7 h-7 rounded-full ${currentCategory?.bgColor} ${currentCategory?.borderColor} border-2 flex items-center justify-center mr-3 mt-0.5`}>
+                                      <span className="text-xs font-semibold text-gray-700">{itemIdx + 1}</span>
                                     </span>
                                     <span className="text-gray-700 leading-relaxed">{item}</span>
                                   </li>
