@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -70,7 +70,7 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
             </svg>
             {!isCollapsed && <span>Dashboard</span>}
             {isCollapsed && (
-              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity shadow-lg">
+              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] transition-opacity shadow-lg" style={{ top: '50%', transform: 'translateY(-50%)' }}>
                 Dashboard
               </div>
             )}
@@ -92,7 +92,7 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
             </svg>
             {!isCollapsed && <span>Database</span>}
             {isCollapsed && (
-              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity shadow-lg">
+              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] transition-opacity shadow-lg" style={{ top: '50%', transform: 'translateY(-50%)' }}>
                 Database
               </div>
             )}
@@ -114,7 +114,7 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
             </svg>
             {!isCollapsed && <span>Scripts</span>}
             {isCollapsed && (
-              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity shadow-lg">
+              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] transition-opacity shadow-lg" style={{ top: '50%', transform: 'translateY(-50%)' }}>
                 Scripts
               </div>
             )}
@@ -136,7 +136,7 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
             </svg>
             {!isCollapsed && <span>Rules</span>}
             {isCollapsed && (
-              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity shadow-lg">
+              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] transition-opacity shadow-lg" style={{ top: '50%', transform: 'translateY(-50%)' }}>
                 Rules
               </div>
             )}
@@ -172,7 +172,7 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
               </span>
             )}
             {isCollapsed && (
-              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50 transition-opacity shadow-lg">
+              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[9999] transition-opacity shadow-lg" style={{ top: '50%', transform: 'translateY(-50%)' }}>
                 Tasks
               </div>
             )}
