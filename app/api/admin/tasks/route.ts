@@ -23,10 +23,14 @@ export async function GET(request: NextRequest) {
         in: ['pending', 'in_progress', 'completed']
       }
     };
+    
+    // Only filter by leadEmail if provided
     if (leadEmail) {
       where.leadEmail = leadEmail;
     }
-    if (closerId) {
+    
+    // Only filter by closerId if provided AND not 'all'
+    if (closerId && closerId !== 'all') {
       where.closerId = closerId;
     }
 
