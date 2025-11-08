@@ -1887,7 +1887,7 @@ export default function CloserManagement() {
                             {/* Due Date Column */}
                             <td className="px-6 py-4 whitespace-nowrap">
                               {task.dueDate ? (
-                                <span className={`text-sm ${isDueDateOverdueOrToday(task.dueDate) && task.status !== 'completed' ? 'text-red-600 font-semibold' : 'text-gray-900'}`}>
+                                <span className={`text-sm ${(isDueDateOverdue(task.dueDate) || isDueDateToday(task.dueDate)) && task.status !== 'completed' ? 'text-red-600 font-semibold' : 'text-gray-900'}`}>
                                   {new Date(task.dueDate).toLocaleDateString()}
                                 </span>
                               ) : (
