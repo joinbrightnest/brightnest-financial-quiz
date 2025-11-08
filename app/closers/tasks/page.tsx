@@ -264,7 +264,61 @@ export default function CloserTasks() {
       description: '',
       priority: 'medium',
       dueDate: '',
+      leadEmail: '',
     });
+  };
+
+  const closeCreateTaskModal = () => {
+    setShowCreateTaskModal(false);
+    setTaskForm({
+      title: '',
+      description: '',
+      priority: 'medium',
+      dueDate: '',
+      leadEmail: '',
+    });
+    setError(null);
+  };
+
+  const handleCreateTask = async () => {
+    if (!taskForm.title.trim()) {
+      setError('Task title is required');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('closerToken');
+      if (!token) {
+        setError('Not authenticated');
+        return;
+      }
+
+      const response = await fetch('/api/closer/tasks', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: taskForm.title,
+          description: taskForm.description || null,
+          priority: taskForm.priority,
+          dueDate: taskForm.dueDate || null,
+          leadEmail: taskForm.leadEmail || null,
+        }),
+      });
+
+      if (response.ok) {
+        await fetchTasks();
+        closeCreateTaskModal();
+      } else {
+        const data = await response.json();
+        setError(data.error || 'Failed to create task');
+      }
+    } catch (error) {
+      console.error('Error creating task:', error);
+      setError('Failed to create task');
+    }
   };
 
   const toggleTaskExpand = (taskId: string) => {
