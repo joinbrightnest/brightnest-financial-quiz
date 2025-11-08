@@ -45,7 +45,7 @@ export default function CloserTasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<'not_completed' | 'completed'>('not_completed');
+  const [filter, setFilter] = useState<'all' | 'due_today' | 'overdue' | 'upcoming'>('all');
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
@@ -127,31 +127,67 @@ export default function CloserTasks() {
     }
   };
 
-  const isDueDateOverdueOrToday = (dueDate: string | null): boolean => {
+  const isDueDateToday = (dueDate: string | null): boolean => {
     if (!dueDate) return false;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const due = new Date(dueDate);
     due.setHours(0, 0, 0, 0);
-    return due <= today;
+    return due.getTime() === today.getTime();
+  };
+
+  const isDueDateOverdue = (dueDate: string | null): boolean => {
+    if (!dueDate) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const due = new Date(dueDate);
+    due.setHours(0, 0, 0, 0);
+    return due < today;
+  };
+
+  const isDueDateUpcoming = (dueDate: string | null): boolean => {
+    if (!dueDate) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const due = new Date(dueDate);
+    due.setHours(0, 0, 0, 0);
+    return due > today;
   };
 
   const getFilteredTasks = () => {
-    // Filter out cancelled tasks (removed status)
-    const validTasks = tasks.filter(t => t.status === 'pending' || t.status === 'in_progress' || t.status === 'completed');
+    // Filter out completed tasks (like HubSpot - only show active tasks)
+    const activeTasks = tasks.filter(t => t.status === 'pending' || t.status === 'in_progress');
     
-    let filtered = filter === 'completed' 
-      ? validTasks.filter(t => t.status === 'completed')
-      : validTasks.filter(t => t.status !== 'completed');
+    let filtered: Task[] = [];
+    
+    switch (filter) {
+      case 'due_today':
+        filtered = activeTasks.filter(t => isDueDateToday(t.dueDate));
+        break;
+      case 'overdue':
+        filtered = activeTasks.filter(t => isDueDateOverdue(t.dueDate));
+        break;
+      case 'upcoming':
+        filtered = activeTasks.filter(t => isDueDateUpcoming(t.dueDate));
+        break;
+      case 'all':
+      default:
+        filtered = activeTasks;
+        break;
+    }
     
     // Sort: overdue/today tasks first, then by due date ascending
     filtered.sort((a, b) => {
-      const aOverdue = a.dueDate ? isDueDateOverdueOrToday(a.dueDate) : false;
-      const bOverdue = b.dueDate ? isDueDateOverdueOrToday(b.dueDate) : false;
+      const aOverdue = a.dueDate ? isDueDateOverdue(a.dueDate) : false;
+      const bOverdue = b.dueDate ? isDueDateOverdue(b.dueDate) : false;
+      const aToday = a.dueDate ? isDueDateToday(a.dueDate) : false;
+      const bToday = b.dueDate ? isDueDateToday(b.dueDate) : false;
       
-      // If one is overdue/today and the other isn't, prioritize overdue
+      // Prioritize overdue, then today, then upcoming
       if (aOverdue && !bOverdue) return -1;
       if (!aOverdue && bOverdue) return 1;
+      if (aToday && !bToday) return -1;
+      if (!aToday && bToday) return 1;
       
       // If both are overdue or both are not, sort by due date
       if (a.dueDate && b.dueDate) {
@@ -438,24 +474,44 @@ export default function CloserTasks() {
         <div className="bg-white rounded-lg border border-gray-200 p-4 mb-8">
           <div className="flex space-x-2">
             <button
-              onClick={() => setFilter('not_completed')}
+              onClick={() => setFilter('all')}
               className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
-                filter === 'not_completed'
+                filter === 'all'
                   ? 'bg-slate-900 text-white shadow-sm'
                   : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
               }`}
             >
-              Not Completed ({tasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length})
+              All
             </button>
             <button
-              onClick={() => setFilter('completed')}
+              onClick={() => setFilter('due_today')}
               className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
-                filter === 'completed'
+                filter === 'due_today'
                   ? 'bg-slate-900 text-white shadow-sm'
                   : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
               }`}
             >
-              Completed ({tasks.filter(t => t.status === 'completed').length})
+              Due Today
+            </button>
+            <button
+              onClick={() => setFilter('overdue')}
+              className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+                filter === 'overdue'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
+              }`}
+            >
+              Overdue
+            </button>
+            <button
+              onClick={() => setFilter('upcoming')}
+              className={`px-5 py-2.5 rounded-md text-sm font-medium transition-all ${
+                filter === 'upcoming'
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
+              }`}
+            >
+              Upcoming
             </button>
           </div>
         </div>
@@ -623,7 +679,7 @@ export default function CloserTasks() {
                                 className="px-3 py-1.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-gray-900"
                               />
                             ) : task.dueDate ? (
-                              <span className={`text-sm ${isDueDateOverdueOrToday(task.dueDate) ? 'text-red-600 font-semibold' : 'text-gray-900'}`}>
+                              <span className={`text-sm ${isDueDateOverdue(task.dueDate) || isDueDateToday(task.dueDate) ? 'text-red-600 font-semibold' : 'text-gray-900'}`}>
                                 {new Date(task.dueDate).toLocaleDateString()}
                               </span>
                             ) : (
