@@ -293,9 +293,9 @@ export default function BudgetCalculatorPage() {
           }}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
+            <div className="text-center animate-fade-in">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-6 leading-tight tracking-tight">
-                Budget Calculator
+                Budget <span style={{ color: '#3D6B54' }}>Calculator</span>
               </h1>
               <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
                 If you've never budgeted before—or it's been a while—this budget calculator is a solid starting point. Type in your monthly take-home pay and get a budget example to begin.
@@ -663,9 +663,9 @@ export default function BudgetCalculatorPage() {
           {/* Get the Most out of the Budget Calculator */}
           <div className="mt-12 sm:mt-16 lg:mt-20" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
             <div className="py-12 sm:py-16 lg:py-20">
-              <div className="text-center mb-12">
+              <div className="text-center mb-12 animate-fade-in">
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
-                  Get the Most out of the Budget Calculator
+                  Get the Most out of the <span style={{ color: '#3D6B54' }}>Budget Calculator</span>
                 </h2>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
                 <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
@@ -675,15 +675,15 @@ export default function BudgetCalculatorPage() {
 
               <div className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* See if you're overspending */}
-                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
+                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
                   <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#3D6B54', opacity: 0.1 }}>
-                      <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                      <svg className="w-6 h-6 transition-transform duration-300 group-hover:scale-110" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-light text-slate-900 mb-3">See if you're overspending.</h3>
+                      <h3 className="text-lg font-light text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">See if you're overspending.</h3>
                       <p className="text-base text-slate-700 leading-relaxed font-light">
                         Is there a red negative number at the bottom of your budget? Don't freak out. This is just a wake-up call! You can get that number to zero. Just give every dollar a job—giving, saving and spending—without overspending! It's time to make some changes. (Keep reading.)
                       </p>
@@ -692,15 +692,15 @@ export default function BudgetCalculatorPage() {
                 </div>
 
                 {/* Find ways to cut expenses */}
-                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
+                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
                   <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#3D6B54', opacity: 0.1 }}>
-                      <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                      <svg className="w-6 h-6 transition-transform duration-300 group-hover:scale-110" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-light text-slate-900 mb-3">Find ways to cut expenses.</h3>
+                      <h3 className="text-lg font-light text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">Find ways to cut expenses.</h3>
                       <p className="text-base text-slate-700 leading-relaxed font-light">
                         Once you see you're overspending, you can fix the problem! Start by cutting down your spending. What if you took up meal planning to save on groceries? Get creative and cut the fluff where you can afford to. Then lower some numbers in the calculator based on this kind of planning.
                       </p>
@@ -709,15 +709,15 @@ export default function BudgetCalculatorPage() {
                 </div>
 
                 {/* Put extra money to work */}
-                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
+                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
                   <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#3D6B54', opacity: 0.1 }}>
-                      <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                      <svg className="w-6 h-6 transition-transform duration-300 group-hover:scale-110" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-light text-slate-900 mb-3">Put extra money to work.</h3>
+                      <h3 className="text-lg font-light text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">Put extra money to work.</h3>
                       <p className="text-base text-slate-700 leading-relaxed font-light">
                         Wait, did you have money left over after typing in all your expenses? Bravo! Time to give those dollars a job—build up your savings or pay off your debt. Whatever your current money goal is, get after it!
                       </p>
@@ -726,15 +726,15 @@ export default function BudgetCalculatorPage() {
                 </div>
 
                 {/* Make your first budget */}
-                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
+                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
                   <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#3D6B54', opacity: 0.1 }}>
-                      <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                      <svg className="w-6 h-6 transition-transform duration-300 group-hover:scale-110" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-light text-slate-900 mb-3">Make your first budget.</h3>
+                      <h3 className="text-lg font-light text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">Make your first budget.</h3>
                       <p className="text-base text-slate-700 leading-relaxed font-light">
                         Okay, you worked through your numbers in this budget calculator. Awesome. But don't leave them on the screen. This is just the first step in your beautiful budgeting journey. Take these numbers and start telling your money where to go—one monthly budget at a time.
                       </p>
@@ -747,9 +747,9 @@ export default function BudgetCalculatorPage() {
 
           {/* Best Practices for the Budget Categories */}
           <div className="mt-12 sm:mt-16 lg:mt-20">
-            <div className="text-center mb-12">
+            <div className="text-center mb-12 animate-fade-in">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
-                Best Practices for the Budget Categories
+                Best Practices for the <span style={{ color: '#3D6B54' }}>Budget Categories</span>
               </h2>
               <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
               <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
@@ -759,8 +759,15 @@ export default function BudgetCalculatorPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {/* Monthly Income */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
-                <h3 className="text-xl font-light text-slate-900 mb-4">Monthly Income</h3>
+              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.05s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                    <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Monthly Income</h3>
+                </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
                   This is your take-home pay after taxes. Put in your regular paycheck plus any extra money you plan to bring in (hello, side hustle).
@@ -768,8 +775,15 @@ export default function BudgetCalculatorPage() {
               </div>
 
               {/* Giving */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
-                <h3 className="text-xl font-light text-slate-900 mb-4">Giving</h3>
+              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.15s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                    <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Giving</h3>
+                </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
                   Be intentional about making generosity a regular part of your life. Start your budget by giving 10% of your income.
@@ -777,8 +791,15 @@ export default function BudgetCalculatorPage() {
               </div>
 
               {/* Savings */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
-                <h3 className="text-xl font-light text-slate-900 mb-4">Savings</h3>
+              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                    <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Savings</h3>
+                </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
                   If you're in debt, save $1,000 in a starter emergency fund. Then pause saving and focus on paying off that debt. Once you're debt-free, save up 3–6 months of expenses for a fully funded emergency fund. These are the first steps of your financial journey, and taking each step one at a time is how you make real progress with your money goals.
@@ -786,8 +807,15 @@ export default function BudgetCalculatorPage() {
               </div>
 
               {/* Food */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
-                <h3 className="text-xl font-light text-slate-900 mb-4">Food</h3>
+              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.25s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                    <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Food</h3>
+                </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
                   Food is the easiest budget line to bust—and the hardest to plan for that first month. Open your bank account and see how much you spent on food last month. Then, you can tweak this number as you plan your spending for this month.
@@ -795,8 +823,15 @@ export default function BudgetCalculatorPage() {
               </div>
 
               {/* Utilities */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
-                <h3 className="text-xl font-light text-slate-900 mb-4">Utilities</h3>
+              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                    <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Utilities</h3>
+                </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
                   Utilities are the essential expenses that keep your house running. The amounts can change, but check your bank account and see what you spent last month on electricity, water, the phone bill, natural gas, etc. Add those up and start with that number here.
@@ -804,8 +839,15 @@ export default function BudgetCalculatorPage() {
               </div>
 
               {/* Housing */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
-                <h3 className="text-xl font-light text-slate-900 mb-4">Housing</h3>
+              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.35s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                    <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Housing</h3>
+                </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
                   Pro tip: When you spend 25% (or less) of your take-home pay on housing (mortgage or rent plus insurance, property taxes and HOA fees), one of your biggest blessings (your home) won't turn into a financial burden.
@@ -813,8 +855,15 @@ export default function BudgetCalculatorPage() {
               </div>
 
               {/* Transportation */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
-                <h3 className="text-xl font-light text-slate-900 mb-4">Transportation</h3>
+              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                    <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Transportation</h3>
+                </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
                   Look back through your bank account and add up how much you spent on gas last month as a starting number for this category. Then don't forget auto insurance, maintenance, and anything else you spend on transportation.
@@ -822,8 +871,15 @@ export default function BudgetCalculatorPage() {
               </div>
 
               {/* Insurance */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
-                <h3 className="text-xl font-light text-slate-900 mb-4">Insurance</h3>
+              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.45s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                    <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Insurance</h3>
+                </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
                   You planned for homeowners/renters and auto coverage in other categories. Here, add what you spend on other insurances you need: term life, health, long-term disability, long-term care (if you're age 60+), identity theft, and umbrella (if you've got a net worth of $500,000 or more).
@@ -831,8 +887,15 @@ export default function BudgetCalculatorPage() {
               </div>
 
               {/* Household Items */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
-                <h3 className="text-xl font-light text-slate-900 mb-4">Household Items</h3>
+              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                    <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Household Items</h3>
+                </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
                   Toothpaste, shampoo, laundry supplies: How much do you spend on these things each month? This is another hard one to pin down at first—but soon you'll be a pro here. (Not literally. No one goes pro planning toilet paper spending. Yet.)
@@ -840,8 +903,15 @@ export default function BudgetCalculatorPage() {
               </div>
 
               {/* Debt */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
-                <h3 className="text-xl font-light text-slate-900 mb-4">Debt</h3>
+              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.55s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                    <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Debt</h3>
+                </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
                   Debt is any money you owe to anyone for any reason. So, add up all your car payments, credit card bills, student loans, medical debt and other payment plans and put that total here. Then start hustling to pay it off and really make progress with your money.
@@ -849,8 +919,15 @@ export default function BudgetCalculatorPage() {
               </div>
 
               {/* Retirement */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
-                <h3 className="text-xl font-light text-slate-900 mb-4">Retirement</h3>
+              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                    <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Retirement</h3>
+                </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
                   When you're debt-free and your fully funded emergency fund is, well, fully funded, it's time for retirement savings! Start prepping for your future by investing 15% of your income.
@@ -858,8 +935,15 @@ export default function BudgetCalculatorPage() {
               </div>
 
               {/* Personal and Entertainment */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
-                <h3 className="text-xl font-light text-slate-900 mb-4">Personal and Entertainment</h3>
+              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.65s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                    <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Personal and Entertainment</h3>
+                </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
                   This is what you plan to spend on all the fun stuff: concert tickets, family trips to the ballpark, bagpipe lessons, salon visits—all those exciting extras. (Just remember, needs come before wants.)
@@ -867,8 +951,15 @@ export default function BudgetCalculatorPage() {
               </div>
 
               {/* Other */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
-                <h3 className="text-xl font-light text-slate-900 mb-4">Other</h3>
+              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.7s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110" style={{ backgroundColor: '#3D6B54', opacity: 0.15 }}>
+                    <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Other</h3>
+                </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
                   This budget calculator only has the most common categories, but it probably doesn't cover everything you spend money on. Go ahead and add any other expenses here. When you start budgeting regularly, you can customize and add as many categories as you need.
