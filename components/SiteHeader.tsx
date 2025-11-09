@@ -1,13 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 export default function SiteHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFreeToolsOpen, setIsFreeToolsOpen] = useState(false);
   const pathname = usePathname();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const isActive = (path: string) => {
     if (path === "/") {
@@ -52,8 +62,18 @@ export default function SiteHeader() {
             {/* Free Tools Dropdown */}
             <div 
               className="relative"
-              onMouseEnter={() => setIsFreeToolsOpen(true)}
-              onMouseLeave={() => setIsFreeToolsOpen(false)}
+              onMouseEnter={() => {
+                if (timeoutRef.current) {
+                  clearTimeout(timeoutRef.current);
+                  timeoutRef.current = null;
+                }
+                setIsFreeToolsOpen(true);
+              }}
+              onMouseLeave={() => {
+                timeoutRef.current = setTimeout(() => {
+                  setIsFreeToolsOpen(false);
+                }, 150); // Small delay to allow moving to dropdown
+              }}
             >
               <button
                 className={`px-4 py-2.5 font-medium text-sm transition-all duration-200 rounded-lg group ${
@@ -77,7 +97,21 @@ export default function SiteHeader() {
               
               {/* Dropdown Menu */}
               {isFreeToolsOpen && (
-                <div className="absolute left-0 top-full mt-2 w-[300px] bg-white rounded-xl shadow-xl border border-slate-200/60 py-6 z-50 backdrop-blur-sm">
+                <div 
+                  className="absolute left-0 top-full mt-1 w-[300px] bg-white rounded-xl shadow-xl border border-slate-200/60 py-6 z-50 backdrop-blur-sm"
+                  onMouseEnter={() => {
+                    if (timeoutRef.current) {
+                      clearTimeout(timeoutRef.current);
+                      timeoutRef.current = null;
+                    }
+                    setIsFreeToolsOpen(true);
+                  }}
+                  onMouseLeave={() => {
+                    timeoutRef.current = setTimeout(() => {
+                      setIsFreeToolsOpen(false);
+                    }, 150);
+                  }}
+                >
                   <div className="px-6">
                     <h3 className="font-bold text-slate-900 mb-4 text-sm">Budgeting</h3>
                     <ul className="space-y-2 text-sm">
