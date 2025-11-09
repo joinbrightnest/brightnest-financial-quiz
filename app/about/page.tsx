@@ -41,25 +41,25 @@ export default function AboutPage() {
           <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 pb-16 sm:pb-20">
             {/* Sub-navigation Tabs - Centered like BetterHelp */}
             <div className="flex flex-wrap justify-center gap-6 mb-8 sm:mb-10">
-              <Link href="/about" className="text-sm text-white border-b-2 border-white pb-1.5 font-light">
+              <Link href="/about" className="text-base text-white border-b-2 pb-1.5 font-light transition-colors hover:text-[#8FC47E] active:text-[#8FC47E]" style={{ borderColor: 'white' }}>
                 About
               </Link>
-              <Link href="/careers" className="text-sm text-white/70 hover:text-white pb-1.5 border-b-2 border-transparent hover:border-white/30 transition-colors font-light">
+              <Link href="/careers" className="text-base text-white border-b-2 border-transparent pb-1.5 font-light transition-colors hover:text-[#8FC47E] active:text-[#8FC47E] hover:border-[#8FC47E]">
                 Careers
               </Link>
-              <Link href="/about" className="text-sm text-white/70 hover:text-white pb-1.5 border-b-2 border-transparent hover:border-white/30 transition-colors font-light">
+              <Link href="/about" className="text-base text-white border-b-2 border-transparent pb-1.5 font-light transition-colors hover:text-[#8FC47E] active:text-[#8FC47E] hover:border-[#8FC47E]">
                 Social impact
               </Link>
-              <Link href="/about" className="text-sm text-white/70 hover:text-white pb-1.5 border-b-2 border-transparent hover:border-white/30 transition-colors font-light">
+              <Link href="/about" className="text-base text-white border-b-2 border-transparent pb-1.5 font-light transition-colors hover:text-[#8FC47E] active:text-[#8FC47E] hover:border-[#8FC47E]">
                 Client outcomes
               </Link>
-              <Link href="/about" className="text-sm text-white/70 hover:text-white pb-1.5 border-b-2 border-transparent hover:border-white/30 transition-colors font-light">
+              <Link href="/about" className="text-base text-white border-b-2 border-transparent pb-1.5 font-light transition-colors hover:text-[#8FC47E] active:text-[#8FC47E] hover:border-[#8FC47E]">
                 Responsible AI
               </Link>
             </div>
 
-            {/* Main Heading - Clean muted green like BetterHelp */}
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-center mb-6 sm:mb-8 leading-tight tracking-tight" style={{ color: '#669977' }}>
+            {/* Main Heading - Lighter vibrant green like BetterHelp's "Find yourself in therapy" */}
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-center mb-6 sm:mb-8 leading-tight tracking-tight" style={{ color: '#8FC47E' }}>
               Rebuild your relationship with money
             </h2>
             
