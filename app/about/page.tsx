@@ -5,57 +5,127 @@ import SiteHeader from "@/components/SiteHeader";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
+    <div className="min-h-screen bg-white">
       <SiteHeader />
 
-      {/* Hero Section */}
-      <section className="py-16 sm:py-20 lg:py-24 relative overflow-hidden">
-        {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-50/30 via-white to-amber-50/20"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-teal-100/20 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-amber-100/20 to-transparent rounded-full blur-3xl"></div>
+      {/* Hero Section - Enhanced with Depth */}
+      <section className="relative py-20 sm:py-28 lg:py-32 overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50">
+        {/* Multi-layered background for depth */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(20,184,166,0.08),transparent_50%)]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(251,191,36,0.06),transparent_50%)]"></div>
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-teal-100/20 rounded-full blur-3xl -translate-x-1/2"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-100/20 rounded-full blur-3xl translate-x-1/2"></div>
+        </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center mb-16">
+          <div className="max-w-4xl mx-auto text-center">
             <div className="inline-block mb-6">
-              <span className="text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full">About Us</span>
+              <span className="text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50/80 backdrop-blur-sm px-5 py-2.5 rounded-full border border-teal-100 shadow-sm">
+                About Us
+              </span>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-slate-900 mb-6 leading-[1.1] tracking-tight">
               About BrightNest
             </h1>
-            <p className="text-lg sm:text-xl text-slate-600 leading-relaxed max-w-3xl mx-auto mb-8">
+            <p className="text-xl sm:text-2xl text-slate-600 leading-relaxed max-w-3xl mx-auto mb-12 font-light">
               Helping People Rebuild Their Relationship With Money
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-16">
-            <div className="space-y-6 relative">
-              <div className="absolute -left-4 top-0 bottom-0 w-1 bg-gradient-to-b from-teal-500 to-amber-400 rounded-full"></div>
-              <p className="text-base text-slate-700 leading-relaxed">
-                Money isn&apos;t just numbers.
-              </p>
-              <p className="text-base text-slate-700 leading-relaxed">
-                It&apos;s emotion, habit, and identity — all tangled together.
-              </p>
-              <p className="text-base text-slate-700 leading-relaxed">
-                Most people don&apos;t struggle because they don&apos;t know what to do.
-              </p>
-              <p className="text-base text-slate-700 leading-relaxed">
-                They struggle because they can&apos;t make themselves do it consistently.
-              </p>
-              <p className="text-base text-slate-700 leading-relaxed font-semibold">
-                That&apos;s where BrightNest comes in.
-              </p>
-            </div>
-            <div className="relative h-64 sm:h-80 lg:h-96 group">
-              <div className="absolute inset-0 bg-gradient-to-br from-teal-100 to-teal-50 rounded-xl shadow-lg border border-teal-200/50 flex items-center justify-center transform group-hover:scale-[1.02] transition-transform duration-300">
-                <div className="text-center p-8">
-                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 mb-6 shadow-lg">
-                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
+          {/* Story Card with Depth */}
+          <div className="max-w-6xl mx-auto mt-16">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+              <div className="space-y-6 relative">
+                <div className="absolute -left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-teal-500 via-teal-400 to-amber-400 rounded-full shadow-lg"></div>
+                <div className="pl-8 space-y-5">
+                  <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
+                    Money isn&apos;t just numbers.
+                  </p>
+                  <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
+                    It&apos;s emotion, habit, and identity — all tangled together.
+                  </p>
+                  <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
+                    Most people don&apos;t struggle because they don&apos;t know what to do.
+                  </p>
+                  <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
+                    They struggle because they can&apos;t make themselves do it consistently.
+                  </p>
+                  <p className="text-lg sm:text-xl text-slate-700 leading-relaxed font-semibold text-teal-700">
+                    That&apos;s where BrightNest comes in.
+                  </p>
+                </div>
+              </div>
+              
+              {/* Visual Element with Depth */}
+              <div className="relative h-80 sm:h-96 lg:h-[420px] group">
+                <div className="absolute inset-0 bg-gradient-to-br from-teal-50 via-white to-amber-50 rounded-2xl shadow-2xl border border-slate-200/60 transform group-hover:scale-[1.02] transition-transform duration-500">
+                  <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(20,184,166,0.05)_0%,transparent_50%,rgba(251,191,36,0.05)_100%)] rounded-2xl"></div>
+                  <div className="absolute inset-0 flex items-center justify-center p-8">
+                    <div className="text-center">
+                      <div className="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 mb-6 shadow-xl transform group-hover:scale-110 transition-transform duration-300">
+                        <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                      </div>
+                      <p className="text-slate-700 font-semibold text-lg uppercase tracking-wider">Your Financial Journey</p>
+                      <p className="text-slate-500 text-sm mt-2">Built one step at a time</p>
+                    </div>
                   </div>
-                  <p className="text-slate-700 font-semibold text-sm uppercase tracking-wider">Your Financial Journey</p>
+                </div>
+                {/* Decorative glow */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-teal-400 to-amber-400 rounded-2xl opacity-20 blur-xl -z-10 group-hover:opacity-30 transition-opacity"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Mission Section - Enhanced Card Design */}
+      <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-white">
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-slate-50/30 to-white"></div>
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-teal-50/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-16">
+              <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50/80 backdrop-blur-sm px-5 py-2.5 rounded-full border border-teal-100 shadow-sm mb-6">
+                Our Mission
+              </span>
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mt-6 mb-8 leading-tight tracking-tight">
+                Our Mission
+              </h2>
+            </div>
+            
+            {/* Enhanced Mission Card */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-amber-400/10 rounded-3xl blur-2xl transform scale-105"></div>
+              <div className="relative bg-white rounded-3xl p-10 sm:p-14 lg:p-16 border border-slate-200/80 shadow-2xl">
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500 rounded-t-3xl"></div>
+                <div className="space-y-6 relative z-10">
+                  <p className="text-2xl sm:text-3xl text-slate-900 leading-relaxed font-medium">
+                    At BrightNest, our mission is simple:
+                  </p>
+                  <p className="text-2xl sm:text-3xl text-teal-700 leading-relaxed font-bold">
+                    to help people change their financial behaviour for good.
+                  </p>
+                  <div className="pt-6 border-t border-slate-200 space-y-5">
+                    <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
+                      We combine psychology, structure, and guidance from certified experts to help you take back control of your money — step by step, without guilt or overwhelm.
+                    </p>
+                    <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
+                      We don&apos;t just teach budgeting.
+                    </p>
+                    <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
+                      We help you understand why you spend, how to change your habits, and what systems actually keep you consistent.
+                    </p>
+                    <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
+                      The goal isn&apos;t perfection.
+                    </p>
+                    <p className="text-lg sm:text-xl text-slate-700 leading-relaxed font-semibold text-teal-700">
+                      It&apos;s progress — and freedom.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -63,164 +133,104 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Mission Section */}
-      <section className="py-16 sm:py-20 lg:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-teal-50/20 to-slate-50"></div>
-        <div className="absolute top-20 right-10 w-72 h-72 bg-amber-100/30 rounded-full blur-3xl"></div>
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full mb-4">Our Mission</span>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4 mb-6 leading-tight">
-                Our Mission
-              </h2>
-            </div>
-            <div className="bg-white rounded-xl p-8 sm:p-12 border border-slate-200/60 shadow-lg relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500"></div>
-              <div className="space-y-6 relative z-10">
-                <p className="text-xl sm:text-2xl text-slate-900 leading-relaxed font-medium">
-                  At BrightNest, our mission is simple:
-                </p>
-                <p className="text-xl sm:text-2xl text-slate-900 leading-relaxed font-semibold">
-                  to help people change their financial behaviour for good.
-                </p>
-                <p className="text-lg text-slate-700 leading-relaxed">
-                  We combine psychology, structure, and guidance from certified experts to help you take back control of your money — step by step, without guilt or overwhelm.
-                </p>
-                <p className="text-lg text-slate-700 leading-relaxed">
-                  We don&apos;t just teach budgeting.
-                </p>
-                <p className="text-lg text-slate-700 leading-relaxed">
-                  We help you understand why you spend, how to change your habits, and what systems actually keep you consistent.
-                </p>
-                <p className="text-lg text-slate-700 leading-relaxed">
-                  The goal isn&apos;t perfection.
-                </p>
-                <p className="text-lg text-slate-700 leading-relaxed font-semibold">
-                  It&apos;s progress — and freedom.
-                </p>
-              </div>
-            </div>
-          </div>
+      {/* What Makes BrightNest Different - Enhanced Grid */}
+      <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
+        <div className="absolute inset-0">
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-teal-50/50 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-amber-50/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
         </div>
-      </section>
-
-      {/* What Makes BrightNest Different */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-white relative overflow-hidden">
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-50/30 rounded-full blur-3xl"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full mb-4">What Makes Us Different</span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4 mb-6 max-w-4xl mx-auto leading-tight">
+            <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50/80 backdrop-blur-sm px-5 py-2.5 rounded-full border border-teal-100 shadow-sm mb-6">
+              What Makes Us Different
+            </span>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mt-6 mb-6 max-w-4xl mx-auto leading-tight tracking-tight">
               What Makes BrightNest Different
             </h2>
-            <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed mb-8">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
               Most financial advice focuses on spreadsheets, apps, or tips. We focus on human behaviour.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            <div className="group bg-gradient-to-br from-white to-teal-50/30 rounded-xl p-8 border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-teal-100/20 rounded-full -mr-12 -mt-12"></div>
-              <div className="flex items-start space-x-4 relative z-10">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto mb-12">
+            {[
+              {
+                title: "Behavioural Science",
+                description: "Because lasting change starts with mindset.",
+                icon: "M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+              },
+              {
+                title: "Proven Frameworks",
+                description: "To simplify decisions and remove guesswork.",
+                icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+              },
+              {
+                title: "Accountability & Coaching",
+                description: "To help you follow through, not just plan.",
+                icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+              },
+              {
+                title: "Clear Tracking Dashboards",
+                description: "So you can see your progress in real time.",
+                icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+              }
+            ].map((item, index) => (
+              <div 
+                key={index}
+                className="group relative bg-white rounded-2xl p-8 border border-slate-200/80 hover:border-teal-300 hover:shadow-xl transition-all duration-300 overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-teal-50 to-transparent rounded-full -mr-16 -mt-16 opacity-50 group-hover:opacity-70 transition-opacity"></div>
+                <div className="flex items-start space-x-5 relative z-10">
+                  <div className="flex-shrink-0">
+                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                      <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-teal-700 transition-colors">{item.title}</h3>
+                    <p className="text-base text-slate-600 leading-relaxed">{item.description}</p>
                   </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Behavioural Science</h3>
-                  <p className="text-sm text-slate-600 leading-relaxed">Because lasting change starts with mindset.</p>
-                </div>
               </div>
-            </div>
-            <div className="group bg-gradient-to-br from-white to-teal-50/30 rounded-xl p-8 border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-teal-100/20 rounded-full -mr-12 -mt-12"></div>
-              <div className="flex items-start space-x-4 relative z-10">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Proven Frameworks</h3>
-                  <p className="text-sm text-slate-600 leading-relaxed">To simplify decisions and remove guesswork.</p>
-                </div>
-              </div>
-            </div>
-            <div className="group bg-gradient-to-br from-white to-teal-50/30 rounded-xl p-8 border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-teal-100/20 rounded-full -mr-12 -mt-12"></div>
-              <div className="flex items-start space-x-4 relative z-10">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Accountability & Coaching</h3>
-                  <p className="text-sm text-slate-600 leading-relaxed">To help you follow through, not just plan.</p>
-                </div>
-              </div>
-            </div>
-            <div className="group bg-gradient-to-br from-white to-teal-50/30 rounded-xl p-8 border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-teal-100/20 rounded-full -mr-12 -mt-12"></div>
-              <div className="flex items-start space-x-4 relative z-10">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Clear Tracking Dashboards</h3>
-                  <p className="text-sm text-slate-600 leading-relaxed">So you can see your progress in real time.</p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
           
-          <div className="max-w-4xl mx-auto mt-12 text-center">
-            <p className="text-lg text-slate-700 leading-relaxed">
+          <div className="max-w-4xl mx-auto text-center bg-white/60 backdrop-blur-sm rounded-2xl p-8 border border-slate-200/60 shadow-lg">
+            <p className="text-xl text-slate-700 leading-relaxed mb-3">
               You don&apos;t need to become a finance expert.
             </p>
-            <p className="text-lg text-slate-700 leading-relaxed font-semibold mt-2">
+            <p className="text-xl text-slate-700 leading-relaxed font-semibold text-teal-700">
               You just need the right environment, habits, and support — that&apos;s what BrightNest gives you.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Why We Exist */}
-      <section className="py-16 sm:py-20 lg:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-white to-amber-50/20"></div>
+      {/* Why We Exist - Storytelling Section */}
+      <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-white">
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-slate-50/20 to-white"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4 mb-6 leading-tight">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-8 leading-tight tracking-tight">
                 Why We Exist
               </h2>
             </div>
-            <div className="space-y-6">
-              <p className="text-lg text-slate-700 leading-relaxed">
+            <div className="bg-gradient-to-br from-slate-50 to-white rounded-3xl p-10 sm:p-14 border border-slate-200/80 shadow-xl space-y-6">
+              <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed">
                 Because money stress is one of the biggest causes of anxiety, conflict, and lost potential in people&apos;s lives.
               </p>
-              <p className="text-lg text-slate-700 leading-relaxed">
+              <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed">
                 We&apos;ve seen what happens when people live paycheck to paycheck, avoid their bank apps, or feel trapped by debt.
               </p>
-              <p className="text-lg text-slate-700 leading-relaxed">
+              <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed">
                 It&apos;s not about lacking discipline — it&apos;s about lacking a system that works with your behaviour, not against it.
               </p>
-              <p className="text-lg text-slate-700 leading-relaxed font-semibold">
+              <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed font-semibold text-teal-700 pt-4 border-t border-slate-200">
                 BrightNest was built to change that — to make personal finance feel clear, actionable, and empowering again.
               </p>
             </div>
@@ -228,156 +238,179 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* What We Believe */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-white relative overflow-hidden">
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-50/30 rounded-full blur-3xl"></div>
+      {/* What We Believe - Enhanced Grid */}
+      <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-1/3 w-96 h-96 bg-teal-100/30 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-amber-100/30 rounded-full blur-3xl"></div>
+        </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4 mb-6 leading-tight">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-8 leading-tight tracking-tight">
                 What We Believe
               </h2>
             </div>
-            <div className="space-y-6">
-              <div>
-                <p className="text-lg text-slate-700 leading-relaxed font-semibold mb-2">
-                  Behaviour beats motivation.
-                </p>
-                <p className="text-lg text-slate-700 leading-relaxed">
-                  You don&apos;t need more willpower — you need better systems.
-                </p>
-              </div>
-              <div>
-                <p className="text-lg text-slate-700 leading-relaxed font-semibold mb-2">
-                  Small wins create momentum.
-                </p>
-                <p className="text-lg text-slate-700 leading-relaxed">
-                  Big financial change starts with tiny daily habits.
-                </p>
-              </div>
-              <div>
-                <p className="text-lg text-slate-700 leading-relaxed font-semibold mb-2">
-                  Clarity brings confidence.
-                </p>
-                <p className="text-lg text-slate-700 leading-relaxed">
-                  When you see where your money goes, you can finally steer it with intention.
-                </p>
-              </div>
-              <div>
-                <p className="text-lg text-slate-700 leading-relaxed font-semibold mb-2">
-                  Freedom is the goal.
-                </p>
-                <p className="text-lg text-slate-700 leading-relaxed">
-                  Financial control isn&apos;t about restriction — it&apos;s about choice.
-                </p>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[
+                {
+                  title: "Behaviour beats motivation.",
+                  description: "You don't need more willpower — you need better systems."
+                },
+                {
+                  title: "Small wins create momentum.",
+                  description: "Big financial change starts with tiny daily habits."
+                },
+                {
+                  title: "Clarity brings confidence.",
+                  description: "When you see where your money goes, you can finally steer it with intention."
+                },
+                {
+                  title: "Freedom is the goal.",
+                  description: "Financial control isn't about restriction — it's about choice."
+                }
+              ].map((belief, index) => (
+                <div key={index} className="bg-white rounded-2xl p-8 border border-slate-200/80 hover:border-teal-300 hover:shadow-lg transition-all duration-300">
+                  <p className="text-xl font-bold text-slate-900 mb-3 text-teal-700">
+                    {belief.title}
+                  </p>
+                  <p className="text-lg text-slate-700 leading-relaxed">
+                    {belief.description}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* The BrightNest Approach */}
-      <section className="py-16 sm:py-20 lg:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-50 via-teal-50/20 to-slate-50"></div>
-        <div className="absolute top-20 right-10 w-72 h-72 bg-amber-100/30 rounded-full blur-3xl"></div>
+      {/* The BrightNest Approach - Process Section */}
+      <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-white">
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-teal-50/10 to-white"></div>
+        <div className="absolute top-20 right-10 w-72 h-72 bg-amber-100/20 rounded-full blur-3xl"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4 mb-6 leading-tight">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-8 leading-tight tracking-tight">
                 The BrightNest Approach
               </h2>
             </div>
-            <div className="space-y-6">
-              <p className="text-lg text-slate-700 leading-relaxed">
+            <div className="bg-gradient-to-br from-white to-slate-50 rounded-3xl p-10 sm:p-14 border border-slate-200/80 shadow-xl space-y-8">
+              <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed">
                 We guide you through a clear, step-by-step process:
               </p>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-lg text-slate-700 leading-relaxed font-semibold mb-2">
-                    Awareness
-                  </p>
-                  <p className="text-lg text-slate-700 leading-relaxed">
-                    — Understand your patterns and uncover what&apos;s really driving your financial behaviour.
-                  </p>
-                </div>
-                <div>
-                  <p className="text-lg text-slate-700 leading-relaxed font-semibold mb-2">
-                    Control
-                  </p>
-                  <p className="text-lg text-slate-700 leading-relaxed">
-                    — Learn practical systems for budgeting, spending, saving, and paying off debt without friction.
-                  </p>
-                </div>
-                <div>
-                  <p className="text-lg text-slate-700 leading-relaxed font-semibold mb-2">
-                    Momentum
-                  </p>
-                  <p className="text-lg text-slate-700 leading-relaxed">
-                    — Build habits that last — and create a lifestyle that aligns with your goals and values.
-                  </p>
-                </div>
+              <div className="space-y-6 pt-6 border-t border-slate-200">
+                {[
+                  {
+                    step: "Awareness",
+                    description: "Understand your patterns and uncover what's really driving your financial behaviour."
+                  },
+                  {
+                    step: "Control",
+                    description: "Learn practical systems for budgeting, spending, saving, and paying off debt without friction."
+                  },
+                  {
+                    step: "Momentum",
+                    description: "Build habits that last — and create a lifestyle that aligns with your goals and values."
+                  }
+                ].map((item, index) => (
+                  <div key={index} className="flex items-start space-x-4">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center text-white font-bold shadow-lg">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1 pt-1">
+                      <p className="text-xl font-bold text-slate-900 mb-2 text-teal-700">
+                        {item.step}
+                      </p>
+                      <p className="text-lg text-slate-700 leading-relaxed">
+                        — {item.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <p className="text-lg text-slate-700 leading-relaxed">
-                This isn&apos;t a crash course. It&apos;s a transformation.
+              <div className="pt-6 border-t border-slate-200 space-y-4">
+                <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed">
+                  This isn&apos;t a crash course. It&apos;s a transformation.
+                </p>
+                <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed font-semibold text-teal-700">
+                  Our clients don&apos;t just fix their finances — they reshape how they think, act, and feel about money.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Vision - Final CTA Section */}
+      <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
+        <div className="absolute inset-0">
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-teal-50/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-amber-50/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+        </div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-4xl mx-auto">
+            <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50/80 backdrop-blur-sm px-5 py-2.5 rounded-full border border-teal-100 shadow-sm mb-6">
+              Our Vision
+            </span>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-8 leading-tight tracking-tight">
+              Our Vision
+            </h2>
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-10 sm:p-14 border border-slate-200/80 shadow-xl space-y-6">
+              <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed">
+                To make behaviour change in personal finance as accessible and natural as fitness coaching.
               </p>
-              <p className="text-lg text-slate-700 leading-relaxed font-semibold">
-                Our clients don&apos;t just fix their finances — they reshape how they think, act, and feel about money.
+              <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed font-semibold text-teal-700">
+                Because when people feel in control of their money, everything else gets better — confidence, relationships, freedom, and peace of mind.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Our Vision */}
-      <section className="py-16 sm:py-20 lg:py-24 bg-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-50/20 rounded-full blur-3xl"></div>
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full mb-4">Our Vision</span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mt-4 mb-6 max-w-4xl mx-auto leading-tight">
-              Our Vision
-            </h2>
-            <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
-              To make behaviour change in personal finance as accessible and natural as fitness coaching.
-            </p>
-            <p className="text-lg text-slate-700 leading-relaxed font-semibold mt-4 max-w-3xl mx-auto">
-              Because when people feel in control of their money, everything else gets better — confidence, relationships, freedom, and peace of mind.
-            </p>
-          </div>
+      {/* Join the Movement - Final CTA */}
+      <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-gradient-to-br from-teal-50 via-white to-amber-50/30">
+        <div className="absolute inset-0">
+          <div className="absolute top-10 left-10 w-72 h-72 bg-teal-100/30 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 right-10 w-72 h-72 bg-amber-100/30 rounded-full blur-3xl"></div>
         </div>
-      </section>
-
-      {/* Join the Movement */}
-      <section className="py-16 sm:py-20 lg:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-50 via-white to-amber-50/30"></div>
-        <div className="absolute top-10 left-10 w-72 h-72 bg-teal-100/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-10 right-10 w-72 h-72 bg-amber-100/20 rounded-full blur-3xl"></div>
         
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
+          <div className="text-center">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-10 leading-tight tracking-tight">
               Join the Movement
             </h2>
-          </div>
-          <div className="space-y-6 text-center">
-            <p className="text-lg text-slate-700 leading-relaxed">
-              BrightNest isn&apos;t about quick fixes.
-            </p>
-            <p className="text-lg text-slate-700 leading-relaxed font-semibold">
-              It&apos;s about rewriting your story with money — for good.
-            </p>
-            <p className="text-lg text-slate-700 leading-relaxed">
-              If you&apos;re ready to break the cycle of stress, guilt, and confusion…
-            </p>
-            <p className="text-lg text-slate-700 leading-relaxed">
-              and finally build a financial system that fits you —
-            </p>
-            <p className="text-xl sm:text-2xl text-slate-900 leading-relaxed font-semibold">
-              Welcome to BrightNest.
-            </p>
+            <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-10 sm:p-14 border border-slate-200/80 shadow-2xl space-y-6">
+              <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed">
+                BrightNest isn&apos;t about quick fixes.
+              </p>
+              <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed font-semibold text-teal-700">
+                It&apos;s about rewriting your story with money — for good.
+              </p>
+              <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed">
+                If you&apos;re ready to break the cycle of stress, guilt, and confusion…
+              </p>
+              <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed">
+                and finally build a financial system that fits you —
+              </p>
+              <div className="pt-6">
+                <p className="text-2xl sm:text-3xl text-slate-900 leading-relaxed font-bold">
+                  Welcome to BrightNest.
+                </p>
+              </div>
+              <div className="pt-8">
+                <Link
+                  href="/quiz/financial-profile"
+                  className="inline-block bg-gradient-to-r from-teal-600 to-teal-700 text-white px-10 py-4 rounded-xl font-semibold text-lg hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 relative overflow-hidden group"
+                >
+                  <span className="relative z-10">Get Started</span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -449,5 +482,3 @@ export default function AboutPage() {
     </div>
   );
 }
-
-

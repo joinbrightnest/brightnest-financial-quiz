@@ -10,7 +10,6 @@ export default function CareersPage() {
 
   const handleSeePositions = () => {
     setShowPositions(true);
-    // Smooth scroll to positions section after state update
     setTimeout(() => {
       document.getElementById('positions')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 100);
@@ -105,52 +104,50 @@ export default function CareersPage() {
     }
   ];
 
-  const benefits = [
-    "Generous & flexible time off",
-    "Four paid holidays",
-    "Medical, dental, & vision benefits",
-    "401k & Company match",
-    "Fully remote work environment"
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
+    <div className="min-h-screen bg-white">
       <SiteHeader />
 
-      {/* Hero Section */}
-      <section className="relative py-12 sm:py-20 lg:py-28 overflow-hidden">
-        {/* Background decoration */}
-        <div className="absolute inset-0 bg-gradient-to-br from-teal-50/30 via-white to-amber-50/20"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-teal-100/20 to-transparent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-tr from-amber-100/20 to-transparent rounded-full blur-3xl"></div>
+      {/* Hero Section - Enhanced with Depth */}
+      <section className="relative py-20 sm:py-28 lg:py-32 overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50">
+        {/* Multi-layered background */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(20,184,166,0.08),transparent_50%)]"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(251,191,36,0.06),transparent_50%)]"></div>
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-teal-100/20 rounded-full blur-3xl -translate-x-1/2"></div>
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-100/20 rounded-full blur-3xl translate-x-1/2"></div>
+        </div>
         
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-block mb-6">
-            <span className="text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50 px-4 py-2 rounded-full">Careers</span>
+            <span className="text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50/80 backdrop-blur-sm px-5 py-2.5 rounded-full border border-teal-100 shadow-sm">
+              Careers
+            </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-slate-900">
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-[1.1] tracking-tight text-slate-900">
             Join the BrightNest Team
           </h1>
           
-          <p className="text-sm sm:text-base lg:text-lg text-slate-600 max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed px-2">
+          <p className="text-xl sm:text-2xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
             Change behaviour. Change lives. Build more than a job.
           </p>
 
           <button
             onClick={handleSeePositions}
-            className="inline-block bg-gradient-to-r from-teal-600 to-teal-700 text-white px-8 sm:px-12 py-3 sm:py-4 rounded-lg font-semibold text-sm sm:text-base hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300 w-full sm:w-auto max-w-xs sm:max-w-none"
+            className="inline-block bg-gradient-to-r from-teal-600 to-teal-700 text-white px-10 py-4 rounded-xl font-semibold text-lg hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300 relative overflow-hidden group"
           >
-            Apply Now
+            <span className="relative z-10">Apply Now</span>
+            <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
           </button>
 
           {/* Team Member Avatars */}
-          <div className="mt-10 sm:mt-16">
-            <p className="text-xs sm:text-sm text-teal-600 uppercase tracking-wide mb-4 sm:mb-6 font-semibold">Are You Ready?</p>
-            <div className="flex justify-center items-center space-x-[-8px] sm:space-x-[-12px]">
+          <div className="mt-16">
+            <p className="text-sm text-teal-600 uppercase tracking-wide mb-6 font-semibold">Are You Ready?</p>
+            <div className="flex justify-center items-center space-x-[-12px]">
               {testimonials.slice(0, 4).map((testimonial, idx) => (
                 <div
                   key={idx}
-                  className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-full bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center text-white font-bold text-xs sm:text-sm lg:text-base border-3 sm:border-4 border-white shadow-lg hover:scale-110 transition-transform"
+                  className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center text-white font-bold text-sm sm:text-base lg:text-lg border-4 border-white shadow-xl hover:scale-110 transition-transform duration-300"
                   style={{ zIndex: 10 + idx }}
                 >
                   {testimonial.initials}
@@ -161,231 +158,241 @@ export default function CareersPage() {
         </div>
       </section>
 
-      {/* Our Mission */}
-      <section className="py-10 sm:py-16 lg:py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-teal-50/20"></div>
+      {/* Our Mission - Enhanced Card */}
+      <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-white">
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-slate-50/30 to-white"></div>
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-teal-50/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-8 sm:mb-12">
-              <span className="inline-block text-xs sm:text-sm text-teal-600 uppercase tracking-wide mb-4 font-semibold bg-teal-50 px-4 py-2 rounded-full">Our Mission</span>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 px-2 mt-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-16">
+              <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50/80 backdrop-blur-sm px-5 py-2.5 rounded-full border border-teal-100 shadow-sm mb-6">
+                Our Mission
+              </span>
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-8 leading-tight tracking-tight">
                 Our Mission
               </h2>
             </div>
-            <div className="bg-white rounded-xl p-6 sm:p-8 lg:p-12 border border-slate-200/60 shadow-lg relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500"></div>
-              <div className="space-y-4 relative z-10">
-                <p className="text-base sm:text-lg text-slate-700 leading-relaxed">
-                  At BrightNest, we're not just helping people manage money — we're guiding them to transform how they think, feel, and act about their finances.
-                </p>
-                <p className="text-base sm:text-lg text-slate-700 leading-relaxed">
-                  We believe lasting change happens when the habits beneath the numbers are rewired. And we're building the team to make that possible.
-                </p>
+            
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-amber-400/10 rounded-3xl blur-2xl transform scale-105"></div>
+              <div className="relative bg-white rounded-3xl p-10 sm:p-14 lg:p-16 border border-slate-200/80 shadow-2xl">
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500 rounded-t-3xl"></div>
+                <div className="space-y-6 relative z-10">
+                  <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed">
+                    At BrightNest, we&apos;re not just helping people manage money — we&apos;re guiding them to transform how they think, feel, and act about their finances.
+                  </p>
+                  <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed font-semibold text-teal-700">
+                    We believe lasting change happens when the habits beneath the numbers are rewired. And we&apos;re building the team to make that possible.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Who We're Looking For */}
-      <section className="py-10 sm:py-16 lg:py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-teal-50/20"></div>
+      {/* Who We're Looking For - Enhanced */}
+      <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
+        <div className="absolute inset-0">
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-teal-50/50 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-amber-50/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+        </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 px-2 mt-4">
-              Who We're Looking For
+          <div className="text-center mb-16">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-8 leading-tight tracking-tight">
+              Who We&apos;re Looking For
             </h2>
-            <div className="mt-3 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto px-4 space-y-4">
-              <p>
-                We want people who care deeply about human behaviour, real results and genuine impact. If you're someone who:
+            <div className="max-w-3xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl p-8 sm:p-10 border border-slate-200/80 shadow-lg space-y-6">
+              <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
+                We want people who care deeply about human behaviour, real results and genuine impact. If you&apos;re someone who:
               </p>
-              <ul className="list-disc list-inside space-y-2 ml-4">
-                <li>believes in the power of clarity over confusion</li>
-                <li>gets energy from helping others move from stuck → free</li>
-                <li>wants to work in a team that values growth, integrity and transformation</li>
+              <ul className="text-left space-y-3 list-none">
+                <li className="flex items-start space-x-3">
+                  <svg className="w-6 h-6 text-teal-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-lg text-slate-700">believes in the power of clarity over confusion</span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <svg className="w-6 h-6 text-teal-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-lg text-slate-700">gets energy from helping others move from stuck → free</span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <svg className="w-6 h-6 text-teal-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-lg text-slate-700">wants to work in a team that values growth, integrity and transformation</span>
+                </li>
               </ul>
-              <p className="font-semibold">
+              <p className="text-lg sm:text-xl text-slate-700 leading-relaxed font-semibold text-teal-700 pt-4 border-t border-slate-200">
                 then you might be a perfect fit.
               </p>
-              <p>
-                Whether your strength lies in coaching, operations, tech, content or client experience — there's an opportunity here to help build something meaningful.
+              <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
+                Whether your strength lies in coaching, operations, tech, content or client experience — there&apos;s an opportunity here to help build something meaningful.
               </p>
             </div>
           </div>
 
-          {/* Testimonials Carousel */}
-          <div className="relative max-w-5xl mx-auto">
-            {/* Main Testimonial Display */}
-            <div className="bg-white rounded-xl sm:rounded-2xl p-5 sm:p-8 lg:p-12 border border-slate-200/60 shadow-lg min-h-[280px] sm:min-h-[260px] flex flex-col justify-between relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500"></div>
-              <div className="flex items-start space-x-3 sm:space-x-4 mb-4 sm:mb-6 pt-4">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center text-white font-bold text-base sm:text-xl flex-shrink-0 shadow-md">
+          {/* Enhanced Testimonials Carousel */}
+          <div className="relative max-w-6xl mx-auto mt-16">
+            <div className="relative bg-white rounded-3xl p-8 sm:p-12 border border-slate-200/80 shadow-2xl min-h-[320px] flex flex-col justify-between">
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500 rounded-t-3xl"></div>
+              
+              <div className="flex items-start space-x-6 mb-6 pt-4">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center text-white font-bold text-2xl flex-shrink-0 shadow-lg">
                   {testimonials[currentTestimonial].initials}
                 </div>
-                <div className="min-w-0">
-                  <h3 className="text-base sm:text-xl font-bold text-slate-900 truncate">{testimonials[currentTestimonial].name}</h3>
-                  <p className="text-xs sm:text-sm text-teal-600 font-semibold">{testimonials[currentTestimonial].title}</p>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-slate-900 mb-1">{testimonials[currentTestimonial].name}</h3>
+                  <p className="text-teal-600 font-semibold text-lg">{testimonials[currentTestimonial].title}</p>
                 </div>
               </div>
               
-              <p className="text-sm sm:text-base text-slate-700 leading-relaxed italic mb-6 sm:mb-8">
-                "{testimonials[currentTestimonial].quote}"
+              <p className="text-lg sm:text-xl text-slate-700 leading-relaxed italic mb-8 flex-1">
+                &quot;{testimonials[currentTestimonial].quote}&quot;
               </p>
 
-              {/* Navigation Dots */}
-              <div className="flex justify-center items-center space-x-2 sm:space-x-3">
-                {testimonials.map((_, index) => (
+              {/* Navigation */}
+              <div className="flex justify-between items-center pt-6 border-t border-slate-200">
+                <div className="flex justify-center items-center space-x-3 flex-1">
+                  {testimonials.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentTestimonial(index)}
+                      className={`transition-all duration-300 rounded-full ${
+                        index === currentTestimonial 
+                          ? 'w-8 h-3 bg-teal-600' 
+                          : 'w-3 h-3 bg-slate-300 hover:bg-teal-400'
+                      }`}
+                      aria-label={`View testimonial ${index + 1}`}
+                    />
+                  ))}
+                </div>
+                <div className="flex space-x-2">
                   <button
-                    key={index}
-                    onClick={() => setCurrentTestimonial(index)}
-                    className={`transition-all duration-300 rounded-full ${
-                      index === currentTestimonial 
-                        ? 'w-6 sm:w-8 h-2 sm:h-3 bg-teal-600' 
-                        : 'w-2 sm:w-3 h-2 sm:h-3 bg-slate-300 hover:bg-teal-400'
-                    }`}
-                    aria-label={`View testimonial ${index + 1}`}
-                  />
-                ))}
+                    onClick={() => setCurrentTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
+                    className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center hover:bg-teal-50 hover:border-teal-300 border border-slate-200 transition-colors"
+                    aria-label="Previous testimonial"
+                  >
+                    <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => setCurrentTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
+                    className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center hover:bg-teal-50 hover:border-teal-300 border border-slate-200 transition-colors"
+                    aria-label="Next testimonial"
+                  >
+                    <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
-
-            {/* Arrow Navigation - Hidden on mobile */}
-            <button
-              onClick={() => setCurrentTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
-              className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-6 w-12 h-12 bg-white rounded-full shadow-lg items-center justify-center hover:bg-teal-50 transition-colors border border-slate-200 hover:border-teal-300"
-              aria-label="Previous testimonial"
-            >
-              <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              onClick={() => setCurrentTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
-              className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 w-12 h-12 bg-white rounded-full shadow-lg items-center justify-center hover:bg-teal-50 transition-colors border border-slate-200 hover:border-teal-300"
-              aria-label="Next testimonial"
-            >
-              <svg className="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Grid of smaller testimonials for desktop */}
-          <div className="hidden lg:grid grid-cols-3 gap-6 mt-12">
-            {testimonials.filter((_, idx) => idx !== currentTestimonial).slice(0, 3).map((testimonial, index) => (
-              <div 
-                key={index} 
-                onClick={() => {
-                  const actualIndex = testimonials.findIndex(t => t.name === testimonial.name);
-                  setCurrentTestimonial(actualIndex);
-                }}
-                className="bg-white rounded-xl p-6 border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all cursor-pointer group"
-              >
-                <div className="flex items-center space-x-3 mb-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center text-white font-bold text-sm shadow-md group-hover:scale-110 transition-transform">
-                    {testimonial.initials}
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-900">{testimonial.name}</h4>
-                    <p className="text-xs text-teal-600 font-semibold">{testimonial.title}</p>
-                  </div>
-                </div>
-                <p className="text-sm text-slate-600 leading-relaxed italic line-clamp-3">
-                  "{testimonial.quote}"
-                </p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
 
-      {/* Core Values */}
-      <section className="py-10 sm:py-16 lg:py-20 bg-white relative overflow-hidden">
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-50/20 rounded-full blur-3xl"></div>
+      {/* Core Values - Enhanced Grid */}
+      <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-white">
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-50/30 rounded-full blur-3xl"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-12">
-            <span className="inline-block text-xs sm:text-sm text-teal-600 uppercase tracking-wide mb-4 font-semibold bg-teal-50 px-4 py-2 rounded-full">Our Values</span>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 px-2 mt-4">
+          <div className="text-center mb-16">
+            <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50/80 backdrop-blur-sm px-5 py-2.5 rounded-full border border-teal-100 shadow-sm mb-6">
+              Our Values
+            </span>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-8 leading-tight tracking-tight">
               Our Values
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {coreValues.map((value, index) => (
-              <div key={index} className="group bg-gradient-to-br from-white to-teal-50/30 rounded-xl p-5 sm:p-6 text-center border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-20 h-20 bg-teal-100/20 rounded-full -mr-10 -mt-10"></div>
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 mb-4 shadow-md group-hover:scale-110 transition-transform">
-                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div 
+                key={index} 
+                className="group relative bg-white rounded-2xl p-8 border border-slate-200/80 hover:border-teal-300 hover:shadow-xl transition-all duration-300 overflow-hidden text-center"
+              >
+                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-teal-50 to-transparent rounded-full -mr-12 -mt-12 opacity-50 group-hover:opacity-70 transition-opacity"></div>
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 relative z-10">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={value.icon} />
                   </svg>
                 </div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 group-hover:text-teal-600 transition-colors">{value.title}</h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">{value.description}</p>
+                <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-700 transition-colors relative z-10">{value.title}</h3>
+                <p className="text-base text-slate-600 leading-relaxed relative z-10">{value.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Perks Section */}
-      <section className="py-10 sm:py-16 lg:py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-amber-50/20"></div>
+      {/* Perks Section - Enhanced */}
+      <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
+        <div className="absolute inset-0">
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-teal-50/50 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-amber-50/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+        </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-12">
-            <span className="inline-block text-xs sm:text-sm text-teal-600 uppercase tracking-wide mb-4 font-semibold bg-teal-50 px-4 py-2 rounded-full">Just A Few Perks of Working With BrightNest</span>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 px-2 mt-4">
+          <div className="text-center mb-16">
+            <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50/80 backdrop-blur-sm px-5 py-2.5 rounded-full border border-teal-100 shadow-sm mb-6">
+              Just A Few Perks of Working With BrightNest
+            </span>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-8 leading-tight tracking-tight">
               Your BrightNest Journey <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Starts Here</span>
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {perks.map((perk, index) => (
-              <div key={index} className="group bg-gradient-to-br from-white to-teal-50/30 rounded-xl p-5 sm:p-6 border border-slate-200/60 hover:border-teal-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-teal-100/20 rounded-full -mr-12 -mt-12"></div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 sm:mb-3 group-hover:text-teal-600 transition-colors relative z-10">{perk.title}</h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed relative z-10">{perk.description}</p>
+              <div 
+                key={index} 
+                className="group relative bg-white rounded-2xl p-8 border border-slate-200/80 hover:border-teal-300 hover:shadow-xl transition-all duration-300 overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-teal-50 to-transparent rounded-full -mr-16 -mt-16 opacity-50 group-hover:opacity-70 transition-opacity"></div>
+                <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-teal-700 transition-colors relative z-10">{perk.title}</h3>
+                <p className="text-base text-slate-600 leading-relaxed relative z-10">{perk.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* What It's Like To Work With Us */}
-      <section className="py-10 sm:py-16 lg:py-20 bg-white relative overflow-hidden">
+      {/* What It's Like To Work With Us - Enhanced Dark Section */}
+      <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-white">
         <div className="absolute top-0 right-0 w-96 h-96 bg-teal-50/20 rounded-full blur-3xl"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-14 shadow-xl relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500"></div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center">
-              {/* Left Side - Image */}
+          <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-10 sm:p-14 lg:p-16 shadow-2xl overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500"></div>
+            
+            {/* Background pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute inset-0" style={{
+                backgroundImage: `radial-gradient(circle at 20% 50%, white 2px, transparent 2px),
+                                  radial-gradient(circle at 60% 70%, white 2px, transparent 2px),
+                                  radial-gradient(circle at 80% 20%, white 2px, transparent 2px)`,
+                backgroundSize: '100px 100px, 80px 80px, 120px 120px'
+              }}></div>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+              {/* Left Side - Visual */}
               <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] bg-gradient-to-br from-teal-600 via-teal-500 to-teal-700">
-                {/* Decorative Pattern */}
-                <div className="absolute inset-0 opacity-10">
-                  <div className="absolute inset-0" style={{
-                    backgroundImage: `radial-gradient(circle at 20% 50%, white 2px, transparent 2px),
-                                      radial-gradient(circle at 60% 70%, white 2px, transparent 2px),
-                                      radial-gradient(circle at 80% 20%, white 2px, transparent 2px)`,
-                    backgroundSize: '100px 100px, 80px 80px, 120px 120px'
-                  }}></div>
-                </div>
-                
-                {/* Content */}
+                <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.1)_0%,transparent_50%)]"></div>
                 <div className="relative flex flex-col items-center justify-center h-full p-8">
-                  {/* Team avatars in a circle */}
                   <div className="relative w-48 h-48 mb-6">
-                    {/* Center circle */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg">
                       <svg className="w-10 h-10 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
                       </svg>
                     </div>
-                    
-                    {/* Orbiting circles */}
                     {[0, 1, 2, 3, 4].map((i) => {
                       const angle = (i * 72 - 90) * (Math.PI / 180);
                       const x = Math.cos(angle) * 70;
@@ -401,61 +408,44 @@ export default function CareersPage() {
                       );
                     })}
                   </div>
-                  
-                  <h3 className="text-xl sm:text-2xl font-bold text-white text-center">Join Our Team</h3>
-                  <p className="text-white/90 text-center mt-1 sm:mt-2 text-sm sm:text-base">Empowering Women Together</p>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-white text-center">Join Our Team</h3>
+                  <p className="text-white/90 text-center mt-2 text-base">Empowering Women Together</p>
                 </div>
               </div>
 
               {/* Right Side - Content */}
-              <div className="order-first lg:order-last">
-                <p className="text-teal-400 italic text-sm sm:text-base mb-2 sm:mb-3">What It's Like To</p>
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-5 sm:mb-6 uppercase italic leading-tight">
+              <div>
+                <p className="text-teal-400 italic text-base mb-3">What It&apos;s Like To</p>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-8 uppercase italic leading-tight">
                   work with us
                 </h2>
 
-                {/* Content */}
-                <div className="space-y-4 mb-6 sm:mb-8">
-                  <div className="flex items-start space-x-2 sm:space-x-3">
-                    <div className="flex-shrink-0 mt-0.5">
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
+                <div className="space-y-5 mb-8">
+                  {[
+                    "Purpose over process: Every role connects back to helping someone live with more financial freedom.",
+                    "Team of experts: You'll work alongside certified behaviour & finance coaches, tech builders and change-makers.",
+                    "Supportive culture: We value accountability, transparency, continuous learning and the courage to try new things.",
+                    "Growth mindset: We're growing rapidly, and with growth comes opportunity — for you and for our clients."
+                  ].map((item, index) => (
+                    <div key={index} className="flex items-start space-x-3">
+                      <div className="flex-shrink-0 mt-1">
+                        <svg className="w-6 h-6 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <p className="text-base text-white/90 font-light italic">
+                        <strong className="font-semibold text-white">{item.split(':')[0]}:</strong> {item.split(':').slice(1).join(':')}
+                      </p>
                     </div>
-                    <p className="text-xs sm:text-sm text-white font-light italic"><strong className="font-semibold">Purpose over process:</strong> Every role connects back to helping someone live with more financial freedom.</p>
-                  </div>
-                  <div className="flex items-start space-x-2 sm:space-x-3">
-                    <div className="flex-shrink-0 mt-0.5">
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <p className="text-xs sm:text-sm text-white font-light italic"><strong className="font-semibold">Team of experts:</strong> You'll work alongside certified behaviour & finance coaches, tech builders and change-makers.</p>
-                  </div>
-                  <div className="flex items-start space-x-2 sm:space-x-3">
-                    <div className="flex-shrink-0 mt-0.5">
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <p className="text-xs sm:text-sm text-white font-light italic"><strong className="font-semibold">Supportive culture:</strong> We value accountability, transparency, continuous learning and the courage to try new things.</p>
-                  </div>
-                  <div className="flex items-start space-x-2 sm:space-x-3">
-                    <div className="flex-shrink-0 mt-0.5">
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <p className="text-xs sm:text-sm text-white font-light italic"><strong className="font-semibold">Growth mindset:</strong> We're growing rapidly, and with growth comes opportunity — for you and for our clients.</p>
-                  </div>
+                  ))}
                 </div>
 
-                {/* Button */}
                 <button
                   onClick={handleSeePositions}
-                  className="w-full sm:w-auto bg-gradient-to-r from-teal-600 to-teal-700 text-white px-8 sm:px-10 py-3 rounded-lg font-semibold text-sm sm:text-base uppercase hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300"
+                  className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-10 py-4 rounded-xl font-semibold text-lg uppercase hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300 relative overflow-hidden group"
                 >
-                  See Positions
+                  <span className="relative z-10">See Positions</span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
                 </button>
               </div>
             </div>
@@ -463,37 +453,35 @@ export default function CareersPage() {
         </div>
       </section>
 
-      {/* Positions Section - No Positions Available */}
+      {/* Positions Section */}
       {showPositions && (
         <section 
           id="positions" 
-          className="py-10 sm:py-16 lg:py-20 relative overflow-hidden animate-fade-in"
-          style={{ opacity: 0, animation: 'fadeIn 0.6s ease-out forwards' }}
+          className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-gradient-to-b from-slate-50 to-white animate-fade-in"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-teal-50/20"></div>
           
-          <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-12 border border-slate-200/60 shadow-lg text-center relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500"></div>
+          <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="relative bg-white rounded-3xl p-10 sm:p-14 border border-slate-200/80 shadow-2xl text-center">
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500 rounded-t-3xl"></div>
               
-              {/* Icon */}
-              <div className="mb-6 sm:mb-8">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-lg">
-                  <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="mb-8">
+                <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-lg">
+                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-4 sm:mb-5 px-2">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
                 Roles & Opportunities
               </h2>
               
-              <p className="text-sm sm:text-base text-slate-600 mb-4 sm:mb-5 max-w-2xl mx-auto leading-relaxed px-2">
+              <p className="text-lg sm:text-xl text-slate-600 mb-6 max-w-2xl mx-auto leading-relaxed">
                 We have openings (or will have openings) across:
               </p>
 
-              <ul className="text-sm sm:text-base text-slate-600 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-2 space-y-2 list-disc list-inside">
+              <ul className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed space-y-3 text-left list-disc list-inside">
                 <li>Client Coaching & Behaviour Change Specialists</li>
                 <li>Marketing & Content Creators (focused on mindset & finance)</li>
                 <li>Operations & Client Success</li>
@@ -501,58 +489,49 @@ export default function CareersPage() {
                 <li>Partnerships & Growth</li>
               </ul>
 
-              <p className="text-sm sm:text-base text-slate-600 mb-6 sm:mb-8 max-w-2xl mx-auto leading-relaxed px-2 italic">
-                (Even if you don't see your exact fit listed yet, we encourage you to apply — let's connect and find where your strengths meet our mission.)
+              <p className="text-lg text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed italic">
+                (Even if you don&apos;t see your exact fit listed yet, we encourage you to apply — let&apos;s connect and find where your strengths meet our mission.)
               </p>
 
-              <div className="mb-8 sm:mb-10 pt-6 sm:pt-8 border-t border-slate-200">
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-5 px-2">
+              <div className="mb-10 pt-8 border-t border-slate-200">
+                <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6">
                   Why Join Now
                 </h3>
-                <p className="text-sm sm:text-base text-slate-600 mb-4 sm:mb-5 max-w-2xl mx-auto leading-relaxed px-2">
-                  This is more than a job-board listing. This is an invitation to join at a critical moment in our journey.
-                </p>
-                <p className="text-sm sm:text-base text-slate-600 mb-4 sm:mb-5 max-w-2xl mx-auto leading-relaxed px-2">
-                  You'll have the chance to help shape our systems, culture and impact.
-                </p>
-                <p className="text-sm sm:text-base text-slate-600 mb-4 sm:mb-5 max-w-2xl mx-auto leading-relaxed px-2">
-                  And in doing so, you'll build experience, mastery and fulfilment.
-                </p>
+                <div className="space-y-4 text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed text-left">
+                  <p>This is more than a job-board listing. This is an invitation to join at a critical moment in our journey.</p>
+                  <p>You&apos;ll have the chance to help shape our systems, culture and impact.</p>
+                  <p>And in doing so, you&apos;ll build experience, mastery and fulfilment.</p>
+                </div>
               </div>
 
-              <div className="mb-8 sm:mb-10 pt-6 sm:pt-8 border-t border-slate-200">
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 sm:mb-5 px-2">
+              <div className="mb-10 pt-8 border-t border-slate-200">
+                <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6">
                   How to Apply
                 </h3>
-                <div className="text-sm sm:text-base text-slate-600 mb-4 sm:mb-5 max-w-2xl mx-auto leading-relaxed px-2 space-y-3">
-                  <p>
-                    Email your CV (or LinkedIn) and a short note: <strong>Why does financial behaviour change matter to you?</strong>
+                <div className="text-lg text-slate-600 mb-6 max-w-2xl mx-auto leading-relaxed space-y-4 text-left">
+                  <p>Email your CV (or LinkedIn) and a short note: <strong>Why does financial behaviour change matter to you?</strong></p>
+                  <p>Include which role(s) interest you and how your skills align.</p>
+                  <p>We&apos;ll respond quickly and share next steps: a chat + a short task so we can see if we&apos;re a great match.</p>
+                  <p className="font-semibold text-teal-700">
+                    Send your application to <a href="mailto:careers@brightnest.com" className="underline hover:text-teal-800">careers@brightnest.com</a>
                   </p>
-                  <p>
-                    Include which role(s) interest you and how your skills align.
-                  </p>
-                  <p>
-                    We'll respond quickly and share next steps: a chat + a short task so we can see if we're a great match.
-                  </p>
-                  <p className="font-semibold">
-                    Send your application to <a href="mailto:careers@brightnest.com" className="text-teal-600 hover:text-teal-700 underline break-all">careers@brightnest.com</a>
-                  </p>
-                  <p className="text-xs sm:text-sm text-slate-500 italic">
-                    (We'll treat every application personally and appreciate your time.)
+                  <p className="text-sm text-slate-500 italic">
+                    (We&apos;ll treat every application personally and appreciate your time.)
                   </p>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center px-2">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <a
                   href="mailto:careers@brightnest.com"
-                  className="w-full sm:w-auto bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 sm:px-10 py-3 rounded-lg font-semibold text-sm sm:text-base hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300 text-center"
+                  className="w-full sm:w-auto bg-gradient-to-r from-teal-600 to-teal-700 text-white px-10 py-4 rounded-xl font-semibold text-lg hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300 text-center relative overflow-hidden group"
                 >
-                  Apply Now
+                  <span className="relative z-10">Apply Now</span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
                 </a>
                 <Link
                   href="/"
-                  className="w-full sm:w-auto bg-slate-50 text-slate-700 px-6 sm:px-10 py-3 rounded-lg font-semibold text-sm sm:text-base border-2 border-slate-300 hover:border-slate-400 transition-all text-center"
+                  className="w-full sm:w-auto bg-slate-50 text-slate-700 px-10 py-4 rounded-xl font-semibold text-lg border-2 border-slate-300 hover:border-slate-400 transition-all text-center"
                 >
                   Back to Home
                 </Link>
@@ -566,7 +545,6 @@ export default function CareersPage() {
       <footer className="bg-slate-900 text-white py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8">
-            {/* Logo and Social */}
             <div>
               <Link href="/" className="text-2xl font-bold text-white mb-6 block">
                 BrightNest
@@ -595,7 +573,6 @@ export default function CareersPage() {
               </div>
             </div>
 
-            {/* Quick Links */}
             <div>
               <h4 className="text-sm font-semibold uppercase tracking-wide mb-4 text-white">Quick Links</h4>
               <ul className="space-y-3 text-sm">
@@ -606,7 +583,6 @@ export default function CareersPage() {
               </ul>
             </div>
 
-            {/* Resources */}
             <div>
               <h4 className="text-sm font-semibold uppercase tracking-wide mb-4 text-white">Resources</h4>
               <ul className="space-y-3 text-sm">
@@ -615,7 +591,6 @@ export default function CareersPage() {
               </ul>
             </div>
 
-            {/* Legal */}
             <div>
               <h4 className="text-sm font-semibold uppercase tracking-wide mb-4 text-white">Legal</h4>
               <ul className="space-y-3 text-sm">
@@ -633,4 +608,3 @@ export default function CareersPage() {
     </div>
   );
 }
-
