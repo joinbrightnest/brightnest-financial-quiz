@@ -11,27 +11,27 @@ export default function AboutPage() {
       {/* Hero Section - BetterHelp Style (Compact) */}
       <section className="relative overflow-hidden bg-[#faf9f6]">
         {/* Upper Light Section - More Compact */}
-        <div className="relative pt-16 sm:pt-20 lg:pt-24 pb-8 sm:pb-12">
+        <div className="relative pt-16 sm:pt-20 lg:pt-24 pb-0">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-slate-900 leading-tight tracking-tight">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight tracking-tight">
                 About us
               </h1>
             </div>
           </div>
         </div>
 
-        {/* Curved Wave Separator - More Subtle and Compact */}
-        <div className="relative w-full h-12 sm:h-16 lg:h-20" style={{ marginBottom: '-1px' }}>
+        {/* Curved Wave Separator - Matching BetterHelp's Exact Curve */}
+        <div className="relative w-full overflow-hidden" style={{ height: '65px', marginBottom: '-1px' }}>
           <svg 
             className="absolute bottom-0 w-full h-full" 
-            viewBox="0 0 1440 80" 
+            viewBox="0 0 1440 110" 
             preserveAspectRatio="none"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path 
-              d="M0,15 C200,15 400,65 720,65 C1040,65 1240,15 1440,15 L1440,80 L0,80 Z" 
+              d="M0,0 L0,8 C200,8 400,12 600,35 C720,88 840,88 960,35 C1160,12 1360,8 1440,8 L1440,110 L0,110 Z" 
               fill="#0f766e"
             />
           </svg>
@@ -41,12 +41,12 @@ export default function AboutPage() {
         <div className="relative bg-teal-800 pt-8 sm:pt-10 lg:pt-12 pb-12 sm:pb-16 lg:pb-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Main Content - Compact Spacing */}
-            <div className="space-y-4">
+            <div className="space-y-4 text-center">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-teal-300 leading-tight">
                 Rebuild your relationship with money
               </h2>
               
-              <div className="space-y-4 text-base sm:text-lg text-white/90 leading-relaxed">
+              <div className="space-y-4 text-base sm:text-lg text-white/90 leading-relaxed text-left">
                 <p>
                   BrightNest was founded to remove the traditional barriers to financial wellness and make behavior-based money management accessible to everyone.
                 </p>
