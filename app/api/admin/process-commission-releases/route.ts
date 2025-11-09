@@ -13,18 +13,12 @@ export async function POST(request: NextRequest) {
   }
   
   try {
-    // Get commission hold period from settings
-    const settingsResult = await prisma.$queryRaw`
-      SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
-    ` as any[];
-    
-    const holdDays = settingsResult.length > 0 ? parseInt(settingsResult[0].value) : 30;
-    
-    // Calculate the cutoff date
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - holdDays);
+    // Get current date/time - commissions where holdUntil has passed are ready for release
+    const now = new Date();
     
     // Find all conversions that should be released from hold
+    // Use holdUntil field (set when commission was created) instead of calculating from createdAt
+    // This ensures commissions are released based on their actual hold period, not a calculated date
     // ONLY include conversions with actual commission amounts > 0
     const conversionsToRelease = await prisma.affiliateConversion.findMany({
       where: {
@@ -32,8 +26,8 @@ export async function POST(request: NextRequest) {
         commissionAmount: {
           gt: 0 // Only conversions with actual commission amounts
         },
-        createdAt: {
-          lte: cutoffDate
+        holdUntil: {
+          lte: now // Release if holdUntil is less than or equal to now (hold period has passed)
         }
       },
       include: {
@@ -84,8 +78,7 @@ export async function POST(request: NextRequest) {
       message: `Successfully released ${updateResult.count} commissions`,
       releasedCount: updateResult.count,
       releasedAmount: totalReleasedAmount,
-      cutoffDate: cutoffDate.toISOString(),
-      holdDays
+      currentDate: now.toISOString()
     });
     
   } catch (error) {
@@ -100,16 +93,15 @@ export async function POST(request: NextRequest) {
 // GET - Get commission release status
 export async function GET() {
   try {
-    // Get commission hold period from settings
+    // Get commission hold period from settings (for display purposes)
     const settingsResult = await prisma.$queryRaw`
       SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
     ` as any[];
     
     const holdDays = settingsResult.length > 0 ? parseInt(settingsResult[0].value) : 30;
     
-    // Calculate the cutoff date
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - holdDays);
+    // Get current date/time - commissions where holdUntil has passed are ready for release
+    const now = new Date();
     
     // Check if commission_status column exists
     const columnCheck = await prisma.$queryRaw`
@@ -124,7 +116,7 @@ export async function GET() {
         success: true,
         data: {
           holdDays,
-          cutoffDate: cutoffDate.toISOString(),
+          currentDate: now.toISOString(),
           readyForRelease: 0,
           totalHeld: 0,
           totalAvailable: 0,
@@ -136,6 +128,7 @@ export async function GET() {
     }
     
     // Count commissions ready for release
+    // Use holdUntil field instead of calculating from createdAt
     // ONLY include conversions with actual commission amounts > 0
     const readyForRelease = await prisma.affiliateConversion.count({
       where: {
@@ -143,8 +136,8 @@ export async function GET() {
         commissionAmount: {
           gt: 0 // Only conversions with actual commission amounts
         },
-        createdAt: {
-          lte: cutoffDate
+        holdUntil: {
+          lte: now // Ready for release if holdUntil has passed
         }
       }
     });
@@ -201,7 +194,7 @@ export async function GET() {
       success: true,
       data: {
         holdDays,
-        cutoffDate: cutoffDate.toISOString(),
+        currentDate: now.toISOString(),
         readyForRelease,
         totalHeld,
         totalAvailable,

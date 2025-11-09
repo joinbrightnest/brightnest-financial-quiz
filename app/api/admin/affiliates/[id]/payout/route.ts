@@ -29,6 +29,27 @@ export async function POST(
       );
     }
 
+    // Get minimum payout from settings
+    let minimumPayout = 50; // Default fallback
+    try {
+      const settingsResult = await prisma.$queryRaw`
+        SELECT value FROM "Settings" WHERE key = 'minimum_payout'
+      ` as any[];
+      if (settingsResult.length > 0) {
+        minimumPayout = parseFloat(settingsResult[0].value);
+      }
+    } catch (error) {
+      console.log('Using default minimum payout:', minimumPayout);
+    }
+
+    // Enforce minimum payout
+    if (amount < minimumPayout) {
+      return NextResponse.json(
+        { error: `Payout amount must be at least $${minimumPayout.toFixed(2)}. Current minimum payout threshold is $${minimumPayout.toFixed(2)}.` },
+        { status: 400 }
+      );
+    }
+
     // Get affiliate
     const affiliate = await prisma.affiliate.findUnique({
       where: { id },
@@ -41,10 +62,27 @@ export async function POST(
       );
     }
 
-    // Check if affiliate has enough commission
-    if (Number(affiliate.totalCommission) < amount) {
+    // Check if affiliate has enough available commission (not totalCommission, which is lifetime)
+    // Calculate available commission from conversions with status='available'
+    const availableConversions = await prisma.affiliateConversion.aggregate({
+      where: {
+        affiliateId: id,
+        commissionStatus: 'available',
+        commissionAmount: {
+          gt: 0
+        }
+      },
+      _sum: {
+        commissionAmount: true
+      }
+    });
+
+    const availableCommission = Number(availableConversions._sum.commissionAmount || 0);
+
+    // Check if affiliate has enough available commission
+    if (availableCommission < amount) {
       return NextResponse.json(
-        { error: "Insufficient commission balance" },
+        { error: `Insufficient available commission. Available: $${availableCommission.toFixed(2)}, Requested: $${amount.toFixed(2)}` },
         { status: 400 }
       );
     }

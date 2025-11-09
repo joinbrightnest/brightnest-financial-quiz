@@ -285,13 +285,15 @@ export default function AdminDashboard() {
       const data = await response.json();
       if (data.success) {
         setQualificationThreshold(newThreshold);
-        alert('Qualification threshold updated successfully!');
+        alert('✅ Qualification threshold updated successfully!');
+        // Refresh settings to ensure consistency
+        await fetchSettings();
       } else {
-        alert('Failed to update threshold: ' + data.error);
+        alert('❌ Failed to update threshold: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
       console.error('Error updating threshold:', error);
-      alert('Failed to update threshold. Please try again.');
+      alert('❌ Failed to update threshold. Please try again.');
     } finally {
       setIsUpdatingThreshold(false);
     }
@@ -314,14 +316,15 @@ export default function AdminDashboard() {
       const data = await response.json();
       if (data.success) {
         setCommissionHoldDays(newHoldDays);
-        alert('Commission hold period updated successfully!');
-        fetchCommissionReleaseStatus(); // Refresh status
+        alert('✅ Commission hold period updated successfully!');
+        // Refresh settings and commission release status
+        await Promise.all([fetchSettings(), fetchCommissionReleaseStatus()]);
       } else {
-        alert('Failed to update hold period: ' + data.error);
+        alert('❌ Failed to update hold period: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
       console.error('Error updating hold period:', error);
-      alert('Failed to update hold period. Please try again.');
+      alert('❌ Failed to update hold period. Please try again.');
     } finally {
       setIsUpdatingHoldDays(false);
     }
@@ -343,13 +346,14 @@ export default function AdminDashboard() {
 
       const data = await response.json();
       if (data.success) {
-        console.log('Payout settings updated successfully');
+        alert('✅ Payout settings updated successfully!');
         await fetchSettings(); // Refresh settings
       } else {
-        console.error('Failed to update payout settings:', data.error);
+        alert('❌ Failed to update payout settings: ' + (data.error || 'Unknown error'));
       }
     } catch (error) {
       console.error('Error updating payout settings:', error);
+      alert('❌ Failed to update payout settings. Please try again.');
     } finally {
       setIsUpdatingPayoutSettings(false);
     }
@@ -448,6 +452,14 @@ export default function AdminDashboard() {
       }
     }
   }, [quizAnalyticsFilters, crmFilters, activeSection]);
+
+  // Load settings on component mount and when settings section is active
+  useEffect(() => {
+    fetchSettings();
+    if (activeSection === 'settings') {
+      fetchCommissionReleaseStatus();
+    }
+  }, [activeSection]);
 
   useEffect(() => {
     // Check for leadEmail in URL and open lead modal
@@ -4020,13 +4032,14 @@ export default function AdminDashboard() {
                             });
                             const data = await response.json();
                             if (data.success) {
-                              console.log('CRM settings updated successfully');
+                              alert('✅ Deal value configuration updated successfully!');
                               await fetchSettings();
                             } else {
-                              console.error('Failed to update CRM settings:', data.error);
+                              alert('❌ Failed to update deal value: ' + (data.error || 'Unknown error'));
                             }
                           } catch (error) {
                             console.error('Error updating CRM settings:', error);
+                            alert('❌ Failed to update deal value. Please try again.');
                           } finally {
                             setIsUpdatingCrmSettings(false);
                           }
@@ -4086,14 +4099,14 @@ export default function AdminDashboard() {
                             });
                             const data = await response.json();
                             if (data.success) {
-                              alert('Terminal outcomes updated successfully');
+                              alert('✅ Terminal outcomes updated successfully!');
                               await fetchSettings();
                             } else {
-                              alert('Failed to update terminal outcomes: ' + data.error);
+                              alert('❌ Failed to update terminal outcomes: ' + (data.error || 'Unknown error'));
                             }
                           } catch (error) {
                             console.error('Error updating terminal outcomes:', error);
-                            alert('Error updating terminal outcomes. Please try again.');
+                            alert('❌ Failed to update terminal outcomes. Please try again.');
                           } finally {
                             setIsUpdatingTerminalOutcomes(false);
                           }
