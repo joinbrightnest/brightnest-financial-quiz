@@ -79,13 +79,13 @@ export default function AboutPage() {
           >
             <path 
               d="M0,0 L0,6 C360,6 720,50 1080,50 C1320,50 1440,6 1440,6 L1440,70 L0,70 Z" 
-              fill="#3D6B54"
+              fill="#335343"
             />
           </svg>
         </div>
 
         {/* Dark Green Section - Main Content */}
-        <div className="relative overflow-hidden" style={{ backgroundColor: '#3D6B54' }}>
+        <div className="relative overflow-hidden" style={{ backgroundColor: '#335343' }}>
           <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 pb-16 sm:pb-20">
             {/* Sub-navigation Tabs - Centered */}
             <div className="flex flex-wrap justify-center gap-6 mb-8 sm:mb-10">
@@ -95,17 +95,20 @@ export default function AboutPage() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`text-base pb-1.5 font-light transition-colors border-b-2 ${
                     activeTab === tab.id
-                      ? 'text-white border-white'
-                      : 'text-white/70 border-transparent hover:text-white hover:border-[#8FC47E]'
+                      ? 'border-[#a6e09a]'
+                      : 'border-transparent hover:border-[#a6e09a]'
                   }`}
+                  style={{
+                    color: activeTab === tab.id ? '#a6e09a' : 'white'
+                  }}
                 >
                   {tab.label}
                 </button>
               ))}
             </div>
 
-            {/* Main Heading - Lighter vibrant green like BetterHelp's "Find yourself in therapy" */}
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-center mb-6 sm:mb-8 leading-tight tracking-tight" style={{ color: '#8FC47E' }}>
+            {/* Main Heading - Light green color */}
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-center mb-6 sm:mb-8 leading-tight tracking-tight" style={{ color: '#a6e09a' }}>
               {currentContent.heading}
             </h2>
             
