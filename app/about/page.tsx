@@ -1062,63 +1062,21 @@ export default function AboutPage() {
                 <div className="relative bg-white rounded-xl p-8 sm:p-10 lg:p-12 border border-slate-200 shadow-md">
                   <div className="text-center mb-8">
                     <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
-                      Roles & Opportunities
+                      Open Positions
                     </h2>
                     <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
                   </div>
                   
-                  <p className="text-base sm:text-lg text-slate-700 mb-6 max-w-2xl mx-auto leading-relaxed font-light text-center">
-                    We have openings (or will have openings) across:
-                  </p>
-
-                  <ul className="text-base sm:text-lg text-slate-700 mb-8 max-w-2xl mx-auto leading-relaxed space-y-3 text-left list-disc list-inside font-light">
-                    <li>Client Coaching & Behaviour Change Specialists</li>
-                    <li>Marketing & Content Creators (focused on mindset & finance)</li>
-                    <li>Operations & Client Success</li>
-                    <li>Product & Technology (platforms, dashboards, data)</li>
-                    <li>Partnerships & Growth</li>
-                  </ul>
-
-                  <p className="text-base sm:text-lg text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed italic font-light text-center">
-                    (Even if you don&apos;t see your exact fit listed yet, we encourage you to apply — let&apos;s connect and find where your strengths meet our mission.)
-                  </p>
-
-                  <div className="mb-10 pt-8 border-t border-slate-200">
-                    <h3 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 text-center">
-                      Why Join Now
-                    </h3>
-                    <div className="space-y-4 text-base sm:text-lg text-slate-700 max-w-2xl mx-auto leading-relaxed text-left font-light">
-                      <p>This is more than a job-board listing. This is an invitation to join at a critical moment in our journey.</p>
-                      <p>You&apos;ll have the chance to help shape our systems, culture and impact.</p>
-                      <p>And in doing so, you&apos;ll build experience, mastery and fulfilment.</p>
-                    </div>
-                  </div>
-
-                  <div className="mb-10 pt-8 border-t border-slate-200">
-                    <h3 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 text-center">
-                      How to Apply
-                    </h3>
-                    <div className="text-base sm:text-lg text-slate-700 mb-6 max-w-2xl mx-auto leading-relaxed space-y-4 text-left font-light">
-                      <p>Email your CV (or LinkedIn) and a short note: <strong className="font-light" style={{ color: '#3D6B54' }}>Why does financial behaviour change matter to you?</strong></p>
-                      <p>Include which role(s) interest you and how your skills align.</p>
-                      <p>We&apos;ll respond quickly and share next steps: a chat + a short task so we can see if we&apos;re a great match.</p>
-                      <p className="font-light" style={{ color: '#3D6B54' }}>
-                        Send your application to <a href="mailto:careers@brightnest.com" className="underline hover:opacity-80">careers@brightnest.com</a>
-                      </p>
-                      <p className="text-sm text-slate-500 italic">
-                        (We&apos;ll treat every application personally and appreciate your time.)
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <a
-                      href="mailto:careers@brightnest.com"
-                      className="inline-block text-white px-8 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl"
-                      style={{ backgroundColor: '#3D6B54' }}
-                    >
-                      Apply Now
-                    </a>
+                  <div className="max-w-2xl mx-auto text-center space-y-6">
+                    <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-light">
+                      Sorry, there are no positions currently available.
+                    </p>
+                    <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-light">
+                      But keep an eye out for updates — we&apos;re growing fast and new opportunities are always on the horizon.
+                    </p>
+                    <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-light">
+                      If you&apos;re passionate about financial wellness and want to be notified when we have openings, feel free to reach out to us at <a href="mailto:careers@brightnest.com" className="underline hover:opacity-80" style={{ color: '#3D6B54' }}>careers@brightnest.com</a>.
+                    </p>
                   </div>
                 </div>
               </div>
