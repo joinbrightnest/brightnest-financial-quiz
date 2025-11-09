@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 
-type TabType = 'about' | 'social-impact' | 'client-outcomes';
+type TabType = 'about' | 'careers' | 'social-impact' | 'client-outcomes';
 
 interface TabContent {
   title: string;
@@ -20,6 +20,11 @@ export default function AboutPage() {
       title: 'About us',
       heading: 'Rebuild your relationship with money',
       body: 'BrightNest was founded to remove the traditional barriers to financial wellness and make behavior-based money management accessible to everyone. Today, it is the world\'s leading financial behavior change platform — providing professional, affordable, and personalized financial guidance in a convenient online format. BrightNest\'s network of certified financial coaches has helped thousands of people take ownership of their financial health and work towards their personal goals. As the unmet need for accessible financial behavior change continues to grow, BrightNest is committed to expanding access to proven financial wellness systems globally.'
+    },
+    'careers': {
+      title: 'Careers',
+      heading: 'Join our mission to transform financial lives',
+      body: 'At BrightNest, we\'re building a team of passionate professionals who believe that financial wellness should be accessible to everyone. We combine psychology, technology, and human-centered design to help people change their relationship with money. If you\'re driven by impact, value collaboration, and want to work on meaningful problems that change lives, we\'d love to hear from you. We\'re growing fast and always looking for talented individuals who share our vision of making financial behavior change as natural and accessible as fitness coaching.'
     },
     'social-impact': {
       title: 'Social impact',
@@ -37,6 +42,7 @@ export default function AboutPage() {
 
   const tabs: { id: TabType; label: string }[] = [
     { id: 'about', label: 'About' },
+    { id: 'careers', label: 'Careers' },
     { id: 'social-impact', label: 'Social impact' },
     { id: 'client-outcomes', label: 'Client outcomes' }
   ];
@@ -682,6 +688,87 @@ export default function AboutPage() {
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* Careers Tab Content */}
+      {activeTab === 'careers' && (
+        <>
+          {/* Why Work With Us Section */}
+          <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  Why Work With Us
+                </h2>
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
+              </div>
+
+              <div className="bg-white rounded-2xl shadow-lg p-8 sm:p-12 lg:p-16 mb-8">
+                <p className="text-lg sm:text-xl text-slate-700 leading-relaxed font-light text-center max-w-3xl mx-auto">
+                  At BrightNest, we&apos;re building a team of passionate professionals who believe that financial wellness should be accessible to everyone. We combine psychology, technology, and human-centered design to help people change their relationship with money.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* Values Section */}
+          <section className="relative py-16 sm:py-20 lg:py-24 bg-white">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  Our Values
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                {[
+                  {
+                    title: "Impact-Driven",
+                    description: "We measure success by the lives we change, not just the metrics we hit."
+                  },
+                  {
+                    title: "Collaborative",
+                    description: "We believe the best solutions come from diverse perspectives working together."
+                  },
+                  {
+                    title: "Growth-Minded",
+                    description: "We&apos;re always learning, evolving, and pushing ourselves to be better."
+                  },
+                  {
+                    title: "Mission-Focused",
+                    description: "Every decision we make serves our goal of making financial wellness accessible."
+                  }
+                ].map((value, index) => (
+                  <div key={index} className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-8 border border-slate-200 hover:shadow-lg transition-all duration-300">
+                    <h3 className="text-xl font-light text-slate-900 mb-3">{value.title}</h3>
+                    <p className="text-slate-600 font-light leading-relaxed">{value.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Open Positions CTA */}
+          <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <div className="bg-white rounded-2xl shadow-xl p-10 sm:p-12 lg:p-16">
+                <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6">
+                  Ready to Make an Impact?
+                </h2>
+                <p className="text-lg sm:text-xl text-slate-700 leading-relaxed font-light mb-8 max-w-2xl mx-auto">
+                  If you&apos;re driven by impact, value collaboration, and want to work on meaningful problems that change lives, we&apos;d love to hear from you.
+                </p>
+                <Link
+                  href="/careers"
+                  className="inline-block text-white px-8 py-4 rounded-xl font-light text-lg hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  style={{ backgroundColor: '#3D6B54' }}
+                >
+                  View Open Positions
+                </Link>
               </div>
             </div>
           </section>
