@@ -8,73 +8,62 @@ export default function AboutPage() {
     <div className="min-h-screen bg-white">
       <SiteHeader />
 
-      {/* Hero Section - Enhanced with Depth */}
-      <section className="relative py-20 sm:py-28 lg:py-32 overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50">
-        {/* Multi-layered background for depth */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(20,184,166,0.08),transparent_50%)]"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(251,191,36,0.06),transparent_50%)]"></div>
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-teal-100/20 rounded-full blur-3xl -translate-x-1/2"></div>
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-100/20 rounded-full blur-3xl translate-x-1/2"></div>
-        </div>
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-block mb-6">
-              <span className="text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50/80 backdrop-blur-sm px-5 py-2.5 rounded-full border border-teal-100 shadow-sm">
-                About Us
-              </span>
+      {/* Hero Section - BetterHelp Style */}
+      <section className="relative overflow-hidden bg-[#faf9f6]">
+        {/* Upper Light Section */}
+        <div className="relative pt-20 sm:pt-28 lg:pt-32 pb-0">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold text-slate-900 leading-[1.1] tracking-tight">
+                About us
+              </h1>
             </div>
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-slate-900 mb-6 leading-[1.1] tracking-tight">
-              About BrightNest
-            </h1>
-            <p className="text-xl sm:text-2xl text-slate-600 leading-relaxed max-w-3xl mx-auto mb-12 font-light">
-              Helping People Rebuild Their Relationship With Money
-            </p>
           </div>
+        </div>
 
-          {/* Story Card with Depth */}
-          <div className="max-w-6xl mx-auto mt-16">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-              <div className="space-y-6 relative">
-                <div className="absolute -left-6 top-0 bottom-0 w-1 bg-gradient-to-b from-teal-500 via-teal-400 to-amber-400 rounded-full shadow-lg"></div>
-                <div className="pl-8 space-y-5">
-                  <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
-                    Money isn&apos;t just numbers.
-                  </p>
-                  <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
-                    It&apos;s emotion, habit, and identity — all tangled together.
-                  </p>
-                  <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
-                    Most people don&apos;t struggle because they don&apos;t know what to do.
-                  </p>
-                  <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
-                    They struggle because they can&apos;t make themselves do it consistently.
-                  </p>
-                  <p className="text-lg sm:text-xl text-slate-700 leading-relaxed font-semibold text-teal-700">
-                    That&apos;s where BrightNest comes in.
-                  </p>
-                </div>
-              </div>
+        {/* Curved Wave Separator - Organic Shape with Center Dip */}
+        <div className="relative w-full h-20 sm:h-28 lg:h-36" style={{ marginBottom: '-1px' }}>
+          <svg 
+            className="absolute bottom-0 w-full h-full" 
+            viewBox="0 0 1440 100" 
+            preserveAspectRatio="none"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path 
+              d="M0,20 C200,20 400,80 720,80 C1040,80 1240,20 1440,20 L1440,100 L0,100 Z" 
+              fill="#0f766e"
+            />
+          </svg>
+        </div>
+
+        {/* Lower Dark Teal Section */}
+        <div className="relative bg-teal-800 pt-12 sm:pt-16 lg:pt-20 pb-20 sm:pb-24 lg:pb-28">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Sub-navigation tabs (optional, can be added later) */}
+            
+            {/* Main Content */}
+            <div className="space-y-6">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-teal-300 leading-tight tracking-tight">
+                Rebuild your relationship with money
+              </h2>
               
-              {/* Visual Element with Depth */}
-              <div className="relative h-80 sm:h-96 lg:h-[420px] group">
-                <div className="absolute inset-0 bg-gradient-to-br from-teal-50 via-white to-amber-50 rounded-2xl shadow-2xl border border-slate-200/60 transform group-hover:scale-[1.02] transition-transform duration-500">
-                  <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(20,184,166,0.05)_0%,transparent_50%,rgba(251,191,36,0.05)_100%)] rounded-2xl"></div>
-                  <div className="absolute inset-0 flex items-center justify-center p-8">
-                    <div className="text-center">
-                      <div className="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-gradient-to-br from-teal-500 to-teal-600 mb-6 shadow-xl transform group-hover:scale-110 transition-transform duration-300">
-                        <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                      </div>
-                      <p className="text-slate-700 font-semibold text-lg uppercase tracking-wider">Your Financial Journey</p>
-                      <p className="text-slate-500 text-sm mt-2">Built one step at a time</p>
-                    </div>
-                  </div>
-                </div>
-                {/* Decorative glow */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-teal-400 to-amber-400 rounded-2xl opacity-20 blur-xl -z-10 group-hover:opacity-30 transition-opacity"></div>
+              <div className="space-y-5 text-lg sm:text-xl text-white/90 leading-relaxed font-light">
+                <p>
+                  BrightNest was founded to remove the traditional barriers to financial wellness and make behavior-based money management accessible to everyone.
+                </p>
+                <p>
+                  Money isn&apos;t just numbers. It&apos;s emotion, habit, and identity — all tangled together.
+                </p>
+                <p>
+                  Most people don&apos;t struggle because they don&apos;t know what to do. They struggle because they can&apos;t make themselves do it consistently.
+                </p>
+                <p className="font-medium text-white">
+                  That&apos;s where BrightNest comes in. We combine psychology, structure, and guidance from certified experts to help you take back control of your money — step by step, without guilt or overwhelm.
+                </p>
+                <p>
+                  As the need for accessible financial behavior change continues to grow, BrightNest is committed to expanding access to proven financial wellness systems globally.
+                </p>
               </div>
             </div>
           </div>
