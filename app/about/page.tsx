@@ -1,9 +1,52 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 
+type TabType = 'about' | 'careers' | 'social-impact' | 'client-outcomes';
+
+interface TabContent {
+  title: string;
+  heading: string;
+  body: string;
+}
+
 export default function AboutPage() {
+  const [activeTab, setActiveTab] = useState<TabType>('about');
+
+  const tabContents: Record<TabType, TabContent> = {
+    'about': {
+      title: 'About us',
+      heading: 'Rebuild your relationship with money',
+      body: 'BrightNest was founded to remove the traditional barriers to financial wellness and make behavior-based money management accessible to everyone. Today, it is the world\'s leading financial behavior change platform — providing professional, affordable, and personalized financial guidance in a convenient online format. BrightNest\'s network of certified financial coaches has helped thousands of people take ownership of their financial health and work towards their personal goals. As the unmet need for accessible financial behavior change continues to grow, BrightNest is committed to expanding access to proven financial wellness systems globally.'
+    },
+    'careers': {
+      title: 'Careers',
+      heading: 'Join our mission to transform financial lives',
+      body: 'At BrightNest, we\'re building a team of passionate professionals who believe that financial wellness should be accessible to everyone. We combine psychology, technology, and human-centered design to help people change their relationship with money. If you\'re driven by impact, value collaboration, and want to work on meaningful problems that change lives, we\'d love to hear from you. We\'re growing fast and always looking for talented individuals who share our vision of making financial behavior change as natural and accessible as fitness coaching.'
+    },
+    'social-impact': {
+      title: 'Social impact',
+      heading: 'Making financial wellness accessible to everyone',
+      body: 'Financial stress affects millions of people, regardless of income level. At BrightNest, we believe that everyone deserves access to the tools and support needed to build a healthier relationship with money. We partner with nonprofit organizations, community groups, and employers to bring our proven financial behavior change programs to underserved communities. Through our financial aid programs, we\'ve provided discounted and free access to thousands of individuals who otherwise couldn\'t afford professional financial coaching. We\'re committed to breaking down barriers and making financial wellness a reality for all.'
+    },
+    'client-outcomes': {
+      title: 'Client outcomes',
+      heading: 'Real results from real people',
+      body: 'Our approach works. Thousands of BrightNest clients have transformed their financial lives through our behavior-based coaching and support systems. On average, clients see significant improvements in their financial confidence, debt reduction, and savings habits within the first 90 days. But more importantly, they report feeling less stressed about money, more in control of their financial decisions, and better equipped to build lasting financial habits. We measure our success not just by numbers, but by the profound impact on our clients\' lives — from reduced financial anxiety to improved relationships and greater peace of mind.'
+    }
+  };
+
+  const currentContent = tabContents[activeTab];
+
+  const tabs: { id: TabType; label: string }[] = [
+    { id: 'about', label: 'About' },
+    { id: 'careers', label: 'Careers' },
+    { id: 'social-impact', label: 'Social impact' },
+    { id: 'client-outcomes', label: 'Client outcomes' }
+  ];
+
   return (
     <div className="min-h-screen bg-white">
       <SiteHeader />
@@ -20,7 +63,7 @@ export default function AboutPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 leading-tight tracking-tight">
-                About us
+                {currentContent.title}
               </h1>
             </div>
           </div>
@@ -44,34 +87,32 @@ export default function AboutPage() {
         {/* Dark Green Section - Main Content */}
         <div className="relative overflow-hidden" style={{ backgroundColor: '#3D6B54' }}>
           <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 pb-16 sm:pb-20">
-            {/* Sub-navigation Tabs - Centered like BetterHelp */}
+            {/* Sub-navigation Tabs - Centered */}
             <div className="flex flex-wrap justify-center gap-6 mb-8 sm:mb-10">
-              <Link href="/about" className="text-base text-white border-b-2 pb-1.5 font-light transition-colors hover:text-[#8FC47E] active:text-[#8FC47E]" style={{ borderColor: 'white' }}>
-                About
-              </Link>
-              <Link href="/careers" className="text-base text-white border-b-2 border-transparent pb-1.5 font-light transition-colors hover:text-[#8FC47E] active:text-[#8FC47E] hover:border-[#8FC47E]">
-                Careers
-              </Link>
-              <Link href="/about" className="text-base text-white border-b-2 border-transparent pb-1.5 font-light transition-colors hover:text-[#8FC47E] active:text-[#8FC47E] hover:border-[#8FC47E]">
-                Social impact
-              </Link>
-              <Link href="/about" className="text-base text-white border-b-2 border-transparent pb-1.5 font-light transition-colors hover:text-[#8FC47E] active:text-[#8FC47E] hover:border-[#8FC47E]">
-                Client outcomes
-              </Link>
-              <Link href="/about" className="text-base text-white border-b-2 border-transparent pb-1.5 font-light transition-colors hover:text-[#8FC47E] active:text-[#8FC47E] hover:border-[#8FC47E]">
-                Responsible AI
-              </Link>
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`text-base pb-1.5 font-light transition-colors border-b-2 ${
+                    activeTab === tab.id
+                      ? 'text-white border-white'
+                      : 'text-white/70 border-transparent hover:text-white hover:border-[#8FC47E]'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
 
             {/* Main Heading - Lighter vibrant green like BetterHelp's "Find yourself in therapy" */}
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-center mb-6 sm:mb-8 leading-tight tracking-tight" style={{ color: '#8FC47E' }}>
-              Rebuild your relationship with money
+              {currentContent.heading}
             </h2>
             
             {/* Body Text - Centered, pure white */}
             <div className="max-w-3xl mx-auto">
               <p className="text-base sm:text-lg text-white leading-relaxed font-light text-center">
-                BrightNest was founded to remove the traditional barriers to financial wellness and make behavior-based money management accessible to everyone. Today, it is the world&apos;s leading financial behavior change platform — providing professional, affordable, and personalized financial guidance in a convenient online format. BrightNest&apos;s network of certified financial coaches has helped thousands of people take ownership of their financial health and work towards their personal goals. As the unmet need for accessible financial behavior change continues to grow, BrightNest is committed to expanding access to proven financial wellness systems globally.
+                {currentContent.body}
               </p>
             </div>
           </div>
@@ -100,32 +141,38 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Our Coaches/Experts Section - Matching BetterHelp's "Our therapists" */}
-      <section 
-        className="relative py-12 sm:py-16 lg:py-20" 
-        style={{ 
-          background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)'
-        }}
-      >
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-4xl font-light text-slate-900 text-center mb-6 tracking-tight">
-            Our coaches
-          </h2>
-          <p className="text-base sm:text-lg text-slate-700 text-center leading-relaxed font-light">
-            BrightNest offers access to licensed, trained, experienced, and accredited financial coaches, certified financial planners (CFP), behavioral finance specialists, and certified financial counselors who help you build lasting financial habits.
-          </p>
-          <div className="text-center mt-8">
-            <Link
-              href="/quiz/financial-profile"
-              className="inline-block bg-teal-600 text-white px-6 py-3 rounded-lg font-light text-base hover:bg-teal-700 transition-colors"
-            >
-              Get started
-            </Link>
+      {/* Our Coaches/Experts Section - Matching BetterHelp's "Our therapists" - Only show for About tab */}
+      {activeTab === 'about' && (
+        <section 
+          className="relative py-12 sm:py-16 lg:py-20" 
+          style={{ 
+            background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)'
+          }}
+        >
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl sm:text-4xl font-light text-slate-900 text-center mb-6 tracking-tight">
+              Our coaches
+            </h2>
+            <p className="text-base sm:text-lg text-slate-700 text-center leading-relaxed font-light">
+              BrightNest offers access to licensed, trained, experienced, and accredited financial coaches, certified financial planners (CFP), behavioral finance specialists, and certified financial counselors who help you build lasting financial habits.
+            </p>
+            <div className="text-center mt-8">
+              <Link
+                href="/quiz/financial-profile"
+                className="inline-block px-6 py-3 rounded-lg font-light text-base text-white hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl"
+                style={{ backgroundColor: '#3D6B54' }}
+              >
+                Get started
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Our Mission Section - Redesigned */}
+      {/* Conditional Content Based on Active Tab */}
+      {activeTab === 'about' && (
+        <>
+          {/* Our Mission Section - Redesigned */}
       <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
@@ -404,6 +451,326 @@ export default function AboutPage() {
           </Link>
         </div>
       </section>
+        </>
+      )}
+
+      {/* Social Impact Tab Content */}
+      {activeTab === 'social-impact' && (
+        <>
+          {/* Impact Stats Section */}
+          <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  Our Impact
+                </h2>
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                {[
+                  {
+                    value: "$500K+",
+                    label: "Given in discounts and financial aid",
+                    description: "To cover coaching costs for low-income individuals"
+                  },
+                  {
+                    value: "2,000+",
+                    label: "Free months of coaching",
+                    description: "Donated to communities in need"
+                  },
+                  {
+                    value: "50+",
+                    label: "Partnership organizations",
+                    description: "Working together to expand access"
+                  }
+                ].map((stat, index) => (
+                  <div key={index} className="bg-white rounded-xl shadow-lg p-8 text-center">
+                    <div className="text-4xl sm:text-5xl font-light mb-3" style={{ color: '#3D6B54' }}>
+                      {stat.value}
+                    </div>
+                    <h3 className="text-lg font-light text-slate-900 mb-2">{stat.label}</h3>
+                    <p className="text-sm text-slate-600 font-light">{stat.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Partnership Section */}
+          <section className="relative py-16 sm:py-20 lg:py-24 bg-white">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  Our Partners
+                </h2>
+                <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed font-light">
+                  We partner with impactful organizations to bring financial wellness to underserved communities
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl shadow-lg p-10 sm:p-12">
+                <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-light mb-8">
+                  We partner with 100+ impactful non-profit organizations, community groups, and employers to donate free financial coaching to under-resourced communities and break down barriers to accessing financial wellness support.
+                </p>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                  {[
+                    'Financial Wellness Alliance',
+                    'Community Credit Union',
+                    'Local Food Bank',
+                    'Housing Assistance Network'
+                  ].map((org, index) => (
+                    <div key={index} className="bg-white rounded-lg p-6 border border-slate-200 text-center hover:shadow-md transition-shadow">
+                      <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: '#3D6B54', opacity: 0.1 }}>
+                        <svg className="w-6 h-6" style={{ color: '#3D6B54' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                      </div>
+                      <p className="text-sm font-light text-slate-700">{org}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Commitment Section */}
+          <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="bg-white rounded-2xl shadow-xl p-10 sm:p-12 lg:p-16 text-center">
+                <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6">
+                  Our Commitment
+                </h2>
+                <p className="text-lg sm:text-xl text-slate-700 leading-relaxed font-light max-w-2xl mx-auto">
+                  Financial stress doesn&apos;t discriminate, and neither should access to financial wellness. We&apos;re committed to making our programs accessible to everyone, regardless of their financial situation, and to partnering with organizations that share our mission of breaking down barriers to financial health.
+                </p>
+              </div>
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* Client Outcomes Tab Content */}
+      {activeTab === 'client-outcomes' && (
+        <>
+          {/* Results Overview Section */}
+          <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  Real Results
+                </h2>
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                {[
+                  {
+                    value: "85%",
+                    label: "Report reduced financial stress",
+                    description: "Within the first 90 days"
+                  },
+                  {
+                    value: "70%",
+                    label: "Increase savings",
+                    description: "Average improvement in savings habits"
+                  },
+                  {
+                    value: "90%",
+                    label: "Feel more in control",
+                    description: "Of their financial decisions"
+                  }
+                ].map((stat, index) => (
+                  <div key={index} className="bg-white rounded-xl shadow-lg p-8 text-center">
+                    <div className="text-4xl sm:text-5xl font-light mb-3" style={{ color: '#3D6B54' }}>
+                      {stat.value}
+                    </div>
+                    <h3 className="text-lg font-light text-slate-900 mb-2">{stat.label}</h3>
+                    <p className="text-sm text-slate-600 font-light">{stat.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Transformation Stories Section */}
+          <section className="relative py-16 sm:py-20 lg:py-24 bg-white">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  Client Transformations
+                </h2>
+                <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed font-light">
+                  Real stories from real people who transformed their relationship with money
+                </p>
+              </div>
+
+              <div className="space-y-8">
+                {[
+                  {
+                    title: "From Overwhelm to Confidence",
+                    description: "Sarah went from avoiding her bank account to confidently managing her finances and building an emergency fund for the first time in her life.",
+                    metric: "Built $5,000 emergency fund in 6 months"
+                  },
+                  {
+                    title: "Breaking the Paycheck-to-Paycheck Cycle",
+                    description: "Michael eliminated $15,000 in credit card debt and learned to budget in a way that worked with his lifestyle, not against it.",
+                    metric: "Debt-free in 18 months"
+                  },
+                  {
+                    title: "From Anxiety to Peace of Mind",
+                    description: "Jessica transformed her relationship with money from a source of constant stress to a tool for achieving her goals and creating security.",
+                    metric: "Reduced financial anxiety by 90%"
+                  }
+                ].map((story, index) => (
+                  <div key={index} className="bg-gradient-to-br from-slate-50 to-white rounded-xl shadow-md p-8 border border-slate-200">
+                    <h3 className="text-xl sm:text-2xl font-light text-slate-900 mb-4">{story.title}</h3>
+                    <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-light mb-4">
+                      {story.description}
+                    </p>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#3D6B54' }}></div>
+                      <p className="text-sm font-light" style={{ color: '#3D6B54' }}>{story.metric}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Key Metrics Section */}
+          <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="bg-white rounded-2xl shadow-xl p-10 sm:p-12 lg:p-16">
+                <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-8 text-center">
+                  What Our Clients Achieve
+                </h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {[
+                    {
+                      icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+                      title: "Debt Reduction",
+                      description: "Average debt reduction of 40% within the first year"
+                    },
+                    {
+                      icon: "M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z",
+                      title: "Savings Growth",
+                      description: "Clients increase their savings by an average of 200%"
+                    },
+                    {
+                      icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
+                      title: "Financial Confidence",
+                      description: "90% report feeling more confident about their financial future"
+                    },
+                    {
+                      icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z",
+                      title: "Relationship Impact",
+                      description: "75% report improved relationships due to reduced money stress"
+                    }
+                  ].map((metric, index) => (
+                    <div key={index} className="flex items-start space-x-4">
+                      <div className="flex-shrink-0">
+                        <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#3D6B54', opacity: 0.1 }}>
+                          <svg className="w-6 h-6" style={{ color: '#3D6B54' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={metric.icon} />
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-light text-slate-900 mb-2">{metric.title}</h3>
+                        <p className="text-slate-600 font-light leading-relaxed">{metric.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* Careers Tab Content */}
+      {activeTab === 'careers' && (
+        <>
+          {/* Why Work With Us Section */}
+          <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  Why Work With Us
+                </h2>
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
+              </div>
+
+              <div className="bg-white rounded-2xl shadow-lg p-8 sm:p-12 lg:p-16 mb-8">
+                <p className="text-lg sm:text-xl text-slate-700 leading-relaxed font-light text-center max-w-3xl mx-auto">
+                  At BrightNest, we&apos;re building a team of passionate professionals who believe that financial wellness should be accessible to everyone. We combine psychology, technology, and human-centered design to help people change their relationship with money.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* Values Section */}
+          <section className="relative py-16 sm:py-20 lg:py-24 bg-white">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  Our Values
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                {[
+                  {
+                    title: "Impact-Driven",
+                    description: "We measure success by the lives we change, not just the metrics we hit."
+                  },
+                  {
+                    title: "Collaborative",
+                    description: "We believe the best solutions come from diverse perspectives working together."
+                  },
+                  {
+                    title: "Growth-Minded",
+                    description: "We&apos;re always learning, evolving, and pushing ourselves to be better."
+                  },
+                  {
+                    title: "Mission-Focused",
+                    description: "Every decision we make serves our goal of making financial wellness accessible."
+                  }
+                ].map((value, index) => (
+                  <div key={index} className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-8 border border-slate-200 hover:shadow-lg transition-all duration-300">
+                    <h3 className="text-xl font-light text-slate-900 mb-3">{value.title}</h3>
+                    <p className="text-slate-600 font-light leading-relaxed">{value.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Open Positions CTA */}
+          <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <div className="bg-white rounded-2xl shadow-xl p-10 sm:p-12 lg:p-16">
+                <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6">
+                  Ready to Make an Impact?
+                </h2>
+                <p className="text-lg sm:text-xl text-slate-700 leading-relaxed font-light mb-8 max-w-2xl mx-auto">
+                  If you&apos;re driven by impact, value collaboration, and want to work on meaningful problems that change lives, we&apos;d love to hear from you.
+                </p>
+                <Link
+                  href="/careers"
+                  className="inline-block text-white px-8 py-4 rounded-xl font-light text-lg hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  style={{ backgroundColor: '#3D6B54' }}
+                >
+                  View Open Positions
+                </Link>
+              </div>
+            </div>
+          </section>
+        </>
+      )}
 
       {/* Footer */}
       <footer className="bg-slate-900 text-white py-12 sm:py-16">
