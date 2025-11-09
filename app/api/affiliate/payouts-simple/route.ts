@@ -90,8 +90,9 @@ export async function GET(request: NextRequest) {
       .reduce((sum, p) => sum + Number(p.amountDue), 0);
 
     const totalEarned = Number(affiliate.totalCommission || 0);
-    // Available commission = available conversions - already paid out
-    const availableCommission = Math.max(0, availableAmount - totalPaid);
+    // Available commission = available conversions - already paid out - pending payouts
+    // Pending payouts are already committed, so they should be subtracted from available balance
+    const availableCommission = Math.max(0, availableAmount - totalPaid - pendingPayouts);
 
     console.log("Calculations:", { totalEarned, totalPaid, heldAmount, availableAmount, availableCommission });
 
@@ -126,12 +127,21 @@ export async function GET(request: NextRequest) {
           holdDays,
         },
         commissionHoldInfo: {
-          heldCommissions: heldCommissions.map(c => ({
-            id: c.id,
-            amount: Number(c.commissionAmount),
-            createdAt: c.createdAt,
-            holdUntil: c.holdUntil
-          })),
+          heldCommissions: heldCommissions.map(c => {
+            const holdUntilDate = c.holdUntil ? new Date(c.holdUntil) : null;
+            const now = new Date();
+            const daysLeft = holdUntilDate ? Math.ceil((holdUntilDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : 0;
+            const isReadyForRelease = holdUntilDate ? holdUntilDate <= now : false;
+            
+            return {
+              id: c.id,
+              amount: Number(c.commissionAmount),
+              createdAt: c.createdAt,
+              holdUntil: c.holdUntil,
+              daysLeft: Math.max(0, daysLeft), // Ensure non-negative
+              isReadyForRelease,
+            };
+          }),
           totalHeldAmount: heldAmount,
           totalAvailableAmount: availableAmount,
           holdDays,

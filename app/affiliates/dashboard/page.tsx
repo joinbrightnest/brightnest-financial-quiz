@@ -13,7 +13,6 @@ interface AffiliateData {
   tier: string;
   referralCode: string;
   customLink: string;
-  customTrackingLink?: string;
   commissionRate: number;
   totalClicks: number;
   totalLeads: number;
@@ -287,12 +286,12 @@ export default function AffiliateDashboard() {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 lg:space-x-3">
               <input
                 type="text"
-                value={affiliate.customTrackingLink || `https://joinbrightnest.com/${affiliate.referralCode}`}
+                value={affiliate.customLink || `https://joinbrightnest.com/${affiliate.referralCode}`}
                 readOnly
                 className="flex-1 px-2 sm:px-3 lg:px-4 py-2 sm:py-3 border border-emerald-300 rounded-lg sm:rounded-xl bg-white text-xs sm:text-sm font-mono text-black shadow-sm"
               />
               <button
-                onClick={() => navigator.clipboard.writeText(affiliate.customTrackingLink || `https://joinbrightnest.com/${affiliate.referralCode}`)}
+                onClick={() => navigator.clipboard.writeText(affiliate.customLink || `https://joinbrightnest.com/${affiliate.referralCode}`)}
                 className="inline-flex items-center justify-center px-3 sm:px-4 lg:px-5 py-2 sm:py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold hover:from-emerald-700 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 <svg className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

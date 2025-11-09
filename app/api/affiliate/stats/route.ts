@@ -113,13 +113,10 @@ export async function GET(request: NextRequest) {
             },
           },
         }).catch(() => []),
+        // Payouts should not be date-filtered - we want all-time pending/paid commission
         prisma.affiliatePayout.findMany({
           where: {
             affiliateId: affiliate.id,
-            createdAt: {
-              gte: startDate,
-              lte: endDate,
-            },
           },
         }).catch(() => []),
       ]);
@@ -148,19 +145,16 @@ export async function GET(request: NextRequest) {
     // Count sales from AffiliateConversion records (SAME as admin API line 118)
     // This matches the admin API's approach exactly
     const totalSales = affiliateWithData.conversions.filter(c => c.conversionType === "sale").length;
-    const conversionRate = totalClicks > 0 ? (totalSales / totalClicks) * 100 : 0;
-
-    // Fetch ALL appointments for this affiliate (SAME as admin API line 121-125)
-    const allAffiliateAppointments = await prisma.appointment.findMany({
-      where: {
-        affiliateCode: affiliate.referralCode,
-      },
-    }).catch(() => []);
     
-    // Filter for converted appointments (SAME as admin API line 128-130)
-    const dateFilteredAppointments = allAffiliateAppointments.filter(apt => 
-      apt.outcome === 'converted'
-    );
+    // Conversion rate should be click-to-booking rate (matches admin API)
+    // This represents the percentage of clicks that resulted in booked calls
+    const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
+
+    // NOTE: Commission is calculated from AffiliateConversion records (source of truth)
+    // Appointments are not used for commission calculation, but we fetch them for consistency
+    // Admin API uses updatedAt (when appointment was converted), but we use conversion records instead
+    // which is more accurate since conversion records are created when the deal is actually closed
+    const dateFilteredAppointments: any[] = []; // Not used for commission, but kept for API consistency
 
     // Calculate pending and paid commissions from filtered payouts
     const pendingCommission = affiliateWithData.payouts
@@ -238,17 +232,10 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
   startOfWeek.setDate(now.getDate() - daysToMonday);
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   
-  // Use appointments passed from card calculation, or fetch if not provided
-  let allAppointments, convertedAppointments;
-  
-  // CRITICAL: Use the pre-fetched converted appointments from card calculation
-  // This ensures the graph uses the SAME data as the cards
-  if (cardAppointments) {
-    convertedAppointments = cardAppointments;
-  } else {
-    // This shouldn't happen since we always pass cardAppointments, but keep as fallback
-    convertedAppointments = [];
-  }
+  // NOTE: Commission is calculated from AffiliateConversion records (source of truth)
+  // Appointments are not used for commission calculation - conversion records are more accurate
+  // since they're created when the deal is actually closed, not when the appointment was booked
+  const convertedAppointments: any[] = []; // Not used - commission comes from conversion records
 
   // Use pre-calculated lead data if provided, otherwise fetch it
   const allLeadsData = preCalculatedLeadData || await calculateLeadsByCode(affiliateCode, dateRange);
