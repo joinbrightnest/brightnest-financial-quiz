@@ -45,6 +45,15 @@ export async function PUT(
       );
     }
 
+    // Check if appointment was previously assigned to a different closer
+    const existingAppointment = await prisma.appointment.findUnique({
+      where: { id },
+      select: {
+        closerId: true,
+        status: true
+      }
+    });
+
     // Update appointment with closer assignment
     const appointment = await prisma.appointment.update({
       where: { id },
@@ -61,6 +70,32 @@ export async function PUT(
         }
       }
     });
+
+    // Increment totalCalls for the assigned closer if this is a new assignment
+    // (don't increment if it was already assigned to this closer)
+    if (!existingAppointment || existingAppointment.closerId !== closerId) {
+      // Decrement totalCalls from previous closer if it was assigned to someone else
+      if (existingAppointment?.closerId && existingAppointment.closerId !== closerId) {
+        await prisma.closer.update({
+          where: { id: existingAppointment.closerId },
+          data: {
+            totalCalls: {
+              decrement: 1
+            }
+          }
+        });
+      }
+      
+      // Increment totalCalls for the new closer
+      await prisma.closer.update({
+        where: { id: closerId },
+        data: {
+          totalCalls: {
+            increment: 1
+          }
+        }
+      });
+    }
 
     // Try to create audit log (optional - don't fail assignment if this fails)
     try {

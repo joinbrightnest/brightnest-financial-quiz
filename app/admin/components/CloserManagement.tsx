@@ -296,7 +296,8 @@ export default function CloserManagement() {
       });
 
       if (response.ok) {
-        fetchAppointments();
+        // Refresh both appointments and closers to show updated stats
+        await Promise.all([fetchAppointments(), fetchClosers()]);
         setShowAssignmentModal(false);
         setSelectedAppointment(null);
         setSelectedCloser('');
@@ -327,7 +328,8 @@ export default function CloserManagement() {
       });
 
       if (response.ok) {
-        fetchAppointments();
+        // Refresh both appointments and closers (appointment may have been auto-assigned)
+        await Promise.all([fetchAppointments(), fetchClosers()]);
         setShowCreateAppointment(false);
         setNewAppointment({
           customerName: '',
@@ -617,7 +619,8 @@ export default function CloserManagement() {
       if (response.ok) {
         const data = await response.json();
         alert(`Success! Assigned ${data.assignedCount} appointments.`);
-        fetchAppointments(); // Refresh the list
+        // Refresh both appointments and closers to show updated stats
+        await Promise.all([fetchAppointments(), fetchClosers()]);
       } else {
         const data = await response.json();
         alert(`Failed to auto-assign: ${data.error || 'Unknown error'}`);
@@ -665,12 +668,13 @@ export default function CloserManagement() {
       });
 
       if (response.ok) {
-        fetchAppointments();
+        // Refresh both appointments and closers (deletion may have affected closer stats)
+        await Promise.all([fetchAppointments(), fetchClosers()]);
         alert('Appointment deleted successfully');
       } else if (response.status === 404) {
         // Appointment already deleted, just refresh the list
         console.log('Appointment already deleted, refreshing list');
-        fetchAppointments();
+        await Promise.all([fetchAppointments(), fetchClosers()]);
         alert('Appointment was already deleted');
       } else {
         const errorData = await response.json();
@@ -1097,11 +1101,24 @@ export default function CloserManagement() {
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                   >
                     <option value="">Choose a closer</option>
-                    {closers.filter(c => c.isActive && c.isApproved).map((closer) => (
-                      <option key={closer.id} value={closer.id}>
-                        {closer.name} ({closer.totalCalls} calls, {(closer.conversionRate * 100).toFixed(1)}% rate)
-                      </option>
-                    ))}
+                    {closers.filter(c => c.isActive && c.isApproved).map((closer) => {
+                      // Calculate real-time stats from appointments for accurate display
+                      const closerAppointments = appointments.filter(a => a.closer?.id === closer.id);
+                      const conversions = closerAppointments.filter(a => 
+                        a.outcome === 'converted' && 
+                        a.saleValue !== null && 
+                        a.saleValue !== undefined && 
+                        Number(a.saleValue) > 0
+                      );
+                      const totalCalls = closerAppointments.length;
+                      const conversionRate = totalCalls > 0 ? (conversions.length / totalCalls) * 100 : 0;
+                      
+                      return (
+                        <option key={closer.id} value={closer.id}>
+                          {closer.name} ({totalCalls} calls, {conversionRate.toFixed(1)}% rate)
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
               </div>
