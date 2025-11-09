@@ -796,40 +796,33 @@ export default function AboutPage() {
       {activeTab === 'careers' && (
         <>
           {/* Hero Section with Team Avatars and Apply Button */}
-          <section className="relative py-20 sm:py-28 lg:py-32 overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50">
-            <div className="absolute inset-0">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(20,184,166,0.08),transparent_50%)]"></div>
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(251,191,36,0.06),transparent_50%)]"></div>
-              <div className="absolute top-0 left-1/4 w-96 h-96 bg-teal-100/20 rounded-full blur-3xl -translate-x-1/2"></div>
-              <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-100/20 rounded-full blur-3xl translate-x-1/2"></div>
-            </div>
-            
-            <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-[1.1] tracking-tight text-slate-900">
+          <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+            <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light mb-6 leading-tight tracking-tight text-slate-900">
                 Join the BrightNest Team
-              </h1>
+              </h2>
               
-              <p className="text-xl sm:text-2xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
+              <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto mb-8 leading-relaxed font-light">
                 Change behaviour. Change lives. Build more than a job.
               </p>
 
               <button
                 onClick={handleSeePositions}
-                className="inline-block bg-gradient-to-r from-teal-600 to-teal-700 text-white px-10 py-4 rounded-xl font-semibold text-lg hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300 relative overflow-hidden group mb-16"
+                className="inline-block text-white px-8 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl mb-12"
+                style={{ backgroundColor: '#3D6B54' }}
               >
-                <span className="relative z-10">Apply Now</span>
-                <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+                Apply Now
               </button>
 
               {/* Team Member Avatars */}
-              <div className="mt-16">
-                <p className="text-sm text-teal-600 uppercase tracking-wide mb-6 font-semibold">Are You Ready?</p>
+              <div className="mt-12">
+                <p className="text-sm text-slate-600 uppercase tracking-wide mb-6 font-light">Are You Ready?</p>
                 <div className="flex justify-center items-center space-x-[-12px]">
                   {testimonials.slice(0, 4).map((testimonial, idx) => (
                     <div
                       key={idx}
-                      className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center text-white font-bold text-sm sm:text-base lg:text-lg border-4 border-white shadow-xl hover:scale-110 transition-transform duration-300"
-                      style={{ zIndex: 10 + idx }}
+                      className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center text-white font-light text-xs sm:text-sm lg:text-base border-2 border-white shadow-md"
+                      style={{ backgroundColor: '#3D6B54', zIndex: 10 + idx }}
                     >
                       {testimonial.initials}
                     </div>
@@ -840,139 +833,123 @@ export default function AboutPage() {
           </section>
 
           {/* Our Mission Section */}
-          <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-white">
-            <div className="absolute inset-0 bg-gradient-to-b from-white via-slate-50/30 to-white"></div>
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-teal-50/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-            
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="max-w-5xl mx-auto">
-                <div className="text-center mb-16">
-                  <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50/80 backdrop-blur-sm px-5 py-2.5 rounded-full border border-teal-100 shadow-sm mb-6">
-                    Our Mission
-                  </span>
-                  <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-8 leading-tight tracking-tight">
-                    Our Mission
-                  </h2>
-                </div>
-                
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-teal-500/10 to-amber-400/10 rounded-3xl blur-2xl transform scale-105"></div>
-                  <div className="relative bg-white rounded-3xl p-10 sm:p-14 lg:p-16 border border-slate-200/80 shadow-2xl">
-                    <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500 rounded-t-3xl"></div>
-                    <div className="space-y-6 relative z-10">
-                      <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed">
-                        At BrightNest, we&apos;re not just helping people manage money — we&apos;re guiding them to transform how they think, feel, and act about their finances.
-                    </p>
-                      <p className="text-xl sm:text-2xl text-slate-700 leading-relaxed font-semibold text-teal-700">
-                        We believe lasting change happens when the habits beneath the numbers are rewired. And we&apos;re building the team to make that possible.
-                    </p>
-                    </div>
-                  </div>
+          <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden bg-white">
+            <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  Our Mission
+                </h2>
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
+              </div>
+              
+              <div className="bg-white rounded-xl shadow-md p-8 sm:p-10 lg:p-12">
+                <div className="space-y-5 text-base sm:text-lg text-slate-700 leading-relaxed font-light text-center">
+                  <p>
+                    At BrightNest, we&apos;re not just helping people manage money — we&apos;re guiding them to transform how they think, feel, and act about their finances.
+                  </p>
+                  <p style={{ color: '#3D6B54' }}>
+                    We believe lasting change happens when the habits beneath the numbers are rewired. And we&apos;re building the team to make that possible.
+                  </p>
                 </div>
               </div>
             </div>
           </section>
 
           {/* Who We're Looking For Section */}
-          <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
-            <div className="absolute inset-0">
-              <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-teal-50/50 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
-              <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-amber-50/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-            </div>
-            
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-16">
-                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-8 leading-tight tracking-tight">
+          <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+            <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
                   Who We&apos;re Looking For
                 </h2>
-                <div className="max-w-3xl mx-auto bg-white/80 backdrop-blur-sm rounded-2xl p-8 sm:p-10 border border-slate-200/80 shadow-lg space-y-6">
-                  <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
-                    We want people who care deeply about human behaviour, real results and genuine impact. If you&apos;re someone who:
-                  </p>
-                  <ul className="text-left space-y-3 list-none">
-                    <li className="flex items-start space-x-3">
-                      <svg className="w-6 h-6 text-teal-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-lg text-slate-700">believes in the power of clarity over confusion</span>
-                    </li>
-                    <li className="flex items-start space-x-3">
-                      <svg className="w-6 h-6 text-teal-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-lg text-slate-700">gets energy from helping others move from stuck → free</span>
-                    </li>
-                    <li className="flex items-start space-x-3">
-                      <svg className="w-6 h-6 text-teal-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span className="text-lg text-slate-700">wants to work in a team that values growth, integrity and transformation</span>
-                    </li>
-                  </ul>
-                  <p className="text-lg sm:text-xl text-slate-700 leading-relaxed font-semibold text-teal-700 pt-4 border-t border-slate-200">
-                    then you might be a perfect fit.
-                  </p>
-                  <p className="text-lg sm:text-xl text-slate-700 leading-relaxed">
-                    Whether your strength lies in coaching, operations, tech, content or client experience — there&apos;s an opportunity here to help build something meaningful.
-                  </p>
-                </div>
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
               </div>
+              <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md p-8 sm:p-10 space-y-5">
+                <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-light">
+                  We want people who care deeply about human behaviour, real results and genuine impact. If you&apos;re someone who:
+                </p>
+                <ul className="text-left space-y-3 list-none">
+                  <li className="flex items-start space-x-3">
+                    <svg className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#3D6B54' }} fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-base sm:text-lg text-slate-700 font-light">believes in the power of clarity over confusion</span>
+                  </li>
+                  <li className="flex items-start space-x-3">
+                    <svg className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#3D6B54' }} fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-base sm:text-lg text-slate-700 font-light">gets energy from helping others move from stuck → free</span>
+                  </li>
+                  <li className="flex items-start space-x-3">
+                    <svg className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: '#3D6B54' }} fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-base sm:text-lg text-slate-700 font-light">wants to work in a team that values growth, integrity and transformation</span>
+                  </li>
+                </ul>
+                <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-light pt-4 border-t border-slate-200" style={{ color: '#3D6B54' }}>
+                  then you might be a perfect fit.
+                </p>
+                <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-light">
+                  Whether your strength lies in coaching, operations, tech, content or client experience — there&apos;s an opportunity here to help build something meaningful.
+                </p>
+              </div>
+            </div>
 
-              {/* Testimonials Carousel */}
-              <div className="relative max-w-6xl mx-auto mt-16">
-                <div className="relative bg-white rounded-3xl p-8 sm:p-12 border border-slate-200/80 shadow-2xl min-h-[320px] flex flex-col justify-between">
-                  <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500 rounded-t-3xl"></div>
-                  
-                  <div className="flex items-start space-x-6 mb-6 pt-4">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-teal-600 to-teal-700 flex items-center justify-center text-white font-bold text-2xl flex-shrink-0 shadow-lg">
-                      {testimonials[currentTestimonial].initials}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-2xl font-bold text-slate-900 mb-1">{testimonials[currentTestimonial].name}</h3>
-                      <p className="text-teal-600 font-semibold text-lg">{testimonials[currentTestimonial].title}</p>
-                    </div>
+            {/* Testimonials Carousel */}
+            <div className="relative max-w-4xl mx-auto mt-12">
+              <div className="relative bg-white rounded-xl shadow-md p-8 sm:p-10 border border-slate-200 min-h-[280px] flex flex-col justify-between">
+                <div className="flex items-start space-x-4 mb-6">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center text-white font-light text-lg flex-shrink-0 shadow-md" style={{ backgroundColor: '#3D6B54' }}>
+                    {testimonials[currentTestimonial].initials}
                   </div>
-                  
-                  <p className="text-lg sm:text-xl text-slate-700 leading-relaxed italic mb-8 flex-1">
-                    &quot;{testimonials[currentTestimonial].quote}&quot;
-                  </p>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-light text-slate-900 mb-1">{testimonials[currentTestimonial].name}</h3>
+                    <p className="text-base font-light" style={{ color: '#3D6B54' }}>{testimonials[currentTestimonial].title}</p>
+                  </div>
+                </div>
+                
+                <p className="text-base sm:text-lg text-slate-700 leading-relaxed italic mb-8 flex-1 font-light">
+                  &quot;{testimonials[currentTestimonial].quote}&quot;
+                </p>
 
-                  {/* Navigation */}
-                  <div className="flex justify-between items-center pt-6 border-t border-slate-200">
-                    <div className="flex justify-center items-center space-x-3 flex-1">
-                    {testimonials.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setCurrentTestimonial(index)}
-                        className={`transition-all duration-300 rounded-full ${
-                          index === currentTestimonial 
-                              ? 'w-8 h-3 bg-teal-600' 
-                              : 'w-3 h-3 bg-slate-300 hover:bg-teal-400'
-                        }`}
-                        aria-label={`View testimonial ${index + 1}`}
-                      />
-                    ))}
-                  </div>
-                    <div className="flex space-x-2">
-                <button
-                  onClick={() => setCurrentTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
-                        className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center hover:bg-teal-50 hover:border-teal-300 border border-slate-200 transition-colors"
-                  aria-label="Previous testimonial"
-                >
-                        <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </button>
-                <button
-                  onClick={() => setCurrentTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
-                        className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center hover:bg-teal-50 hover:border-teal-300 border border-slate-200 transition-colors"
-                  aria-label="Next testimonial"
-                >
-                        <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
-                    </div>
+                {/* Navigation */}
+                <div className="flex justify-between items-center pt-6 border-t border-slate-200">
+                  <div className="flex justify-center items-center space-x-2 flex-1">
+                  {testimonials.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentTestimonial(index)}
+                      className={`transition-all duration-300 rounded-full ${
+                        index === currentTestimonial 
+                            ? 'w-6 h-2' 
+                            : 'w-2 h-2 bg-slate-300 hover:opacity-70'
+                      }`}
+                      style={index === currentTestimonial ? { backgroundColor: '#3D6B54' } : {}}
+                      aria-label={`View testimonial ${index + 1}`}
+                    />
+                  ))}
+                </div>
+                  <div className="flex space-x-2">
+              <button
+                onClick={() => setCurrentTestimonial((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1))}
+                      className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center hover:bg-slate-200 border border-slate-200 transition-colors"
+                aria-label="Previous testimonial"
+              >
+                      <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                onClick={() => setCurrentTestimonial((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1))}
+                      className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center hover:bg-slate-200 border border-slate-200 transition-colors"
+                aria-label="Next testimonial"
+              >
+                      <svg className="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
                   </div>
                 </div>
               </div>
@@ -980,33 +957,28 @@ export default function AboutPage() {
           </section>
 
           {/* Core Values Section */}
-          <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-white">
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-50/30 rounded-full blur-3xl"></div>
-            
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-16">
-                <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50/80 backdrop-blur-sm px-5 py-2.5 rounded-full border border-teal-100 shadow-sm mb-6">
-                  Our Values
-                </span>
-                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-8 leading-tight tracking-tight">
+          <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden bg-white">
+            <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
                   Our Values
                 </h2>
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {coreValues.map((value, index) => (
                   <div 
                     key={index} 
-                    className="group relative bg-white rounded-2xl p-8 border border-slate-200/80 hover:border-teal-300 hover:shadow-xl transition-all duration-300 overflow-hidden text-center"
+                    className="group relative bg-white rounded-xl p-6 border border-slate-200 hover:shadow-md transition-all duration-300 text-center"
                   >
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-teal-50 to-transparent rounded-full -mr-12 -mt-12 opacity-50 group-hover:opacity-70 transition-opacity"></div>
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 mb-6 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 relative z-10">
-                      <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg mb-4 shadow-sm relative z-10" style={{ backgroundColor: '#3D6B54', opacity: 0.9 }}>
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={value.icon} />
                       </svg>
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-teal-700 transition-colors relative z-10">{value.title}</h3>
-                    <p className="text-base text-slate-600 leading-relaxed relative z-10">{value.description}</p>
+                    <h3 className="text-lg font-light text-slate-900 mb-2 transition-colors relative z-10">{value.title}</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed font-light relative z-10">{value.description}</p>
                   </div>
                 ))}
               </div>
@@ -1014,31 +986,23 @@ export default function AboutPage() {
           </section>
 
           {/* Perks Section */}
-          <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
-            <div className="absolute inset-0">
-              <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-teal-50/50 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
-              <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-amber-50/30 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-            </div>
-            
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center mb-16">
-                <span className="inline-block text-xs font-semibold text-teal-600 uppercase tracking-wider bg-teal-50/80 backdrop-blur-sm px-5 py-2.5 rounded-full border border-teal-100 shadow-sm mb-6">
-                  Just A Few Perks of Working With BrightNest
-                </span>
-                <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 mb-8 leading-tight tracking-tight">
-                  Your BrightNest Journey <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Starts Here</span>
+          <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+            <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  Your BrightNest Journey
                 </h2>
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {perks.map((perk, index) => (
                   <div 
                     key={index} 
-                    className="group relative bg-white rounded-2xl p-8 border border-slate-200/80 hover:border-teal-300 hover:shadow-xl transition-all duration-300 overflow-hidden"
+                    className="group relative bg-white rounded-xl p-6 border border-slate-200 hover:shadow-md transition-all duration-300"
                   >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-teal-50 to-transparent rounded-full -mr-16 -mt-16 opacity-50 group-hover:opacity-70 transition-opacity"></div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-teal-700 transition-colors relative z-10">{perk.title}</h3>
-                    <p className="text-base text-slate-600 leading-relaxed relative z-10">{perk.description}</p>
+                    <h3 className="text-lg font-light text-slate-900 mb-3 transition-colors">{perk.title}</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed font-light">{perk.description}</p>
                   </div>
                 ))}
               </div>
@@ -1046,90 +1010,43 @@ export default function AboutPage() {
           </section>
 
           {/* What It's Like To Work With Us Section */}
-          <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-white">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-teal-50/20 rounded-full blur-3xl"></div>
-            
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-10 sm:p-14 lg:p-16 shadow-2xl overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500"></div>
-                
-                {/* Background pattern */}
-                    <div className="absolute inset-0 opacity-10">
-                      <div className="absolute inset-0" style={{
-                        backgroundImage: `radial-gradient(circle at 20% 50%, white 2px, transparent 2px),
-                                          radial-gradient(circle at 60% 70%, white 2px, transparent 2px),
-                                          radial-gradient(circle at 80% 20%, white 2px, transparent 2px)`,
-                        backgroundSize: '100px 100px, 80px 80px, 120px 120px'
-                      }}></div>
+          <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden bg-white">
+            <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  What It&apos;s Like To Work With Us
+                </h2>
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
+              </div>
+
+              <div className="space-y-5 mb-8 max-w-3xl mx-auto">
+                {[
+                  "Purpose over process: Every role connects back to helping someone live with more financial freedom.",
+                  "Team of experts: You'll work alongside certified behaviour & finance coaches, tech builders and change-makers.",
+                  "Supportive culture: We value accountability, transparency, continuous learning and the courage to try new things.",
+                  "Growth mindset: We're growing rapidly, and with growth comes opportunity — for you and for our clients."
+                ].map((item, index) => (
+                  <div key={index} className="flex items-start space-x-3 bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+                    <div className="flex-shrink-0 mt-0.5">
+                      <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
                     </div>
-                    
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
-                  {/* Left Side - Visual */}
-                  <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] bg-gradient-to-br from-teal-600 via-teal-500 to-teal-700">
-                    <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.1)_0%,transparent_50%)]"></div>
-                    <div className="relative flex flex-col items-center justify-center h-full p-8">
-                      <div className="relative w-48 h-48 mb-6">
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-lg">
-                          <svg className="w-10 h-10 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" />
-                          </svg>
-                        </div>
-                        {[0, 1, 2, 3, 4].map((i) => {
-                          const angle = (i * 72 - 90) * (Math.PI / 180);
-                          const x = Math.cos(angle) * 70;
-                          const y = Math.sin(angle) * 70;
-                          return (
-                            <div
-                              key={i}
-                              className="absolute top-1/2 left-1/2 w-12 h-12 rounded-full bg-white/80 backdrop-blur-sm shadow-lg"
-                              style={{
-                                transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`
-                              }}
-                            ></div>
-                          );
-                        })}
-                      </div>
-                      <h3 className="text-2xl sm:text-3xl font-bold text-white text-center">Join Our Team</h3>
-                      <p className="text-white/90 text-center mt-2 text-base">Empowering Women Together</p>
-                    </div>
+                    <p className="text-base sm:text-lg text-slate-700 font-light leading-relaxed">
+                      <span className="font-light" style={{ color: '#3D6B54' }}>{item.split(':')[0]}:</span> {item.split(':').slice(1).join(':')}
+                    </p>
                   </div>
+                ))}
+              </div>
 
-                  {/* Right Side - Content */}
-                  <div>
-                    <p className="text-teal-400 italic text-base mb-3">What It&apos;s Like To</p>
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-8 uppercase italic leading-tight">
-                      work with us
-                    </h2>
-
-                    <div className="space-y-5 mb-8">
-                      {[
-                        "Purpose over process: Every role connects back to helping someone live with more financial freedom.",
-                        "Team of experts: You'll work alongside certified behaviour & finance coaches, tech builders and change-makers.",
-                        "Supportive culture: We value accountability, transparency, continuous learning and the courage to try new things.",
-                        "Growth mindset: We're growing rapidly, and with growth comes opportunity — for you and for our clients."
-                      ].map((item, index) => (
-                        <div key={index} className="flex items-start space-x-3">
-                          <div className="flex-shrink-0 mt-1">
-                            <svg className="w-6 h-6 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                        </div>
-                          <p className="text-base text-white/90 font-light italic">
-                            <strong className="font-semibold text-white">{item.split(':')[0]}:</strong> {item.split(':').slice(1).join(':')}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-
-                    <button
-                      onClick={handleSeePositions}
-                      className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-10 py-4 rounded-xl font-semibold text-lg uppercase hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300 relative overflow-hidden group"
-                    >
-                      <span className="relative z-10">See Positions</span>
-                      <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
-                    </button>
-                  </div>
-                </div>
+              <div className="text-center">
+                <button
+                  onClick={handleSeePositions}
+                  className="inline-block text-white px-8 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  style={{ backgroundColor: '#3D6B54' }}
+                >
+                  See Positions
+                </button>
               </div>
             </div>
           </section>
@@ -1138,31 +1055,23 @@ export default function AboutPage() {
           {showPositions && (
             <section 
               id="positions" 
-              className="relative py-20 sm:py-24 lg:py-28 overflow-hidden bg-gradient-to-b from-slate-50 to-white animate-fade-in"
+              className="relative py-12 sm:py-16 lg:py-20 overflow-hidden" 
+              style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-teal-50/20"></div>
-              
               <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="relative bg-white rounded-3xl p-10 sm:p-14 border border-slate-200/80 shadow-2xl text-center">
-                  <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-500 via-amber-400 to-teal-500 rounded-t-3xl"></div>
-                  
-                  <div className="mb-8">
-                    <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center shadow-lg">
-                      <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                    </div>
+                <div className="relative bg-white rounded-xl p-8 sm:p-10 lg:p-12 border border-slate-200 shadow-md">
+                  <div className="text-center mb-8">
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                      Roles & Opportunities
+                    </h2>
+                    <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
                   </div>
-
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
-                    Roles & Opportunities
-                  </h2>
                   
-                  <p className="text-lg sm:text-xl text-slate-600 mb-6 max-w-2xl mx-auto leading-relaxed">
+                  <p className="text-base sm:text-lg text-slate-700 mb-6 max-w-2xl mx-auto leading-relaxed font-light text-center">
                     We have openings (or will have openings) across:
                   </p>
 
-                  <ul className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto leading-relaxed space-y-3 text-left list-disc list-inside">
+                  <ul className="text-base sm:text-lg text-slate-700 mb-8 max-w-2xl mx-auto leading-relaxed space-y-3 text-left list-disc list-inside font-light">
                     <li>Client Coaching & Behaviour Change Specialists</li>
                     <li>Marketing & Content Creators (focused on mindset & finance)</li>
                     <li>Operations & Client Success</li>
@@ -1170,15 +1079,15 @@ export default function AboutPage() {
                     <li>Partnerships & Growth</li>
                   </ul>
 
-                  <p className="text-lg text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed italic">
+                  <p className="text-base sm:text-lg text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed italic font-light text-center">
                     (Even if you don&apos;t see your exact fit listed yet, we encourage you to apply — let&apos;s connect and find where your strengths meet our mission.)
                   </p>
 
                   <div className="mb-10 pt-8 border-t border-slate-200">
-                    <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6">
+                    <h3 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 text-center">
                       Why Join Now
                     </h3>
-                    <div className="space-y-4 text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed text-left">
+                    <div className="space-y-4 text-base sm:text-lg text-slate-700 max-w-2xl mx-auto leading-relaxed text-left font-light">
                       <p>This is more than a job-board listing. This is an invitation to join at a critical moment in our journey.</p>
                       <p>You&apos;ll have the chance to help shape our systems, culture and impact.</p>
                       <p>And in doing so, you&apos;ll build experience, mastery and fulfilment.</p>
@@ -1186,15 +1095,15 @@ export default function AboutPage() {
                   </div>
 
                   <div className="mb-10 pt-8 border-t border-slate-200">
-                    <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6">
+                    <h3 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 text-center">
                       How to Apply
                     </h3>
-                    <div className="text-lg text-slate-600 mb-6 max-w-2xl mx-auto leading-relaxed space-y-4 text-left">
-                      <p>Email your CV (or LinkedIn) and a short note: <strong>Why does financial behaviour change matter to you?</strong></p>
+                    <div className="text-base sm:text-lg text-slate-700 mb-6 max-w-2xl mx-auto leading-relaxed space-y-4 text-left font-light">
+                      <p>Email your CV (or LinkedIn) and a short note: <strong className="font-light" style={{ color: '#3D6B54' }}>Why does financial behaviour change matter to you?</strong></p>
                       <p>Include which role(s) interest you and how your skills align.</p>
                       <p>We&apos;ll respond quickly and share next steps: a chat + a short task so we can see if we&apos;re a great match.</p>
-                      <p className="font-semibold text-teal-700">
-                        Send your application to <a href="mailto:careers@brightnest.com" className="underline hover:text-teal-800">careers@brightnest.com</a>
+                      <p className="font-light" style={{ color: '#3D6B54' }}>
+                        Send your application to <a href="mailto:careers@brightnest.com" className="underline hover:opacity-80">careers@brightnest.com</a>
                       </p>
                       <p className="text-sm text-slate-500 italic">
                         (We&apos;ll treat every application personally and appreciate your time.)
@@ -1205,10 +1114,10 @@ export default function AboutPage() {
                   <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                     <a
                       href="mailto:careers@brightnest.com"
-                      className="w-full sm:w-auto bg-gradient-to-r from-teal-600 to-teal-700 text-white px-10 py-4 rounded-xl font-semibold text-lg hover:from-teal-700 hover:to-teal-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 duration-300 text-center relative overflow-hidden group"
+                      className="inline-block text-white px-8 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl"
+                      style={{ backgroundColor: '#3D6B54' }}
                     >
-                      <span className="relative z-10">Apply Now</span>
-                      <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+                      Apply Now
                     </a>
                   </div>
                 </div>
