@@ -513,16 +513,20 @@ export default function AdminDashboard() {
 
   // Trigger data fetch when filters change (only when on the respective section)
   useEffect(() => {
-    // Only fetch if we're switching to a section that needs data, or if filters changed
-    const needsDataFetch = (activeSection === 'quiz-analytics' || activeSection === 'crm') && 
-                          (currentSectionRef.current !== activeSection || hasInitiallyLoaded.current);
-    
-    if (needsDataFetch) {
-      currentSectionRef.current = activeSection;
-      // Don't show loading spinner when switching filters - just update data silently
-      fetchStats(true);
+    // Fetch data when:
+    // 1. We're on quiz-analytics or crm section, AND
+    // 2. Either section changed OR we've already loaded initial data (so filter changes trigger refetch)
+    if (activeSection === 'quiz-analytics' || activeSection === 'crm') {
+      const sectionChanged = currentSectionRef.current !== activeSection;
+      const shouldRefetch = sectionChanged || hasInitiallyLoaded.current;
+      
+      if (shouldRefetch) {
+        currentSectionRef.current = activeSection;
+        // Don't show loading spinner when switching filters - just update data silently
+        fetchStats(true);
+      }
     }
-  }, [quizAnalyticsFilters, crmFilters, activeSection]);
+  }, [quizAnalyticsFilters, crmFilters, activeSection, fetchStats]);
 
 
   // Handle page visibility and focus changes to prevent unnecessary re-fetching
@@ -644,24 +648,31 @@ export default function AdminDashboard() {
   }
 
   // Chart data for retention rates (showing downward trend)
-  const retentionChartData = stats ? {
+  const retentionChartData = stats && stats.questionAnalytics.length > 0 ? {
     labels: stats.questionAnalytics.map(q => `Q${q.questionNumber}`),
     datasets: [
       {
         label: 'Retention Rate (%)',
         data: stats.questionAnalytics.map((q, index) => {
-          // Q1 should always be 100% (all users start the quiz)
-          if (index === 0) return 100;
-          // For other questions, cap at 100% and ensure it's not higher than previous
-          const cappedRate = Math.min(q.retentionRate, 100);
-          const previousRate = index > 0 ? Math.min(stats.questionAnalytics[index - 1].retentionRate, 100) : 100;
-          return Math.min(cappedRate, previousRate); // Never exceed previous question's rate
+          // Calculate actual retention rate, ensuring it doesn't exceed 100%
+          const actualRate = Math.min(q.retentionRate, 100);
+          
+          // Ensure retention rate doesn't increase from previous question
+          // (users can't reach Q2 without reaching Q1, etc.)
+          if (index === 0) {
+            // First question: show actual rate (might be less than 100% if some sessions never answered)
+            return Math.min(actualRate, 100);
+          }
+          
+          // For subsequent questions, ensure rate doesn't exceed previous question's rate
+          const previousRate = Math.min(stats.questionAnalytics[index - 1].retentionRate, 100);
+          return Math.min(actualRate, previousRate);
         }),
         borderColor: 'rgba(59, 130, 246, 1)',
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
         borderWidth: 3,
         fill: true,
-        tension: 0.2, // Reduced tension to prevent overshoot
+        tension: 0, // No curvature - straight segmented lines for accurate representation
         pointBackgroundColor: 'rgba(59, 130, 246, 1)',
         pointBorderColor: '#fff',
         pointBorderWidth: 2,
@@ -1581,9 +1592,19 @@ export default function AdminDashboard() {
                         className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       >
                         <option value="all">All Types</option>
-                        <option value="financial-profile">Financial Profile</option>
-                        <option value="health-finance">Health Finance</option>
-                        <option value="marriage-finance">Marriage Finance</option>
+                        {stats?.quizTypes && stats.quizTypes.length > 0 ? (
+                          stats.quizTypes.map((quizType) => (
+                            <option key={quizType.name} value={quizType.name}>
+                              {quizType.displayName}
+                            </option>
+                          ))
+                        ) : (
+                          <>
+                            <option value="financial-profile">Financial Profile</option>
+                            <option value="health-finance">Health Finance</option>
+                            <option value="marriage-finance">Marriage Finance</option>
+                          </>
+                        )}
                       </select>
                     </div>
                     
@@ -1595,6 +1616,7 @@ export default function AdminDashboard() {
                         onChange={(e) => setQuizAnalyticsFilters(prev => ({ ...prev, duration: e.target.value }))}
                         className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       >
+                        <option value="all">All Time</option>
                         <option value="24h">Last 24 hours</option>
                         <option value="7d">Last 7 days</option>
                         <option value="30d">Last 30 days</option>
@@ -1759,7 +1781,7 @@ export default function AdminDashboard() {
                     </svg>
                     Quiz Retention Rate
                   </h3>
-                  {retentionChartData && (
+                  {retentionChartData && stats && stats.questionAnalytics.length > 0 ? (
                     <div className="h-80">
                       <Line 
                         data={retentionChartData} 
@@ -1782,13 +1804,25 @@ export default function AdminDashboard() {
                               borderWidth: 1,
                               cornerRadius: 8,
                               callbacks: {
+                                title: function(context) {
+                                  if (stats && stats.questionAnalytics[context[0].dataIndex]) {
+                                    return `Question ${stats.questionAnalytics[context[0].dataIndex].questionNumber}`;
+                                  }
+                                  return `Question ${context[0].dataIndex + 1}`;
+                                },
                                 label: function(context) {
-                                  const questionNum = context.dataIndex + 1;
+                                  const questionNum = stats && stats.questionAnalytics[context.dataIndex] 
+                                    ? stats.questionAnalytics[context.dataIndex].questionNumber 
+                                    : context.dataIndex + 1;
                                   const retention = Math.min(context.parsed.y, 100).toFixed(1); // Cap at 100%
+                                  const answeredCount = stats && stats.questionAnalytics[context.dataIndex]
+                                    ? stats.questionAnalytics[context.dataIndex].answeredCount
+                                    : 0;
+                                  const totalSessions = stats?.totalSessions || 0;
                                   const dropOff = Math.max(100 - context.parsed.y, 0).toFixed(1); // Ensure non-negative
                                   return [
-                                    `Q${questionNum}: ${retention}% retention`,
-                                    `${dropOff}% never reached this question`
+                                    `Retention: ${retention}% (${answeredCount}/${totalSessions} users)`,
+                                    `${dropOff}% dropped off before reaching this question`
                                   ];
                                 }
                               }
@@ -1854,6 +1888,16 @@ export default function AdminDashboard() {
                         }}
                       />
                     </div>
+                  ) : (
+                    <div className="h-80 flex items-center justify-center text-gray-500">
+                      <div className="text-center">
+                        <svg className="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        <p className="text-sm font-medium">No quiz data available</p>
+                        <p className="text-xs text-gray-400 mt-1">Quiz retention data will appear here once users start taking quizzes</p>
+                      </div>
+                    </div>
                   )}
                 </div>
 
@@ -1867,7 +1911,7 @@ export default function AdminDashboard() {
                       Quiz Started
                     </h3>
                   </div>
-                  {dailyActivityData && (
+                  {dailyActivityData && dailyActivityData.labels && dailyActivityData.labels.length > 0 ? (
                     <div className="h-80">
                       <Line 
                         data={dailyActivityData} 
@@ -1949,6 +1993,16 @@ export default function AdminDashboard() {
                         }}
                       />
                     </div>
+                  ) : (
+                    <div className="h-80 flex items-center justify-center text-gray-500">
+                      <div className="text-center">
+                        <svg className="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        <p className="text-sm font-medium">No activity data available</p>
+                        <p className="text-xs text-gray-400 mt-1">Quiz activity data will appear here once users start taking quizzes</p>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
@@ -1963,7 +2017,7 @@ export default function AdminDashboard() {
                       Clicks
                     </h3>
                   </div>
-                  {clicksActivityData && (
+                  {clicksActivityData && clicksActivityData.labels && clicksActivityData.labels.length > 0 ? (
                     <div className="h-80">
                       <Line 
                         data={clicksActivityData} 
@@ -2032,6 +2086,16 @@ export default function AdminDashboard() {
                           }
                         }}
                       />
+                    </div>
+                  ) : (
+                    <div className="h-80 flex items-center justify-center text-gray-500">
+                      <div className="text-center">
+                        <svg className="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                        </svg>
+                        <p className="text-sm font-medium">No clicks data available</p>
+                        <p className="text-xs text-gray-400 mt-1">Click data will appear here once users visit the website</p>
+                      </div>
                     </div>
                   )}
               </div>

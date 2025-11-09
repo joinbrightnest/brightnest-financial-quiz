@@ -500,21 +500,57 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    // Calculate completion rate (using actual leads as completed sessions)
-    const completedSessions = allLeads.length;
-    const completionRate = totalSessions > 0 ? (completedSessions / totalSessions) * 100 : 0;
+    // Calculate completion rate
+    // Get count of ALL completed sessions (not just leads with contact info)
+    const completedSessionsCount = await prisma.quizSession.count({
+      where: {
+        createdAt: dateFilter,
+        status: "completed",
+        ...(quizType ? { quizType } : {}),
+        ...(affiliateCode ? { affiliateCode } : {})
+      }
+    });
+    
+    // Leads are completed sessions WITH name and email
+    const leadsCollected = allLeads.length;
+    
+    // Completion rate is based on ALL completed sessions, not just leads
+    const completionRate = totalSessions > 0 ? (completedSessionsCount / totalSessions) * 100 : 0;
 
     // Get all questions ordered by their order field
     // Use quiz type filter if specified, otherwise default
     const defaultQuizType = quizType || 'financial-profile';
     
     // 🚀 PERFORMANCE: Parallelize archetype and question queries
-    const [archetypeStats, totalQuestions, allQuestions] = await Promise.all([
-      // Get archetype distribution
-      prisma.result.groupBy({
-        by: ["archetype"],
-        _count: { archetype: true },
-      }),
+    // First, get filtered session IDs for archetype filtering
+    const filteredSessionsForArchetypes = await prisma.quizSession.findMany({
+      where: {
+        createdAt: dateFilter,
+        status: "completed", // Only completed sessions have results/archetypes
+        ...(quizType ? { quizType } : {}),
+        ...(affiliateCode ? { affiliateCode } : {})
+      },
+      select: {
+        id: true
+      }
+    });
+
+    const filteredSessionIdsForArchetypes = filteredSessionsForArchetypes.map(s => s.id);
+
+    // Get archetype distribution for filtered sessions only
+    const archetypeStatsData = filteredSessionIdsForArchetypes.length > 0
+      ? await prisma.result.groupBy({
+          by: ["archetype"],
+          _count: { archetype: true },
+          where: {
+            sessionId: {
+              in: filteredSessionIdsForArchetypes
+            }
+          }
+        })
+      : [];
+
+    const [totalQuestions, allQuestions] = await Promise.all([
       // Get behavior analytics - drop-off rates per question
       prisma.quizQuestion.count({
         where: { 
@@ -530,6 +566,8 @@ export async function GET(request: NextRequest) {
         orderBy: { order: 'asc' }
       })
     ]);
+
+    const archetypeStats = archetypeStatsData;
 
     // Get filtered sessions first (applying date and affiliate filters)
     const filteredSessions = await prisma.quizSession.findMany({
@@ -889,8 +927,7 @@ export async function GET(request: NextRequest) {
     }
     
     const clicks = totalClicks; // Total clicks (affiliate clicks + normal website clicks)
-    const partialSubmissions = totalSessions - completedSessions; // Started but didn't complete
-    const leadsCollected = allLeads.length; // Count completed sessions (all completed quizzes are leads)
+    const partialSubmissions = totalSessions - completedSessionsCount; // Started but didn't complete
     const averageTimeMs = avgDurationResult._avg.durationMs || 0; // Average time in milliseconds
 
     // Get top 3 questions responsible for biggest drop-offs (questions that CAUSE the drop)
@@ -986,7 +1023,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       totalSessions,
-      completedSessions,
+      completedSessions: completedSessionsCount, // All completed sessions (status="completed")
       completionRate: Math.round(completionRate * 100) / 100,
       avgDurationMs: avgDurationResult._avg.durationMs || 0,
       totalLeads: leadData.totalLeads,
@@ -998,7 +1035,7 @@ export async function GET(request: NextRequest) {
       // New metrics
       clicks,
       partialSubmissions,
-      leadsCollected,
+      leadsCollected, // Completed sessions WITH name and email (actual leads)
       averageTimeMs,
       topDropOffQuestions: questionsWithDrops,
       quizTypes: formattedQuizTypes,
@@ -1010,13 +1047,13 @@ export async function GET(request: NextRequest) {
       completedSessions: 0,
       completionRate: 0,
       avgDurationMs: 0,
+      totalLeads: 0,
       allLeads: [],
       archetypeStats: [],
       questionAnalytics: [],
       dailyActivity: [],
       clicksActivity: [],
       clicks: 0,
-      visitors: 0,
       partialSubmissions: 0,
       leadsCollected: 0,
       averageTimeMs: 0,
