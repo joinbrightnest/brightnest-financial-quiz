@@ -205,9 +205,7 @@ export async function GET(request: NextRequest) {
       const quizCount = quizSessions.length;
       const completionCount = quizSessions.filter((s: any) => s.status === "completed").length;
       
-      // Use pre-calculated emails from dataByAffiliate (no additional query needed)
-      const completedSessionEmails = affiliateData.completedSessionEmails || new Set<string>();
-      
+      // Use pre-calculated emails from dataByAffiliate (already destructured above)
       // Match appointments to completed quiz sessions by email (consistent with admin API)
       // This ensures we only count bookings that came from the quiz flow
       const validBookedAppointments = appointments.filter((apt: any) => {
