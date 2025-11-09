@@ -36,17 +36,14 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
             
             {/* Desktop Menu Items */}
             <div className="flex items-center space-x-8">
-              <Link href="/about" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-teal-600 transition-colors duration-200 relative group">
+              <Link href="/about" className="px-4 py-2.5 text-slate-700 font-medium text-sm hover:text-teal-700 hover:bg-teal-50/50 transition-all duration-200 rounded-lg">
                 About Us
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-teal-600 transition-all duration-200 group-hover:w-full"></span>
               </Link>
-              <Link href="/blog" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-teal-600 transition-colors duration-200 relative group">
+              <Link href="/blog" className="px-4 py-2.5 text-slate-700 font-medium text-sm hover:text-teal-700 hover:bg-teal-50/50 transition-all duration-200 rounded-lg">
                 Blog
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-teal-600 transition-all duration-200 group-hover:w-full"></span>
               </Link>
-              <Link href="/careers" className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-teal-600 transition-colors duration-200 relative group">
+              <Link href="/careers" className="px-4 py-2.5 text-slate-700 font-medium text-sm hover:text-teal-700 hover:bg-teal-50/50 transition-all duration-200 rounded-lg">
                 Careers
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-teal-600 transition-all duration-200 group-hover:w-full"></span>
               </Link>
               
               {/* Free Tools Dropdown */}
@@ -56,25 +53,24 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                 onMouseLeave={() => setIsFreeToolsOpen(false)}
               >
                 <button
-                  className="px-3 py-2 text-slate-600 font-medium text-sm hover:text-teal-600 transition-colors duration-200 relative group"
+                  className="px-4 py-2.5 text-slate-700 font-medium text-sm hover:text-teal-700 hover:bg-teal-50/50 transition-all duration-200 rounded-lg group"
                   onClick={() => setIsFreeToolsOpen(!isFreeToolsOpen)}
                 >
                   Free Tools
                   <svg 
-                    className={`inline-block ml-1 w-4 h-4 transition-transform duration-200 ${isFreeToolsOpen ? 'rotate-180' : ''}`}
+                    className={`inline-block ml-1.5 w-4 h-4 transition-transform duration-200 ${isFreeToolsOpen ? 'rotate-180' : ''}`}
                     fill="none" 
                     viewBox="0 0 24 24" 
                     stroke="currentColor" 
-                    strokeWidth={2}
+                    strokeWidth={2.5}
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-teal-600 transition-all duration-200 group-hover:w-full"></span>
                 </button>
                 
                 {/* Dropdown Menu */}
                 {isFreeToolsOpen && (
-                  <div className="absolute left-0 top-full mt-2 w-[300px] bg-white rounded-lg shadow-xl border border-slate-200 py-6 z-50">
+                  <div className="absolute left-0 top-full mt-2 w-[300px] bg-white rounded-xl shadow-xl border border-slate-200/60 py-6 z-50 backdrop-blur-sm">
                     <div className="px-6">
                       <h3 className="font-bold text-slate-900 mb-4 text-sm">Budgeting</h3>
                       <ul className="space-y-2 text-sm">
@@ -115,8 +111,12 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
             
             {/* Right Side Items */}
             <div className="flex items-center">
-              <Link href={getLink("/quiz/financial-profile")} className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02]">
-                Learn More
+              <Link 
+                href={getLink("/quiz/financial-profile")} 
+                className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-[1.03] active:scale-[0.98] relative overflow-hidden group"
+              >
+                <span className="relative z-10">Get Started</span>
+                <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
               </Link>
             </div>
           </div>
