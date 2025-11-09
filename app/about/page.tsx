@@ -90,7 +90,7 @@ export default function AboutPage() {
 
       {/* Our Coaches/Experts Section - Matching BetterHelp's "Our therapists" */}
       <section className="relative py-12 sm:py-16 lg:py-20 bg-[#faf9f6]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-light text-slate-900 text-center mb-6 tracking-tight">
             Our coaches
           </h2>
