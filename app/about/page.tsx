@@ -71,6 +71,21 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
+
+          {/* Curved Bottom Edge - Single color, single curve transitioning to light */}
+          <div className="relative w-full" style={{ height: '70px', marginBottom: '-70px' }}>
+            <svg 
+              className="absolute bottom-0 left-0 w-full h-full" 
+              viewBox="0 0 1440 70" 
+              preserveAspectRatio="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path 
+                d="M0,70 L0,64 C360,64 720,20 1080,20 C1320,20 1440,64 1440,64 L1440,0 L0,0 Z" 
+                fill="#faf9f6"
+              />
+            </svg>
+          </div>
         </div>
       </section>
 
