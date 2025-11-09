@@ -640,32 +640,32 @@ export default function DebtSnowballCalculatorPage() {
               </div>
             </div>
 
-        {/* Share Section - Narrow, Centered */}
-        <div className="mt-12 sm:mt-16 lg:mt-20">
-          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 text-center tracking-tight">Share the Debt Snowball Calculator</h2>
-            <div className="flex items-center gap-3">
-              <div className="flex-1 min-w-0">
-                <input
-                  type="text"
-                  readOnly
-                  value={typeof window !== 'undefined' ? window.location.href : ''}
-                  className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                />
+            {/* Share Section - Narrow, Centered */}
+            <div className="mt-12 sm:mt-16 lg:mt-20">
+              <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 text-center tracking-tight">Share the Debt Snowball Calculator</h2>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    <input
+                      type="text"
+                      readOnly
+                      value={typeof window !== 'undefined' ? window.location.href : ''}
+                      className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    />
+                  </div>
+                  <button
+                    onClick={copyLinkToClipboard}
+                    className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl flex-shrink-0"
+                    style={{ backgroundColor: '#3D6B54' }}
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                    {linkCopied ? "Copied!" : "Copy"}
+                  </button>
+                </div>
               </div>
-              <button
-                onClick={copyLinkToClipboard}
-                className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl flex-shrink-0"
-                style={{ backgroundColor: '#3D6B54' }}
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                </svg>
-                {linkCopied ? "Copied!" : "Copy"}
-              </button>
             </div>
-          </div>
-        </div>
           </div>
       </main>
 
@@ -679,25 +679,24 @@ export default function DebtSnowballCalculatorPage() {
       <SiteHeader />
       
       <main className="flex-1 py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Full-width Banner with Fine Fade */}
-          <div 
-            className="relative py-12 sm:py-16 lg:py-20 overflow-hidden"
-            style={{ 
-              background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)'
-            }}
-          >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="text-center animate-fade-in">
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-6 leading-tight tracking-tight">
-                  Debt Snowball <span style={{ color: '#3D6B54' }}>Calculator</span>
-                </h1>
-                <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
-                  Find out your debt-free date and accelerate your progress with the debt snowball method—the fastest way to pay off debt.
-                </p>
-              </div>
+        {/* Full-width Banner with Fine Fade */}
+        <div 
+          className="relative py-12 sm:py-16 lg:py-20 overflow-hidden"
+          style={{ 
+            background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)'
+          }}
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center animate-fade-in">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-6 leading-tight tracking-tight">
+                Debt Snowball <span style={{ color: '#3D6B54' }}>Calculator</span>
+              </h1>
+              <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
+                Find out your debt-free date and accelerate your progress with the debt snowball method—the fastest way to pay off debt.
+              </p>
             </div>
           </div>
+        </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           {/* Main Calculator Section - Compact Form */}
@@ -878,9 +877,10 @@ export default function DebtSnowballCalculatorPage() {
                 Get Your Debt-Free Date
               </button>
             </div>
+          </div>
 
-            {/* Educational Content */}
-            <div className="space-y-12 sm:space-y-16 lg:space-y-20 max-w-3xl mx-auto py-8">
+          {/* Educational Content */}
+          <div className="space-y-12 sm:space-y-16 lg:space-y-20 max-w-3xl mx-auto py-8">
               {/* What Is the Debt Snowball? */}
               <div className="animate-fade-in">
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
@@ -1055,11 +1055,11 @@ export default function DebtSnowballCalculatorPage() {
                   </div>
                 </div>
               </div>
-            </div>
+          </div>
 
-            {/* Share Section - Narrow, Centered */}
-            <div className="mt-12 sm:mt-16 lg:mt-20">
-              <div className="max-w-2xl mx-auto">
+          {/* Share Section - Narrow, Centered */}
+          <div className="mt-12 sm:mt-16 lg:mt-20">
+            <div className="max-w-2xl mx-auto">
                 <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 text-center tracking-tight">Share the Debt Snowball Calculator</h2>
                 <div className="flex items-center gap-3">
                   <div className="flex-1 min-w-0">
@@ -1084,7 +1084,6 @@ export default function DebtSnowballCalculatorPage() {
               </div>
             </div>
           </div>
-        </div>
       </main>
 
       <SiteFooter />
