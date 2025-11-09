@@ -37,9 +37,8 @@ export default function AboutPage() {
         </div>
 
         {/* Dark Teal Section - Main Content */}
-        <div className="relative" style={{ backgroundColor: '#0f766e' }}>
-
-          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 pb-20 sm:pb-24">
+        <div className="relative overflow-hidden" style={{ backgroundColor: '#0f766e' }}>
+          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 pb-16 sm:pb-20">
             {/* Sub-navigation Tabs - Centered like BetterHelp */}
             <div className="flex flex-wrap justify-center gap-6 mb-8 sm:mb-10">
               <Link href="/about" className="text-sm text-teal-300 border-b-2 border-teal-300 pb-1.5 font-light">
@@ -72,17 +71,17 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* Curved Bottom Edge - Upward curve, dark section extends up in center */}
-          <div className="relative w-full overflow-hidden" style={{ height: '60px', marginTop: '20px' }}>
+          {/* Curved Bottom Edge - Creates upward curve at bottom of dark section */}
+          <div className="absolute bottom-0 left-0 w-full" style={{ height: '70px' }}>
             <svg 
-              className="absolute bottom-0 left-0 w-full h-full" 
-              viewBox="0 0 1440 60" 
+              className="w-full h-full" 
+              viewBox="0 0 1440 70" 
               preserveAspectRatio="none"
               xmlns="http://www.w3.org/2000/svg"
             >
               <path 
-                d="M0,60 L0,55 C360,55 720,15 1080,15 C1320,15 1440,55 1440,55 L1440,60 Z" 
-                fill="#0f766e"
+                d="M0,70 L0,65 C360,65 720,20 1080,20 C1320,20 1440,65 1440,65 L1440,70 Z" 
+                fill="#faf9f6"
               />
             </svg>
           </div>
@@ -90,7 +89,7 @@ export default function AboutPage() {
       </section>
 
       {/* Our Coaches/Experts Section - Matching BetterHelp's "Our therapists" */}
-      <section className="relative bg-[#faf9f6]" style={{ marginTop: '-40px', paddingTop: '60px' }}>
+      <section className="relative py-12 sm:py-16 lg:py-20 bg-[#faf9f6]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
           <h2 className="text-3xl sm:text-4xl font-light text-slate-900 text-center mb-6 tracking-tight">
             Our coaches
