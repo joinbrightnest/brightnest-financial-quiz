@@ -10,11 +10,16 @@ export default function AboutPage() {
 
       {/* Hero Section - Exact BetterHelp Structure */}
       <section className="relative">
-        {/* Light Section with Title */}
-        <div className="relative pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-16" style={{ backgroundColor: '#FDFDFB' }}>
+        {/* Light Section with Title - Fine fade gradient like BetterHelp */}
+        <div 
+          className="relative pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-16" 
+          style={{ 
+            background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)'
+          }}
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-slate-900 leading-tight tracking-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 leading-tight tracking-tight">
                 About us
               </h1>
             </div>
@@ -83,9 +88,9 @@ export default function AboutPage() {
                 d="M0,70 L0,65 C360,65 720,20 1080,20 C1320,20 1440,65 1440,65 L1440,70 Z" 
                 fill="#FDFDFB"
               />
-            </svg>
-          </div>
-        </div>
+                    </svg>
+                  </div>
+                </div>
       </section>
 
       {/* Our Coaches/Experts Section - Matching BetterHelp's "Our therapists" */}
@@ -112,21 +117,21 @@ export default function AboutPage() {
       <section className="relative py-12 sm:py-16 lg:py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-light text-slate-900 text-center mb-6 tracking-tight">
-            Our Mission
-          </h2>
+                Our Mission
+              </h2>
           <div className="space-y-4 text-base sm:text-lg text-slate-700 leading-relaxed font-light">
             <p className="font-normal text-slate-900">
               At BrightNest, our mission is simple: to help people change their financial behaviour for good.
-            </p>
+                </p>
             <p>
-              We combine psychology, structure, and guidance from certified experts to help you take back control of your money — step by step, without guilt or overwhelm.
-            </p>
+                  We combine psychology, structure, and guidance from certified experts to help you take back control of your money — step by step, without guilt or overwhelm.
+                </p>
             <p>
               We don&apos;t just teach budgeting. We help you understand why you spend, how to change your habits, and what systems actually keep you consistent.
-            </p>
+                </p>
             <p className="font-normal text-slate-900">
               The goal isn&apos;t perfection. It&apos;s progress — and freedom.
-            </p>
+                </p>
           </div>
         </div>
       </section>
@@ -135,11 +140,11 @@ export default function AboutPage() {
       <section className="relative py-12 sm:py-16 lg:py-20 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-light text-slate-900 text-center mb-4 tracking-tight">
-            What Makes BrightNest Different
-          </h2>
+              What Makes BrightNest Different
+            </h2>
           <p className="text-base sm:text-lg text-slate-600 text-center mb-8 leading-relaxed font-light">
-            Most financial advice focuses on spreadsheets, apps, or tips. We focus on human behaviour.
-          </p>
+              Most financial advice focuses on spreadsheets, apps, or tips. We focus on human behaviour.
+            </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             {[
@@ -166,10 +171,10 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
-
+          
           <p className="text-base sm:text-lg text-slate-700 text-center leading-relaxed font-light">
             You don&apos;t need to become a finance expert. You just need the right environment, habits, and support — that&apos;s what BrightNest gives you.
-          </p>
+            </p>
         </div>
       </section>
 
@@ -177,21 +182,21 @@ export default function AboutPage() {
       <section className="relative py-12 sm:py-16 lg:py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-light text-slate-900 text-center mb-6 tracking-tight">
-            Why We Exist
-          </h2>
+                Why We Exist
+              </h2>
           <div className="space-y-4 text-base sm:text-lg text-slate-700 leading-relaxed font-light">
             <p>
-              Because money stress is one of the biggest causes of anxiety, conflict, and lost potential in people&apos;s lives.
-            </p>
+                Because money stress is one of the biggest causes of anxiety, conflict, and lost potential in people&apos;s lives.
+              </p>
             <p>
-              We&apos;ve seen what happens when people live paycheck to paycheck, avoid their bank apps, or feel trapped by debt.
-            </p>
+                We&apos;ve seen what happens when people live paycheck to paycheck, avoid their bank apps, or feel trapped by debt.
+              </p>
             <p>
-              It&apos;s not about lacking discipline — it&apos;s about lacking a system that works with your behaviour, not against it.
-            </p>
+                It&apos;s not about lacking discipline — it&apos;s about lacking a system that works with your behaviour, not against it.
+              </p>
             <p className="font-normal text-slate-900">
-              BrightNest was built to change that — to make personal finance feel clear, actionable, and empowering again.
-            </p>
+                BrightNest was built to change that — to make personal finance feel clear, actionable, and empowering again.
+              </p>
           </div>
         </div>
       </section>
@@ -200,8 +205,8 @@ export default function AboutPage() {
       <section className="relative py-12 sm:py-16 lg:py-20 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-light text-slate-900 text-center mb-6 tracking-tight">
-            What We Believe
-          </h2>
+                What We Believe
+              </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               {
@@ -234,32 +239,32 @@ export default function AboutPage() {
       <section className="relative py-12 sm:py-16 lg:py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-light text-slate-900 text-center mb-6 tracking-tight">
-            The BrightNest Approach
-          </h2>
+                The BrightNest Approach
+              </h2>
           <div className="space-y-4 text-base sm:text-lg text-slate-700 leading-relaxed font-light">
             <p>
-              We guide you through a clear, step-by-step process:
-            </p>
+                We guide you through a clear, step-by-step process:
+              </p>
             <div className="space-y-3">
-              <div>
+                <div>
                 <p className="font-normal text-slate-900 mb-1">Awareness</p>
                 <p className="text-slate-600">— Understand your patterns and uncover what&apos;s really driving your financial behaviour.</p>
-              </div>
-              <div>
+                </div>
+                <div>
                 <p className="font-normal text-slate-900 mb-1">Control</p>
                 <p className="text-slate-600">— Learn practical systems for budgeting, spending, saving, and paying off debt without friction.</p>
-              </div>
-              <div>
+                </div>
+                <div>
                 <p className="font-normal text-slate-900 mb-1">Momentum</p>
                 <p className="text-slate-600">— Build habits that last — and create a lifestyle that aligns with your goals and values.</p>
               </div>
             </div>
             <p className="mt-4">
-              This isn&apos;t a crash course. It&apos;s a transformation.
-            </p>
+                This isn&apos;t a crash course. It&apos;s a transformation.
+              </p>
             <p className="font-normal text-slate-900">
-              Our clients don&apos;t just fix their finances — they reshape how they think, act, and feel about money.
-            </p>
+                Our clients don&apos;t just fix their finances — they reshape how they think, act, and feel about money.
+              </p>
           </div>
         </div>
       </section>
@@ -268,8 +273,8 @@ export default function AboutPage() {
       <section className="relative py-12 sm:py-16 lg:py-20 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-light text-slate-900 text-center mb-6 tracking-tight">
-            Our Vision
-          </h2>
+              Our Vision
+            </h2>
           <div className="space-y-4 text-base sm:text-lg text-slate-700 leading-relaxed font-light">
             <p>
               To make behaviour change in personal finance as accessible and natural as fitness coaching.
@@ -285,8 +290,8 @@ export default function AboutPage() {
       <section className="relative py-12 sm:py-16 lg:py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-light text-slate-900 text-center mb-6 tracking-tight">
-            Join the Movement
-          </h2>
+              Join the Movement
+            </h2>
           <div className="space-y-4 text-base sm:text-lg text-slate-700 leading-relaxed font-light">
             <p>
               BrightNest isn&apos;t about quick fixes. It&apos;s about rewriting your story with money — for good.
