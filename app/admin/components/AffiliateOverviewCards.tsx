@@ -28,8 +28,6 @@ export default function AffiliateOverviewCards({ data }: AffiliateOverviewCardsP
         </svg>
       ),
       description: "Active affiliate partners",
-      trend: "+5",
-      trendDirection: "up" as const,
       gradient: "from-blue-500 to-blue-600",
     },
     {
@@ -41,8 +39,6 @@ export default function AffiliateOverviewCards({ data }: AffiliateOverviewCardsP
         </svg>
       ),
       description: "Quiz completions via affiliates",
-      trend: "+12%",
-      trendDirection: "up" as const,
       gradient: "from-emerald-500 to-emerald-600",
     },
     {
@@ -54,8 +50,6 @@ export default function AffiliateOverviewCards({ data }: AffiliateOverviewCardsP
         </svg>
       ),
       description: "Calls booked from affiliate leads",
-      trend: "+18%",
-      trendDirection: "up" as const,
       gradient: "from-purple-500 to-purple-600",
     },
     {
@@ -67,8 +61,6 @@ export default function AffiliateOverviewCards({ data }: AffiliateOverviewCardsP
         </svg>
       ),
       description: "Commissions owed to affiliates",
-      trend: "+8%",
-      trendDirection: "up" as const,
       gradient: "from-orange-500 to-orange-600",
     },
   ];

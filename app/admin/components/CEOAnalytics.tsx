@@ -41,6 +41,7 @@ interface CEOAnalyticsData {
   overallClickToQuizRate: number;
   overallQuizToCompletionRate: number;
   overallClickToCompletionRate: number;
+  overallClickToSalesRate: number;
   // Individual affiliate data
   affiliatePerformance: AffiliatePerformance[];
   topAffiliates: AffiliatePerformance[];
@@ -407,6 +408,7 @@ export default function CEOAnalytics({ initialData }: CEOAnalyticsProps) {
                     <p className="text-3xl font-bold text-slate-900 mt-1">
                       {data.overallClickToCompletionRate.toFixed(1)}%
                     </p>
+                    <p className="text-xs text-slate-500 font-medium mt-1">Quiz completion rate</p>
                   </div>
                 </div>
               </div>

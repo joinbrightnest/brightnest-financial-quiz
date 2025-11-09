@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
     
     const affiliates = await prisma.affiliate.findMany({
       where: {
-        isActive: true,
+        isApproved: true, // Use isApproved instead of isActive for consistency with admin API
         ...(tier !== "all" && tier !== undefined && { tier: tier as any }),
       },
       orderBy: {
@@ -62,10 +62,15 @@ export async function GET(request: NextRequest) {
         totalActiveAffiliates: 0,
         totalPendingAffiliates: 0,
         totalLeadsFromAffiliates: 0,
+        totalBookedCalls: 0,
         totalCommissionsPaid: 0,
         totalCommissionsPending: 0,
+        totalCommissionsEarned: 0,
         totalSalesValue: 0,
         topAffiliates: [],
+        trafficSourceBreakdown: [],
+        conversionFunnelByTier: [],
+        pendingAffiliates: [],
       });
     }
     
@@ -113,19 +118,69 @@ export async function GET(request: NextRequest) {
           affiliateCode: true,
           outcome: true,
           saleValue: true,
+          customerEmail: true, // Need email for matching to quiz sessions
         },
       }),
     ]);
     
+    // Get all completed quiz session IDs for email matching
+    const completedSessionIds = allQuizSessions
+      .filter((s: any) => s.status === "completed")
+      .map((s: any) => s.id);
+    
+    // Bulk fetch all email answers for completed sessions (single query)
+    const completedSessionEmailsMap = new Map<string, string>(); // sessionId -> email
+    if (completedSessionIds.length > 0) {
+      const emailAnswers = await prisma.quizAnswer.findMany({
+        where: {
+          sessionId: { in: completedSessionIds },
+          OR: [
+            { question: { type: 'email' } },
+            { question: { prompt: { contains: 'email' } } },
+            { question: { prompt: { contains: 'Email' } } }
+          ]
+        },
+        include: {
+          question: true
+        }
+      });
+      
+      emailAnswers.forEach(answer => {
+        if (answer.value && answer.sessionId) {
+          const email = String(answer.value).toLowerCase().trim();
+          completedSessionEmailsMap.set(answer.sessionId, email);
+        }
+      });
+    }
+    
+    // Create a set of all completed session emails for quick lookup
+    const completedSessionEmailsSet = new Set(completedSessionEmailsMap.values());
+    
     // Group data by affiliate (in memory - fast)
     const dataByAffiliate = new Map();
     affiliates.forEach(aff => {
+      const affiliateQuizSessions = allQuizSessions.filter((s: any) => s.affiliateCode === aff.referralCode);
+      const affiliateAppointments = allAppointments.filter((a: any) => a.affiliateCode === aff.referralCode);
+      
+      // Get emails for this affiliate's completed quiz sessions
+      const affiliateCompletedSessionIds = affiliateQuizSessions
+        .filter((s: any) => s.status === "completed")
+        .map((s: any) => s.id);
+      const affiliateCompletedEmails = new Set<string>();
+      affiliateCompletedSessionIds.forEach((sessionId: string) => {
+        const email = completedSessionEmailsMap.get(sessionId);
+        if (email) {
+          affiliateCompletedEmails.add(email);
+        }
+      });
+      
       dataByAffiliate.set(aff.id, {
         affiliate: aff,
         clicks: allClicks.filter(c => c.affiliateId === aff.id),
         conversions: allConversions.filter(c => c.affiliateId === aff.id),
-        quizSessions: allQuizSessions.filter(s => s.affiliateCode === aff.referralCode),
-        appointments: allAppointments.filter(a => a.affiliateCode === aff.referralCode),
+        quizSessions: affiliateQuizSessions,
+        appointments: affiliateAppointments,
+        completedSessionEmails: affiliateCompletedEmails, // Pre-calculated emails for this affiliate
       });
     });
     
@@ -140,16 +195,30 @@ export async function GET(request: NextRequest) {
 
     // PERFORMANCE: Process affiliates using pre-fetched data (no more queries!)
     const topAffiliates = approvedAffiliates.map((affiliate) => {
-      const data = dataByAffiliate.get(affiliate.id);
-      if (!data) return null;
+      const affiliateData = dataByAffiliate.get(affiliate.id);
+      if (!affiliateData) return null;
       
-      const { clicks, conversions, quizSessions, appointments } = data;
+      const { clicks, conversions, quizSessions, appointments, completedSessionEmails } = affiliateData;
 
       // Calculate metrics using pre-fetched data
       const clickCount = clicks.length;
       const quizCount = quizSessions.length;
       const completionCount = quizSessions.filter((s: any) => s.status === "completed").length;
-      const bookingCount = appointments.length;
+      
+      // Use pre-calculated emails from dataByAffiliate (no additional query needed)
+      const completedSessionEmails = affiliateData.completedSessionEmails || new Set<string>();
+      
+      // Match appointments to completed quiz sessions by email (consistent with admin API)
+      // This ensures we only count bookings that came from the quiz flow
+      const validBookedAppointments = appointments.filter((apt: any) => {
+        if (!apt.customerEmail) return false;
+        const appointmentEmail = apt.customerEmail.toLowerCase().trim();
+        return completedSessionEmails.has(appointmentEmail);
+      });
+      
+      // Count bookings from completed quiz flow (consistent with admin API)
+      const bookingCount = validBookedAppointments.length;
+      // Sales: count ALL affiliate sales (matches Lead Analytics and admin API)
       const saleCount = appointments.filter((apt: any) => apt.outcome === CallOutcome.converted).length;
       
       // Lead count = completed quiz sessions with results
@@ -193,10 +262,13 @@ export async function GET(request: NextRequest) {
     const totalBookedCalls = topAffiliates.reduce((sum, aff) => sum + (aff?.bookedCalls || 0), 0);
     const totalSalesValue = topAffiliates.reduce((sum, aff) => sum + (aff?.revenue || 0), 0); // Use actual revenue, not commission
     
-    // Calculate total commissions from actual payouts (not arbitrary 70/30 split)
-    const totalCommissionsEarned = topAffiliates.reduce((sum, aff) => sum + Number(aff?.commission || 0), 0);
+    // Calculate total commissions earned in the selected date range
+    // This is the commission calculated from revenue in the date range
+    const totalCommissionsEarnedInPeriod = topAffiliates.reduce((sum, aff) => sum + Number(aff?.commission || 0), 0);
     
-    // Get actual paid/pending from payout records for all affiliates
+    // Get actual paid/pending from payout records for all affiliates (all time, not date-filtered)
+    // Note: For accurate pending calculation, we should use AffiliateConversion records with commissionStatus
+    // But for overview display, we'll use the simpler calculation from payouts
     const allPayouts = await prisma.affiliatePayout.findMany({
       where: {
         affiliateId: {
@@ -209,7 +281,16 @@ export async function GET(request: NextRequest) {
       .filter(p => p.status === 'completed')
       .reduce((sum, p) => sum + Number(p.amountDue), 0);
     
-    const totalCommissionsPending = totalCommissionsEarned - totalCommissionsPaid;
+    // Calculate pending payouts (payouts with pending status)
+    const totalPendingPayouts = allPayouts
+      .filter(p => p.status === 'pending')
+      .reduce((sum, p) => sum + Number(p.amountDue), 0);
+    
+    // For overview, show commissions earned in period and pending payouts
+    // Note: This is a simplified calculation. For accurate pending commissions,
+    // we should calculate from AffiliateConversion records with commissionStatus (like payout API)
+    // But that would require additional queries and might impact performance
+    const totalCommissionsPending = totalPendingPayouts; // Show pending payouts as pending commissions
     
     // Debug logging for overview metrics
     console.log("Overview Metrics Debug:", {
@@ -278,13 +359,23 @@ export async function GET(request: NextRequest) {
       let tierClosed = 0;
 
       tierAffiliates.forEach(aff => {
-        const data = dataByAffiliate.get(aff.id);
-        if (data) {
-          tierClicks += data.clicks.length;
-          tierQuizStarts += data.quizSessions.length;
-          tierCompleted += data.quizSessions.filter((s: any) => s.status === "completed").length;
-          tierBooked += data.appointments.length;
-          tierClosed += data.appointments.filter((a: any) => a.outcome === CallOutcome.converted).length;
+        const affiliateData = dataByAffiliate.get(aff.id);
+        if (affiliateData) {
+          tierClicks += affiliateData.clicks.length;
+          tierQuizStarts += affiliateData.quizSessions.length;
+          tierCompleted += affiliateData.quizSessions.filter((s: any) => s.status === "completed").length;
+          
+          // Match appointments to completed quiz sessions by email (consistent with individual affiliate metrics)
+          const completedSessionEmails = affiliateData.completedSessionEmails || new Set<string>();
+          const validBookedAppointments = affiliateData.appointments.filter((apt: any) => {
+            if (!apt.customerEmail) return false;
+            const appointmentEmail = apt.customerEmail.toLowerCase().trim();
+            return completedSessionEmails.has(appointmentEmail);
+          });
+          
+          tierBooked += validBookedAppointments.length;
+          // Sales: count ALL affiliate sales (matches admin API and individual metrics)
+          tierClosed += affiliateData.appointments.filter((a: any) => a.outcome === CallOutcome.converted).length;
         }
       });
 
@@ -301,12 +392,13 @@ export async function GET(request: NextRequest) {
     const affiliateData = {
       totalActiveAffiliates,
       totalPendingAffiliates,
-      totalLeadsFromAffiliates,
-      totalBookedCalls,
-      totalSalesValue,
-      totalCommissionsPaid,
-      totalCommissionsPending,
-      topAffiliates,
+        totalLeadsFromAffiliates,
+        totalBookedCalls,
+        totalSalesValue,
+        totalCommissionsPaid,
+        totalCommissionsPending,
+        totalCommissionsEarned: totalCommissionsEarnedInPeriod, // Commissions earned in selected period
+        topAffiliates,
       pendingAffiliates: pendingAffiliatesData,
       trafficSourceBreakdown,
       conversionFunnelByTier,

@@ -231,7 +231,10 @@ export async function GET(request: NextRequest) {
     // Calculate overall conversion rates
     const overallClickToQuizRate = totalVisitors > 0 ? (totalQuizStarts / totalVisitors) * 100 : 0;
     const overallQuizToCompletionRate = totalQuizStarts > 0 ? (totalCompleted / totalQuizStarts) * 100 : 0;
-    const overallClickToCompletionRate = totalVisitors > 0 ? (totalSales / totalVisitors) * 100 : 0; // Use sales, not completions
+    // Click to Completion Rate: percentage of visitors who completed the quiz
+    const overallClickToCompletionRate = totalVisitors > 0 ? (totalCompleted / totalVisitors) * 100 : 0;
+    // Click to Sales Rate: percentage of visitors who made a purchase (separate metric)
+    const overallClickToSalesRate = totalVisitors > 0 ? (totalSales / totalVisitors) * 100 : 0;
 
     // Get top performing affiliates
     const topAffiliates = affiliatePerformance
@@ -254,6 +257,7 @@ export async function GET(request: NextRequest) {
         overallClickToQuizRate,
         overallQuizToCompletionRate,
         overallClickToCompletionRate,
+        overallClickToSalesRate,
         // Individual affiliate performance
         affiliatePerformance,
         topAffiliates,
