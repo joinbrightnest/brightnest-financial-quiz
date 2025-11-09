@@ -53,8 +53,19 @@ interface AdminStats {
     }>;
     source?: string;
     saleValue?: string | null;
+    closerName?: string | null;
+    dealClosedAt?: string | null;
     appointment?: {
       outcome?: string | null;
+      saleValue?: string | null;
+      id?: string | null;
+      createdAt?: string | null;
+      scheduledAt?: string | null;
+      updatedAt?: string | null;
+      closer?: {
+        id: string;
+        name: string;
+      } | null;
     } | null;
   }>;
   quizTypes?: Array<{
@@ -2427,9 +2438,9 @@ export default function AdminDashboard() {
                       {(() => {
                         // Calculate average deal age from appointments (time since appointment created)
                         const appointmentsWithDates = filteredCrmLeads
-                          .filter(lead => lead.appointment?.createdAt)
+                          .filter(lead => lead.appointment?.createdAt && lead.appointment.createdAt !== null)
                           .map(lead => {
-                            const appointmentDate = new Date(lead.appointment!.createdAt);
+                            const appointmentDate = new Date(lead.appointment!.createdAt!);
                             const now = new Date();
                             return (now.getTime() - appointmentDate.getTime()) / (1000 * 60 * 60 * 24); // Days
                           });
