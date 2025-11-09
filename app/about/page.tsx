@@ -8,47 +8,45 @@ export default function AboutPage() {
     <div className="min-h-screen bg-white">
       <SiteHeader />
 
-      {/* Hero Section - BetterHelp Style */}
+      {/* Hero Section - BetterHelp Style (Compact) */}
       <section className="relative overflow-hidden bg-[#faf9f6]">
-        {/* Upper Light Section */}
-        <div className="relative pt-20 sm:pt-28 lg:pt-32 pb-0">
+        {/* Upper Light Section - More Compact */}
+        <div className="relative pt-16 sm:pt-20 lg:pt-24 pb-8 sm:pb-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold text-slate-900 leading-[1.1] tracking-tight">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-slate-900 leading-tight tracking-tight">
                 About us
               </h1>
             </div>
           </div>
         </div>
 
-        {/* Curved Wave Separator - Organic Shape with Center Dip */}
-        <div className="relative w-full h-20 sm:h-28 lg:h-36" style={{ marginBottom: '-1px' }}>
+        {/* Curved Wave Separator - More Subtle and Compact */}
+        <div className="relative w-full h-12 sm:h-16 lg:h-20" style={{ marginBottom: '-1px' }}>
           <svg 
             className="absolute bottom-0 w-full h-full" 
-            viewBox="0 0 1440 100" 
+            viewBox="0 0 1440 80" 
             preserveAspectRatio="none"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path 
-              d="M0,20 C200,20 400,80 720,80 C1040,80 1240,20 1440,20 L1440,100 L0,100 Z" 
+              d="M0,15 C200,15 400,65 720,65 C1040,65 1240,15 1440,15 L1440,80 L0,80 Z" 
               fill="#0f766e"
             />
           </svg>
         </div>
 
-        {/* Lower Dark Teal Section */}
-        <div className="relative bg-teal-800 pt-12 sm:pt-16 lg:pt-20 pb-20 sm:pb-24 lg:pb-28">
+        {/* Lower Dark Teal Section - Tighter Padding */}
+        <div className="relative bg-teal-800 pt-8 sm:pt-10 lg:pt-12 pb-12 sm:pb-16 lg:pb-20">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Sub-navigation tabs (optional, can be added later) */}
-            
-            {/* Main Content */}
-            <div className="space-y-6">
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-teal-300 leading-tight tracking-tight">
+            {/* Main Content - Compact Spacing */}
+            <div className="space-y-4">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-teal-300 leading-tight">
                 Rebuild your relationship with money
               </h2>
               
-              <div className="space-y-5 text-lg sm:text-xl text-white/90 leading-relaxed font-light">
+              <div className="space-y-4 text-base sm:text-lg text-white/90 leading-relaxed">
                 <p>
                   BrightNest was founded to remove the traditional barriers to financial wellness and make behavior-based money management accessible to everyone.
                 </p>
