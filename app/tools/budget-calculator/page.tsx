@@ -870,22 +870,25 @@ export default function BudgetCalculatorPage() {
                 </p>
               </div>
             </div>
+          </div>
 
-            {/* Share Section */}
-            <div className="mt-12">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Share the Budget Calculator</h2>
-              <div className="flex items-center gap-2">
+          {/* Share Section - Narrow, Centered */}
+          <div className="mt-12 sm:mt-16 lg:mt-20">
+            <div className="max-w-2xl mx-auto">
+              <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 text-center tracking-tight">Share the Budget Calculator</h2>
+              <div className="flex items-center gap-3">
                 <div className="flex-1 min-w-0">
                   <input
                     type="text"
                     readOnly
                     value={typeof window !== 'undefined' ? window.location.href : ''}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm"
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                   />
                 </div>
                 <button
                   onClick={copyLinkToClipboard}
-                  className="flex items-center gap-2 bg-teal-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-700 transition-colors whitespace-nowrap touch-friendly flex-shrink-0"
+                  className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl flex-shrink-0"
+                  style={{ backgroundColor: '#3D6B54' }}
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
