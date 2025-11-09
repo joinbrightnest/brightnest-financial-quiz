@@ -218,26 +218,73 @@ export async function PUT(
       }
     });
 
-    // Update closer stats if converted
-    if (outcome === 'converted' && saleValue) {
+    // Update closer stats based on conversion changes
+    // Note: totalCalls is calculated from appointments.length in the stats API, so we don't update it here
+    // We only update totalConversions and totalRevenue when conversion status changes
+    const previousOutcome = appointment.outcome;
+    const previousSaleValue = appointment.saleValue ? parseFloat(appointment.saleValue.toString()) : 0;
+    const previousWasConversion = previousOutcome === 'converted' && previousSaleValue > 0;
+    
+    const newIsConversion = outcome === 'converted' && saleValue && parseFloat(saleValue) > 0;
+    const newSaleValue = saleValue ? parseFloat(saleValue) : 0;
+    
+    // If changing from conversion to non-conversion, decrement conversions and revenue
+    if (previousWasConversion && !newIsConversion) {
       await prisma.closer.update({
         where: { id: decoded.closerId },
         data: {
-          totalCalls: { increment: 1 },
-          totalConversions: { increment: 1 },
-          totalRevenue: { increment: parseFloat(saleValue) },
+          totalConversions: { decrement: 1 },
+          totalRevenue: { decrement: previousSaleValue },
           conversionRate: {
-            // Recalculate conversion rate
             set: await calculateConversionRate(decoded.closerId)
           }
         }
       });
-    } else {
-      // Just increment total calls
+    }
+    // If changing from non-conversion to conversion, increment conversions and revenue
+    else if (!previousWasConversion && newIsConversion) {
       await prisma.closer.update({
         where: { id: decoded.closerId },
         data: {
-          totalCalls: { increment: 1 },
+          totalConversions: { increment: 1 },
+          totalRevenue: { increment: newSaleValue },
+          conversionRate: {
+            set: await calculateConversionRate(decoded.closerId)
+          }
+        }
+      });
+    }
+    // If both are conversions but sale value changed, adjust revenue
+    else if (previousWasConversion && newIsConversion && previousSaleValue !== newSaleValue) {
+      const revenueDiff = newSaleValue - previousSaleValue;
+      await prisma.closer.update({
+        where: { id: decoded.closerId },
+        data: {
+          totalRevenue: { increment: revenueDiff },
+          conversionRate: {
+            set: await calculateConversionRate(decoded.closerId)
+          }
+        }
+      });
+    }
+    // If updating conversion but sale value becomes invalid, remove conversion
+    else if (previousWasConversion && outcome === 'converted' && (!saleValue || parseFloat(saleValue) <= 0)) {
+      await prisma.closer.update({
+        where: { id: decoded.closerId },
+        data: {
+          totalConversions: { decrement: 1 },
+          totalRevenue: { decrement: previousSaleValue },
+          conversionRate: {
+            set: await calculateConversionRate(decoded.closerId)
+          }
+        }
+      });
+    }
+    // Otherwise, just recalculate conversion rate (no stat changes needed)
+    else {
+      await prisma.closer.update({
+        where: { id: decoded.closerId },
+        data: {
           conversionRate: {
             set: await calculateConversionRate(decoded.closerId)
           }
@@ -310,13 +357,26 @@ export async function PUT(
 }
 
 async function calculateConversionRate(closerId: string): Promise<number> {
-  const closer = await prisma.closer.findUnique({
-    where: { id: closerId }
+  // Calculate conversion rate from actual appointments (single source of truth)
+  const appointments = await prisma.appointment.findMany({
+    where: { closerId: closerId },
+    select: {
+      outcome: true,
+      saleValue: true
+    }
   });
 
-  if (!closer || closer.totalCalls === 0) {
+  const totalCalls = appointments.length;
+  if (totalCalls === 0) {
     return 0;
   }
 
-  return closer.totalConversions / closer.totalCalls;
+  // Only count conversions where outcome is 'converted' AND saleValue exists AND is > 0
+  const totalConversions = appointments.filter(apt => {
+    const isConverted = apt.outcome === 'converted';
+    const hasSaleValue = apt.saleValue !== null && apt.saleValue !== undefined && Number(apt.saleValue) > 0;
+    return isConverted && hasSaleValue;
+  }).length;
+
+  return totalConversions / totalCalls;
 }

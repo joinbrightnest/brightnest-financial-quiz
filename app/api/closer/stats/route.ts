@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Calculate real stats from appointments
+    // Calculate real stats from appointments (single source of truth)
     const actualTotalCalls = appointments.length;
     
     // Only count conversions where outcome is 'converted' AND saleValue exists AND is > 0 (actual closed sales)
@@ -83,7 +83,35 @@ export async function GET(request: NextRequest) {
       .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
     const actualConversionRate = actualTotalCalls > 0 ? parseFloat(((actualTotalConversions / actualTotalCalls) * 100).toFixed(4)) : 0;
 
-    // Ensure numeric fields have default values
+    // Sync database fields with calculated values (for round-robin assignment and consistency)
+    // Only update if there's a discrepancy to avoid unnecessary writes
+    if (closer.totalCalls !== actualTotalCalls || 
+        closer.totalConversions !== actualTotalConversions || 
+        Math.abs(Number(closer.totalRevenue || 0) - actualTotalRevenue) > 0.01 ||
+        Math.abs(Number(closer.conversionRate || 0) - actualConversionRate) > 0.0001) {
+      try {
+        await prisma.closer.update({
+          where: { id: decoded.closerId },
+          data: {
+            totalCalls: actualTotalCalls,
+            totalConversions: actualTotalConversions,
+            totalRevenue: actualTotalRevenue,
+            conversionRate: actualConversionRate,
+          }
+        });
+        console.log('🔄 Synced closer stats in database:', {
+          closerId: decoded.closerId,
+          totalCalls: `${closer.totalCalls} → ${actualTotalCalls}`,
+          totalConversions: `${closer.totalConversions} → ${actualTotalConversions}`,
+          totalRevenue: `${closer.totalRevenue} → ${actualTotalRevenue}`,
+        });
+      } catch (syncError) {
+        console.error('⚠️ Error syncing closer stats to database (non-critical):', syncError);
+        // Continue even if sync fails - we still return correct values
+      }
+    }
+
+    // Return calculated values (always correct, regardless of DB state)
     const closerWithDefaults = {
       ...closer,
       totalCalls: actualTotalCalls,

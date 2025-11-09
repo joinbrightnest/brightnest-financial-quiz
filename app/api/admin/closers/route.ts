@@ -26,6 +26,10 @@ export async function GET(request: NextRequest) {
         isActive: true,
         isApproved: true,
         createdAt: true,
+        totalCalls: true,
+        totalConversions: true,
+        totalRevenue: true,
+        conversionRate: true,
       }
     });
 
@@ -40,7 +44,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Calculate stats for each closer from actual appointment data
-    const closersWithStats = closers.map(closer => {
+    const closersWithStats = await Promise.all(closers.map(async (closer) => {
       const closerAppointments = appointments.filter(a => a.closerId === closer.id);
       // Only count conversions where outcome is 'converted' AND saleValue exists AND is > 0 (actual closed sales)
       const conversions = closerAppointments.filter(a => 
@@ -54,6 +58,34 @@ export async function GET(request: NextRequest) {
       const totalConversions = conversions.length;
       const conversionRate = totalCalls > 0 ? totalConversions / totalCalls : 0;
 
+      // Sync database fields with calculated values (for round-robin assignment and consistency)
+      // Only update if there's a discrepancy to avoid unnecessary writes
+      if (closer.totalCalls !== totalCalls || 
+          closer.totalConversions !== totalConversions || 
+          Math.abs(Number(closer.totalRevenue || 0) - totalRevenue) > 0.01 ||
+          Math.abs(Number(closer.conversionRate || 0) - conversionRate) > 0.0001) {
+        try {
+          await prisma.closer.update({
+            where: { id: closer.id },
+            data: {
+              totalCalls,
+              totalConversions,
+              totalRevenue,
+              conversionRate,
+            }
+          });
+          console.log('🔄 Synced closer stats in database (admin API):', {
+            closerId: closer.id,
+            closerName: closer.name,
+            totalCalls: `${closer.totalCalls} → ${totalCalls}`,
+            totalConversions: `${closer.totalConversions} → ${totalConversions}`,
+          });
+        } catch (syncError) {
+          console.error('⚠️ Error syncing closer stats to database (non-critical):', syncError);
+          // Continue even if sync fails - we still return correct values
+        }
+      }
+
       return {
         ...closer,
         totalCalls,
@@ -61,7 +93,7 @@ export async function GET(request: NextRequest) {
         totalRevenue,
         conversionRate,
       };
-    });
+    }));
 
     return NextResponse.json({
       success: true,
