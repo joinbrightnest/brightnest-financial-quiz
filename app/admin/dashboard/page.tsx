@@ -984,9 +984,9 @@ export default function AdminDashboard() {
           emailAnswer?.value || 'N/A',
           lead.status,
           lead.completedAt ? new Date(lead.completedAt).toLocaleDateString() : 'N/A',
-          'Stefan',
+          lead.closerName || lead.appointment?.closer?.name || 'Unassigned',
           lead.saleValue ? `$${Number(lead.saleValue).toFixed(2)}` : '--',
-          lead.source || 'Direct'
+          lead.source || 'Website'
         ].join(',');
       })
     ].join('\n');
@@ -1017,13 +1017,17 @@ export default function AdminDashboard() {
       // Check if this is a booked call (has appointment)
       const appointment = lead.appointment;
       const appointmentOutcome = appointment?.outcome;
-      const hasSaleValue = lead.saleValue && parseFloat(lead.saleValue || '0') > 0;
       
-      // NEW DEAL AMOUNT: Only count leads with "Booked" status 
+      // Get sale value from appointment (preferred) or lead
+      const saleValue = appointment?.saleValue 
+        ? parseFloat(appointment.saleValue.toString()) 
+        : (lead.saleValue ? parseFloat(lead.saleValue.toString()) : 0);
+      const hasSaleValue = saleValue > 0;
+      
+      // NEW DEAL AMOUNT: Leads with appointment but no outcome yet
       // This means they have an appointment but haven't had the call yet
-      if (lead.status === 'Booked' && appointment && !appointmentOutcome) {
+      if (appointment && !appointmentOutcome) {
         // This is a NEW deal - freshly booked call with no outcome
-        console.log('NEW DEAL: Lead has Booked status with no outcome, adding to newDealAmount');
         newDealAmount += potentialValuePerCall;
       }
       
@@ -1035,7 +1039,6 @@ export default function AdminDashboard() {
           // It's still an open deal (could have outcome or not)
           if (hasSaleValue) {
             // Has actual sale value - use that for open deal
-            const saleValue = parseFloat(lead.saleValue || '0');
             openDealAmount += saleValue;
           } else {
             // No sale value yet - use potential value for open deal
@@ -1044,10 +1047,13 @@ export default function AdminDashboard() {
         } else {
           // It's a terminal outcome - this is a closed deal
           if (hasSaleValue) {
-            const saleValue = parseFloat(lead.saleValue || '0');
             closedDealAmount += saleValue;
           }
         }
+      } else {
+        // No appointment yet - this is still a potential open deal (just completed quiz)
+        // Only count if they completed the quiz (they're a lead)
+        openDealAmount += potentialValuePerCall;
       }
     });
 
@@ -1057,9 +1063,7 @@ export default function AdminDashboard() {
     return { totalRevenue, openDealAmount, newDealAmount, closedDealAmount };
   };
   
-  const revenueMetrics = calculateRevenueMetrics(stats?.allLeads || [], terminalOutcomes, newDealAmountPotential);
-
-  // Filter and sort CRM leads
+  // Filter and sort CRM leads (apply search filter first)
   const filteredCrmLeads = stats?.allLeads ? stats.allLeads.filter(lead => {
     // Search filter only
     if (crmSearch) {
@@ -1095,12 +1099,18 @@ export default function AdminDashboard() {
         bValue = new Date(b.completedAt || b.createdAt).getTime();
         break;
       case 'amount':
-        aValue = 100; // Fixed amount for now
-        bValue = 100;
+        // Sort by sale value (from appointment or lead)
+        aValue = a.saleValue ? parseFloat(a.saleValue.toString()) : 0;
+        bValue = b.saleValue ? parseFloat(b.saleValue.toString()) : 0;
+        break;
+      case 'owner':
+        // Sort by closer name (deal owner)
+        aValue = (a.closerName || a.appointment?.closer?.name || 'Unassigned').toLowerCase();
+        bValue = (b.closerName || b.appointment?.closer?.name || 'Unassigned').toLowerCase();
         break;
       case 'source':
-        aValue = a.source || 'Direct';
-        bValue = b.source || 'Direct';
+        aValue = a.source || 'Website';
+        bValue = b.source || 'Website';
         break;
       default:
         aValue = new Date(a.completedAt || a.createdAt).getTime();
@@ -1121,6 +1131,10 @@ export default function AdminDashboard() {
   );
 
   const totalCrmPages = Math.ceil(filteredCrmLeads.length / crmItemsPerPage);
+
+  // Calculate revenue metrics on FILTERED leads (after search filter)
+  // Note: API filters (quiz type, date range, affiliate) are already applied in stats.allLeads
+  const revenueMetrics = calculateRevenueMetrics(filteredCrmLeads, terminalOutcomes, newDealAmountPotential);
 
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden">
@@ -2273,9 +2287,19 @@ export default function AdminDashboard() {
                       className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
                       <option value="all">All Types</option>
-                      <option value="financial-profile">Financial Profile</option>
-                      <option value="health-finance">Health Finance</option>
-                      <option value="marriage-finance">Marriage Finance</option>
+                      {stats?.quizTypes && stats.quizTypes.length > 0 ? (
+                        stats.quizTypes.map((quizType) => (
+                          <option key={quizType.name} value={quizType.name}>
+                            {quizType.displayName}
+                          </option>
+                        ))
+                      ) : (
+                        <>
+                          <option value="financial-profile">Financial Profile</option>
+                          <option value="health-finance">Health Finance</option>
+                          <option value="marriage-finance">Marriage Finance</option>
+                        </>
+                      )}
                     </select>
                   </div>
                   
@@ -2399,14 +2423,29 @@ export default function AdminDashboard() {
                         </svg>
                       </div>
                     </div>
-                    <div className="text-2xl font-bold text-gray-900 mb-2 text-center">{((stats?.averageTimeMs || 0) / (1000 * 60 * 60 * 24)).toFixed(1)} days</div>
+                    <div className="text-2xl font-bold text-gray-900 mb-2 text-center">
+                      {(() => {
+                        // Calculate average deal age from appointments (time since appointment created)
+                        const appointmentsWithDates = filteredCrmLeads
+                          .filter(lead => lead.appointment?.createdAt)
+                          .map(lead => {
+                            const appointmentDate = new Date(lead.appointment!.createdAt);
+                            const now = new Date();
+                            return (now.getTime() - appointmentDate.getTime()) / (1000 * 60 * 60 * 24); // Days
+                          });
+                        
+                        if (appointmentsWithDates.length === 0) return '0.0';
+                        const avgAge = appointmentsWithDates.reduce((sum, age) => sum + age, 0) / appointmentsWithDates.length;
+                        return avgAge.toFixed(1);
+                      })()} days
+                    </div>
                     <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">AVERAGE DEAL AGE</div>
                     <div className="text-xs text-gray-400">
                       <svg className="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       </svg>
-                      Average time
+                      Time since appointment created
                     </div>
                   </div>
                 </div>
@@ -2605,25 +2644,41 @@ export default function AdminDashboard() {
                             )}
                             {crmVisibleColumns.date && (
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {lead.completedAt ? new Date(lead.completedAt).toLocaleDateString('en-GB') : "Yesterday"}
+                              {lead.completedAt 
+                                ? new Date(lead.completedAt).toLocaleDateString('en-GB', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric'
+                                  })
+                                : lead.createdAt 
+                                  ? new Date(lead.createdAt).toLocaleDateString('en-GB', {
+                                      day: '2-digit',
+                                      month: '2-digit',
+                                      year: 'numeric'
+                                    })
+                                  : 'N/A'}
                             </td>
                             )}
                             {crmVisibleColumns.owner && (
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-700 cursor-pointer">
-                              {'Unassigned'}
+                              {lead.closerName || lead.appointment?.closer?.name || 'Unassigned'}
                             </td>
                             )}
                             {crmVisibleColumns.amount && (
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {lead.saleValue 
-                                ? `$${Number(lead.saleValue).toFixed(2)}` 
-                                : '--'}
+                              {(() => {
+                                // Get sale value from appointment (preferred) or lead
+                                const saleValue = lead.appointment?.saleValue 
+                                  ? parseFloat(lead.appointment.saleValue.toString())
+                                  : (lead.saleValue ? parseFloat(lead.saleValue.toString()) : null);
+                                return saleValue ? `$${saleValue.toFixed(2)}` : '--';
+                              })()}
                             </td>
                             )}
                             {crmVisibleColumns.source && (
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                                {lead.source || 'Direct'}
+                                {lead.source || 'Website'}
                               </span>
                             </td>
                             )}
