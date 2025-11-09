@@ -11,7 +11,7 @@ export default function AboutPage() {
       {/* Hero Section - Exact BetterHelp Structure */}
       <section className="relative">
         {/* Light Section with Title */}
-        <div className="relative pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-16 bg-[#faf9f6]">
+        <div className="relative pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-16" style={{ backgroundColor: '#FDFDFB' }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-slate-900 leading-tight tracking-tight">
@@ -31,17 +31,17 @@ export default function AboutPage() {
           >
             <path 
               d="M0,0 L0,6 C360,6 720,50 1080,50 C1320,50 1440,6 1440,6 L1440,70 L0,70 Z" 
-              fill="#0f766e"
+              fill="#3D6B54"
             />
           </svg>
         </div>
 
-        {/* Dark Teal Section - Main Content */}
-        <div className="relative overflow-hidden" style={{ backgroundColor: '#0f766e' }}>
+        {/* Dark Green Section - Main Content */}
+        <div className="relative overflow-hidden" style={{ backgroundColor: '#3D6B54' }}>
           <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 pb-16 sm:pb-20">
             {/* Sub-navigation Tabs - Centered like BetterHelp */}
             <div className="flex flex-wrap justify-center gap-6 mb-8 sm:mb-10">
-              <Link href="/about" className="text-sm text-teal-300 border-b-2 border-teal-300 pb-1.5 font-light">
+              <Link href="/about" className="text-sm text-white border-b-2 border-white pb-1.5 font-light">
                 About
               </Link>
               <Link href="/careers" className="text-sm text-white/70 hover:text-white pb-1.5 border-b-2 border-transparent hover:border-white/30 transition-colors font-light">
@@ -58,14 +58,14 @@ export default function AboutPage() {
               </Link>
             </div>
 
-            {/* Main Heading - Thin and stylish like BetterHelp */}
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-teal-300 text-center mb-6 sm:mb-8 leading-tight tracking-tight">
+            {/* Main Heading - Clean muted green like BetterHelp */}
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-center mb-6 sm:mb-8 leading-tight tracking-tight" style={{ color: '#669977' }}>
               Rebuild your relationship with money
             </h2>
             
-            {/* Body Text - Light weight, stylish */}
+            {/* Body Text - Centered, pure white */}
             <div className="max-w-3xl mx-auto">
-              <p className="text-base sm:text-lg text-white/90 leading-relaxed font-light">
+              <p className="text-base sm:text-lg text-white leading-relaxed font-light text-center">
                 BrightNest was founded to remove the traditional barriers to financial wellness and make behavior-based money management accessible to everyone. Today, it is the world&apos;s leading financial behavior change platform — providing professional, affordable, and personalized financial guidance in a convenient online format. BrightNest&apos;s network of certified financial coaches has helped thousands of people take ownership of their financial health and work towards their personal goals. As the unmet need for accessible financial behavior change continues to grow, BrightNest is committed to expanding access to proven financial wellness systems globally.
               </p>
             </div>
@@ -81,7 +81,7 @@ export default function AboutPage() {
             >
               <path 
                 d="M0,70 L0,65 C360,65 720,20 1080,20 C1320,20 1440,65 1440,65 L1440,70 Z" 
-                fill="#faf9f6"
+                fill="#FDFDFB"
               />
             </svg>
           </div>
@@ -89,7 +89,7 @@ export default function AboutPage() {
       </section>
 
       {/* Our Coaches/Experts Section - Matching BetterHelp's "Our therapists" */}
-      <section className="relative py-12 sm:py-16 lg:py-20 bg-[#faf9f6]">
+      <section className="relative py-12 sm:py-16 lg:py-20" style={{ backgroundColor: '#FDFDFB' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-light text-slate-900 text-center mb-6 tracking-tight">
             Our coaches
