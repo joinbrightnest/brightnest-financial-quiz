@@ -84,17 +84,29 @@ export default function AboutPage() {
               preserveAspectRatio="none"
               xmlns="http://www.w3.org/2000/svg"
             >
+              <defs>
+                <linearGradient id="fadeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#FDFDFB" />
+                  <stop offset="50%" stopColor="#FCFCF9" />
+                  <stop offset="100%" stopColor="#FDFBF7" />
+                </linearGradient>
+              </defs>
               <path 
                 d="M0,70 L0,65 C360,65 720,20 1080,20 C1320,20 1440,65 1440,65 L1440,70 Z" 
-                fill="#FDFDFB"
+                fill="url(#fadeGradient)"
               />
-                    </svg>
-                  </div>
-                </div>
+            </svg>
+          </div>
+        </div>
       </section>
 
       {/* Our Coaches/Experts Section - Matching BetterHelp's "Our therapists" */}
-      <section className="relative py-12 sm:py-16 lg:py-20" style={{ backgroundColor: '#FDFDFB' }}>
+      <section 
+        className="relative py-12 sm:py-16 lg:py-20" 
+        style={{ 
+          background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)'
+        }}
+      >
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-4xl font-light text-slate-900 text-center mb-6 tracking-tight">
             Our coaches
