@@ -11,7 +11,7 @@ export default function AboutPage() {
       {/* Hero Section - Exact BetterHelp Structure */}
       <section className="relative">
         {/* Light Section with Title */}
-        <div className="relative pt-12 sm:pt-16 lg:pt-20 pb-20 sm:pb-24 bg-[#faf9f6]">
+        <div className="relative pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-16 bg-[#faf9f6]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-light text-slate-900 leading-tight tracking-tight">
@@ -21,22 +21,23 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* Dark Teal Section with Simple Hill-Shaped Wave - Main Content */}
+        {/* Curved Wave - Single color, single curve */}
+        <div className="relative w-full" style={{ height: '70px', marginTop: '-70px' }}>
+          <svg 
+            className="absolute top-0 left-0 w-full h-full" 
+            viewBox="0 0 1440 70" 
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path 
+              d="M0,0 L0,6 C360,6 720,50 1080,50 C1320,50 1440,6 1440,6 L1440,70 L0,70 Z" 
+              fill="#0f766e"
+            />
+          </svg>
+        </div>
+
+        {/* Dark Teal Section - Main Content */}
         <div className="relative bg-teal-800">
-          {/* Simple hill-shaped wave - single solid teal color, smooth concave curve */}
-          <div className="relative w-full overflow-hidden" style={{ height: '65px', marginTop: '-65px' }}>
-            <svg 
-              className="absolute top-0 left-0 w-full h-full" 
-              viewBox="0 0 1440 70" 
-              preserveAspectRatio="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path 
-                d="M0,0 L0,8 C240,8 480,12 720,45 C960,12 1200,8 1440,8 L1440,70 L0,70 Z" 
-                fill="#0f766e"
-              />
-            </svg>
-          </div>
 
           <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 pb-16 sm:pb-20">
             {/* Sub-navigation Tabs - Centered like BetterHelp */}
