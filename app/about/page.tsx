@@ -8,10 +8,10 @@ export default function AboutPage() {
     <div className="min-h-screen bg-white">
       <SiteHeader />
 
-      {/* Hero Section - BetterHelp Style (Single Section with Small Curve) */}
-      <section className="relative overflow-hidden bg-[#faf9f6]">
+      {/* Hero Section - Exact BetterHelp Structure */}
+      <section className="relative overflow-hidden">
         {/* Light Section with Title */}
-        <div className="relative pt-16 sm:pt-20 lg:pt-24 pb-12">
+        <div className="relative pt-12 sm:pt-16 lg:pt-20 pb-0 bg-[#faf9f6]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight">
@@ -21,60 +21,87 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* Single Dark Section with Small Upward Curve on Top */}
+        {/* Single Dark Teal Section with Curved Top - Main Content */}
         <div className="relative bg-teal-800">
-          {/* Small gentle curve on top - dips down in center like BetterHelp */}
-          <div className="relative w-full overflow-hidden" style={{ height: '45px', marginTop: '-45px' }}>
+          {/* Curved Top Edge - Smooth wave dipping in center */}
+          <div className="relative w-full" style={{ height: '45px', marginTop: '-45px' }}>
             <svg 
               className="absolute top-0 w-full h-full" 
-              viewBox="0 0 1440 55" 
+              viewBox="0 0 1440 50" 
               preserveAspectRatio="none"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
               <path 
-                d="M0,0 L0,8 C240,8 480,45 720,45 C960,45 1200,8 1440,8 L1440,55 L0,55 Z" 
+                d="M0,0 L0,4 C240,4 480,6 600,25 C720,42 840,42 960,25 C1080,6 1200,4 1440,4 L1440,50 L0,50 Z" 
                 fill="#0f766e"
               />
             </svg>
           </div>
 
-          {/* Content */}
-          <div className="relative pt-10 sm:pt-12 lg:pt-14 pb-12 sm:pb-16 lg:pb-20">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="space-y-5 text-center">
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-teal-300 leading-tight">
-                  Rebuild your relationship with money
-                </h2>
-                
-                <div className="space-y-4 text-base sm:text-lg text-white/90 leading-relaxed">
-                  <p>
-                    BrightNest was founded to remove the traditional barriers to financial wellness and make behavior-based money management accessible to everyone. Today, we provide professional, affordable, and personalized financial guidance in a convenient online format.
-                  </p>
-                  <p>
-                    Money isn&apos;t just numbers. It&apos;s emotion, habit, and identity — all tangled together. Most people don&apos;t struggle because they don&apos;t know what to do. They struggle because they can&apos;t make themselves do it consistently.
-                  </p>
-                  <p>
-                    That&apos;s where BrightNest comes in. We combine psychology, structure, and guidance from certified experts to help you take back control of your money — step by step, without guilt or overwhelm. As the need for accessible financial behavior change continues to grow, BrightNest is committed to expanding access to proven financial wellness systems globally.
-                  </p>
-                </div>
-              </div>
+          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-12 pb-12 sm:pb-16">
+            {/* Sub-navigation Tabs */}
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-8 sm:mb-10">
+              <Link href="/about" className="text-sm text-teal-300 border-b-2 border-teal-300 pb-1 font-medium">
+                About
+              </Link>
+              <Link href="/careers" className="text-sm text-white/70 hover:text-white pb-1 border-b-2 border-transparent hover:border-white/30 transition-colors">
+                Careers
+              </Link>
+              <Link href="/about" className="text-sm text-white/70 hover:text-white pb-1 border-b-2 border-transparent hover:border-white/30 transition-colors">
+                Social impact
+              </Link>
+              <Link href="/about" className="text-sm text-white/70 hover:text-white pb-1 border-b-2 border-transparent hover:border-white/30 transition-colors">
+                Client outcomes
+              </Link>
+              <Link href="/about" className="text-sm text-white/70 hover:text-white pb-1 border-b-2 border-transparent hover:border-white/30 transition-colors">
+                Responsible AI
+              </Link>
+            </div>
+
+            {/* Main Heading */}
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-teal-300 text-center mb-6 sm:mb-8 leading-tight">
+              Rebuild your relationship with money
+            </h2>
+            
+            {/* Body Text - Centered */}
+            <div className="text-center space-y-4 text-base sm:text-lg text-white leading-relaxed max-w-3xl mx-auto">
+              <p>
+                BrightNest was founded to remove the traditional barriers to financial wellness and make behavior-based money management accessible to everyone. Today, it is the world&apos;s leading financial behavior change platform — providing professional, affordable, and personalized financial guidance in a convenient online format. BrightNest&apos;s network of certified financial coaches has helped thousands of people take ownership of their financial health and work towards their personal goals. As the unmet need for accessible financial behavior change continues to grow, BrightNest is committed to expanding access to proven financial wellness systems globally.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Mission Section - BetterHelp Style */}
-      <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden bg-white">
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6 leading-tight">
-              Our Mission
-            </h2>
+      {/* Our Coaches/Experts Section - Matching BetterHelp's "Our therapists" */}
+      <section className="relative py-12 sm:py-16 lg:py-20 bg-[#faf9f6]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 text-center mb-6">
+            Our coaches
+          </h2>
+          <p className="text-base sm:text-lg text-slate-700 text-center leading-relaxed">
+            BrightNest offers access to licensed, trained, experienced, and accredited financial coaches, certified financial planners (CFP), behavioral finance specialists, and certified financial counselors who help you build lasting financial habits.
+          </p>
+          <div className="text-center mt-8">
+            <Link
+              href="/quiz/financial-profile"
+              className="inline-block bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold text-base hover:bg-teal-700 transition-colors"
+            >
+              Get started
+            </Link>
           </div>
-          
-          <div className="space-y-5 text-base sm:text-lg text-slate-700 leading-relaxed">
-            <p className="font-medium text-slate-900">
+        </div>
+      </section>
+
+      {/* Our Mission Section */}
+      <section className="relative py-12 sm:py-16 lg:py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 text-center mb-6">
+            Our Mission
+          </h2>
+          <div className="space-y-4 text-base sm:text-lg text-slate-700 leading-relaxed">
+            <p>
               At BrightNest, our mission is simple: to help people change their financial behaviour for good.
             </p>
             <p>
@@ -83,86 +110,62 @@ export default function AboutPage() {
             <p>
               We don&apos;t just teach budgeting. We help you understand why you spend, how to change your habits, and what systems actually keep you consistent.
             </p>
-            <p>
+            <p className="font-semibold text-slate-900">
               The goal isn&apos;t perfection. It&apos;s progress — and freedom.
             </p>
           </div>
         </div>
       </section>
 
-      {/* What Makes BrightNest Different - BetterHelp Style */}
-      <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden bg-slate-50">
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 leading-tight">
-              What Makes BrightNest Different
-            </h2>
-            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-              Most financial advice focuses on spreadsheets, apps, or tips. We focus on human behaviour.
-            </p>
-          </div>
+      {/* What Makes Us Different */}
+      <section className="relative py-12 sm:py-16 lg:py-20 bg-slate-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 text-center mb-4">
+            What Makes BrightNest Different
+          </h2>
+          <p className="text-base sm:text-lg text-slate-600 text-center mb-8 leading-relaxed">
+            Most financial advice focuses on spreadsheets, apps, or tips. We focus on human behaviour.
+          </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             {[
               {
                 title: "Behavioural Science",
-                description: "Because lasting change starts with mindset.",
-                icon: "M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                description: "Because lasting change starts with mindset."
               },
               {
                 title: "Proven Frameworks",
-                description: "To simplify decisions and remove guesswork.",
-                icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                description: "To simplify decisions and remove guesswork."
               },
               {
                 title: "Accountability & Coaching",
-                description: "To help you follow through, not just plan.",
-                icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                description: "To help you follow through, not just plan."
               },
               {
                 title: "Clear Tracking Dashboards",
-                description: "So you can see your progress in real time.",
-                icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                description: "So you can see your progress in real time."
               }
             ].map((item, index) => (
-              <div 
-                key={index}
-                className="bg-white rounded-lg p-6 border border-slate-200 hover:border-teal-300 transition-all duration-300"
-              >
-                <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0">
-                    <div className="w-10 h-10 rounded-lg bg-teal-600 flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
-                      </svg>
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-slate-900 mb-1">{item.title}</h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">{item.description}</p>
-                  </div>
-                </div>
+              <div key={index} className="bg-white p-5 rounded-lg border border-slate-200">
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">{item.title}</h3>
+                <p className="text-sm text-slate-600">{item.description}</p>
               </div>
             ))}
           </div>
-          
-          <div className="max-w-2xl mx-auto text-center">
-            <p className="text-base sm:text-lg text-slate-700 leading-relaxed">
-              You don&apos;t need to become a finance expert. You just need the right environment, habits, and support — that&apos;s what BrightNest gives you.
-            </p>
-          </div>
+
+          <p className="text-base sm:text-lg text-slate-700 text-center leading-relaxed">
+            You don&apos;t need to become a finance expert. You just need the right environment, habits, and support — that&apos;s what BrightNest gives you.
+          </p>
         </div>
       </section>
 
-      {/* Why We Exist - BetterHelp Style */}
-      <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden bg-white">
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6 leading-tight">
-              Why We Exist
-            </h2>
-          </div>
-          <div className="space-y-5 text-base sm:text-lg text-slate-700 leading-relaxed">
+      {/* Why We Exist */}
+      <section className="relative py-12 sm:py-16 lg:py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 text-center mb-6">
+            Why We Exist
+          </h2>
+          <div className="space-y-4 text-base sm:text-lg text-slate-700 leading-relaxed">
             <p>
               Because money stress is one of the biggest causes of anxiety, conflict, and lost potential in people&apos;s lives.
             </p>
@@ -179,14 +182,12 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* What We Believe - BetterHelp Style */}
-      <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden bg-slate-50">
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6 leading-tight">
-              What We Believe
-            </h2>
-          </div>
+      {/* What We Believe */}
+      <section className="relative py-12 sm:py-16 lg:py-20 bg-slate-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 text-center mb-6">
+            What We Believe
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               {
@@ -206,77 +207,56 @@ export default function AboutPage() {
                 description: "Financial control isn't about restriction — it's about choice."
               }
             ].map((belief, index) => (
-              <div key={index} className="bg-white rounded-lg p-6 border border-slate-200">
-                <p className="text-lg font-semibold text-slate-900 mb-2">
-                  {belief.title}
-                </p>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  {belief.description}
-                </p>
+              <div key={index} className="bg-white p-5 rounded-lg border border-slate-200">
+                <p className="text-lg font-semibold text-slate-900 mb-2">{belief.title}</p>
+                <p className="text-sm text-slate-600">{belief.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* The BrightNest Approach - BetterHelp Style */}
-      <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden bg-white">
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6 leading-tight">
-              The BrightNest Approach
-            </h2>
-          </div>
-          <div className="space-y-5 text-base sm:text-lg text-slate-700 leading-relaxed">
+      {/* The BrightNest Approach */}
+      <section className="relative py-12 sm:py-16 lg:py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 text-center mb-6">
+            The BrightNest Approach
+          </h2>
+          <div className="space-y-4 text-base sm:text-lg text-slate-700 leading-relaxed">
             <p>
               We guide you through a clear, step-by-step process:
             </p>
-            <div className="space-y-4 pt-4 border-t border-slate-200">
-              {[
-                {
-                  step: "Awareness",
-                  description: "Understand your patterns and uncover what's really driving your financial behaviour."
-                },
-                {
-                  step: "Control",
-                  description: "Learn practical systems for budgeting, spending, saving, and paying off debt without friction."
-                },
-                {
-                  step: "Momentum",
-                  description: "Build habits that last — and create a lifestyle that aligns with your goals and values."
-                }
-              ].map((item, index) => (
-                <div key={index}>
-                  <p className="font-semibold text-slate-900 mb-1">
-                    {item.step}
-                  </p>
-                  <p className="text-slate-600">
-                    — {item.description}
-                  </p>
-                </div>
-              ))}
+            <div className="space-y-3">
+              <div>
+                <p className="font-semibold text-slate-900 mb-1">Awareness</p>
+                <p className="text-slate-600">— Understand your patterns and uncover what&apos;s really driving your financial behaviour.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-slate-900 mb-1">Control</p>
+                <p className="text-slate-600">— Learn practical systems for budgeting, spending, saving, and paying off debt without friction.</p>
+              </div>
+              <div>
+                <p className="font-semibold text-slate-900 mb-1">Momentum</p>
+                <p className="text-slate-600">— Build habits that last — and create a lifestyle that aligns with your goals and values.</p>
+              </div>
             </div>
-            <div className="pt-4 border-t border-slate-200 space-y-3">
-              <p>
-                This isn&apos;t a crash course. It&apos;s a transformation.
-              </p>
-              <p className="font-semibold text-slate-900">
-                Our clients don&apos;t just fix their finances — they reshape how they think, act, and feel about money.
-              </p>
-            </div>
+            <p className="mt-4">
+              This isn&apos;t a crash course. It&apos;s a transformation.
+            </p>
+            <p className="font-semibold text-slate-900">
+              Our clients don&apos;t just fix their finances — they reshape how they think, act, and feel about money.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Our Vision - BetterHelp Style */}
-      <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden bg-slate-50">
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6 leading-tight">
-              Our Vision
-            </h2>
-          </div>
-          <div className="space-y-5 text-base sm:text-lg text-slate-700 leading-relaxed">
+      {/* Our Vision */}
+      <section className="relative py-12 sm:py-16 lg:py-20 bg-slate-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 text-center mb-6">
+            Our Vision
+          </h2>
+          <div className="space-y-4 text-base sm:text-lg text-slate-700 leading-relaxed">
             <p>
               To make behaviour change in personal finance as accessible and natural as fitness coaching.
             </p>
@@ -287,31 +267,29 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Join the Movement - BetterHelp Style */}
-      <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden bg-white">
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6 leading-tight">
-              Join the Movement
-            </h2>
-            <div className="space-y-5 text-base sm:text-lg text-slate-700 leading-relaxed">
-              <p>
-                BrightNest isn&apos;t about quick fixes. It&apos;s about rewriting your story with money — for good.
-              </p>
-              <p>
-                If you&apos;re ready to break the cycle of stress, guilt, and confusion and finally build a financial system that fits you —
-              </p>
-              <p className="font-semibold text-slate-900 text-lg">
-                Welcome to BrightNest.
-              </p>
-              <div className="pt-6">
-                <Link
-                  href="/quiz/financial-profile"
-                  className="inline-block bg-gradient-to-r from-teal-600 to-teal-700 text-white px-8 py-3 rounded-lg font-semibold text-base hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-lg"
-                >
-                  Get Started
-                </Link>
-              </div>
+      {/* Join the Movement */}
+      <section className="relative py-12 sm:py-16 lg:py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 text-center mb-6">
+            Join the Movement
+          </h2>
+          <div className="space-y-4 text-base sm:text-lg text-slate-700 leading-relaxed">
+            <p>
+              BrightNest isn&apos;t about quick fixes. It&apos;s about rewriting your story with money — for good.
+            </p>
+            <p>
+              If you&apos;re ready to break the cycle of stress, guilt, and confusion and finally build a financial system that fits you —
+            </p>
+            <p className="font-semibold text-slate-900 text-lg">
+              Welcome to BrightNest.
+            </p>
+            <div className="text-center pt-4">
+              <Link
+                href="/quiz/financial-profile"
+                className="inline-block bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold text-base hover:bg-teal-700 transition-colors"
+              >
+                Get Started
+              </Link>
             </div>
           </div>
         </div>
