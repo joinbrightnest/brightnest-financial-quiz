@@ -122,7 +122,7 @@ export default function SiteHeader() {
               href="/quiz/financial-profile" 
               className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-[1.03] active:scale-[0.98] relative overflow-hidden group"
             >
-              <span className="relative z-10">Learn More</span>
+              <span className="relative z-10">Get Started</span>
               <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
             </Link>
           </div>
@@ -241,7 +241,7 @@ export default function SiteHeader() {
                     className="block w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-3 rounded-xl font-semibold text-sm text-center shadow-md hover:from-teal-700 hover:to-teal-800 transition-all duration-300 hover:shadow-xl active:scale-[0.98] relative overflow-hidden group" 
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <span className="relative z-10">Learn More</span>
+                    <span className="relative z-10">Get Started</span>
                     <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
                   </Link>
                 </div>
