@@ -9,9 +9,9 @@ export default function AboutPage() {
       <SiteHeader />
 
       {/* Hero Section - Exact BetterHelp Structure */}
-      <section className="relative overflow-hidden">
+      <section className="relative">
         {/* Light Section with Title */}
-        <div className="relative pt-12 sm:pt-16 lg:pt-20 pb-0 bg-[#faf9f6]">
+        <div className="relative pt-12 sm:pt-16 lg:pt-20 pb-20 sm:pb-24 bg-[#faf9f6]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight">
@@ -21,52 +21,52 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* Single Dark Teal Section with Curved Top - Main Content */}
+        {/* Dark Teal Section with Curved Top Wave - Main Content */}
         <div className="relative bg-teal-800">
-          {/* Curved Top Edge - Smooth wave dipping in center */}
-          <div className="relative w-full" style={{ height: '45px', marginTop: '-45px' }}>
+          {/* Wave as the top edge of dark section - creates deep dip in center like BetterHelp */}
+          <div className="relative w-full overflow-hidden" style={{ height: '70px', marginTop: '-70px' }}>
             <svg 
-              className="absolute top-0 w-full h-full" 
-              viewBox="0 0 1440 50" 
+              className="absolute top-0 left-0 w-full h-full" 
+              viewBox="0 0 1440 80" 
               preserveAspectRatio="none"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
               <path 
-                d="M0,0 L0,4 C240,4 480,6 600,25 C720,42 840,42 960,25 C1080,6 1200,4 1440,4 L1440,50 L0,50 Z" 
+                d="M0,0 L0,6 C180,6 360,10 520,38 C680,60 760,60 920,38 C1080,10 1260,6 1440,6 L1440,80 L0,80 Z" 
                 fill="#0f766e"
               />
             </svg>
           </div>
 
-          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-12 pb-12 sm:pb-16">
-            {/* Sub-navigation Tabs */}
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 mb-8 sm:mb-10">
-              <Link href="/about" className="text-sm text-teal-300 border-b-2 border-teal-300 pb-1 font-medium">
+          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 pb-16 sm:pb-20">
+            {/* Sub-navigation Tabs - Left aligned like BetterHelp */}
+            <div className="flex flex-wrap gap-6 mb-8 sm:mb-10">
+              <Link href="/about" className="text-sm text-teal-300 border-b-2 border-teal-300 pb-1.5 font-medium">
                 About
               </Link>
-              <Link href="/careers" className="text-sm text-white/70 hover:text-white pb-1 border-b-2 border-transparent hover:border-white/30 transition-colors">
+              <Link href="/careers" className="text-sm text-white/70 hover:text-white pb-1.5 border-b-2 border-transparent hover:border-white/30 transition-colors">
                 Careers
               </Link>
-              <Link href="/about" className="text-sm text-white/70 hover:text-white pb-1 border-b-2 border-transparent hover:border-white/30 transition-colors">
+              <Link href="/about" className="text-sm text-white/70 hover:text-white pb-1.5 border-b-2 border-transparent hover:border-white/30 transition-colors">
                 Social impact
               </Link>
-              <Link href="/about" className="text-sm text-white/70 hover:text-white pb-1 border-b-2 border-transparent hover:border-white/30 transition-colors">
+              <Link href="/about" className="text-sm text-white/70 hover:text-white pb-1.5 border-b-2 border-transparent hover:border-white/30 transition-colors">
                 Client outcomes
               </Link>
-              <Link href="/about" className="text-sm text-white/70 hover:text-white pb-1 border-b-2 border-transparent hover:border-white/30 transition-colors">
+              <Link href="/about" className="text-sm text-white/70 hover:text-white pb-1.5 border-b-2 border-transparent hover:border-white/30 transition-colors">
                 Responsible AI
               </Link>
             </div>
 
-            {/* Main Heading */}
+            {/* Main Heading - Centered like BetterHelp */}
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-teal-300 text-center mb-6 sm:mb-8 leading-tight">
               Rebuild your relationship with money
             </h2>
             
-            {/* Body Text - Centered */}
-            <div className="text-center space-y-4 text-base sm:text-lg text-white leading-relaxed max-w-3xl mx-auto">
-              <p>
+            {/* Body Text - Centered container, left-aligned text inside like BetterHelp */}
+            <div className="max-w-3xl mx-auto">
+              <p className="text-base sm:text-lg text-white/90 leading-relaxed">
                 BrightNest was founded to remove the traditional barriers to financial wellness and make behavior-based money management accessible to everyone. Today, it is the world&apos;s leading financial behavior change platform — providing professional, affordable, and personalized financial guidance in a convenient online format. BrightNest&apos;s network of certified financial coaches has helped thousands of people take ownership of their financial health and work towards their personal goals. As the unmet need for accessible financial behavior change continues to grow, BrightNest is committed to expanding access to proven financial wellness systems globally.
               </p>
             </div>
