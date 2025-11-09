@@ -21,18 +21,13 @@ export default function SiteHeader() {
     return (
       <Link 
         href={href} 
-        className={`px-3 py-2 font-medium text-sm transition-colors duration-200 relative group ${
+        className={`px-4 py-2.5 font-medium text-sm transition-all duration-200 relative rounded-lg group ${
           active 
-            ? "text-slate-900" 
-            : "text-slate-600 hover:text-teal-600"
+            ? "text-teal-700 bg-teal-50/80 shadow-sm" 
+            : "text-slate-700 hover:text-teal-700 hover:bg-teal-50/50"
         }`}
       >
         {children}
-        {active ? (
-          <span className="absolute bottom-0 left-0 w-full h-0.5 bg-teal-600"></span>
-        ) : (
-          <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-teal-600 transition-all duration-200 group-hover:w-full"></span>
-        )}
       </Link>
     );
   };
@@ -62,31 +57,28 @@ export default function SiteHeader() {
               onMouseLeave={() => setIsFreeToolsOpen(false)}
             >
               <button
-                className={`px-3 py-2 font-medium text-sm transition-colors duration-200 relative group ${
+                className={`px-4 py-2.5 font-medium text-sm transition-all duration-200 rounded-lg group ${
                   pathname?.startsWith("/tools")
-                    ? "text-slate-900" 
-                    : "text-slate-600 hover:text-teal-600"
+                    ? "text-teal-700 bg-teal-50/80 shadow-sm" 
+                    : "text-slate-700 hover:text-teal-700 hover:bg-teal-50/50"
                 }`}
                 onClick={() => setIsFreeToolsOpen(!isFreeToolsOpen)}
               >
                 Free Tools
                 <svg 
-                  className={`inline-block ml-1 w-4 h-4 transition-transform duration-200 ${isFreeToolsOpen ? 'rotate-180' : ''}`}
+                  className={`inline-block ml-1.5 w-4 h-4 transition-transform duration-200 ${isFreeToolsOpen ? 'rotate-180' : ''}`}
                   fill="none" 
                   viewBox="0 0 24 24" 
                   stroke="currentColor" 
-                  strokeWidth={2}
+                  strokeWidth={2.5}
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
-                {pathname?.startsWith("/tools") && (
-                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-teal-600"></span>
-                )}
               </button>
               
               {/* Dropdown Menu */}
               {isFreeToolsOpen && (
-                <div className="absolute left-0 top-full mt-2 w-[300px] bg-white rounded-lg shadow-xl border border-slate-200 py-6 z-50">
+                <div className="absolute left-0 top-full mt-2 w-[300px] bg-white rounded-xl shadow-xl border border-slate-200/60 py-6 z-50 backdrop-blur-sm">
                   <div className="px-6">
                     <h3 className="font-bold text-slate-900 mb-4 text-sm">Budgeting</h3>
                     <ul className="space-y-2 text-sm">
@@ -126,8 +118,12 @@ export default function SiteHeader() {
           </div>
 
           <div className="flex items-center">
-            <Link href="/quiz/financial-profile" className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02]">
-              Learn More
+            <Link 
+              href="/quiz/financial-profile" 
+              className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-[1.03] active:scale-[0.98] relative overflow-hidden group"
+            >
+              <span className="relative z-10">Learn More</span>
+              <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
             </Link>
           </div>
         </div>
@@ -159,9 +155,10 @@ export default function SiteHeader() {
           {/* Button - Right */}
           <Link 
             href="/quiz/financial-profile" 
-            className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-2 rounded-full font-semibold text-xs hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 whitespace-nowrap"
+            className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-2 rounded-xl font-semibold text-xs hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-xl active:scale-95 whitespace-nowrap relative overflow-hidden group"
           >
-            APPLY NOW
+            <span className="relative z-10">APPLY NOW</span>
+            <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
           </Link>
         </div>
 
@@ -178,10 +175,10 @@ export default function SiteHeader() {
               <div className="px-4 py-4 space-y-1">
                 <Link 
                   href="/about" 
-                  className={`block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
+                  className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${
                     isActive("/about") 
-                      ? "text-teal-700 font-semibold bg-teal-50" 
-                      : "text-slate-600 hover:bg-gray-50 hover:text-teal-600"
+                      ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm" 
+                      : "text-slate-700 hover:bg-teal-50/50 hover:text-teal-700"
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -189,10 +186,10 @@ export default function SiteHeader() {
                 </Link>
                 <Link 
                   href="/blog" 
-                  className={`block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
+                  className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${
                     isActive("/blog") 
-                      ? "text-teal-700 font-semibold bg-teal-50" 
-                      : "text-slate-600 hover:bg-gray-50 hover:text-teal-600"
+                      ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm" 
+                      : "text-slate-700 hover:bg-teal-50/50 hover:text-teal-700"
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -200,10 +197,10 @@ export default function SiteHeader() {
                 </Link>
                 <Link 
                   href="/careers" 
-                  className={`block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
+                  className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${
                     isActive("/careers") 
-                      ? "text-teal-700 font-semibold bg-teal-50" 
-                      : "text-slate-600 hover:bg-gray-50 hover:text-teal-600"
+                      ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm" 
+                      : "text-slate-700 hover:bg-teal-50/50 hover:text-teal-700"
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -217,10 +214,10 @@ export default function SiteHeader() {
                   </div>
                   <Link 
                     href="/tools/budget-calculator" 
-                    className={`block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
+                    className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${
                       pathname === "/tools/budget-calculator" 
-                        ? "text-teal-700 font-semibold bg-teal-50" 
-                        : "text-slate-600 hover:bg-gray-50 hover:text-teal-600"
+                        ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm" 
+                        : "text-slate-700 hover:bg-teal-50/50 hover:text-teal-700"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -228,10 +225,10 @@ export default function SiteHeader() {
                   </Link>
                   <Link 
                     href="/tools/debt-snowball-calculator" 
-                    className={`block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 ${
+                    className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${
                       pathname === "/tools/debt-snowball-calculator" 
-                        ? "text-teal-700 font-semibold bg-teal-50" 
-                        : "text-slate-600 hover:bg-gray-50 hover:text-teal-600"
+                        ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm" 
+                        : "text-slate-700 hover:bg-teal-50/50 hover:text-teal-700"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -239,8 +236,13 @@ export default function SiteHeader() {
                   </Link>
                 </div>
                 <div className="pt-2">
-                  <Link href="/quiz/financial-profile" className="block w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-3 rounded-lg font-semibold text-sm text-center shadow-md hover:from-teal-700 hover:to-teal-800 transition-all duration-300" onClick={() => setIsMobileMenuOpen(false)}>
-                    Learn More
+                  <Link 
+                    href="/quiz/financial-profile" 
+                    className="block w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-3 rounded-xl font-semibold text-sm text-center shadow-md hover:from-teal-700 hover:to-teal-800 transition-all duration-300 hover:shadow-xl active:scale-[0.98] relative overflow-hidden group" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span className="relative z-10">Learn More</span>
+                    <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
                   </Link>
                 </div>
               </div>
