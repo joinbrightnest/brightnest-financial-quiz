@@ -118,7 +118,9 @@ export async function GET(request: NextRequest) {
   }
   
   const { searchParams } = new URL(request.url);
-  const quizType = searchParams.get('quizType') || null;
+  const quizTypeParam = searchParams.get('quizType') || null;
+  // Normalize 'all' to null for filtering (sessions don't have quizType='all')
+  const quizType = quizTypeParam && quizTypeParam !== 'all' ? quizTypeParam : null;
   const duration = searchParams.get('duration') || 'all';
   const affiliateCode = searchParams.get('affiliateCode') || null;
   
@@ -517,10 +519,6 @@ export async function GET(request: NextRequest) {
     // Completion rate is based on ALL completed sessions, not just leads
     const completionRate = totalSessions > 0 ? (completedSessionsCount / totalSessions) * 100 : 0;
 
-    // Get all questions ordered by their order field
-    // Use quiz type filter if specified, otherwise default
-    const defaultQuizType = quizType || 'financial-profile';
-    
     // 🚀 PERFORMANCE: Parallelize archetype and question queries
     // First, get filtered session IDs for archetype filtering
     const filteredSessionsForArchetypes = await prisma.quizSession.findMany({
@@ -550,26 +548,7 @@ export async function GET(request: NextRequest) {
         })
       : [];
 
-    const [totalQuestions, allQuestions] = await Promise.all([
-      // Get behavior analytics - drop-off rates per question
-      prisma.quizQuestion.count({
-        where: { 
-          active: true
-        }
-      }),
-      // Get all questions ordered by their order field
-      prisma.quizQuestion.findMany({
-        where: { 
-          active: true,
-          quizType: defaultQuizType
-        },
-        orderBy: { order: 'asc' }
-      })
-    ]);
-
-    const archetypeStats = archetypeStatsData;
-
-    // Get filtered sessions first (applying date and affiliate filters)
+    // Get filtered sessions first to determine which questions to include
     const filteredSessions = await prisma.quizSession.findMany({
       where: {
         createdAt: dateFilter,
@@ -577,11 +556,60 @@ export async function GET(request: NextRequest) {
         ...(affiliateCode ? { affiliateCode } : {})
       },
       select: {
-        id: true
+        id: true,
+        quizType: true  // Need quizType to get matching questions
       }
     });
 
     const filteredSessionIds = filteredSessions.map(s => s.id);
+
+    // When quizType is null (meaning 'all'), get questions from all quiz types that have sessions
+    // When quizType is specified, get questions only for that type
+    let allQuestions;
+    if (quizType) {
+      // Specific quiz type: get questions for that type only
+      allQuestions = await prisma.quizQuestion.findMany({
+        where: { 
+          active: true,
+          quizType: quizType
+        },
+        orderBy: { order: 'asc' }
+      });
+    } else {
+      // 'all' or no filter: get questions from all quiz types that have sessions
+      const uniqueQuizTypes = [...new Set(filteredSessions.map(s => s.quizType))];
+      if (uniqueQuizTypes.length > 0) {
+        allQuestions = await prisma.quizQuestion.findMany({
+          where: { 
+            active: true,
+            quizType: { in: uniqueQuizTypes }
+          },
+          orderBy: [{ quizType: 'asc' }, { order: 'asc' }]  // Group by quiz type, then by order
+        });
+      } else {
+        // No sessions found, but we still want to show questions for default type
+        allQuestions = await prisma.quizQuestion.findMany({
+          where: { 
+            active: true,
+            quizType: 'financial-profile'
+          },
+          orderBy: { order: 'asc' }
+        });
+      }
+    }
+
+    const [totalQuestions] = await Promise.all([
+      // Get behavior analytics - drop-off rates per question
+      prisma.quizQuestion.count({
+        where: { 
+          active: true
+        }
+      })
+    ]);
+
+    const archetypeStats = archetypeStatsData;
+
+    // filteredSessionIds already calculated above from filteredSessions
 
     // Get question analytics for ONLY the filtered sessions
     // If no sessions match filters, skip the query and use empty results
@@ -607,24 +635,49 @@ export async function GET(request: NextRequest) {
       questionAnalyticsData.map(item => [item.questionId, item._count.sessionId])
     );
 
+    // When showing "all" quiz types, calculate retention rate per quiz type
+    // Group sessions by quiz type for accurate retention calculation
+    const sessionsByQuizType = filteredSessions.reduce((acc, session) => {
+      if (!acc[session.quizType]) {
+        acc[session.quizType] = [];
+      }
+      acc[session.quizType].push(session.id);
+      return acc;
+    }, {} as Record<string, string[]>);
+
+    // When showing multiple quiz types, we need to ensure question numbers are unique
+    // Create a sequential question number across all quiz types
     const questionAnalytics = allQuestions.map((question, index) => {
       const answeredCount = questionCountMap.get(question.id) || 0;
-      const retentionRate = totalSessions > 0 ? (answeredCount / totalSessions) * 100 : 0;
+      
+      // Calculate retention rate: when showing "all", use sessions of the same quiz type as the question
+      // When showing a specific type, use totalSessions
+      let retentionRate = 0;
+      if (quizType) {
+        // Specific quiz type: use totalSessions (already filtered by quiz type)
+        retentionRate = totalSessions > 0 ? (answeredCount / totalSessions) * 100 : 0;
+      } else {
+        // "All" types: use sessions of the same quiz type as this question
+        const sessionsForThisQuizType = sessionsByQuizType[question.quizType]?.length || 0;
+        retentionRate = sessionsForThisQuizType > 0 ? (answeredCount / sessionsForThisQuizType) * 100 : 0;
+      }
 
-      // Show quiz type in question text
-      const questionText = question.prompt;
+      // Show quiz type in question text if showing multiple quiz types
+      const questionText = !quizType && allQuestions.length > 0
+        ? `[${question.quizType}] ${question.prompt}`
+        : question.prompt;
 
-      console.log(`📊 Question ${question.order} (DB order: ${question.order}): ${questionText}`);
+      console.log(`📊 Question ${question.order} (${question.quizType}, DB order: ${question.order}): ${questionText}`);
       console.log(`   Answers: ${answeredCount}/${totalSessions} (${retentionRate.toFixed(1)}% retention)`);
 
       return {
-        questionNumber: question.order,
+        questionNumber: index + 1, // Sequential number across all questions (Q1, Q2, Q3...)
         questionText: questionText,
         answeredCount,
         retentionRate: Math.round(retentionRate * 100) / 100,
         originalOrder: question.order,
         quizType: question.quizType,
-        selectedQuizType: defaultQuizType, // Show which quiz was selected
+        selectedQuizType: quizType || 'all',
       };
     });
 
