@@ -39,7 +39,7 @@ export default function AboutPage() {
         {/* Dark Teal Section - Main Content */}
         <div className="relative" style={{ backgroundColor: '#0f766e' }}>
 
-          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 pb-16 sm:pb-20">
+          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 pb-20 sm:pb-24">
             {/* Sub-navigation Tabs - Centered like BetterHelp */}
             <div className="flex flex-wrap justify-center gap-6 mb-8 sm:mb-10">
               <Link href="/about" className="text-sm text-teal-300 border-b-2 border-teal-300 pb-1.5 font-light">
@@ -72,8 +72,8 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* Curved Bottom Edge - Single color, single curve transitioning to light */}
-          <div className="relative w-full" style={{ height: '70px', marginBottom: '-70px' }}>
+          {/* Curved Bottom Edge - Upward curve transitioning to light background */}
+          <div className="relative w-full overflow-hidden" style={{ height: '70px' }}>
             <svg 
               className="absolute bottom-0 left-0 w-full h-full" 
               viewBox="0 0 1440 70" 
@@ -81,7 +81,7 @@ export default function AboutPage() {
               xmlns="http://www.w3.org/2000/svg"
             >
               <path 
-                d="M0,70 L0,64 C360,64 720,20 1080,20 C1320,20 1440,64 1440,64 L1440,0 L0,0 Z" 
+                d="M0,70 L0,65 C360,65 720,25 1080,25 C1320,25 1440,65 1440,65 L1440,70 Z" 
                 fill="#faf9f6"
               />
             </svg>
