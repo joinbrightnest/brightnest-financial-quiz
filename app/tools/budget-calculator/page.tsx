@@ -307,11 +307,11 @@ export default function BudgetCalculatorPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
 
           {/* Calculator Section */}
-          <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-4 sm:p-6">
-            <h2 className="text-xl font-bold text-slate-900 mb-2">
+          <div className="bg-white rounded-xl shadow-md border border-slate-200 p-6 sm:p-8 lg:p-10">
+            <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-4 tracking-tight">
               Budget Calculator
             </h2>
-            <p className="text-sm text-slate-600 mb-6">
+            <p className="text-base sm:text-lg text-slate-700 mb-8 leading-relaxed font-light">
               Enter your income and the calculator will show the national averages for most budget categories as a starting point. A few of these are recommendations (like giving). Most just reflect average spending (like debt). Don't have debt? Yay! Move that money to your current money goal.
             </p>
 
@@ -320,9 +320,9 @@ export default function BudgetCalculatorPage() {
               <div className="space-y-4 order-2 lg:order-1">
                 {/* Income */}
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 mb-2">Income</h3>
+                  <h3 className="text-lg font-light text-slate-900 mb-3">Income</h3>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block text-sm font-light text-slate-700 mb-2">
                       Monthly Income (after taxes)
                     </label>
                     <div className="relative">
@@ -344,7 +344,7 @@ export default function BudgetCalculatorPage() {
 
                 {/* Expenses */}
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 mb-2">Expenses</h3>
+                  <h3 className="text-lg font-light text-slate-900 mb-3">Expenses</h3>
                   <div className="space-y-2">
                     {Object.keys(CATEGORY_LABELS).map((key) => {
                       const categoryKey = key as keyof typeof CATEGORY_LABELS;
@@ -538,11 +538,11 @@ export default function BudgetCalculatorPage() {
                   {/* Difference */}
                   <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
                     <div className="text-center">
-                      <h3 className="text-base font-bold text-slate-900 mb-1">Difference</h3>
-                      <p className={`text-3xl font-bold ${difference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      <h3 className="text-base font-light text-slate-900 mb-2">Difference</h3>
+                      <p className={`text-2xl sm:text-3xl font-light ${difference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                         {formatCurrency(Math.abs(difference))}
                       </p>
-                      <p className="text-xs text-slate-600 mt-1">
+                      <p className="text-sm text-slate-600 mt-2 font-light">
                         {difference >= 0 ? 'Remaining' : 'Over Budget'}
                       </p>
                     </div>
@@ -551,7 +551,7 @@ export default function BudgetCalculatorPage() {
                   {/* Category Breakdown */}
                   {expenseData.length > 0 && (
                     <div className="mt-4 bg-slate-50 rounded-lg p-4 border border-slate-200">
-                      <h3 className="text-sm font-bold text-slate-900 mb-3">Expense Breakdown</h3>
+                      <h3 className="text-base font-light text-slate-900 mb-3">Expense Breakdown</h3>
                       <div className="space-y-1.5 max-h-48 overflow-y-auto">
                         {expenseData.map((item) => {
                           const percentage = totalExpenses > 0 ? (item.value / totalExpenses) * 100 : 0;
@@ -581,8 +581,8 @@ export default function BudgetCalculatorPage() {
 
           {/* Insights Section */}
           {incomeNum > 0 && (
-            <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-4 sm:p-6 mt-4">
-              <h2 className="text-xl font-bold text-slate-900 mb-4">Budget Insights</h2>
+            <div className="bg-white rounded-xl shadow-md border border-slate-200 p-6 sm:p-8 mt-6 sm:mt-8">
+              <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 tracking-tight">Budget Insights</h2>
               
               {difference < 0 ? (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -593,15 +593,15 @@ export default function BudgetCalculatorPage() {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-red-900 mb-1">
+                      <h3 className="text-lg font-light text-red-900 mb-3">
                         You're overspending by {formatCurrency(Math.abs(difference))} per month
                       </h3>
-                      <p className="text-sm text-red-800 mb-3">
+                      <p className="text-base text-red-800 mb-4 font-light">
                         Don't freak out. This is just a wake-up call! You can get that number to zero. Just give every dollar a job—giving, saving and spending—without overspending! It's time to make some changes.
                       </p>
-                      <div className="space-y-1.5 text-xs text-red-700">
-                        <p className="font-semibold">Try this:</p>
-                        <ul className="list-disc list-inside space-y-0.5">
+                      <div className="space-y-2 text-sm text-red-700 font-light">
+                        <p className="font-light">Try this:</p>
+                        <ul className="list-disc list-inside space-y-1">
                           <li>Review your expenses and identify areas to cut back</li>
                           <li>Consider reducing discretionary spending</li>
                           <li>Find ways to increase your income</li>
@@ -620,15 +620,15 @@ export default function BudgetCalculatorPage() {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-green-900 mb-1">
+                      <h3 className="text-lg font-light text-green-900 mb-3">
                         Great! You have {formatCurrency(difference)} remaining each month
                       </h3>
-                      <p className="text-sm text-green-800 mb-3">
+                      <p className="text-base text-green-800 mb-4 font-light">
                         Bravo! Time to give those dollars a job—build up your savings or pay off your debt. Whatever your current money goal is, get after it!
                       </p>
-                      <div className="space-y-1.5 text-xs text-green-700">
-                        <p className="font-semibold">Consider allocating this surplus to:</p>
-                        <ul className="list-disc list-inside space-y-0.5">
+                      <div className="space-y-2 text-sm text-green-700 font-light">
+                        <p className="font-light">Consider allocating this surplus to:</p>
+                        <ul className="list-disc list-inside space-y-1">
                           <li>Emergency fund (3-6 months of expenses)</li>
                           <li>Debt payoff (if you have debt)</li>
                           <li>Retirement savings (15% of income recommended)</li>
@@ -647,10 +647,10 @@ export default function BudgetCalculatorPage() {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-base font-bold text-blue-900 mb-1">
+                      <h3 className="text-lg font-light text-blue-900 mb-3">
                         Your income and expenses are balanced!
                       </h3>
-                      <p className="text-sm text-blue-800">
+                      <p className="text-base text-blue-800 font-light">
                         Perfect! Your budget is working. Consider building an emergency fund and investing for long-term wealth if you haven't already.
                       </p>
                     </div>
@@ -661,79 +661,84 @@ export default function BudgetCalculatorPage() {
           )}
 
           {/* Get the Most out of the Budget Calculator */}
-          <div className="mt-8 bg-slate-50 rounded-2xl p-8 lg:p-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4 text-center">
-              Get the Most out of the <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Budget Calculator</span>
-            </h2>
-            <p className="text-slate-600 mb-6 text-center max-w-3xl mx-auto">
-              The budget calculator helps you see where you stand with your money right <strong>now</strong>. But what if your income and expenses don't balance out? Great question. Try this:
-            </p>
-
-            <div className="grid md:grid-cols-2 gap-4 lg:gap-6 mt-8">
-              {/* See if you're overspending */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-slate-900 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">See if you're overspending.</h3>
-                    <p className="text-slate-600 text-sm leading-relaxed">
-                      Is there a red negative number at the bottom of your budget? Don't freak out. This is just a wake-up call! You can get that number to zero. Just give every dollar a job—giving, saving and spending—without overspending! It's time to make some changes. (Keep reading.)
-                    </p>
-                  </div>
-                </div>
+          <div className="mt-12 sm:mt-16 lg:mt-20" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+            <div className="py-12 sm:py-16 lg:py-20">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  Get the Most out of the Budget Calculator
+                </h2>
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
+                <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
+                  The budget calculator helps you see where you stand with your money right <strong className="font-light">now</strong>. But what if your income and expenses don't balance out? Great question. Try this:
+                </p>
               </div>
 
-              {/* Find ways to cut expenses */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-teal-700 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">Find ways to cut expenses.</h3>
-                    <p className="text-slate-600 text-sm leading-relaxed">
-                      Once you see you're overspending, you can fix the problem! Start by cutting down your spending. What if you took up meal planning to save on groceries? Get creative and cut the fluff where you can afford to. Then lower some numbers in the calculator based on this kind of planning.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Put extra money to work */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-slate-700 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">Put extra money to work.</h3>
-                    <p className="text-slate-600 text-sm leading-relaxed">
-                      Wait, did you have money left over after typing in all your expenses? Bravo! Time to give those dollars a job—build up your savings or pay off your debt. Whatever your current money goal is, get after it!
-                    </p>
+              <div className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* See if you're overspending */}
+                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#3D6B54', opacity: 0.1 }}>
+                      <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-light text-slate-900 mb-3">See if you're overspending.</h3>
+                      <p className="text-base text-slate-700 leading-relaxed font-light">
+                        Is there a red negative number at the bottom of your budget? Don't freak out. This is just a wake-up call! You can get that number to zero. Just give every dollar a job—giving, saving and spending—without overspending! It's time to make some changes. (Keep reading.)
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Make your first budget */}
-              <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
+                {/* Find ways to cut expenses */}
+                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#3D6B54', opacity: 0.1 }}>
+                      <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-light text-slate-900 mb-3">Find ways to cut expenses.</h3>
+                      <p className="text-base text-slate-700 leading-relaxed font-light">
+                        Once you see you're overspending, you can fix the problem! Start by cutting down your spending. What if you took up meal planning to save on groceries? Get creative and cut the fluff where you can afford to. Then lower some numbers in the calculator based on this kind of planning.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">Make your first budget.</h3>
-                    <p className="text-slate-600 text-sm leading-relaxed">
-                      Okay, you worked through your numbers in this budget calculator. Awesome. But don't leave them on the screen. This is just the first step in your beautiful budgeting journey. Take these numbers and start telling your money where to go—one monthly budget at a time.
-                    </p>
+                </div>
+
+                {/* Put extra money to work */}
+                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#3D6B54', opacity: 0.1 }}>
+                      <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-light text-slate-900 mb-3">Put extra money to work.</h3>
+                      <p className="text-base text-slate-700 leading-relaxed font-light">
+                        Wait, did you have money left over after typing in all your expenses? Bravo! Time to give those dollars a job—build up your savings or pay off your debt. Whatever your current money goal is, get after it!
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Make your first budget */}
+                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#3D6B54', opacity: 0.1 }}>
+                      <svg className="w-5 h-5" style={{ color: '#3D6B54' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-light text-slate-900 mb-3">Make your first budget.</h3>
+                      <p className="text-base text-slate-700 leading-relaxed font-light">
+                        Okay, you worked through your numbers in this budget calculator. Awesome. But don't leave them on the screen. This is just the first step in your beautiful budgeting journey. Take these numbers and start telling your money where to go—one monthly budget at a time.
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
