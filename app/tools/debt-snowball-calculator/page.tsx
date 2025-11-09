@@ -290,18 +290,21 @@ export default function DebtSnowballCalculatorPage() {
         <main className="flex-1 py-4">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Header Section */}
-            <div className="relative py-6 mb-6 overflow-hidden rounded-2xl border border-slate-200/50 shadow-sm">
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-teal-50 to-amber-50"></div>
-              <div className="absolute top-0 right-0 w-72 h-72 bg-teal-100/60 rounded-full blur-3xl"></div>
-              <div className="absolute bottom-0 left-0 w-72 h-72 bg-amber-100/60 rounded-full blur-3xl"></div>
-              
-              <div className="relative text-center px-2">
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
-                  Your <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Debt Results</span>
-                </h1>
-                <p className="text-sm sm:text-base lg:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-                  See your complete debt picture and find out exactly when you'll be debt-free!
-                </p>
+            <div 
+              className="relative py-12 sm:py-16 lg:py-20 overflow-hidden mb-6"
+              style={{ 
+                background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)'
+              }}
+            >
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center animate-fade-in">
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-6 leading-tight tracking-tight">
+                    Your <span style={{ color: '#3D6B54' }}>Debt Results</span>
+                  </h1>
+                  <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
+                    See your complete debt picture and find out exactly when you'll be debt-free!
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -460,123 +463,176 @@ export default function DebtSnowballCalculatorPage() {
             </div>
 
             {/* Educational Content Below Results */}
-            <div className="space-y-12 max-w-3xl mx-auto py-8">
+            <div className="space-y-12 sm:space-y-16 lg:space-y-20 max-w-3xl mx-auto py-8">
               {/* What Is the Debt Snowball? */}
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
-                  What Is the Debt Snowball?
+              <div className="animate-fade-in">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  What Is the <span style={{ color: '#3D6B54' }}>Debt Snowball</span>?
                 </h2>
-                <p className="text-lg text-slate-700 mb-4 leading-relaxed">
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
+                <p className="text-base sm:text-lg text-slate-700 mb-4 leading-relaxed font-light">
                   The debt snowball is a debt payoff method where you pay your debts from smallest to largest, regardless of interest rate. Knock out the smallest debt first. Then, take what you were paying on that debt and add it to the payment of your next smallest debt.
                 </p>
-                <p className="text-lg text-slate-700 mb-8 leading-relaxed">
+                <p className="text-base sm:text-lg text-slate-700 mb-8 leading-relaxed font-light">
                   Why a snowball? Because just like a snowball rolling downhill, paying off debt is all about momentum. With every debt you pay off, you gain speed until you're an unstoppable, debt-crushing force.
                 </p>
 
-                <div className="bg-slate-50 border border-slate-200 rounded-lg p-8 mb-8">
-                  <h3 className="text-2xl font-bold text-slate-900 mb-6">Here's how the debt snowball works:</h3>
-                  <ol className="space-y-4">
+                <div className="bg-white rounded-xl border border-slate-200 shadow-md p-6 sm:p-8 lg:p-10 mb-8">
+                  <h3 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 tracking-tight">Here's how the debt snowball works:</h3>
+                  <ol className="space-y-6">
                     <li className="flex items-start gap-4">
-                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">1</span>
+                      <span className="flex-shrink-0 w-12 h-12 rounded-full text-white font-light flex items-center justify-center text-lg" style={{ backgroundColor: '#3D6B54' }}>1</span>
                       <div>
-                        <p className="text-lg font-bold text-slate-900 mb-1">List your debts from smallest to largest regardless of interest rate.</p>
+                        <p className="text-lg font-light text-slate-900 mb-1">List your debts from smallest to largest regardless of interest rate.</p>
                       </div>
                     </li>
                     <li className="flex items-start gap-4">
-                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">2</span>
+                      <span className="flex-shrink-0 w-12 h-12 rounded-full text-white font-light flex items-center justify-center text-lg" style={{ backgroundColor: '#3D6B54' }}>2</span>
                       <div>
-                        <p className="text-lg font-bold text-slate-900 mb-1">Make minimum payments on all your debts except the smallest.</p>
+                        <p className="text-lg font-light text-slate-900 mb-1">Make minimum payments on all your debts except the smallest.</p>
                       </div>
                     </li>
                     <li className="flex items-start gap-4">
-                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">3</span>
+                      <span className="flex-shrink-0 w-12 h-12 rounded-full text-white font-light flex items-center justify-center text-lg" style={{ backgroundColor: '#3D6B54' }}>3</span>
                       <div>
-                        <p className="text-lg font-bold text-slate-900 mb-1">Pay as much as possible on your smallest debt.</p>
+                        <p className="text-lg font-light text-slate-900 mb-1">Pay as much as possible on your smallest debt.</p>
                       </div>
                     </li>
                     <li className="flex items-start gap-4">
-                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">4</span>
+                      <span className="flex-shrink-0 w-12 h-12 rounded-full text-white font-light flex items-center justify-center text-lg" style={{ backgroundColor: '#3D6B54' }}>4</span>
                       <div>
-                        <p className="text-lg font-bold text-slate-900 mb-1">Repeat until each debt is paid in full.</p>
+                        <p className="text-lg font-light text-slate-900 mb-1">Repeat until each debt is paid in full.</p>
                       </div>
                     </li>
                   </ol>
-                  <p className="text-lg text-slate-700 mt-6 leading-relaxed">
+                  <p className="text-base sm:text-lg text-slate-700 mt-6 leading-relaxed font-light">
                     What happens then? Freedom. No more payments. No more answering to collectors. No more watching your paychecks disappear.
                   </p>
-                  <p className="text-lg text-slate-700 mt-4 leading-relaxed">
+                  <p className="text-base sm:text-lg text-slate-700 mt-4 leading-relaxed font-light">
                     Because when you get hyper-focused and start chucking every dollar you can at your debt, you'll see how much faster you can pay it all off. Sorry, minimum payments. You're just not good enough.
                   </p>
                 </div>
               </div>
 
               {/* Debt Snowball vs Debt Avalanche */}
-              <div className="border-t border-slate-200 pt-12">
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
-                  Debt Snowball vs. Debt Avalanche
+              <div className="border-t border-slate-200 pt-12 animate-fade-in">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  Debt Snowball vs. <span style={{ color: '#3D6B54' }}>Debt Avalanche</span>
                 </h2>
-                <p className="text-lg text-slate-700 mb-4 leading-relaxed">
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
+                <p className="text-base sm:text-lg text-slate-700 mb-4 leading-relaxed font-light">
                   Maybe you've heard of another way to pay off debt—the debt avalanche. Sounds epic, right? Wrong. With the debt avalanche, you pay your debts in order from the highest interest rate to the lowest, regardless of the balance.
                 </p>
-                <p className="text-lg text-slate-700 mb-6 leading-relaxed">
-                  That might sound like smart math. Here's why it's not: <strong className="text-slate-900">Debt isn't a math problem. It's a behavior problem.</strong>
+                <p className="text-base sm:text-lg text-slate-700 mb-6 leading-relaxed font-light">
+                  That might sound like smart math. Here's why it's not: <strong className="font-light">Debt isn't a math problem. It's a behavior problem.</strong>
                 </p>
-                <p className="text-lg text-slate-700 mb-4 leading-relaxed">
+                <p className="text-base sm:text-lg text-slate-700 mb-4 leading-relaxed font-light">
                   If you want to change your behavior and get out of debt, you need to stay motivated. With the debt avalanche, you may not see progress on your first debt for a long time. That's motivating nobody. You're way more likely to lose steam and give up.
                 </p>
-                <p className="text-lg text-slate-700 leading-relaxed">
+                <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-light">
                   But when you use the debt snowball, you get quick wins sooner. Crush the first debt fast. Boom. On to the next. Now, you're cooking. Suddenly, you start believing that getting out of debt is within reach. Motivation is the key to becoming debt-free, not math.
                 </p>
               </div>
 
               {/* Debt Terms */}
               <div className="border-t border-slate-200 pt-12">
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
-                  Debt Terms
-                </h2>
-                <p className="text-lg text-slate-700 mb-8 leading-relaxed">
-                  Debt terminology can be confusing and overly complicated—but it doesn't have to be! Let's break these down in a way you can actually understand.
-                </p>
+                <div className="text-center mb-12 animate-fade-in">
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                    Debt <span style={{ color: '#3D6B54' }}>Terms</span>
+                  </h2>
+                  <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
+                  <p className="text-base sm:text-lg text-slate-700 mb-8 leading-relaxed font-light max-w-2xl mx-auto">
+                    Debt terminology can be confusing and overly complicated—but it doesn't have to be! Let's break these down in a way you can actually understand.
+                  </p>
+                </div>
 
-                <div className="space-y-8">
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Minimum Payment</h3>
-                    <p className="text-lg text-slate-700 leading-relaxed">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                        <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Minimum Payment</h3>
+                    </div>
+                    <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
+                    <p className="text-base text-slate-700 leading-relaxed font-light">
                       This is the lowest amount you are required to pay on a debt every month (includes principal and interest). Pay any less and you might get slapped with some hefty penalties.
                     </p>
                   </div>
 
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Balance</h3>
-                    <p className="text-lg text-slate-700 leading-relaxed">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.15s', animationFillMode: 'forwards' }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                        <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Balance</h3>
+                    </div>
+                    <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
+                    <p className="text-base text-slate-700 leading-relaxed font-light">
                       It's the amount you still have to pay on your debt. If your original loan was $20,000 and you've paid $5,000 already, your balance would be $15,000.
                     </p>
                   </div>
 
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Interest Rate</h3>
-                    <p className="text-lg text-slate-700 leading-relaxed">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                        <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                      </div>
+                      <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Interest Rate</h3>
+                    </div>
+                    <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
+                    <p className="text-base text-slate-700 leading-relaxed font-light">
                       When it comes to borrowing money, there's no such thing as free. Lenders are interested in letting you borrow their money because they make money on what they loan you. Your interest rate is how much they charge, usually shown as a percentage of the principal balance.
                     </p>
                   </div>
 
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Principal</h3>
-                    <p className="text-lg text-slate-700 leading-relaxed">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.25s', animationFillMode: 'forwards' }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                        <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Principal</h3>
+                    </div>
+                    <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
+                    <p className="text-base text-slate-700 leading-relaxed font-light">
                       No, it's not that elementary school principal you were terrified of as a kid. We're talking about the amount of money you borrowed without the interest added. So, if you borrowed $20,000 over 10 years, your principal payment would be about $167 per month.
                     </p>
                   </div>
 
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Nonmortgage Debt</h3>
-                    <p className="text-lg text-slate-700 leading-relaxed">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                        <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                      </div>
+                      <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Nonmortgage Debt</h3>
+                    </div>
+                    <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
+                    <p className="text-base text-slate-700 leading-relaxed font-light">
                       This one is simple. It's everything you owe, except for loans related to the purchase of your home. Yes, that includes your car notes and student loans. It's all debt. Why don't we ask you to list your mortgage in your debt snowball? Because after you've knocked out your consumer debt, you've got other important steps to take before tackling the house.
                     </p>
                   </div>
 
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Debt-Free Date</h3>
-                    <p className="text-lg text-slate-700 leading-relaxed">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.35s', animationFillMode: 'forwards' }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                        <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Debt-Free Date</h3>
+                    </div>
+                    <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
+                    <p className="text-base text-slate-700 leading-relaxed font-light">
                       It's the day when every single cent of your consumer debt is history. Bye, credit cards. See you never, student loans. If you've got a mortgage, you'll hit that hard later. But for now, it's time to celebrate.
                     </p>
                   </div>
@@ -584,23 +640,24 @@ export default function DebtSnowballCalculatorPage() {
               </div>
             </div>
 
-        {/* Share Section */}
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-slate-900 mb-6">Share the Debt Snowball Calculator</h2>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 min-w-0">
-                  <input
-                    type="text"
-                    readOnly
-                    value={typeof window !== 'undefined' ? window.location.href : ''}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm"
-                  />
-                </div>
-                <button
-                  onClick={copyLinkToClipboard}
-                  className="flex items-center gap-2 bg-teal-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-700 transition-colors whitespace-nowrap touch-friendly flex-shrink-0"
-                >
+        {/* Share Section - Narrow, Centered */}
+        <div className="mt-12 sm:mt-16 lg:mt-20">
+          <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 text-center tracking-tight">Share the Debt Snowball Calculator</h2>
+            <div className="flex items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <input
+                  type="text"
+                  readOnly
+                  value={typeof window !== 'undefined' ? window.location.href : ''}
+                  className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                />
+              </div>
+              <button
+                onClick={copyLinkToClipboard}
+                className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl flex-shrink-0"
+                style={{ backgroundColor: '#3D6B54' }}
+              >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                 </svg>
@@ -623,30 +680,34 @@ export default function DebtSnowballCalculatorPage() {
       
       <main className="flex-1 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header Section */}
-          <div className="relative py-6 mb-4 overflow-hidden rounded-2xl border border-slate-200/50 shadow-sm">
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-teal-50 to-amber-50"></div>
-            <div className="absolute top-0 right-0 w-72 h-72 bg-teal-100/60 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 w-72 h-72 bg-amber-100/60 rounded-full blur-3xl"></div>
-            
-            <div className="relative text-center px-2">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4">
-                Debt Snowball <span className="bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">Calculator</span>
-              </h1>
-              <p className="text-sm sm:text-base lg:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
-                Find out your debt-free date and accelerate your progress with the debt snowball method—the fastest way to pay off debt.
-              </p>
+          {/* Full-width Banner with Fine Fade */}
+          <div 
+            className="relative py-12 sm:py-16 lg:py-20 overflow-hidden"
+            style={{ 
+              background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)'
+            }}
+          >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center animate-fade-in">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-6 leading-tight tracking-tight">
+                  Debt Snowball <span style={{ color: '#3D6B54' }}>Calculator</span>
+                </h1>
+                <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
+                  Find out your debt-free date and accelerate your progress with the debt snowball method—the fastest way to pay off debt.
+                </p>
+              </div>
             </div>
           </div>
 
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           {/* Main Calculator Section - Compact Form */}
           <div className="max-w-3xl mx-auto">
-            <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-6 mb-12">
+            <div className="bg-white rounded-xl shadow-md border border-slate-200 p-6 sm:p-8 lg:p-10 mb-12">
               {/* Your Debts Section */}
               <div className="mb-6">
-                <h2 className="text-xl font-bold text-slate-900 mb-1">Your Debts</h2>
-                <p className="text-sm text-slate-600 mb-4">
-                  Start by listing out your <strong>non-mortgage</strong> debts.
+                <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-4 tracking-tight">Your Debts</h2>
+                <p className="text-base sm:text-lg text-slate-700 mb-6 leading-relaxed font-light">
+                  Start by listing out your <strong className="font-light">non-mortgage</strong> debts.
                 </p>
 
                 {debts.map((debt, index) => (
@@ -759,9 +820,9 @@ export default function DebtSnowballCalculatorPage() {
 
               {/* Household Income Section */}
               <div className="mb-6 border-t border-slate-200 pt-6">
-                <h2 className="text-xl font-bold text-slate-900 mb-1">Your Household Income</h2>
-                <p className="text-sm text-slate-600 mb-3">
-                  This includes <strong>any income</strong> you make each month after taxes (your paycheck, your side hustle—it all counts).
+                <h2 className="text-lg font-light text-slate-900 mb-3">Your Household Income</h2>
+                <p className="text-base text-slate-700 mb-4 leading-relaxed font-light">
+                  This includes <strong className="font-light">any income</strong> you make each month after taxes (your paycheck, your side hustle—it all counts).
                 </p>
                 <div className="relative">
                   <input
@@ -778,9 +839,9 @@ export default function DebtSnowballCalculatorPage() {
 
               {/* Additional Payment Section */}
               <div className="mb-6 border-t border-slate-200 pt-6">
-                <h2 className="text-xl font-bold text-slate-900 mb-1">Additional Payment</h2>
-                <p className="text-sm text-slate-600 mb-3">
-                  Next, to snowball your debt, enter the <strong>additional amount</strong> you want to pay above the minimum required payment.
+                <h2 className="text-lg font-light text-slate-900 mb-3">Additional Payment</h2>
+                <p className="text-base text-slate-700 mb-4 leading-relaxed font-light">
+                  Next, to snowball your debt, enter the <strong className="font-light">additional amount</strong> you want to pay above the minimum required payment.
                 </p>
                 <div className="relative">
                   <input
@@ -810,130 +871,184 @@ export default function DebtSnowballCalculatorPage() {
               {/* CTA Button */}
               <button
                 onClick={calculateResults}
-                className="w-full bg-teal-600 text-white px-8 py-3.5 rounded-lg font-bold text-lg hover:bg-teal-700 transition-colors touch-friendly"
+                className="w-full text-white px-8 py-3.5 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl touch-friendly"
+                style={{ backgroundColor: '#3D6B54' }}
               >
                 Get Your Debt-Free Date
               </button>
             </div>
 
             {/* Educational Content */}
-            <div className="space-y-12 max-w-3xl mx-auto py-8">
+            <div className="space-y-12 sm:space-y-16 lg:space-y-20 max-w-3xl mx-auto py-8">
               {/* What Is the Debt Snowball? */}
-              <div>
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
-                  What Is the Debt Snowball?
+              <div className="animate-fade-in">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  What Is the <span style={{ color: '#3D6B54' }}>Debt Snowball</span>?
                 </h2>
-                <p className="text-lg text-slate-700 mb-4 leading-relaxed">
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
+                <p className="text-base sm:text-lg text-slate-700 mb-4 leading-relaxed font-light">
                   The debt snowball is a debt payoff method where you pay your debts from smallest to largest, regardless of interest rate. Knock out the smallest debt first. Then, take what you were paying on that debt and add it to the payment of your next smallest debt.
                 </p>
-                <p className="text-lg text-slate-700 mb-8 leading-relaxed">
+                <p className="text-base sm:text-lg text-slate-700 mb-8 leading-relaxed font-light">
                   Why a snowball? Because just like a snowball rolling downhill, paying off debt is all about momentum. With every debt you pay off, you gain speed until you're an unstoppable, debt-crushing force.
                 </p>
 
-                <div className="bg-slate-50 border border-slate-200 rounded-lg p-8 mb-8">
-                  <h3 className="text-2xl font-bold text-slate-900 mb-6">Here's how the debt snowball works:</h3>
-                  <ol className="space-y-4">
+                <div className="bg-white rounded-xl border border-slate-200 shadow-md p-6 sm:p-8 lg:p-10 mb-8">
+                  <h3 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 tracking-tight">Here's how the debt snowball works:</h3>
+                  <ol className="space-y-6">
                     <li className="flex items-start gap-4">
-                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">1</span>
+                      <span className="flex-shrink-0 w-12 h-12 rounded-full text-white font-light flex items-center justify-center text-lg" style={{ backgroundColor: '#3D6B54' }}>1</span>
                       <div>
-                        <p className="text-lg font-bold text-slate-900 mb-1">List your debts from smallest to largest regardless of interest rate.</p>
+                        <p className="text-lg font-light text-slate-900 mb-1">List your debts from smallest to largest regardless of interest rate.</p>
                       </div>
                     </li>
                     <li className="flex items-start gap-4">
-                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">2</span>
+                      <span className="flex-shrink-0 w-12 h-12 rounded-full text-white font-light flex items-center justify-center text-lg" style={{ backgroundColor: '#3D6B54' }}>2</span>
                       <div>
-                        <p className="text-lg font-bold text-slate-900 mb-1">Make minimum payments on all your debts except the smallest.</p>
+                        <p className="text-lg font-light text-slate-900 mb-1">Make minimum payments on all your debts except the smallest.</p>
                       </div>
                     </li>
                     <li className="flex items-start gap-4">
-                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">3</span>
+                      <span className="flex-shrink-0 w-12 h-12 rounded-full text-white font-light flex items-center justify-center text-lg" style={{ backgroundColor: '#3D6B54' }}>3</span>
                       <div>
-                        <p className="text-lg font-bold text-slate-900 mb-1">Pay as much as possible on your smallest debt.</p>
+                        <p className="text-lg font-light text-slate-900 mb-1">Pay as much as possible on your smallest debt.</p>
                       </div>
                     </li>
                     <li className="flex items-start gap-4">
-                      <span className="flex-shrink-0 w-10 h-10 rounded-full bg-teal-600 text-white font-bold flex items-center justify-center text-lg mt-0.5">4</span>
+                      <span className="flex-shrink-0 w-12 h-12 rounded-full text-white font-light flex items-center justify-center text-lg" style={{ backgroundColor: '#3D6B54' }}>4</span>
                       <div>
-                        <p className="text-lg font-bold text-slate-900 mb-1">Repeat until each debt is paid in full.</p>
+                        <p className="text-lg font-light text-slate-900 mb-1">Repeat until each debt is paid in full.</p>
                       </div>
                     </li>
                   </ol>
-                  <p className="text-lg text-slate-700 mt-6 leading-relaxed">
+                  <p className="text-base sm:text-lg text-slate-700 mt-6 leading-relaxed font-light">
                     What happens then? Freedom. No more payments. No more answering to collectors. No more watching your paychecks disappear.
                   </p>
-                  <p className="text-lg text-slate-700 mt-4 leading-relaxed">
+                  <p className="text-base sm:text-lg text-slate-700 mt-4 leading-relaxed font-light">
                     Because when you get hyper-focused and start chucking every dollar you can at your debt, you'll see how much faster you can pay it all off. Sorry, minimum payments. You're just not good enough.
                   </p>
                 </div>
               </div>
 
               {/* Debt Snowball vs Debt Avalanche */}
-              <div className="border-t border-slate-200 pt-12">
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
-                  Debt Snowball vs. Debt Avalanche
+              <div className="border-t border-slate-200 pt-12 animate-fade-in">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  Debt Snowball vs. <span style={{ color: '#3D6B54' }}>Debt Avalanche</span>
                 </h2>
-                <p className="text-lg text-slate-700 mb-4 leading-relaxed">
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
+                <p className="text-base sm:text-lg text-slate-700 mb-4 leading-relaxed font-light">
                   Maybe you've heard of another way to pay off debt—the debt avalanche. Sounds epic, right? Wrong. With the debt avalanche, you pay your debts in order from the highest interest rate to the lowest, regardless of the balance.
                 </p>
-                <p className="text-lg text-slate-700 mb-6 leading-relaxed">
-                  That might sound like smart math. Here's why it's not: <strong className="text-slate-900">Debt isn't a math problem. It's a behavior problem.</strong>
+                <p className="text-base sm:text-lg text-slate-700 mb-6 leading-relaxed font-light">
+                  That might sound like smart math. Here's why it's not: <strong className="font-light">Debt isn't a math problem. It's a behavior problem.</strong>
                 </p>
-                <p className="text-lg text-slate-700 mb-4 leading-relaxed">
+                <p className="text-base sm:text-lg text-slate-700 mb-4 leading-relaxed font-light">
                   If you want to change your behavior and get out of debt, you need to stay motivated. With the debt avalanche, you may not see progress on your first debt for a long time. That's motivating nobody. You're way more likely to lose steam and give up.
                 </p>
-                <p className="text-lg text-slate-700 leading-relaxed">
+                <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-light">
                   But when you use the debt snowball, you get quick wins sooner. Crush the first debt fast. Boom. On to the next. Now, you're cooking. Suddenly, you start believing that getting out of debt is within reach. Motivation is the key to becoming debt-free, not math.
                 </p>
               </div>
 
               {/* Debt Terms */}
               <div className="border-t border-slate-200 pt-12">
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">
-                  Debt Terms
-                </h2>
-                <p className="text-lg text-slate-700 mb-8 leading-relaxed">
-                  Debt terminology can be confusing and overly complicated—but it doesn't have to be! Let's break these down in a way you can actually understand.
-                </p>
+                <div className="text-center mb-12 animate-fade-in">
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                    Debt <span style={{ color: '#3D6B54' }}>Terms</span>
+                  </h2>
+                  <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
+                  <p className="text-base sm:text-lg text-slate-700 mb-8 leading-relaxed font-light max-w-2xl mx-auto">
+                    Debt terminology can be confusing and overly complicated—but it doesn't have to be! Let's break these down in a way you can actually understand.
+                  </p>
+                </div>
 
-                <div className="space-y-8">
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Minimum Payment</h3>
-                    <p className="text-lg text-slate-700 leading-relaxed">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                        <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Minimum Payment</h3>
+                    </div>
+                    <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
+                    <p className="text-base text-slate-700 leading-relaxed font-light">
                       This is the lowest amount you are required to pay on a debt every month (includes principal and interest). Pay any less and you might get slapped with some hefty penalties.
                     </p>
                   </div>
 
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Balance</h3>
-                    <p className="text-lg text-slate-700 leading-relaxed">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.15s', animationFillMode: 'forwards' }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                        <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Balance</h3>
+                    </div>
+                    <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
+                    <p className="text-base text-slate-700 leading-relaxed font-light">
                       It's the amount you still have to pay on your debt. If your original loan was $20,000 and you've paid $5,000 already, your balance would be $15,000.
                     </p>
                   </div>
 
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Interest Rate</h3>
-                    <p className="text-lg text-slate-700 leading-relaxed">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                        <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                        </svg>
+                      </div>
+                      <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Interest Rate</h3>
+                    </div>
+                    <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
+                    <p className="text-base text-slate-700 leading-relaxed font-light">
                       When it comes to borrowing money, there's no such thing as free. Lenders are interested in letting you borrow their money because they make money on what they loan you. Your interest rate is how much they charge, usually shown as a percentage of the principal balance.
                     </p>
                   </div>
 
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Principal</h3>
-                    <p className="text-lg text-slate-700 leading-relaxed">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.25s', animationFillMode: 'forwards' }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                        <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Principal</h3>
+                    </div>
+                    <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
+                    <p className="text-base text-slate-700 leading-relaxed font-light">
                       No, it's not that elementary school principal you were terrified of as a kid. We're talking about the amount of money you borrowed without the interest added. So, if you borrowed $20,000 over 10 years, your principal payment would be about $167 per month.
                     </p>
                   </div>
 
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Nonmortgage Debt</h3>
-                    <p className="text-lg text-slate-700 leading-relaxed">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                        <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                      </div>
+                      <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Nonmortgage Debt</h3>
+                    </div>
+                    <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
+                    <p className="text-base text-slate-700 leading-relaxed font-light">
                       This one is simple. It's everything you owe, except for loans related to the purchase of your home. Yes, that includes your car notes and student loans. It's all debt. Why don't we ask you to list your mortgage in your debt snowball? Because after you've knocked out your consumer debt, you've got other important steps to take before tackling the house.
                     </p>
                   </div>
 
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-2">Debt-Free Date</h3>
-                    <p className="text-lg text-slate-700 leading-relaxed">
+                  <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.35s', animationFillMode: 'forwards' }}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                        <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Debt-Free Date</h3>
+                    </div>
+                    <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
+                    <p className="text-base text-slate-700 leading-relaxed font-light">
                       It's the day when every single cent of your consumer debt is history. Bye, credit cards. See you never, student loans. If you've got a mortgage, you'll hit that hard later. But for now, it's time to celebrate.
                     </p>
                   </div>
@@ -941,27 +1056,30 @@ export default function DebtSnowballCalculatorPage() {
               </div>
             </div>
 
-            {/* Share Section */}
-            <div className="mt-12">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Share the Debt Snowball Calculator</h2>
-              <div className="flex items-center gap-2">
-                <div className="flex-1 min-w-0">
-                  <input
-                    type="text"
-                    readOnly
-                    value={typeof window !== 'undefined' ? window.location.href : ''}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm"
-                  />
+            {/* Share Section - Narrow, Centered */}
+            <div className="mt-12 sm:mt-16 lg:mt-20">
+              <div className="max-w-2xl mx-auto">
+                <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 text-center tracking-tight">Share the Debt Snowball Calculator</h2>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    <input
+                      type="text"
+                      readOnly
+                      value={typeof window !== 'undefined' ? window.location.href : ''}
+                      className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    />
+                  </div>
+                  <button
+                    onClick={copyLinkToClipboard}
+                    className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl flex-shrink-0"
+                    style={{ backgroundColor: '#3D6B54' }}
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                    {linkCopied ? "Copied!" : "Copy"}
+                  </button>
                 </div>
-                <button
-                  onClick={copyLinkToClipboard}
-                  className="flex items-center gap-2 bg-teal-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-teal-700 transition-colors whitespace-nowrap touch-friendly flex-shrink-0"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                  </svg>
-                  {linkCopied ? "Copied!" : "Copy"}
-                </button>
               </div>
             </div>
           </div>
