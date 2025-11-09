@@ -37,7 +37,7 @@ export default function AboutPage() {
         </div>
 
         {/* Dark Teal Section - Main Content */}
-        <div className="relative bg-teal-800">
+        <div className="relative" style={{ backgroundColor: '#0f766e' }}>
 
           <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 pb-16 sm:pb-20">
             {/* Sub-navigation Tabs - Centered like BetterHelp */}
