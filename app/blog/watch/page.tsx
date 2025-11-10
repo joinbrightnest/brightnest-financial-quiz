@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import SiteFooter from "@/components/SiteFooter";
 
 export default function BlogWatchPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -175,44 +176,7 @@ export default function BlogWatchPage() {
         </div>
       </div>
 
-      {/* Footer - Same as read page */}
-      <footer className="bg-slate-900 text-white py-12 sm:py-16 mt-12 sm:mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 sm:gap-12">
-            <div>
-              <Link href="/" className="text-2xl font-bold text-white mb-6 block">
-                BrightNest
-              </Link>
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold uppercase tracking-wide mb-4 text-white">Quick Links</h4>
-              <ul className="space-y-3 text-sm">
-                <li><Link href="/" className="text-slate-400 hover:text-white transition-colors">Home</Link></li>
-                <li><Link href="/about" className="text-slate-400 hover:text-white transition-colors">About Us</Link></li>
-                <li><Link href="/blog" className="text-slate-400 hover:text-white transition-colors">Blog</Link></li>
-                <li><Link href="/careers" className="text-slate-400 hover:text-white transition-colors">Careers</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold uppercase tracking-wide mb-4 text-white">Resources</h4>
-              <ul className="space-y-3 text-sm">
-                <li><Link href="/quiz/financial-profile" className="text-slate-400 hover:text-white transition-colors">Take the Quiz</Link></li>
-                <li><Link href="/affiliates/signup" className="text-slate-400 hover:text-white transition-colors">Become a Partner</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sm font-semibold uppercase tracking-wide mb-4 text-white">Legal</h4>
-              <ul className="space-y-3 text-sm">
-                <li><Link href="/terms" className="text-slate-400 hover:text-white transition-colors">Terms of Service</Link></li>
-                <li><Link href="/privacy" className="text-slate-400 hover:text-white transition-colors">Privacy Policy</Link></li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-12 pt-8 border-t border-slate-800 text-center text-sm text-slate-400">
-            © {new Date().getFullYear()} BrightNest Technologies LLC. All rights reserved.
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

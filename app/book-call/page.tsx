@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Script from "next/script";
+import SiteFooter from "@/components/SiteFooter";
 
 // Declare Calendly global
 declare global {
@@ -466,22 +467,7 @@ export default function BookCallPage() {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="bg-[#333333] py-6 sm:py-8 px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="mb-3 sm:mb-4">
-              <h1 className="text-white text-xl sm:text-2xl font-bold tracking-wide">
-                <span className="font-sans">BRIGHT</span>
-                <span className="font-serif italic ml-2">Nest</span>
-              </h1>
-            </div>
-            <div className="text-white text-xs sm:text-sm">
-              <Link href="/privacy" className="hover:text-[#4CAF50]">Privacy Policy</Link>
-              <span className="mx-2">|</span>
-              <Link href="/terms" className="hover:text-[#4CAF50]">Terms and Conditions</Link>
-            </div>
-          </div>
-        </div>
+        <SiteFooter />
       </div>
     </>
   );
