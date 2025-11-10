@@ -578,23 +578,23 @@ export default function BudgetCalculatorPage() {
                       </div>
                     </div>
 
-                    {/* Expense Breakdown - Compact, Below Difference */}
+                    {/* Expense Breakdown - Full Width, Below Difference */}
                     {expenseData.length > 0 && (
                       <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
                         <h3 className="text-base font-semibold text-slate-900 mb-4 tracking-wide">Expense Breakdown</h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <div className="space-y-2">
                           {expenseData.map((item) => {
                             const percentage = totalExpenses > 0 ? (item.value / totalExpenses) * 100 : 0;
                             return (
-                              <div key={item.key} className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition-colors">
-                                <div className="flex items-center gap-2 min-w-0 flex-1">
+                              <div key={item.key} className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors w-full">
+                                <div className="flex items-center gap-3 min-w-0 flex-1">
                                   <div 
                                     className="w-3 h-3 rounded-full flex-shrink-0 shadow-sm" 
                                     style={{ backgroundColor: item.color }}
                                   />
-                                  <span className="text-sm font-medium text-slate-700 truncate">{item.label}</span>
+                                  <span className="text-sm font-medium text-slate-700">{item.label}</span>
                                 </div>
-                                <div className="text-right flex-shrink-0 ml-3">
+                                <div className="text-right flex-shrink-0 ml-4">
                                   <div className="text-sm font-bold text-slate-900">{formatCurrency(item.value)}</div>
                                   <div className="text-xs text-slate-500">{percentage.toFixed(1)}%</div>
                                 </div>
