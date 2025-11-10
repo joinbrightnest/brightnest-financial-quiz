@@ -39,23 +39,29 @@ export async function POST(request: NextRequest) {
       console.log("ℹ️ No affiliate code found in request - direct website visit");
     }
 
-    // Create a new quiz session
-    const session = await prisma.quizSession.create({
-      data: {
-        quizType,
-        status: "in_progress",
-        affiliateCode,
-      },
-    });
-
-    // Get the first question for this quiz type
-    const firstQuestion = await prisma.quizQuestion.findFirst({
-      where: { 
-        active: true,
-        quizType: quizType
-      },
-      orderBy: { order: "asc" },
-    });
+    // Create session and get first question + count in parallel (optimization)
+    const [session, firstQuestion, questionCount] = await Promise.all([
+      prisma.quizSession.create({
+        data: {
+          quizType,
+          status: "in_progress",
+          affiliateCode,
+        },
+      }),
+      prisma.quizQuestion.findFirst({
+        where: { 
+          active: true,
+          quizType: quizType
+        },
+        orderBy: { order: "asc" },
+      }),
+      prisma.quizQuestion.count({
+        where: {
+          active: true,
+          quizType: quizType,
+        },
+      }),
+    ]);
 
     if (!firstQuestion) {
       return NextResponse.json(
@@ -64,9 +70,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Return session, question, and count in one response (optimization: eliminates extra API call)
     return NextResponse.json({
       sessionId: session.id,
       question: firstQuestion,
+      totalQuestions: questionCount,
     });
   } catch (error) {
     console.error("Error starting quiz:", error);

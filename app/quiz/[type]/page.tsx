@@ -80,6 +80,9 @@ export default function QuizPage({ params }: QuizPageProps) {
   // Loading screen state
   const [currentLoadingScreen, setCurrentLoadingScreen] = useState<LoadingScreen | null>(null);
   const [pendingNextQuestion, setPendingNextQuestion] = useState<Question | null>(null);
+  
+  // Preload state (optimization: preload next question while user is on current)
+  const [preloadedNextQuestion, setPreloadedNextQuestion] = useState<Question | null>(null);
 
   // Handle async params
   useEffect(() => {
@@ -113,25 +116,21 @@ export default function QuizPage({ params }: QuizPageProps) {
         const urlParams = new URLSearchParams(window.location.search);
         const affiliateCode = urlParams.get('affiliate');
         
-        // Run initialization in parallel for faster loading
-        const [sessionResponse, countResponse] = await Promise.all([
-          fetch("/api/quiz/start", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-              quizType,
-              affiliateCode: affiliateCode || undefined
-            }),
+        // Optimized: single API call now returns session, question, and count
+        const sessionResponse = await fetch("/api/quiz/start", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ 
+            quizType,
+            affiliateCode: affiliateCode || undefined
           }),
-          fetch(`/api/quiz/questions/count?quizType=${quizType}`)
-        ]);
+        });
         
         if (!sessionResponse.ok) {
           throw new Error("Failed to start quiz");
         }
         
         const sessionData = await sessionResponse.json();
-        const countData = countResponse.ok ? await countResponse.json() : { count: 10 };
         
         setSessionId(sessionData.sessionId);
         // Store session ID in localStorage for the analyzing page
@@ -139,7 +138,7 @@ export default function QuizPage({ params }: QuizPageProps) {
         console.log('Quiz: Stored sessionId in localStorage:', sessionData.sessionId);
         setCurrentQuestion(sessionData.question);
         setCurrentQuestionIndex(0);
-        setTotalQuestions(countData.count);
+        setTotalQuestions(sessionData.totalQuestions || 10); // Use count from response
         setCanGoBack(false);
         setIsLoading(false);
       } catch (err) {
@@ -153,41 +152,46 @@ export default function QuizPage({ params }: QuizPageProps) {
     initializeQuiz();
   }, [quizType]);
 
+  // Preload next question while user is on current question (optimization: instant transitions)
+  useEffect(() => {
+    if (!sessionId || !currentQuestion || !currentQuestion.order) return;
+
+    // Preload next question in background
+    const preloadNext = async () => {
+      try {
+        const preloadResponse = await fetch("/api/quiz/answer", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId,
+            questionId: currentQuestion.id,
+            value: "preload", // Special value to skip saving
+          }),
+        });
+
+        if (preloadResponse.ok) {
+          const preloadData = await preloadResponse.json();
+          if (preloadData.nextQuestion && !preloadData.isComplete) {
+            setPreloadedNextQuestion(preloadData.nextQuestion);
+          }
+        }
+      } catch (error) {
+        // Silently fail - preloading is optional optimization
+        console.debug('Preload failed (non-critical):', error);
+      }
+    };
+
+    // Small delay to avoid interfering with current question load
+    const timeoutId = setTimeout(preloadNext, 500);
+    return () => clearTimeout(timeoutId);
+  }, [sessionId, currentQuestion?.id]);
+
 
   const processAnswer = async (value: string, answerLabel: string) => {
     if (!sessionId || !currentQuestion) return;
 
     try {
-      // Check for articles first (before saving answer)
-      const articlesResponse = await fetch('/api/quiz/articles', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          sessionId,
-          questionId: currentQuestion.id,
-          answerValue: value,
-          answerLabel: answerLabel
-        })
-      });
-
-      // Check if article should be shown
-      if (articlesResponse.ok) {
-        const articlesData = await articlesResponse.json();
-        
-        if (articlesData.articles && articlesData.articles.length > 0) {
-          // Article found - don't save answer yet, save it when article closes
-          setArticleData(articlesData.articles[0]);
-          setLastAnswer({
-            questionId: currentQuestion.id,
-            answerValue: value,
-            answerLabel: answerLabel
-          });
-          setQuizState('article');
-          return;
-        }
-      }
-
-      // No articles found - save answer and proceed to next question
+      // Optimized: Check for articles AND save answer in one API call (reduces round trips)
       const answerResponse = await fetch("/api/quiz/answer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -195,6 +199,7 @@ export default function QuizPage({ params }: QuizPageProps) {
           sessionId,
           questionId: currentQuestion.id,
           value: value,
+          checkArticles: true, // Request article check in same call
         }),
       });
 
@@ -203,6 +208,19 @@ export default function QuizPage({ params }: QuizPageProps) {
       }
 
       const answerData = await answerResponse.json();
+
+      // Check if article should be shown (from same response)
+      if (answerData.article) {
+        // Article found - don't proceed to next question yet
+        setArticleData(answerData.article);
+        setLastAnswer({
+          questionId: currentQuestion.id,
+          answerValue: value,
+          answerLabel: answerLabel
+        });
+        setQuizState('article');
+        return;
+      }
 
       if (answerData.isComplete) {
         // Quiz completed - redirect to analyzing page first (no alert)
@@ -214,11 +232,18 @@ export default function QuizPage({ params }: QuizPageProps) {
           setPendingNextQuestion(answerData.nextQuestion);
           setQuizState('loading-screen');
         } else {
+          // Use preloaded question if available (optimization: instant transition)
+          const nextQ = preloadedNextQuestion && 
+            preloadedNextQuestion.id === answerData.nextQuestion?.id 
+            ? preloadedNextQuestion 
+            : answerData.nextQuestion;
+          
           // Move to next question immediately
-          setCurrentQuestion(answerData.nextQuestion);
+          setCurrentQuestion(nextQ);
           setCurrentQuestionIndex(prev => prev + 1);
           setCanGoBack(true);
           clearInputs();
+          setPreloadedNextQuestion(null); // Clear preloaded question
           setQuizState('question');
         }
       }
@@ -344,6 +369,8 @@ export default function QuizPage({ params }: QuizPageProps) {
     
     try {
       // Save answer and get next question
+      // Note: We don't check for articles here because we're saving an answer that already triggered an article
+      // Article checks happen when the user answers the NEXT question
       const answerResponse = await fetch("/api/quiz/answer", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -351,6 +378,7 @@ export default function QuizPage({ params }: QuizPageProps) {
           sessionId,
           questionId: lastAnswer.questionId,
           value: lastAnswer.answerValue,
+          // Don't check articles - we're saving an answer that already has an article
         }),
       });
 
@@ -370,11 +398,18 @@ export default function QuizPage({ params }: QuizPageProps) {
           setPendingNextQuestion(answerData.nextQuestion);
           setQuizState('loading-screen');
         } else {
+          // Use preloaded question if available (optimization: instant transition)
+          const nextQ = preloadedNextQuestion && 
+            preloadedNextQuestion.id === answerData.nextQuestion?.id 
+            ? preloadedNextQuestion 
+            : answerData.nextQuestion;
+          
           // Move to next question immediately
-          setCurrentQuestion(answerData.nextQuestion);
+          setCurrentQuestion(nextQ);
           setCurrentQuestionIndex(prev => prev + 1);
           setCanGoBack(true);
           clearAllStates();
+          setPreloadedNextQuestion(null); // Clear preloaded question
           setQuizState('question');
         }
       }
