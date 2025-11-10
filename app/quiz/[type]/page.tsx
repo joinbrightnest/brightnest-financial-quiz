@@ -158,34 +158,24 @@ export default function QuizPage({ params }: QuizPageProps) {
     if (!sessionId || !currentQuestion) return;
 
     try {
-      // Run articles check and answer save in parallel for maximum speed
-      const [articlesResponse, answerResponse] = await Promise.all([
-        fetch('/api/quiz/articles', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            sessionId,
-            questionId: currentQuestion.id,
-            answerValue: value,
-            answerLabel: answerLabel
-          })
-        }),
-        fetch("/api/quiz/answer", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            sessionId,
-            questionId: currentQuestion.id,
-            value: value,
-          }),
+      // Check for articles first (before saving answer)
+      const articlesResponse = await fetch('/api/quiz/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId,
+          questionId: currentQuestion.id,
+          answerValue: value,
+          answerLabel: answerLabel
         })
-      ]);
+      });
 
-      // Check articles first (this determines if we show article or advance)
+      // Check if article should be shown
       if (articlesResponse.ok) {
         const articlesData = await articlesResponse.json();
         
         if (articlesData.articles && articlesData.articles.length > 0) {
+          // Article found - don't save answer yet, save it when article closes
           setArticleData(articlesData.articles[0]);
           setLastAnswer({
             questionId: currentQuestion.id,
@@ -197,7 +187,17 @@ export default function QuizPage({ params }: QuizPageProps) {
         }
       }
 
-      // No articles found, process the answer response
+      // No articles found - save answer and proceed to next question
+      const answerResponse = await fetch("/api/quiz/answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          questionId: currentQuestion.id,
+          value: value,
+        }),
+      });
+
       if (!answerResponse.ok) {
         throw new Error("Failed to save answer");
       }

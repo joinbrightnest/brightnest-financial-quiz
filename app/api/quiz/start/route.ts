@@ -14,12 +14,27 @@ export async function POST(request: NextRequest) {
 
     // Only use affiliate code if explicitly provided in the request
     // Don't use cookie-based affiliate codes for direct website visits
-    const affiliateCode = requestAffiliateCode || null;
+    let affiliateCode = requestAffiliateCode || null;
 
-    // If we have an affiliate code, just log it (click tracking is handled by /api/track-affiliate)
+    // Validate affiliate code if provided (ensure it's active and approved)
     if (affiliateCode) {
-      console.log("🎯 Quiz started with affiliate code:", affiliateCode);
-      // Note: Click tracking is handled separately by /api/track-affiliate to avoid double counting
+      try {
+        const affiliate = await prisma.affiliate.findUnique({
+          where: { referralCode: affiliateCode },
+          select: { id: true, isActive: true, isApproved: true },
+        });
+
+        if (!affiliate || !affiliate.isActive || !affiliate.isApproved) {
+          console.log("⚠️ Invalid, inactive, or unapproved affiliate code, ignoring:", affiliateCode);
+          affiliateCode = null; // Don't track invalid affiliates
+        } else {
+          console.log("🎯 Quiz started with valid affiliate code:", affiliateCode);
+          // Note: Click tracking is handled separately by /api/track-affiliate to avoid double counting
+        }
+      } catch (error) {
+        console.error("Error validating affiliate code:", error);
+        affiliateCode = null; // Don't track if validation fails
+      }
     } else {
       console.log("ℹ️ No affiliate code found in request - direct website visit");
     }

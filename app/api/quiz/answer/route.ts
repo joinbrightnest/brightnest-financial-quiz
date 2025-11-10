@@ -5,19 +5,48 @@ export async function POST(request: NextRequest) {
   try {
     const { sessionId, questionId, value, dwellMs } = await request.json();
 
+    // Validate required fields
+    if (!sessionId || !questionId || value === undefined) {
+      return NextResponse.json(
+        { error: "Session ID, question ID, and value are required" },
+        { status: 400 }
+      );
+    }
+
     // Handle preload requests (don't save answer, just get next question)
     const isPreload = value === "preload";
 
     // Run database operations in parallel for better performance
-    const [existingAnswer, currentQuestion] = await Promise.all([
+    const [existingAnswer, currentQuestion, session] = await Promise.all([
       prisma.quizAnswer.findFirst({
         where: { sessionId, questionId },
       }),
       prisma.quizQuestion.findUnique({
         where: { id: questionId },
       }),
+      prisma.quizSession.findUnique({
+        where: { id: sessionId },
+        select: { id: true, quizType: true, status: true },
+      }),
     ]);
 
+    // Validate session exists
+    if (!session) {
+      return NextResponse.json(
+        { error: "Session not found" },
+        { status: 404 }
+      );
+    }
+
+    // Validate session is still in progress
+    if (session.status === "completed") {
+      return NextResponse.json(
+        { error: "Quiz session already completed" },
+        { status: 400 }
+      );
+    }
+
+    // Validate question exists
     if (!currentQuestion) {
       return NextResponse.json(
         { error: "Question not found" },
@@ -25,17 +54,46 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate question belongs to same quiz type as session
+    if (currentQuestion.quizType !== session.quizType) {
+      return NextResponse.json(
+        { error: "Question does not belong to this quiz session" },
+        { status: 400 }
+      );
+    }
+
     // Save/update answer (skip for preload requests)
+    // Use transaction with upsert to handle race conditions safely (unique constraint protects against duplicates)
     if (!isPreload) {
+      // Use upsert pattern: check if exists, then update or create
+      // The unique constraint on [sessionId, questionId] prevents duplicates
       if (existingAnswer) {
         await prisma.quizAnswer.update({
           where: { id: existingAnswer.id },
           data: { value, dwellMs },
         });
       } else {
-        await prisma.quizAnswer.create({
-          data: { sessionId, questionId, value, dwellMs },
-        });
+        // Use create with error handling for race conditions
+        try {
+          await prisma.quizAnswer.create({
+            data: { sessionId, questionId, value, dwellMs },
+          });
+        } catch (error: any) {
+          // If unique constraint violation (race condition), update instead
+          if (error?.code === 'P2002' || error?.message?.includes('Unique constraint')) {
+            const raceAnswer = await prisma.quizAnswer.findFirst({
+              where: { sessionId, questionId },
+            });
+            if (raceAnswer) {
+              await prisma.quizAnswer.update({
+                where: { id: raceAnswer.id },
+                data: { value, dwellMs },
+              });
+            }
+          } else {
+            throw error;
+          }
+        }
       }
     }
 

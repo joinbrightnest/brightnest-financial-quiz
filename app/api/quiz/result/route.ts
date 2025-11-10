@@ -101,49 +101,86 @@ export async function POST(request: NextRequest) {
         });
 
         if (affiliate && affiliate.isActive) {
-          // Get commission hold days from settings
-          let commissionHoldDays = 30; // Default fallback
-          try {
-            const holdDaysResult = await prisma.$queryRaw`
-              SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
-            ` as any[];
-            if (holdDaysResult.length > 0) {
-              commissionHoldDays = parseInt(holdDaysResult[0].value);
-            }
-          } catch (error) {
-            console.log('Using default commission hold days:', commissionHoldDays);
-          }
-
-          // Calculate hold until date
-          const holdUntil = new Date();
-          holdUntil.setDate(holdUntil.getDate() + commissionHoldDays);
-
-          // Record the conversion (lead)
-          await prisma.affiliateConversion.create({
-            data: {
+          // Check if conversion already exists for this session (prevent duplicates)
+          const existingConversion = await prisma.affiliateConversion.findFirst({
+            where: {
               affiliateId: affiliate.id,
               quizSessionId: sessionId,
-              referralCode: session.affiliateCode,
               conversionType: "quiz_completion",
-              status: "confirmed",
-              commissionAmount: 0.00,
-              saleValue: 0.00,
-              commissionStatus: "held",
-              holdUntil: holdUntil,
             },
           });
 
-          // Update affiliate's total leads
-          await prisma.affiliate.update({
-            where: { id: affiliate.id },
-            data: {
-              totalLeads: {
-                increment: 1,
-              },
-            },
-          });
+          if (existingConversion) {
+            console.log("⚠️ Quiz completion conversion already exists for this session, skipping duplicate:", {
+              sessionId,
+              affiliateCode: session.affiliateCode,
+              existingConversionId: existingConversion.id
+            });
+          } else {
+            // Get commission hold days from settings
+            let commissionHoldDays = 30; // Default fallback
+            try {
+              const holdDaysResult = await prisma.$queryRaw`
+                SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
+              ` as any[];
+              if (holdDaysResult.length > 0) {
+                commissionHoldDays = parseInt(holdDaysResult[0].value);
+              }
+            } catch (error) {
+              console.log('Using default commission hold days:', commissionHoldDays);
+            }
 
-          console.log("Affiliate conversion tracked:", session.affiliateCode);
+            // Calculate hold until date
+            const holdUntil = new Date();
+            holdUntil.setDate(holdUntil.getDate() + commissionHoldDays);
+
+            // Record the conversion (lead) and update total leads in a transaction to prevent race conditions
+            await prisma.$transaction(async (tx) => {
+              // Double-check for duplicates within the transaction
+              const duplicateCheck = await tx.affiliateConversion.findFirst({
+                where: {
+                  affiliateId: affiliate.id,
+                  quizSessionId: sessionId,
+                  conversionType: "quiz_completion",
+                },
+              });
+
+              if (!duplicateCheck) {
+                // Record the conversion (lead)
+                // session.affiliateCode is guaranteed to be non-null here because we're inside the if (session.affiliateCode) block
+                await tx.affiliateConversion.create({
+                  data: {
+                    affiliateId: affiliate.id,
+                    quizSessionId: sessionId,
+                    referralCode: session.affiliateCode!, // Non-null assertion: we're inside if (session.affiliateCode) block
+                    conversionType: "quiz_completion",
+                    status: "confirmed",
+                    commissionAmount: 0.00,
+                    saleValue: 0.00,
+                    commissionStatus: "held",
+                    holdUntil: holdUntil,
+                  },
+                });
+
+                // Update affiliate's total leads
+                await tx.affiliate.update({
+                  where: { id: affiliate.id },
+                  data: {
+                    totalLeads: {
+                      increment: 1,
+                    },
+                  },
+                });
+
+                console.log("✅ Affiliate conversion tracked:", session.affiliateCode);
+              } else {
+                console.log("🔄 Duplicate conversion detected within transaction, skipping:", {
+                  sessionId,
+                  affiliateCode: session.affiliateCode
+                });
+              }
+            });
+          }
         }
       } catch (error) {
         console.error("Error tracking affiliate conversion:", error);
