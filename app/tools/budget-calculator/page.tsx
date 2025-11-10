@@ -503,23 +503,23 @@ export default function BudgetCalculatorPage() {
                     {/* Center Display - Animated on Hover */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                       {hoveredSegment && expenseData.find(item => item.key === hoveredSegment) ? (
-                        <div className="animate-slide-up">
+                        <div className="animate-slide-up text-center">
                           {(() => {
                             const hoveredItem = expenseData.find(item => item.key === hoveredSegment)!;
                             const percentage = totalExpenses > 0 ? (hoveredItem.value / totalExpenses) * 100 : 0;
                             return (
                               <>
                                 <div 
-                                  className="w-3 h-3 rounded-full mb-2 mx-auto transition-all duration-300"
+                                  className="w-3.5 h-3.5 rounded-full mb-2.5 mx-auto transition-all duration-300 shadow-sm"
                                   style={{ backgroundColor: hoveredItem.color }}
                                 />
-                                <p className="text-xs sm:text-sm font-medium text-slate-700 mb-1 transition-all duration-300">
+                                <p className="text-xs sm:text-sm font-semibold text-slate-800 mb-1.5 transition-all duration-300 tracking-wide">
                                   {hoveredItem.label}
                                 </p>
-                                <p className="text-xl sm:text-2xl font-bold text-slate-900 mb-0.5 transition-all duration-300">
+                                <p className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1 transition-all duration-300 tracking-tight">
                                   {formatCurrency(hoveredItem.value)}
                                 </p>
-                                <p className="text-xs text-slate-500 transition-all duration-300">
+                                <p className="text-xs font-medium text-slate-500 transition-all duration-300">
                                   {percentage.toFixed(1)}%
                                 </p>
                               </>
@@ -527,53 +527,56 @@ export default function BudgetCalculatorPage() {
                           })()}
                         </div>
                       ) : (
-                        <div className="transform transition-all duration-200 ease-out">
-                          <p className="text-xs text-slate-600 font-medium">Total Expenses</p>
-                          <p className="text-2xl font-bold text-slate-900 mt-0.5">{formatCurrency(totalExpenses)}</p>
+                        <div className="transform transition-all duration-200 ease-out text-center">
+                          <p className="text-xs sm:text-sm text-slate-600 font-semibold mb-1.5 tracking-wide">Total Expenses</p>
+                          <p className="text-3xl sm:text-4xl font-bold text-slate-900 mt-0.5 tracking-tight">{formatCurrency(totalExpenses)}</p>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Difference */}
-                  <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                    <div className="text-center">
-                      <h3 className="text-base font-light text-slate-900 mb-2">Difference</h3>
-                      <p className={`text-2xl sm:text-3xl font-light ${difference >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {formatCurrency(Math.abs(difference))}
-                      </p>
-                      <p className="text-sm text-slate-600 mt-2 font-light">
-                        {difference >= 0 ? 'Remaining' : 'Over Budget'}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Category Breakdown */}
-                  {expenseData.length > 0 && (
-                    <div className="mt-4 bg-slate-50 rounded-lg p-4 border border-slate-200">
-                      <h3 className="text-base font-light text-slate-900 mb-3">Expense Breakdown</h3>
-                      <div className="space-y-1.5 max-h-48 overflow-y-auto">
-                        {expenseData.map((item) => {
-                          const percentage = totalExpenses > 0 ? (item.value / totalExpenses) * 100 : 0;
-                          return (
-                            <div key={item.key} className="flex items-center justify-between text-sm">
-                              <div className="flex items-center gap-2">
-                                <div 
-                                  className="w-2 h-2 rounded-full" 
-                                  style={{ backgroundColor: item.color }}
-                                />
-                                <span className="text-slate-700">{item.label}</span>
-                              </div>
-                              <div className="text-right">
-                                <span className="font-medium text-slate-900">{formatCurrency(item.value)}</span>
-                                <span className="text-slate-500 ml-2">({percentage.toFixed(1)}%)</span>
-                              </div>
-                            </div>
-                          );
-                        })}
+                  {/* Difference and Expense Breakdown - Side by Side */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Difference */}
+                    <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                      <div className="text-center">
+                        <h3 className="text-sm font-semibold text-slate-700 mb-2 tracking-wide">Difference</h3>
+                        <p className={`text-3xl sm:text-4xl font-bold ${difference >= 0 ? 'text-green-600' : 'text-red-600'} tracking-tight`}>
+                          {formatCurrency(Math.abs(difference))}
+                        </p>
+                        <p className="text-xs sm:text-sm text-slate-600 mt-2 font-medium">
+                          {difference >= 0 ? 'Remaining' : 'Over Budget'}
+                        </p>
                       </div>
                     </div>
-                  )}
+
+                    {/* Category Breakdown - Compact Grid */}
+                    {expenseData.length > 0 && (
+                      <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                        <h3 className="text-sm font-semibold text-slate-700 mb-3 tracking-wide">Expense Breakdown</h3>
+                        <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 max-h-48 overflow-y-auto">
+                          {expenseData.map((item) => {
+                            const percentage = totalExpenses > 0 ? (item.value / totalExpenses) * 100 : 0;
+                            return (
+                              <div key={item.key} className="flex items-center justify-between text-xs">
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <div 
+                                    className="w-2 h-2 rounded-full flex-shrink-0" 
+                                    style={{ backgroundColor: item.color }}
+                                  />
+                                  <span className="text-slate-700 truncate">{item.label}</span>
+                                </div>
+                                <div className="text-right flex-shrink-0 ml-2">
+                                  <span className="font-semibold text-slate-900">{formatCurrency(item.value)}</span>
+                                  <span className="text-slate-500 ml-1 text-[10px]">({percentage.toFixed(0)}%)</span>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
