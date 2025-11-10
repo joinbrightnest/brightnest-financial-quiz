@@ -403,9 +403,9 @@ export default function BudgetCalculatorPage() {
 
               {/* Right Column - Visual Display */}
               <div className="flex flex-col items-center justify-center order-1 lg:order-2 mb-6 lg:mb-0">
-                <div className="w-full max-w-sm">
+                <div className="w-full max-w-lg">
                   {/* Donut Chart */}
-                  <div className="relative w-full aspect-square mb-4 max-w-xs mx-auto">
+                  <div className="relative w-full aspect-square mb-4 max-w-lg mx-auto">
                     <svg className="w-full h-full" viewBox="0 0 200 200">
                       {/* Helper function to convert angle to cartesian coordinates */}
                       {(() => {
