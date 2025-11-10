@@ -134,7 +134,9 @@ export default function BudgetCalculatorPage() {
         
         // If there are calculated values, adjust for rounding
         if (Object.keys(calculatedValues).length > 0) {
+          // Round all values and calculate total
           const totalRounded = Object.values(calculatedValues).reduce((sum, val) => sum + Math.round(val), 0);
+          // Calculate adjustment to make rounded total match income (rounded to nearest dollar)
           const adjustment = Math.round(incomeNum) - totalRounded;
           
           // Apply rounding with adjustment to make total match income
@@ -151,12 +153,14 @@ export default function BudgetCalculatorPage() {
               if (percentage > 0) {
                 let roundedValue = Math.round(calculatedValues[categoryKey] || 0);
                 
-                // Apply adjustment to the largest category to balance the total
+                // Apply adjustment to the largest category (housing) to balance the total
+                // This ensures the sum of rounded values equals the rounded income
                 if (adjustment !== 0 && key === 'housing') {
                   roundedValue += adjustment;
                   roundedValue = Math.max(0, roundedValue); // Ensure non-negative
                 }
                 
+                // Convert to string, preserving decimals if needed
                 const newValue = roundedValue > 0 ? roundedValue.toString() : "";
                 
                 // Update if value changed
@@ -200,12 +204,26 @@ export default function BudgetCalculatorPage() {
   }, [income, manuallyEditedFields]);
 
   const handleExpenseChange = (category: string, value: string) => {
-    // Remove leading zeros - convert to number then back to string to strip leading zeros
+    // Handle input value - preserve what user types, but clean it properly
+    // Allow digits, single decimal point, and empty string
     let cleanedValue = value;
-    if (value !== "" && value !== ".") {
-      // Remove leading zeros, but allow "0." for decimal input
-      cleanedValue = value.replace(/^0+(?=\d)/, '');
-      // If it's just "0", keep it, but if it's "0233", convert to "233"
+    
+    // Remove any non-numeric characters except decimal point
+    cleanedValue = cleanedValue.replace(/[^\d.]/g, '');
+    
+    // Ensure only one decimal point
+    const parts = cleanedValue.split('.');
+    if (parts.length > 2) {
+      cleanedValue = parts[0] + '.' + parts.slice(1).join('');
+    }
+    
+    // Remove leading zeros, but allow "0." for decimal input
+    if (cleanedValue !== "" && cleanedValue !== ".") {
+      // Remove leading zeros, but preserve "0." or "0"
+      if (cleanedValue.startsWith('0') && cleanedValue.length > 1 && cleanedValue[1] !== '.') {
+        cleanedValue = cleanedValue.replace(/^0+/, '');
+      }
+      // If it's just "0", keep it
       if (cleanedValue === "" && value.startsWith("0")) {
         cleanedValue = "0";
       }
@@ -225,16 +243,31 @@ export default function BudgetCalculatorPage() {
   };
 
   const handleIncomeChange = (value: string) => {
-    // Remove leading zeros - convert to number then back to string to strip leading zeros
+    // Handle input value - preserve what user types, but clean it properly
+    // Allow digits, single decimal point, and empty string
     let cleanedValue = value;
-    if (value !== "" && value !== ".") {
-      // Remove leading zeros, but allow "0." for decimal input
-      cleanedValue = value.replace(/^0+(?=\d)/, '');
-      // If it's just "0", keep it, but if it's "0233", convert to "233"
+    
+    // Remove any non-numeric characters except decimal point
+    cleanedValue = cleanedValue.replace(/[^\d.]/g, '');
+    
+    // Ensure only one decimal point
+    const parts = cleanedValue.split('.');
+    if (parts.length > 2) {
+      cleanedValue = parts[0] + '.' + parts.slice(1).join('');
+    }
+    
+    // Remove leading zeros, but allow "0." for decimal input
+    if (cleanedValue !== "" && cleanedValue !== ".") {
+      // Remove leading zeros, but preserve "0." or "0"
+      if (cleanedValue.startsWith('0') && cleanedValue.length > 1 && cleanedValue[1] !== '.') {
+        cleanedValue = cleanedValue.replace(/^0+/, '');
+      }
+      // If it's just "0", keep it
       if (cleanedValue === "" && value.startsWith("0")) {
         cleanedValue = "0";
       }
     }
+    
     setIncome(cleanedValue);
     // Note: Auto-population will trigger via useEffect when income changes
     // It will only update fields that weren't manually edited
@@ -328,14 +361,14 @@ export default function BudgetCalculatorPage() {
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium text-sm">$</span>
                       <input
-                        type="number"
+                        type="text"
+                        inputMode="decimal"
                         value={income}
                         onChange={(e) => {
                           const value = e.target.value;
                           handleIncomeChange(value);
                         }}
                         placeholder="0.00"
-                        step="0.01"
                         className="w-full pl-8 pr-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900 touch-friendly"
                       />
                     </div>
@@ -385,11 +418,11 @@ export default function BudgetCalculatorPage() {
                             <div className="relative w-full sm:flex-1 min-w-0">
                               <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-500 text-xs">$</span>
                               <input
-                                type="number"
+                                type="text"
+                                inputMode="decimal"
                                 value={expenses[categoryKey] || ""}
                                 onChange={(e) => handleExpenseChange(categoryKey, e.target.value)}
                                 placeholder="0.00"
-                                step="0.01"
                                 className="w-full pl-6 pr-2 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 touch-friendly"
                               />
                             </div>
