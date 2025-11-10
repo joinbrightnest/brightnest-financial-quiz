@@ -435,7 +435,13 @@ export default function BudgetCalculatorPage() {
                           return `M ${startOuter.x} ${startOuter.y} A ${outerR} ${outerR} 0 ${largeArcFlag} 1 ${endOuter.x} ${endOuter.y} L ${endInner.x} ${endInner.y} A ${innerR} ${innerR} 0 ${largeArcFlag} 0 ${startInner.x} ${startInner.y} Z`;
                         };
                         
+                        // Reset currentAngle for each render to prevent accumulation bugs
                         let currentAngle = 0;
+                        
+                        // Calculate total angle used by expenses
+                        const totalExpenseAngle = totalExpenses > 0 
+                          ? expenseData.reduce((sum, item) => sum + (item.value / totalExpenses) * 360, 0)
+                          : 0;
                         
                         return (
                           <>
@@ -455,19 +461,23 @@ export default function BudgetCalculatorPage() {
                             />
                             
                             {/* Render expense segments */}
-                            {totalExpenses > 0 && expenseData.map((item) => {
+                            {totalExpenses > 0 && expenseData.map((item, index) => {
                               const segmentAngle = (item.value / totalExpenses) * 360;
                               const startAngle = currentAngle;
                               const endAngle = currentAngle + segmentAngle;
                               const isHovered = hoveredSegment === item.key;
-                              const percentage = totalExpenses > 0 ? (item.value / totalExpenses) * 100 : 0;
+                              
+                              // Update currentAngle for next segment
                               currentAngle = endAngle;
                               
                               // Calculate opacity for hover effect - brighten on hover
                               const opacity = isHovered ? 1 : 0.85;
                               
+                              // Only render if segment has a meaningful angle (> 0.1 degrees to avoid rendering issues)
+                              if (segmentAngle < 0.1) return null;
+                              
                               return (
-                                <g key={item.key}>
+                                <g key={`${item.key}-${index}`}>
                                   <path
                                     d={createArc(startAngle, endAngle, radius, innerRadius)}
                                     fill={item.color}
@@ -488,10 +498,10 @@ export default function BudgetCalculatorPage() {
                               );
                             })}
                             
-                            {/* Remaining segment (if difference > 0) */}
-                            {difference > 0 && currentAngle < 360 && (
+                            {/* Remaining segment (if difference > 0 and there's remaining space) */}
+                            {difference > 0 && totalExpenseAngle < 360 && (
                               <path
-                                d={createArc(currentAngle, 360, radius, innerRadius)}
+                                d={createArc(totalExpenseAngle, 360, radius, innerRadius)}
                                 fill="#e2e8f0"
                                 className="transition-all duration-300"
                               />
@@ -535,40 +545,58 @@ export default function BudgetCalculatorPage() {
                     </div>
                   </div>
 
-                  {/* Difference and Expense Breakdown - Side by Side */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Difference */}
-                    <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                      <div className="text-center">
-                        <h3 className="text-sm font-semibold text-slate-700 mb-2 tracking-wide">Difference</h3>
-                        <p className={`text-3xl sm:text-4xl font-bold ${difference >= 0 ? 'text-green-600' : 'text-red-600'} tracking-tight`}>
-                          {formatCurrency(Math.abs(difference))}
-                        </p>
-                        <p className="text-xs sm:text-sm text-slate-600 mt-2 font-medium">
-                          {difference >= 0 ? 'Remaining' : 'Over Budget'}
-                        </p>
+                  {/* Summary Cards - Professional Layout */}
+                  <div className="mt-6 space-y-4">
+                    {/* Difference Card - Full Width, Prominent */}
+                    <div className={`rounded-xl p-5 border-2 shadow-sm transition-all duration-300 ${
+                      difference >= 0 
+                        ? 'bg-green-50 border-green-200' 
+                        : 'bg-red-50 border-red-200'
+                    }`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <h3 className="text-sm font-semibold text-slate-700 mb-1 tracking-wide">
+                            {difference >= 0 ? 'Remaining Budget' : 'Over Budget'}
+                          </h3>
+                          <p className={`text-4xl sm:text-5xl font-bold ${difference >= 0 ? 'text-green-700' : 'text-red-700'} tracking-tight`}>
+                            {formatCurrency(Math.abs(difference))}
+                          </p>
+                        </div>
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          difference >= 0 ? 'bg-green-100' : 'bg-red-100'
+                        }`}>
+                          {difference >= 0 ? (
+                            <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          ) : (
+                            <svg className="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                          )}
+                        </div>
                       </div>
                     </div>
 
-                    {/* Category Breakdown - Compact Grid */}
+                    {/* Expense Breakdown - Compact, Below Difference */}
                     {expenseData.length > 0 && (
-                      <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
-                        <h3 className="text-sm font-semibold text-slate-700 mb-3 tracking-wide">Expense Breakdown</h3>
-                        <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 max-h-48 overflow-y-auto">
+                      <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
+                        <h3 className="text-base font-semibold text-slate-900 mb-4 tracking-wide">Expense Breakdown</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                           {expenseData.map((item) => {
                             const percentage = totalExpenses > 0 ? (item.value / totalExpenses) * 100 : 0;
                             return (
-                              <div key={item.key} className="flex items-center justify-between text-xs">
-                                <div className="flex items-center gap-1.5 min-w-0">
+                              <div key={item.key} className="flex items-center justify-between p-2 rounded-lg hover:bg-slate-50 transition-colors">
+                                <div className="flex items-center gap-2 min-w-0 flex-1">
                                   <div 
-                                    className="w-2 h-2 rounded-full flex-shrink-0" 
+                                    className="w-3 h-3 rounded-full flex-shrink-0 shadow-sm" 
                                     style={{ backgroundColor: item.color }}
                                   />
-                                  <span className="text-slate-700 truncate">{item.label}</span>
+                                  <span className="text-sm font-medium text-slate-700 truncate">{item.label}</span>
                                 </div>
-                                <div className="text-right flex-shrink-0 ml-2">
-                                  <span className="font-semibold text-slate-900">{formatCurrency(item.value)}</span>
-                                  <span className="text-slate-500 ml-1 text-[10px]">({percentage.toFixed(0)}%)</span>
+                                <div className="text-right flex-shrink-0 ml-3">
+                                  <div className="text-sm font-bold text-slate-900">{formatCurrency(item.value)}</div>
+                                  <div className="text-xs text-slate-500">{percentage.toFixed(1)}%</div>
                                 </div>
                               </div>
                             );
