@@ -33,8 +33,14 @@ export async function POST(request: NextRequest) {
         weightValue: number;
       }>;
 
+      // Handle answer.value - it's stored as Json but should be a string for comparison
+      // Convert to string if needed (Prisma Json type can store strings directly)
+      const answerValue = typeof answer.value === 'string' 
+        ? answer.value 
+        : (answer.value as any)?.toString?.() || String(answer.value);
+
       const selectedOption = questionOptions.find(
-        (option) => option.value === answer.value
+        (option) => option.value === answerValue
       );
 
       if (selectedOption) {

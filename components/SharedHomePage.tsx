@@ -50,7 +50,11 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                 onMouseLeave={() => setIsFreeToolsOpen(false)}
               >
                 <button
-                  className="px-4 py-2.5 text-slate-700 font-medium text-sm hover:text-teal-700 hover:bg-teal-50/50 transition-all duration-200 rounded-lg group"
+                  className={`px-4 py-2.5 font-medium text-sm transition-all duration-200 group ${
+                    isFreeToolsOpen 
+                      ? "rounded-t-lg rounded-b-none text-teal-700 bg-teal-50/80 shadow-sm" 
+                      : "rounded-lg text-slate-700 hover:text-teal-700 hover:bg-teal-50/50"
+                  }`}
                   onClick={() => setIsFreeToolsOpen(!isFreeToolsOpen)}
                 >
                   Free Tools
@@ -67,7 +71,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                 
                 {/* Dropdown Menu */}
                 {isFreeToolsOpen && (
-                  <div className="absolute left-0 top-full mt-2 w-[300px] bg-white rounded-xl shadow-xl border border-slate-200/60 py-6 z-50 backdrop-blur-sm">
+                  <div className="absolute left-0 top-full w-[300px] bg-white rounded-b-xl shadow-xl border border-slate-200/60 border-t-0 py-6 z-50 backdrop-blur-sm">
                     <div className="px-6">
                       <h3 className="font-bold text-slate-900 mb-4 text-sm">Budgeting</h3>
                       <ul className="space-y-2 text-sm">

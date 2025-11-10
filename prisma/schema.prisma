@@ -391,9 +391,9 @@ model Closer {
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
-  appointments Appointment[]
-  tasks        Task[]
-  auditLogs    CloserAuditLog[]
+  appointments      Appointment[]
+  tasks             Task[]
+  auditLogs         CloserAuditLog[]
   scriptAssignments CloserScriptAssignment[]
 
   @@map("closers")
@@ -494,16 +494,16 @@ model CloserAuditLog {
 
 // Closer Scripts System
 model CloserScript {
-  id          String   @id @default(cuid())
-  name        String   // Name/identifier for this script set
-  callScript  String   @db.Text @map("call_script")
-  programDetails Json? @map("program_details") // JSON object with all program detail sections
-  emailTemplates Json? @map("email_templates") // JSON object with all email templates
-  isDefault   Boolean  @default(false) @map("is_default") // Default script for new closers
-  isActive    Boolean  @default(true) @map("is_active")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  
+  id             String   @id @default(cuid())
+  name           String // Name/identifier for this script set
+  callScript     String   @map("call_script") @db.Text
+  programDetails Json?    @map("program_details") // JSON object with all program detail sections
+  emailTemplates Json?    @map("email_templates") // JSON object with all email templates
+  isDefault      Boolean  @default(false) @map("is_default") // Default script for new closers
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
   assignments CloserScriptAssignment[]
 
   @@map("closer_scripts")
@@ -516,7 +516,7 @@ model CloserScriptAssignment {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  closer Closer     @relation(fields: [closerId], references: [id], onDelete: Cascade)
+  closer Closer       @relation(fields: [closerId], references: [id], onDelete: Cascade)
   script CloserScript @relation(fields: [scriptId], references: [id], onDelete: Cascade)
 
   @@unique([closerId, scriptId])
@@ -556,4 +556,15 @@ enum TaskStatus {
   pending
   in_progress
   completed
+}
+
+// Settings Model - Application-wide settings
+model Settings {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique @db.VarChar(255)
+  value     String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  @@map("Settings")
 }

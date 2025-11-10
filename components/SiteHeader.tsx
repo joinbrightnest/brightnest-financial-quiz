@@ -76,8 +76,12 @@ export default function SiteHeader() {
               }}
             >
               <button
-                className={`px-4 py-2.5 font-medium text-sm transition-all duration-200 rounded-lg group ${
-                  pathname?.startsWith("/tools")
+                className={`px-4 py-2.5 font-medium text-sm transition-all duration-200 group ${
+                  isFreeToolsOpen 
+                    ? "rounded-t-lg rounded-b-none" 
+                    : "rounded-lg"
+                } ${
+                  pathname?.startsWith("/tools") || isFreeToolsOpen
                     ? "text-teal-700 bg-teal-50/80 shadow-sm" 
                     : "text-slate-700 hover:text-teal-700 hover:bg-teal-50/50"
                 }`}
@@ -98,7 +102,7 @@ export default function SiteHeader() {
               {/* Dropdown Menu */}
               {isFreeToolsOpen && (
                 <div 
-                  className="absolute left-0 top-full mt-1 w-[300px] bg-white rounded-xl shadow-xl border border-slate-200/60 py-6 z-50 backdrop-blur-sm"
+                  className="absolute left-0 top-full w-[300px] bg-white rounded-b-xl shadow-xl border border-slate-200/60 border-t-0 py-6 z-50 backdrop-blur-sm"
                   onMouseEnter={() => {
                     if (timeoutRef.current) {
                       clearTimeout(timeoutRef.current);
