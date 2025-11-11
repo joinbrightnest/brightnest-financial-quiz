@@ -156,7 +156,7 @@ export default function FAQPage() {
           </div>
         </div>
 
-        {/* Curved Wave - Single color, single curve */}
+        {/* Curved Wave - Single color, single curve (green) */}
         <div className="relative w-full" style={{ height: '70px', marginTop: '-70px' }}>
           <svg 
             className="absolute top-0 left-0 w-full h-full" 
@@ -166,9 +166,27 @@ export default function FAQPage() {
           >
             <path 
               d="M0,0 L0,6 C360,6 720,50 1080,50 C1320,50 1440,6 1440,6 L1440,70 L0,70 Z" 
-              fill="white"
+              fill="#335343"
             />
           </svg>
+        </div>
+
+        {/* Dark Green Section - Minimal decorative band */}
+        <div className="relative overflow-hidden" style={{ backgroundColor: '#335343', minHeight: '40px' }}>
+          {/* Curved Bottom Edge - Creates upward curve at bottom of dark section */}
+          <div className="absolute bottom-0 left-0 w-full" style={{ height: '70px' }}>
+            <svg 
+              className="w-full h-full" 
+              viewBox="0 0 1440 70" 
+              preserveAspectRatio="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path 
+                d="M0,70 L0,65 C360,65 720,20 1080,20 C1320,20 1440,65 1440,65 L1440,70 Z" 
+                fill="white"
+              />
+            </svg>
+          </div>
         </div>
       </section>
 
