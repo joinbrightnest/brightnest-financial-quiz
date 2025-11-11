@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import type { ReactNode } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import Link from "next/link";
 
 interface FAQItem {
   question: string;
-  answer: string | JSX.Element;
+  answer: string | ReactNode;
 }
 
 export default function FAQPage() {
