@@ -23,36 +23,19 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
       {/* Navigation - Professional with Depth */}
       <nav className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-[60] shadow-sm relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Desktop Layout - Two Row Structure */}
-          <div className="hidden lg:block">
-            {/* First Row: Icon + Name (Left) | Get Started Button (Right) */}
-            <div className="flex justify-between items-center h-16 border-b border-slate-100">
-              <div className="flex items-center">
-                <Link href={getLink("/")} className="group flex items-center space-x-3">
-                  <img 
-                    src="/icon.png" 
-                    alt="BrightNest" 
-                    className="w-8 h-8 object-contain"
-                  />
-                  <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all duration-300">
-                    BrightNest
-                  </div>
-                </Link>
-              </div>
-
-              <div className="flex items-center">
-                <Link 
-                  href={getLink("/quiz/financial-profile")} 
-                  className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-[1.03] active:scale-[0.98] relative overflow-hidden group"
-                >
-                  <span className="relative z-10">Get Started</span>
-                  <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
-                </Link>
-              </div>
+          {/* Desktop Layout */}
+          <div className="hidden lg:flex justify-between items-center h-20">
+            {/* Logo - Left Side */}
+            <div className="flex items-center">
+              <Link href={getLink("/")} className="group flex items-center space-x-2">
+                <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all duration-300">
+                  BrightNest
+                </div>
+              </Link>
             </div>
-
-            {/* Second Row: Navigation Links */}
-            <div className="flex items-center justify-center space-x-8 h-14">
+            
+            {/* Desktop Menu Items */}
+            <div className="flex items-center space-x-8">
               <Link href="/about" className="px-4 py-2.5 text-slate-700 font-medium text-sm hover:text-teal-700 hover:bg-teal-50/50 transition-all duration-200 rounded-lg">
                 About Us
               </Link>
@@ -126,6 +109,17 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                 )}
               </div>
             </div>
+            
+            {/* Right Side Items */}
+            <div className="flex items-center">
+              <Link 
+                href={getLink("/quiz/financial-profile")} 
+                className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-[1.03] active:scale-[0.98] relative overflow-hidden group"
+              >
+                <span className="relative z-10">Get Started</span>
+                <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+              </Link>
+            </div>
           </div>
 
           {/* Mobile Layout: Menu Icon + Logo (Left) | Button (Right) */}
@@ -145,12 +139,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                   )}
                 </svg>
               </button>
-              <Link href={getLink("/")} className="group flex items-center space-x-2">
-                <img 
-                  src="/icon.png" 
-                  alt="BrightNest" 
-                  className="w-7 h-7 object-contain"
-                />
+              <Link href={getLink("/")} className="group">
                 <div className="text-xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all duration-300 whitespace-nowrap">
                   BrightNest
                 </div>
