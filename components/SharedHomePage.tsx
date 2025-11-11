@@ -42,6 +42,9 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
               <Link href="/blog" className="px-4 py-2.5 text-slate-700 font-medium text-sm hover:text-teal-700 hover:bg-teal-50/50 transition-all duration-200 rounded-lg">
                 Blog
               </Link>
+              <Link href="/faq" className="px-4 py-2.5 text-slate-700 font-medium text-sm hover:text-teal-700 hover:bg-teal-50/50 transition-all duration-200 rounded-lg">
+                FAQ
+              </Link>
               
               {/* Free Tools Dropdown */}
               <div 
@@ -168,6 +171,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                 <div className="px-4 py-4 space-y-1">
                   <Link href="/about" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
                   <Link href="/blog" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
+                  <Link href="/faq" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>FAQ</Link>
                   
                   {/* Free Tools in Mobile */}
                   <div className="pt-2 border-t border-gray-200">

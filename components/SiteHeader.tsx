@@ -58,6 +58,7 @@ export default function SiteHeader() {
           <div className="flex items-center space-x-8">
             <NavLink href="/about">About Us</NavLink>
             <NavLink href="/blog">Blog</NavLink>
+            <NavLink href="/faq">FAQ</NavLink>
             
             {/* Free Tools Dropdown */}
             <div 
@@ -231,6 +232,17 @@ export default function SiteHeader() {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Blog
+                </Link>
+                <Link 
+                  href="/faq" 
+                  className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${
+                    isActive("/faq") 
+                      ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm" 
+                      : "text-slate-700 hover:bg-teal-50/50 hover:text-teal-700"
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  FAQ
                 </Link>
                 
                 {/* Free Tools in Mobile */}
