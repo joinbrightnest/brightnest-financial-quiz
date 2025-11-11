@@ -138,55 +138,29 @@ export default function FAQPage() {
     <div className="min-h-screen bg-white">
       <SiteHeader />
 
-      {/* Hero Section - Similar to About Page */}
-      <section className="relative">
-        {/* Light Section with Title - Fine fade gradient like BetterHelp */}
-        <div 
-          className="relative pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-16" 
-          style={{ 
-            background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)'
-          }}
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 leading-tight tracking-tight">
-                Frequently asked questions
-              </h1>
-            </div>
+      {/* Hero Section with Dark Green Background */}
+      <section className="relative overflow-hidden" style={{ backgroundColor: '#335343' }}>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-16">
+          <div className="text-center">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-white leading-tight tracking-tight">
+              Frequently asked questions
+            </h1>
           </div>
         </div>
 
-        {/* Curved Wave - Single color, single curve (green) */}
-        <div className="relative w-full" style={{ height: '70px', marginTop: '-70px' }}>
+        {/* Curved Bottom Edge - Creates upward curve at bottom transitioning to white */}
+        <div className="absolute bottom-0 left-0 w-full" style={{ height: '70px' }}>
           <svg 
-            className="absolute top-0 left-0 w-full h-full" 
+            className="w-full h-full" 
             viewBox="0 0 1440 70" 
             preserveAspectRatio="none"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path 
-              d="M0,0 L0,6 C360,6 720,50 1080,50 C1320,50 1440,6 1440,6 L1440,70 L0,70 Z" 
-              fill="#335343"
+              d="M0,70 L0,65 C360,65 720,20 1080,20 C1320,20 1440,65 1440,65 L1440,70 Z" 
+              fill="white"
             />
           </svg>
-        </div>
-
-        {/* Dark Green Section - Minimal decorative band */}
-        <div className="relative overflow-hidden" style={{ backgroundColor: '#335343', minHeight: '40px' }}>
-          {/* Curved Bottom Edge - Creates upward curve at bottom of dark section */}
-          <div className="absolute bottom-0 left-0 w-full" style={{ height: '70px' }}>
-            <svg 
-              className="w-full h-full" 
-              viewBox="0 0 1440 70" 
-              preserveAspectRatio="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path 
-                d="M0,70 L0,65 C360,65 720,20 1080,20 C1320,20 1440,65 1440,65 L1440,70 Z" 
-                fill="white"
-              />
-            </svg>
-          </div>
         </div>
       </section>
 
