@@ -45,17 +45,36 @@ export default function SiteHeader() {
   return (
     <nav aria-label="site-header" className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-[60] shadow-sm relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Desktop Layout */}
-        <div className="hidden lg:flex justify-between items-center h-20">
-          <div className="flex items-center">
-            <Link href="/" className="group flex items-center space-x-2">
-              <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all duration-300">
-                BrightNest
-              </div>
-            </Link>
+        {/* Desktop Layout - Two Row Structure */}
+        <div className="hidden lg:block">
+          {/* First Row: Icon + Name (Left) | Get Started Button (Right) */}
+          <div className="flex justify-between items-center h-16 border-b border-slate-100">
+            <div className="flex items-center">
+              <Link href="/" className="group flex items-center space-x-3">
+                <img 
+                  src="/icon.png" 
+                  alt="BrightNest" 
+                  className="w-8 h-8 object-contain"
+                />
+                <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all duration-300">
+                  BrightNest
+                </div>
+              </Link>
+            </div>
+
+            <div className="flex items-center">
+              <Link 
+                href="/quiz/financial-profile" 
+                className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-[1.03] active:scale-[0.98] relative overflow-hidden group"
+              >
+                <span className="relative z-10">Get Started</span>
+                <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+              </Link>
+            </div>
           </div>
 
-          <div className="flex items-center space-x-8">
+          {/* Second Row: Navigation Links */}
+          <div className="flex items-center justify-center space-x-8 h-14">
             <NavLink href="/about">About Us</NavLink>
             <NavLink href="/blog">Blog</NavLink>
             
@@ -153,16 +172,6 @@ export default function SiteHeader() {
               )}
             </div>
           </div>
-
-          <div className="flex items-center">
-            <Link 
-              href="/quiz/financial-profile" 
-              className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-[1.03] active:scale-[0.98] relative overflow-hidden group"
-            >
-              <span className="relative z-10">Get Started</span>
-              <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
-            </Link>
-          </div>
         </div>
 
         {/* Mobile Layout: Menu Icon + Logo (Left) | Button (Right) */}
@@ -182,7 +191,12 @@ export default function SiteHeader() {
                 )}
               </svg>
             </button>
-            <Link href="/" className="group">
+            <Link href="/" className="group flex items-center space-x-2">
+              <img 
+                src="/icon.png" 
+                alt="BrightNest" 
+                className="w-7 h-7 object-contain"
+              />
               <div className="text-xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all duration-300 whitespace-nowrap">
                 BrightNest
               </div>
