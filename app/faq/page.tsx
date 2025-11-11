@@ -138,12 +138,42 @@ export default function FAQPage() {
     <div className="min-h-screen bg-white">
       <SiteHeader />
 
+      {/* Hero Section - Similar to About Page */}
+      <section className="relative">
+        {/* Light Section with Title - Fine fade gradient like BetterHelp */}
+        <div 
+          className="relative pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-16" 
+          style={{ 
+            background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)'
+          }}
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 leading-tight tracking-tight">
+                Frequently asked questions
+              </h1>
+            </div>
+          </div>
+        </div>
+
+        {/* Curved Wave - Single color, single curve */}
+        <div className="relative w-full" style={{ height: '70px', marginTop: '-70px' }}>
+          <svg 
+            className="absolute top-0 left-0 w-full h-full" 
+            viewBox="0 0 1440 70" 
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path 
+              d="M0,0 L0,6 C360,6 720,50 1080,50 C1320,50 1440,6 1440,6 L1440,70 L0,70 Z" 
+              fill="white"
+            />
+          </svg>
+        </div>
+      </section>
+
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-        {/* Page Title */}
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-12 text-center tracking-tight">
-          Frequently asked questions
-        </h1>
 
         {/* FAQ List */}
         <div className="space-y-0 border-b border-slate-200">
