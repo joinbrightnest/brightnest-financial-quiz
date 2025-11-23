@@ -642,30 +642,45 @@ export default function DebtSnowballCalculatorPage() {
               </div>
             </div>
 
-            {/* Share Section - Narrow, Centered */}
-            <div className="mt-12 sm:mt-16 lg:mt-20">
-              <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 text-center tracking-tight">Share the Debt Snowball Calculator</h2>
-                <div className="flex items-center gap-3">
+            {/* Share Section - Clean White Background */}
+            <div className="w-full bg-white py-12 sm:py-16 px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16 lg:mt-20">
+              <div className="max-w-4xl mx-auto text-center">
+                {/* Headline */}
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4 leading-tight">
+                  Help Others Take Control of Their Money
+                </h2>
+                
+                {/* Subtext */}
+                <p className="text-sm sm:text-base lg:text-lg text-slate-600 mb-6 sm:mb-7 leading-relaxed max-w-2xl mx-auto">
+                  Share this free debt snowball calculator with friends and family who need to start their financial journey—because everyone deserves financial peace.
+                </p>
+                
+                {/* Share Input and Button */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 max-w-2xl mx-auto">
                   <div className="flex-1 min-w-0">
                     <input
                       type="text"
                       readOnly
                       value={typeof window !== 'undefined' ? window.location.href : ''}
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm"
+                      onClick={(e) => e.currentTarget.select()}
                     />
                   </div>
                   <button
                     onClick={copyLinkToClipboard}
-                    className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl flex-shrink-0"
-                    style={{ backgroundColor: '#3D6B54' }}
+                    className="flex items-center justify-center gap-2 bg-[#3D6B54] hover:bg-[#2d5340] text-white px-6 py-3 rounded-xl font-semibold text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 flex-shrink-0"
                   >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                     </svg>
-                    {linkCopied ? "Copied!" : "Copy"}
+                    <span>{linkCopied ? "Copied!" : "Copy Link"}</span>
                   </button>
                 </div>
+                
+                {/* Trust message */}
+                <p className="text-xs sm:text-sm text-slate-500 mt-5 sm:mt-6">
+                  Join thousands of people building better financial habits with BrightNest
+                </p>
               </div>
             </div>
           </div>
@@ -1062,30 +1077,45 @@ export default function DebtSnowballCalculatorPage() {
             </div>
           </div>
 
-          {/* Share Section - Narrow, Centered */}
-          <div className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-            <div className="max-w-2xl mx-auto">
-              <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 text-center tracking-tight">Share the Debt Snowball Calculator</h2>
-              <div className="flex items-center gap-3">
+          {/* Share Section - Clean White Background */}
+          <div className="w-full bg-white py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-4xl mx-auto text-center">
+              {/* Headline */}
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4 leading-tight">
+                Help Others Take Control of Their Money
+              </h2>
+              
+              {/* Subtext */}
+              <p className="text-sm sm:text-base lg:text-lg text-slate-600 mb-6 sm:mb-7 leading-relaxed max-w-2xl mx-auto">
+                Share this free debt snowball calculator with friends and family who need to start their financial journey—because everyone deserves financial peace.
+              </p>
+              
+              {/* Share Input and Button */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 max-w-2xl mx-auto">
                 <div className="flex-1 min-w-0">
                   <input
                     type="text"
                     readOnly
                     value={typeof window !== 'undefined' ? window.location.href : ''}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                    className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm"
+                    onClick={(e) => e.currentTarget.select()}
                   />
                 </div>
                 <button
                   onClick={copyLinkToClipboard}
-                  className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl flex-shrink-0"
-                  style={{ backgroundColor: '#3D6B54' }}
+                  className="flex items-center justify-center gap-2 bg-[#3D6B54] hover:bg-[#2d5340] text-white px-6 py-3 rounded-xl font-semibold text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 flex-shrink-0"
                 >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
-                  {linkCopied ? "Copied!" : "Copy"}
+                  <span>{linkCopied ? "Copied!" : "Copy Link"}</span>
                 </button>
               </div>
+              
+              {/* Trust message */}
+              <p className="text-xs sm:text-sm text-slate-500 mt-5 sm:mt-6">
+                Join thousands of people building better financial habits with BrightNest
+              </p>
             </div>
           </div>
       </main>
