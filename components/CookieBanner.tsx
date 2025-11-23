@@ -4,51 +4,60 @@ import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 
 export default function CookieBanner() {
-  const [isVisible, setIsVisible] = useState(false);
+  const [shouldShow, setShouldShow] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    // Only run on client side
+    if (typeof window === 'undefined') return;
     
-    // Only show on marketing site (not app subdomain)
-    if (typeof window !== 'undefined' && window.location.hostname.includes('app.')) {
+    // Don't show on app subdomain
+    if (window.location.hostname.includes('app.')) {
+      console.log('🍪 Cookie banner: Skipping app subdomain');
       return;
     }
 
     // Check if user has already made a choice
     const consent = localStorage.getItem('cookie_consent');
+    console.log('🍪 Cookie banner: Consent status:', consent);
+    
     if (!consent) {
+      console.log('🍪 Cookie banner: No consent found, showing banner in 1 second');
       // Small delay for better UX
-      const timer = setTimeout(() => setIsVisible(true), 1000);
+      const timer = setTimeout(() => {
+        console.log('🍪 Cookie banner: Displaying now');
+        setShouldShow(true);
+      }, 1000);
+      
       return () => clearTimeout(timer);
+    } else {
+      console.log('🍪 Cookie banner: Consent already given, not showing');
     }
   }, []);
 
-  // Prevent hydration mismatch
-  if (!isMounted) {
-    return null;
-  }
-
   const handleAccept = () => {
+    console.log('🍪 Cookie banner: User accepted');
     localStorage.setItem('cookie_consent', 'accepted');
-    setIsVisible(false);
+    setShouldShow(false);
   };
 
   const handleDecline = () => {
+    console.log('🍪 Cookie banner: User declined');
     localStorage.setItem('cookie_consent', 'declined');
-    setIsVisible(false);
+    setShouldShow(false);
     // Note: Even if declined, affiliate cookies are already set server-side
     // This is for transparency and user preference tracking
   };
 
   const handleClose = () => {
+    console.log('🍪 Cookie banner: User dismissed');
     // Treat close (X button) as implicit acceptance
     localStorage.setItem('cookie_consent', 'dismissed');
-    setIsVisible(false);
+    setShouldShow(false);
   };
 
-  if (!isVisible) return null;
+  // Don't render anything if shouldn't show
+  if (!shouldShow) return null;
 
   return (
     <>
