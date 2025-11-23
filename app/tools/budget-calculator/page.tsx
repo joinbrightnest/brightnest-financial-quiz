@@ -347,23 +347,23 @@ export default function BudgetCalculatorPage() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 
           {/* Calculator Section */}
-          <div className="bg-white rounded-xl shadow-md border border-slate-200 p-6 sm:p-8 lg:p-10">
-            <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-4 tracking-tight">
+          <div className="bg-white rounded-xl shadow-md border border-slate-200 p-4 sm:p-6">
+            <h2 className="text-xl sm:text-2xl font-light text-slate-900 mb-3 tracking-tight">
               Budget Calculator
             </h2>
-            <p className="text-base sm:text-lg text-slate-700 mb-8 leading-relaxed font-light">
+            <p className="text-sm sm:text-base text-slate-700 mb-5 leading-relaxed font-light">
               Enter your income and the calculator will show the national averages for most budget categories as a starting point. A few of these are recommendations (like giving). Most just reflect average spending (like debt). Don't have debt? Yay! Move that money to your current money goal.
             </p>
 
-            <div className="grid lg:grid-cols-2 gap-4 lg:gap-6">
+            <div className="grid lg:grid-cols-3 gap-3 lg:gap-4">
               {/* Left Column - Input Fields */}
-              <div className="space-y-4 order-2 lg:order-1">
+              <div className="space-y-3 order-2 lg:order-1 lg:col-span-1">
                 {/* Income */}
                 <div>
-                  <h3 className="text-lg font-light text-slate-900 mb-3">Income</h3>
+                  <h3 className="text-base font-medium text-slate-900 mb-2">Income</h3>
                   <div>
                     <label className="block text-sm font-light text-slate-700 mb-2">
                       Monthly Income (after taxes)
@@ -387,8 +387,8 @@ export default function BudgetCalculatorPage() {
 
                 {/* Expenses */}
                 <div>
-                  <h3 className="text-lg font-light text-slate-900 mb-3">Expenses</h3>
-                  <div className="space-y-2">
+                  <h3 className="text-base font-medium text-slate-900 mb-2">Expenses</h3>
+                  <div className="space-y-1.5">
                     {Object.keys(CATEGORY_LABELS).map((key) => {
                       const categoryKey = key as keyof typeof CATEGORY_LABELS;
                       const color = CATEGORY_COLORS[categoryKey];
@@ -444,11 +444,11 @@ export default function BudgetCalculatorPage() {
                 </div>
               </div>
 
-              {/* Right Column - Visual Display */}
-              <div className="flex flex-col items-center justify-center order-1 lg:order-2 mb-6 lg:mb-0">
-                <div className="w-full max-w-lg">
+              {/* Center Column - Visual Display */}
+              <div className="flex flex-col items-center justify-start order-1 lg:order-2 mb-6 lg:mb-0 lg:col-span-1">
+                <div className="w-full max-w-md">
                   {/* Donut Chart */}
-                  <div className="relative w-full aspect-square mb-4 max-w-lg mx-auto">
+                  <div className="relative w-full aspect-square mb-2 max-w-sm mx-auto">
                     <svg 
                       className="w-full h-full" 
                       viewBox="0 0 200 200"
@@ -601,163 +601,89 @@ export default function BudgetCalculatorPage() {
                     </div>
                   </div>
 
-                  {/* Summary Cards - Professional Layout */}
-                  <div className="mt-6 space-y-4">
-                    {/* Difference Card - Full Width, Prominent */}
-                    <div className={`rounded-xl p-5 border-2 shadow-sm ${
-                      difference >= 0 
-                        ? 'bg-green-50 border-green-200' 
-                        : 'bg-red-50 border-red-200'
-                    }`}
-                    style={{
-                      transition: 'background-color 0.3s ease-out, border-color 0.3s ease-out'
-                    }}>
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <h3 className="text-sm font-semibold text-slate-700 mb-1 tracking-wide">
-                            {difference >= 0 ? 'Remaining Budget' : 'Over Budget'}
-                          </h3>
-                          <p className={`text-4xl sm:text-5xl font-bold ${difference >= 0 ? 'text-green-700' : 'text-red-700'} tracking-tight number-transition`}>
-                            {formatCurrency(Math.abs(difference))}
-                          </p>
-                        </div>
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
-                          difference >= 0 ? 'bg-green-100' : 'bg-red-100'
-                        }`}
-                        style={{
-                          transition: 'background-color 0.3s ease-out'
-                        }}>
-                          {difference >= 0 ? (
-                            <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          ) : (
-                            <svg className="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  {/* Simple Difference Display */}
+                  <div className="mt-4 text-center">
+                    <h3 className="text-sm font-medium text-slate-600 mb-2">Difference</h3>
+                    <p className={`text-3xl sm:text-4xl font-bold ${difference >= 0 ? 'text-green-600' : 'text-red-600'} number-transition`}>
+                      {difference < 0 && '-'}{formatCurrency(Math.abs(difference))}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column - Budget Insights */}
+              <div className="order-3 lg:col-span-1 space-y-4">
+                {incomeNum > 0 && (
+                  <>
+                    {difference < 0 ? (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-5">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg className="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
-                          )}
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-base font-semibold text-red-900 mb-2">
+                              You're overspending by {formatCurrency(Math.abs(difference))}
+                            </h3>
+                            <p className="text-sm text-red-800 mb-3 leading-relaxed">
+                              Don't freak out. This is just a wake-up call! You can get that number to zero by giving every dollar a job—giving, saving and spending—without overspending!
+                            </p>
+                            <div className="text-sm text-red-700 space-y-1">
+                              <p className="font-medium">Try this:</p>
+                              <ul className="list-disc list-inside space-y-1 text-xs">
+                                <li>Review your expenses and cut back</li>
+                                <li>Reduce discretionary spending</li>
+                                <li>Find ways to increase income</li>
+                              </ul>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-
-                    {/* Expense Breakdown - Compact Grid Layout */}
-                    {expenseData.length > 0 && (
-                      <div className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-4 border border-slate-200 shadow-sm w-full">
-                        <h3 className="text-sm font-semibold text-slate-900 mb-3 tracking-wide">Expense Breakdown</h3>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
-                          {expenseData.map((item) => {
-                            const percentage = totalExpenses > 0 ? (item.value / totalExpenses) * 100 : 0;
-                            return (
-                              <div 
-                                key={item.key} 
-                                className="flex items-center justify-between gap-3 p-2.5 rounded-lg hover:bg-white transition-all duration-200 border border-slate-100 hover:border-slate-200 hover:shadow-sm"
-                                style={{
-                                  transition: 'all 0.2s ease-out'
-                                }}
-                              >
-                                <div className="flex items-center gap-2 min-w-0 flex-1">
-                                  <div 
-                                    className="w-2.5 h-2.5 rounded-full flex-shrink-0" 
-                                    style={{ backgroundColor: item.color }}
-                                  />
-                                  <span className="text-xs font-medium text-slate-700 truncate">{item.label}</span>
-                                </div>
-                                <div className="flex items-center gap-1.5 flex-shrink-0">
-                                  <span className="text-sm font-bold text-slate-900">{formatCurrency(item.value)}</span>
-                                  <span className="text-xs text-slate-500">({percentage.toFixed(0)}%)</span>
-                                </div>
-                              </div>
-                            );
-                          })}
+                    ) : difference > 0 ? (
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-5">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-base font-semibold text-green-900 mb-2">
+                              Great! You have {formatCurrency(difference)} remaining
+                            </h3>
+                            <p className="text-sm text-green-800 leading-relaxed">
+                              Perfect! Your budget is working. Consider building an emergency fund and investing for long-term wealth if you haven't already.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-5">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-base font-semibold text-blue-900 mb-2">
+                              Your budget is balanced!
+                            </h3>
+                            <p className="text-sm text-blue-800 leading-relaxed">
+                              Perfect! Your income and expenses are balanced. Consider building an emergency fund and investing for long-term wealth.
+                            </p>
+                          </div>
                         </div>
                       </div>
                     )}
-                  </div>
-                </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
 
-          {/* Insights Section */}
-          {incomeNum > 0 && (
-            <div className="bg-white rounded-xl shadow-md border border-slate-200 p-6 sm:p-8 mt-6 sm:mt-8">
-              <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 tracking-tight">Budget Insights</h2>
-              
-              {difference < 0 ? (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-light text-red-900 mb-3">
-                        You're overspending by {formatCurrency(Math.abs(difference))} per month
-                      </h3>
-                      <p className="text-base text-red-800 mb-4 font-light">
-                        Don't freak out. This is just a wake-up call! You can get that number to zero. Just give every dollar a job—giving, saving and spending—without overspending! It's time to make some changes.
-                      </p>
-                      <div className="space-y-2 text-sm text-red-700 font-light">
-                        <p className="font-light">Try this:</p>
-                        <ul className="list-disc list-inside space-y-1">
-                          <li>Review your expenses and identify areas to cut back</li>
-                          <li>Consider reducing discretionary spending</li>
-                          <li>Find ways to increase your income</li>
-                          <li>Move money from non-essential categories to cover essentials</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : difference > 0 ? (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-light text-green-900 mb-3">
-                        Great! You have {formatCurrency(difference)} remaining each month
-                      </h3>
-                      <p className="text-base text-green-800 mb-4 font-light">
-                        Bravo! Time to give those dollars a job—build up your savings or pay off your debt. Whatever your current money goal is, get after it!
-                      </p>
-                      <div className="space-y-2 text-sm text-green-700 font-light">
-                        <p className="font-light">Consider allocating this surplus to:</p>
-                        <ul className="list-disc list-inside space-y-1">
-                          <li>Emergency fund (3-6 months of expenses)</li>
-                          <li>Debt payoff (if you have debt)</li>
-                          <li>Retirement savings (15% of income recommended)</li>
-                          <li>Other financial goals</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-light text-blue-900 mb-3">
-                        Your income and expenses are balanced!
-                      </h3>
-                      <p className="text-base text-blue-800 font-light">
-                        Perfect! Your budget is working. Consider building an emergency fund and investing for long-term wealth if you haven't already.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
 
           {/* Get the Most out of the Budget Calculator */}
           <div className="mt-12 sm:mt-16 lg:mt-20" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
