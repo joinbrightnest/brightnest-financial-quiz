@@ -370,11 +370,11 @@ export default function BudgetCalculatorPage() {
                 {/* Income */}
                 <div>
                   <h3 className="text-base font-medium text-slate-900 mb-2">Income</h3>
-                  <div>
-                    <label className="block text-sm font-light text-slate-700 mb-2">
+                  <div className="flex items-center justify-between gap-4">
+                    <label className="text-sm font-medium text-slate-700">
                       Monthly Income (after taxes)
                     </label>
-                    <div className="relative">
+                    <div className="relative w-48">
                       <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium text-sm">$</span>
                       <input
                         type="text"
@@ -385,7 +385,7 @@ export default function BudgetCalculatorPage() {
                           handleIncomeChange(value);
                         }}
                         placeholder="0.00"
-                        className="w-full pl-8 pr-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900 touch-friendly"
+                        className="w-full pl-8 pr-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900 text-right touch-friendly"
                       />
                     </div>
                   </div>
@@ -399,49 +399,47 @@ export default function BudgetCalculatorPage() {
                       const categoryKey = key as keyof typeof CATEGORY_LABELS;
                       const color = CATEGORY_COLORS[categoryKey];
                       return (
-                        <div key={key} className="flex items-center gap-2">
-                          <div 
-                            className="w-2.5 h-2.5 rounded-full flex-shrink-0" 
-                            style={{ backgroundColor: color }}
-                          />
-                          <div className="flex-1 flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                            <div className="flex items-center gap-1.5 w-full sm:w-auto">
-                              <label className="block text-xs sm:text-sm font-medium text-slate-700 whitespace-nowrap">
-                                {CATEGORY_LABELS[categoryKey]}
-                              </label>
-                              <div className="relative">
-                                <button
-                                  type="button"
-                                  onMouseEnter={() => setShowInfoTooltip(key)}
-                                  onMouseLeave={() => setShowInfoTooltip(null)}
-                                  onFocus={() => setShowInfoTooltip(key)}
-                                  onBlur={() => setShowInfoTooltip(null)}
-                                  className="w-3.5 h-3.5 rounded-full border border-slate-400 text-slate-400 hover:border-teal-600 hover:text-teal-600 flex items-center justify-center transition-colors text-[9px] font-bold touch-friendly"
-                                  aria-label={`Information about ${CATEGORY_LABELS[categoryKey]}`}
-                                >
-                                  i
-                                </button>
-                                {showInfoTooltip === key && (
-                                  <div className="absolute left-0 sm:left-auto sm:right-0 top-full mt-1 z-50 w-72 sm:w-80 bg-white rounded-lg shadow-xl border border-slate-200 p-3">
-                                    <p className="text-xs text-slate-700 leading-relaxed">
-                                      {CATEGORY_DESCRIPTIONS[categoryKey as keyof typeof CATEGORY_DESCRIPTIONS]}
-                                    </p>
-                                    <div className="absolute -top-1.5 left-3 sm:right-3 w-3 h-3 bg-white border-l border-t border-slate-200 transform rotate-45"></div>
-                                  </div>
-                                )}
-                              </div>
+                        <div key={key} className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-2 flex-1">
+                            <div 
+                              className="w-2.5 h-2.5 rounded-full flex-shrink-0" 
+                              style={{ backgroundColor: color }}
+                            />
+                            <label className="text-sm font-medium text-slate-700">
+                              {CATEGORY_LABELS[categoryKey]}
+                            </label>
+                            <div className="relative">
+                              <button
+                                type="button"
+                                onMouseEnter={() => setShowInfoTooltip(key)}
+                                onMouseLeave={() => setShowInfoTooltip(null)}
+                                onFocus={() => setShowInfoTooltip(key)}
+                                onBlur={() => setShowInfoTooltip(null)}
+                                className="w-3.5 h-3.5 rounded-full border border-slate-400 text-slate-400 hover:border-teal-600 hover:text-teal-600 flex items-center justify-center transition-colors text-[9px] font-bold touch-friendly"
+                                aria-label={`Information about ${CATEGORY_LABELS[categoryKey]}`}
+                              >
+                                i
+                              </button>
+                              {showInfoTooltip === key && (
+                                <div className="absolute left-0 top-full mt-1 z-50 w-72 sm:w-80 bg-white rounded-lg shadow-xl border border-slate-200 p-3">
+                                  <p className="text-xs text-slate-700 leading-relaxed">
+                                    {CATEGORY_DESCRIPTIONS[categoryKey as keyof typeof CATEGORY_DESCRIPTIONS]}
+                                  </p>
+                                  <div className="absolute -top-1.5 left-3 w-3 h-3 bg-white border-l border-t border-slate-200 transform rotate-45"></div>
+                                </div>
+                              )}
                             </div>
-                            <div className="relative w-full sm:flex-1 min-w-0">
-                              <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-slate-500 text-xs">$</span>
-                              <input
-                                type="text"
-                                inputMode="decimal"
-                                value={expenses[categoryKey] || ""}
-                                onChange={(e) => handleExpenseChange(categoryKey, e.target.value)}
-                                placeholder="0.00"
-                                className="w-full pl-6 pr-2 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 touch-friendly"
-                              />
-                            </div>
+                          </div>
+                          <div className="relative w-48 flex-shrink-0">
+                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-sm">$</span>
+                            <input
+                              type="text"
+                              inputMode="decimal"
+                              value={expenses[categoryKey] || ""}
+                              onChange={(e) => handleExpenseChange(categoryKey, e.target.value)}
+                              placeholder="0.00"
+                              className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 text-right touch-friendly"
+                            />
                           </div>
                         </div>
                       );
