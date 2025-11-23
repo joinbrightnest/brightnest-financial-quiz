@@ -273,18 +273,6 @@ export default function BudgetCalculatorPage() {
     // It will only update fields that weren't manually edited
   };
 
-  const calculateTotalExpenses = () => {
-    return Object.values(expenses).reduce((total, value) => {
-      return total + (parseFloat(value) || 0);
-    }, 0);
-  };
-
-  const calculateDifference = () => {
-    const incomeNum = parseFloat(income) || 0;
-    const totalExpenses = calculateTotalExpenses();
-    return incomeNum - totalExpenses;
-  };
-
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -295,9 +283,22 @@ export default function BudgetCalculatorPage() {
   };
 
   // Memoize expensive calculations to prevent unnecessary re-renders
-  const totalExpenses = useMemo(() => calculateTotalExpenses(), [expenses]);
-  const incomeNum = useMemo(() => parseFloat(income) || 0, [income]);
-  const difference = useMemo(() => incomeNum - totalExpenses, [incomeNum, totalExpenses]);
+  const totalExpenses = useMemo(() => {
+    return Object.values(expenses).reduce((total, value) => {
+      // Explicitly handle empty strings, null, undefined, and invalid numbers as 0
+      const numValue = parseFloat(value);
+      return total + (isNaN(numValue) ? 0 : numValue);
+    }, 0);
+  }, [expenses]);
+
+  const incomeNum = useMemo(() => {
+    const num = parseFloat(income);
+    return isNaN(num) ? 0 : num;
+  }, [income]);
+
+  const difference = useMemo(() => {
+    return incomeNum - totalExpenses;
+  }, [incomeNum, totalExpenses]);
 
   // Calculate percentage for donut chart
   const expensesPercentage = useMemo(() => 
@@ -312,7 +313,10 @@ export default function BudgetCalculatorPage() {
   // Get expense categories with values for the chart - memoized for smooth animations
   const expenseData = useMemo(() => 
     Object.entries(expenses)
-      .filter(([_, value]) => parseFloat(value) > 0)
+      .filter(([_, value]) => {
+        const num = parseFloat(value);
+        return !isNaN(num) && num > 0;
+      })
       .map(([key, value]) => ({
         key: key as keyof typeof CATEGORY_COLORS,
         label: CATEGORY_LABELS[key as keyof typeof CATEGORY_LABELS],
