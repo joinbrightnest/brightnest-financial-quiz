@@ -6,25 +6,44 @@ import { X } from 'lucide-react';
 export default function CookieBanner() {
   const [isVisible, setIsVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [shouldRender, setShouldRender] = useState(true);
 
   useEffect(() => {
     // Only show on marketing site (not app subdomain)
-    if (typeof window !== 'undefined' && window.location.hostname.includes('app.')) {
-      return;
+    if (typeof window !== 'undefined') {
+      if (window.location.hostname.includes('app.')) {
+        setShouldRender(false);
+        return;
+      }
+
+      // Check if already dismissed this session
+      const dismissed = sessionStorage.getItem('cookie_banner_dismissed');
+      if (dismissed) {
+        setShouldRender(false);
+        return;
+      }
+
+      // Show banner after 1 second delay
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+      }, 1000);
+
+      return () => clearTimeout(timer);
     }
-
-    // Show banner after 1 second delay
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 1000);
-
-    return () => clearTimeout(timer);
   }, []);
 
   const handleDismiss = () => {
     setIsVisible(false);
+    // Mark as dismissed for this session only
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('cookie_banner_dismissed', 'true');
+    }
   };
 
+  // Don't render at all if shouldn't show
+  if (!shouldRender) return null;
+  
+  // Return null while waiting to show (but component stays mounted)
   if (!isVisible) return null;
 
   return (
