@@ -1031,54 +1031,52 @@ export default function BudgetCalculatorPage() {
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Share Section - Full Width with Gradient Background */}
-          <div className="mt-12 sm:mt-16 lg:mt-20 -mx-4 sm:-mx-6 lg:-mx-8">
-            <div className="bg-gradient-to-br from-teal-600 via-teal-700 to-teal-800 py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-              {/* Decorative Background Elements */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/20 rounded-full blur-3xl"></div>
-              <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-900/30 rounded-full blur-3xl"></div>
-              
-              <div className="max-w-3xl mx-auto text-center relative z-10">
-                {/* Headline */}
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-5 leading-tight">
-                  Help Others Take Control of Their Money
-                </h2>
-                
-                {/* Subtext */}
-                <p className="text-base sm:text-lg lg:text-xl text-teal-50 mb-8 sm:mb-10 leading-relaxed max-w-2xl mx-auto">
-                  Share this free budget calculator with friends and family who need to start their financial journey—because everyone deserves financial peace.
-                </p>
-                
-                {/* Share Input and Button */}
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 max-w-2xl mx-auto">
-                  <div className="flex-1 min-w-0">
-                    <input
-                      type="text"
-                      readOnly
-                      value={typeof window !== 'undefined' ? window.location.href : ''}
-                      className="w-full px-4 sm:px-5 py-3 sm:py-4 border-2 border-white/20 rounded-xl bg-white/95 backdrop-blur-sm text-slate-900 font-mono text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white focus:border-white shadow-lg"
-                      onClick={(e) => e.currentTarget.select()}
-                    />
-                  </div>
-                  <button
-                    onClick={copyLinkToClipboard}
-                    className="flex items-center justify-center gap-2 bg-[#FF5C41] hover:bg-[#e54a2f] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 flex-shrink-0 relative overflow-hidden group"
-                  >
-                    <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
-                    <svg className="w-5 h-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                    </svg>
-                    <span className="relative z-10">{linkCopied ? "Copied!" : "Copy Link"}</span>
-                  </button>
-                </div>
-                
-                {/* Optional: Small trust message */}
-                <p className="text-sm text-teal-100 mt-6 sm:mt-8">
-                  Join thousands of people building better financial habits with BrightNest
-                </p>
+        {/* Share Section - Full Width with Gradient Background */}
+        <div className="w-full bg-gradient-to-br from-teal-600 via-teal-700 to-teal-800 py-10 sm:py-12 lg:py-14 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+          {/* Decorative Background Elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-900/30 rounded-full blur-3xl"></div>
+          
+          <div className="max-w-4xl mx-auto text-center relative z-10">
+            {/* Headline */}
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 sm:mb-4 leading-tight">
+              Help Others Take Control of Their Money
+            </h2>
+            
+            {/* Subtext */}
+            <p className="text-sm sm:text-base lg:text-lg text-teal-50 mb-6 sm:mb-7 leading-relaxed max-w-2xl mx-auto">
+              Share this free budget calculator with friends and family who need to start their financial journey—because everyone deserves financial peace.
+            </p>
+            
+            {/* Share Input and Button */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 max-w-2xl mx-auto">
+              <div className="flex-1 min-w-0">
+                <input
+                  type="text"
+                  readOnly
+                  value={typeof window !== 'undefined' ? window.location.href : ''}
+                  className="w-full px-4 py-3 border-2 border-white/20 rounded-xl bg-white/95 backdrop-blur-sm text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-white focus:border-white shadow-lg"
+                  onClick={(e) => e.currentTarget.select()}
+                />
               </div>
+              <button
+                onClick={copyLinkToClipboard}
+                className="flex items-center justify-center gap-2 bg-[#FF5C41] hover:bg-[#e54a2f] text-white px-6 py-3 rounded-xl font-semibold text-base transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 flex-shrink-0 relative overflow-hidden group"
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+                <svg className="w-5 h-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
+                <span className="relative z-10">{linkCopied ? "Copied!" : "Copy Link"}</span>
+              </button>
             </div>
+            
+            {/* Optional: Small trust message */}
+            <p className="text-xs sm:text-sm text-teal-100 mt-5 sm:mt-6">
+              Join thousands of people building better financial habits with BrightNest
+            </p>
           </div>
         </div>
       </main>
