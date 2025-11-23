@@ -4,67 +4,33 @@ import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 
 export default function CookieBanner() {
-  const [shouldShow, setShouldShow] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
-    // Only run on client side
-    if (typeof window === 'undefined') return;
-    
-    // Don't show on app subdomain
-    if (window.location.hostname.includes('app.')) {
-      console.log('🍪 Cookie banner: Skipping app subdomain');
+    // Only show on marketing site (not app subdomain)
+    if (typeof window !== 'undefined' && window.location.hostname.includes('app.')) {
       return;
     }
 
-    // Check if user has already made a choice
-    const consent = localStorage.getItem('cookie_consent');
-    console.log('🍪 Cookie banner: Consent status:', consent);
-    
-    if (!consent) {
-      console.log('🍪 Cookie banner: No consent found, showing banner in 1 second');
-      // Small delay for better UX
-      const timer = setTimeout(() => {
-        console.log('🍪 Cookie banner: Displaying now');
-        setShouldShow(true);
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    } else {
-      console.log('🍪 Cookie banner: Consent already given, not showing');
-    }
+    // Show banner after 1 second delay
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, []);
 
-  const handleAccept = () => {
-    console.log('🍪 Cookie banner: User accepted');
-    localStorage.setItem('cookie_consent', 'accepted');
-    setShouldShow(false);
+  const handleDismiss = () => {
+    setIsVisible(false);
   };
 
-  const handleDecline = () => {
-    console.log('🍪 Cookie banner: User declined');
-    localStorage.setItem('cookie_consent', 'declined');
-    setShouldShow(false);
-    // Note: Even if declined, affiliate cookies are already set server-side
-    // This is for transparency and user preference tracking
-  };
-
-  const handleClose = () => {
-    console.log('🍪 Cookie banner: User dismissed');
-    // Treat close (X button) as implicit acceptance
-    localStorage.setItem('cookie_consent', 'dismissed');
-    setShouldShow(false);
-  };
-
-  // Don't render anything if shouldn't show
-  if (!shouldShow) return null;
+  if (!isVisible) return null;
 
   return (
     <>
-      {/* Backdrop overlay - non-clickable to prevent accidental dismissal */}
-      <div 
-        className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-[9998] transition-opacity duration-300"
-      />
+      {/* Backdrop overlay */}
+      <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-[9998] transition-opacity duration-300" />
 
       {/* Cookie banner */}
       <div className="fixed bottom-0 left-0 right-0 z-[9999] animate-slide-up">
@@ -122,7 +88,7 @@ export default function CookieBanner() {
 
                 {/* Close button (desktop) */}
                 <button
-                  onClick={handleClose}
+                  onClick={handleDismiss}
                   className="hidden sm:block p-2 text-slate-400 hover:text-slate-600 transition-colors"
                   aria-label="Close"
                 >
@@ -133,14 +99,14 @@ export default function CookieBanner() {
               {/* Action buttons */}
               <div className="flex flex-col sm:flex-row gap-3 mt-6">
                 <button
-                  onClick={handleAccept}
+                  onClick={handleDismiss}
                   className="flex-1 sm:flex-none px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-teal-600/30 hover:shadow-xl hover:shadow-teal-600/40 hover:scale-[1.02]"
                 >
                   Accept All Cookies
                 </button>
                 
                 <button
-                  onClick={handleDecline}
+                  onClick={handleDismiss}
                   className="flex-1 sm:flex-none px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 font-semibold rounded-xl transition-all duration-200 border-2 border-slate-200 hover:border-slate-300"
                 >
                   Decline Non-Essential
@@ -182,4 +148,3 @@ export default function CookieBanner() {
     </>
   );
 }
-
