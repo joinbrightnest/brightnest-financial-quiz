@@ -287,7 +287,7 @@ export default function DebtSnowballCalculatorPage() {
       <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-50 via-white to-slate-50">
         <SiteHeader />
         
-        <main className="flex-1 py-4">
+        <main className="flex-1">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Header Section */}
             <div 
@@ -536,17 +536,17 @@ export default function DebtSnowballCalculatorPage() {
 
               {/* Debt Terms */}
               <div className="border-t border-slate-200 pt-12">
-                <div className="text-center mb-12 animate-fade-in">
+                <div className="text-center mb-12 animate-fade-in max-w-3xl mx-auto">
                   <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
                     Debt <span style={{ color: '#3D6B54' }}>Terms</span>
                   </h2>
                   <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
-                  <p className="text-base sm:text-lg text-slate-700 mb-8 leading-relaxed font-light max-w-2xl mx-auto">
+                  <p className="text-base sm:text-lg text-slate-700 mb-8 leading-relaxed font-light">
                     Debt terminology can be confusing and overly complicated—but it doesn't have to be! Let's break these down in a way you can actually understand.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                   <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
                     <div className="flex items-center gap-3 mb-4">
                       <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
@@ -678,7 +678,7 @@ export default function DebtSnowballCalculatorPage() {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-50 via-white to-slate-50">
       <SiteHeader />
       
-      <main className="flex-1 py-4">
+      <main className="flex-1">
         {/* Full-width Banner with Fine Fade */}
         <div 
           className="relative py-12 sm:py-16 lg:py-20 overflow-hidden"
@@ -698,7 +698,7 @@ export default function DebtSnowballCalculatorPage() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Main Calculator Section - Compact Form */}
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-xl shadow-md border border-slate-200 p-6 sm:p-8 lg:p-10 mb-12">
@@ -953,17 +953,17 @@ export default function DebtSnowballCalculatorPage() {
 
               {/* Debt Terms */}
               <div className="border-t border-slate-200 pt-12">
-                <div className="text-center mb-12 animate-fade-in">
+                <div className="text-center mb-12 animate-fade-in max-w-3xl mx-auto">
                   <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
                     Debt <span style={{ color: '#3D6B54' }}>Terms</span>
                   </h2>
                   <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
-                  <p className="text-base sm:text-lg text-slate-700 mb-8 leading-relaxed font-light max-w-2xl mx-auto">
+                  <p className="text-base sm:text-lg text-slate-700 mb-8 leading-relaxed font-light">
                     Debt terminology can be confusing and overly complicated—but it doesn't have to be! Let's break these down in a way you can actually understand.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                   <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
                     <div className="flex items-center gap-3 mb-4">
                       <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
