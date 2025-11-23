@@ -156,7 +156,9 @@ export async function POST(request: NextRequest) {
     // Check for articles in parallel if requested (optimization)
     let article: any = null;
     if (checkArticles && !isPreload) {
-      operations.push(checkForArticles(questionId, value));
+      // Convert value to string for article checking
+      const answerValue = typeof value === 'string' ? value : JSON.stringify(value);
+      operations.push(checkForArticles(questionId, answerValue));
     }
 
     const results = await Promise.all(operations);
