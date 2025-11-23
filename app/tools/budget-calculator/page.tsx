@@ -693,7 +693,7 @@ export default function BudgetCalculatorPage() {
           <div className="mt-12 sm:mt-16 lg:mt-20" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
             <div className="py-12 sm:py-16 lg:py-20">
               <div className="text-center mb-12 animate-fade-in">
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
                   Get the Most out of the <span style={{ color: '#3D6B54' }}>Budget Calculator</span>
                 </h2>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
@@ -712,7 +712,7 @@ export default function BudgetCalculatorPage() {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-light text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">See if you're overspending.</h3>
+                      <h3 className="text-lg font-bold text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">See if you're overspending.</h3>
                       <p className="text-base text-slate-700 leading-relaxed font-light">
                         Is there a red negative number at the bottom of your budget? Don't freak out. This is just a wake-up call! You can get that number to zero. Just give every dollar a job—giving, saving and spending—without overspending! It's time to make some changes. (Keep reading.)
                       </p>
@@ -729,7 +729,7 @@ export default function BudgetCalculatorPage() {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-light text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">Find ways to cut expenses.</h3>
+                      <h3 className="text-lg font-bold text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">Find ways to cut expenses.</h3>
                       <p className="text-base text-slate-700 leading-relaxed font-light">
                         Once you see you're overspending, you can fix the problem! Start by cutting down your spending. What if you took up meal planning to save on groceries? Get creative and cut the fluff where you can afford to. Then lower some numbers in the calculator based on this kind of planning.
                       </p>
@@ -746,7 +746,7 @@ export default function BudgetCalculatorPage() {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-light text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">Put extra money to work.</h3>
+                      <h3 className="text-lg font-bold text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">Put extra money to work.</h3>
                       <p className="text-base text-slate-700 leading-relaxed font-light">
                         Wait, did you have money left over after typing in all your expenses? Bravo! Time to give those dollars a job—build up your savings or pay off your debt. Whatever your current money goal is, get after it!
                       </p>
@@ -763,7 +763,7 @@ export default function BudgetCalculatorPage() {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-light text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">Make your first budget.</h3>
+                      <h3 className="text-lg font-bold text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">Make your first budget.</h3>
                       <p className="text-base text-slate-700 leading-relaxed font-light">
                         Okay, you worked through your numbers in this budget calculator. Awesome. But don't leave them on the screen. This is just the first step in your beautiful budgeting journey. Take these numbers and start telling your money where to go—one monthly budget at a time.
                       </p>
@@ -777,7 +777,7 @@ export default function BudgetCalculatorPage() {
           {/* Best Practices for the Budget Categories */}
           <div className="mt-12 sm:mt-16 lg:mt-20">
             <div className="text-center mb-12 animate-fade-in">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
                 Best Practices for the <span style={{ color: '#3D6B54' }}>Budget Categories</span>
               </h2>
               <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
@@ -795,7 +795,7 @@ export default function BudgetCalculatorPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Monthly Income</h3>
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Monthly Income</h3>
                 </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
@@ -811,7 +811,7 @@ export default function BudgetCalculatorPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Giving</h3>
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Giving</h3>
                 </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
@@ -827,7 +827,7 @@ export default function BudgetCalculatorPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Savings</h3>
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Savings</h3>
                 </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
@@ -843,7 +843,7 @@ export default function BudgetCalculatorPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Food</h3>
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Food</h3>
                 </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
@@ -859,7 +859,7 @@ export default function BudgetCalculatorPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Utilities</h3>
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Utilities</h3>
                 </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
@@ -875,7 +875,7 @@ export default function BudgetCalculatorPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Housing</h3>
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Housing</h3>
                 </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
@@ -891,7 +891,7 @@ export default function BudgetCalculatorPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Transportation</h3>
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Transportation</h3>
                 </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
@@ -907,7 +907,7 @@ export default function BudgetCalculatorPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Insurance</h3>
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Insurance</h3>
                 </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
@@ -923,7 +923,7 @@ export default function BudgetCalculatorPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Household Items</h3>
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Household Items</h3>
                 </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
@@ -939,7 +939,7 @@ export default function BudgetCalculatorPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Debt</h3>
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Debt</h3>
                 </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
@@ -955,7 +955,7 @@ export default function BudgetCalculatorPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Retirement</h3>
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Retirement</h3>
                 </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
@@ -971,7 +971,7 @@ export default function BudgetCalculatorPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Personal and Entertainment</h3>
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Personal and Entertainment</h3>
                 </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
@@ -987,7 +987,7 @@ export default function BudgetCalculatorPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-light text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Other</h3>
+                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Other</h3>
                 </div>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
                 <p className="text-base text-slate-700 leading-relaxed font-light">
