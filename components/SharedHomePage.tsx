@@ -207,7 +207,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
       </nav>
 
       {/* Hero Section */}
-      <div className="flex flex-col px-4 sm:px-6 lg:px-8 pt-2 sm:pt-3 lg:pt-4 pb-20 sm:pb-20 lg:pb-24 min-h-[calc(100vh-80px)] justify-center" style={{backgroundColor: '#FAF8F4'}}>
+      <div className="flex flex-col px-4 sm:px-6 lg:px-8 pt-2 sm:pt-3 lg:pt-4 pb-8 sm:pb-10 lg:pb-12 min-h-[calc(100vh-80px)] justify-center" style={{backgroundColor: '#FAF8F4'}}>
         <div className="max-w-4xl mx-auto text-center">
           {/* 1️⃣ Microline */}
           <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-2 font-medium">
