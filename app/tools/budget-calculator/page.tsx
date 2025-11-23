@@ -1044,6 +1044,9 @@ export default function BudgetCalculatorPage() {
             </p>
           </div>
         </div>
+
+        {/* Spacer section for visual separation */}
+        <div className="bg-gradient-to-b from-slate-50 to-white py-12 sm:py-16"></div>
       </main>
 
       <SiteFooter />
