@@ -998,20 +998,16 @@ export default function BudgetCalculatorPage() {
           </div>
         </div>
 
-        {/* Share Section - Full Width with Gradient Background */}
-        <div className="w-full bg-gradient-to-br from-teal-600 via-teal-700 to-teal-800 py-10 sm:py-12 lg:py-14 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-          {/* Decorative Background Elements */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-900/30 rounded-full blur-3xl"></div>
-          
-          <div className="max-w-4xl mx-auto text-center relative z-10">
+        {/* Share Section - Clean White Background */}
+        <div className="w-full bg-white py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
             {/* Headline */}
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-3 sm:mb-4 leading-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4 leading-tight">
               Help Others Take Control of Their Money
             </h2>
             
             {/* Subtext */}
-            <p className="text-sm sm:text-base lg:text-lg text-teal-50 mb-6 sm:mb-7 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base lg:text-lg text-slate-600 mb-6 sm:mb-7 leading-relaxed max-w-2xl mx-auto">
               Share this free budget calculator with friends and family who need to start their financial journey—because everyone deserves financial peace.
             </p>
             
@@ -1022,31 +1018,27 @@ export default function BudgetCalculatorPage() {
                   type="text"
                   readOnly
                   value={typeof window !== 'undefined' ? window.location.href : ''}
-                  className="w-full px-4 py-3 border-2 border-white/20 rounded-xl bg-white/95 backdrop-blur-sm text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-white focus:border-white shadow-lg"
+                  className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm"
                   onClick={(e) => e.currentTarget.select()}
                 />
               </div>
               <button
                 onClick={copyLinkToClipboard}
-                className="flex items-center justify-center gap-2 bg-[#FF5C41] hover:bg-[#e54a2f] text-white px-6 py-3 rounded-xl font-semibold text-base transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 flex-shrink-0 relative overflow-hidden group"
+                className="flex items-center justify-center gap-2 bg-[#3D6B54] hover:bg-[#2d5340] text-white px-6 py-3 rounded-xl font-semibold text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 flex-shrink-0"
               >
-                <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
-                <svg className="w-5 h-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                 </svg>
-                <span className="relative z-10">{linkCopied ? "Copied!" : "Copy Link"}</span>
+                <span>{linkCopied ? "Copied!" : "Copy Link"}</span>
               </button>
             </div>
             
-            {/* Optional: Small trust message */}
-            <p className="text-xs sm:text-sm text-teal-100 mt-5 sm:mt-6">
+            {/* Trust message */}
+            <p className="text-xs sm:text-sm text-slate-500 mt-5 sm:mt-6">
               Join thousands of people building better financial habits with BrightNest
             </p>
           </div>
         </div>
-
-        {/* Spacer section for visual separation */}
-        <div className="bg-gradient-to-b from-slate-50 to-white py-12 sm:py-16"></div>
       </main>
 
       <SiteFooter />
