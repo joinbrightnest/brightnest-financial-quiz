@@ -530,7 +530,7 @@ export default function BudgetCalculatorPage() {
                                     opacity={opacity}
                                     className="chart-path cursor-pointer"
                                     style={{ 
-                                      animationDelay: `${index * 0.06}s`
+                                      animationDelay: `${index * 0.03}s`
                                     }}
                                     onMouseEnter={() => setHoveredSegment(item.key)}
                                     onMouseLeave={() => setHoveredSegment(null)}
@@ -555,7 +555,7 @@ export default function BudgetCalculatorPage() {
                                 fill="#e2e8f0"
                                 className="chart-path"
                                 style={{ 
-                                  animationDelay: `${expenseData.length * 0.06}s`
+                                  animationDelay: `${expenseData.length * 0.03}s`
                                 }}
                               />
                             )}

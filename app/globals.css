@@ -174,10 +174,7 @@ html {
 @keyframes chartSegmentLoad {
   0% {
     opacity: 0;
-    filter: brightness(0.7);
-  }
-  60% {
-    opacity: 0.8;
+    filter: brightness(0.8);
   }
   100% {
     opacity: 1;
@@ -188,7 +185,7 @@ html {
 /* Clean loading-style animation that stays within segment boundaries */
 .chart-path {
   opacity: 0;
-  animation: chartSegmentLoad 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: chartSegmentLoad 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 /* Smooth number transitions */
