@@ -66,6 +66,38 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     
+    // Individual Blog Posts - High SEO value
+    {
+      url: `${baseUrl}/blog/why-your-budget-keeps-failing`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/blog/hidden-cost-of-bnpl`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/blog/talk-about-money-with-your-partner`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/blog/three-account-system`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/blog/build-wealth-on-variable-income`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    
     // Tools - High SEO value (free tools attract traffic)
     {
       url: `${baseUrl}/tools/budget-calculator`,
