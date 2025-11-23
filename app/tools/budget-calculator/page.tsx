@@ -343,7 +343,7 @@ export default function BudgetCalculatorPage() {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center animate-fade-in">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-6 leading-tight tracking-tight">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 sm:mb-6 leading-tight tracking-tight">
                 Budget <span style={{ color: '#3D6B54' }}>Calculator</span>
               </h1>
               <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
@@ -357,7 +357,7 @@ export default function BudgetCalculatorPage() {
 
           {/* Calculator Section */}
           <div className="bg-white rounded-xl shadow-md border border-slate-200 p-4 sm:p-6">
-            <h2 className="text-xl sm:text-2xl font-light text-slate-900 mb-3 tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 tracking-tight">
               Budget Calculator
             </h2>
             <p className="text-sm sm:text-base text-slate-700 mb-5 leading-relaxed font-light">
