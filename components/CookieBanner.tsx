@@ -33,14 +33,19 @@ export default function CookieBanner() {
     // This is for transparency and user preference tracking
   };
 
+  const handleClose = () => {
+    // Treat close (X button) as implicit acceptance
+    localStorage.setItem('cookie_consent', 'dismissed');
+    setIsVisible(false);
+  };
+
   if (!isVisible) return null;
 
   return (
     <>
-      {/* Backdrop overlay */}
+      {/* Backdrop overlay - non-clickable to prevent accidental dismissal */}
       <div 
         className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-[9998] transition-opacity duration-300"
-        onClick={() => setIsVisible(false)}
       />
 
       {/* Cookie banner */}
@@ -99,7 +104,7 @@ export default function CookieBanner() {
 
                 {/* Close button (desktop) */}
                 <button
-                  onClick={() => setIsVisible(false)}
+                  onClick={handleClose}
                   className="hidden sm:block p-2 text-slate-400 hover:text-slate-600 transition-colors"
                   aria-label="Close"
                 >
