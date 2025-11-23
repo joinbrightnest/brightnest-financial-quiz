@@ -5,11 +5,15 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const hostname = request.headers.get('host') || ''
   
-  // Determine which domain we're on
-  const isAppDomain = hostname.includes('app.brightnest') || hostname.includes('app.localhost')
-  const isMainDomain = hostname.includes('joinbrightnest.com') || hostname.includes('localhost') && !isAppDomain
+  // Get domains from environment variables
+  const MAIN_DOMAIN = process.env.NEXT_PUBLIC_MAIN_DOMAIN || 'joinbrightnest.com'
+  const APP_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN || 'app.joinbrightnest.com'
   
-  // Routes that should ONLY be on app.brightnest.com
+  // Determine which domain we're on
+  const isAppDomain = hostname.includes(APP_DOMAIN) || hostname.includes('app.localhost')
+  const isMainDomain = (hostname.includes(MAIN_DOMAIN) || hostname.includes('localhost')) && !isAppDomain
+  
+  // Routes that should ONLY be on app subdomain
   const appOnlyRoutes = [
     '/admin',
     '/closers',
@@ -19,7 +23,7 @@ export function middleware(request: NextRequest) {
     '/affiliates/payouts',
   ]
   
-  // Routes that should ONLY be on joinbrightnest.com (marketing)
+  // Routes that should ONLY be on main domain (marketing)
   const marketingOnlyRoutes = [
     '/about',
     '/blog',
@@ -38,14 +42,14 @@ export function middleware(request: NextRequest) {
   if (isMainDomain && shouldBeOnApp) {
     // On main domain but accessing app-only route → redirect to app domain
     const url = new URL(request.url)
-    url.host = hostname.replace('joinbrightnest.com', 'app.brightnest.com').replace('localhost:3000', 'app.localhost:3000')
+    url.host = APP_DOMAIN
     return NextResponse.redirect(url)
   }
   
   if (isAppDomain && shouldBeOnMarketing) {
     // On app domain but accessing marketing-only route → redirect to main domain
     const url = new URL(request.url)
-    url.host = hostname.replace('app.brightnest.com', 'joinbrightnest.com').replace('app.localhost:3000', 'localhost:3000')
+    url.host = MAIN_DOMAIN
     return NextResponse.redirect(url)
   }
   
