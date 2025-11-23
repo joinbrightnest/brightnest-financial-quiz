@@ -358,9 +358,9 @@ export default function BudgetCalculatorPage() {
               Enter your income and the calculator will show the national averages for most budget categories as a starting point. A few of these are recommendations (like giving). Most just reflect average spending (like debt). Don't have debt? Yay! Move that money to your current money goal.
             </p>
 
-            <div className="grid lg:grid-cols-3 gap-3 lg:gap-4">
+            <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
               {/* Left Column - Input Fields */}
-              <div className="space-y-3 order-2 lg:order-1 lg:col-span-1">
+              <div className="space-y-3 order-2 lg:order-1">
                 {/* Income */}
                 <div>
                   <h3 className="text-base font-medium text-slate-900 mb-2">Income</h3>
@@ -444,9 +444,9 @@ export default function BudgetCalculatorPage() {
                 </div>
               </div>
 
-              {/* Center Column - Visual Display */}
-              <div className="flex flex-col items-center justify-start order-1 lg:order-2 mb-6 lg:mb-0 lg:col-span-1">
-                <div className="w-full max-w-md">
+              {/* Right Column - Visual Display & Insights */}
+              <div className="flex flex-col items-center justify-start order-1 lg:order-2 mb-6 lg:mb-0">
+                <div className="w-full">
                   {/* Donut Chart */}
                   <div className="relative w-full aspect-square mb-2 max-w-sm mx-auto">
                     <svg 
@@ -602,17 +602,15 @@ export default function BudgetCalculatorPage() {
                   </div>
 
                   {/* Simple Difference Display */}
-                  <div className="mt-4 text-center">
+                  <div className="mt-4 text-center mb-6">
                     <h3 className="text-sm font-medium text-slate-600 mb-2">Difference</h3>
                     <p className={`text-3xl sm:text-4xl font-bold ${difference >= 0 ? 'text-green-600' : 'text-red-600'} number-transition`}>
                       {difference < 0 && '-'}{formatCurrency(Math.abs(difference))}
                     </p>
                   </div>
-                </div>
-              </div>
 
-              {/* Right Column - Budget Insights */}
-              <div className="order-3 lg:col-span-1 space-y-4">
+                  {/* Budget Insights - Below Chart */}
+                  <div className="w-full max-w-xl mx-auto">
                 {incomeNum > 0 && (
                   <>
                     {difference < 0 ? (
@@ -680,6 +678,8 @@ export default function BudgetCalculatorPage() {
                     )}
                   </>
                 )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
