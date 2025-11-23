@@ -836,7 +836,7 @@ export default function DebtSnowballCalculatorPage() {
 
                   <button
                     onClick={addDebt}
-                    className="w-full inline-flex items-center justify-center gap-2 text-white px-6 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    className="w-full inline-flex items-center justify-center gap-2 text-white px-6 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl mt-4"
                     style={{ backgroundColor: '#3D6B54' }}
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -891,7 +891,7 @@ export default function DebtSnowballCalculatorPage() {
 
               {/* Error Message */}
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 mt-6">
                   <div className="flex items-start gap-3">
                     <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -904,7 +904,7 @@ export default function DebtSnowballCalculatorPage() {
               {/* CTA Button */}
               <button
                 onClick={calculateResults}
-                className="w-full text-white px-8 py-3.5 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl touch-friendly"
+                className="w-full text-white px-8 py-3.5 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl touch-friendly mt-6"
                 style={{ backgroundColor: '#3D6B54' }}
               >
                 Get Your Debt-Free Date
