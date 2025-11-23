@@ -12,19 +12,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     
-    // Main Quiz Pages - Very high priority (main conversion funnel)
-    {
-      url: `${baseUrl}/quiz`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
+    // Book Call Page - High priority conversion page
     {
       url: `${baseUrl}/book-call`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.9,
     },
+    
+    // Note: /quiz is intentionally excluded from sitemap
+    // It's a JavaScript-based interactive app with no static content
+    // Users discover it through homepage and blog CTAs
     
     // About & Info Pages - High priority (SEO value)
     {
