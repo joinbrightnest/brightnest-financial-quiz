@@ -533,20 +533,22 @@ export default function DebtSnowballCalculatorPage() {
                   But when you use the debt snowball, you get quick wins sooner. Crush the first debt fast. Boom. On to the next. Now, you're cooking. Suddenly, you start believing that getting out of debt is within reach. Motivation is the key to becoming debt-free, not math.
                 </p>
               </div>
+          </div>
 
-              {/* Debt Terms */}
-              <div className="border-t border-slate-200 pt-12">
-                <div className="text-center mb-12 animate-fade-in max-w-3xl mx-auto">
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
-                    Debt <span style={{ color: '#3D6B54' }}>Terms</span>
-                  </h2>
-                  <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
-                  <p className="text-base sm:text-lg text-slate-700 mb-8 leading-relaxed font-light">
-                    Debt terminology can be confusing and overly complicated—but it doesn't have to be! Let's break these down in a way you can actually understand.
-                  </p>
-                </div>
+          {/* Debt Terms - Wider Section */}
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-12 animate-fade-in max-w-3xl mx-auto">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  Debt <span style={{ color: '#3D6B54' }}>Terms</span>
+                </h2>
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
+                <p className="text-base sm:text-lg text-slate-700 mb-8 leading-relaxed font-light">
+                  Debt terminology can be confusing and overly complicated—but it doesn't have to be! Let's break these down in a way you can actually understand.
+                </p>
+              </div>
 
-                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                   <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
                     <div className="flex items-center gap-3 mb-4">
                       <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
@@ -950,20 +952,22 @@ export default function DebtSnowballCalculatorPage() {
                   But when you use the debt snowball, you get quick wins sooner. Crush the first debt fast. Boom. On to the next. Now, you're cooking. Suddenly, you start believing that getting out of debt is within reach. Motivation is the key to becoming debt-free, not math.
                 </p>
               </div>
+          </div>
 
-              {/* Debt Terms */}
-              <div className="border-t border-slate-200 pt-12">
-                <div className="text-center mb-12 animate-fade-in max-w-3xl mx-auto">
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
-                    Debt <span style={{ color: '#3D6B54' }}>Terms</span>
-                  </h2>
-                  <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
-                  <p className="text-base sm:text-lg text-slate-700 mb-8 leading-relaxed font-light">
-                    Debt terminology can be confusing and overly complicated—but it doesn't have to be! Let's break these down in a way you can actually understand.
-                  </p>
-                </div>
+          {/* Debt Terms - Wider Section */}
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-12 animate-fade-in max-w-3xl mx-auto">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                  Debt <span style={{ color: '#3D6B54' }}>Terms</span>
+                </h2>
+                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
+                <p className="text-base sm:text-lg text-slate-700 mb-8 leading-relaxed font-light">
+                  Debt terminology can be confusing and overly complicated—but it doesn't have to be! Let's break these down in a way you can actually understand.
+                </p>
+              </div>
 
-                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                   <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
                     <div className="flex items-center gap-3 mb-4">
                       <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
@@ -1055,34 +1059,35 @@ export default function DebtSnowballCalculatorPage() {
                   </div>
                 </div>
               </div>
+            </div>
           </div>
 
           {/* Share Section - Narrow, Centered */}
-          <div className="mt-12 sm:mt-16 lg:mt-20">
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
             <div className="max-w-2xl mx-auto">
-                <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 text-center tracking-tight">Share the Debt Snowball Calculator</h2>
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 min-w-0">
-                    <input
-                      type="text"
-                      readOnly
-                      value={typeof window !== 'undefined' ? window.location.href : ''}
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    />
-                  </div>
-                  <button
-                    onClick={copyLinkToClipboard}
-                    className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl flex-shrink-0"
-                    style={{ backgroundColor: '#3D6B54' }}
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                    </svg>
-                    {linkCopied ? "Copied!" : "Copy"}
-                  </button>
+              <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6 text-center tracking-tight">Share the Debt Snowball Calculator</h2>
+              <div className="flex items-center gap-3">
+                <div className="flex-1 min-w-0">
+                  <input
+                    type="text"
+                    readOnly
+                    value={typeof window !== 'undefined' ? window.location.href : ''}
+                    className="w-full px-4 py-3 border border-slate-300 rounded-lg bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                  />
                 </div>
+                <button
+                  onClick={copyLinkToClipboard}
+                  className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl flex-shrink-0"
+                  style={{ backgroundColor: '#3D6B54' }}
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
+                  {linkCopied ? "Copied!" : "Copy"}
+                </button>
               </div>
             </div>
+          </div>
           </div>
       </main>
 
