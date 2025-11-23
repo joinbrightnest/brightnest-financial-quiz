@@ -723,17 +723,21 @@ export default function DebtSnowballCalculatorPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          {/* Main Calculator Section - Compact Form */}
-          <div className="max-w-3xl mx-auto">
+          {/* Main Calculator Section - Horizontal Layout */}
+          <div className="max-w-6xl mx-auto">
             <div className="bg-white rounded-xl shadow-md border border-slate-200 p-6 sm:p-8 lg:p-10 mb-12">
-              {/* Your Debts Section */}
-              <div className="mb-6">
-                <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-4 tracking-tight">Your Debts</h2>
-                <p className="text-base sm:text-lg text-slate-700 mb-6 leading-relaxed font-light">
-                  Start by listing out your <strong className="font-light">non-mortgage</strong> debts.
-                </p>
+              
+              {/* Grid Layout: Left = Debts, Right = Income & Payment */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                {/* Left Column - Your Debts (2/3 width) */}
+                <div className="lg:col-span-2">
+                  <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-4 tracking-tight">Your Debts</h2>
+                  <p className="text-base sm:text-lg text-slate-700 mb-6 leading-relaxed font-light">
+                    Start by listing out your <strong className="font-light">non-mortgage</strong> debts.
+                  </p>
 
-                {debts.map((debt, index) => (
+                  {debts.map((debt, index) => (
                   <div key={debt.id} className="mb-4">
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-base font-bold text-teal-600">Debt {index + 1}</span>
@@ -830,53 +834,58 @@ export default function DebtSnowballCalculatorPage() {
                   </div>
                 ))}
 
-                <button
-                  onClick={addDebt}
-                  className="w-full inline-flex items-center justify-center gap-2 text-white px-6 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl mb-6"
-                  style={{ backgroundColor: '#3D6B54' }}
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                  </svg>
-                  Add Debt
-                </button>
-              </div>
-
-              {/* Household Income Section */}
-              <div className="mb-6 border-t border-slate-200 pt-6">
-                <h2 className="text-lg font-light text-slate-900 mb-3">Your Household Income</h2>
-                <p className="text-base text-slate-700 mb-4 leading-relaxed font-light">
-                  This includes <strong className="font-light">any income</strong> you make each month after taxes (your paycheck, your side hustle—it all counts).
-                </p>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={income}
-                    onChange={(e) => setIncome(e.target.value)}
-                    placeholder="0"
-                    step="0.01"
-                    className="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900 touch-friendly"
-                  />
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
+                  <button
+                    onClick={addDebt}
+                    className="w-full inline-flex items-center justify-center gap-2 text-white px-6 py-3 rounded-lg font-light text-base hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    style={{ backgroundColor: '#3D6B54' }}
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Debt
+                  </button>
                 </div>
-              </div>
 
-              {/* Additional Payment Section */}
-              <div className="mb-6 border-t border-slate-200 pt-6">
-                <h2 className="text-lg font-light text-slate-900 mb-3">Additional Payment</h2>
-                <p className="text-base text-slate-700 mb-4 leading-relaxed font-light">
-                  Next, to snowball your debt, enter the <strong className="font-light">additional amount</strong> you want to pay above the minimum required payment.
-                </p>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={extraPayment}
-                    onChange={(e) => setExtraPayment(e.target.value)}
-                    placeholder="0"
-                    step="0.01"
-                    className="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900 touch-friendly"
-                  />
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
+                {/* Right Column - Income & Payment (1/3 width) */}
+                <div className="lg:col-span-1 space-y-6">
+                  
+                  {/* Household Income Section */}
+                  <div className="bg-slate-50 rounded-lg p-5 border border-slate-200">
+                    <h2 className="text-lg font-semibold text-slate-900 mb-3">Your Household Income</h2>
+                    <p className="text-sm text-slate-600 mb-4 leading-relaxed">
+                      This includes <strong>any income</strong> you make each month after taxes (your paycheck, your side hustle—it all counts).
+                    </p>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={income}
+                        onChange={(e) => setIncome(e.target.value)}
+                        placeholder="0"
+                        step="0.01"
+                        className="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900 touch-friendly bg-white"
+                      />
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
+                    </div>
+                  </div>
+
+                  {/* Additional Payment Section */}
+                  <div className="bg-slate-50 rounded-lg p-5 border border-slate-200">
+                    <h2 className="text-lg font-semibold text-slate-900 mb-3">Additional Payment</h2>
+                    <p className="text-sm text-slate-600 mb-4 leading-relaxed">
+                      Next, to snowball your debt, enter the <strong>additional amount</strong> you want to pay above the minimum required payment.
+                    </p>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={extraPayment}
+                        onChange={(e) => setExtraPayment(e.target.value)}
+                        placeholder="0"
+                        step="0.01"
+                        className="w-full pl-8 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900 touch-friendly bg-white"
+                      />
+                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500">$</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
