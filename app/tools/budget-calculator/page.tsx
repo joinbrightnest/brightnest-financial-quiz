@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 
@@ -294,24 +294,34 @@ export default function BudgetCalculatorPage() {
     }).format(value);
   };
 
-  const totalExpenses = calculateTotalExpenses();
-  const difference = calculateDifference();
-  const incomeNum = parseFloat(income) || 0;
+  // Memoize expensive calculations to prevent unnecessary re-renders
+  const totalExpenses = useMemo(() => calculateTotalExpenses(), [expenses]);
+  const incomeNum = useMemo(() => parseFloat(income) || 0, [income]);
+  const difference = useMemo(() => incomeNum - totalExpenses, [incomeNum, totalExpenses]);
 
   // Calculate percentage for donut chart
-  const expensesPercentage = incomeNum > 0 ? (totalExpenses / incomeNum) * 100 : 0;
-  const remainingPercentage = incomeNum > 0 ? (Math.max(0, difference) / incomeNum) * 100 : 0;
+  const expensesPercentage = useMemo(() => 
+    incomeNum > 0 ? (totalExpenses / incomeNum) * 100 : 0,
+    [incomeNum, totalExpenses]
+  );
+  const remainingPercentage = useMemo(() => 
+    incomeNum > 0 ? (Math.max(0, difference) / incomeNum) * 100 : 0,
+    [incomeNum, difference]
+  );
 
-  // Get expense categories with values for the chart
-  const expenseData = Object.entries(expenses)
-    .filter(([_, value]) => parseFloat(value) > 0)
-    .map(([key, value]) => ({
-      key: key as keyof typeof CATEGORY_COLORS,
-      label: CATEGORY_LABELS[key as keyof typeof CATEGORY_LABELS],
-      value: parseFloat(value),
-      color: CATEGORY_COLORS[key as keyof typeof CATEGORY_COLORS]
-    }))
-    .sort((a, b) => b.value - a.value);
+  // Get expense categories with values for the chart - memoized for smooth animations
+  const expenseData = useMemo(() => 
+    Object.entries(expenses)
+      .filter(([_, value]) => parseFloat(value) > 0)
+      .map(([key, value]) => ({
+        key: key as keyof typeof CATEGORY_COLORS,
+        label: CATEGORY_LABELS[key as keyof typeof CATEGORY_LABELS],
+        value: parseFloat(value),
+        color: CATEGORY_COLORS[key as keyof typeof CATEGORY_COLORS]
+      }))
+      .sort((a, b) => b.value - a.value),
+    [expenses]
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-50 via-white to-slate-50">
@@ -515,7 +525,10 @@ export default function BudgetCalculatorPage() {
                                     d={createArc(startAngle, endAngle, radius, innerRadius)}
                                     fill={item.color}
                                     opacity={opacity}
-                                    className="transition-all duration-300 cursor-pointer"
+                                    className="chart-path cursor-pointer"
+                                    style={{ 
+                                      transition: 'opacity 0.2s ease-out, fill 0.2s ease-out'
+                                    }}
                                     onMouseEnter={() => setHoveredSegment(item.key)}
                                     onMouseLeave={() => setHoveredSegment(null)}
                                   />
@@ -546,23 +559,26 @@ export default function BudgetCalculatorPage() {
                     {/* Center Display - Animated on Hover */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                       {hoveredSegment && expenseData.find(item => item.key === hoveredSegment) ? (
-                        <div className="animate-slide-up text-center">
+                        <div className="animate-fadeInScale text-center">
                           {(() => {
                             const hoveredItem = expenseData.find(item => item.key === hoveredSegment)!;
                             const percentage = totalExpenses > 0 ? (hoveredItem.value / totalExpenses) * 100 : 0;
                             return (
                               <>
                                 <div 
-                                  className="w-3.5 h-3.5 rounded-full mb-2.5 mx-auto transition-all duration-300 shadow-sm"
-                                  style={{ backgroundColor: hoveredItem.color }}
+                                  className="w-3.5 h-3.5 rounded-full mb-2.5 mx-auto shadow-sm"
+                                  style={{ 
+                                    backgroundColor: hoveredItem.color,
+                                    transition: 'background-color 0.2s ease-out'
+                                  }}
                                 />
-                                <p className="text-xs sm:text-sm font-semibold text-slate-800 mb-1.5 transition-all duration-300 tracking-wide">
+                                <p className="text-xs sm:text-sm font-semibold text-slate-800 mb-1.5 tracking-wide">
                                   {hoveredItem.label}
                                 </p>
-                                <p className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1 transition-all duration-300 tracking-tight">
+                                <p className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1 tracking-tight">
                                   {formatCurrency(hoveredItem.value)}
                                 </p>
-                                <p className="text-xs font-medium text-slate-500 transition-all duration-300">
+                                <p className="text-xs font-medium text-slate-500">
                                   {percentage.toFixed(1)}%
                                 </p>
                               </>
@@ -570,9 +586,9 @@ export default function BudgetCalculatorPage() {
                           })()}
                         </div>
                       ) : (
-                        <div className="transform transition-all duration-200 ease-out text-center">
+                        <div className="text-center">
                           <p className="text-xs sm:text-sm text-slate-600 font-semibold mb-1.5 tracking-wide">Total Expenses</p>
-                          <p className="text-3xl sm:text-4xl font-bold text-slate-900 mt-0.5 tracking-tight">{formatCurrency(totalExpenses)}</p>
+                          <p className="text-3xl sm:text-4xl font-bold text-slate-900 mt-0.5 tracking-tight number-transition">{formatCurrency(totalExpenses)}</p>
                         </div>
                       )}
                     </div>
@@ -581,23 +597,29 @@ export default function BudgetCalculatorPage() {
                   {/* Summary Cards - Professional Layout */}
                   <div className="mt-6 space-y-4">
                     {/* Difference Card - Full Width, Prominent */}
-                    <div className={`rounded-xl p-5 border-2 shadow-sm transition-all duration-300 ${
+                    <div className={`rounded-xl p-5 border-2 shadow-sm ${
                       difference >= 0 
                         ? 'bg-green-50 border-green-200' 
                         : 'bg-red-50 border-red-200'
-                    }`}>
+                    }`}
+                    style={{
+                      transition: 'background-color 0.3s ease-out, border-color 0.3s ease-out'
+                    }}>
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <h3 className="text-sm font-semibold text-slate-700 mb-1 tracking-wide">
                             {difference >= 0 ? 'Remaining Budget' : 'Over Budget'}
                           </h3>
-                          <p className={`text-4xl sm:text-5xl font-bold ${difference >= 0 ? 'text-green-700' : 'text-red-700'} tracking-tight`}>
+                          <p className={`text-4xl sm:text-5xl font-bold ${difference >= 0 ? 'text-green-700' : 'text-red-700'} tracking-tight number-transition`}>
                             {formatCurrency(Math.abs(difference))}
                           </p>
                         </div>
                         <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
                           difference >= 0 ? 'bg-green-100' : 'bg-red-100'
-                        }`}>
+                        }`}
+                        style={{
+                          transition: 'background-color 0.3s ease-out'
+                        }}>
                           {difference >= 0 ? (
                             <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -611,25 +633,31 @@ export default function BudgetCalculatorPage() {
                       </div>
                     </div>
 
-                    {/* Expense Breakdown - Horizontal Layout, Full Width */}
+                    {/* Expense Breakdown - Compact Grid Layout */}
                     {expenseData.length > 0 && (
-                      <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm w-full">
-                        <h3 className="text-base font-semibold text-slate-900 mb-4 tracking-wide">Expense Breakdown</h3>
-                        <div className="flex flex-wrap gap-3 w-full">
+                      <div className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-4 border border-slate-200 shadow-sm w-full">
+                        <h3 className="text-sm font-semibold text-slate-900 mb-3 tracking-wide">Expense Breakdown</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full">
                           {expenseData.map((item) => {
                             const percentage = totalExpenses > 0 ? (item.value / totalExpenses) * 100 : 0;
                             return (
-                              <div key={item.key} className="flex items-center gap-2 p-3 rounded-lg hover:bg-slate-50 transition-colors border border-slate-200 min-w-0 flex-shrink-0">
-                                <div 
-                                  className="w-3 h-3 rounded-full flex-shrink-0 shadow-sm" 
-                                  style={{ backgroundColor: item.color }}
-                                />
-                                <div className="flex flex-col min-w-0">
-                                  <span className="text-xs font-medium text-slate-700 whitespace-nowrap">{item.label}</span>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-sm font-bold text-slate-900">{formatCurrency(item.value)}</span>
-                                    <span className="text-xs text-slate-500">({percentage.toFixed(1)}%)</span>
-                                  </div>
+                              <div 
+                                key={item.key} 
+                                className="flex items-center justify-between gap-3 p-2.5 rounded-lg hover:bg-white transition-all duration-200 border border-slate-100 hover:border-slate-200 hover:shadow-sm"
+                                style={{
+                                  transition: 'all 0.2s ease-out'
+                                }}
+                              >
+                                <div className="flex items-center gap-2 min-w-0 flex-1">
+                                  <div 
+                                    className="w-2.5 h-2.5 rounded-full flex-shrink-0" 
+                                    style={{ backgroundColor: item.color }}
+                                  />
+                                  <span className="text-xs font-medium text-slate-700 truncate">{item.label}</span>
+                                </div>
+                                <div className="flex items-center gap-1.5 flex-shrink-0">
+                                  <span className="text-sm font-bold text-slate-900">{formatCurrency(item.value)}</span>
+                                  <span className="text-xs text-slate-500">({percentage.toFixed(0)}%)</span>
                                 </div>
                               </div>
                             );
