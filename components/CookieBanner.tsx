@@ -1,21 +1,41 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 
 export default function CookieBanner() {
-  const [isHidden, setIsHidden] = useState(false);
+  const [isHidden, setIsHidden] = useState(true); // Start hidden
+  const [isDismissed, setIsDismissed] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+
+  useEffect(() => {
+    // Check if user already dismissed it permanently
+    const dismissed = localStorage.getItem('cookie_banner_accepted');
+    if (!dismissed) {
+      // Show banner after a tiny delay for smooth animation
+      setTimeout(() => setIsHidden(false), 100);
+    } else {
+      setIsDismissed(true);
+    }
+  }, []);
 
   const handleDismiss = () => {
     setIsHidden(true);
+    // Remember forever
+    localStorage.setItem('cookie_banner_accepted', 'true');
+    // Remove from DOM after animation completes
+    setTimeout(() => setIsDismissed(true), 400);
   };
 
-  // Simple: if hidden, don't render
-  if (isHidden) return null;
+  // Don't render at all if permanently dismissed
+  if (isDismissed) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50">
+    <div 
+      className={`fixed bottom-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
+        isHidden ? 'translate-y-full opacity-0' : 'translate-y-0 opacity-100'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 sm:pb-6">
         <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
           {/* Main content */}
