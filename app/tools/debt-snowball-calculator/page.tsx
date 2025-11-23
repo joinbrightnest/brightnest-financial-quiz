@@ -1088,7 +1088,6 @@ export default function DebtSnowballCalculatorPage() {
               </div>
             </div>
           </div>
-          </div>
       </main>
 
       <SiteFooter />
