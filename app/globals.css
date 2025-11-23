@@ -172,21 +172,30 @@ html {
 
 /* Smooth chart animations for Budget Calculator */
 @keyframes chartSegmentGrow {
-  from {
+  0% {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.7);
   }
-  to {
+  50% {
+    opacity: 0.8;
+  }
+  100% {
     opacity: 1;
     transform: scale(1);
   }
 }
 
-/* Smooth path transitions */
+/* Smooth path transitions with elegant grow animation */
 .chart-path {
-  transition: d 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
-              opacity 0.3s ease-out,
-              fill 0.2s ease-out;
+  opacity: 0;
+  transform-origin: center;
+  animation: chartSegmentGrow 0.6s cubic-bezier(0.34, 1.15, 0.64, 1) forwards;
+  transition: opacity 0.2s ease-out, fill 0.2s ease-out;
+}
+
+/* Prevent animation on hover */
+.chart-path:hover {
+  animation: none;
 }
 
 /* Smooth number transitions */

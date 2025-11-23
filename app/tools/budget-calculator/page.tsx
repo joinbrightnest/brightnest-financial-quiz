@@ -449,7 +449,10 @@ export default function BudgetCalculatorPage() {
                 <div className="w-full max-w-lg">
                   {/* Donut Chart */}
                   <div className="relative w-full aspect-square mb-4 max-w-lg mx-auto">
-                    <svg className="w-full h-full" viewBox="0 0 200 200">
+                    <svg 
+                      className="w-full h-full" 
+                      viewBox="0 0 200 200"
+                    >
                       {/* Helper function to convert angle to cartesian coordinates */}
                       {(() => {
                         const centerX = 100;
@@ -520,14 +523,15 @@ export default function BudgetCalculatorPage() {
                               if (segmentAngle < 0.1) return null;
                               
                               return (
-                                <g key={`${item.key}-${index}`}>
+                                <g key={`${item.key}-${item.value}-${index}`}>
                                   <path
                                     d={createArc(startAngle, endAngle, radius, innerRadius)}
                                     fill={item.color}
                                     opacity={opacity}
                                     className="chart-path cursor-pointer"
                                     style={{ 
-                                      transition: 'opacity 0.2s ease-out, fill 0.2s ease-out'
+                                      animationDelay: `${index * 0.05}s`,
+                                      transformOrigin: '100px 100px'
                                     }}
                                     onMouseEnter={() => setHoveredSegment(item.key)}
                                     onMouseLeave={() => setHoveredSegment(null)}
@@ -547,9 +551,14 @@ export default function BudgetCalculatorPage() {
                             {/* Remaining segment (if difference > 0 and there's remaining space) */}
                             {difference > 0 && totalExpenseAngle < 360 && (
                               <path
+                                key={`remaining-${difference}`}
                                 d={createArc(totalExpenseAngle, 360, radius, innerRadius)}
                                 fill="#e2e8f0"
-                                className="transition-all duration-300"
+                                className="chart-path"
+                                style={{ 
+                                  animationDelay: `${expenseData.length * 0.05}s`,
+                                  transformOrigin: '100px 100px'
+                                }}
                               />
                             )}
                           </>
