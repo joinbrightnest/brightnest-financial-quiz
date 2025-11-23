@@ -2,64 +2,76 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const url = request.nextUrl.clone()
+  const { pathname } = request.nextUrl
+  const hostname = request.headers.get('host') || ''
   
-  // Handle affiliate quiz redirects
-  const affiliateQuizMatch = url.pathname.match(/^\/([^\/]+)\/quiz\/([^\/]+)$/)
+  // Determine which domain we're on
+  const isAppDomain = hostname.includes('app.brightnest') || hostname.includes('app.localhost')
+  const isMainDomain = hostname.includes('joinbrightnest.com') || hostname.includes('localhost') && !isAppDomain
   
-  if (affiliateQuizMatch) {
-    const [, affiliateCode, quizType] = affiliateQuizMatch
-    
-    // Redirect to quiz with affiliate parameter
-    // Note: Affiliate tracking is handled by the page-level validateAndTrackAffiliate function
-    // to avoid duplicate clicks from middleware + page tracking
-    url.pathname = `/quiz/${quizType}`
-    url.searchParams.set('affiliate', affiliateCode)
-    
+  // Routes that should ONLY be on app.brightnest.com
+  const appOnlyRoutes = [
+    '/admin',
+    '/closers',
+    '/affiliates/dashboard',
+    '/affiliates/profile',
+    '/affiliates/links',
+    '/affiliates/payouts',
+  ]
+  
+  // Routes that should ONLY be on joinbrightnest.com (marketing)
+  const marketingOnlyRoutes = [
+    '/about',
+    '/blog',
+    '/faq',
+    '/tools',
+    '/partners',
+  ]
+  
+  // Check if current path should be on app domain
+  const shouldBeOnApp = appOnlyRoutes.some(route => pathname.startsWith(route))
+  
+  // Check if current path should be on marketing domain
+  const shouldBeOnMarketing = marketingOnlyRoutes.some(route => pathname.startsWith(route))
+  
+  // Redirect logic
+  if (isMainDomain && shouldBeOnApp) {
+    // On main domain but accessing app-only route → redirect to app domain
+    const url = new URL(request.url)
+    url.host = hostname.replace('joinbrightnest.com', 'app.brightnest.com').replace('localhost:3000', 'app.localhost:3000')
     return NextResponse.redirect(url)
   }
   
-  // 🛡️ SECURITY: Add CORS and security headers
-  const response = NextResponse.next()
-  
-  // CORS headers
-  const origin = request.headers.get('origin')
-  const allowedOrigins = [
-    'https://joinbrightnest.com',
-    'https://www.joinbrightnest.com',
-    process.env.NEXT_PUBLIC_SITE_URL,
-    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
-  ].filter(Boolean)
-  
-  if (origin && allowedOrigins.includes(origin)) {
-    response.headers.set('Access-Control-Allow-Origin', origin)
-    response.headers.set('Access-Control-Allow-Credentials', 'true')
-    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  if (isAppDomain && shouldBeOnMarketing) {
+    // On app domain but accessing marketing-only route → redirect to main domain
+    const url = new URL(request.url)
+    url.host = hostname.replace('app.brightnest.com', 'joinbrightnest.com').replace('app.localhost:3000', 'localhost:3000')
+    return NextResponse.redirect(url)
   }
   
-  // Security headers
-  // Allow Calendly iframes for booking functionality
-  // Use SAMEORIGIN instead of DENY to allow Calendly embeds
-  response.headers.set('X-Frame-Options', 'SAMEORIGIN')
-  response.headers.set('X-Content-Type-Options', 'nosniff')
-  response.headers.set('X-XSS-Protection', '1; mode=block')
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-  // Allow Calendly domain for iframes (needed for booking widget)
-  response.headers.set(
-    'Content-Security-Policy',
-    "frame-ancestors 'self' https://calendly.com https://*.calendly.com"
-  )
-  response.headers.set(
-    'Permissions-Policy',
-    'camera=(), microphone=(), geolocation=()'
-  )
+  // Redirect homepage based on domain
+  if (pathname === '/') {
+    if (isAppDomain) {
+      // App domain homepage → redirect to admin dashboard
+      return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+    }
+    // Main domain homepage → stay on homepage (marketing site)
+  }
   
-  return response
+  // Allow the request to continue
+  return NextResponse.next()
 }
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    /*
+     * Match all request paths except:
+     * - api routes (handled separately)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public files (public folder)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
   ],
 }

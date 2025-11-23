@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateAdminToken } from "@/lib/admin-auth-server";
 import { rateLimit, rateLimitExceededResponse } from "@/lib/rate-limit";
+import { setCrossDomainCookie } from "@/lib/session";
 
 export async function POST(request: NextRequest) {
   // 🛡️ SECURITY: Rate limit authentication attempts (5 per 15 minutes)
@@ -31,11 +32,9 @@ export async function POST(request: NextRequest) {
         token // Return token to client
       });
       
-      // Also set as httpOnly cookie for browser-based requests
-      response.cookies.set("admin_token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+      // Set as httpOnly cookie with cross-domain support
+      // This allows the admin session to work across joinbrightnest.com and app.brightnest.com
+      setCrossDomainCookie(response, "admin_token", token, {
         maxAge: 60 * 60 * 24 // 24 hours
       });
       
