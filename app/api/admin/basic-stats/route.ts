@@ -3,6 +3,20 @@ import { calculateTotalLeads, calculateLeadsByCode, calculateLeads } from "@/lib
 import { getLeadStatuses } from "@/lib/lead-status";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
 import { prisma } from "@/lib/prisma";
+import { Redis } from '@upstash/redis';
+
+// Initialize Redis client for caching (optional)
+let redis: Redis | null = null;
+try {
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    redis = Redis.fromEnv();
+    console.log('✅ Redis caching enabled for admin stats');
+  } else {
+    console.log('ℹ️ Redis not configured - stats will not be cached');
+  }
+} catch (error) {
+  console.warn('⚠️ Failed to initialize Redis for caching:', error);
+}
 
 export async function DELETE(request: NextRequest) {
   // 🔒 SECURITY: Require admin authentication
@@ -123,6 +137,27 @@ export async function GET(request: NextRequest) {
   const quizType = quizTypeParam && quizTypeParam !== 'all' ? quizTypeParam : null;
   const duration = searchParams.get('duration') || 'all';
   const affiliateCode = searchParams.get('affiliateCode') || null;
+  
+  // 🚀 PERFORMANCE: Check cache first (5 minute TTL)
+  const cacheKey = `admin:stats:${quizType || 'all'}:${duration}:${affiliateCode || 'all'}`;
+  
+  if (redis) {
+    try {
+      const cached = await redis.get(cacheKey);
+      if (cached) {
+        console.log('✅ Returning cached stats for:', cacheKey);
+        return NextResponse.json(cached, {
+          headers: {
+            'X-Cache': 'HIT',
+            'Cache-Control': 'private, max-age=300', // 5 minutes
+          }
+        });
+      }
+    } catch (error) {
+      console.warn('Cache read failed (non-critical):', error);
+      // Continue with normal flow if cache fails
+    }
+  }
   
   try {
     // Build date filter based on duration parameter
@@ -305,31 +340,37 @@ export async function GET(request: NextRequest) {
           customLink: a.customLink 
         })));
 
-        // Create a map of affiliate codes to names
+        // 🚀 PERFORMANCE: Build lookup maps instead of repeated finds (O(n) instead of O(n²))
         affiliateMap = {};
         
-        // Check each affiliate code against all possible matches
+        // Create maps for O(1) lookups
+        const referralCodeMap = new Map(
+          allAffiliates.map(a => [a.referralCode, a.name])
+        );
+        const customLinkMap = new Map(
+          allAffiliates.map(a => [a.customLink?.replace(/^\//, ''), a.name])
+        );
+        
+        // Map affiliate codes to names using maps (O(n) instead of O(n²))
         affiliateCodes.forEach(code => {
           // Try exact referral code match
-          const exactMatch = allAffiliates.find(affiliate => 
-            affiliate.referralCode === code
-          );
-          
-          if (exactMatch) {
-            affiliateMap[code] = exactMatch.name;
-            console.log(`✅ Found exact match: ${code} -> ${exactMatch.name}`);
+          if (referralCodeMap.has(code)) {
+            affiliateMap[code] = referralCodeMap.get(code)!;
+            console.log(`✅ Found exact match: ${code} -> ${affiliateMap[code]}`);
             return;
           }
           
-          // Try custom tracking link match (remove leading slash)
-          const customMatch = allAffiliates.find(affiliate => 
-            affiliate.customLink === `/${code}` || 
-            affiliate.customLink === code
-          );
+          // Try custom tracking link match (with and without leading slash)
+          const cleanCode = code.replace(/^\//, '');
+          if (customLinkMap.has(cleanCode)) {
+            affiliateMap[code] = customLinkMap.get(cleanCode)!;
+            console.log(`✅ Found custom link match: ${code} -> ${affiliateMap[code]}`);
+            return;
+          }
           
-          if (customMatch) {
-            affiliateMap[code] = customMatch.name;
-            console.log(`✅ Found custom link match: ${code} -> ${customMatch.name}`);
+          if (customLinkMap.has(`/${code}`)) {
+            affiliateMap[code] = customLinkMap.get(`/${code}`)!;
+            console.log(`✅ Found custom link match: ${code} -> ${affiliateMap[code]}`);
             return;
           }
           
@@ -1074,7 +1115,7 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    return NextResponse.json({
+    const stats = {
       totalSessions,
       completedSessions: completedSessionsCount, // All completed sessions (status="completed")
       completionRate: Math.round(completionRate * 100) / 100,
@@ -1092,6 +1133,24 @@ export async function GET(request: NextRequest) {
       averageTimeMs,
       topDropOffQuestions: questionsWithDrops,
       quizTypes: formattedQuizTypes,
+    };
+    
+    // 🚀 PERFORMANCE: Cache result for 5 minutes (300 seconds)
+    if (redis) {
+      try {
+        await redis.setex(cacheKey, 300, stats);
+        console.log('✅ Stats cached successfully for:', cacheKey);
+      } catch (error) {
+        console.warn('Cache write failed (non-critical):', error);
+        // Continue even if caching fails
+      }
+    }
+    
+    return NextResponse.json(stats, {
+      headers: {
+        'X-Cache': 'MISS',
+        'Cache-Control': 'private, max-age=300', // 5 minutes
+      }
     });
   } catch (error) {
     console.error("Error fetching admin stats:", error);

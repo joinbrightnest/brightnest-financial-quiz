@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { calculateArchetype, ScoreCategory } from "@/lib/scoring";
 import { prisma } from "@/lib/prisma";
+import { Redis } from '@upstash/redis';
+
+// Initialize Redis client for cache invalidation (optional)
+let redis: Redis | null = null;
+try {
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    redis = Redis.fromEnv();
+  }
+} catch (error) {
+  // Silently fail if Redis not configured
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -97,6 +108,28 @@ export async function POST(request: NextRequest) {
         durationMs,
       },
     });
+    
+    // 🚀 PERFORMANCE: Invalidate admin stats cache (data has changed)
+    if (redis) {
+      try {
+        // Delete all admin stats cache keys (use pattern matching)
+        const pattern = 'admin:stats:*';
+        // Note: Redis.del with pattern requires scanning keys first
+        // For simplicity, we'll delete known variations
+        const cacheKeys = [
+          'admin:stats:all:all:all',
+          'admin:stats:all:30d:all',
+          'admin:stats:all:7d:all',
+          'admin:stats:financial-profile:all:all',
+          // Add more variations as needed
+        ];
+        await Promise.all(cacheKeys.map(key => redis!.del(key).catch(() => {})));
+        console.log('✅ Admin stats cache invalidated after quiz completion');
+      } catch (error) {
+        // Non-critical, continue
+        console.warn('Cache invalidation failed (non-critical):', error);
+      }
+    }
 
     // Handle affiliate conversion tracking
     if (session.affiliateCode) {

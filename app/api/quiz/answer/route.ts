@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { rateLimit, rateLimitExceededResponse } from "@/lib/rate-limit";
+import { quizAnswerSchema, validateRequest } from "@/lib/validation";
 
 // Helper function to check for articles (optimized)
 async function checkForArticles(questionId: string, answerValue: string) {
@@ -111,16 +113,25 @@ async function checkForArticles(questionId: string, answerValue: string) {
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const { sessionId, questionId, value, dwellMs, checkArticles } = await request.json();
+  // 🛡️ SECURITY: Rate limit quiz answer submissions (60 per minute)
+  const rateLimitResult = await rateLimit(request, 'api');
+  if (!rateLimitResult.success) {
+    return rateLimitExceededResponse(rateLimitResult);
+  }
 
-    // Validate required fields
-    if (!sessionId || !questionId || value === undefined) {
+  try {
+    const body = await request.json();
+    
+    // ✅ SECURITY: Validate input with Zod
+    const validation = validateRequest(quizAnswerSchema, body);
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "Session ID, question ID, and value are required" },
+        { error: validation.error },
         { status: 400 }
       );
     }
+    
+    const { sessionId, questionId, value, dwellMs, checkArticles } = validation.data;
 
     // Handle preload requests (don't save answer, just get next question)
     const isPreload = value === "preload";

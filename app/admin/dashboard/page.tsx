@@ -2377,8 +2377,8 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div className="text-2xl font-bold text-gray-900 mb-2 text-center">{formatCurrency(revenueMetrics.totalRevenue)}</div>
-                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">TOTAL DEAL AMOUNT</div>
-                    <div className="text-xs text-gray-400">Open + Closed deals</div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 text-center">TOTAL DEAL AMOUNT</div>
+                    <div className="text-xs text-gray-400 text-center">Open + Closed deals</div>
                   </div>
 
                   {/* Weighted Deal Amount */}
@@ -2391,8 +2391,8 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div className="text-2xl font-bold text-gray-900 mb-2 text-center">$0.00</div>
-                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">WEIGHTED DEAL AMOUNT</div>
-                    <div className="text-xs text-gray-400">To be determined</div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 text-center">WEIGHTED DEAL AMOUNT</div>
+                    <div className="text-xs text-gray-400 text-center">To be determined</div>
                   </div>
 
                   {/* Open Deal Amount */}
@@ -2405,8 +2405,8 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div className="text-2xl font-bold text-gray-900 mb-2 text-center">{formatCurrency(revenueMetrics.openDealAmount)}</div>
-                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">OPEN DEAL AMOUNT</div>
-                    <div className="text-xs text-gray-400">Potential + actual open deals</div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 text-center">OPEN DEAL AMOUNT</div>
+                    <div className="text-xs text-gray-400 text-center">Potential + actual open deals</div>
                   </div>
 
                   {/* Closed Deal Amount */}
@@ -2419,8 +2419,8 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div className="text-2xl font-bold text-gray-900 mb-2 text-center">{formatCurrency(revenueMetrics.closedDealAmount)}</div>
-                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">CLOSED DEAL AMOUNT</div>
-                    <div className="text-xs text-gray-400">Closed deals with sale values</div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 text-center">CLOSED DEAL AMOUNT</div>
+                    <div className="text-xs text-gray-400 text-center">Closed deals with sale values</div>
                   </div>
 
                   {/* New Deal Amount */}
@@ -2433,8 +2433,8 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div className="text-2xl font-bold text-gray-900 mb-2 text-center">{formatCurrency(revenueMetrics.newDealAmount)}</div>
-                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">NEW DEAL AMOUNT</div>
-                    <div className="text-xs text-gray-400">Deals with no outcome yet</div>
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 text-center">NEW DEAL AMOUNT</div>
+                    <div className="text-xs text-gray-400 text-center">Deals with no outcome yet</div>
                   </div>
 
                   {/* Average Deal Age */}
@@ -2462,8 +2462,8 @@ export default function AdminDashboard() {
                         return avgAge.toFixed(1);
                       })()} days
                     </div>
-                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">AVERAGE DEAL AGE</div>
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 text-center">AVERAGE DEAL AGE</div>
+                    <div className="text-xs text-gray-400 text-center">
                       <svg className="w-3 h-3 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

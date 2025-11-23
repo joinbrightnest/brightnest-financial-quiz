@@ -94,45 +94,55 @@ class InMemoryRateLimiter {
 
 // Rate limiters for different endpoint types
 export const rateLimiters = {
-  // Strict limits for sensitive endpoints
+  // Strict limits for auth (prevent brute force)
   auth: upstashConfigured && redis
     ? new Ratelimit({
         redis,
-        limiter: Ratelimit.slidingWindow(5, "15 m"), // 5 requests per 15 minutes
+        limiter: Ratelimit.slidingWindow(5, "15 m"), // 5 login attempts per 15min
         analytics: true,
         prefix: "@brightnest/auth",
       })
     : new InMemoryRateLimiter(5, 15 * 60 * 1000),
 
-  // Moderate limits for public API endpoints
+  // Moderate limits for API endpoints
   api: upstashConfigured && redis
     ? new Ratelimit({
         redis,
-        limiter: Ratelimit.slidingWindow(30, "1 m"), // 30 requests per minute
+        limiter: Ratelimit.slidingWindow(60, "1 m"), // ⬆️ Increased from 30 to 60
         analytics: true,
         prefix: "@brightnest/api",
       })
-    : new InMemoryRateLimiter(30, 60 * 1000),
+    : new InMemoryRateLimiter(60, 60 * 1000),
+  
+  // Higher limit for admin (authenticated users)
+  admin: upstashConfigured && redis
+    ? new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(120, "1 m"), // ✨ New limit for admins
+        analytics: true,
+        prefix: "@brightnest/admin",
+      })
+    : new InMemoryRateLimiter(120, 60 * 1000),
 
-  // Lenient limits for general page requests
+  // Lenient limits for page requests
   page: upstashConfigured && redis
     ? new Ratelimit({
         redis,
-        limiter: Ratelimit.slidingWindow(60, "1 m"), // 60 requests per minute
+        limiter: Ratelimit.slidingWindow(100, "1 m"), // ⬆️ Increased from 60 to 100
         analytics: true,
         prefix: "@brightnest/page",
       })
-    : new InMemoryRateLimiter(60, 60 * 1000),
+    : new InMemoryRateLimiter(100, 60 * 1000),
 
-  // Very strict for expensive operations (like AI generation)
+  // Moderate limit for expensive operations
   expensive: upstashConfigured && redis
     ? new Ratelimit({
         redis,
-        limiter: Ratelimit.slidingWindow(2, "1 h"), // 2 requests per hour
+        limiter: Ratelimit.slidingWindow(5, "1 h"), // ⬆️ Increased from 2 to 5
         analytics: true,
         prefix: "@brightnest/expensive",
       })
-    : new InMemoryRateLimiter(2, 60 * 60 * 1000),
+    : new InMemoryRateLimiter(5, 60 * 60 * 1000),
 };
 
 /**

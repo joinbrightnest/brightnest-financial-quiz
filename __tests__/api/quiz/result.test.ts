@@ -1,6 +1,23 @@
 /**
  * Tests for quiz result API route
+ * 
+ * NOTE: These are integration tests that require a test database.
+ * To run these tests, set up a test database and configure DATABASE_URL:
+ * 
+ * 1. Create a test database:
+ *    createdb brightnest_test
+ * 
+ * 2. Set DATABASE_URL in your test environment:
+ *    export DATABASE_URL="postgresql://user:pass@localhost:5432/brightnest_test"
+ * 
+ * 3. Run migrations:
+ *    DATABASE_URL="postgresql://..." npx prisma migrate deploy
+ * 
+ * For now, these tests are skipped in CI/CD and require manual setup.
  */
+
+// ✅ Unmock Prisma for integration tests
+jest.unmock('@/lib/prisma');
 
 import { POST } from '@/app/api/quiz/result/route';
 import { createMockRequest } from '../../setup/test-utils';
@@ -20,6 +37,11 @@ describe('POST /api/quiz/result', () => {
       status: 'in_progress',
     });
     
+    // ✅ Verify session was created
+    expect(session).toBeDefined();
+    expect(session.id).toBeTruthy();
+    console.log('✓ Test session created:', session.id);
+    
     question1 = await createTestQuizQuestion({
       quizType: 'financial-profile',
       order: 1,
@@ -29,6 +51,11 @@ describe('POST /api/quiz/result', () => {
         { value: 'option2', label: 'Option 2', weightCategory: 'debt', weightValue: 1 },
       ],
     });
+    
+    // ✅ Verify question1 was created
+    expect(question1).toBeDefined();
+    expect(question1.id).toBeTruthy();
+    console.log('✓ Test question1 created:', question1.id);
     
     question2 = await createTestQuizQuestion({
       quizType: 'financial-profile',
@@ -40,6 +67,11 @@ describe('POST /api/quiz/result', () => {
       ],
     });
     
+    // ✅ Verify question2 was created
+    expect(question2).toBeDefined();
+    expect(question2.id).toBeTruthy();
+    console.log('✓ Test question2 created:', question2.id);
+    
     // Create answers
     await prisma.quizAnswer.create({
       data: {
@@ -49,6 +81,8 @@ describe('POST /api/quiz/result', () => {
       },
     });
     
+    console.log('✓ Test answer1 created');
+    
     await prisma.quizAnswer.create({
       data: {
         sessionId: session.id,
@@ -56,6 +90,8 @@ describe('POST /api/quiz/result', () => {
         value: 'option1',
       },
     });
+    
+    console.log('✓ Test answer2 created');
   });
 
   afterEach(async () => {
