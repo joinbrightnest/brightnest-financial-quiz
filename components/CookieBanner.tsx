@@ -6,8 +6,11 @@ import { X } from 'lucide-react';
 export default function CookieBanner() {
   const [isVisible, setIsVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+    
     // Only show on marketing site (not app subdomain)
     if (typeof window !== 'undefined' && window.location.hostname.includes('app.')) {
       return;
@@ -17,9 +20,15 @@ export default function CookieBanner() {
     const consent = localStorage.getItem('cookie_consent');
     if (!consent) {
       // Small delay for better UX
-      setTimeout(() => setIsVisible(true), 1000);
+      const timer = setTimeout(() => setIsVisible(true), 1000);
+      return () => clearTimeout(timer);
     }
   }, []);
+
+  // Prevent hydration mismatch
+  if (!isMounted) {
+    return null;
+  }
 
   const handleAccept = () => {
     localStorage.setItem('cookie_consent', 'accepted');
