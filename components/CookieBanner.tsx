@@ -48,11 +48,8 @@ export default function CookieBanner() {
 
   return (
     <>
-      {/* Backdrop overlay */}
-      <div className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-[9998] transition-opacity duration-300" />
-
       {/* Cookie banner */}
-      <div className="fixed bottom-0 left-0 right-0 z-[9999] animate-slide-up">
+      <div className="fixed bottom-0 left-0 right-0 z-50 animate-slide-up">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4 sm:pb-6">
           <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
             {/* Main content */}
