@@ -688,8 +688,8 @@ export default function DebtSnowballCalculatorPage() {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center animate-fade-in">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-6 leading-tight tracking-tight">
-                Debt Snowball <span style={{ color: '#3D6B54' }}>Calculator</span>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 sm:mb-6 leading-tight tracking-tight">
+                Debt Snowball Calculator
               </h1>
               <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
                 Find out your debt-free date and accelerate your progress with the debt snowball method—the fastest way to pay off debt.
