@@ -93,10 +93,17 @@ export default function BudgetCalculatorPage() {
   
   // Share functionality
   const [linkCopied, setLinkCopied] = useState(false);
+  const [currentUrl, setCurrentUrl] = useState("");
+
+  // Set the current URL on mount to ensure correct page URL
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setCurrentUrl(window.location.href);
+    }
+  }, []);
 
   const copyLinkToClipboard = () => {
-    const url = typeof window !== 'undefined' ? window.location.href : '';
-    navigator.clipboard.writeText(url).then(() => {
+    navigator.clipboard.writeText(currentUrl).then(() => {
       setLinkCopied(true);
       setTimeout(() => setLinkCopied(false), 2000);
     });
@@ -1017,7 +1024,7 @@ export default function BudgetCalculatorPage() {
                 <input
                   type="text"
                   readOnly
-                  value={typeof window !== 'undefined' ? window.location.href : ''}
+                  value={currentUrl}
                   className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm"
                   onClick={(e) => e.currentTarget.select()}
                 />
