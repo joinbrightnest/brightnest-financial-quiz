@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 
@@ -86,6 +86,7 @@ export default function BudgetCalculatorPage() {
 
   // Track which fields were manually edited by the user
   const [manuallyEditedFields, setManuallyEditedFields] = useState<Set<string>>(new Set());
+  const manuallyEditedFieldsRef = useRef<Set<string>>(new Set());
   
   // Track hovered segment in donut chart
   const [hoveredSegment, setHoveredSegment] = useState<string | null>(null);
@@ -121,7 +122,7 @@ export default function BudgetCalculatorPage() {
           const percentage = NATIONAL_AVERAGES[categoryKey];
           
           // Skip if this field was manually edited by the user
-          if (manuallyEditedFields.has(categoryKey)) {
+          if (manuallyEditedFieldsRef.current.has(categoryKey)) {
             return; // Keep user's manual input
           }
           
@@ -145,7 +146,7 @@ export default function BudgetCalculatorPage() {
             const percentage = NATIONAL_AVERAGES[categoryKey];
             
             // Skip if this field was manually edited by the user
-            if (manuallyEditedFields.has(categoryKey)) {
+            if (manuallyEditedFieldsRef.current.has(categoryKey)) {
               return; // Keep user's manual input
             }
             
@@ -183,7 +184,7 @@ export default function BudgetCalculatorPage() {
             const categoryKey = key as keyof typeof NATIONAL_AVERAGES;
             
             // Skip if this field was manually edited by the user
-            if (manuallyEditedFields.has(categoryKey)) {
+            if (manuallyEditedFieldsRef.current.has(categoryKey)) {
               return; // Keep user's manual input
             }
             
@@ -201,7 +202,7 @@ export default function BudgetCalculatorPage() {
     
     // Cleanup timeout if income changes again
     return () => clearTimeout(timeoutId);
-  }, [income, manuallyEditedFields]);
+  }, [income]); // Only depend on income - don't retrigger when fields are manually edited
 
   const handleExpenseChange = (category: string, value: string) => {
     // Handle input value - preserve what user types, but clean it properly
@@ -229,7 +230,8 @@ export default function BudgetCalculatorPage() {
       }
     }
     
-    // Mark this field as manually edited
+    // Mark this field as manually edited (update both state and ref)
+    manuallyEditedFieldsRef.current.add(category);
     setManuallyEditedFields(prev => {
       const newSet = new Set(prev);
       newSet.add(category);
