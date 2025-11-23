@@ -4,6 +4,7 @@ import "./globals.css";
 // Validate environment variables at startup
 import '@/lib/env-validation';
 import { StructuredData } from '@/components/StructuredData';
+import CookieBanner from '@/components/CookieBanner';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -112,6 +113,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+        <CookieBanner />
       </body>
     </html>
   );
