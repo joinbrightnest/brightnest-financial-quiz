@@ -3,7 +3,7 @@
  * 
  * Handles cross-domain session management between:
  * - joinbrightnest.com (marketing site)
- * - app.brightnest.com (app platform)
+ * - app.joinbrightnest.com (app platform)
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -14,8 +14,8 @@ import { NextRequest, NextResponse } from 'next/server'
 export const getCookieOptions = (isProduction = process.env.NODE_ENV === 'production') => {
   return {
     // Use root domain for cross-subdomain cookies
-    // .brightnest.com works for both joinbrightnest.com and app.brightnest.com
-    domain: isProduction ? process.env.COOKIE_DOMAIN || '.brightnest.com' : undefined,
+    // .joinbrightnest.com works for both joinbrightnest.com and app.joinbrightnest.com
+    domain: isProduction ? process.env.COOKIE_DOMAIN || '.joinbrightnest.com' : undefined,
     path: '/',
     httpOnly: true,
     secure: isProduction,
@@ -47,8 +47,9 @@ export function setCrossDomainCookie(
  */
 export function getDomainType(request: NextRequest): 'marketing' | 'app' {
   const hostname = request.headers.get('host') || ''
+  const APP_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN || 'app.joinbrightnest.com'
   
-  if (hostname.includes('app.brightnest') || hostname.includes('app.localhost')) {
+  if (hostname.includes(APP_DOMAIN) || hostname.includes('app.localhost')) {
     return 'app'
   }
   
@@ -63,14 +64,17 @@ export function getOppositeDomainUrl(request: NextRequest, path: string = '/'): 
   const protocol = request.headers.get('x-forwarded-proto') || 'http'
   const currentType = getDomainType(request)
   
+  const MAIN_DOMAIN = process.env.NEXT_PUBLIC_MAIN_DOMAIN || 'joinbrightnest.com'
+  const APP_DOMAIN = process.env.NEXT_PUBLIC_APP_DOMAIN || 'app.joinbrightnest.com'
+  
   let newHostname = hostname
   
   if (currentType === 'marketing') {
     // Switch to app domain
-    newHostname = hostname.replace('joinbrightnest.com', 'app.brightnest.com').replace('localhost', 'app.localhost')
+    newHostname = APP_DOMAIN
   } else {
     // Switch to marketing domain
-    newHostname = hostname.replace('app.brightnest.com', 'joinbrightnest.com').replace('app.localhost', 'localhost')
+    newHostname = MAIN_DOMAIN
   }
   
   return `${protocol}://${newHostname}${path}`

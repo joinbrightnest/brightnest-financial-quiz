@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       });
       
       // Set as httpOnly cookie with cross-domain support
-      // This allows the admin session to work across joinbrightnest.com and app.brightnest.com
+      // This allows the admin session to work across joinbrightnest.com and app.joinbrightnest.com
       setCrossDomainCookie(response, "admin_token", token, {
         maxAge: 60 * 60 * 24 // 24 hours
       });
