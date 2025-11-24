@@ -31,21 +31,21 @@ export default function CookieBanner() {
 
   return (
     <div 
-      className={`fixed bottom-6 right-6 z-50 transition-all duration-500 ease-out max-w-md ${
-        isHidden ? 'translate-x-[120%] opacity-0' : 'translate-x-0 opacity-100'
+      className={`fixed bottom-0 left-0 right-0 sm:bottom-6 sm:right-6 sm:left-auto z-50 transition-all duration-500 ease-out sm:max-w-md ${
+        isHidden ? 'translate-y-[120%] sm:translate-y-0 sm:translate-x-[120%] opacity-0' : 'translate-y-0 sm:translate-x-0 opacity-100'
       }`}
     >
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+      <div className="bg-white sm:rounded-2xl shadow-2xl border-t sm:border border-slate-200 overflow-hidden">
         {/* Main content */}
-        <div className="p-5">
-          <div className="flex items-start justify-between gap-3 mb-3">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <svg className="w-4 h-4 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="p-3 sm:p-5">
+          <div className="flex items-start justify-between gap-2 mb-2 sm:mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                 </svg>
               </div>
-              <h3 className="text-base font-semibold text-slate-900">
+              <h3 className="text-sm sm:text-base font-semibold text-slate-900">
                 We Value Your Privacy
               </h3>
             </div>
@@ -53,14 +53,14 @@ export default function CookieBanner() {
             {/* Close button */}
             <button
               onClick={handleDismiss}
-              className="p-1.5 text-slate-400 hover:text-slate-600 transition-colors"
+              className="p-1 sm:p-1.5 text-slate-400 hover:text-slate-600 transition-colors"
               aria-label="Close"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
           
-          <p className="text-slate-600 text-sm leading-relaxed mb-4">
+          <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-2.5 sm:mb-4">
             We use cookies to enhance your experience and track referrals. 
             <a 
               href="/privacy" 
@@ -74,14 +74,14 @@ export default function CookieBanner() {
           <div className="flex gap-2">
             <button
               onClick={handleDismiss}
-              className="flex-1 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg hover:scale-[1.02]"
+              className="flex-1 px-3 py-2 sm:px-4 sm:py-2.5 bg-teal-600 hover:bg-teal-700 text-white text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:scale-95 sm:hover:scale-[1.02]"
             >
               Accept
             </button>
             
             <button
               onClick={handleDismiss}
-              className="flex-1 px-4 py-2.5 bg-white hover:bg-slate-50 text-slate-700 text-sm font-semibold rounded-lg transition-all duration-200 border-2 border-slate-200 hover:border-slate-300"
+              className="flex-1 px-3 py-2 sm:px-4 sm:py-2.5 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-semibold rounded-lg transition-all duration-200 border-2 border-slate-200 hover:border-slate-300 active:scale-95"
             >
               Decline
             </button>
