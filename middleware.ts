@@ -17,10 +17,7 @@ export function middleware(request: NextRequest) {
   const appOnlyRoutes = [
     '/admin',
     '/closers',
-    '/affiliates/dashboard',
-    '/affiliates/profile',
-    '/affiliates/links',
-    '/affiliates/payouts',
+    '/affiliates',
   ]
   
   // Routes that should ONLY be on main domain (marketing)
