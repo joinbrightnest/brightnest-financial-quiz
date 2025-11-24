@@ -69,6 +69,15 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [expandedAffiliates, setExpandedAffiliates] = useState<Set<string>>(new Set());
   const [holdDetails, setHoldDetails] = useState<Record<string, { heldCommissions: HeldCommission[], holdDays: number }>>({});
+  
+  // Commission release states
+  const [isReleasing, setIsReleasing] = useState(false);
+  const [releaseStatus, setReleaseStatus] = useState<{
+    show: boolean;
+    success: boolean;
+    message: string;
+    details?: { releasedCount: number; releasedAmount: number };
+  }>({ show: false, success: false, message: "" });
 
   useEffect(() => {
     fetchData();
@@ -96,6 +105,72 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
       console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleReleaseCommissions = async () => {
+    if (!confirm("Are you sure you want to release all commissions that have passed the hold period? This will make them available for payout.")) {
+      return;
+    }
+
+    setIsReleasing(true);
+    setReleaseStatus({ show: false, success: false, message: "" });
+
+    try {
+      const token = localStorage.getItem("admin_token");
+      if (!token) {
+        setReleaseStatus({
+          show: true,
+          success: false,
+          message: "Not authenticated. Please log in again.",
+        });
+        return;
+      }
+
+      const response = await fetch("/api/admin/process-commission-releases", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setReleaseStatus({
+          show: true,
+          success: true,
+          message: data.message || `Successfully released ${data.releasedCount} commissions!`,
+          details: {
+            releasedCount: data.releasedCount,
+            releasedAmount: data.releasedAmount,
+          },
+        });
+
+        // Refresh all data to show updated commission statuses
+        await fetchData();
+
+        // Auto-hide success message after 5 seconds
+        setTimeout(() => {
+          setReleaseStatus({ show: false, success: false, message: "" });
+        }, 5000);
+      } else {
+        setReleaseStatus({
+          show: true,
+          success: false,
+          message: data.error || "Failed to release commissions",
+        });
+      }
+    } catch (error) {
+      console.error("Error releasing commissions:", error);
+      setReleaseStatus({
+        show: true,
+        success: false,
+        message: "An error occurred while releasing commissions",
+      });
+    } finally {
+      setIsReleasing(false);
     }
   };
 
@@ -207,7 +282,81 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
           <h1 className="text-3xl font-bold text-slate-900">Commission Payout Management</h1>
           <p className="text-slate-600 mt-2">Professional affiliate commission payout system</p>
         </div>
+        
+        {/* Release Commissions Button */}
+        <button
+          onClick={handleReleaseCommissions}
+          disabled={isReleasing}
+          className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-sm font-semibold hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isReleasing ? (
+            <>
+              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Releasing...
+            </>
+          ) : (
+            <>
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              Release Commissions Now
+            </>
+          )}
+        </button>
       </div>
+
+      {/* Release Status Alert */}
+      {releaseStatus.show && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          className={`p-4 rounded-xl shadow-lg ${
+            releaseStatus.success
+              ? "bg-green-50 border-l-4 border-green-500"
+              : "bg-red-50 border-l-4 border-red-500"
+          }`}
+        >
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              {releaseStatus.success ? (
+                <svg className="h-6 w-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              ) : (
+                <svg className="h-6 w-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              )}
+            </div>
+            <div className="ml-3 flex-1">
+              <h3 className={`text-sm font-semibold ${releaseStatus.success ? "text-green-800" : "text-red-800"}`}>
+                {releaseStatus.success ? "Success!" : "Error"}
+              </h3>
+              <p className={`text-sm mt-1 ${releaseStatus.success ? "text-green-700" : "text-red-700"}`}>
+                {releaseStatus.message}
+              </p>
+              {releaseStatus.success && releaseStatus.details && (
+                <div className="mt-2 text-sm text-green-700">
+                  <p><strong>{releaseStatus.details.releasedCount}</strong> commissions released</p>
+                  <p><strong>${releaseStatus.details.releasedAmount.toLocaleString()}</strong> total amount</p>
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => setReleaseStatus({ show: false, success: false, message: "" })}
+              className="ml-3 flex-shrink-0"
+            >
+              <svg className={`h-5 w-5 ${releaseStatus.success ? "text-green-400" : "text-red-400"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </motion.div>
+      )}
 
       {/* Summary Cards */}
       {summary && (
