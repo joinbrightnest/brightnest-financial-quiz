@@ -45,19 +45,19 @@ export const metadata: Metadata = {
     siteName: "BrightNest",
     images: [
       {
-        url: "/icon.png",
-        width: 1200,
-        height: 630,
+        url: "https://joinbrightnest.com/icon.png",
+        width: 512,
+        height: 512,
         alt: "BrightNest Logo",
       },
     ],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "BrightNest - Discover Your Financial Personality",
     description: "Take our quiz to discover your financial archetype and get personalized insights for a brighter financial future.",
-    images: ["/icon.png"],
-    creator: "@brightnest", // Update with your actual Twitter handle when available
+    images: ["https://joinbrightnest.com/icon.png"],
+    creator: "@brightnest",
   },
   icons: {
     icon: [
