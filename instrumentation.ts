@@ -8,7 +8,3 @@ export async function register() {
   }
 }
 
-export const onRequestError = async (err: any) => {
-  console.error('Request error captured:', err);
-};
-
