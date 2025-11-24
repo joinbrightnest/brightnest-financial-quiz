@@ -207,7 +207,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
       </nav>
 
       {/* Hero Section */}
-      <div className="flex flex-col px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-4 pb-8 sm:pb-10 lg:pb-12 min-h-[calc(100vh-80px)] justify-start sm:justify-center" style={{backgroundColor: '#FAF8F4'}}>
+      <div className="flex flex-col px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-4 pb-4 sm:pb-10 lg:pb-12 sm:min-h-[calc(100vh-80px)] justify-start sm:justify-center" style={{backgroundColor: '#FAF8F4'}}>
         <div className="max-w-4xl mx-auto text-center mt-2 sm:mt-0">
           {/* 1️⃣ Microline */}
           <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-2 font-medium">
@@ -215,18 +215,18 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
           </p>
           
           {/* 2️⃣ Headline */}
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-serif text-gray-900 mb-4 sm:mb-5 lg:mb-6 leading-tight">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-serif text-gray-900 mb-3 sm:mb-5 lg:mb-6 leading-tight">
             <div>Real results.</div>
             <div>Built one habit at a time.</div>
           </h1>
           
           {/* 3️⃣ Subheadline */}
-          <p className="text-base sm:text-lg lg:text-xl text-gray-700 mb-6 sm:mb-8 lg:mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-700 mb-4 sm:mb-8 lg:mb-10 max-w-2xl mx-auto leading-relaxed">
             Because wealth isn&apos;t about math — it&apos;s about behavior.
           </p>
           
           {/* 4️⃣ Visual Element - Family-Friendly Illustration */}
-          <div className="mb-6 sm:mb-8 lg:mb-10">
+          <div className="mb-4 sm:mb-8 lg:mb-10">
             <div className="relative inline-block w-full max-w-sm sm:max-w-lg mx-auto">
               <div className="bg-gradient-to-br from-teal-50 via-white to-amber-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl border border-slate-200/60 w-full overflow-hidden relative">
                 {/* Decorative Elements */}
