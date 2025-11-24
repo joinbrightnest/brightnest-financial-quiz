@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.16.3",
+    "@sentry/nextjs": "^10.27.0",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/jest": "^30.0.0",
