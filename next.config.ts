@@ -7,10 +7,7 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Enable instrumentation for Sentry
-  experimental: {
-    instrumentationHook: true,
-  },
+  // Instrumentation is automatically enabled in Next.js 15+
 };
 
 // Sentry configuration options
