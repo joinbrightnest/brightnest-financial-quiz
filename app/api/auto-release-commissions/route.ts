@@ -3,6 +3,22 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
+    // 🔒 SECURITY: Verify this is called by Vercel Cron or with valid API secret
+    const authHeader = request.headers.get('authorization');
+    const cronSecret = process.env.CRON_SECRET;
+    
+    // Allow requests from Vercel Cron (has specific header) or with valid API secret
+    const isVercelCron = request.headers.get('user-agent')?.includes('vercel-cron');
+    const hasValidSecret = cronSecret && authHeader === `Bearer ${cronSecret}`;
+    
+    if (!isVercelCron && !hasValidSecret) {
+      console.error('❌ Unauthorized commission release attempt');
+      return NextResponse.json(
+        { error: 'Unauthorized - This endpoint is only accessible via Vercel Cron or with valid API secret' },
+        { status: 401 }
+      );
+    }
+    
     console.log('🔄 Running automatic commission release...');
 
     // Get commission hold days from settings

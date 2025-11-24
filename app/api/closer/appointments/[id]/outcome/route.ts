@@ -138,12 +138,13 @@ export async function PUT(
           });
         }
         
-        // Update affiliate's total commission (only if not a duplicate)
+        // Update affiliate's total commission and total sales (only if not a duplicate)
         if (affiliateCommissionAmount !== null) {
           await prisma.affiliate.update({
             where: { id: affiliate.id },
             data: {
-              totalCommission: { increment: affiliateCommissionAmount }
+              totalCommission: { increment: affiliateCommissionAmount },
+              totalSales: { increment: 1 }
             }
           });
         }
