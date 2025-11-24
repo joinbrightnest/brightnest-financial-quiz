@@ -6,8 +6,20 @@ import { X } from 'lucide-react';
 export default function CookieBanner() {
   const [isHidden, setIsHidden] = useState(true); // Start hidden
   const [isDismissed, setIsDismissed] = useState(false);
+  const [isAppDomain, setIsAppDomain] = useState(false);
 
   useEffect(() => {
+    // Check if we're on the app subdomain
+    const hostname = window.location.hostname;
+    const isApp = hostname.includes('app.') || hostname.includes('app.localhost');
+    setIsAppDomain(isApp);
+    
+    // Don't show on app domain at all
+    if (isApp) {
+      setIsDismissed(true);
+      return;
+    }
+    
     // Check if user already dismissed it permanently
     const dismissed = localStorage.getItem('cookie_banner_accepted');
     if (!dismissed) {
@@ -26,8 +38,8 @@ export default function CookieBanner() {
     setTimeout(() => setIsDismissed(true), 400);
   };
 
-  // Don't render at all if permanently dismissed
-  if (isDismissed) return null;
+  // Don't render at all if permanently dismissed or on app domain
+  if (isDismissed || isAppDomain) return null;
 
   return (
     <div 
