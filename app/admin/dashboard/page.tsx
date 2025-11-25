@@ -855,6 +855,8 @@ export default function AdminDashboard() {
       const response = await fetch(`/api/admin/leads/${lead.id}/activities`);
       if (response.ok) {
         const data = await response.json();
+        console.log('🔍 DEBUG: Activities from API:', data.activities);
+        console.log('🔍 DEBUG: Quiz completed activities:', data.activities.filter((a: any) => a.type === 'quiz_completed'));
         setCrmActivities(data.activities || []);
       } else {
         console.error('Failed to fetch activities');
