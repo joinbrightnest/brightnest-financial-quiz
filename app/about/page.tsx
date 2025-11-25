@@ -154,7 +154,7 @@ export default function AboutPage() {
       <section className="relative">
         {/* Light Section with Title - Fine fade gradient like BetterHelp */}
         <div 
-          className="relative pt-8 sm:pt-12 lg:pt-20 pb-8 sm:pb-12 lg:pb-16" 
+          className="relative pt-8 sm:pt-12 lg:pt-20 pb-16 sm:pb-20 lg:pb-24" 
           style={{ 
             background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)'
           }}
@@ -185,7 +185,7 @@ export default function AboutPage() {
 
         {/* Dark Green Section - Main Content */}
         <div className="relative overflow-hidden" style={{ backgroundColor: '#335343' }}>
-          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-14 pb-12 sm:pb-16 lg:pb-20">
+          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-14 pb-20 sm:pb-24 lg:pb-32">
             {/* Sub-navigation Tabs - Centered */}
             <div className="flex flex-wrap justify-center gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8 lg:mb-10">
               {tabs.map((tab) => (
