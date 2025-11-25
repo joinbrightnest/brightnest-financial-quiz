@@ -60,48 +60,30 @@ export async function GET(
       details?: any;
     }> = [];
 
-    // 1. Quiz completed activity
-    // Show quiz completion ONLY ONCE, even if there are multiple sessions for this email
-    if (quizSession.completedAt && leadEmail) {
-      // Get all quiz sessions for this email to check for duplicates
-      const allSessionsWithEmail = await prisma.quizSession.findMany({
+    // 1. Quiz completed activity (deduplicated by email)
+    // If this email has completed the quiz multiple times, only show the most recent completion
+    if (leadEmail) {
+      // Get ALL quiz sessions for this email, including the current one
+      const allQuizSessionsForEmail = await prisma.quizSession.findMany({
         where: {
           status: 'completed',
-          completedAt: { not: null },
-          id: { not: sessionId } // Exclude current session
-        },
-        include: {
           answers: {
-            where: {
-              question: {
-                OR: [
-                  { type: 'email' },
-                  { prompt: { contains: 'email', mode: 'insensitive' } }
-                ]
-              }
-            },
-            select: {
-              value: true
+            some: {
+              AND: [
+                { question: { type: 'email' } },
+                { value: leadEmail as any } // Cast to any to match JsonValue type
+              ]
             }
           }
         },
-        orderBy: {
-          completedAt: 'desc'
-        }
+        orderBy: { completedAt: 'desc' },
+        take: 1 // Get only the most recent completed quiz session for this email
       });
 
-      // Check if any other session has the same email
-      const hasDuplicateSession = allSessionsWithEmail.some(session => {
-        const sessionEmail = session.answers.find(a => {
-          const val = a.value;
-          const emailStr = typeof val === 'string' ? val : String(val);
-          return emailStr === leadEmail;
-        });
-        return !!sessionEmail;
-      });
+      const mostRecentQuizSession = allQuizSessionsForEmail[0];
 
-      // Only show quiz completion if this is the only session OR the most recent one
-      if (!hasDuplicateSession) {
+      // Only show quiz completion if this session IS the most recent one for this email
+      if (mostRecentQuizSession && mostRecentQuizSession.completedAt && mostRecentQuizSession.id === sessionId) {
         activities.push({
           id: `quiz_${quizSession.id}`,
           type: 'quiz_completed',
