@@ -4,13 +4,15 @@ import { useState, useEffect } from 'react';
 
 interface LeadDetailViewProps {
   lead: any;
+  sessionId: string;
   onClose?: () => void;
   userType: 'admin' | 'closer';
+  showHeader?: boolean;
 }
 
 type TabType = 'activity' | 'notes' | 'tasks';
 
-export default function LeadDetailView({ lead, onClose, userType }: LeadDetailViewProps) {
+export default function LeadDetailView({ lead, sessionId, onClose, userType, showHeader = true }: LeadDetailViewProps) {
   const [activeTab, setActiveTab] = useState<TabType>('activity');
   const [activities, setActivities] = useState<any[]>([]);
   const [loadingActivities, setLoadingActivities] = useState(false);
@@ -34,14 +36,18 @@ export default function LeadDetailView({ lead, onClose, userType }: LeadDetailVi
     dueDate: ''
   });
 
-  const leadEmail = lead.answers?.find((a: any) => a.value?.includes('@'))?.value;
+  const leadEmail = lead.answers?.find((a: any) => 
+    a.value?.includes('@') || a.answer?.includes('@')
+  )?.value || lead.answers?.find((a: any) => 
+    a.answer?.includes('@')
+  )?.answer;
 
   // Fetch activities
   useEffect(() => {
     if (activeTab === 'activity') {
       fetchActivities();
     }
-  }, [activeTab, lead]);
+  }, [activeTab, sessionId]);
 
   // Fetch notes
   useEffect(() => {
@@ -60,10 +66,22 @@ export default function LeadDetailView({ lead, onClose, userType }: LeadDetailVi
   const fetchActivities = async () => {
     setLoadingActivities(true);
     try {
-      const response = await fetch(`/api/admin/leads/${lead.sessionId}/activities`);
+      const headers: HeadersInit = {};
+      if (userType === 'closer') {
+        const token = localStorage.getItem('closerToken');
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+      }
+
+      const apiUrl = userType === 'admin' 
+        ? `/api/admin/leads/${sessionId}/activities`
+        : `/api/closer/lead-details/${sessionId}/activities`;
+
+      const response = await fetch(apiUrl, { headers });
       if (response.ok) {
         const data = await response.json();
-        setActivities(data);
+        setActivities(data.activities || data);
       }
     } catch (error) {
       console.error('Error fetching activities:', error);
@@ -280,10 +298,19 @@ export default function LeadDetailView({ lead, onClose, userType }: LeadDetailVi
     }
   };
 
+  const getLeadName = () => {
+    return lead.answers?.find((a: any) => 
+      a.question?.toLowerCase().includes('name') || 
+      a.questionText?.toLowerCase().includes('name')
+    )?.value || lead.answers?.find((a: any) => 
+      a.questionText?.toLowerCase().includes('name')
+    )?.answer || 'No name';
+  };
+
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Header */}
-      {onClose && (
+      {showHeader && onClose && (
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
           <h2 className="text-xl font-semibold text-slate-900">Lead Details</h2>
           <button
@@ -305,7 +332,7 @@ export default function LeadDetailView({ lead, onClose, userType }: LeadDetailVi
             {/* Lead Name */}
             <div>
               <h3 className="text-lg font-semibold text-slate-900">
-                {lead.answers?.find((a: any) => a.question.toLowerCase().includes('name'))?.value || 'No name'}
+                {getLeadName()}
               </h3>
               <p className="text-sm text-slate-500 mt-1">{leadEmail || 'No email'}</p>
             </div>
@@ -343,8 +370,8 @@ export default function LeadDetailView({ lead, onClose, userType }: LeadDetailVi
               <div className="space-y-3">
                 {lead.answers?.map((answer: any, idx: number) => (
                   <div key={idx}>
-                    <p className="text-xs text-slate-500">{answer.question}</p>
-                    <p className="text-sm font-medium text-slate-900 mt-1">{answer.value}</p>
+                    <p className="text-xs text-slate-500">{answer.question || answer.questionText}</p>
+                    <p className="text-sm font-medium text-slate-900 mt-1">{answer.value || answer.answer}</p>
                   </div>
                 ))}
               </div>
