@@ -343,17 +343,17 @@ export default function BudgetCalculatorPage() {
       <main className="flex-1">
         {/* Full-width Banner with Fine Fade */}
         <div 
-          className="relative py-12 sm:py-16 lg:py-20 overflow-hidden"
+          className="relative py-8 sm:py-12 lg:py-16 overflow-hidden"
           style={{ 
             background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)'
           }}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center animate-fade-in">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 sm:mb-6 leading-tight tracking-tight">
+              <h1 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-slate-900 mb-3 sm:mb-4 lg:mb-6 leading-tight tracking-tight">
                 Budget <span style={{ color: '#3D6B54' }}>Calculator</span>
               </h1>
-              <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
+              <p className="text-sm sm:text-base lg:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
                 If you've never budgeted before—or it's been a while—this budget calculator is a solid starting point. Type in your monthly take-home pay and get a budget example to begin.
               </p>
             </div>
@@ -363,11 +363,11 @@ export default function BudgetCalculatorPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 
           {/* Calculator Section */}
-          <div className="bg-white rounded-xl shadow-md border border-slate-200 p-4 sm:p-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3 tracking-tight">
+          <div className="bg-white rounded-xl shadow-md border border-slate-200 p-3 sm:p-4 lg:p-6">
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-900 mb-2 sm:mb-3 tracking-tight">
               Budget Calculator
             </h2>
-            <p className="text-sm sm:text-base text-slate-700 mb-5 leading-relaxed font-light">
+            <p className="text-xs sm:text-sm lg:text-base text-slate-700 mb-4 sm:mb-5 leading-relaxed font-light">
               Enter your income and the calculator will show the national averages for most budget categories as a starting point. A few of these are recommendations (like giving). Most just reflect average spending (like debt). Don't have debt? Yay! Move that money to your current money goal.
             </p>
 
@@ -377,12 +377,12 @@ export default function BudgetCalculatorPage() {
                 {/* Income */}
                 <div>
                   <h3 className="text-base font-medium text-slate-900 mb-2">Income</h3>
-                  <div className="flex items-center justify-between gap-4">
-                    <label className="text-sm font-medium text-slate-700">
+                  <div className="flex items-center justify-between gap-2 sm:gap-4">
+                    <label className="text-xs sm:text-sm font-medium text-slate-700 flex-1 min-w-0">
                       Monthly Income (after taxes)
                     </label>
-                    <div className="relative w-48">
-                      <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium text-sm">$</span>
+                    <div className="relative w-28 sm:w-40 flex-shrink-0">
+                      <span className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-slate-500 font-medium text-xs sm:text-sm">$</span>
                       <input
                         type="text"
                         inputMode="decimal"
@@ -392,7 +392,7 @@ export default function BudgetCalculatorPage() {
                           handleIncomeChange(value);
                         }}
                         placeholder="0.00"
-                        className="w-full pl-8 pr-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-base font-medium text-slate-900 text-right touch-friendly"
+                        className="w-full pl-6 sm:pl-8 pr-2 sm:pr-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm sm:text-base font-medium text-slate-900 text-right"
                       />
                     </div>
                   </div>
@@ -401,34 +401,35 @@ export default function BudgetCalculatorPage() {
                 {/* Expenses */}
                 <div>
                   <h3 className="text-base font-medium text-slate-900 mb-2">Expenses</h3>
-                  <div className="space-y-1.5">
+                  <div className="space-y-2.5 sm:space-y-1.5">
                     {Object.keys(CATEGORY_LABELS).map((key) => {
                       const categoryKey = key as keyof typeof CATEGORY_LABELS;
                       const color = CATEGORY_COLORS[categoryKey];
                       return (
-                        <div key={key} className="flex items-center justify-between gap-4">
-                          <div className="flex items-center gap-2 flex-1">
+                        <div key={key} className="flex items-center justify-between gap-2 sm:gap-4">
+                          <div className="flex items-center gap-1.5 sm:gap-2 flex-1 min-w-0">
                             <div 
-                              className="w-2.5 h-2.5 rounded-full flex-shrink-0" 
+                              className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full flex-shrink-0" 
                               style={{ backgroundColor: color }}
                             />
-                            <label className="text-sm font-medium text-slate-700">
+                            <label className="text-xs sm:text-sm font-medium text-slate-700 truncate">
                               {CATEGORY_LABELS[categoryKey]}
                             </label>
-                            <div className="relative">
+                            <div className="relative flex-shrink-0">
                               <button
                                 type="button"
                                 onMouseEnter={() => setShowInfoTooltip(key)}
                                 onMouseLeave={() => setShowInfoTooltip(null)}
                                 onFocus={() => setShowInfoTooltip(key)}
                                 onBlur={() => setShowInfoTooltip(null)}
-                                className="w-3.5 h-3.5 rounded-full border border-slate-400 text-slate-400 hover:border-teal-600 hover:text-teal-600 flex items-center justify-center transition-colors text-[9px] font-bold touch-friendly"
+                                onClick={() => setShowInfoTooltip(showInfoTooltip === key ? null : key)}
+                                className="w-4 h-4 sm:w-3.5 sm:h-3.5 rounded-full border border-slate-400 text-slate-400 hover:border-teal-600 hover:text-teal-600 flex items-center justify-center transition-colors text-[8px] sm:text-[9px] font-bold"
                                 aria-label={`Information about ${CATEGORY_LABELS[categoryKey]}`}
                               >
                                 i
                               </button>
                               {showInfoTooltip === key && (
-                                <div className="absolute left-0 top-full mt-1 z-50 w-72 sm:w-80 bg-white rounded-lg shadow-xl border border-slate-200 p-3">
+                                <div className="absolute left-0 top-full mt-1 z-50 w-[calc(100vw-2rem)] max-w-xs sm:max-w-sm bg-white rounded-lg shadow-xl border border-slate-200 p-3">
                                   <p className="text-xs text-slate-700 leading-relaxed">
                                     {CATEGORY_DESCRIPTIONS[categoryKey as keyof typeof CATEGORY_DESCRIPTIONS]}
                                   </p>
@@ -437,15 +438,15 @@ export default function BudgetCalculatorPage() {
                               )}
                             </div>
                           </div>
-                          <div className="relative w-48 flex-shrink-0">
-                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-sm">$</span>
+                          <div className="relative w-28 sm:w-40 flex-shrink-0">
+                            <span className="absolute left-2 sm:left-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-xs sm:text-sm">$</span>
                             <input
                               type="text"
                               inputMode="decimal"
                               value={expenses[categoryKey] || ""}
                               onChange={(e) => handleExpenseChange(categoryKey, e.target.value)}
                               placeholder="0.00"
-                              className="w-full pl-8 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm text-slate-900 text-right touch-friendly"
+                              className="w-full pl-6 sm:pl-8 pr-2 sm:pr-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-xs sm:text-sm text-slate-900 text-right"
                             />
                           </div>
                         </div>
@@ -456,10 +457,10 @@ export default function BudgetCalculatorPage() {
               </div>
 
               {/* Right Column - Visual Display & Insights */}
-              <div className="flex flex-col items-center justify-start order-1 lg:order-2 mb-6 lg:mb-0">
+              <div className="flex flex-col items-center justify-start order-1 lg:order-2 mb-4 sm:mb-6 lg:mb-0">
                 <div className="w-full">
                   {/* Donut Chart */}
-                  <div className="relative w-full aspect-square mb-2 max-w-sm mx-auto">
+                  <div className="relative w-full aspect-square mb-2 max-w-[280px] sm:max-w-sm mx-auto">
                     <svg 
                       className="w-full h-full" 
                       viewBox="0 0 200 200"
@@ -575,7 +576,7 @@ export default function BudgetCalculatorPage() {
                       })()}
                     </svg>
                     {/* Center Display - Animated on Hover */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none px-4">
                       {hoveredSegment && expenseData.find(item => item.key === hoveredSegment) ? (
                         <div className="animate-fadeInScale text-center">
                           {(() => {
@@ -584,19 +585,19 @@ export default function BudgetCalculatorPage() {
                             return (
                               <>
                                 <div 
-                                  className="w-3.5 h-3.5 rounded-full mb-2.5 mx-auto shadow-sm"
+                                  className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full mb-2 sm:mb-2.5 mx-auto shadow-sm"
                                   style={{ 
                                     backgroundColor: hoveredItem.color,
                                     transition: 'background-color 0.2s ease-out'
                                   }}
                                 />
-                                <p className="text-xs sm:text-sm font-semibold text-slate-800 mb-1.5 tracking-wide">
+                                <p className="text-[10px] sm:text-xs lg:text-sm font-semibold text-slate-800 mb-1 sm:mb-1.5 tracking-wide">
                                   {hoveredItem.label}
                                 </p>
-                                <p className="text-2xl sm:text-3xl font-bold text-slate-900 mb-1 tracking-tight">
+                                <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 mb-0.5 sm:mb-1 tracking-tight">
                                   {formatCurrency(hoveredItem.value)}
                                 </p>
-                                <p className="text-xs font-medium text-slate-500">
+                                <p className="text-[10px] sm:text-xs font-medium text-slate-500">
                                   {percentage.toFixed(1)}%
                                 </p>
                               </>
@@ -605,17 +606,17 @@ export default function BudgetCalculatorPage() {
                         </div>
                       ) : (
                         <div className="text-center">
-                          <p className="text-xs sm:text-sm text-slate-600 font-semibold mb-1.5 tracking-wide">Total Expenses</p>
-                          <p className="text-3xl sm:text-4xl font-bold text-slate-900 mt-0.5 tracking-tight number-transition">{formatCurrency(totalExpenses)}</p>
+                          <p className="text-[10px] sm:text-xs lg:text-sm text-slate-600 font-semibold mb-1 sm:mb-1.5 tracking-wide">Total Expenses</p>
+                          <p className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mt-0.5 tracking-tight number-transition">{formatCurrency(totalExpenses)}</p>
                         </div>
                       )}
                     </div>
                   </div>
 
                   {/* Simple Difference Display */}
-                  <div className="mt-4 text-center mb-6">
-                    <h3 className="text-sm font-medium text-slate-600 mb-2">Difference</h3>
-                    <p className={`text-3xl sm:text-4xl font-bold ${difference >= 0 ? 'text-green-600' : 'text-red-600'} number-transition`}>
+                  <div className="mt-3 sm:mt-4 text-center mb-4 sm:mb-6">
+                    <h3 className="text-xs sm:text-sm font-medium text-slate-600 mb-1.5 sm:mb-2">Difference</h3>
+                    <p className={`text-2xl sm:text-3xl lg:text-4xl font-bold ${difference >= 0 ? 'text-green-600' : 'text-red-600'} number-transition`}>
                       {difference < 0 && '-'}{formatCurrency(Math.abs(difference))}
                     </p>
                   </div>
@@ -625,23 +626,23 @@ export default function BudgetCalculatorPage() {
                 {incomeNum > 0 && (
                   <>
                     {difference < 0 ? (
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-5">
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                            <svg className="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 lg:p-5">
+                        <div className="flex items-start gap-2 sm:gap-3">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
                           </div>
-                          <div className="flex-1">
-                            <h3 className="text-base font-semibold text-red-900 mb-2">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm sm:text-base font-semibold text-red-900 mb-1.5 sm:mb-2">
                               You're overspending by {formatCurrency(Math.abs(difference))}
                             </h3>
-                            <p className="text-sm text-red-800 mb-3 leading-relaxed">
+                            <p className="text-xs sm:text-sm text-red-800 mb-2 sm:mb-3 leading-relaxed">
                               Don't freak out. This is just a wake-up call! You can get that number to zero by giving every dollar a job—giving, saving and spending—without overspending!
                             </p>
-                            <div className="text-sm text-red-700 space-y-1">
+                            <div className="text-xs sm:text-sm text-red-700 space-y-1">
                               <p className="font-medium">Try this:</p>
-                              <ul className="list-disc list-inside space-y-1 text-xs">
+                              <ul className="list-disc list-inside space-y-0.5 text-[11px] sm:text-xs">
                                 <li>Review your expenses and cut back</li>
                                 <li>Reduce discretionary spending</li>
                                 <li>Find ways to increase income</li>
@@ -651,36 +652,36 @@ export default function BudgetCalculatorPage() {
                         </div>
                       </div>
                     ) : difference > 0 ? (
-                      <div className="bg-green-50 border border-green-200 rounded-lg p-5">
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                            <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4 lg:p-5">
+                        <div className="flex items-start gap-2 sm:gap-3">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                           </div>
-                          <div className="flex-1">
-                            <h3 className="text-base font-semibold text-green-900 mb-2">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm sm:text-base font-semibold text-green-900 mb-1.5 sm:mb-2">
                               Great! You have {formatCurrency(difference)} remaining
                             </h3>
-                            <p className="text-sm text-green-800 leading-relaxed">
+                            <p className="text-xs sm:text-sm text-green-800 leading-relaxed">
                               Perfect! Your budget is working. Consider building an emergency fund and investing for long-term wealth if you haven't already.
                             </p>
                           </div>
                         </div>
                       </div>
                     ) : (
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-5">
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                            <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 lg:p-5">
+                        <div className="flex items-start gap-2 sm:gap-3">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                           </div>
-                          <div className="flex-1">
-                            <h3 className="text-base font-semibold text-blue-900 mb-2">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm sm:text-base font-semibold text-blue-900 mb-1.5 sm:mb-2">
                               Your budget is balanced!
                             </h3>
-                            <p className="text-sm text-blue-800 leading-relaxed">
+                            <p className="text-xs sm:text-sm text-blue-800 leading-relaxed">
                               Perfect! Your income and expenses are balanced. Consider building an emergency fund and investing for long-term wealth.
                             </p>
                           </div>
@@ -697,30 +698,30 @@ export default function BudgetCalculatorPage() {
 
 
           {/* Get the Most out of the Budget Calculator */}
-          <div className="mt-12 sm:mt-16 lg:mt-20" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
-            <div className="py-12 sm:py-16 lg:py-20">
-              <div className="text-center mb-12 animate-fade-in">
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
+          <div className="mt-8 sm:mt-12 lg:mt-20" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+            <div className="py-8 sm:py-12 lg:py-20">
+              <div className="text-center mb-8 sm:mb-10 lg:mb-12 animate-fade-in px-4">
+                <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-slate-900 mb-3 sm:mb-4 lg:mb-6 tracking-tight">
                   Get the Most out of the <span style={{ color: '#3D6B54' }}>Budget Calculator</span>
                 </h2>
-                <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
-                <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
+                <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mx-auto mb-4 sm:mb-5 lg:mb-6"></div>
+                <p className="text-sm sm:text-base lg:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
                   The budget calculator helps you see where you stand with your money right <strong className="font-light">now</strong>. But what if your income and expenses don't balance out? Great question. Try this:
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* See if you're overspending */}
-                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 bg-teal-50">
-                      <svg className="w-6 h-6 transition-transform duration-300 group-hover:scale-110 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 bg-teal-50">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:scale-110 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                       </svg>
                     </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">See if you're overspending.</h3>
-                      <p className="text-base text-slate-700 leading-relaxed font-light">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 sm:mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">See if you're overspending.</h3>
+                      <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                         Is there a red negative number at the bottom of your budget? Don't freak out. This is just a wake-up call! You can get that number to zero. Just give every dollar a job—giving, saving and spending—without overspending! It's time to make some changes. (Keep reading.)
                       </p>
                     </div>
@@ -728,16 +729,16 @@ export default function BudgetCalculatorPage() {
                 </div>
 
                 {/* Find ways to cut expenses */}
-                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 bg-teal-50">
-                      <svg className="w-6 h-6 transition-transform duration-300 group-hover:scale-110 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 bg-teal-50">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:scale-110 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                       </svg>
                     </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">Find ways to cut expenses.</h3>
-                      <p className="text-base text-slate-700 leading-relaxed font-light">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 sm:mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">Find ways to cut expenses.</h3>
+                      <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                         Once you see you're overspending, you can fix the problem! Start by cutting down your spending. What if you took up meal planning to save on groceries? Get creative and cut the fluff where you can afford to. Then lower some numbers in the calculator based on this kind of planning.
                       </p>
                     </div>
@@ -745,16 +746,16 @@ export default function BudgetCalculatorPage() {
                 </div>
 
                 {/* Put extra money to work */}
-                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 bg-teal-50">
-                      <svg className="w-6 h-6 transition-transform duration-300 group-hover:scale-110 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 bg-teal-50">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:scale-110 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">Put extra money to work.</h3>
-                      <p className="text-base text-slate-700 leading-relaxed font-light">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 sm:mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">Put extra money to work.</h3>
+                      <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                         Wait, did you have money left over after typing in all your expenses? Bravo! Time to give those dollars a job—build up your savings or pay off your debt. Whatever your current money goal is, get after it!
                       </p>
                     </div>
@@ -762,16 +763,16 @@ export default function BudgetCalculatorPage() {
                 </div>
 
                 {/* Make your first budget */}
-                <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 bg-teal-50">
-                      <svg className="w-6 h-6 transition-transform duration-300 group-hover:scale-110 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 bg-teal-50">
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:scale-110 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
                     </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-slate-900 mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">Make your first budget.</h3>
-                      <p className="text-base text-slate-700 leading-relaxed font-light">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 sm:mb-3 group-hover:text-[#3D6B54] transition-colors duration-300">Make your first budget.</h3>
+                      <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                         Okay, you worked through your numbers in this budget calculator. Awesome. But don't leave them on the screen. This is just the first step in your beautiful budgeting journey. Take these numbers and start telling your money where to go—one monthly budget at a time.
                       </p>
                     </div>
@@ -782,222 +783,222 @@ export default function BudgetCalculatorPage() {
           </div>
 
           {/* Best Practices for the Budget Categories */}
-          <div className="mt-12 sm:mt-16 lg:mt-20">
-            <div className="text-center mb-12 animate-fade-in">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 mb-6 tracking-tight">
+          <div className="mt-8 sm:mt-12 lg:mt-20">
+            <div className="text-center mb-8 sm:mb-10 lg:mb-12 animate-fade-in px-4">
+              <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-slate-900 mb-3 sm:mb-4 lg:mb-6 tracking-tight">
                 Best Practices for the <span style={{ color: '#3D6B54' }}>Budget Categories</span>
               </h2>
-              <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-6"></div>
-              <p className="text-base sm:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
+              <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mx-auto mb-4 sm:mb-5 lg:mb-6"></div>
+              <p className="text-sm sm:text-base lg:text-lg text-slate-700 max-w-3xl mx-auto leading-relaxed font-light">
                 Maybe you're still wondering how to find <strong className="font-light">your</strong> budget numbers, or you want to know how to build the best budget. Here's even more info on the budget categories to help!
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 px-4">
               {/* Monthly Income */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.05s', animationFillMode: 'forwards' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
-                    <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.05s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Monthly Income</h3>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Monthly Income</h3>
                 </div>
-                <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
-                <p className="text-base text-slate-700 leading-relaxed font-light">
+                <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mb-3 sm:mb-4 lg:mb-5"></div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                   This is your take-home pay after taxes. Put in your regular paycheck plus any extra money you plan to bring in (hello, side hustle).
                 </p>
               </div>
 
               {/* Giving */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.15s', animationFillMode: 'forwards' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
-                    <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.15s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Giving</h3>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Giving</h3>
                 </div>
-                <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
-                <p className="text-base text-slate-700 leading-relaxed font-light">
+                <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mb-3 sm:mb-4 lg:mb-5"></div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                   Be intentional about making generosity a regular part of your life. Start your budget by giving 10% of your income.
                 </p>
               </div>
 
               {/* Savings */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
-                    <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Savings</h3>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Savings</h3>
                 </div>
-                <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
-                <p className="text-base text-slate-700 leading-relaxed font-light">
+                <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mb-3 sm:mb-4 lg:mb-5"></div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                   If you're in debt, save $1,000 in a starter emergency fund. Then pause saving and focus on paying off that debt. Once you're debt-free, save up 3–6 months of expenses for a fully funded emergency fund. These are the first steps of your financial journey, and taking each step one at a time is how you make real progress with your money goals.
                 </p>
               </div>
 
               {/* Food */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.25s', animationFillMode: 'forwards' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
-                    <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.25s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Food</h3>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Food</h3>
                 </div>
-                <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
-                <p className="text-base text-slate-700 leading-relaxed font-light">
+                <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mb-3 sm:mb-4 lg:mb-5"></div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                   Food is the easiest budget line to bust—and the hardest to plan for that first month. Open your bank account and see how much you spent on food last month. Then, you can tweak this number as you plan your spending for this month.
                 </p>
               </div>
 
               {/* Utilities */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
-                    <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Utilities</h3>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Utilities</h3>
                 </div>
-                <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
-                <p className="text-base text-slate-700 leading-relaxed font-light">
+                <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mb-3 sm:mb-4 lg:mb-5"></div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                   Utilities are the essential expenses that keep your house running. The amounts can change, but check your bank account and see what you spent last month on electricity, water, the phone bill, natural gas, etc. Add those up and start with that number here.
                 </p>
               </div>
 
               {/* Housing */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.35s', animationFillMode: 'forwards' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
-                    <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.35s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Housing</h3>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Housing</h3>
                 </div>
-                <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
-                <p className="text-base text-slate-700 leading-relaxed font-light">
+                <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mb-3 sm:mb-4 lg:mb-5"></div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                   Pro tip: When you spend 25% (or less) of your take-home pay on housing (mortgage or rent plus insurance, property taxes and HOA fees), one of your biggest blessings (your home) won't turn into a financial burden.
                 </p>
               </div>
 
               {/* Transportation */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
-                    <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Transportation</h3>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Transportation</h3>
                 </div>
-                <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
-                <p className="text-base text-slate-700 leading-relaxed font-light">
+                <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mb-3 sm:mb-4 lg:mb-5"></div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                   Look back through your bank account and add up how much you spent on gas last month as a starting number for this category. Then don't forget auto insurance, maintenance, and anything else you spend on transportation.
                 </p>
               </div>
 
               {/* Insurance */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.45s', animationFillMode: 'forwards' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
-                    <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.45s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Insurance</h3>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Insurance</h3>
                 </div>
-                <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
-                <p className="text-base text-slate-700 leading-relaxed font-light">
+                <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mb-3 sm:mb-4 lg:mb-5"></div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                   You planned for homeowners/renters and auto coverage in other categories. Here, add what you spend on other insurances you need: term life, health, long-term disability, long-term care (if you're age 60+), identity theft, and umbrella (if you've got a net worth of $500,000 or more).
                 </p>
               </div>
 
               {/* Household Items */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
-                    <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Household Items</h3>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Household Items</h3>
                 </div>
-                <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
-                <p className="text-base text-slate-700 leading-relaxed font-light">
+                <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mb-3 sm:mb-4 lg:mb-5"></div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                   Toothpaste, shampoo, laundry supplies: How much do you spend on these things each month? This is another hard one to pin down at first—but soon you'll be a pro here. (Not literally. No one goes pro planning toilet paper spending. Yet.)
                 </p>
               </div>
 
               {/* Debt */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.55s', animationFillMode: 'forwards' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
-                    <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.55s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Debt</h3>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Debt</h3>
                 </div>
-                <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
-                <p className="text-base text-slate-700 leading-relaxed font-light">
+                <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mb-3 sm:mb-4 lg:mb-5"></div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                   Debt is any money you owe to anyone for any reason. So, add up all your car payments, credit card bills, student loans, medical debt and other payment plans and put that total here. Then start hustling to pay it off and really make progress with your money.
                 </p>
               </div>
 
               {/* Retirement */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
-                    <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Retirement</h3>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Retirement</h3>
                 </div>
-                <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
-                <p className="text-base text-slate-700 leading-relaxed font-light">
+                <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mb-3 sm:mb-4 lg:mb-5"></div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                   When you're debt-free and your fully funded emergency fund is, well, fully funded, it's time for retirement savings! Start prepping for your future by investing 15% of your income.
                 </p>
               </div>
 
               {/* Personal and Entertainment */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.65s', animationFillMode: 'forwards' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
-                    <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.65s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Personal and Entertainment</h3>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Personal and Entertainment</h3>
                 </div>
-                <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
-                <p className="text-base text-slate-700 leading-relaxed font-light">
+                <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mb-3 sm:mb-4 lg:mb-5"></div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                   This is what you plan to spend on all the fun stuff: concert tickets, family trips to the ballpark, bagpipe lessons, salon visits—all those exciting extras. (Just remember, needs come before wants.)
                 </p>
               </div>
 
               {/* Other */}
-              <div className="bg-white rounded-xl p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.7s', animationFillMode: 'forwards' }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
-                    <svg className="w-5 h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group animate-slide-up" style={{ animationDelay: '0.7s', animationFillMode: 'forwards' }}>
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110 bg-teal-50">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Other</h3>
+                  <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 group-hover:text-[#3D6B54] transition-colors duration-300">Other</h3>
                 </div>
-                <div className="w-20 h-0.5 bg-[#3D6B54] mb-5"></div>
-                <p className="text-base text-slate-700 leading-relaxed font-light">
+                <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mb-3 sm:mb-4 lg:mb-5"></div>
+                <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-light">
                   This budget calculator only has the most common categories, but it probably doesn't cover everything you spend money on. Go ahead and add any other expenses here. When you start budgeting regularly, you can customize and add as many categories as you need.
                 </p>
               </div>
@@ -1006,34 +1007,34 @@ export default function BudgetCalculatorPage() {
         </div>
 
         {/* Share Section - Clean White Background */}
-        <div className="w-full bg-white py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+        <div className="w-full bg-white py-8 sm:py-12 lg:py-16 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             {/* Headline */}
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-3 sm:mb-4 leading-tight">
+            <h2 className="text-xl sm:text-2xl lg:text-4xl font-bold text-slate-900 mb-2 sm:mb-3 lg:mb-4 leading-tight">
               Help Others Take Control of Their Money
             </h2>
             
             {/* Subtext */}
-            <p className="text-sm sm:text-base lg:text-lg text-slate-600 mb-6 sm:mb-7 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-xs sm:text-sm lg:text-base text-slate-600 mb-4 sm:mb-6 lg:mb-7 leading-relaxed max-w-2xl mx-auto">
               Share this free budget calculator with friends and family who need to start their financial journey—because everyone deserves financial peace.
             </p>
             
             {/* Share Input and Button */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 max-w-2xl mx-auto">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 max-w-2xl mx-auto">
               <div className="flex-1 min-w-0">
                 <input
                   type="text"
                   readOnly
                   value={currentUrl}
-                  className="w-full px-4 py-3 border-2 border-slate-300 rounded-xl bg-white text-slate-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 border-slate-300 rounded-xl bg-white text-slate-900 font-mono text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm"
                   onClick={(e) => e.currentTarget.select()}
                 />
               </div>
               <button
                 onClick={copyLinkToClipboard}
-                className="flex items-center justify-center gap-2 bg-[#3D6B54] hover:bg-[#2d5340] text-white px-6 py-3 rounded-xl font-semibold text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 flex-shrink-0"
+                className="flex items-center justify-center gap-2 bg-[#3D6B54] hover:bg-[#2d5340] text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl font-semibold text-sm sm:text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 flex-shrink-0"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                 </svg>
                 <span>{linkCopied ? "Copied!" : "Copy Link"}</span>
@@ -1041,7 +1042,7 @@ export default function BudgetCalculatorPage() {
             </div>
             
             {/* Trust message */}
-            <p className="text-xs sm:text-sm text-slate-500 mt-5 sm:mt-6">
+            <p className="text-[10px] sm:text-xs lg:text-sm text-slate-500 mt-4 sm:mt-5 lg:mt-6">
               Join thousands of people building better financial habits with BrightNest
             </p>
           </div>
