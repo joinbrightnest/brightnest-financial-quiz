@@ -154,14 +154,14 @@ export default function AboutPage() {
       <section className="relative">
         {/* Light Section with Title - Fine fade gradient like BetterHelp */}
         <div 
-          className="relative pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-16" 
+          className="relative pt-8 sm:pt-12 lg:pt-20 pb-8 sm:pb-12 lg:pb-16" 
           style={{ 
             background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)'
           }}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 leading-tight tracking-tight">
+              <h1 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 leading-tight tracking-tight">
                 {currentContent.title}
               </h1>
             </div>
@@ -185,14 +185,14 @@ export default function AboutPage() {
 
         {/* Dark Green Section - Main Content */}
         <div className="relative overflow-hidden" style={{ backgroundColor: '#335343' }}>
-          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 pb-16 sm:pb-20">
+          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-14 pb-12 sm:pb-16 lg:pb-20">
             {/* Sub-navigation Tabs - Centered */}
-            <div className="flex flex-wrap justify-center gap-6 mb-8 sm:mb-10">
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4 lg:gap-6 mb-6 sm:mb-8 lg:mb-10">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`text-base pb-1.5 font-light transition-colors border-b-2 ${
+                  className={`text-xs sm:text-sm lg:text-base pb-1.5 font-light transition-colors border-b-2 ${
                     activeTab === tab.id
                       ? 'border-[#a6e09a]'
                       : 'border-transparent hover:border-[#a6e09a]'
@@ -207,13 +207,13 @@ export default function AboutPage() {
             </div>
 
             {/* Main Heading - Light green color */}
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-center mb-6 sm:mb-8 leading-tight tracking-tight" style={{ color: '#a6e09a' }}>
+            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-center mb-4 sm:mb-6 lg:mb-8 leading-tight tracking-tight" style={{ color: '#a6e09a' }}>
               {currentContent.heading}
             </h2>
             
             {/* Body Text - Centered, pure white */}
             <div className="max-w-3xl mx-auto">
-              <p className="text-base sm:text-lg text-white leading-relaxed font-light text-center">
+              <p className="text-sm sm:text-base lg:text-lg text-white leading-relaxed font-light text-center">
                 {currentContent.body}
               </p>
             </div>
@@ -246,22 +246,22 @@ export default function AboutPage() {
       {/* Our Coaches/Experts Section - Matching BetterHelp's "Our therapists" - Only show for About tab */}
       {activeTab === 'about' && (
         <section 
-          className="relative py-12 sm:py-16 lg:py-20" 
+          className="relative py-8 sm:py-12 lg:py-20" 
           style={{ 
             background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)'
           }}
         >
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl sm:text-4xl font-light text-slate-900 text-center mb-6 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light text-slate-900 text-center mb-4 sm:mb-5 lg:mb-6 tracking-tight">
               Our coaches
             </h2>
-            <p className="text-base sm:text-lg text-slate-700 text-center leading-relaxed font-light">
+            <p className="text-sm sm:text-base lg:text-lg text-slate-700 text-center leading-relaxed font-light">
               BrightNest offers access to licensed, trained, experienced, and accredited financial coaches, certified financial planners (CFP), behavioral finance specialists, and certified financial counselors who help you build lasting financial habits.
             </p>
-            <div className="text-center mt-8">
+            <div className="text-center mt-6 sm:mt-7 lg:mt-8">
               <Link
                 href="/quiz/financial-profile"
-                className="inline-block px-6 py-3 rounded-lg font-light text-base text-white hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="inline-block px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg font-light text-sm sm:text-base text-white hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl"
                 style={{ backgroundColor: '#3D6B54' }}
               >
                 Get started
@@ -275,18 +275,18 @@ export default function AboutPage() {
       {activeTab === 'about' && (
         <>
           {/* Our Mission Section - Redesigned */}
-      <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+      <section className="relative py-8 sm:py-12 lg:py-20" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-5 lg:mb-6 tracking-tight">
               Our Mission
             </h2>
-            <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto mb-8"></div>
+            <div className="w-16 sm:w-20 h-0.5 bg-[#3D6B54] mx-auto mb-4 sm:mb-6 lg:mb-8"></div>
           </div>
           
-          <div className="bg-white rounded-2xl shadow-lg p-8 sm:p-12 lg:p-16 max-w-3xl mx-auto">
+          <div className="bg-white rounded-2xl shadow-lg p-6 sm:p-10 lg:p-16 max-w-3xl mx-auto">
             <div className="space-y-6 text-base sm:text-lg text-slate-700 leading-relaxed font-light">
-              <p className="text-xl sm:text-2xl font-light text-slate-900 text-center" style={{ color: '#3D6B54' }}>
+              <p className="text-lg sm:text-xl lg:text-2xl font-light text-slate-900 text-center" style={{ color: '#3D6B54' }}>
                 At BrightNest, our mission is simple: to help people change their financial behaviour for good.
               </p>
               
@@ -318,7 +318,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-12">
             {[
               {
                 title: "Behavioural Science",
@@ -341,17 +341,17 @@ export default function AboutPage() {
                 icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
               }
             ].map((item, index) => (
-              <div key={index} className="bg-gradient-to-br from-white to-slate-50 rounded-xl p-8 border border-slate-200 hover:border-[#3D6B54] hover:shadow-lg transition-all duration-300">
+              <div key={index} className="bg-gradient-to-br from-white to-slate-50 rounded-xl p-5 sm:p-6 lg:p-8 border border-slate-200 hover:border-[#3D6B54] hover:shadow-lg transition-all duration-300">
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#3D6B54', opacity: 0.1 }}>
-                      <svg className="w-6 h-6" style={{ color: '#3D6B54' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#3D6B54', opacity: 0.1 }}>
+                      <svg className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: '#3D6B54' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
                       </svg>
                     </div>
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-light text-slate-900 mb-2">{item.title}</h3>
+                    <h3 className="text-base sm:text-lg lg:text-xl font-light text-slate-900 mb-2">{item.title}</h3>
                     <p className="text-slate-600 font-light leading-relaxed">{item.description}</p>
                   </div>
                 </div>
@@ -366,10 +366,10 @@ export default function AboutPage() {
       </section>
 
       {/* Why We Exist - Redesigned */}
-      <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+      <section className="relative py-8 sm:py-12 lg:py-20" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-5 lg:mb-6 tracking-tight">
               Why We Exist
             </h2>
             <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
@@ -389,7 +389,7 @@ export default function AboutPage() {
             </div>
             
             <div className="bg-white rounded-2xl shadow-lg p-8 sm:p-10">
-              <p className="text-xl sm:text-2xl font-light leading-relaxed" style={{ color: '#3D6B54' }}>
+              <p className="text-lg sm:text-xl lg:text-2xl font-light leading-relaxed" style={{ color: '#3D6B54' }}>
                 BrightNest was built to change that — to make personal finance feel clear, actionable, and empowering again.
               </p>
             </div>
@@ -401,12 +401,12 @@ export default function AboutPage() {
       <section className="relative py-16 sm:py-20 lg:py-24 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-5 lg:mb-6 tracking-tight">
               What We Believe
             </h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {[
               {
                 title: "Behaviour beats motivation.",
@@ -432,7 +432,7 @@ export default function AboutPage() {
               <div key={index} className="bg-gradient-to-br from-slate-50 to-white rounded-xl p-8 border border-slate-200 hover:shadow-lg transition-all duration-300">
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-light text-lg" style={{ backgroundColor: '#3D6B54' }}>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white font-light text-base sm:text-lg" style={{ backgroundColor: '#3D6B54' }}>
                       {belief.number}
                     </div>
                   </div>
@@ -448,10 +448,10 @@ export default function AboutPage() {
       </section>
 
       {/* The BrightNest Approach - Redesigned */}
-      <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+      <section className="relative py-8 sm:py-12 lg:py-20" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-5 lg:mb-6 tracking-tight">
               The BrightNest Approach
             </h2>
             <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed font-light">
@@ -477,15 +477,15 @@ export default function AboutPage() {
                 number: "3"
               }
             ].map((item, index) => (
-              <div key={index} className="flex items-start space-x-6 bg-white rounded-xl p-8 shadow-md hover:shadow-lg transition-shadow">
+              <div key={index} className="flex items-start space-x-4 sm:space-x-6 bg-white rounded-xl p-5 sm:p-6 lg:p-8 shadow-md hover:shadow-lg transition-shadow">
                 <div className="flex-shrink-0">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-light" style={{ backgroundColor: '#3D6B54' }}>
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full flex items-center justify-center text-white text-lg sm:text-xl lg:text-2xl font-light" style={{ backgroundColor: '#3D6B54' }}>
                     {item.number}
                   </div>
                 </div>
-                <div className="flex-1 pt-2">
-                  <h3 className="text-2xl font-light text-slate-900 mb-3">{item.step}</h3>
-                  <p className="text-slate-600 font-light leading-relaxed text-lg">{item.description}</p>
+                <div className="flex-1 pt-1 sm:pt-2">
+                  <h3 className="text-lg sm:text-xl lg:text-2xl font-light text-slate-900 mb-2 sm:mb-3">{item.step}</h3>
+                  <p className="text-slate-600 font-light leading-relaxed text-sm sm:text-base lg:text-lg">{item.description}</p>
                 </div>
               </div>
             ))}
@@ -506,7 +506,7 @@ export default function AboutPage() {
       <section className="relative py-16 sm:py-20 lg:py-24 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-5 lg:mb-6 tracking-tight">
               Our Vision
             </h2>
           </div>
@@ -524,7 +524,7 @@ export default function AboutPage() {
       </section>
 
       {/* Join the Movement - Redesigned */}
-      <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+      <section className="relative py-8 sm:py-12 lg:py-20" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-8 tracking-tight">
             Join the Movement
@@ -532,7 +532,7 @@ export default function AboutPage() {
           
           <div className="bg-white rounded-2xl shadow-xl p-10 sm:p-12 lg:p-16 mb-8">
             <div className="space-y-6 text-base sm:text-lg text-slate-700 leading-relaxed font-light max-w-2xl mx-auto">
-              <p className="text-xl sm:text-2xl font-light text-slate-900">
+              <p className="text-lg sm:text-xl lg:text-2xl font-light text-slate-900">
                 BrightNest isn&apos;t about quick fixes. It&apos;s about rewriting your story with money — for good.
               </p>
               <p>
@@ -546,7 +546,7 @@ export default function AboutPage() {
           
           <Link
             href="/quiz/financial-profile"
-            className="inline-block text-white px-8 py-4 rounded-xl font-light text-lg hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="inline-block text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-light text-base sm:text-lg hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl"
             style={{ backgroundColor: '#3D6B54' }}
           >
             Get Started
@@ -560,10 +560,10 @@ export default function AboutPage() {
       {activeTab === 'social-impact' && (
         <>
           {/* Impact Stats Section */}
-          <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+          <section className="relative py-8 sm:py-12 lg:py-20" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-12">
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-5 lg:mb-6 tracking-tight">
                   Our Impact
                 </h2>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
@@ -587,12 +587,12 @@ export default function AboutPage() {
                     description: "Working together to expand access"
                   }
                 ].map((stat, index) => (
-                  <div key={index} className="bg-white rounded-xl shadow-lg p-8 text-center">
-                    <div className="text-4xl sm:text-5xl font-light mb-3" style={{ color: '#3D6B54' }}>
+                  <div key={index} className="bg-white rounded-xl shadow-lg p-5 sm:p-6 lg:p-8 text-center">
+                    <div className="text-3xl sm:text-4xl lg:text-5xl font-light mb-2 sm:mb-3" style={{ color: '#3D6B54' }}>
                       {stat.value}
                     </div>
-                    <h3 className="text-lg font-light text-slate-900 mb-2">{stat.label}</h3>
-                    <p className="text-sm text-slate-600 font-light">{stat.description}</p>
+                    <h3 className="text-base sm:text-lg font-light text-slate-900 mb-2">{stat.label}</h3>
+                    <p className="text-xs sm:text-sm text-slate-600 font-light">{stat.description}</p>
                   </div>
                 ))}
               </div>
@@ -603,7 +603,7 @@ export default function AboutPage() {
           <section className="relative py-16 sm:py-20 lg:py-24 bg-white">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-12">
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-5 lg:mb-6 tracking-tight">
                   Our Partners
                 </h2>
                 <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed font-light">
@@ -638,7 +638,7 @@ export default function AboutPage() {
           </section>
 
           {/* Commitment Section */}
-          <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+          <section className="relative py-8 sm:py-12 lg:py-20" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="bg-white rounded-2xl shadow-xl p-10 sm:p-12 lg:p-16 text-center">
                 <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-6">
@@ -657,10 +657,10 @@ export default function AboutPage() {
       {activeTab === 'client-outcomes' && (
         <>
           {/* Results Overview Section */}
-          <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+          <section className="relative py-8 sm:py-12 lg:py-20" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-12">
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-5 lg:mb-6 tracking-tight">
                   Real Results
                 </h2>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
@@ -684,12 +684,12 @@ export default function AboutPage() {
                     description: "Of their financial decisions"
                   }
                 ].map((stat, index) => (
-                  <div key={index} className="bg-white rounded-xl shadow-lg p-8 text-center">
-                    <div className="text-4xl sm:text-5xl font-light mb-3" style={{ color: '#3D6B54' }}>
+                  <div key={index} className="bg-white rounded-xl shadow-lg p-5 sm:p-6 lg:p-8 text-center">
+                    <div className="text-3xl sm:text-4xl lg:text-5xl font-light mb-2 sm:mb-3" style={{ color: '#3D6B54' }}>
                       {stat.value}
                     </div>
-                    <h3 className="text-lg font-light text-slate-900 mb-2">{stat.label}</h3>
-                    <p className="text-sm text-slate-600 font-light">{stat.description}</p>
+                    <h3 className="text-base sm:text-lg font-light text-slate-900 mb-2">{stat.label}</h3>
+                    <p className="text-xs sm:text-sm text-slate-600 font-light">{stat.description}</p>
                   </div>
                 ))}
               </div>
@@ -700,7 +700,7 @@ export default function AboutPage() {
           <section className="relative py-16 sm:py-20 lg:py-24 bg-white">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-12">
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-5 lg:mb-6 tracking-tight">
                   Client Transformations
                 </h2>
                 <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed font-light">
@@ -726,9 +726,9 @@ export default function AboutPage() {
                     metric: "Reduced financial anxiety by 90%"
                   }
                 ].map((story, index) => (
-                  <div key={index} className="bg-gradient-to-br from-slate-50 to-white rounded-xl shadow-md p-8 border border-slate-200">
-                    <h3 className="text-xl sm:text-2xl font-light text-slate-900 mb-4">{story.title}</h3>
-                    <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-light mb-4">
+                  <div key={index} className="bg-gradient-to-br from-slate-50 to-white rounded-xl shadow-md p-5 sm:p-6 lg:p-8 border border-slate-200">
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-light text-slate-900 mb-3 sm:mb-4">{story.title}</h3>
+                    <p className="text-sm sm:text-base lg:text-lg text-slate-700 leading-relaxed font-light mb-3 sm:mb-4">
                       {story.description}
                     </p>
                     <div className="flex items-center space-x-2">
@@ -742,7 +742,7 @@ export default function AboutPage() {
           </section>
 
           {/* Key Metrics Section */}
-          <section className="relative py-16 sm:py-20 lg:py-24" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+          <section className="relative py-8 sm:py-12 lg:py-20" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="bg-white rounded-2xl shadow-xl p-10 sm:p-12 lg:p-16">
                 <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-8 text-center">
@@ -797,7 +797,7 @@ export default function AboutPage() {
       {activeTab === 'careers' && (
         <>
           {/* Hero Section with Team Avatars and Apply Button */}
-          <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+          <section className="relative py-8 sm:py-12 lg:py-20 overflow-hidden" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
             <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light mb-6 leading-tight tracking-tight text-slate-900">
                 Join the BrightNest Team
@@ -834,10 +834,10 @@ export default function AboutPage() {
           </section>
 
           {/* Our Mission Section */}
-          <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden bg-white">
+          <section className="relative py-8 sm:py-12 lg:py-20 overflow-hidden bg-white">
             <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-8">
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-5 lg:mb-6 tracking-tight">
                   Our Mission
                 </h2>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
@@ -857,16 +857,16 @@ export default function AboutPage() {
           </section>
 
           {/* Who We're Looking For Section */}
-          <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+          <section className="relative py-8 sm:py-12 lg:py-20 overflow-hidden" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
             <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-8">
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-5 lg:mb-6 tracking-tight">
                   Who We&apos;re Looking For
                 </h2>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
               </div>
               <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md p-8 sm:p-10 space-y-5">
-                <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-light">
+                <p className="text-sm sm:text-base lg:text-lg text-slate-700 leading-relaxed font-light">
                   We want people who care deeply about human behaviour, real results and genuine impact. If you&apos;re someone who:
                 </p>
                 <ul className="text-left space-y-3 list-none">
@@ -892,7 +892,7 @@ export default function AboutPage() {
                 <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-light pt-4 border-t border-slate-200" style={{ color: '#3D6B54' }}>
                   then you might be a perfect fit.
                 </p>
-                <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-light">
+                <p className="text-sm sm:text-base lg:text-lg text-slate-700 leading-relaxed font-light">
                   Whether your strength lies in coaching, operations, tech, content or client experience — there&apos;s an opportunity here to help build something meaningful.
                 </p>
               </div>
@@ -958,10 +958,10 @@ export default function AboutPage() {
           </section>
 
           {/* Core Values Section */}
-          <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden bg-white">
+          <section className="relative py-8 sm:py-12 lg:py-20 overflow-hidden bg-white">
             <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-8">
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-5 lg:mb-6 tracking-tight">
                   Our Values
                 </h2>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
@@ -987,10 +987,10 @@ export default function AboutPage() {
           </section>
 
           {/* Perks Section */}
-          <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
+          <section className="relative py-8 sm:py-12 lg:py-20 overflow-hidden" style={{ background: 'linear-gradient(to right, #FDFDFB 0%, #FCFCF9 50%, #FDFBF7 100%)' }}>
             <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-8">
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-5 lg:mb-6 tracking-tight">
                   Your BrightNest Journey
                 </h2>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
@@ -1011,10 +1011,10 @@ export default function AboutPage() {
           </section>
 
           {/* What It's Like To Work With Us Section */}
-          <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden bg-white">
+          <section className="relative py-8 sm:py-12 lg:py-20 overflow-hidden bg-white">
             <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center mb-8">
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-5 lg:mb-6 tracking-tight">
                   What It&apos;s Like To Work With Us
                 </h2>
                 <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
@@ -1062,17 +1062,17 @@ export default function AboutPage() {
               <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="relative bg-white rounded-xl p-8 sm:p-10 lg:p-12 border border-slate-200 shadow-md">
                   <div className="text-center mb-8">
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-light text-slate-900 mb-6 tracking-tight">
+                    <h2 className="text-2xl sm:text-3xl lg:text-5xl font-light text-slate-900 mb-4 sm:mb-5 lg:mb-6 tracking-tight">
                       Open Positions
                     </h2>
                     <div className="w-20 h-0.5 bg-[#3D6B54] mx-auto"></div>
                   </div>
                   
                   <div className="max-w-2xl mx-auto text-center space-y-6">
-                    <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-light">
+                    <p className="text-sm sm:text-base lg:text-lg text-slate-700 leading-relaxed font-light">
                       Sorry, there are no positions currently available.
                     </p>
-                    <p className="text-base sm:text-lg text-slate-700 leading-relaxed font-light">
+                    <p className="text-sm sm:text-base lg:text-lg text-slate-700 leading-relaxed font-light">
                       But keep an eye out for updates — we&apos;re growing fast and new opportunities are always on the horizon.
                     </p>
                     <p className="text-base sm:text-lg text-slate-600 leading-relaxed font-light">
