@@ -102,11 +102,29 @@ export async function calculateLeads(params: {
     return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
   });
 
+  // Deduplicate by email - keep only the most recent quiz session for each email
+  // This prevents duplicate leads when someone completes the quiz multiple times
+  const leadsByEmail = new Map();
+  for (const lead of actualLeads) {
+    const emailAnswer = lead.answers.find(a => 
+      a.question?.prompt?.toLowerCase().includes('email')
+    );
+    const email = emailAnswer?.value ? String(emailAnswer.value) : null;
+    
+    if (email) {
+      const existingLead = leadsByEmail.get(email);
+      if (!existingLead || new Date(lead.completedAt || lead.createdAt) > new Date(existingLead.completedAt || existingLead.createdAt)) {
+        leadsByEmail.set(email, lead);
+      }
+    }
+  }
+  const deduplicatedLeads = Array.from(leadsByEmail.values());
+
   return {
-    totalLeads: actualLeads.length,
-    leads: actualLeads,
+    totalLeads: deduplicatedLeads.length,
+    leads: deduplicatedLeads,
     allCompletedSessions: allCompletedSessions.length,
-    leadConversionRate: allCompletedSessions.length > 0 ? (actualLeads.length / allCompletedSessions.length) * 100 : 0
+    leadConversionRate: allCompletedSessions.length > 0 ? (deduplicatedLeads.length / allCompletedSessions.length) * 100 : 0
   };
 }
 

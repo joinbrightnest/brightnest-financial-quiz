@@ -78,7 +78,7 @@ export async function GET(
     });
 
     // Transform the data for the CRM view
-    const leads = quizSessionsWithContactInfo.map(session => {
+    const allLeads = quizSessionsWithContactInfo.map(session => {
       // Extract name and email from quiz answers (like general admin CRM)
       // Look for questions containing "name" or "email" in the prompt
       const nameAnswer = session.answers.find(a => 
@@ -142,6 +142,17 @@ export async function GET(
         },
       };
     });
+
+    // Deduplicate by email - keep only the most recent quiz session for each email
+    // This prevents duplicate leads when someone completes the quiz multiple times
+    const leadsByEmail = new Map();
+    for (const lead of allLeads) {
+      const existingLead = leadsByEmail.get(lead.email);
+      if (!existingLead || new Date(lead.completedAt || lead.startedAt) > new Date(existingLead.completedAt || existingLead.startedAt)) {
+        leadsByEmail.set(lead.email, lead);
+      }
+    }
+    const leads = Array.from(leadsByEmail.values());
 
     // Calculate CRM stats - only count actual leads (completed sessions with contact info)
     const totalLeads = leads.filter(lead => lead.status === "completed").length;

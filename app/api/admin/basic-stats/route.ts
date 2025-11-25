@@ -279,8 +279,26 @@ export async function GET(request: NextRequest) {
         return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
       });
       
-      allLeads = actualLeadsAllTime;
-      leadData = { leads: allLeads, totalLeads: actualLeadsAllTime.length };
+      // Deduplicate by email - keep only the most recent quiz session for each email
+      // This prevents duplicate leads when someone completes the quiz multiple times
+      const leadsByEmail = new Map();
+      for (const lead of actualLeadsAllTime) {
+        const emailAnswer = lead.answers.find((a: any) => 
+          a.question?.prompt?.toLowerCase().includes('email')
+        );
+        const email = emailAnswer?.value ? String(emailAnswer.value) : null;
+        
+        if (email) {
+          const existingLead = leadsByEmail.get(email);
+          if (!existingLead || new Date(lead.completedAt || lead.createdAt) > new Date(existingLead.completedAt || existingLead.createdAt)) {
+            leadsByEmail.set(email, lead);
+          }
+        }
+      }
+      const deduplicatedLeads = Array.from(leadsByEmail.values());
+      
+      allLeads = deduplicatedLeads;
+      leadData = { leads: deduplicatedLeads, totalLeads: deduplicatedLeads.length };
     } else {
       // Map duration to calculateLeads format (7d, 30d, 90d, 1y)
       const leadDataResult = await calculateLeads({ 
