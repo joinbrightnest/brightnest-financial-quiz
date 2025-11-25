@@ -34,20 +34,20 @@ export default function FAQAccordion() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-4">
+    <div className="max-w-4xl mx-auto space-y-3 sm:space-y-4">
       {faqs.map((faq, index) => (
         <div key={index} className="bg-white rounded-lg shadow-md border border-slate-200 overflow-hidden">
           <button
             onClick={() => toggleFAQ(index)}
-            className="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-slate-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset"
+            className="w-full px-4 py-3 sm:px-6 sm:py-5 text-left flex items-center justify-between hover:bg-slate-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-inset"
             aria-expanded={openIndex === index}
             aria-controls={`faq-answer-${index}`}
           >
-            <h3 className="text-xl font-bold text-slate-900 pr-4">
+            <h3 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 pr-3 sm:pr-4">
               {faq.question}
             </h3>
             <svg
-              className={`w-6 h-6 text-teal-600 flex-shrink-0 transition-transform duration-300 ${
+              className={`w-5 h-5 sm:w-6 sm:h-6 text-teal-600 flex-shrink-0 transition-transform duration-300 ${
                 openIndex === index ? "transform rotate-180" : ""
               }`}
               fill="none"
@@ -64,8 +64,8 @@ export default function FAQAccordion() {
               openIndex === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
             }`}
           >
-            <div className="px-6 pb-5 pt-2">
-              <p className="text-slate-700 leading-relaxed">
+            <div className="px-4 pb-4 pt-2 sm:px-6 sm:pb-5">
+              <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
                 {faq.answer}
               </p>
             </div>
