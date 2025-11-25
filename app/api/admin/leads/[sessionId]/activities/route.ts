@@ -61,7 +61,60 @@ export async function GET(
     }> = [];
 
     // 1. Quiz completed activity
-    if (quizSession.completedAt) {
+    // Show quiz completion ONLY ONCE, even if there are multiple sessions for this email
+    if (quizSession.completedAt && leadEmail) {
+      // Get all quiz sessions for this email to check for duplicates
+      const allSessionsWithEmail = await prisma.quizSession.findMany({
+        where: {
+          status: 'completed',
+          completedAt: { not: null },
+          id: { not: sessionId } // Exclude current session
+        },
+        include: {
+          answers: {
+            where: {
+              question: {
+                OR: [
+                  { type: 'email' },
+                  { prompt: { contains: 'email', mode: 'insensitive' } }
+                ]
+              }
+            },
+            select: {
+              value: true
+            }
+          }
+        },
+        orderBy: {
+          completedAt: 'desc'
+        }
+      });
+
+      // Check if any other session has the same email
+      const hasDuplicateSession = allSessionsWithEmail.some(session => {
+        const sessionEmail = session.answers.find(a => {
+          const val = a.value;
+          const emailStr = typeof val === 'string' ? val : String(val);
+          return emailStr === leadEmail;
+        });
+        return !!sessionEmail;
+      });
+
+      // Only show quiz completion if this is the only session OR the most recent one
+      if (!hasDuplicateSession) {
+        activities.push({
+          id: `quiz_${quizSession.id}`,
+          type: 'quiz_completed',
+          timestamp: quizSession.completedAt.toISOString(),
+          leadName,
+          details: {
+            quizType: quizSession.quizType,
+            answersCount: quizSession.answers.length
+          }
+        });
+      }
+    } else if (quizSession.completedAt && !leadEmail) {
+      // If there's no email, still show the activity (edge case)
       activities.push({
         id: `quiz_${quizSession.id}`,
         type: 'quiz_completed',
