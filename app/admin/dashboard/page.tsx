@@ -3219,19 +3219,19 @@ export default function AdminDashboard() {
                               </div>
                             </div>
                             )}
-                              {!crmActivities ? (
+                              {false && !crmActivities ? (
                                 <div className="text-center py-8">
                                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
                                   <p className="text-sm text-slate-600 mt-4">Loading activities...</p>
                                 </div>
-                              ) : crmActivities.length === 0 ? (
+                              ) : crmActivities && crmActivities.length === 0 ? (
                                 <div className="text-center py-8">
                                   <svg className="w-12 h-12 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                   </svg>
                                   <p className="text-sm text-slate-600">No activity recorded yet</p>
                                 </div>
-                              ) : (
+                              ) : crmActivities ? (
                                 <div className="space-y-6">
                                   {[...crmActivities].sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).map((activity: any) => (
                                     <div key={activity.id} className="flex items-start space-x-4">
@@ -3448,7 +3448,7 @@ export default function AdminDashboard() {
                                     </div>
                                   ))}
                                 </div>
-                              )}
+                              ) : null}
                             </div>
                           )}
 
