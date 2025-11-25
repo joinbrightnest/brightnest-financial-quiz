@@ -2769,194 +2769,158 @@ export default function AdminDashboard() {
 
               {/* Lead Details Modal */}
               {crmShowLeadModal && crmSelectedLead && (
-                <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
-                  <div className="min-h-screen bg-white">
-                    {/* Header */}
-                    <div className="bg-slate-800 px-6 py-4 border-b border-slate-700">
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-slate-700 rounded-lg flex items-center justify-center">
-                            <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                          </div>
-                          <div>
-                            <h1 className="text-xl font-semibold text-white">
-                              {crmSelectedLead.answers.find((a: any) => 
-                                a.question?.prompt?.toLowerCase().includes('name')
-                              )?.value || 'Lead Profile'}
-                            </h1>
-                            <p className="text-slate-300 text-sm">
-                              Session ID: {crmSelectedLead.id || crmSelectedLead.sessionId || 'N/A'}
-                            </p>
-                          </div>
-                        </div>
+                <div className="fixed inset-0 bg-slate-50 z-50 overflow-hidden">
+                  <div className="h-screen flex flex-col">
+                    {/* Header with back button */}
+                    <div className="bg-white border-b border-slate-200 px-6 py-4 flex-shrink-0">
+                      <div className="flex items-center space-x-4">
                         <button 
                           onClick={() => setCrmShowLeadModal(false)}
-                          className="text-slate-400 hover:text-white transition-colors p-2 rounded-lg hover:bg-slate-700"
+                          className="text-slate-600 hover:text-slate-900 transition-colors"
+                          title="Back to dashboard"
                         >
-                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                           </svg>
                         </button>
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center">
+                            <span className="text-slate-700 font-semibold text-sm">
+                              {(crmSelectedLead.answers.find((a: any) => a.question?.prompt?.toLowerCase().includes('name'))?.value || 'L').charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <div>
+                            <h1 className="text-xl font-semibold text-slate-900">
+                              {crmSelectedLead.answers.find((a: any) => a.question?.prompt?.toLowerCase().includes('name'))?.value || 'Lead Profile'}
+                            </h1>
+                            <p className="text-xs text-slate-500">
+                              {crmSelectedLead.answers.find((a: any) => a.question?.prompt?.toLowerCase().includes('email'))?.value || 'No email'}
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </div>
+                    
+                    {/* Two-column layout */}
+                    <div className="flex flex-1 overflow-hidden">
+                      {/* Left sidebar - Contact Information */}
+                      <div className="w-96 bg-white border-r border-slate-200 overflow-y-auto flex-shrink-0">
+                        <div className="p-6">
+                          <div className="space-y-6">
+                            {/* Personal Information */}
+                            <div>
+                              <div className="flex items-center mb-4">
+                                <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                <h3 className="text-sm font-semibold text-slate-900">Personal Information</h3>
+                              </div>
+                              <div className="space-y-4">
+                                <div>
+                                  <label className="text-xs text-slate-500 uppercase tracking-wide">Full Name</label>
+                                  <p className="text-sm text-slate-900 mt-1 font-medium">
+                                    {crmSelectedLead.answers.find((a: any) => a.question?.prompt?.toLowerCase().includes('name'))?.value || 'N/A'}
+                                  </p>
+                                </div>
+                                
+                                <div>
+                                  <label className="text-xs text-slate-500 uppercase tracking-wide">Email Address</label>
+                                  <p className="text-sm text-slate-900 mt-1">
+                                    {crmSelectedLead.answers.find((a: any) => a.question?.prompt?.toLowerCase().includes('email'))?.value || 'N/A'}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
 
-                    <div className="p-8 max-w-7xl mx-auto space-y-8">
-                      {/* Combined Personal Information and Deal Information */}
-                      <div className="bg-white rounded-xl border border-slate-200 p-6">
-                        <div className="flex justify-between items-center mb-6">
-                          <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-                            <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
-                            Personal Information
-                          </h3>
-                          <button 
-                            onClick={() => {
-                              setCrmShowLeadModal(false);
-                              setCrmSelectedLead(null);
-                              setCrmLeadModalTab('activity');
-                              setAdminNotes([]);
-                              setAdminNoteContent('');
-                              setShowAdminNoteForm(false);
-                            }}
-                            className="text-slate-400 hover:text-slate-900 transition-colors p-2 rounded-lg hover:bg-slate-100"
-                            title="Close and return to dashboard"
-                          >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                          <div>
-                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Full Name</label>
-                            <p className="mt-1 text-sm font-semibold text-slate-900">
-                              {crmSelectedLead.answers.find((a: any) => 
-                                a.question?.prompt?.toLowerCase().includes('name')
-                              )?.value || 'N/A'}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Email Address</label>
-                            <p className="mt-1 text-sm font-semibold text-slate-900">
-                              {crmSelectedLead.answers.find((a: any) => 
-                                a.question?.prompt?.toLowerCase().includes('email')
-                              )?.value || 'N/A'}
-                            </p>
-                          </div>
-                        </div>
-
-                        <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
-                          <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                          </svg>
-                          Deal Information
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                          <div>
-                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Stage</label>
-                            <div className="mt-1">
-                              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                crmSelectedLead.status === 'Completed' || crmSelectedLead.status === 'Booked' 
-                                  ? 'bg-green-100 text-green-800' 
-                                  : crmSelectedLead.status === 'In Progress'
-                                  ? 'bg-blue-100 text-blue-800'
-                                  : 'bg-gray-100 text-gray-800'
-                              }`}>
-                                {crmSelectedLead.status}
-                              </span>
+                            <div className="border-t border-slate-200 pt-6">
+                              <div className="flex items-center mb-4">
+                                <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                </svg>
+                                <h3 className="text-sm font-semibold text-slate-900">Deal Information</h3>
+                              </div>
+                              <div className="space-y-4">
+                                <div>
+                                  <label className="text-xs text-slate-500 uppercase tracking-wide">Stage</label>
+                                  <div className="mt-1">
+                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                      crmSelectedLead.status === 'Completed' || crmSelectedLead.status === 'Booked' 
+                                        ? 'bg-green-100 text-green-800' 
+                                        : crmSelectedLead.status === 'In Progress'
+                                        ? 'bg-blue-100 text-blue-800'
+                                        : 'bg-gray-100 text-gray-800'
+                                    }`}>
+                                      {crmSelectedLead.status || '--'}
+                                    </span>
+                                  </div>
+                                </div>
+                                
+                                <div>
+                                  <label className="text-xs text-slate-500 uppercase tracking-wide">Deal Owner</label>
+                                  <p className="text-sm text-slate-900 mt-1">
+                                    {crmSelectedLead.closerName || crmSelectedLead.appointment?.closer?.name || 'Unassigned'}
+                                  </p>
+                                </div>
+                                
+                                <div>
+                                  <label className="text-xs text-slate-500 uppercase tracking-wide">Lead Added</label>
+                                  <p className="text-sm text-slate-900 mt-1">
+                                    {crmSelectedLead.completedAt ? new Date(crmSelectedLead.completedAt).toLocaleDateString('en-US', {
+                                      month: 'short',
+                                      day: 'numeric',
+                                      year: 'numeric'
+                                    }) : '--'}
+                                  </p>
+                                </div>
+                                
+                                <div>
+                                  <label className="text-xs text-slate-500 uppercase tracking-wide">Deal Closed</label>
+                                  <p className="text-sm text-slate-900 mt-1">
+                                    {crmSelectedLead.dealClosedAt ? new Date(crmSelectedLead.dealClosedAt).toLocaleDateString('en-US', {
+                                      month: 'short',
+                                      day: 'numeric',
+                                      year: 'numeric'
+                                    }) : '--'}
+                                  </p>
+                                </div>
+                                
+                                <div>
+                                  <label className="text-xs text-slate-500 uppercase tracking-wide">Deal Amount</label>
+                                  <p className="text-sm text-slate-900 mt-1">
+                                    {crmSelectedLead.appointment?.outcome === 'converted' && crmSelectedLead.appointment?.saleValue 
+                                      ? `$${Number(crmSelectedLead.appointment.saleValue).toFixed(2)}` 
+                                      : '--'}
+                                  </p>
+                                </div>
+                                
+                                <div>
+                                  <label className="text-xs text-slate-500 uppercase tracking-wide">Lead Source</label>
+                                  <div className="mt-1">
+                                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                                      {crmSelectedLead.source || 'Website'}
+                                    </span>
+                                  </div>
+                                </div>
+                                
+                                <div>
+                                  <label className="text-xs text-slate-500 uppercase tracking-wide">Quiz Type</label>
+                                  <p className="text-sm text-slate-900 mt-1">{crmSelectedLead.quizType || '--'}</p>
+                                </div>
+                              </div>
                             </div>
                           </div>
-                          <div>
-                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Owner</label>
-                            <p className="mt-1 text-sm font-semibold text-slate-900">
-                              {crmSelectedLead.closerName || crmSelectedLead.appointment?.closer?.name || 'Unassigned'}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Lead Added</label>
-                            <p className="mt-1 text-sm font-semibold text-slate-900">
-                              {crmSelectedLead.completedAt ? new Date(crmSelectedLead.completedAt).toLocaleDateString('en-GB') : 'N/A'}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Closed</label>
-                            <p className="mt-1 text-sm font-semibold text-slate-900">
-                              {crmSelectedLead.dealClosedAt ? new Date(crmSelectedLead.dealClosedAt).toLocaleDateString('en-GB') : '--'}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Deal Amount</label>
-                            <p className="mt-1 text-sm font-semibold text-slate-900">
-                              {crmSelectedLead.appointment?.outcome === 'converted' && crmSelectedLead.appointment?.saleValue 
-                                ? `$${Number(crmSelectedLead.appointment.saleValue).toFixed(2)}` 
-                                : '--'}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Lead Source</label>
-                            <div className="mt-1">
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                {crmSelectedLead.source || 'Website'}
-                              </span>
-                            </div>
-                          </div>
-                          <div>
-                            <label className="text-xs font-medium text-slate-500 uppercase tracking-wide">Quiz Type</label>
-                            <p className="mt-1 text-sm font-semibold text-slate-900">{crmSelectedLead.quizType || 'Financial-Profile'}</p>
-                        </div>
-                        </div>
-
-                      </div>
-
-                      {/* Tabs Navigation */}
-                      <div className="border-b border-slate-200">
-                        <div className="flex space-x-8">
-                          <button
-                            onClick={() => setCrmLeadModalTab('activity')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                              crmLeadModalTab === 'activity'
-                                ? 'border-slate-800 text-slate-800'
-                                : 'border-transparent text-gray-600 hover:text-slate-700 hover:border-gray-300'
-                            }`}
-                          >
-                            Activity
-                          </button>
-                          <button
-                            onClick={() => setCrmLeadModalTab('notes')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                              crmLeadModalTab === 'notes'
-                                ? 'border-slate-800 text-slate-800'
-                                : 'border-transparent text-gray-600 hover:text-slate-700 hover:border-gray-300'
-                            }`}
-                          >
-                            Notes
-                          </button>
-                          <button
-                            onClick={() => setCrmLeadModalTab('tasks')}
-                            className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                              crmLeadModalTab === 'tasks'
-                                ? 'border-slate-800 text-slate-800'
-                                : 'border-transparent text-gray-600 hover:text-slate-700 hover:border-gray-300'
-                            }`}
-                          >
-                            Tasks
-                          </button>
                         </div>
                       </div>
 
-                      {/* Tab Content */}
-                      <div className="bg-white rounded-xl border border-slate-200 p-6">
-                        {crmLeadModalTab === 'activity' && (
-                          <div>
-                            <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center">
-                              <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                              Activity Timeline
-                            </h3>
+                      {/* Right side - Activity Timeline */}
+                      <div className="flex-1 overflow-y-auto bg-slate-50">
+                        <div className="p-6">
+                          <div className="bg-white rounded-lg border border-slate-200">
+                            <div className="border-b border-slate-200 px-6 py-4">
+                              <h2 className="text-base font-semibold text-slate-900">Activity</h2>
+                            </div>
+                            
+                            <div className="p-6">
 
                             {!crmActivities ? (
                               <div className="text-center py-8">
@@ -3237,13 +3201,244 @@ export default function AdminDashboard() {
                               </div>
                             </div>
                             )}
+                              {!crmActivities ? (
+                                <div className="text-center py-8">
+                                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                                  <p className="text-sm text-slate-600 mt-4">Loading activities...</p>
+                                </div>
+                              ) : crmActivities.length === 0 ? (
+                                <div className="text-center py-8">
+                                  <svg className="w-12 h-12 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                  </svg>
+                                  <p className="text-sm text-slate-600">No activity recorded yet</p>
+                                </div>
+                              ) : (
+                                <div className="space-y-6">
+                                  {[...crmActivities].sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).map((activity: any) => (
+                                    <div key={activity.id} className="flex items-start space-x-4">
+                                      {/* Icon */}
+                                      <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
+                                        activity.type === 'quiz_completed' ? 'bg-purple-100' :
+                                        activity.type === 'call_booked' ? 'bg-blue-100' :
+                                        activity.type === 'outcome_marked' ? 'bg-orange-100' :
+                                        activity.type === 'outcome_updated' ? 'bg-orange-100' :
+                                        activity.type === 'deal_closed' ? 'bg-green-100' :
+                                        activity.type === 'note_added' ? 'bg-amber-100' :
+                                        (activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_completed') ? 'bg-indigo-100' :
+                                        'bg-gray-100'
+                                      }`}>
+                                        {activity.type === 'quiz_completed' && (
+                                          <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                          </svg>
+                                        )}
+                                        {activity.type === 'call_booked' && (
+                                          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                          </svg>
+                                        )}
+                                        {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated') && (
+                                          <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                          </svg>
+                                        )}
+                                        {activity.type === 'deal_closed' && (
+                                          <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                          </svg>
+                                        )}
+                                        {activity.type === 'note_added' && (
+                                          <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                          </svg>
+                                        )}
+                                        {(activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_completed') && (
+                                          <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                          </svg>
+                                        )}
+                                      </div>
+                                      
+                                      {/* Content */}
+                                      <div className="flex-1 min-w-0">
+                                        <div>
+                                          <p className="text-sm text-slate-900">
+                                            {activity.type === 'quiz_completed' && (
+                                              <span><span className="font-semibold text-blue-600">{activity.leadName}</span> completed the quiz</span>
+                                            )}
+                                            {activity.type === 'call_booked' && (
+                                              <span><span className="font-semibold text-blue-600">{activity.leadName}</span> booked a call</span>
+                                            )}
+                                            {activity.type === 'outcome_marked' && (
+                                              <span><span className="font-semibold text-green-600">{activity.actor}</span> marked <span className="font-semibold text-blue-600">{activity.leadName}</span> as <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
+                                            )}
+                                            {activity.type === 'outcome_updated' && (
+                                              <span><span className="font-semibold text-green-600">{activity.actor}</span> marked <span className="font-semibold text-blue-600">{activity.leadName}</span> as <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
+                                            )}
+                                            {activity.type === 'deal_closed' && (
+                                              <span><span className="font-semibold text-green-600">{activity.actor}</span> marked <span className="font-semibold text-blue-600">{activity.leadName}</span> as closed</span>
+                                            )}
+                                            {activity.type === 'note_added' && (
+                                              <span><span className="font-semibold text-amber-600">{activity.actor}</span> added a note</span>
+                                            )}
+                                            {activity.type === 'task_created' && (
+                                              <span><span className="font-semibold text-indigo-600">{activity.actor}</span> created a task</span>
+                                            )}
+                                            {activity.type === 'task_started' && (
+                                              <span><span className="font-semibold text-blue-600">{activity.actor}</span> started the task</span>
+                                            )}
+                                            {activity.type === 'task_completed' && (
+                                              <span><span className="font-semibold text-green-600">{activity.actor}</span> finished the task</span>
+                                            )}
+                                          </p>
+                                          <p className="text-xs text-slate-500 mt-1">
+                                            {new Date(activity.timestamp).toLocaleString('en-US', {
+                                              month: 'short',
+                                              day: 'numeric',
+                                              year: 'numeric',
+                                              hour: 'numeric',
+                                              minute: '2-digit',
+                                              hour12: true
+                                            })}
+                                          </p>
+                                          
+                                          {/* View Call Details for outcome/deal activities */}
+                                          {(activity.type === 'outcome_marked' || activity.type === 'outcome_updated' || activity.type === 'deal_closed') && (
+                                            <div className="mt-3">
+                                              <button
+                                                onClick={() => {
+                                                  const detailsEl = document.getElementById(`call-details-${activity.id}`);
+                                                  if (detailsEl) detailsEl.classList.toggle('hidden');
+                                                }}
+                                                className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center"
+                                              >
+                                                View details
+                                                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                              </button>
+                                              <div id={`call-details-${activity.id}`} className="hidden mt-4 space-y-3">
+                                                <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
+                                                  <p className="text-xs font-semibold text-slate-900 mb-1">Recording Link</p>
+                                                  {activity.details?.recordingLink ? (
+                                                    <a href={activity.details.recordingLink} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:text-blue-800 underline break-all">
+                                                      {activity.details.recordingLink}
+                                                    </a>
+                                                  ) : (
+                                                    <p className="text-sm text-slate-400 italic">No recording available</p>
+                                                  )}
+                                                </div>
+                                                <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
+                                                  <p className="text-xs font-semibold text-slate-900 mb-1">Call Notes</p>
+                                                  {activity.details?.notes ? (
+                                                    <p className="text-sm text-slate-700 whitespace-pre-wrap">{activity.details.notes}</p>
+                                                  ) : (
+                                                    <p className="text-sm text-slate-400 italic">No notes available</p>
+                                                  )}
+                                                </div>
+                                              </div>
+                                            </div>
+                                          )}
+
+                                          {/* Activity-specific details */}
+                                          {activity.type === 'quiz_completed' && (
+                                            <div className="mt-2">
+                                              <button 
+                                                onClick={() => {
+                                                  const modal = document.getElementById(`quiz-answers-${activity.id}`);
+                                                  if (modal) modal.classList.toggle('hidden');
+                                                }}
+                                                className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                                              >
+                                                View quiz answers →
+                                              </button>
+                                              <div id={`quiz-answers-${activity.id}`} className="hidden mt-3 grid grid-cols-1 gap-3">
+                                                {crmSelectedLead.answers.map((answer: any, index: number) => (
+                                                  <div key={index} className="bg-slate-50 rounded-lg p-3 border border-slate-200">
+                                                    <p className="text-xs font-semibold text-slate-900 mb-1">
+                                                      {answer.question?.prompt || `Question ${index + 1}`}
+                                                    </p>
+                                                    <p className="text-sm text-slate-700">{answer.value || 'No answer provided'}</p>
+                                                  </div>
+                                                ))}
+                                              </div>
+                                            </div>
+                                          )}
+
+                                          {activity.type === 'call_booked' && activity.details?.closerName && (
+                                            <p className="text-xs text-slate-600 mt-2">
+                                              <span className="font-medium">Assigned to:</span> {activity.details.closerName}
+                                            </p>
+                                          )}
+                                          
+                                          {activity.type === 'note_added' && activity.details?.content && (
+                                            <div className="mt-2">
+                                              <p className="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-200">{activity.details.content}</p>
+                                            </div>
+                                          )}
+                                          
+                                          {(activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_completed') && activity.details?.title && (
+                                            <div className="mt-2">
+                                              <button
+                                                onClick={() => {
+                                                  const detailsEl = document.getElementById(`task-details-${activity.id}`);
+                                                  if (detailsEl) detailsEl.classList.toggle('hidden');
+                                                }}
+                                                className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center"
+                                              >
+                                                View task details
+                                                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                              </button>
+                                              <div id={`task-details-${activity.id}`} className="hidden mt-3">
+                                                <div className="flex items-center gap-2">
+                                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
+                                                    {activity.details.title}
+                                                  </span>
+                                                  {activity.details?.priority && activity.type === 'task_created' && (
+                                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                                      activity.details.priority === 'urgent' ? 'bg-red-100 text-red-800' :
+                                                      activity.details.priority === 'high' ? 'bg-orange-100 text-orange-800' :
+                                                      activity.details.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                                      'bg-green-100 text-green-800'
+                                                    }`}>
+                                                      {activity.details.priority}
+                                                    </span>
+                                                  )}
+                                                </div>
+                                                {activity.details?.description && activity.type === 'task_created' && (
+                                                  <p className="text-sm text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-200 mt-2">{activity.details.description}</p>
+                                                )}
+                                                {activity.details?.dueDate && activity.type === 'task_created' && (
+                                                  <p className="text-xs text-slate-500 mt-2">
+                                                    Due: {new Date(activity.details.dueDate).toLocaleString('en-US', {
+                                                      month: 'short',
+                                                      day: 'numeric',
+                                                      year: 'numeric',
+                                                      hour: 'numeric',
+                                                      minute: '2-digit'
+                                                    })}
+                                                  </p>
+                                                )}
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        )}
-
-                        {crmLeadModalTab === 'notes' && (
-                          <div className="space-y-6">
-
-                            {/* Notes Section */}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
                             <div>
                               <div className="flex justify-between items-center mb-4">
                                 <h3 className="text-lg font-semibold text-slate-900 flex items-center">
@@ -3363,19 +3558,6 @@ export default function AdminDashboard() {
                                 )}
                               </div>
                             </div>
-                          </div>
-                        )}
-
-                        {crmLeadModalTab === 'tasks' && (
-                          <div>
-                            <div className="flex justify-between items-center mb-6">
-                              <div className="flex items-center">
-                                <svg className="w-6 h-6 text-slate-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                                </svg>
-                                <h3 className="text-lg font-semibold text-slate-900">
-                                  Tasks ({adminTasks.length})
-                                </h3>
                               </div>
                               <button
                                 onClick={() => setAdminShowTaskForm(!adminShowTaskForm)}
