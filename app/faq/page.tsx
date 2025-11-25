@@ -140,9 +140,9 @@ export default function FAQPage() {
 
       {/* Hero Section with Dark Green Background */}
       <section className="relative overflow-hidden" style={{ backgroundColor: '#335343' }}>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 lg:pt-20 pb-12 sm:pb-16">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 lg:pt-20 pb-20 sm:pb-24 lg:pb-32">
           <div className="text-center">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-white leading-tight tracking-tight">
+            <h1 className="text-2xl sm:text-3xl lg:text-5xl font-light text-white leading-tight tracking-tight">
               Frequently asked questions
             </h1>
           </div>
