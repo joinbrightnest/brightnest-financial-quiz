@@ -3481,7 +3481,6 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               )}
-              )}
 
               {/* Edit Columns Modal */}
               {crmShowColumnModal && (
