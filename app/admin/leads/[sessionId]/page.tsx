@@ -43,6 +43,8 @@ interface LeadData {
   dealClosedAt?: string | null;
 }
 
+type TabType = 'activity' | 'notes' | 'tasks';
+
 export default function LeadDetailsPage() {
   const params = useParams();
   const router = useRouter();
@@ -51,6 +53,7 @@ export default function LeadDetailsPage() {
   const [leadData, setLeadData] = useState<LeadData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<TabType>('activity');
   const [activities, setActivities] = useState<any[]>([]);
   const [loadingActivities, setLoadingActivities] = useState(false);
   const [expandedActivity, setExpandedActivity] = useState<string | null>(null);
@@ -312,15 +315,33 @@ export default function LeadDetailsPage() {
             </div>
           </div>
 
-          {/* Right side - Activity Timeline */}
+          {/* Right side - Tabs Content */}
           <div className="flex-1 overflow-y-auto bg-slate-50">
             <div className="p-6">
               <div className="bg-white rounded-lg border border-slate-200">
-                <div className="border-b border-slate-200 px-6 py-4">
-                  <h2 className="text-base font-semibold text-slate-900">Activity</h2>
+                {/* Tab Navigation */}
+                <div className="border-b border-slate-200">
+                  <div className="flex px-6">
+                    {(['activity', 'notes', 'tasks'] as TabType[]).map((tab) => (
+                      <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`py-3 px-4 border-b-2 font-medium text-sm capitalize transition-colors ${
+                          activeTab === tab
+                            ? 'border-blue-600 text-blue-600'
+                            : 'border-transparent text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 
+                {/* Tab Content */}
                 <div className="p-6">
+                  {activeTab === 'activity' && (
+                    <div>
                   {loadingActivities ? (
                     <div className="text-center py-8">
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -611,6 +632,30 @@ export default function LeadDetailsPage() {
                     </div>
                   )}
                 </div>
+              )}
+
+              {activeTab === 'notes' && (
+                <div>
+                  <div className="text-center py-12">
+                    <svg className="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    <p className="text-slate-600 text-sm">Notes functionality coming soon</p>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'tasks' && (
+                <div>
+                  <div className="text-center py-12">
+                    <svg className="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    </svg>
+                    <p className="text-slate-600 text-sm">Tasks functionality coming soon</p>
+                  </div>
+                </div>
+              )}
+            </div>
               </div>
             </div>
           </div>

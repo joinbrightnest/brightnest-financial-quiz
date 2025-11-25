@@ -2912,15 +2912,33 @@ export default function AdminDashboard() {
                         </div>
                       </div>
 
-                      {/* Right side - Activity Timeline */}
+                      {/* Right side - Tabs Content */}
                       <div className="flex-1 overflow-y-auto bg-slate-50">
                         <div className="p-6">
                           <div className="bg-white rounded-lg border border-slate-200">
-                            <div className="border-b border-slate-200 px-6 py-4">
-                              <h2 className="text-base font-semibold text-slate-900">Activity</h2>
+                            {/* Tab Navigation */}
+                            <div className="border-b border-slate-200">
+                              <div className="flex px-6">
+                                {(['activity', 'notes', 'tasks'] as ('activity' | 'notes' | 'tasks')[]).map((tab) => (
+                                  <button
+                                    key={tab}
+                                    onClick={() => setCrmLeadModalTab(tab)}
+                                    className={`py-3 px-4 border-b-2 font-medium text-sm capitalize transition-colors ${
+                                      crmLeadModalTab === tab
+                                        ? 'border-blue-600 text-blue-600'
+                                        : 'border-transparent text-slate-600 hover:text-slate-900'
+                                    }`}
+                                  >
+                                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                                  </button>
+                                ))}
+                              </div>
                             </div>
                             
+                            {/* Tab Content */}
                             <div className="p-6">
+                              {crmLeadModalTab === 'activity' && (
+                                <div>
 
                             {!crmActivities ? (
                               <div className="text-center py-8">
@@ -3432,6 +3450,30 @@ export default function AdminDashboard() {
                                 </div>
                               )}
                             </div>
+                          )}
+
+                          {crmLeadModalTab === 'notes' && (
+                            <div>
+                              <div className="text-center py-12">
+                                <svg className="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                <p className="text-slate-600 text-sm">Notes functionality coming soon</p>
+                              </div>
+                            </div>
+                          )}
+
+                          {crmLeadModalTab === 'tasks' && (
+                            <div>
+                              <div className="text-center py-12">
+                                <svg className="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                </svg>
+                                <p className="text-slate-600 text-sm">Tasks functionality coming soon</p>
+                              </div>
+                            </div>
+                          )}
+                        </div>
                           </div>
                         </div>
                       </div>
@@ -3439,341 +3481,6 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               )}
-                            <div>
-                              <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-lg font-semibold text-slate-900 flex items-center">
-                                  <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                  </svg>
-                                  Notes
-                                  <span className="ml-2 text-sm text-slate-500 font-normal">({adminNotes.length})</span>
-                                </h3>
-                                <button
-                                  onClick={() => setShowAdminNoteForm(!showAdminNoteForm)}
-                                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
-                                >
-                                  <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                  </svg>
-                                  {showAdminNoteForm ? 'Cancel' : 'Create Note'}
-                                </button>
-                              </div>
-
-                              {/* Note Form */}
-                              {showAdminNoteForm && (
-                                <form onSubmit={(e) => {
-                                  e.preventDefault();
-                                  if (adminNoteContent.trim() && crmSelectedLead) {
-                                    const leadEmail = crmSelectedLead.answers?.find((a: any) => a.value?.includes('@'))?.value;
-                                    fetch('/api/notes', {
-                                      method: 'POST',
-                                      headers: { 'Content-Type': 'application/json' },
-                                      body: JSON.stringify({ leadEmail, content: adminNoteContent, createdBy: 'Admin', createdByType: 'admin' }),
-                                    }).then(async (response) => {
-                                      if (response.ok) {
-                                        const newNote = await response.json();
-                                        setAdminNotes([newNote, ...adminNotes]);
-                                        setAdminNoteContent('');
-                                        setShowAdminNoteForm(false);
-                                        fetchCrmActivities(crmSelectedLead);
-                                      }
-                                    }).catch((error) => console.error('Error saving note:', error));
-                                  }
-                                }} className="mb-6 bg-slate-50 p-4 rounded-lg border border-slate-200">
-                                  <textarea
-                                    value={adminNoteContent}
-                                    onChange={(e) => setAdminNoteContent(e.target.value)}
-                                    rows={4}
-                                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-slate-500 focus:border-slate-500"
-                                    placeholder="Add a new note..."
-                                  />
-                                  <div className="mt-2 flex justify-end gap-2">
-                                    <button
-                                      type="button"
-                                      onClick={() => {
-                                        setShowAdminNoteForm(false);
-                                        setAdminNoteContent('');
-                                      }}
-                                      className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50"
-                                    >
-                                      Cancel
-                                    </button>
-                                    <button
-                                      type="submit"
-                                      disabled={!adminNoteContent.trim()}
-                                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 disabled:bg-slate-400"
-                                    >
-                                      Save Note
-                                    </button>
-                                  </div>
-                                </form>
-                              )}
-
-                              {/* Notes List */}
-                              <div className="space-y-4">
-                                {adminNotes.length > 0 ? (
-                                  adminNotes.map((note) => (
-                                    <div
-                                      key={note.id}
-                                      className="group p-4 bg-white rounded-lg border border-slate-200 flex justify-between items-start"
-                                    >
-                                      <div>
-                                        <p className="text-sm text-slate-500">
-                                          {new Date(note.createdAt).toLocaleString([], {
-                                            year: 'numeric',
-                                            month: 'short',
-                                            day: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                          })}
-                                        </p>
-                                        <p className="text-sm text-slate-800 whitespace-pre-wrap mt-1">{note.content}</p>
-                                      </div>
-                                      <button
-                                        onClick={async () => {
-                                          try {
-                                            const response = await fetch(`/api/notes/${note.id}`, {
-                                              method: 'DELETE',
-                                            });
-
-                                            if (response.ok) {
-                                              setAdminNotes(adminNotes.filter(n => n.id !== note.id));
-                                              fetchCrmActivities(crmSelectedLead);
-                                            }
-                                          } catch (error) {
-                                            console.error('Error deleting note:', error);
-                                          }
-                                        }}
-                                        className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-50 transition-opacity"
-                                        aria-label="Delete note"
-                                      >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                      </button>
-                                    </div>
-                                  ))
-                                ) : (
-                                  !showAdminNoteForm && <p className="text-sm text-slate-600 text-center py-4">No notes have been added for this lead.</p>
-                                )}
-                              </div>
-                            </div>
-                              </div>
-                              <button
-                                onClick={() => setAdminShowTaskForm(!adminShowTaskForm)}
-                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
-                              >
-                                <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                </svg>
-                                {adminShowTaskForm ? 'Cancel' : 'Create Task'}
-                              </button>
-                            </div>
-
-                            {/* Collapsible Task Form */}
-                            {adminShowTaskForm && (
-                              <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 mb-6">
-                                <h4 className="text-base font-semibold text-slate-900 mb-4">
-                                  {adminEditingTask ? 'Edit Task' : 'Create New Task'}
-                                </h4>
-                              
-                              <div className="space-y-4">
-                                <div>
-                                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Task Title *
-                                  </label>
-                                  <input
-                                    type="text"
-                                    value={adminTaskForm.title}
-                                    onChange={(e) => setAdminTaskForm({ ...adminTaskForm, title: e.target.value })}
-                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
-                                    placeholder="e.g., Follow up on product demo"
-                                  />
-                                </div>
-
-                                <div>
-                                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Description
-                                  </label>
-                                  <textarea
-                                    value={adminTaskForm.description}
-                                    onChange={(e) => setAdminTaskForm({ ...adminTaskForm, description: e.target.value })}
-                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-slate-900"
-                                    rows={3}
-                                    placeholder="Add any additional details..."
-                                  />
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                      Priority
-                                    </label>
-                                    <select
-                                      value={adminTaskForm.priority}
-                                      onChange={(e) => setAdminTaskForm({ ...adminTaskForm, priority: e.target.value })}
-                                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
-                                    >
-                                      <option value="low">Low</option>
-                                      <option value="medium">Medium</option>
-                                      <option value="high">High</option>
-                                      <option value="urgent">Urgent</option>
-                                    </select>
-                                  </div>
-
-                                  <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
-                                      Due Date
-                                    </label>
-                                    <input
-                                      type="date"
-                                      value={adminTaskForm.dueDate}
-                                      onChange={(e) => setAdminTaskForm({ ...adminTaskForm, dueDate: e.target.value })}
-                                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-
-                                <div className="flex justify-end space-x-3 mt-6">
-                                  <button
-                                    onClick={() => {
-                                      setAdminEditingTask(null);
-                                      setAdminTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
-                                      setAdminShowTaskForm(false);
-                                    }}
-                                    className="px-4 py-2 text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors font-medium"
-                                  >
-                                    Cancel
-                                  </button>
-                                  <button
-                                    onClick={adminEditingTask ? handleAdminSaveEditedTask : handleAdminCreateTask}
-                                    disabled={!adminTaskForm.title}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
-                                  >
-                                    {adminEditingTask ? 'Save Changes' : 'Create Task'}
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-
-                            {isLoadingAdminTasks ? (
-                              <div className="flex items-center justify-center py-12">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                              </div>
-                            ) : (
-                              <>
-                                  <div className="space-y-3">
-                                    {adminTasks.map((task: any) => (
-                                      <div
-                                        key={task.id}
-                                        className="bg-slate-50 rounded-lg p-4 border border-slate-200 hover:border-slate-300 transition-colors"
-                                      >
-                                        <div className="flex items-start justify-between">
-                                          <div className="flex-1">
-                                            <div className="flex items-center space-x-2 mb-2">
-                                              <button
-                                                onClick={() => handleAdminUpdateTask(task.id, {
-                                                  status: task.status === 'completed' ? 'pending' : 'completed'
-                                                })}
-                                                className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                                                  task.status === 'completed'
-                                                    ? 'bg-green-500 border-green-500'
-                                                    : 'border-slate-400 hover:border-green-500'
-                                                }`}
-                                              >
-                                                {task.status === 'completed' && (
-                                                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                                  </svg>
-                                                )}
-                                              </button>
-                                              <h4 className={`font-semibold text-slate-900 ${task.status === 'completed' ? 'line-through text-slate-500' : ''}`}>
-                                                {task.title}
-                                              </h4>
-                                              <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                                                task.priority === 'urgent'
-                                                  ? 'bg-red-100 text-red-700'
-                                                  : task.priority === 'high'
-                                                  ? 'bg-orange-100 text-orange-700'
-                                                  : task.priority === 'medium'
-                                                  ? 'bg-yellow-100 text-yellow-700'
-                                                  : 'bg-slate-100 text-slate-700'
-                                              }`}>
-                                                {task.priority}
-                                              </span>
-                                              {task.status === 'in_progress' && (
-                                                <span className="px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
-                                                  In Progress
-                                                </span>
-                        )}
-                      </div>
-                                            {task.description && (
-                                              <p className={`text-sm text-slate-600 ml-7 mb-2 ${task.status === 'completed' ? 'line-through text-slate-400' : ''}`}>
-                                                {task.description}
-                                              </p>
-                                            )}
-                                            <div className="flex items-center space-x-4 ml-7 text-xs text-slate-500">
-                                              {task.dueDate && (
-                                                <div className="flex items-center">
-                                                  <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                  </svg>
-                                                  {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </div>
-                                              )}
-                                              <div className="flex items-center">
-                                                <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                                {new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div className="flex items-center space-x-2 ml-4">
-                                            {task.status !== 'completed' && task.status !== 'in_progress' && (
-                                              <button
-                                                onClick={() => handleAdminUpdateTask(task.id, { status: 'in_progress' })}
-                                                className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                                                title="Start Task"
-                                              >
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                              </button>
-                                            )}
-                                            <button
-                                              onClick={() => openAdminEditTask(task)}
-                                              className="p-1.5 text-slate-600 hover:bg-slate-200 rounded transition-colors"
-                                              title="Edit Task"
-                                            >
-                                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                              </svg>
-                                            </button>
-                                            <button
-                                              onClick={() => handleAdminDeleteTask(task.id)}
-                                              className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors"
-                                              title="Delete Task"
-                                            >
-                                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                              </svg>
-                                            </button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                              </>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
               )}
 
               {/* Edit Columns Modal */}
