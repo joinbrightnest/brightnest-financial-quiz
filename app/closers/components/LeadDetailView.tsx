@@ -721,7 +721,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                     {!showNoteForm ? (
                       <button
                         onClick={() => setShowNoteForm(true)}
-                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 transition-colors"
                       >
                         <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -729,44 +729,55 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                         Add Note
                       </button>
                     ) : (
-                      <form onSubmit={(e) => { e.preventDefault(); handleCreateNote(getLeadEmail()); }} className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-                        <textarea
-                          value={newNoteContent}
-                          onChange={(e) => setNewNoteContent(e.target.value)}
-                          rows={4}
-                          className="w-full p-2 border border-gray-300 rounded-md focus:ring-slate-500 focus:border-slate-500"
-                          placeholder="Add a new note..."
-                        />
-                        <div className="mt-2 flex justify-end gap-2">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setShowNoteForm(false);
-                              setNewNoteContent('');
-                            }}
-                            className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            type="submit"
-                            disabled={!newNoteContent.trim() || isSubmittingNote}
-                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400"
-                          >
-                            {isSubmittingNote ? 'Saving...' : 'Save Note'}
-                          </button>
+                      <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <div className="flex items-start space-x-3">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+                            <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          </div>
+                          <div className="flex-1">
+                            <form onSubmit={(e) => { e.preventDefault(); handleCreateNote(getLeadEmail()); }}>
+                              <textarea
+                                value={newNoteContent}
+                                onChange={(e) => setNewNoteContent(e.target.value)}
+                                rows={3}
+                                className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900"
+                                placeholder="Write your note here..."
+                              />
+                              <div className="mt-3 flex justify-end gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setShowNoteForm(false);
+                                    setNewNoteContent('');
+                                  }}
+                                  className="px-4 py-2 text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors font-medium text-sm"
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  type="submit"
+                                  disabled={!newNoteContent.trim() || isSubmittingNote}
+                                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium text-sm"
+                                >
+                                  {isSubmittingNote ? 'Saving...' : 'Save Note'}
+                                </button>
+                              </div>
+                            </form>
+                          </div>
                         </div>
-                      </form>
+                      </div>
                     )}
                   </div>
 
                   {loadingNotes ? (
                     <div className="flex items-center justify-center py-12">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                     </div>
                   ) : (
                     <div className="relative">
-                      <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-slate-200"></div>
+                      {notes.length > 0 && <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-slate-200"></div>}
                       <div className="space-y-4">
                         {notes.length > 0 ? (
                           notes.map((note) => (
@@ -776,24 +787,24 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
                               </div>
-                              <div className="flex-1 bg-slate-50 rounded-lg p-4 border border-slate-200">
-                                <p className="text-sm font-semibold text-slate-900">
-                                  <span className="text-amber-600">Note added</span>
-                                </p>
-                                <p className="text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-200 whitespace-pre-wrap mt-2">{note.content}</p>
-                                <p className="text-xs text-slate-500 mt-2">
-                                  {new Date(note.createdAt).toLocaleString([], {
-                                    year: 'numeric',
-                                    month: 'short',
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                  })}
-                                </p>
-                                <div className="mt-2 flex justify-end">
+                              <div className="flex-1 bg-slate-50 rounded-lg p-4 border border-slate-200 group">
+                                <div className="flex justify-between items-start">
+                                  <div className="flex-1">
+                                    <p className="text-xs text-slate-500 mb-2">
+                                      {new Date(note.createdAt).toLocaleString('en-US', {
+                                        month: 'short',
+                                        day: 'numeric',
+                                        year: 'numeric',
+                                        hour: 'numeric',
+                                        minute: '2-digit',
+                                        hour12: true
+                                      })}
+                                    </p>
+                                    <p className="text-sm text-slate-800 whitespace-pre-wrap">{note.content}</p>
+                                  </div>
                                   <button
                                     onClick={() => handleDeleteNote(note.id)}
-                                    className="p-1.5 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                    className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all ml-2"
                                     aria-label="Delete note"
                                   >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -807,10 +818,12 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                         ) : (
                           !showNoteForm && (
                             <div className="text-center py-12">
-                              <svg className="mx-auto h-16 w-16 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                              <p className="mt-2 text-sm text-slate-600">No notes have been added for this lead.</p>
+                              <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
+                                <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </div>
+                              <p className="text-sm text-slate-600">No notes have been added for this lead.</p>
                             </div>
                           )
                         )}
