@@ -39,11 +39,26 @@ export async function GET(
       );
     }
 
-    // Find email from answers
+    // Find email from answers - try multiple methods for robustness
+    let leadEmail: string | null = null;
+    
+    // Method 1: Look for answer where question type is 'email' or prompt mentions email
     const emailAnswer = quizSession.answers.find(
-      a => a.question?.type === 'email' || a.question?.prompt.toLowerCase().includes('email')
+      a => a.question?.type === 'email' || a.question?.prompt?.toLowerCase().includes('email')
     );
-    const leadEmail = emailAnswer?.value ? String(emailAnswer.value) : null;
+    if (emailAnswer?.value) {
+      leadEmail = String(emailAnswer.value);
+    }
+    
+    // Method 2: Fallback - look for any answer value that looks like an email (contains @)
+    if (!leadEmail) {
+      const emailByValue = quizSession.answers.find(
+        a => a.value && typeof a.value === 'string' && a.value.includes('@')
+      );
+      if (emailByValue?.value) {
+        leadEmail = String(emailByValue.value);
+      }
+    }
     
     // Find name from answers
     const nameAnswer = quizSession.answers.find(
