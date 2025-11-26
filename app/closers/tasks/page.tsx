@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import CloserSidebar from '../components/CloserSidebar';
 import LeadDetailView from '../../components/shared/LeadDetailView';
 import ContentLoader from '../components/ContentLoader';
+import { getPriorityColor, getStatusColor } from '@/lib/utils/ui';
 
 interface Closer {
   id: string;
@@ -408,31 +409,7 @@ export default function CloserTasks() {
     }
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'urgent':
-        return 'bg-red-100 text-red-800 font-semibold';
-      case 'high':
-        return 'bg-orange-100 text-orange-800 font-semibold';
-      case 'medium':
-        return 'bg-amber-100 text-amber-800 font-semibold';
-      case 'low':
-        return 'bg-slate-100 text-slate-700';
-      default:
-        return 'bg-slate-100 text-slate-700';
-    }
-  };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'bg-emerald-100 text-emerald-800 font-semibold';
-      case 'in_progress':
-        return 'bg-indigo-100 text-indigo-800 font-semibold';
-      default:
-        return 'bg-amber-100 text-amber-800 font-semibold';
-    }
-  };
 
   const filteredTasks = getFilteredTasks();
   const activeTaskCount = tasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length;
