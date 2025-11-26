@@ -686,7 +686,6 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                                 </div>
                               )}
                             </div>
-                            </div>
                           </div>
                         ))}
                       </div>
