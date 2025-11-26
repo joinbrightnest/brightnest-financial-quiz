@@ -180,10 +180,16 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
     if (!email) return;
     setLoadingTasks(true);
     try {
-      const response = await fetch(`/api/admin/tasks?leadEmail=${encodeURIComponent(email)}`);
+      const token = localStorage.getItem('closerToken');
+      const response = await fetch(`/api/closer/tasks?leadEmail=${encodeURIComponent(email)}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
       if (response.ok) {
         const data = await response.json();
-        setTasks(data);
+        setTasks(data.tasks || []);
       }
     } catch (error) {
       console.error('Error fetching tasks:', error);
@@ -196,13 +202,16 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
     if (!taskForm.title || !leadEmail) return;
 
     try {
-      const response = await fetch('/api/admin/tasks', {
+      const token = localStorage.getItem('closerToken');
+      const response = await fetch('/api/closer/tasks', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           ...taskForm,
           leadEmail,
-          assignedTo: 'closer'
         }),
       });
 
@@ -211,6 +220,9 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
         setTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
         setShowTaskForm(false);
         fetchActivities();
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Failed to create task' }));
+        console.error('Error creating task:', errorData.error);
       }
     } catch (error) {
       console.error('Error creating task:', error);
@@ -219,9 +231,13 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
 
   const handleUpdateTask = async (taskId: string, updates: any, leadEmail: string) => {
     try {
-      const response = await fetch(`/api/admin/tasks/${taskId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+      const token = localStorage.getItem('closerToken');
+      const response = await fetch(`/api/closer/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(updates),
       });
 
@@ -236,8 +252,13 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
 
   const handleDeleteTask = async (taskId: string, leadEmail: string) => {
     try {
-      const response = await fetch(`/api/admin/tasks/${taskId}`, {
+      const token = localStorage.getItem('closerToken');
+      const response = await fetch(`/api/closer/tasks/${taskId}`, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (response.ok) {
