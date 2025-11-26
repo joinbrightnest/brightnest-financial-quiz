@@ -454,11 +454,17 @@ export default function LeadDetailsPage() {
                       <label className="text-xs text-slate-500 uppercase tracking-wide">Stage</label>
                       <div className="mt-1">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                          leadData.status === 'Completed' || leadData.status === 'completed' 
-                            ? 'bg-green-100 text-green-800' 
-                            : leadData.status === 'Booked'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-gray-100 text-gray-800'
+                          leadData.status === "Purchased (Call)"
+                            ? "bg-green-100 text-green-800" 
+                            : leadData.status === "Not Interested"
+                            ? "bg-red-100 text-red-800"
+                            : leadData.status === "Needs Follow Up"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : leadData.status === "Booked"
+                            ? "bg-blue-100 text-blue-800"
+                            : leadData.status === "Completed"
+                            ? "bg-gray-100 text-gray-800"
+                            : "bg-gray-100 text-gray-800"
                         }`}>
                           {leadData.status || '--'}
                         </span>

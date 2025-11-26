@@ -2939,15 +2939,32 @@ export default function AdminDashboard() {
                                 <div>
                                   <label className="text-xs text-slate-500 uppercase tracking-wide">Stage</label>
                                   <div className="mt-1">
-                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                                      crmSelectedLead.status === 'Completed' || crmSelectedLead.status === 'Booked' 
-                                        ? 'bg-green-100 text-green-800' 
-                                        : crmSelectedLead.status === 'In Progress'
-                                        ? 'bg-blue-100 text-blue-800'
-                                        : 'bg-gray-100 text-gray-800'
-                                    }`}>
-                                      {crmSelectedLead.status || '--'}
-                                    </span>
+                                    {(() => {
+                                      // Use the same logic as the table to determine status and color
+                                      const actualStatus = crmSelectedLead.status && crmSelectedLead.status !== "Stage" ? crmSelectedLead.status : 
+                                        (crmSelectedLead.appointment?.outcome === 'converted' ? 'Purchased (Call)' :
+                                         crmSelectedLead.appointment?.outcome === 'not_interested' ? 'Not Interested' :
+                                         crmSelectedLead.appointment?.outcome === 'needs_follow_up' ? 'Needs Follow Up' :
+                                         crmSelectedLead.appointment?.outcome ? 'Booked' : 'Completed');
+                                      
+                                      return (
+                                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                          actualStatus === "Purchased (Call)"
+                                            ? "bg-green-100 text-green-800" 
+                                            : actualStatus === "Not Interested"
+                                            ? "bg-red-100 text-red-800"
+                                            : actualStatus === "Needs Follow Up"
+                                            ? "bg-yellow-100 text-yellow-800"
+                                            : actualStatus === "Booked"
+                                            ? "bg-blue-100 text-blue-800"
+                                            : actualStatus === "Completed"
+                                            ? "bg-gray-100 text-gray-800"
+                                            : "bg-gray-100 text-gray-800"
+                                        }`}>
+                                          {actualStatus || '--'}
+                                        </span>
+                                      );
+                                    })()}
                                   </div>
                                 </div>
                                 
