@@ -28,12 +28,12 @@ export const getApiEndpoint = (
     const baseMap = {
         closer: {
             'lead-details': '/api/closer/lead-details',
-            activities: '/api/closer/lead-details',
+            activities: '/api/leads', // ✅ Unified endpoint
             tasks: '/api/tasks', // ✅ Unified endpoint
         },
         admin: {
             'lead-details': '/api/admin/leads',
-            activities: '/api/admin/leads',
+            activities: '/api/leads', // ✅ Unified endpoint
             tasks: '/api/tasks', // ✅ Unified endpoint
         },
     };
