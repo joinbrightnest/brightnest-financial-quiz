@@ -953,12 +953,35 @@ export default function AdminDashboard() {
   const handleAdminCreateTask = async () => {
     if (!adminTaskForm.title || !crmSelectedLead) return;
 
+    setError(null); // Clear previous errors
+    
     try {
       const leadEmail = crmSelectedLead.answers?.find((a: any) => a.value?.includes('@'))?.value;
       
       if (!leadEmail) {
         setError('No email found for this lead');
         return;
+      }
+
+      // Get closerId from appointment, or fetch a default closer
+      let closerId = crmSelectedLead.appointment?.closer?.id;
+      
+      // If no closer is assigned, fetch the first active closer as default
+      if (!closerId) {
+        const closersResponse = await fetch('/api/admin/closers');
+        if (closersResponse.ok) {
+          const closersData = await closersResponse.json();
+          const activeCloser = closersData.closers?.find((c: any) => c.isActive && c.isApproved);
+          if (activeCloser) {
+            closerId = activeCloser.id;
+          } else {
+            setError('No active closer available to assign task. Please assign a closer to this lead first.');
+            return;
+          }
+        } else {
+          setError('Unable to fetch closers. Please try again.');
+          return;
+        }
       }
 
       const response = await fetch('/api/admin/tasks', {
@@ -972,16 +995,23 @@ export default function AdminDashboard() {
           description: adminTaskForm.description,
           priority: adminTaskForm.priority,
           dueDate: adminTaskForm.dueDate || null,
+          closerId: closerId,
         }),
       });
 
       if (response.ok) {
+        setError(null);
         setAdminTaskForm({ title: '', description: '', priority: 'medium', dueDate: '' });
         setAdminShowTaskForm(false);
         fetchAdminTasks(crmSelectedLead);
+        fetchCrmActivities(crmSelectedLead);
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || 'Failed to create task');
       }
     } catch (error) {
       console.error('Error creating admin task:', error);
+      setError('An error occurred while creating the task');
     }
   };
 
@@ -3632,7 +3662,10 @@ export default function AdminDashboard() {
                             <div>
                               <div className="mb-6">
                                 <button
-                                  onClick={() => setAdminShowTaskForm(!adminShowTaskForm)}
+                                  onClick={() => {
+                                    setAdminShowTaskForm(!adminShowTaskForm);
+                                    setError(null); // Clear errors when toggling form
+                                  }}
                                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 transition-colors"
                                 >
                                   <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3654,6 +3687,12 @@ export default function AdminDashboard() {
                                       <h4 className="text-sm font-semibold text-slate-900 mb-3">
                                         {adminEditingTask ? 'Edit Task' : 'New Task'}
                                       </h4>
+                                      
+                                      {error && (
+                                        <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                          <p className="text-sm text-red-800">{error}</p>
+                                        </div>
+                                      )}
                                       
                                       <div className="space-y-3">
                                         <input
