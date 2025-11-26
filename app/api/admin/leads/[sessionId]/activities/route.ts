@@ -83,7 +83,7 @@ export async function GET(
       const mostRecentQuizSession = allQuizSessionsForEmail[0];
 
       // Only show quiz completion if this session IS the most recent one for this email
-      if (mostRecentQuizSession && mostRecentQuizSession.completedAt && mostRecentQuizSession.id === sessionId) {
+      if (mostRecentQuizSession && mostRecentQuizSession.completedAt && mostRecentQuizSession.id === sessionId && quizSession.completedAt) {
         activities.push({
           id: `quiz_${quizSession.id}`,
           type: 'quiz_completed',
