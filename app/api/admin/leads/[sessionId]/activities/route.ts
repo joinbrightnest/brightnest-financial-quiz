@@ -72,7 +72,7 @@ export async function GET(
     
     // Find name from answers
     const nameAnswer = quizSession.answers.find(
-      a => a.question?.type === 'text' || a.question?.prompt.toLowerCase().includes('name')
+      a => a.question?.type === 'text' || a.question?.prompt?.toLowerCase().includes('name')
     );
     const leadName = nameAnswer?.value ? String(nameAnswer.value) : 'Lead';
 
