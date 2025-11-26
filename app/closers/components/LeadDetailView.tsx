@@ -825,7 +825,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                   <div className="mb-6">
                     <button
                       onClick={() => setShowTaskForm(!showTaskForm)}
-                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
+                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 transition-colors"
                     >
                       <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -944,20 +944,29 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                                   </svg>
                                 )}
                               </div>
-                              <div className="flex-1 bg-slate-50 rounded-lg p-4 border border-slate-200">
+                              <div className="flex-1 bg-slate-50 rounded-lg p-4 border border-slate-200 group">
                                 <div className="flex items-start justify-between">
                                   <div className="flex-1">
-                                    <p className="text-sm font-semibold text-slate-900">
-                                      <span className={task.status === 'completed' ? 'text-green-600 line-through' : 'text-indigo-600'}>
+                                    <div className="flex items-center flex-wrap gap-2 mb-2">
+                                      <button
+                                        onClick={() => handleUpdateTask(task.id, {
+                                          status: task.status === 'completed' ? 'pending' : 'completed'
+                                        }, getLeadEmail())}
+                                        className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                                          task.status === 'completed'
+                                            ? 'bg-green-500 border-green-500'
+                                            : 'border-slate-400 hover:border-green-500'
+                                        }`}
+                                      >
+                                        {task.status === 'completed' && (
+                                          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                          </svg>
+                                        )}
+                                      </button>
+                                      <span className={`font-semibold text-slate-900 ${task.status === 'completed' ? 'line-through text-slate-500' : ''}`}>
                                         {task.title}
                                       </span>
-                                    </p>
-                                    {task.description && (
-                                      <p className={`text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-200 mt-2 ${task.status === 'completed' ? 'line-through text-slate-400' : ''}`}>
-                                        {task.description}
-                                      </p>
-                                    )}
-                                    <div className="flex items-center space-x-3 mt-2">
                                       <span className={`px-2 py-0.5 rounded text-xs font-medium ${getPriorityColor(task.priority)}`}>
                                         {task.priority}
                                       </span>
@@ -966,23 +975,30 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                                           In Progress
                                         </span>
                                       )}
+                                    </div>
+                                    {task.description && (
+                                      <p className={`text-sm text-slate-600 mb-2 ${task.status === 'completed' ? 'line-through text-slate-400' : ''}`}>
+                                        {task.description}
+                                      </p>
+                                    )}
+                                    <div className="flex items-center space-x-4 text-xs text-slate-500">
                                       {task.dueDate && (
-                                        <div className="flex items-center text-xs text-slate-500">
+                                        <div className="flex items-center">
                                           <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                           </svg>
-                                          {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                          Due {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                         </div>
                                       )}
-                                      <div className="flex items-center text-xs text-slate-500">
+                                      <div className="flex items-center">
                                         <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
-                                        {new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                        Created {new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="flex items-center space-x-2 ml-4">
+                                  <div className="flex items-center space-x-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                     {task.status !== 'completed' && task.status !== 'in_progress' && (
                                       <button
                                         onClick={() => handleUpdateTask(task.id, { status: 'in_progress' }, getLeadEmail())}
@@ -996,23 +1012,8 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                                       </button>
                                     )}
                                     <button
-                                      onClick={() => handleUpdateTask(task.id, {
-                                        status: task.status === 'completed' ? 'pending' : 'completed'
-                                      }, getLeadEmail())}
-                                      className={`p-1.5 rounded transition-colors ${
-                                        task.status === 'completed'
-                                          ? 'text-green-600 hover:bg-green-50'
-                                          : 'text-slate-400 hover:bg-slate-100'
-                                      }`}
-                                      title={task.status === 'completed' ? 'Mark as incomplete' : 'Mark as complete'}
-                                    >
-                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                      </svg>
-                                    </button>
-                                    <button
                                       onClick={() => openEditTask(task)}
-                                      className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded transition-colors"
+                                      className="p-1.5 text-slate-600 hover:bg-slate-200 rounded transition-colors"
                                       title="Edit Task"
                                     >
                                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1021,7 +1022,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                                     </button>
                                     <button
                                       onClick={() => handleDeleteTask(task.id, getLeadEmail())}
-                                      className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                                      className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors"
                                       title="Delete Task"
                                     >
                                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1036,10 +1037,12 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                         ) : (
                           !showTaskForm && (
                             <div className="text-center py-12">
-                              <svg className="mx-auto h-16 w-16 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                              </svg>
-                              <p className="mt-2 text-sm text-slate-600">No tasks yet</p>
+                              <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-4">
+                                <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                </svg>
+                              </div>
+                              <p className="text-sm text-slate-600">No tasks yet. Create one to get started.</p>
                             </div>
                           )
                         )}
