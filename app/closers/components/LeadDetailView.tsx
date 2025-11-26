@@ -480,83 +480,86 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                       <p className="text-sm text-slate-600">No activity recorded yet</p>
                     </div>
                   ) : (
-                    <div className="space-y-6">
-                      {[...activities].sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).map((activity: any) => (
-                        <div key={activity.id} className="flex items-start space-x-4">
-                          {/* Icon */}
-                          <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-                            activity.type === 'quiz_completed' ? 'bg-purple-100' :
-                            activity.type === 'call_booked' ? 'bg-blue-100' :
-                            activity.type === 'deal_closed' ? 'bg-green-100' :
-                            activity.type === 'note_added' ? 'bg-amber-100' :
-                            (activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_completed') ? 'bg-indigo-100' :
-                            (activity.type === 'outcome_updated' || activity.type === 'outcome_marked') ? 'bg-orange-100' :
-                            'bg-amber-100'
-                          }`}>
-                            {activity.type === 'quiz_completed' && (
-                              <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                            )}
-                            {activity.type === 'call_booked' && (
-                              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                              </svg>
-                            )}
-                            {activity.type === 'deal_closed' && (
-                              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                            )}
-                            {activity.type === 'note_added' && (
-                              <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                            )}
-                            {(activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_completed') && (
-                              <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                              </svg>
-                            )}
-                            {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked') && (
-                              <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                            )}
-                          </div>
-                          
-                          {/* Content */}
-                          <div className="flex-1 min-w-0">
-                            <div>
-                              <p className="text-sm text-slate-900">
+                    <div className="relative">
+                      <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-slate-200"></div>
+                      <div className="space-y-4">
+                        {[...activities].sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).map((activity: any) => (
+                          <div key={activity.id} className="relative flex items-start space-x-4">
+                            {/* Icon */}
+                            <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center z-10 ${
+                              activity.type === 'quiz_completed' ? 'bg-purple-100' :
+                              activity.type === 'call_booked' ? 'bg-blue-100' :
+                              activity.type === 'deal_closed' ? 'bg-green-100' :
+                              activity.type === 'note_added' ? 'bg-amber-100' :
+                              (activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_completed') ? 'bg-indigo-100' :
+                              (activity.type === 'outcome_updated' || activity.type === 'outcome_marked') ? 'bg-orange-100' :
+                              'bg-amber-100'
+                            }`}>
+                              {activity.type === 'quiz_completed' && (
+                                <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                              )}
+                              {activity.type === 'call_booked' && (
+                                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                              )}
+                              {activity.type === 'deal_closed' && (
+                                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                              )}
+                              {activity.type === 'note_added' && (
+                                <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              )}
+                              {(activity.type === 'task_created' || activity.type === 'task_started' || activity.type === 'task_completed') && (
+                                <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                </svg>
+                              )}
+                              {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked') && (
+                                <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                              )}
+                            </div>
+                            
+                            {/* Content */}
+                            <div className="flex-1 bg-slate-50 rounded-lg p-4 border border-slate-200">
+                              <p className="text-sm font-semibold text-slate-900">
                                 {activity.type === 'quiz_completed' && (
-                                  <span><span className="font-semibold text-blue-600">{activity.leadName}</span> completed the quiz</span>
+                                  <span><span className="text-blue-600">{activity.leadName}</span> completed the quiz</span>
                                 )}
                                 {activity.type === 'call_booked' && (
-                                  <span><span className="font-semibold text-blue-600">{activity.leadName}</span> booked a call</span>
+                                  <span><span className="text-blue-600">{activity.leadName}</span> booked a call</span>
                                 )}
                                 {activity.type === 'deal_closed' && (
-                                  <span><span className="font-semibold text-green-600">{activity.actor}</span> marked <span className="font-semibold text-blue-600">{activity.leadName}</span> as closed</span>
+                                  <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as closed</span>
                                 )}
                                 {activity.type === 'note_added' && (
-                                  <span><span className="font-semibold text-green-600">{activity.actor}</span> added a note</span>
+                                  <span><span className="text-amber-600">{activity.actor}</span> added a note</span>
                                 )}
                                 {activity.type === 'task_created' && (
-                                  <span><span className="font-semibold text-indigo-600">{activity.actor}</span> created a task</span>
+                                  <span><span className="text-indigo-600">{activity.actor}</span> created a task</span>
                                 )}
                                 {activity.type === 'task_started' && (
-                                  <span><span className="font-semibold text-blue-600">{activity.actor}</span> started the task</span>
+                                  <span><span className="text-blue-600">{activity.actor}</span> started the task</span>
                                 )}
                                 {activity.type === 'task_completed' && (
-                                  <span><span className="font-semibold text-green-600">{activity.actor}</span> finished the task</span>
+                                  <span><span className="text-green-600">{activity.actor}</span> finished the task</span>
                                 )}
                                 {(activity.type === 'outcome_updated' || activity.type === 'outcome_marked') && (
-                                  <span><span className="font-semibold text-green-600">{activity.actor}</span> marked <span className="font-semibold text-blue-600">{activity.leadName}</span> as <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
+                                  <span><span className="text-green-600">{activity.actor}</span> marked <span className="text-blue-600">{activity.leadName}</span> as <span className="font-bold text-orange-600">{activity.details?.outcome?.replace(/_/g, ' ')}</span></span>
                                 )}
                               </p>
                               
                               {activity.type === 'note_added' && activity.details?.content && (
-                                <p className="mt-2 text-sm text-slate-700 whitespace-pre-wrap">{activity.details.content}</p>
+                                <div className="mt-2">
+                                  <p className="text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-200 whitespace-pre-wrap">{activity.details.content}</p>
+                                </div>
                               )}
                               
                               <p className="text-xs text-slate-500 mt-1">
@@ -683,9 +686,10 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                                 </div>
                               )}
                             </div>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -697,7 +701,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                     {!showNoteForm ? (
                       <button
                         onClick={() => setShowNoteForm(true)}
-                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900"
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
                       >
                         <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -727,7 +731,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                           <button
                             type="submit"
                             disabled={!newNoteContent.trim() || isSubmittingNote}
-                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 disabled:bg-slate-400"
+                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400"
                           >
                             {isSubmittingNote ? 'Saving...' : 'Save Note'}
                           </button>
@@ -741,46 +745,56 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
                     </div>
                   ) : (
-                    <div className="space-y-4">
-                      {notes.length > 0 ? (
-                        notes.map((note) => (
-                          <div
-                            key={note.id}
-                            className="group p-4 bg-white rounded-lg border border-slate-200 flex justify-between items-start"
-                          >
-                            <div>
-                              <p className="text-sm text-slate-500">
-                                {new Date(note.createdAt).toLocaleString([], {
-                                  year: 'numeric',
-                                  month: 'short',
-                                  day: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                })}
-                              </p>
-                              <p className="text-sm text-slate-800 whitespace-pre-wrap mt-1">{note.content}</p>
+                    <div className="relative">
+                      <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-slate-200"></div>
+                      <div className="space-y-4">
+                        {notes.length > 0 ? (
+                          notes.map((note) => (
+                            <div key={note.id} className="relative flex items-start space-x-4">
+                              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center z-10">
+                                <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </div>
+                              <div className="flex-1 bg-slate-50 rounded-lg p-4 border border-slate-200">
+                                <p className="text-sm font-semibold text-slate-900">
+                                  <span className="text-amber-600">Note added</span>
+                                </p>
+                                <p className="text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-200 whitespace-pre-wrap mt-2">{note.content}</p>
+                                <p className="text-xs text-slate-500 mt-2">
+                                  {new Date(note.createdAt).toLocaleString([], {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </p>
+                                <div className="mt-2 flex justify-end">
+                                  <button
+                                    onClick={() => handleDeleteNote(note.id)}
+                                    className="p-1.5 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                    aria-label="Delete note"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                  </button>
+                                </div>
+                              </div>
                             </div>
-                            <button
-                              onClick={() => handleDeleteNote(note.id)}
-                              className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-50 transition-opacity"
-                              aria-label="Delete note"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          ))
+                        ) : (
+                          !showNoteForm && (
+                            <div className="text-center py-12">
+                              <svg className="mx-auto h-16 w-16 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                               </svg>
-                            </button>
-                          </div>
-                        ))
-                      ) : (
-                        !showNoteForm && (
-                          <div className="text-center py-12">
-                            <svg className="mx-auto h-12 w-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                            <p className="mt-2 text-sm text-slate-600">No notes have been added for this lead.</p>
-                          </div>
-                        )
-                      )}
+                              <p className="mt-2 text-sm text-slate-600">No notes have been added for this lead.</p>
+                            </div>
+                          )
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -791,7 +805,7 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                   <div className="mb-6">
                     <button
                       onClick={() => setShowTaskForm(!showTaskForm)}
-                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900"
+                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
                     >
                       <svg className="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -891,111 +905,125 @@ export default function LeadDetailView({ sessionId, onClose }: LeadDetailViewPro
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                     </div>
                   ) : (
-                    <div className="space-y-3">
-                      {tasks.length > 0 ? (
-                        tasks.map((task: any) => (
-                          <div
-                            key={task.id}
-                            className="bg-slate-50 rounded-lg p-4 border border-slate-200 hover:border-slate-300 transition-colors"
-                          >
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <div className="flex items-center space-x-2 mb-2">
-                                  <button
-                                    onClick={() => handleUpdateTask(task.id, {
-                                      status: task.status === 'completed' ? 'pending' : 'completed'
-                                    }, getLeadEmail())}
-                                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                                      task.status === 'completed'
-                                        ? 'bg-green-500 border-green-500'
-                                        : 'border-slate-400 hover:border-green-500'
-                                    }`}
-                                  >
-                                    {task.status === 'completed' && (
-                                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                      </svg>
-                                    )}
-                                  </button>
-                                  <h4 className={`font-semibold text-slate-900 ${task.status === 'completed' ? 'line-through text-slate-500' : ''}`}>
-                                    {task.title}
-                                  </h4>
-                                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${getPriorityColor(task.priority)}`}>
-                                    {task.priority}
-                                  </span>
-                                  {task.status === 'in_progress' && (
-                                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
-                                      In Progress
-                                    </span>
-                                  )}
-                                </div>
-                                {task.description && (
-                                  <p className={`text-sm text-slate-600 ml-7 mb-2 ${task.status === 'completed' ? 'line-through text-slate-400' : ''}`}>
-                                    {task.description}
-                                  </p>
+                    <div className="relative">
+                      <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-slate-200"></div>
+                      <div className="space-y-4">
+                        {tasks.length > 0 ? (
+                          tasks.map((task: any) => (
+                            <div key={task.id} className="relative flex items-start space-x-4">
+                              <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center z-10 ${
+                                task.status === 'completed' ? 'bg-green-100' : 'bg-indigo-100'
+                              }`}>
+                                {task.status === 'completed' ? (
+                                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                ) : (
+                                  <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                  </svg>
                                 )}
-                                <div className="flex items-center space-x-4 ml-7 text-xs text-slate-500">
-                                  {task.dueDate && (
-                                    <div className="flex items-center">
-                                      <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                      </svg>
-                                      {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                              </div>
+                              <div className="flex-1 bg-slate-50 rounded-lg p-4 border border-slate-200">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <p className="text-sm font-semibold text-slate-900">
+                                      <span className={task.status === 'completed' ? 'text-green-600 line-through' : 'text-indigo-600'}>
+                                        {task.title}
+                                      </span>
+                                    </p>
+                                    {task.description && (
+                                      <p className={`text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-200 mt-2 ${task.status === 'completed' ? 'line-through text-slate-400' : ''}`}>
+                                        {task.description}
+                                      </p>
+                                    )}
+                                    <div className="flex items-center space-x-3 mt-2">
+                                      <span className={`px-2 py-0.5 rounded text-xs font-medium ${getPriorityColor(task.priority)}`}>
+                                        {task.priority}
+                                      </span>
+                                      {task.status === 'in_progress' && (
+                                        <span className="px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700">
+                                          In Progress
+                                        </span>
+                                      )}
+                                      {task.dueDate && (
+                                        <div className="flex items-center text-xs text-slate-500">
+                                          <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                          </svg>
+                                          {new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                        </div>
+                                      )}
+                                      <div className="flex items-center text-xs text-slate-500">
+                                        <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        {new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                      </div>
                                     </div>
-                                  )}
-                                  <div className="flex items-center">
-                                    <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    {new Date(task.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                  </div>
+                                  <div className="flex items-center space-x-2 ml-4">
+                                    {task.status !== 'completed' && task.status !== 'in_progress' && (
+                                      <button
+                                        onClick={() => handleUpdateTask(task.id, { status: 'in_progress' }, getLeadEmail())}
+                                        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                                        title="Start Task"
+                                      >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                      </button>
+                                    )}
+                                    <button
+                                      onClick={() => handleUpdateTask(task.id, {
+                                        status: task.status === 'completed' ? 'pending' : 'completed'
+                                      }, getLeadEmail())}
+                                      className={`p-1.5 rounded transition-colors ${
+                                        task.status === 'completed'
+                                          ? 'text-green-600 hover:bg-green-50'
+                                          : 'text-slate-400 hover:bg-slate-100'
+                                      }`}
+                                      title={task.status === 'completed' ? 'Mark as incomplete' : 'Mark as complete'}
+                                    >
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                      </svg>
+                                    </button>
+                                    <button
+                                      onClick={() => openEditTask(task)}
+                                      className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded transition-colors"
+                                      title="Edit Task"
+                                    >
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                      </svg>
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteTask(task.id, getLeadEmail())}
+                                      className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                                      title="Delete Task"
+                                    >
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                      </svg>
+                                    </button>
                                   </div>
                                 </div>
                               </div>
-                              <div className="flex items-center space-x-2 ml-4">
-                                {task.status !== 'completed' && task.status !== 'in_progress' && (
-                                  <button
-                                    onClick={() => handleUpdateTask(task.id, { status: 'in_progress' }, getLeadEmail())}
-                                    className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                                    title="Start Task"
-                                  >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                  </button>
-                                )}
-                                <button
-                                  onClick={() => openEditTask(task)}
-                                  className="p-1.5 text-slate-600 hover:bg-slate-200 rounded transition-colors"
-                                  title="Edit Task"
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                  </svg>
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteTask(task.id, getLeadEmail())}
-                                  className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors"
-                                  title="Delete Task"
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                  </svg>
-                                </button>
-                              </div>
                             </div>
-                          </div>
-                        ))
-                      ) : (
-                        !showTaskForm && (
-                          <div className="text-center py-12">
-                            <svg className="mx-auto h-12 w-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                            </svg>
-                            <p className="mt-2 text-sm text-slate-600">No tasks yet</p>
-                          </div>
-                        )
-                      )}
+                          ))
+                        ) : (
+                          !showTaskForm && (
+                            <div className="text-center py-12">
+                              <svg className="mx-auto h-16 w-16 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                              </svg>
+                              <p className="mt-2 text-sm text-slate-600">No tasks yet</p>
+                            </div>
+                          )
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
