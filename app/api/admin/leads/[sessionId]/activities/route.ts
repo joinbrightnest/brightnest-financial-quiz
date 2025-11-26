@@ -40,6 +40,7 @@ export async function GET(
     }
 
     // Find email from answers - try multiple methods for robustness
+    // This matches the exact logic used in the dashboard for consistency
     let leadEmail: string | null = null;
     
     // Method 1: Look for answer where question type is 'email' or prompt mentions email
@@ -50,15 +51,24 @@ export async function GET(
       leadEmail = String(emailAnswer.value);
     }
     
-    // Method 2: Fallback - look for any answer value that looks like an email (contains @)
+    // Method 2: Fallback - look for any answer value that contains @ (same as dashboard)
     if (!leadEmail) {
       const emailByValue = quizSession.answers.find(
-        a => a.value && typeof a.value === 'string' && a.value.includes('@')
+        a => {
+          const val = a.value;
+          if (!val) return false;
+          // Handle both string values and JSON-stringified values
+          const strVal = typeof val === 'string' ? val : JSON.stringify(val);
+          return strVal.includes('@');
+        }
       );
       if (emailByValue?.value) {
         leadEmail = String(emailByValue.value);
       }
     }
+    
+    // Debug log for troubleshooting (can be removed later)
+    console.log('[Activities API] Session:', sessionId, 'Email found:', leadEmail);
     
     // Find name from answers
     const nameAnswer = quizSession.answers.find(
@@ -75,43 +85,9 @@ export async function GET(
       details?: any;
     }> = [];
 
-    // 1. Quiz completed activity (deduplicated by email)
-    // If this email has completed the quiz multiple times, only show the most recent completion
-    if (leadEmail) {
-      // Get ALL quiz sessions for this email, including the current one
-      const allQuizSessionsForEmail = await prisma.quizSession.findMany({
-        where: {
-          status: 'completed',
-          answers: {
-            some: {
-              AND: [
-                { question: { type: 'email' } },
-                { value: leadEmail as any } // Cast to any to match JsonValue type
-              ]
-            }
-          }
-        },
-        orderBy: { completedAt: 'desc' },
-        take: 1 // Get only the most recent completed quiz session for this email
-      });
-
-      const mostRecentQuizSession = allQuizSessionsForEmail[0];
-
-      // Only show quiz completion if this session IS the most recent one for this email
-      if (mostRecentQuizSession && mostRecentQuizSession.completedAt && mostRecentQuizSession.id === sessionId && quizSession.completedAt) {
-        activities.push({
-          id: `quiz_${quizSession.id}`,
-          type: 'quiz_completed',
-          timestamp: quizSession.completedAt.toISOString(),
-          leadName,
-          details: {
-            quizType: quizSession.quizType,
-            answersCount: quizSession.answers.length
-          }
-        });
-      }
-    } else if (quizSession.completedAt && !leadEmail) {
-      // If there's no email, still show the activity (edge case)
+    // 1. Quiz completed activity
+    // Show the quiz completion for this session if it was completed
+    if (quizSession.completedAt) {
       activities.push({
         id: `quiz_${quizSession.id}`,
         type: 'quiz_completed',

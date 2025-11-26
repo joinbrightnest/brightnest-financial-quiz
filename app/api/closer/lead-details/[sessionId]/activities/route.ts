@@ -40,11 +40,35 @@ export async function GET(
       );
     }
 
-    // Find email from answers
+    // Find email from answers - try multiple methods for robustness
+    let leadEmail: string | null = null;
+    
+    // Method 1: Look for answer where question type is 'email' or prompt mentions email
     const emailAnswer = quizSession.answers.find(
-      a => a.question?.type === 'email' || a.question?.prompt.toLowerCase().includes('email')
+      a => a.question?.type === 'email' || a.question?.prompt?.toLowerCase().includes('email')
     );
-    const leadEmail = emailAnswer?.value ? String(emailAnswer.value) : null;
+    if (emailAnswer?.value) {
+      leadEmail = String(emailAnswer.value);
+    }
+    
+    // Method 2: Fallback - look for any answer value that contains @ (same as dashboard)
+    if (!leadEmail) {
+      const emailByValue = quizSession.answers.find(
+        a => {
+          const val = a.value;
+          if (!val) return false;
+          // Handle both string values and JSON-stringified values
+          const strVal = typeof val === 'string' ? val : JSON.stringify(val);
+          return strVal.includes('@');
+        }
+      );
+      if (emailByValue?.value) {
+        leadEmail = String(emailByValue.value);
+      }
+    }
+    
+    // Debug log for troubleshooting
+    console.log('[Closer Activities API] Session:', sessionId, 'Email found:', leadEmail);
     
     // Find name from answers
     const nameAnswer = quizSession.answers.find(
