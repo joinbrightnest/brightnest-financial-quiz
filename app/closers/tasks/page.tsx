@@ -106,7 +106,7 @@ export default function CloserTasks() {
         return;
       }
 
-      const response = await fetch('/api/closer/tasks', {
+      const response = await fetch('/api/tasks', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -216,7 +216,7 @@ export default function CloserTasks() {
         return;
       }
 
-      const response = await fetch(`/api/closer/tasks/${taskId}`, {
+      const response = await fetch(`/api/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -299,7 +299,7 @@ export default function CloserTasks() {
         return;
       }
 
-      const response = await fetch('/api/closer/tasks', {
+      const response = await fetch('/api/tasks', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -380,7 +380,7 @@ export default function CloserTasks() {
         return;
       }
 
-      const response = await fetch(`/api/closer/tasks/${editingTask.id}`, {
+      const response = await fetch(`/api/tasks/${editingTask.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

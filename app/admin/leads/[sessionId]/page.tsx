@@ -224,7 +224,7 @@ export default function LeadDetailsPage() {
     if (!email) return;
     setLoadingTasks(true);
     try {
-      const response = await fetch(`/api/admin/tasks?leadEmail=${encodeURIComponent(email)}`);
+      const response = await fetch(`/api/tasks?leadEmail=${encodeURIComponent(email)}`);
       if (response.ok) {
         const data = await response.json();
         setTasks(data);
@@ -240,7 +240,7 @@ export default function LeadDetailsPage() {
     if (!taskForm.title || !leadEmail) return;
 
     try {
-      const response = await fetch('/api/admin/tasks', {
+      const response = await fetch('/api/tasks', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -263,7 +263,7 @@ export default function LeadDetailsPage() {
 
   const handleUpdateTask = async (taskId: string, updates: any, leadEmail: string) => {
     try {
-      const response = await fetch(`/api/admin/tasks/${taskId}`, {
+      const response = await fetch(`/api/tasks/${taskId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updates),
@@ -280,7 +280,7 @@ export default function LeadDetailsPage() {
 
   const handleDeleteTask = async (taskId: string, leadEmail: string) => {
     try {
-      const response = await fetch(`/api/admin/tasks/${taskId}`, {
+      const response = await fetch(`/api/tasks/${taskId}`, {
         method: 'DELETE',
       });
 

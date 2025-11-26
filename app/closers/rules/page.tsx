@@ -60,7 +60,7 @@ export default function CloserRules() {
 
   const fetchActiveTaskCount = async (token: string) => {
     try {
-      const response = await fetch('/api/closer/tasks', {
+      const response = await fetch('/api/tasks', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',

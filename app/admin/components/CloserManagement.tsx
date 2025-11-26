@@ -362,7 +362,7 @@ export default function CloserManagement() {
 
   const handleUpdateTaskStatus = async (taskId: string, newStatus: 'pending' | 'in_progress' | 'completed') => {
     try {
-      const response = await fetch(`/api/admin/tasks/${taskId}`, {
+      const response = await fetch(`/api/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -413,7 +413,7 @@ export default function CloserManagement() {
         params.append('closerId', taskCloserFilter);
       }
       
-      const url = `/api/admin/tasks${params.toString() ? `?${params.toString()}` : ''}`;
+      const url = `/api/tasks${params.toString() ? `?${params.toString()}` : ''}`;
       const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
@@ -1846,7 +1846,7 @@ export default function CloserManagement() {
                       }
 
                       try {
-                        const response = await fetch('/api/admin/tasks', {
+                        const response = await fetch('/api/tasks', {
                           method: 'POST',
                           headers: {
                             'Content-Type': 'application/json',
