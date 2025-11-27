@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import ConfirmationModal from "../components/ConfirmationModal";
 
 interface QuizType {
   name: string;
@@ -10,15 +12,27 @@ interface QuizType {
 }
 
 export default function QuizManagement() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const hasInitiallyLoaded = useRef(false);
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: React.ReactNode;
+    confirmText: string;
+    isDangerous: boolean;
+    requireInput?: string;
+    action: () => Promise<void>;
+  }>({
+    isOpen: false,
+    title: "",
+    message: null,
+    confirmText: "Confirm",
+    isDangerous: false,
+    action: async () => { },
+  });
 
-  const [allQuizTypes, setAllQuizTypes] = useState<Array<{
-    name: string;
-    displayName: string;
-    description: string;
-    questionCount: number;
-  }>>([]);
+  const [allQuizTypes, setAllQuizTypes] = useState<QuizType[]>([]);
 
   useEffect(() => {
     fetchQuizData();
@@ -45,7 +59,7 @@ export default function QuizManagement() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('focus', handleWindowFocus);
     window.addEventListener('blur', handleWindowBlur);
-    
+
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('focus', handleWindowFocus);
@@ -59,11 +73,11 @@ export default function QuizManagement() {
       if (!hasInitiallyLoaded.current) {
         setIsLoading(true);
       }
-      
+
       // Get all unique quiz types from the database
       const response = await fetch('/api/admin/all-quiz-types');
       const data = await response.json();
-      
+
       if (data.success) {
         setAllQuizTypes(data.quizTypes);
         hasInitiallyLoaded.current = true;
@@ -80,11 +94,7 @@ export default function QuizManagement() {
 
 
 
-  const resetQuizType = async (quizType: string) => {
-    if (!confirm(`Are you sure you want to reset all questions for ${quizType}? This will delete all existing questions.`)) {
-      return;
-    }
-
+  const executeReset = async (quizType: string) => {
     try {
       const response = await fetch("/api/admin/reset-quiz-type", {
         method: "POST",
@@ -96,7 +106,7 @@ export default function QuizManagement() {
 
       if (response.ok) {
         await fetchQuizData();
-        alert(`Quiz type ${quizType} reset successfully!`);
+        // alert(`Quiz type ${quizType} reset successfully!`); // Optional: could show a toast instead
       } else {
         alert("Failed to reset quiz type");
       }
@@ -106,24 +116,7 @@ export default function QuizManagement() {
     }
   };
 
-  const deleteQuizType = async (quizType: string) => {
-    const quizDisplayName = allQuizTypes.find(qt => qt.name === quizType)?.displayName || quizType;
-    
-    if (!confirm(`⚠️ DANGER: Are you sure you want to PERMANENTLY DELETE the "${quizDisplayName}" quiz?\n\nThis will:\n• Delete ALL questions for this quiz\n• Delete ALL quiz sessions and answers\n• Delete ALL results for this quiz\n• Remove the quiz from the system completely\n\nThis action CANNOT be undone!`)) {
-      return;
-    }
-
-    // Double confirmation for safety
-    if (!confirm(`🚨 FINAL WARNING: You are about to PERMANENTLY DELETE "${quizDisplayName}"\n\nType "DELETE" to confirm (case sensitive):`)) {
-      return;
-    }
-
-    const confirmation = prompt(`Please type "DELETE" to confirm permanent deletion of "${quizDisplayName}":`);
-    if (confirmation !== "DELETE") {
-      alert("Deletion cancelled. You must type 'DELETE' exactly to confirm.");
-      return;
-    }
-
+  const executeDelete = async (quizType: string) => {
     try {
       const response = await fetch("/api/admin/delete-quiz-type", {
         method: "POST",
@@ -137,14 +130,56 @@ export default function QuizManagement() {
 
       if (response.ok) {
         await fetchQuizData();
-        alert(`✅ Quiz "${quizDisplayName}" has been permanently deleted from the system.`);
       } else {
-        alert(`❌ Failed to delete quiz: ${result.error || 'Unknown error'}`);
+        alert(`Failed to delete quiz: ${result.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error("Error deleting quiz type:", error);
-      alert("❌ Error deleting quiz. Please try again.");
+      alert("Error deleting quiz. Please try again.");
     }
+  };
+
+  const handleResetClick = (quizType: string, displayName: string) => {
+    setModalState({
+      isOpen: true,
+      title: "Reset Quiz Type",
+      message: (
+        <span>
+          Are you sure you want to reset all questions for <strong>{displayName}</strong>?
+          <br /><br />
+          This will delete all existing questions.
+        </span>
+      ),
+      confirmText: "Reset",
+      isDangerous: true,
+      action: () => executeReset(quizType)
+    });
+  };
+
+  const handleDeleteClick = (quizType: string, displayName: string) => {
+    setModalState({
+      isOpen: true,
+      title: "Delete Quiz Type",
+      message: (
+        <span>
+          Are you sure you want to PERMANENTLY DELETE the <strong>{displayName}</strong> quiz?
+          <br /><br />
+          This will:
+          <ul className="list-disc pl-5 mt-2 space-y-1">
+            <li>Delete ALL questions for this quiz</li>
+            <li>Delete ALL quiz sessions and answers</li>
+            <li>Delete ALL results for this quiz</li>
+            <li>Remove the quiz from the system completely</li>
+          </ul>
+          <br />
+          This action CANNOT be undone!
+        </span>
+      ),
+      confirmText: "Delete Forever",
+      isDangerous: true,
+      requireInput: "DELETE",
+      action: () => executeDelete(quizType)
+    });
   };
 
   if (isLoading && !hasInitiallyLoaded.current) {
@@ -166,7 +201,7 @@ export default function QuizManagement() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6">
               <button
-                onClick={() => window.open('/admin/dashboard', '_self')}
+                onClick={() => router.push('/admin/dashboard')}
                 className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors group"
               >
                 <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,7 +247,7 @@ export default function QuizManagement() {
               </div>
             </div>
             <button
-              onClick={() => window.open('/admin/quiz-editor/new-quiz', '_self')}
+              onClick={() => router.push('/admin/quiz-editor/new-quiz')}
               className="flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -228,7 +263,7 @@ export default function QuizManagement() {
           <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">All Quizzes ({allQuizTypes.length})</h3>
           </div>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-50">
@@ -244,12 +279,11 @@ export default function QuizManagement() {
                   <tr key={quizType.name} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-4">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${
-                          index % 4 === 0 ? 'bg-blue-500' :
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${index % 4 === 0 ? 'bg-blue-500' :
                           index % 4 === 1 ? 'bg-emerald-500' :
-                          index % 4 === 2 ? 'bg-purple-500' :
-                          'bg-orange-500'
-                        }`}>
+                            index % 4 === 2 ? 'bg-purple-500' :
+                              'bg-orange-500'
+                          }`}>
                           <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
@@ -261,12 +295,11 @@ export default function QuizManagement() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
-                        index % 4 === 0 ? 'bg-blue-100 text-blue-800' :
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${index % 4 === 0 ? 'bg-blue-100 text-blue-800' :
                         index % 4 === 1 ? 'bg-emerald-100 text-emerald-800' :
-                        index % 4 === 2 ? 'bg-purple-100 text-purple-800' :
-                        'bg-orange-100 text-orange-800'
-                      }`}>
+                          index % 4 === 2 ? 'bg-purple-100 text-purple-800' :
+                            'bg-orange-100 text-orange-800'
+                        }`}>
                         {quizType.questionCount} questions
                       </span>
                     </td>
@@ -276,7 +309,7 @@ export default function QuizManagement() {
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-2">
                         <button
-                          onClick={() => window.open(`/admin/quiz-editor/${quizType.name}`, '_self')}
+                          onClick={() => router.push(`/admin/quiz-editor/${quizType.name}`)}
                           className="flex items-center space-x-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -285,7 +318,7 @@ export default function QuizManagement() {
                           <span>Edit</span>
                         </button>
                         <button
-                          onClick={() => resetQuizType(quizType.name)}
+                          onClick={() => handleResetClick(quizType.name, quizType.displayName)}
                           className="flex items-center space-x-2 px-3 py-2 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-lg text-sm font-medium transition-colors border border-orange-200"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -294,7 +327,7 @@ export default function QuizManagement() {
                           <span>Reset</span>
                         </button>
                         <button
-                          onClick={() => deleteQuizType(quizType.name)}
+                          onClick={() => handleDeleteClick(quizType.name, quizType.displayName)}
                           className="flex items-center space-x-2 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -312,6 +345,20 @@ export default function QuizManagement() {
         </div>
 
       </div>
+
+      <ConfirmationModal
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={async () => {
+          await modalState.action();
+          setModalState(prev => ({ ...prev, isOpen: false }));
+        }}
+        title={modalState.title}
+        message={modalState.message}
+        confirmText={modalState.confirmText}
+        isDangerous={modalState.isDangerous}
+        requireInput={modalState.requireInput}
+      />
     </div>
   );
 }

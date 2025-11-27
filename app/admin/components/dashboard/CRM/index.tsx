@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { AdminStats } from "../../../types";
 import LeadDetailView from "../../../../components/shared/LeadDetailView";
+import { ADMIN_CONSTANTS } from "../../../constants";
 
 interface CRMProps {
     stats: AdminStats | null;
@@ -50,11 +51,18 @@ export default function CRM({
     });
     const [crmSelectedLeads, setCrmSelectedLeads] = useState<Set<string>>(new Set());
     const [crmCurrentPage, setCrmCurrentPage] = useState(1);
-    const [crmItemsPerPage, setCrmItemsPerPage] = useState(25);
+    const [crmItemsPerPage, setCrmItemsPerPage] = useState(ADMIN_CONSTANTS.PAGINATION.DEFAULT_PAGE_SIZE);
     const [crmShowMetrics, setCrmShowMetrics] = useState(true);
     const [crmShowLeadModal, setCrmShowLeadModal] = useState(false);
     const [crmSelectedLead, setCrmSelectedLead] = useState<any>(null);
     const [crmShowColumnModal, setCrmShowColumnModal] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        await onRefresh();
+        setIsRefreshing(false);
+    };
 
     // Helper: Format Currency
     const formatCurrency = (amount: number): string => {
@@ -116,10 +124,10 @@ export default function CRM({
 
         return stats.allLeads.filter(lead => {
             if (crmSearch) {
-                const nameAnswer = lead.answers.find(a =>
+                const nameAnswer = lead.answers.find((a: any) =>
                     a.question?.prompt?.toLowerCase().includes('name')
                 );
-                const emailAnswer = lead.answers.find(a =>
+                const emailAnswer = lead.answers.find((a: any) =>
                     a.question?.prompt?.toLowerCase().includes('email')
                 );
                 const searchText = `${nameAnswer?.value || ''} ${emailAnswer?.value || ''}`.toLowerCase();
@@ -128,13 +136,13 @@ export default function CRM({
                 }
             }
             return true;
-        }).sort((a, b) => {
+        }).sort((a: any, b: any) => {
             let aValue, bValue;
 
             switch (crmSortField) {
                 case 'name':
-                    const aNameAnswer = a.answers.find(ans => ans.question?.prompt?.toLowerCase().includes('name'));
-                    const bNameAnswer = b.answers.find(ans => ans.question?.prompt?.toLowerCase().includes('name'));
+                    const aNameAnswer = a.answers.find((ans: any) => ans.question?.prompt?.toLowerCase().includes('name'));
+                    const bNameAnswer = b.answers.find((ans: any) => ans.question?.prompt?.toLowerCase().includes('name'));
                     aValue = aNameAnswer?.value || '';
                     bValue = bNameAnswer?.value || '';
                     break;
@@ -292,6 +300,18 @@ export default function CRM({
                     </div>
 
                     <div className="flex items-center space-x-4">
+                        {/* Refresh Button */}
+                        <button
+                            onClick={handleRefresh}
+                            disabled={isRefreshing}
+                            className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <svg className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            <span>{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
+                        </button>
+
                         {/* Quiz Type Filter */}
                         <div className="flex items-center space-x-2">
                             <label className="text-sm font-medium text-gray-700">Quiz Type:</label>
@@ -448,7 +468,7 @@ export default function CRM({
                                         });
 
                                     if (appointmentsWithDates.length === 0) return '0.0';
-                                    const avgAge = appointmentsWithDates.reduce((sum, age) => sum + age, 0) / appointmentsWithDates.length;
+                                    const avgAge = appointmentsWithDates.reduce((sum: number, age: number) => sum + age, 0) / appointmentsWithDates.length;
                                     return avgAge.toFixed(1);
                                 })()} days
                             </div>
@@ -604,7 +624,7 @@ export default function CRM({
                         </thead>
                         <tbody className="bg-white">
                             {paginatedCrmLeads.map((lead) => {
-                                const nameAnswer = lead.answers.find(a =>
+                                const nameAnswer = lead.answers.find((a: any) =>
                                     a.question?.prompt?.toLowerCase().includes('name')
                                 );
 

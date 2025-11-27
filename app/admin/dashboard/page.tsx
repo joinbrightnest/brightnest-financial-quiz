@@ -699,7 +699,7 @@ export default function AdminDashboard() {
               affiliates={affiliates}
               newDealAmountPotential={newDealAmountPotential}
               terminalOutcomes={terminalOutcomes}
-              onRefresh={() => fetchStats(true)}
+              onRefresh={() => fetchStats(false, true)}
               crmFilters={crmFilters}
               setCrmFilters={setCrmFilters}
             />

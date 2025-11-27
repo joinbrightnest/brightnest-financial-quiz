@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 type SectionType = 'quiz-analytics' | 'crm' | 'ceo-analytics' | 'closer-management' | 'settings';
 
@@ -29,6 +30,7 @@ export default function Sidebar({
     showResetDropdown,
     setShowResetDropdown
 }: SidebarProps) {
+    const router = useRouter();
     const getButtonClasses = (section: SectionType) => {
         const isActive = activeSection === section;
         return `w-full flex items-center ${collapsed ? 'justify-center' : 'space-x-3'} ${collapsed ? 'px-2 py-2.5' : 'px-3 py-3 rounded-lg'
@@ -121,7 +123,7 @@ export default function Sidebar({
                     )}
 
                     <button
-                        onClick={() => window.open('/admin/quiz-management', '_self')}
+                        onClick={() => router.push('/admin/quiz-management')}
                         className={`w-full flex items-center ${collapsed ? 'justify-center' : 'space-x-3'} ${collapsed ? 'px-2 py-2.5' : 'px-3 py-3 rounded-lg'} text-slate-300 hover:bg-slate-700 transition-colors group relative`}
                     >
                         <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

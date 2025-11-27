@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, RefreshCw } from 'lucide-react';
 import { getPriorityColor } from '@/lib/utils/ui';
 
 interface Closer {
@@ -50,6 +50,7 @@ export default function CloserManagement() {
   const [closers, setClosers] = useState<Closer[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState<'closers' | 'assignments' | 'performance' | 'tasks' | 'scripts'>('closers');
   const [allTasks, setAllTasks] = useState<any[]>([]);
@@ -134,9 +135,10 @@ export default function CloserManagement() {
     }
   }, [activeTab, taskCloserFilter]);
 
-  const fetchClosers = async () => {
+  const fetchClosers = async (bypassCache = false) => {
     try {
-      const response = await fetch('/api/admin/closers');
+      const url = bypassCache ? `/api/admin/closers?t=${Date.now()}` : '/api/admin/closers';
+      const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
         setClosers(data.closers || []);
@@ -148,36 +150,17 @@ export default function CloserManagement() {
     }
   };
 
-  const fetchAppointments = async () => {
+  const fetchAppointments = async (bypassCache = false) => {
     try {
-      console.log('🔍 Fetching appointments...');
-      const response = await fetch('/api/admin/appointments');
-      console.log('📡 Response status:', response.status);
+      const url = bypassCache ? `/api/admin/appointments?t=${Date.now()}` : '/api/admin/appointments';
+      const response = await fetch(url);
       if (response.ok) {
         const data = await response.json();
-        console.log('📊 Appointments data:', data);
-        console.log('📊 Appointments array:', data.appointments);
-        console.log('📊 Appointments count:', data.appointments?.length || 0);
-
-        // Debug: Check unassigned appointments
-        const allUnassigned = data.appointments?.filter((a: any) => !a.closer) || [];
-        const actualAppointments = allUnassigned.filter((a: any) => a.type !== 'quiz_session');
-        console.log('🔍 All unassigned (including quiz):', allUnassigned.length);
-        console.log('🔍 Actual unassigned appointments:', actualAppointments.length);
-        console.log('🔍 Actual appointments:', actualAppointments.map((a: any) => ({
-          name: a.customerName,
-          type: a.type,
-          status: a.status,
-          closer: a.closer
-        })));
-
         setAppointments(data.appointments || []);
       } else {
-        console.error('❌ Failed to load appointments:', response.status);
         setError('Failed to load appointments');
       }
     } catch (error) {
-      console.error('❌ Network error loading appointments:', error);
       setError('Network error loading appointments');
     } finally {
       setIsLoading(false);
@@ -771,10 +754,23 @@ export default function CloserManagement() {
         </div>
         <div className="flex space-x-3">
           <button
-            onClick={() => setShowCreateAppointment(true)}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+            onClick={async () => {
+              setIsRefreshing(true);
+              await Promise.all([fetchClosers(true), fetchAppointments(true)]);
+              setIsRefreshing(false);
+            }}
+            disabled={isRefreshing}
+            className="flex items-center space-x-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md text-sm font-medium transition-colors disabled:opacity-50"
           >
-            Create Appointment
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>{isRefreshing ? 'Refreshing...' : 'Refresh Data'}</span>
+          </button>
+          <button
+            onClick={() => setShowCreateAppointment(true)}
+            className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          >
+            <PlusCircle className="w-4 h-4" />
+            <span>Create Appointment</span>
           </button>
         </div>
       </div>
@@ -785,8 +781,8 @@ export default function CloserManagement() {
           <button
             onClick={() => setActiveTab('closers')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'closers'
-                ? 'border-indigo-500 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ? 'border-indigo-500 text-indigo-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
           >
             Closers ({closers.length})
@@ -794,8 +790,8 @@ export default function CloserManagement() {
           <button
             onClick={() => setActiveTab('assignments')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'assignments'
-                ? 'border-indigo-500 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ? 'border-indigo-500 text-indigo-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
           >
             Unassigned ({appointments.filter(a => !a.closer && a.type !== 'quiz_session').length})
@@ -803,8 +799,8 @@ export default function CloserManagement() {
           <button
             onClick={() => setActiveTab('performance')}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'performance'
-                ? 'border-indigo-500 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ? 'border-indigo-500 text-indigo-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
           >
             Performance Analytics
@@ -815,8 +811,8 @@ export default function CloserManagement() {
               fetchAllTasks();
             }}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'tasks'
-                ? 'border-indigo-500 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ? 'border-indigo-500 text-indigo-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
           >
             Tasks
@@ -827,8 +823,8 @@ export default function CloserManagement() {
               fetchScripts();
             }}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${activeTab === 'scripts'
-                ? 'border-indigo-500 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              ? 'border-indigo-500 text-indigo-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               }`}
           >
             Scripts
@@ -896,8 +892,8 @@ export default function CloserManagement() {
                         <button
                           onClick={() => handleDeactivateCloser(closer.id)}
                           className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${closer.isActive
-                              ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                              : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                            ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                            : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                             }`}
                         >
                           {closer.isActive ? 'Deactivate' : 'Activate'}
@@ -1510,8 +1506,8 @@ export default function CloserManagement() {
                   <button
                     onClick={() => setTaskFilter('all')}
                     className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${taskFilter === 'all'
-                        ? 'bg-slate-900 text-white shadow-sm'
-                        : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
+                      ? 'bg-slate-900 text-white shadow-sm'
+                      : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
                       }`}
                   >
                     All ({allCount})
@@ -1519,8 +1515,8 @@ export default function CloserManagement() {
                   <button
                     onClick={() => setTaskFilter('due_today')}
                     className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${taskFilter === 'due_today'
-                        ? 'bg-slate-900 text-white shadow-sm'
-                        : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
+                      ? 'bg-slate-900 text-white shadow-sm'
+                      : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
                       }`}
                   >
                     Due Today ({dueTodayCount})
@@ -1528,8 +1524,8 @@ export default function CloserManagement() {
                   <button
                     onClick={() => setTaskFilter('overdue')}
                     className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${taskFilter === 'overdue'
-                        ? 'bg-slate-900 text-white shadow-sm'
-                        : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
+                      ? 'bg-slate-900 text-white shadow-sm'
+                      : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
                       }`}
                   >
                     Overdue ({overdueCount})
@@ -1537,8 +1533,8 @@ export default function CloserManagement() {
                   <button
                     onClick={() => setTaskFilter('upcoming')}
                     className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${taskFilter === 'upcoming'
-                        ? 'bg-slate-900 text-white shadow-sm'
-                        : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
+                      ? 'bg-slate-900 text-white shadow-sm'
+                      : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
                       }`}
                   >
                     Upcoming ({upcomingCount})
@@ -2308,8 +2304,8 @@ export default function CloserManagement() {
                   <button
                     onClick={() => setScriptEditTab('call')}
                     className={`py-2 px-1 border-b-2 font-medium text-sm ${scriptEditTab === 'call'
-                        ? 'border-indigo-500 text-indigo-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-indigo-500 text-indigo-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                       }`}
                   >
                     Call Script
@@ -2317,8 +2313,8 @@ export default function CloserManagement() {
                   <button
                     onClick={() => setScriptEditTab('program')}
                     className={`py-2 px-1 border-b-2 font-medium text-sm ${scriptEditTab === 'program'
-                        ? 'border-indigo-500 text-indigo-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-indigo-500 text-indigo-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                       }`}
                   >
                     Program Details
@@ -2326,8 +2322,8 @@ export default function CloserManagement() {
                   <button
                     onClick={() => setScriptEditTab('email')}
                     className={`py-2 px-1 border-b-2 font-medium text-sm ${scriptEditTab === 'email'
-                        ? 'border-indigo-500 text-indigo-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-indigo-500 text-indigo-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                       }`}
                   >
                     Email Templates

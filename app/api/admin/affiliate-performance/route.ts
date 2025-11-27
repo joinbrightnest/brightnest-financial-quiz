@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
+import { Redis } from '@upstash/redis';
+import { ADMIN_CONSTANTS } from '@/app/admin/constants';
+
+// Initialize Redis client for caching (optional)
+let redis: Redis | null = null;
+if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+  redis = new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN,
+  });
+}
 
 export async function GET(request: NextRequest) {
   // 🔒 SECURITY: Require admin authentication
@@ -10,16 +21,37 @@ export async function GET(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
     // Get date range filter from query params
     const { searchParams } = new URL(request.url);
     const dateRange = searchParams.get("dateRange") || "all";
-    
+    const nocache = searchParams.get('nocache') === 'true'; // Bypass cache for refresh button
+
+    // 🚀 PERFORMANCE: Check cache first (5 minute TTL) - unless nocache is requested
+    const cacheKey = `admin:affiliate-performance:${dateRange}`;
+
+    if (redis && !nocache) {
+      try {
+        const cached = await redis.get(cacheKey);
+        if (cached) {
+          return NextResponse.json(cached, {
+            headers: {
+              'X-Cache': 'HIT',
+              'Cache-Control': `public, s-maxage=${ADMIN_CONSTANTS.CACHE.DASHBOARD_STATS_TTL}, stale-while-revalidate=${ADMIN_CONSTANTS.CACHE.DASHBOARD_STATS_TTL}`
+            }
+          });
+        }
+      } catch (error) {
+        console.warn('Cache read failed (non-critical):', error);
+        // Continue with normal flow if cache fails
+      }
+    }
+
     // Calculate date filter
     const now = new Date();
     let startDate: Date;
-    
+
     switch (dateRange) {
       case "24h":
         startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -86,7 +118,7 @@ export async function GET(request: NextRequest) {
         // Get completed quiz sessions to find emails
         const completedQuizSessions = quizSessions.filter(session => session.status === "completed");
         const completedSessionIds = completedQuizSessions.map(s => s.id);
-        
+
         // Get emails from completed quiz sessions by finding email answers (batch query for efficiency)
         const completedSessionEmails = new Set<string>();
         if (completedSessionIds.length > 0) {
@@ -104,7 +136,7 @@ export async function GET(request: NextRequest) {
               question: true
             }
           });
-          
+
           // Group by session ID to get the email for each session
           const emailsBySession = new Map<string, string>();
           emailAnswers.forEach(answer => {
@@ -134,14 +166,14 @@ export async function GET(request: NextRequest) {
         //   1. Direct Calendly bookings with affiliate codes entered in form
         //   2. Manual appointment creation with affiliate codes
         //   3. Email mismatches (different emails used for quiz vs booking)
-        
+
         // Match appointments to completed quiz sessions by email (with normalization)
         const validBookedAppointments = allAppointments.filter(apt => {
           if (!apt.customerEmail) return false;
           const appointmentEmail = apt.customerEmail.toLowerCase().trim();
           return completedSessionEmails.has(appointmentEmail);
         });
-        
+
         // Sales: count ALL affiliate sales (matches Lead Analytics)
         // This includes sales from direct bookings, manual appointments, or email mismatches
         const allAffiliateSales = allAppointments.filter(apt => apt.outcome === 'converted');
@@ -151,7 +183,7 @@ export async function GET(request: NextRequest) {
         const conversionCount = conversions.length;
         const quizCount = quizSessions.length;
         const completionCount = completedQuizSessions.length;
-        
+
         // Count bookings (from completed quiz flow) and sales (all affiliate sales)
         const bookingCount = validBookedAppointments.length;
         const saleCount = allAffiliateSales.length;
@@ -241,7 +273,7 @@ export async function GET(request: NextRequest) {
       .sort((a, b) => b.totalRevenue - a.totalRevenue)
       .slice(0, 10);
 
-    return NextResponse.json({
+    const responseData = {
       success: true,
       data: {
         // Overall stats
@@ -262,13 +294,29 @@ export async function GET(request: NextRequest) {
         affiliatePerformance,
         topAffiliates,
       },
+    };
+
+    // Cache the result for 5 minutes (300 seconds)
+    if (redis) {
+      try {
+        await redis.set(cacheKey, JSON.stringify(responseData), { ex: ADMIN_CONSTANTS.CACHE.DASHBOARD_STATS_TTL });
+      } catch (e) {
+        console.error('Redis set error:', e);
+      }
+    }
+
+    return NextResponse.json(responseData, {
+      headers: {
+        'X-Cache': 'MISS',
+        'Cache-Control': `public, s-maxage=${ADMIN_CONSTANTS.CACHE.DASHBOARD_STATS_TTL}, stale-while-revalidate=${ADMIN_CONSTANTS.CACHE.DASHBOARD_STATS_TTL}`
+      }
     });
   } catch (error) {
     console.error("Error fetching affiliate performance:", error);
     console.error("Error details:", error instanceof Error ? error.message : 'Unknown error');
     console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace');
     return NextResponse.json(
-      { 
+      {
         error: "Failed to fetch affiliate performance data",
         details: error instanceof Error ? error.message : 'Unknown error'
       },
