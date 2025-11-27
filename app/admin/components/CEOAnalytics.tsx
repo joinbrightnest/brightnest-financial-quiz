@@ -47,6 +47,16 @@ interface CEOAnalyticsData {
   topAffiliates: AffiliatePerformance[];
 }
 
+interface PendingAffiliate {
+  id: string;
+  name: string;
+  email: string;
+  tier: string;
+  commissionRate: number;
+  createdAt: string;
+  referralCode: string;
+}
+
 interface CEOAnalyticsProps {
   initialData?: CEOAnalyticsData | null;
 }
@@ -57,7 +67,7 @@ export default function CEOAnalytics({ initialData }: CEOAnalyticsProps) {
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState("all");
   const [activeSection, setActiveSection] = useState<"overview" | "affiliates" | "pending" | "payouts">("overview");
-  const [pendingAffiliates, setPendingAffiliates] = useState<any[]>([]);
+  const [pendingAffiliates, setPendingAffiliates] = useState<PendingAffiliate[]>([]);
   const [editingTrackingLink, setEditingTrackingLink] = useState<string | null>(null);
   const [trackingLinkInput, setTrackingLinkInput] = useState<string>("");
   const [approvingAffiliate, setApprovingAffiliate] = useState<string | null>(null);
@@ -421,7 +431,6 @@ export default function CEOAnalytics({ initialData }: CEOAnalyticsProps) {
                       <p className="text-3xl font-bold text-slate-900 mt-1">
                         {data.overallClickToCompletionRate.toFixed(1)}%
                       </p>
-                      <p className="text-xs text-slate-500 font-medium mt-1">Quiz completion rate</p>
                     </div>
                   </div>
                 </div>
@@ -437,10 +446,9 @@ export default function CEOAnalytics({ initialData }: CEOAnalyticsProps) {
                     </div>
                     <div className="ml-4">
                       <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Top Affiliate</p>
-                      <p className="text-lg font-bold text-slate-900 mt-1 truncate">
+                      <p className="text-2xl font-bold text-slate-900 mt-1 truncate">
                         {data.topAffiliates[0]?.name || "N/A"}
                       </p>
-                      <p className="text-xs text-slate-500 font-medium">${data.topAffiliates[0]?.totalRevenue || 0} revenue</p>
                     </div>
                   </div>
                 </div>
@@ -773,7 +781,7 @@ export default function CEOAnalytics({ initialData }: CEOAnalyticsProps) {
                                   </button>
                                 </div>
                                 <p className="text-xs text-slate-600 font-medium">
-                                  Click "Customize Link" to set a custom tracking link, or approve with the auto-generated one.
+                                  Click &quot;Customize Link&quot; to set a custom tracking link, or approve with the auto-generated one.
                                 </p>
                               </div>
                             )}
