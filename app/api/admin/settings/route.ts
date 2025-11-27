@@ -11,61 +11,49 @@ export async function GET(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
-    // Get current settings from database
-    // If settings table doesn't exist, create it and insert default values
-    const settings = await prisma.$queryRaw`
-      SELECT * FROM "Settings" WHERE key IN ('qualification_threshold', 'commission_hold_days', 'minimum_payout', 'payout_schedule', 'new_deal_amount_potential', 'terminal_outcomes')
-    `.catch(async () => {
-      // If Settings table doesn't exist, create it and insert default values
-      await prisma.$executeRaw`
-        CREATE TABLE IF NOT EXISTS "Settings" (
-          id SERIAL PRIMARY KEY,
-          key VARCHAR(255) UNIQUE NOT NULL,
-          value TEXT NOT NULL,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-      `;
-      
-      await prisma.$executeRaw`
-        INSERT INTO "Settings" (key, value) 
-        VALUES 
-          ('qualification_threshold', '17'),
-          ('commission_hold_days', '30'),
-          ('minimum_payout', '50'),
-          ('payout_schedule', 'monthly-1st'),
-          ('new_deal_amount_potential', '5000'),
-          ('terminal_outcomes', '["not_interested", "converted"]')
-        ON CONFLICT (key) DO NOTHING
-      `;
-      
-      return [
-        { key: 'qualification_threshold', value: '17' },
-        { key: 'commission_hold_days', value: '30' },
-        { key: 'minimum_payout', value: '50' },
-        { key: 'payout_schedule', value: 'monthly-1st' },
-        { key: 'new_deal_amount_potential', value: '5000' },
-        { key: 'terminal_outcomes', value: '["not_interested", "converted"]' }
-      ];
+    // Get current settings from database using Prisma ORM
+    const settings = await prisma.settings.findMany({
+      where: {
+        key: {
+          in: [
+            'qualification_threshold',
+            'commission_hold_days',
+            'minimum_payout',
+            'payout_schedule',
+            'new_deal_amount_potential',
+            'terminal_outcomes'
+          ]
+        }
+      }
     });
 
     // Convert array to object for easier access
-    const settingsObj = (settings as Array<{ key: string; value: string }>).reduce((acc: any, setting: { key: string; value: string }) => {
+    const settingsObj = settings.reduce((acc: any, setting) => {
       acc[setting.key] = setting.value;
       return acc;
     }, {});
 
+    // Default values if settings don't exist
+    const defaults = {
+      qualificationThreshold: 17,
+      commissionHoldDays: 30,
+      minimumPayout: 50,
+      payoutSchedule: 'monthly-1st',
+      newDealAmountPotential: 5000,
+      terminalOutcomes: ['not_interested', 'converted']
+    };
+
     return NextResponse.json({
       success: true,
       settings: {
-        qualificationThreshold: parseInt(settingsObj.qualification_threshold || '17'),
-        commissionHoldDays: parseInt(settingsObj.commission_hold_days || '30'),
-        minimumPayout: parseFloat(settingsObj.minimum_payout || '50'),
-        payoutSchedule: settingsObj.payout_schedule || 'monthly-1st',
-        newDealAmountPotential: parseFloat(settingsObj.new_deal_amount_potential || '5000'),
-        terminalOutcomes: JSON.parse(settingsObj.terminal_outcomes || '["not_interested", "converted"]')
+        qualificationThreshold: settingsObj.qualification_threshold ? parseInt(settingsObj.qualification_threshold) : defaults.qualificationThreshold,
+        commissionHoldDays: settingsObj.commission_hold_days ? parseInt(settingsObj.commission_hold_days) : defaults.commissionHoldDays,
+        minimumPayout: settingsObj.minimum_payout ? parseFloat(settingsObj.minimum_payout) : defaults.minimumPayout,
+        payoutSchedule: settingsObj.payout_schedule || defaults.payoutSchedule,
+        newDealAmountPotential: settingsObj.new_deal_amount_potential ? parseFloat(settingsObj.new_deal_amount_potential) : defaults.newDealAmountPotential,
+        terminalOutcomes: settingsObj.terminal_outcomes ? JSON.parse(settingsObj.terminal_outcomes) : defaults.terminalOutcomes
       }
     });
   } catch (error) {
@@ -86,7 +74,7 @@ export async function POST(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
     const { qualificationThreshold, commissionHoldDays, minimumPayout, payoutSchedule, newDealAmountPotential, terminalOutcomes } = await request.json();
 
@@ -138,10 +126,10 @@ export async function POST(request: NextRequest) {
           error: 'Terminal outcomes must be an array.'
         }, { status: 400 });
       }
-      
+
       const validOutcomes = ['converted', 'not_interested', 'needs_follow_up', 'wrong_number', 'no_answer', 'callback_requested', 'rescheduled'];
       const invalidOutcomes = terminalOutcomes.filter((outcome: string) => !validOutcomes.includes(outcome));
-      
+
       if (invalidOutcomes.length > 0) {
         return NextResponse.json({
           success: false,
@@ -150,97 +138,72 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Ensure Settings table exists
-    await prisma.$executeRaw`
-      CREATE TABLE IF NOT EXISTS "Settings" (
-        id SERIAL PRIMARY KEY,
-        key VARCHAR(255) UNIQUE NOT NULL,
-        value TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `;
-
     const updates = [];
-    
+    const updatePromises = [];
+
     // Update qualification threshold if provided
     if (qualificationThreshold !== undefined) {
-      await prisma.$executeRaw`
-        INSERT INTO "Settings" (key, value) 
-        VALUES ('qualification_threshold', ${qualificationThreshold.toString()})
-        ON CONFLICT (key) 
-        DO UPDATE SET 
-          value = ${qualificationThreshold.toString()},
-          updated_at = CURRENT_TIMESTAMP
-      `;
+      updatePromises.push(prisma.settings.upsert({
+        where: { key: 'qualification_threshold' },
+        update: { value: qualificationThreshold.toString() },
+        create: { key: 'qualification_threshold', value: qualificationThreshold.toString() }
+      }));
       updates.push('qualification threshold');
     }
 
     // Update commission hold days if provided
     if (commissionHoldDays !== undefined) {
-      await prisma.$executeRaw`
-        INSERT INTO "Settings" (key, value) 
-        VALUES ('commission_hold_days', ${commissionHoldDays.toString()})
-        ON CONFLICT (key) 
-        DO UPDATE SET 
-          value = ${commissionHoldDays.toString()},
-          updated_at = CURRENT_TIMESTAMP
-      `;
+      updatePromises.push(prisma.settings.upsert({
+        where: { key: 'commission_hold_days' },
+        update: { value: commissionHoldDays.toString() },
+        create: { key: 'commission_hold_days', value: commissionHoldDays.toString() }
+      }));
       updates.push('commission hold period');
     }
 
     // Update minimum payout if provided
     if (minimumPayout !== undefined) {
-      await prisma.$executeRaw`
-        INSERT INTO "Settings" (key, value) 
-        VALUES ('minimum_payout', ${minimumPayout.toString()})
-        ON CONFLICT (key) 
-        DO UPDATE SET 
-          value = ${minimumPayout.toString()},
-          updated_at = CURRENT_TIMESTAMP
-      `;
+      updatePromises.push(prisma.settings.upsert({
+        where: { key: 'minimum_payout' },
+        update: { value: minimumPayout.toString() },
+        create: { key: 'minimum_payout', value: minimumPayout.toString() }
+      }));
       updates.push('minimum payout');
     }
 
     // Update payout schedule if provided
     if (payoutSchedule !== undefined) {
-      await prisma.$executeRaw`
-        INSERT INTO "Settings" (key, value) 
-        VALUES ('payout_schedule', ${payoutSchedule})
-        ON CONFLICT (key) 
-        DO UPDATE SET 
-          value = ${payoutSchedule},
-          updated_at = CURRENT_TIMESTAMP
-      `;
+      updatePromises.push(prisma.settings.upsert({
+        where: { key: 'payout_schedule' },
+        update: { value: payoutSchedule },
+        create: { key: 'payout_schedule', value: payoutSchedule }
+      }));
       updates.push('payout schedule');
     }
 
     // Update new deal amount potential if provided
     if (newDealAmountPotential !== undefined) {
-      await prisma.$executeRaw`
-        INSERT INTO "Settings" (key, value) 
-        VALUES ('new_deal_amount_potential', ${newDealAmountPotential.toString()})
-        ON CONFLICT (key) 
-        DO UPDATE SET 
-          value = ${newDealAmountPotential.toString()},
-          updated_at = CURRENT_TIMESTAMP
-      `;
+      updatePromises.push(prisma.settings.upsert({
+        where: { key: 'new_deal_amount_potential' },
+        update: { value: newDealAmountPotential.toString() },
+        create: { key: 'new_deal_amount_potential', value: newDealAmountPotential.toString() }
+      }));
       updates.push('new deal amount potential');
     }
 
     // Update terminal outcomes if provided
     if (terminalOutcomes !== undefined) {
       const terminalOutcomesJson = JSON.stringify(terminalOutcomes);
-      await prisma.$executeRaw`
-        INSERT INTO "Settings" (key, value) 
-        VALUES ('terminal_outcomes', ${terminalOutcomesJson})
-        ON CONFLICT (key) 
-        DO UPDATE SET 
-          value = ${terminalOutcomesJson},
-          updated_at = CURRENT_TIMESTAMP
-      `;
+      updatePromises.push(prisma.settings.upsert({
+        where: { key: 'terminal_outcomes' },
+        update: { value: terminalOutcomesJson },
+        create: { key: 'terminal_outcomes', value: terminalOutcomesJson }
+      }));
       updates.push('terminal outcomes');
     }
+
+    // Execute all updates in parallel
+    await prisma.$transaction(updatePromises);
 
     return NextResponse.json({
       success: true,
