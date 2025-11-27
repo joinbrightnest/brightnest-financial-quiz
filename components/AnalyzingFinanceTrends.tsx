@@ -27,27 +27,29 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
 
   useEffect(() => {
     if (isActive && isVisible) {
-      // Create realistic variable speed animation within each bar
+      // Create realistic variable speed animation with TRULY random patterns
       const startTime = Date.now();
 
-      // Add random duration variation to simulate different processing complexity
-      const baseDuration = 3000; // Base 3 seconds
-      const complexityVariation = (Math.random() - 0.5) * 1000; // ±500ms variation
-      const duration = baseDuration + complexityVariation;
+      // Each bar gets unique duration variation (2.5-4 seconds)
+      const baseDuration = 2500;
+      const durationVariation = Math.random() * 1500; // ±750ms variation
+      const duration = baseDuration + durationVariation;
 
-      // Use smooth incremental progress with variable speed (like LoadingScreenDisplay)
+      // Track progress with realistic variable speed
       let lastProgress = 0;
-      let currentSpeed = 1;
-      let nextSpeedChange = Math.random() * 500 + 300; // Change speed every 300-800ms
+      let currentSpeed = 0.5 + Math.random() * 1.5; // Start with random speed (0.5x - 2x)
+      let nextSpeedChange = Math.random() * 300 + 200; // First speed change in 200-500ms
 
       const interval = setInterval(() => {
         const elapsed = Date.now() - startTime;
 
-        // Randomly change speed at intervals
+        // Change speed MORE FREQUENTLY with MORE VARIATION for realistic feel
         if (elapsed > nextSpeedChange) {
-          // More dramatic speed changes: 0.5x to 1.8x
-          currentSpeed = 0.5 + Math.random() * 1.3;
-          nextSpeedChange = elapsed + (Math.random() * 600 + 400); // Next change in 400-1000ms
+          // Dramatic speed changes: 0.3x to 2x (sometimes very slow, sometimes fast)
+          currentSpeed = 0.3 + Math.random() * 1.7;
+
+          // Next speed change in 200-500ms (frequent changes throughout)
+          nextSpeedChange = elapsed + (Math.random() * 300 + 200);
         }
 
         // Calculate progress increment with current speed
@@ -55,11 +57,11 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
         const increment = baseIncrement * currentSpeed;
         lastProgress += increment;
 
-        // Make sure we don't overshoot
+        // Ensure we don't exceed the time-based maximum
         const maxProgress = (elapsed / duration) * 100;
         lastProgress = Math.min(lastProgress, maxProgress);
 
-        // Ensure we reach 100% at the end
+        // Complete at the end
         if (elapsed >= duration) {
           setPercentage(100);
           setVisualWidth(100);
@@ -69,7 +71,9 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
           setPercentage(Math.floor(currentPercentage));
           setVisualWidth(currentPercentage);
         }
-      }, 50);
+      }, 50); // Update every 50ms for smooth animation
+
+      return () => clearInterval(interval);
     } else if (isCompleted) {
       setPercentage(100);
       setVisualWidth(100);
