@@ -28,28 +28,37 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
   useEffect(() => {
     if (isActive && isVisible) {
       // Create realistic variable speed animation with TRULY random patterns
+      // Use index to seed randomness for unique behavior per bar
       const startTime = Date.now();
 
-      // Each bar gets unique duration variation (2.5-4 seconds)
-      const baseDuration = 2500;
-      const durationVariation = Math.random() * 1500; // ±750ms variation
-      const duration = baseDuration + durationVariation;
+      // Seeded random function using bar index for unique patterns
+      const seededRandom = (seed: number) => {
+        const x = Math.sin(seed + index * 1000) * 10000;
+        return x - Math.floor(x);
+      };
+
+      // Each bar gets unique duration variation (2-4.5 seconds) based on index
+      const baseDuration = 2000 + (seededRandom(index * 100) * 2500);
+      const duration = baseDuration;
 
       // Track progress with realistic variable speed
       let lastProgress = 0;
-      let currentSpeed = 0.5 + Math.random() * 1.5; // Start with random speed (0.5x - 2x)
-      let nextSpeedChange = Math.random() * 300 + 200; // First speed change in 200-500ms
+      let currentSpeed = 0.4 + seededRandom(index * 200) * 1.8; // Unique start speed per bar (0.4x - 2.2x)
+      let speedChangeCounter = 0;
+      let nextSpeedChange = seededRandom(index * 300 + speedChangeCounter) * 400 + 150; // 150-550ms
 
       const interval = setInterval(() => {
         const elapsed = Date.now() - startTime;
 
         // Change speed MORE FREQUENTLY with MORE VARIATION for realistic feel
         if (elapsed > nextSpeedChange) {
-          // Dramatic speed changes: 0.3x to 2x (sometimes very slow, sometimes fast)
-          currentSpeed = 0.3 + Math.random() * 1.7;
+          speedChangeCounter++;
+          // Dramatic speed changes: 0.2x to 2.5x (sometimes very slow, sometimes very fast)
+          // Use index and counter for unique pattern per bar
+          currentSpeed = 0.2 + seededRandom(index * 400 + speedChangeCounter * 50) * 2.3;
 
-          // Next speed change in 200-500ms (frequent changes throughout)
-          nextSpeedChange = elapsed + (Math.random() * 300 + 200);
+          // Next speed change in 150-550ms (very frequent changes throughout)
+          nextSpeedChange = elapsed + (seededRandom(index * 500 + speedChangeCounter * 30) * 400 + 150);
         }
 
         // Calculate progress increment with current speed
@@ -81,7 +90,7 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
       setPercentage(0);
       setVisualWidth(0);
     }
-  }, [isActive, isVisible, isCompleted]);
+  }, [isActive, isVisible, isCompleted, index]);
 
   return (
     <div className="w-full">
@@ -131,7 +140,7 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
           className={`h-full rounded-full ${color} shadow-sm`}
           style={{
             width: `${visualWidth}%`,
-            transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)' // Smooth 300ms transition
+            transition: 'width 0.15s cubic-bezier(0.4, 0, 0.2, 1)' // Faster 150ms transition for smoothness
           }}
           animate={isActive ? {
             boxShadow: ['0 0 0px rgba(0,0,0,0)', '0 0 8px rgba(0,0,0,0.1)', '0 0 0px rgba(0,0,0,0)']
