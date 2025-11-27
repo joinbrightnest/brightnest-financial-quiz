@@ -4,6 +4,7 @@ import { getLeadStatuses } from "@/lib/lead-status";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
 import { prisma } from "@/lib/prisma";
 import { Redis } from '@upstash/redis';
+import { ADMIN_CONSTANTS } from '@/app/admin/constants';
 
 // Initialize Redis client for caching (optional)
 let redis: Redis | null = null;
@@ -149,7 +150,7 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(cached, {
           headers: {
             'X-Cache': 'HIT',
-            'Cache-Control': 'private, max-age=300', // 5 minutes
+            'Cache-Control': `public, s-maxage=${ADMIN_CONSTANTS.CACHE.DASHBOARD_STATS_TTL}, stale-while-revalidate=${ADMIN_CONSTANTS.CACHE.DASHBOARD_STATS_TTL}`
           }
         });
       }
@@ -230,12 +231,12 @@ export async function GET(request: NextRequest) {
           },
         },
         orderBy: { createdAt: "desc" },
-        take: 50,
+        take: duration === 'all' ? ADMIN_CONSTANTS.PAGINATION.MAX_LEADS_EXPORT : undefined,
       })
     ]);
 
     // Use centralized lead calculation with filters
-    // Convert duration parameter to format expected by calculateTotalLeads
+    // Convert duration parameter to format expected by calculateLeads
     let leadData: { leads: any[]; totalLeads: number };
     let allLeads: any[];
 
@@ -1138,7 +1139,7 @@ export async function GET(request: NextRequest) {
     // 🚀 PERFORMANCE: Cache result for 5 minutes (300 seconds)
     if (redis) {
       try {
-        await redis.setex(cacheKey, 300, stats);
+        await redis.set(cacheKey, JSON.stringify(stats), { ex: ADMIN_CONSTANTS.CACHE.DASHBOARD_STATS_TTL });
         console.log('✅ Stats cached successfully for:', cacheKey);
       } catch (error) {
         console.warn('Cache write failed (non-critical):', error);

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminAuth } from '@/lib/admin-auth-server';
 import { prisma } from '@/lib/prisma';
+import { ADMIN_CONSTANTS } from '@/app/admin/constants';
 
 // GET settings
 export async function GET(request: NextRequest) {
@@ -35,25 +36,15 @@ export async function GET(request: NextRequest) {
       return acc;
     }, {});
 
-    // Default values if settings don't exist
-    const defaults = {
-      qualificationThreshold: 17,
-      commissionHoldDays: 30,
-      minimumPayout: 50,
-      payoutSchedule: 'monthly-1st',
-      newDealAmountPotential: 5000,
-      terminalOutcomes: ['not_interested', 'converted']
-    };
-
     return NextResponse.json({
       success: true,
       settings: {
-        qualificationThreshold: settingsObj.qualification_threshold ? parseInt(settingsObj.qualification_threshold) : defaults.qualificationThreshold,
-        commissionHoldDays: settingsObj.commission_hold_days ? parseInt(settingsObj.commission_hold_days) : defaults.commissionHoldDays,
-        minimumPayout: settingsObj.minimum_payout ? parseFloat(settingsObj.minimum_payout) : defaults.minimumPayout,
-        payoutSchedule: settingsObj.payout_schedule || defaults.payoutSchedule,
-        newDealAmountPotential: settingsObj.new_deal_amount_potential ? parseFloat(settingsObj.new_deal_amount_potential) : defaults.newDealAmountPotential,
-        terminalOutcomes: settingsObj.terminal_outcomes ? JSON.parse(settingsObj.terminal_outcomes) : defaults.terminalOutcomes
+        qualificationThreshold: settingsObj.qualification_threshold ? parseInt(settingsObj.qualification_threshold) : ADMIN_CONSTANTS.DEFAULTS.QUALIFICATION_THRESHOLD,
+        commissionHoldDays: settingsObj.commission_hold_days ? parseInt(settingsObj.commission_hold_days) : ADMIN_CONSTANTS.DEFAULTS.COMMISSION_HOLD_DAYS,
+        minimumPayout: settingsObj.minimum_payout ? parseFloat(settingsObj.minimum_payout) : ADMIN_CONSTANTS.DEFAULTS.MINIMUM_PAYOUT,
+        payoutSchedule: settingsObj.payout_schedule || ADMIN_CONSTANTS.DEFAULTS.PAYOUT_SCHEDULE,
+        newDealAmountPotential: settingsObj.new_deal_amount_potential ? parseFloat(settingsObj.new_deal_amount_potential) : ADMIN_CONSTANTS.DEFAULTS.NEW_DEAL_AMOUNT_POTENTIAL,
+        terminalOutcomes: settingsObj.terminal_outcomes ? JSON.parse(settingsObj.terminal_outcomes) : ADMIN_CONSTANTS.DEFAULTS.TERMINAL_OUTCOMES
       }
     });
   } catch (error) {
@@ -79,26 +70,26 @@ export async function POST(request: NextRequest) {
     const { qualificationThreshold, commissionHoldDays, minimumPayout, payoutSchedule, newDealAmountPotential, terminalOutcomes } = await request.json();
 
     // Validate qualification threshold
-    if (qualificationThreshold !== undefined && (qualificationThreshold < 1 || qualificationThreshold > 20)) {
+    if (qualificationThreshold !== undefined && (qualificationThreshold < ADMIN_CONSTANTS.VALIDATION.QUALIFICATION_THRESHOLD.MIN || qualificationThreshold > ADMIN_CONSTANTS.VALIDATION.QUALIFICATION_THRESHOLD.MAX)) {
       return NextResponse.json({
         success: false,
-        error: 'Invalid qualification threshold. Must be between 1 and 20.'
+        error: `Invalid qualification threshold. Must be between ${ADMIN_CONSTANTS.VALIDATION.QUALIFICATION_THRESHOLD.MIN} and ${ADMIN_CONSTANTS.VALIDATION.QUALIFICATION_THRESHOLD.MAX}.`
       }, { status: 400 });
     }
 
     // Validate commission hold days
-    if (commissionHoldDays !== undefined && (commissionHoldDays < 0 || commissionHoldDays > 365)) {
+    if (commissionHoldDays !== undefined && (commissionHoldDays < ADMIN_CONSTANTS.VALIDATION.COMMISSION_HOLD_DAYS.MIN || commissionHoldDays > ADMIN_CONSTANTS.VALIDATION.COMMISSION_HOLD_DAYS.MAX)) {
       return NextResponse.json({
         success: false,
-        error: 'Invalid commission hold days. Must be between 0 and 365.'
+        error: `Invalid commission hold days. Must be between ${ADMIN_CONSTANTS.VALIDATION.COMMISSION_HOLD_DAYS.MIN} and ${ADMIN_CONSTANTS.VALIDATION.COMMISSION_HOLD_DAYS.MAX}.`
       }, { status: 400 });
     }
 
     // Validate minimum payout
-    if (minimumPayout !== undefined && (minimumPayout < 0 || minimumPayout > 10000)) {
+    if (minimumPayout !== undefined && (minimumPayout < ADMIN_CONSTANTS.VALIDATION.MINIMUM_PAYOUT.MIN || minimumPayout > ADMIN_CONSTANTS.VALIDATION.MINIMUM_PAYOUT.MAX)) {
       return NextResponse.json({
         success: false,
-        error: 'Invalid minimum payout. Must be between 0 and 10000.'
+        error: `Invalid minimum payout. Must be between ${ADMIN_CONSTANTS.VALIDATION.MINIMUM_PAYOUT.MIN} and ${ADMIN_CONSTANTS.VALIDATION.MINIMUM_PAYOUT.MAX}.`
       }, { status: 400 });
     }
 
@@ -111,10 +102,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate new deal amount potential
-    if (newDealAmountPotential !== undefined && (newDealAmountPotential < 0 || newDealAmountPotential > 100000)) {
+    if (newDealAmountPotential !== undefined && (newDealAmountPotential < ADMIN_CONSTANTS.VALIDATION.NEW_DEAL_AMOUNT_POTENTIAL.MIN || newDealAmountPotential > ADMIN_CONSTANTS.VALIDATION.NEW_DEAL_AMOUNT_POTENTIAL.MAX)) {
       return NextResponse.json({
         success: false,
-        error: 'Invalid new deal amount potential. Must be between 0 and 100000.'
+        error: `Invalid new deal amount potential. Must be between ${ADMIN_CONSTANTS.VALIDATION.NEW_DEAL_AMOUNT_POTENTIAL.MIN} and ${ADMIN_CONSTANTS.VALIDATION.NEW_DEAL_AMOUNT_POTENTIAL.MAX}.`
       }, { status: 400 });
     }
 
