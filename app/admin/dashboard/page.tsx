@@ -23,6 +23,7 @@ import DashboardLayout from '../components/dashboard/DashboardLayout';
 import QuizAnalytics from '../components/dashboard/QuizAnalytics';
 import CRM from '../components/dashboard/CRM';
 import { AdminStats, QuizAnalyticsFilters } from '../types';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 ChartJS.register(
   CategoryScale,
@@ -671,464 +672,473 @@ export default function AdminDashboard() {
       <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Quiz Analytics Section */}
-
         {activeSection === 'quiz-analytics' && (
-          <QuizAnalytics
-            filters={quizAnalyticsFilters}
-            onFilterChange={setQuizAnalyticsFilters}
-            stats={stats}
-            loading={isLoading}
-            error={error}
-            onRetry={fetchStats}
-            affiliates={affiliates}
-            retentionChartData={retentionChartData}
-            dailyActivityData={dailyActivityData}
-            clicksActivityData={clicksActivityData}
-            hasInitiallyLoaded={hasInitiallyLoaded.current}
-            onRefreshData={() => fetchStats(false, true)} // Bypass cache on refresh
-          />
+          <ErrorBoundary sectionName="Quiz Analytics">
+            <QuizAnalytics
+              filters={quizAnalyticsFilters}
+              onFilterChange={setQuizAnalyticsFilters}
+              stats={stats}
+              loading={isLoading}
+              error={error}
+              onRetry={fetchStats}
+              affiliates={affiliates}
+              retentionChartData={retentionChartData}
+              dailyActivityData={dailyActivityData}
+              clicksActivityData={clicksActivityData}
+              hasInitiallyLoaded={hasInitiallyLoaded.current}
+              onRefreshData={() => fetchStats(false, true)} // Bypass cache on refresh
+            />
+          </ErrorBoundary>
         )}
 
         {/* CRM Section - HubSpot Style */}
         {activeSection === 'crm' && (
-          <CRM
-            stats={stats}
-            affiliates={affiliates}
-            newDealAmountPotential={newDealAmountPotential}
-            terminalOutcomes={terminalOutcomes}
-            onRefresh={() => fetchStats(true)}
-            crmFilters={crmFilters}
-            setCrmFilters={setCrmFilters}
-          />
+          <ErrorBoundary sectionName="CRM">
+            <CRM
+              stats={stats}
+              affiliates={affiliates}
+              newDealAmountPotential={newDealAmountPotential}
+              terminalOutcomes={terminalOutcomes}
+              onRefresh={() => fetchStats(true)}
+              crmFilters={crmFilters}
+              setCrmFilters={setCrmFilters}
+            />
+          </ErrorBoundary>
         )}
 
         {/* CEO Analytics Section */}
         {activeSection === 'ceo-analytics' && (
-          <div className="mb-8">
-            <CEOAnalytics initialData={affiliateAnalyticsData} />
-          </div>
+          <ErrorBoundary sectionName="CEO Analytics">
+            <div className="mb-8">
+              <CEOAnalytics initialData={affiliateAnalyticsData} />
+            </div>
+          </ErrorBoundary>
         )}
 
         {/* Closer Management Section */}
         {activeSection === 'closer-management' && (
-          <div className="mb-8">
-            <CloserManagement />
-          </div>
+          <ErrorBoundary sectionName="Closer Management">
+            <div className="mb-8">
+              <CloserManagement />
+            </div>
+          </ErrorBoundary>
         )}
 
         {/* Settings Section */}
         {activeSection === 'settings' && (
-          <div className="mb-8">
-            {/* Settings Header */}
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-              <p className="text-gray-600 mt-2">Manage your system configuration and preferences</p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              {/* Settings Navigation Sidebar */}
-              <div className="lg:col-span-1">
-                <nav className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sticky top-6">
-                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Categories</h3>
-                  <ul className="space-y-1">
-                    <li>
-                      <a href="#quiz-settings" className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-indigo-600 transition-colors">
-                        <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Quiz Settings
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#affiliate-settings" className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-indigo-600 transition-colors">
-                        <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Affiliate & Payouts
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#crm-settings" className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-indigo-600 transition-colors">
-                        <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        CRM Settings
-                      </a>
-                    </li>
-                  </ul>
-                </nav>
+          <ErrorBoundary sectionName="Settings">
+            <div className="mb-8">
+              {/* Settings Header */}
+              <div className="mb-6">
+                <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+                <p className="text-gray-600 mt-2">Manage your system configuration and preferences</p>
               </div>
 
-              {/* Settings Content */}
-              <div className="lg:col-span-3 space-y-8">
+              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                {/* Settings Navigation Sidebar */}
+                <div className="lg:col-span-1">
+                  <nav className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sticky top-6">
+                    <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Categories</h3>
+                    <ul className="space-y-1">
+                      <li>
+                        <a href="#quiz-settings" className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-indigo-600 transition-colors">
+                          <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          Quiz Settings
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#affiliate-settings" className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-indigo-600 transition-colors">
+                          <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Affiliate & Payouts
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#crm-settings" className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-indigo-600 transition-colors">
+                          <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                          </svg>
+                          CRM Settings
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
 
-                {/* QUIZ SETTINGS SECTION */}
-                <div id="quiz-settings" className="scroll-mt-6">
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                    <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
-                      <h2 className="text-xl font-bold text-white flex items-center">
-                        <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Quiz Settings
-                      </h2>
-                      <p className="text-indigo-100 text-sm mt-1">Configure quiz behavior and qualification rules</p>
-                    </div>
+                {/* Settings Content */}
+                <div className="lg:col-span-3 space-y-8">
 
-                    <div className="p-6">
-                      {/* Qualification Threshold */}
-                      <div className="mb-6 pb-6 border-b border-gray-200 last:border-b-0 last:mb-0 last:pb-0">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex-1">
-                            <h3 className="text-base font-semibold text-gray-900 mb-2">Qualification Threshold</h3>
-                            <p className="text-sm text-gray-600">
-                              Set the minimum points required for users to qualify for a consultation call.
-                              Users below this threshold will be directed to the checkout page instead.
-                            </p>
-                          </div>
-                        </div>
+                  {/* QUIZ SETTINGS SECTION */}
+                  <div id="quiz-settings" className="scroll-mt-6">
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-4">
+                        <h2 className="text-xl font-bold text-white flex items-center">
+                          <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          Quiz Settings
+                        </h2>
+                        <p className="text-indigo-100 text-sm mt-1">Configure quiz behavior and qualification rules</p>
+                      </div>
 
-                        <div className="bg-gray-50 rounded-lg p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-4">
-                              <label htmlFor="threshold" className="text-sm font-medium text-gray-700">
-                                Minimum Points:
-                              </label>
-                              <input
-                                type="number"
-                                id="threshold"
-                                min="1"
-                                max="20"
-                                value={qualificationThreshold}
-                                onChange={(e) => setQualificationThreshold(parseInt(e.target.value))}
-                                className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                              />
-                              <span className="text-sm text-gray-500">out of 20</span>
+                      <div className="p-6">
+                        {/* Qualification Threshold */}
+                        <div className="mb-6 pb-6 border-b border-gray-200 last:border-b-0 last:mb-0 last:pb-0">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex-1">
+                              <h3 className="text-base font-semibold text-gray-900 mb-2">Qualification Threshold</h3>
+                              <p className="text-sm text-gray-600">
+                                Set the minimum points required for users to qualify for a consultation call.
+                                Users below this threshold will be directed to the checkout page instead.
+                              </p>
                             </div>
-                            <button
-                              onClick={() => updateQualificationThreshold(qualificationThreshold)}
-                              disabled={isUpdatingThreshold}
-                              className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                            >
-                              {isUpdatingThreshold ? 'Saving...' : 'Save Changes'}
-                            </button>
+                          </div>
+
+                          <div className="bg-gray-50 rounded-lg p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-4">
+                                <label htmlFor="threshold" className="text-sm font-medium text-gray-700">
+                                  Minimum Points:
+                                </label>
+                                <input
+                                  type="number"
+                                  id="threshold"
+                                  min="1"
+                                  max="20"
+                                  value={qualificationThreshold}
+                                  onChange={(e) => setQualificationThreshold(parseInt(e.target.value))}
+                                  className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                />
+                                <span className="text-sm text-gray-500">out of 20</span>
+                              </div>
+                              <button
+                                onClick={() => updateQualificationThreshold(qualificationThreshold)}
+                                disabled={isUpdatingThreshold}
+                                className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                              >
+                                {isUpdatingThreshold ? 'Saving...' : 'Save Changes'}
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* AFFILIATE & PAYOUTS SECTION */}
-                <div id="affiliate-settings" className="scroll-mt-6">
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                    <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-4">
-                      <h2 className="text-xl font-bold text-white flex items-center">
-                        <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Affiliate & Payouts
-                      </h2>
-                      <p className="text-green-100 text-sm mt-1">Manage commissions, payouts, and affiliate settings</p>
-                    </div>
-
-                    <div className="p-6 space-y-6">
-                      {/* Commission Hold Period */}
-                      <div className="pb-6 border-b border-gray-200">
-                        <div className="mb-4">
-                          <h3 className="text-base font-semibold text-gray-900 mb-2">Commission Hold Period</h3>
-                          <p className="text-sm text-gray-600">
-                            Set how many days commissions should be held before becoming available for payout.
-                            This helps prevent chargebacks and ensures payment stability.
-                          </p>
-                        </div>
-
-                        <div className="bg-gray-50 rounded-lg p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-4">
-                              <label htmlFor="holdDays" className="text-sm font-medium text-gray-700">
-                                Hold Period:
-                              </label>
-                              <input
-                                type="number"
-                                id="holdDays"
-                                min="0"
-                                max="365"
-                                value={commissionHoldDays}
-                                onChange={(e) => setCommissionHoldDays(parseInt(e.target.value))}
-                                className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                              />
-                              <span className="text-sm text-gray-500">days</span>
-                            </div>
-                            <button
-                              onClick={() => updateCommissionHoldDays(commissionHoldDays)}
-                              disabled={isUpdatingHoldDays}
-                              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                            >
-                              {isUpdatingHoldDays ? 'Saving...' : 'Save Changes'}
-                            </button>
-                          </div>
-                        </div>
+                  {/* AFFILIATE & PAYOUTS SECTION */}
+                  <div id="affiliate-settings" className="scroll-mt-6">
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                      <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-4">
+                        <h2 className="text-xl font-bold text-white flex items-center">
+                          <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Affiliate & Payouts
+                        </h2>
+                        <p className="text-green-100 text-sm mt-1">Manage commissions, payouts, and affiliate settings</p>
                       </div>
 
-                      {/* Payout Settings */}
-                      <div className="pb-6 border-b border-gray-200">
-                        <div className="mb-4">
-                          <h3 className="text-base font-semibold text-gray-900 mb-2">Payout Settings</h3>
-                          <p className="text-sm text-gray-600">
-                            Configure minimum payout amounts and payout schedules for all affiliates.
-                          </p>
-                        </div>
-
-                        <div className="bg-gray-50 rounded-lg p-4 space-y-4">
-                          <div className="flex items-center justify-between">
-                            <label htmlFor="minimumPayout" className="text-sm font-medium text-gray-700">
-                              Minimum Payout:
-                            </label>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-sm text-gray-500">$</span>
-                              <input
-                                type="number"
-                                id="minimumPayout"
-                                min="0"
-                                step="0.01"
-                                value={minimumPayout}
-                                onChange={(e) => setMinimumPayout(parseFloat(e.target.value))}
-                                className="w-28 px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between">
-                            <label htmlFor="payoutSchedule" className="text-sm font-medium text-gray-700">
-                              Payout Schedule:
-                            </label>
-                            <select
-                              id="payoutSchedule"
-                              value={payoutSchedule}
-                              onChange={(e) => setPayoutSchedule(e.target.value)}
-                              className="px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                            >
-                              <option value="weekly">Weekly (Every Monday)</option>
-                              <option value="biweekly">Bi-weekly (Every 2 weeks)</option>
-                              <option value="monthly-1st">Monthly (1st of each month)</option>
-                              <option value="monthly-15th">Monthly (15th of each month)</option>
-                              <option value="monthly-last">Monthly (Last day of each month)</option>
-                              <option value="quarterly">Quarterly (1st of Jan, Apr, Jul, Oct)</option>
-                            </select>
-                          </div>
-
-                          <div className="flex justify-end pt-2">
-                            <button
-                              onClick={updatePayoutSettings}
-                              disabled={isUpdatingPayoutSettings}
-                              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                            >
-                              {isUpdatingPayoutSettings ? 'Saving...' : 'Save Changes'}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Commission Release Management */}
-                      {commissionReleaseStatus && (
-                        <div>
+                      <div className="p-6 space-y-6">
+                        {/* Commission Hold Period */}
+                        <div className="pb-6 border-b border-gray-200">
                           <div className="mb-4">
-                            <h3 className="text-base font-semibold text-gray-900 mb-2">Commission Release Management</h3>
+                            <h3 className="text-base font-semibold text-gray-900 mb-2">Commission Hold Period</h3>
                             <p className="text-sm text-gray-600">
-                              Commissions are automatically released after the hold period expires. Manual release is available for immediate processing.
+                              Set how many days commissions should be held before becoming available for payout.
+                              This helps prevent chargebacks and ensures payment stability.
                             </p>
                           </div>
 
                           <div className="bg-gray-50 rounded-lg p-4">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-                              <div className="bg-white border-2 border-blue-200 rounded-lg p-3">
-                                <div className="text-xs font-medium text-blue-700 uppercase tracking-wide">Ready for Release</div>
-                                <div className="text-2xl font-bold text-blue-900 mt-1">{commissionReleaseStatus.readyForRelease}</div>
-                                <div className="text-xs text-blue-600">commissions</div>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-4">
+                                <label htmlFor="holdDays" className="text-sm font-medium text-gray-700">
+                                  Hold Period:
+                                </label>
+                                <input
+                                  type="number"
+                                  id="holdDays"
+                                  min="0"
+                                  max="365"
+                                  value={commissionHoldDays}
+                                  onChange={(e) => setCommissionHoldDays(parseInt(e.target.value))}
+                                  className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                />
+                                <span className="text-sm text-gray-500">days</span>
                               </div>
-                              <div className="bg-white border-2 border-orange-200 rounded-lg p-3">
-                                <div className="text-xs font-medium text-orange-700 uppercase tracking-wide">Currently Held</div>
-                                <div className="text-2xl font-bold text-orange-900 mt-1">{commissionReleaseStatus.totalHeld}</div>
-                                <div className="text-xs text-orange-600">commissions</div>
-                              </div>
-                              <div className="bg-white border-2 border-green-200 rounded-lg p-3">
-                                <div className="text-xs font-medium text-green-700 uppercase tracking-wide">Available</div>
-                                <div className="text-2xl font-bold text-green-900 mt-1">{commissionReleaseStatus.totalAvailable}</div>
-                                <div className="text-xs text-green-600">commissions</div>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center justify-end space-x-3">
                               <button
-                                onClick={fetchCommissionReleaseStatus}
-                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
-                              >
-                                Refresh Status
-                              </button>
-                              <button
-                                onClick={processCommissionReleases}
-                                disabled={isProcessingReleases || commissionReleaseStatus.readyForRelease === 0}
+                                onClick={() => updateCommissionHoldDays(commissionHoldDays)}
+                                disabled={isUpdatingHoldDays}
                                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
                               >
-                                {isProcessingReleases ? 'Processing...' : `Release ${commissionReleaseStatus.readyForRelease} Commissions`}
+                                {isUpdatingHoldDays ? 'Saving...' : 'Save Changes'}
                               </button>
                             </div>
                           </div>
                         </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
 
-                {/* CRM SETTINGS SECTION */}
-                <div id="crm-settings" className="scroll-mt-6">
-                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                    <div className="bg-gradient-to-r from-blue-500 to-cyan-600 px-6 py-4">
-                      <h2 className="text-xl font-bold text-white flex items-center">
-                        <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                        CRM Settings
-                      </h2>
-                      <p className="text-blue-100 text-sm mt-1">Configure deal pipeline and outcome tracking</p>
-                    </div>
+                        {/* Payout Settings */}
+                        <div className="pb-6 border-b border-gray-200">
+                          <div className="mb-4">
+                            <h3 className="text-base font-semibold text-gray-900 mb-2">Payout Settings</h3>
+                            <p className="text-sm text-gray-600">
+                              Configure minimum payout amounts and payout schedules for all affiliates.
+                            </p>
+                          </div>
 
-                    <div className="p-6 space-y-6">
-                      {/* Deal Value Configuration */}
-                      <div className="pb-6 border-b border-gray-200">
-                        <div className="mb-4">
-                          <h3 className="text-base font-semibold text-gray-900 mb-2">Deal Value Configuration</h3>
-                          <p className="text-sm text-gray-600">
-                            Configure the potential value used for calculating the NEW DEAL AMOUNT metric.
-                            This is multiplied by the number of booked calls to estimate pipeline value.
-                          </p>
-                        </div>
-
-                        <div className="bg-gray-50 rounded-lg p-4">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-4">
-                              <label htmlFor="newDealPotential" className="text-sm font-medium text-gray-700">
-                                Potential Value per Call:
+                          <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+                            <div className="flex items-center justify-between">
+                              <label htmlFor="minimumPayout" className="text-sm font-medium text-gray-700">
+                                Minimum Payout:
                               </label>
                               <div className="flex items-center space-x-2">
                                 <span className="text-sm text-gray-500">$</span>
                                 <input
                                   type="number"
-                                  id="newDealPotential"
+                                  id="minimumPayout"
                                   min="0"
-                                  max="100000"
-                                  value={newDealAmountPotential}
-                                  onChange={(e) => setNewDealAmountPotential(parseFloat(e.target.value))}
-                                  className="w-32 px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  step="0.01"
+                                  value={minimumPayout}
+                                  onChange={(e) => setMinimumPayout(parseFloat(e.target.value))}
+                                  className="w-28 px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                 />
                               </div>
                             </div>
-                            <button
-                              onClick={async () => {
-                                setIsUpdatingCrmSettings(true);
-                                try {
-                                  const response = await fetch('/api/admin/settings', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ newDealAmountPotential })
-                                  });
-                                  const data = await response.json();
-                                  if (data.success) {
-                                    alert('✅ Deal value configuration updated successfully!');
-                                    await fetchSettings();
-                                  } else {
-                                    alert('❌ Failed to update deal value: ' + (data.error || 'Unknown error'));
-                                  }
-                                } catch (error) {
-                                  console.error('Error updating CRM settings:', error);
-                                  alert('❌ Failed to update deal value. Please try again.');
-                                } finally {
-                                  setIsUpdatingCrmSettings(false);
-                                }
-                              }}
-                              disabled={isUpdatingCrmSettings}
-                              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                            >
-                              {isUpdatingCrmSettings ? 'Saving...' : 'Save Changes'}
-                            </button>
+
+                            <div className="flex items-center justify-between">
+                              <label htmlFor="payoutSchedule" className="text-sm font-medium text-gray-700">
+                                Payout Schedule:
+                              </label>
+                              <select
+                                id="payoutSchedule"
+                                value={payoutSchedule}
+                                onChange={(e) => setPayoutSchedule(e.target.value)}
+                                className="px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                              >
+                                <option value="weekly">Weekly (Every Monday)</option>
+                                <option value="biweekly">Bi-weekly (Every 2 weeks)</option>
+                                <option value="monthly-1st">Monthly (1st of each month)</option>
+                                <option value="monthly-15th">Monthly (15th of each month)</option>
+                                <option value="monthly-last">Monthly (Last day of each month)</option>
+                                <option value="quarterly">Quarterly (1st of Jan, Apr, Jul, Oct)</option>
+                              </select>
+                            </div>
+
+                            <div className="flex justify-end pt-2">
+                              <button
+                                onClick={updatePayoutSettings}
+                                disabled={isUpdatingPayoutSettings}
+                                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                              >
+                                {isUpdatingPayoutSettings ? 'Saving...' : 'Save Changes'}
+                              </button>
+                            </div>
                           </div>
                         </div>
+
+                        {/* Commission Release Management */}
+                        {commissionReleaseStatus && (
+                          <div>
+                            <div className="mb-4">
+                              <h3 className="text-base font-semibold text-gray-900 mb-2">Commission Release Management</h3>
+                              <p className="text-sm text-gray-600">
+                                Commissions are automatically released after the hold period expires. Manual release is available for immediate processing.
+                              </p>
+                            </div>
+
+                            <div className="bg-gray-50 rounded-lg p-4">
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                                <div className="bg-white border-2 border-blue-200 rounded-lg p-3">
+                                  <div className="text-xs font-medium text-blue-700 uppercase tracking-wide">Ready for Release</div>
+                                  <div className="text-2xl font-bold text-blue-900 mt-1">{commissionReleaseStatus.readyForRelease}</div>
+                                  <div className="text-xs text-blue-600">commissions</div>
+                                </div>
+                                <div className="bg-white border-2 border-orange-200 rounded-lg p-3">
+                                  <div className="text-xs font-medium text-orange-700 uppercase tracking-wide">Currently Held</div>
+                                  <div className="text-2xl font-bold text-orange-900 mt-1">{commissionReleaseStatus.totalHeld}</div>
+                                  <div className="text-xs text-orange-600">commissions</div>
+                                </div>
+                                <div className="bg-white border-2 border-green-200 rounded-lg p-3">
+                                  <div className="text-xs font-medium text-green-700 uppercase tracking-wide">Available</div>
+                                  <div className="text-2xl font-bold text-green-900 mt-1">{commissionReleaseStatus.totalAvailable}</div>
+                                  <div className="text-xs text-green-600">commissions</div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center justify-end space-x-3">
+                                <button
+                                  onClick={fetchCommissionReleaseStatus}
+                                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
+                                >
+                                  Refresh Status
+                                </button>
+                                <button
+                                  onClick={processCommissionReleases}
+                                  disabled={isProcessingReleases || commissionReleaseStatus.readyForRelease === 0}
+                                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                                >
+                                  {isProcessingReleases ? 'Processing...' : `Release ${commissionReleaseStatus.readyForRelease} Commissions`}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CRM SETTINGS SECTION */}
+                  <div id="crm-settings" className="scroll-mt-6">
+                    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                      <div className="bg-gradient-to-r from-blue-500 to-cyan-600 px-6 py-4">
+                        <h2 className="text-xl font-bold text-white flex items-center">
+                          <svg className="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                          </svg>
+                          CRM Settings
+                        </h2>
+                        <p className="text-blue-100 text-sm mt-1">Configure deal pipeline and outcome tracking</p>
                       </div>
 
-                      {/* Terminal Outcomes Configuration */}
-                      <div>
-                        <div className="mb-4">
-                          <h3 className="text-base font-semibold text-gray-900 mb-2">Terminal Outcomes Configuration</h3>
-                          <p className="text-sm text-gray-600">
-                            Configure which deal outcomes are considered "terminal" (closed deals that should NOT be counted in OPEN DEAL AMOUNT).
-                            All other deals will be counted as open deals.
-                          </p>
-                        </div>
-
-                        <div className="bg-gray-50 rounded-lg p-4">
-                          <label className="text-sm font-medium text-gray-700 mb-3 block">
-                            Select Terminal Outcomes:
-                          </label>
-                          <div className="grid grid-cols-2 gap-3 mb-4">
-                            {['converted', 'not_interested', 'needs_follow_up', 'wrong_number', 'no_answer', 'callback_requested', 'rescheduled'].map((outcome) => (
-                              <label key={outcome} className="flex items-center space-x-2 bg-white px-3 py-2 rounded border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
-                                <input
-                                  type="checkbox"
-                                  checked={terminalOutcomes.includes(outcome)}
-                                  onChange={(e) => {
-                                    if (e.target.checked) {
-                                      setTerminalOutcomes([...terminalOutcomes, outcome]);
-                                    } else {
-                                      setTerminalOutcomes(terminalOutcomes.filter(o => o !== outcome));
-                                    }
-                                  }}
-                                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                />
-                                <span className="text-sm text-gray-700 capitalize">{outcome.replace('_', ' ')}</span>
-                              </label>
-                            ))}
+                      <div className="p-6 space-y-6">
+                        {/* Deal Value Configuration */}
+                        <div className="pb-6 border-b border-gray-200">
+                          <div className="mb-4">
+                            <h3 className="text-base font-semibold text-gray-900 mb-2">Deal Value Configuration</h3>
+                            <p className="text-sm text-gray-600">
+                              Configure the potential value used for calculating the NEW DEAL AMOUNT metric.
+                              This is multiplied by the number of booked calls to estimate pipeline value.
+                            </p>
                           </div>
 
-                          <div className="flex justify-end">
-                            <button
-                              onClick={async () => {
-                                setIsUpdatingTerminalOutcomes(true);
-                                try {
-                                  const response = await fetch('/api/admin/settings', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ terminalOutcomes })
-                                  });
-                                  const data = await response.json();
-                                  if (data.success) {
-                                    alert('✅ Terminal outcomes updated successfully!');
-                                    await fetchSettings();
-                                  } else {
-                                    alert('❌ Failed to update terminal outcomes: ' + (data.error || 'Unknown error'));
+                          <div className="bg-gray-50 rounded-lg p-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-4">
+                                <label htmlFor="newDealPotential" className="text-sm font-medium text-gray-700">
+                                  Potential Value per Call:
+                                </label>
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-sm text-gray-500">$</span>
+                                  <input
+                                    type="number"
+                                    id="newDealPotential"
+                                    min="0"
+                                    max="100000"
+                                    value={newDealAmountPotential}
+                                    onChange={(e) => setNewDealAmountPotential(parseFloat(e.target.value))}
+                                    className="w-32 px-3 py-2 border border-gray-300 rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  />
+                                </div>
+                              </div>
+                              <button
+                                onClick={async () => {
+                                  setIsUpdatingCrmSettings(true);
+                                  try {
+                                    const response = await fetch('/api/admin/settings', {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ newDealAmountPotential })
+                                    });
+                                    const data = await response.json();
+                                    if (data.success) {
+                                      alert('✅ Deal value configuration updated successfully!');
+                                      await fetchSettings();
+                                    } else {
+                                      alert('❌ Failed to update deal value: ' + (data.error || 'Unknown error'));
+                                    }
+                                  } catch (error) {
+                                    console.error('Error updating CRM settings:', error);
+                                    alert('❌ Failed to update deal value. Please try again.');
+                                  } finally {
+                                    setIsUpdatingCrmSettings(false);
                                   }
-                                } catch (error) {
-                                  console.error('Error updating terminal outcomes:', error);
-                                  alert('❌ Failed to update terminal outcomes. Please try again.');
-                                } finally {
-                                  setIsUpdatingTerminalOutcomes(false);
-                                }
-                              }}
-                              disabled={isUpdatingTerminalOutcomes}
-                              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
-                            >
-                              {isUpdatingTerminalOutcomes ? 'Saving...' : 'Save Changes'}
-                            </button>
+                                }}
+                                disabled={isUpdatingCrmSettings}
+                                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                              >
+                                {isUpdatingCrmSettings ? 'Saving...' : 'Save Changes'}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Terminal Outcomes Configuration */}
+                        <div>
+                          <div className="mb-4">
+                            <h3 className="text-base font-semibold text-gray-900 mb-2">Terminal Outcomes Configuration</h3>
+                            <p className="text-sm text-gray-600">
+                              Configure which deal outcomes are considered "terminal" (closed deals that should NOT be counted in OPEN DEAL AMOUNT).
+                              All other deals will be counted as open deals.
+                            </p>
+                          </div>
+
+                          <div className="bg-gray-50 rounded-lg p-4">
+                            <label className="text-sm font-medium text-gray-700 mb-3 block">
+                              Select Terminal Outcomes:
+                            </label>
+                            <div className="grid grid-cols-2 gap-3 mb-4">
+                              {['converted', 'not_interested', 'needs_follow_up', 'wrong_number', 'no_answer', 'callback_requested', 'rescheduled'].map((outcome) => (
+                                <label key={outcome} className="flex items-center space-x-2 bg-white px-3 py-2 rounded border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors">
+                                  <input
+                                    type="checkbox"
+                                    checked={terminalOutcomes.includes(outcome)}
+                                    onChange={(e) => {
+                                      if (e.target.checked) {
+                                        setTerminalOutcomes([...terminalOutcomes, outcome]);
+                                      } else {
+                                        setTerminalOutcomes(terminalOutcomes.filter(o => o !== outcome));
+                                      }
+                                    }}
+                                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                  />
+                                  <span className="text-sm text-gray-700 capitalize">{outcome.replace('_', ' ')}</span>
+                                </label>
+                              ))}
+                            </div>
+
+                            <div className="flex justify-end">
+                              <button
+                                onClick={async () => {
+                                  setIsUpdatingTerminalOutcomes(true);
+                                  try {
+                                    const response = await fetch('/api/admin/settings', {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({ terminalOutcomes })
+                                    });
+                                    const data = await response.json();
+                                    if (data.success) {
+                                      alert('✅ Terminal outcomes updated successfully!');
+                                      await fetchSettings();
+                                    } else {
+                                      alert('❌ Failed to update terminal outcomes: ' + (data.error || 'Unknown error'));
+                                    }
+                                  } catch (error) {
+                                    console.error('Error updating terminal outcomes:', error);
+                                    alert('❌ Failed to update terminal outcomes. Please try again.');
+                                  } finally {
+                                    setIsUpdatingTerminalOutcomes(false);
+                                  }
+                                }}
+                                disabled={isUpdatingTerminalOutcomes}
+                                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                              >
+                                {isUpdatingTerminalOutcomes ? 'Saving...' : 'Save Changes'}
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
+                </div>
               </div>
             </div>
-          </div>
+          </ErrorBoundary>
         )}
 
 
