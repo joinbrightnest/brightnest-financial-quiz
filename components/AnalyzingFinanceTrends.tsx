@@ -27,62 +27,70 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
 
   useEffect(() => {
     if (isActive && isVisible) {
-      // Create realistic variable speed animation with TRULY random patterns
-      // Use index to seed randomness for unique behavior per bar
-      const startTime = Date.now();
+      // Use requestAnimationFrame for buttery smooth 60fps animation
+      const startTime = performance.now();
 
-      // Seeded random function using bar index for unique patterns
-      const seededRandom = (seed: number) => {
-        const x = Math.sin(seed + index * 1000) * 10000;
-        return x - Math.floor(x);
-      };
+      // Generate TRULY random values at mount time (different every time)
+      const randomDuration = 2000 + Math.random() * 2500; // 2-4.5 seconds, unique per bar
+      const randomStartSpeed = 0.3 + Math.random() * 2.0; // 0.3x - 2.3x start speed
 
-      // Each bar gets unique duration variation (2-4.5 seconds) based on index
-      const baseDuration = 2000 + (seededRandom(index * 100) * 2500);
-      const duration = baseDuration;
+      // Create array of random speed changes for this specific bar
+      const speedChanges: Array<{ time: number; speed: number }> = [];
+      let timeAccumulator = Math.random() * 400 + 100; // First change at 100-500ms
 
-      // Track progress with realistic variable speed
+      // Generate 8-15 random speed changes throughout the duration
+      const numChanges = Math.floor(Math.random() * 8) + 8;
+      for (let i = 0; i < numChanges; i++) {
+        speedChanges.push({
+          time: timeAccumulator,
+          speed: 0.2 + Math.random() * 2.5 // 0.2x - 2.7x speed
+        });
+        timeAccumulator += Math.random() * 400 + 100; // Next change in 100-500ms
+      }
+
+      let currentSpeed = randomStartSpeed;
       let lastProgress = 0;
-      let currentSpeed = 0.4 + seededRandom(index * 200) * 1.8; // Unique start speed per bar (0.4x - 2.2x)
-      let speedChangeCounter = 0;
-      let nextSpeedChange = seededRandom(index * 300 + speedChangeCounter) * 400 + 150; // 150-550ms
+      let speedChangeIndex = 0;
+      let animationFrameId: number;
 
-      const interval = setInterval(() => {
-        const elapsed = Date.now() - startTime;
+      const animate = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
 
-        // Change speed MORE FREQUENTLY with MORE VARIATION for realistic feel
-        if (elapsed > nextSpeedChange) {
-          speedChangeCounter++;
-          // Dramatic speed changes: 0.2x to 2.5x (sometimes very slow, sometimes very fast)
-          // Use index and counter for unique pattern per bar
-          currentSpeed = 0.2 + seededRandom(index * 400 + speedChangeCounter * 50) * 2.3;
-
-          // Next speed change in 150-550ms (very frequent changes throughout)
-          nextSpeedChange = elapsed + (seededRandom(index * 500 + speedChangeCounter * 30) * 400 + 150);
+        // Check if we should change speed
+        if (speedChangeIndex < speedChanges.length && elapsed >= speedChanges[speedChangeIndex].time) {
+          currentSpeed = speedChanges[speedChangeIndex].speed;
+          speedChangeIndex++;
         }
 
-        // Calculate progress increment with current speed
-        const baseIncrement = (100 / duration) * 50; // Base progress per 50ms
+        // Calculate progress increment (60fps = ~16.67ms per frame)
+        const frameTime = 16.67;
+        const baseIncrement = (100 / randomDuration) * frameTime;
         const increment = baseIncrement * currentSpeed;
         lastProgress += increment;
 
-        // Ensure we don't exceed the time-based maximum
-        const maxProgress = (elapsed / duration) * 100;
+        // Ensure we don't exceed time-based maximum
+        const maxProgress = (elapsed / randomDuration) * 100;
         lastProgress = Math.min(lastProgress, maxProgress);
 
-        // Complete at the end
-        if (elapsed >= duration) {
+        // Update state
+        if (elapsed >= randomDuration) {
           setPercentage(100);
           setVisualWidth(100);
-          clearInterval(interval);
         } else {
           const currentPercentage = Math.min(lastProgress, 99);
           setPercentage(Math.floor(currentPercentage));
           setVisualWidth(currentPercentage);
+          animationFrameId = requestAnimationFrame(animate);
         }
-      }, 50); // Update every 50ms for smooth animation
+      };
 
-      return () => clearInterval(interval);
+      animationFrameId = requestAnimationFrame(animate);
+
+      return () => {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+        }
+      };
     } else if (isCompleted) {
       setPercentage(100);
       setVisualWidth(100);
@@ -90,7 +98,7 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
       setPercentage(0);
       setVisualWidth(0);
     }
-  }, [isActive, isVisible, isCompleted, index]);
+  }, [isActive, isVisible, isCompleted]);
 
   return (
     <div className="w-full">
@@ -139,8 +147,8 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
         <motion.div
           className={`h-full rounded-full ${color} shadow-sm`}
           style={{
-            width: `${visualWidth}%`,
-            transition: 'width 0.15s cubic-bezier(0.4, 0, 0.2, 1)' // Faster 150ms transition for smoothness
+            width: `${visualWidth}%`
+            // No CSS transition - using requestAnimationFrame for smooth updates
           }}
           animate={isActive ? {
             boxShadow: ['0 0 0px rgba(0,0,0,0)', '0 0 8px rgba(0,0,0,0.1)', '0 0 0px rgba(0,0,0,0)']
