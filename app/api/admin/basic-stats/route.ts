@@ -139,8 +139,11 @@ export async function GET(request: NextRequest) {
   const affiliateCode = searchParams.get('affiliateCode') || null;
 
   // 🚀 PERFORMANCE: Check cache first (5 minute TTL)
+  // TEMPORARILY DISABLED to debug click tracking issue
   const cacheKey = `admin:stats:${quizType || 'all'}:${duration}:${affiliateCode || 'all'}`;
 
+  // Cache disabled for debugging - will re-enable after verification
+  /*
   if (redis) {
     try {
       const cached = await redis.get(cacheKey);
@@ -156,6 +159,7 @@ export async function GET(request: NextRequest) {
       // Continue with normal flow if cache fails
     }
   }
+  */
 
   try {
     // Build date filter based on duration parameter
