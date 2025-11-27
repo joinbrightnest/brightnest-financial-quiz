@@ -39,6 +39,7 @@ interface QuizAnalyticsProps {
     dailyActivityData: any;
     clicksActivityData: any;
     hasInitiallyLoaded: boolean;
+    onRefreshData?: () => void; // Optional refresh function to bypass cache
 }
 
 export default function QuizAnalytics({
@@ -52,7 +53,8 @@ export default function QuizAnalytics({
     retentionChartData,
     dailyActivityData,
     clicksActivityData,
-    hasInitiallyLoaded
+    hasInitiallyLoaded,
+    onRefreshData
 }: QuizAnalyticsProps) {
 
     const formatDuration = (ms: number): string => {
@@ -142,6 +144,21 @@ export default function QuizAnalytics({
                                 ))}
                             </select>
                         </div>
+
+                        {/* Refresh Button - Bypass Cache */}
+                        {onRefreshData && (
+                            <button
+                                onClick={onRefreshData}
+                                disabled={loading}
+                                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                title="Refresh data (bypasses cache for real-time stats)"
+                            >
+                                <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                <span className="text-sm font-medium">Refresh</span>
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

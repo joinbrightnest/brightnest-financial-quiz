@@ -137,14 +137,12 @@ export async function GET(request: NextRequest) {
   const quizType = quizTypeParam && quizTypeParam !== 'all' ? quizTypeParam : null;
   const duration = searchParams.get('duration') || 'all';
   const affiliateCode = searchParams.get('affiliateCode') || null;
+  const nocache = searchParams.get('nocache') === 'true'; // Bypass cache for refresh button
 
-  // 🚀 PERFORMANCE: Check cache first (5 minute TTL)
-  // TEMPORARILY DISABLED to debug click tracking issue
+  // 🚀 PERFORMANCE: Check cache first (5 minute TTL) - unless nocache is requested
   const cacheKey = `admin:stats:${quizType || 'all'}:${duration}:${affiliateCode || 'all'}`;
 
-  // Cache disabled for debugging - will re-enable after verification
-  /*
-  if (redis) {
+  if (redis && !nocache) {
     try {
       const cached = await redis.get(cacheKey);
       if (cached) {
@@ -159,7 +157,6 @@ export async function GET(request: NextRequest) {
       // Continue with normal flow if cache fails
     }
   }
-  */
 
   try {
     // Build date filter based on duration parameter

@@ -288,7 +288,8 @@ export default function AdminDashboard() {
     }
   };
 
-  const fetchStats = useCallback(async (isTimeframeChange = false) => {
+
+  const fetchStats = useCallback(async (isTimeframeChange = false, bypassCache = false) => {
     // Only show loading state on initial load, not on window switches or timeframe changes
     if (!isTimeframeChange && !hasInitiallyLoaded.current) {
       setIsLoading(true);
@@ -318,6 +319,11 @@ export default function AdminDashboard() {
         if (crmFilters.affiliateCode !== 'all') {
           params.append('affiliateCode', crmFilters.affiliateCode);
         }
+      }
+
+      // Add nocache parameter if bypassing cache
+      if (bypassCache) {
+        params.append('nocache', 'true');
       }
 
       const queryString = params.toString();
@@ -679,6 +685,7 @@ export default function AdminDashboard() {
             dailyActivityData={dailyActivityData}
             clicksActivityData={clicksActivityData}
             hasInitiallyLoaded={hasInitiallyLoaded.current}
+            onRefreshData={() => fetchStats(false, true)} // Bypass cache on refresh
           />
         )}
 
