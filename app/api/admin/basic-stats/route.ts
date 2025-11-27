@@ -26,20 +26,20 @@ export async function DELETE(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
     const { searchParams } = new URL(request.url);
     const resetType = searchParams.get('type') || 'quiz'; // 'quiz', 'affiliate', 'closer', 'all'
-    
+
     console.log(`🔄 Starting ${resetType} data reset...`);
-    
+
     if (resetType === 'quiz' || resetType === 'all') {
       // Delete quiz-related data
       await prisma.quizAnswer.deleteMany();
       await prisma.result.deleteMany();
       await prisma.quizSession.deleteMany();
       await prisma.articleView.deleteMany();
-      
+
       // Also reset affiliate stats since they're connected to quiz data
       await prisma.affiliate.updateMany({
         data: {
@@ -50,7 +50,7 @@ export async function DELETE(request: NextRequest) {
           totalCommission: 0
         }
       });
-      
+
       // Reset closer stats since they're connected to quiz data
       await prisma.closer.updateMany({
         data: {
@@ -60,10 +60,10 @@ export async function DELETE(request: NextRequest) {
           conversionRate: 0
         }
       });
-      
+
       console.log('✅ Quiz data and connected stats deleted');
     }
-    
+
     if (resetType === 'affiliate' || resetType === 'all') {
       // Delete affiliate-related data
       await prisma.affiliateClick.deleteMany();
@@ -83,7 +83,7 @@ export async function DELETE(request: NextRequest) {
       });
       console.log('✅ Affiliate data deleted');
     }
-    
+
     if (resetType === 'closer' || resetType === 'all') {
       // Delete closer-related data
       await prisma.appointment.deleteMany();
@@ -99,17 +99,17 @@ export async function DELETE(request: NextRequest) {
       });
       console.log('✅ Closer data deleted');
     }
-    
+
     if (resetType === 'all') {
       // Also reset user data if doing complete reset
       await prisma.user.deleteMany();
       console.log('✅ User data deleted');
     }
-    
+
     console.log(`🎉 ${resetType} data reset completed successfully`);
-    
-    return NextResponse.json({ 
-      success: true, 
+
+    return NextResponse.json({
+      success: true,
       message: `${resetType} data reset successfully`,
       resetType: resetType
     });
@@ -130,22 +130,21 @@ export async function GET(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   const { searchParams } = new URL(request.url);
   const quizTypeParam = searchParams.get('quizType') || null;
   // Normalize 'all' to null for filtering (sessions don't have quizType='all')
   const quizType = quizTypeParam && quizTypeParam !== 'all' ? quizTypeParam : null;
   const duration = searchParams.get('duration') || 'all';
   const affiliateCode = searchParams.get('affiliateCode') || null;
-  
+
   // 🚀 PERFORMANCE: Check cache first (5 minute TTL)
   const cacheKey = `admin:stats:${quizType || 'all'}:${duration}:${affiliateCode || 'all'}`;
-  
+
   if (redis) {
     try {
       const cached = await redis.get(cacheKey);
       if (cached) {
-        console.log('✅ Returning cached stats for:', cacheKey);
         return NextResponse.json(cached, {
           headers: {
             'X-Cache': 'HIT',
@@ -154,11 +153,10 @@ export async function GET(request: NextRequest) {
         });
       }
     } catch (error) {
-      console.warn('Cache read failed (non-critical):', error);
       // Continue with normal flow if cache fails
     }
   }
-  
+
   try {
     // Build date filter based on duration parameter
     const buildDateFilter = () => {
@@ -206,7 +204,7 @@ export async function GET(request: NextRequest) {
       // Calculate average duration for completed sessions
       prisma.quizSession.aggregate({
         _avg: { durationMs: true },
-        where: { 
+        where: {
           createdAt: dateFilter,
           status: "completed",
           durationMs: { not: null },
@@ -222,7 +220,7 @@ export async function GET(request: NextRequest) {
           ...(quizType ? { quizType } : {}),
           ...(affiliateCode ? { affiliateCode } : {})
         },
-        include: { 
+        include: {
           result: true,
           answers: {
             include: {
@@ -239,9 +237,9 @@ export async function GET(request: NextRequest) {
     // Convert duration parameter to format expected by calculateTotalLeads
     let leadData: { leads: any[]; totalLeads: number };
     let allLeads: any[];
-    
+
     if (duration === '24h') {
-      const leadDataResult = await calculateLeads({ 
+      const leadDataResult = await calculateLeads({
         dateRange: '1d',
         quizType: quizType || undefined,
         affiliateCode: affiliateCode || undefined
@@ -250,7 +248,9 @@ export async function GET(request: NextRequest) {
       leadData = { leads: allLeads, totalLeads: leadDataResult.totalLeads };
     } else if (duration === 'all') {
       // For 'all', we need to bypass date filtering completely
-      // Get all leads without date restriction
+      // Get all leads without date restriction (with smart limit to prevent memory issues)
+      const MAX_LEADS_LIMIT = 500; // Lean & smart: prevent loading thousands of records
+
       const allCompletedSessionsAllTime = await prisma.quizSession.findMany({
         where: {
           status: "completed",
@@ -265,29 +265,30 @@ export async function GET(request: NextRequest) {
           },
         },
         orderBy: { createdAt: "desc" },
+        take: MAX_LEADS_LIMIT, // Smart pagination: limit to most recent 500 leads
       });
-      
+
       // Filter to only include sessions that have name and email (actual leads)
       const actualLeadsAllTime = allCompletedSessionsAllTime.filter(session => {
-        const nameAnswer = session.answers.find(a => 
+        const nameAnswer = session.answers.find(a =>
           a.question?.prompt?.toLowerCase().includes('name')
         );
-        const emailAnswer = session.answers.find(a => 
+        const emailAnswer = session.answers.find(a =>
           a.question?.prompt?.toLowerCase().includes('email')
         );
-        
+
         return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
       });
-      
+
       // Deduplicate by email - keep only the most recent quiz session for each email
       // This prevents duplicate leads when someone completes the quiz multiple times
       const leadsByEmail = new Map();
       for (const lead of actualLeadsAllTime) {
-        const emailAnswer = lead.answers.find((a: any) => 
+        const emailAnswer = lead.answers.find((a: any) =>
           a.question?.prompt?.toLowerCase().includes('email')
         );
         const email = emailAnswer?.value ? String(emailAnswer.value) : null;
-        
+
         if (email) {
           const existingLead = leadsByEmail.get(email);
           if (!existingLead || new Date(lead.completedAt || lead.createdAt) > new Date(existingLead.completedAt || existingLead.createdAt)) {
@@ -296,13 +297,13 @@ export async function GET(request: NextRequest) {
         }
       }
       const deduplicatedLeads = Array.from(leadsByEmail.values());
-      
+
       allLeads = deduplicatedLeads;
       leadData = { leads: deduplicatedLeads, totalLeads: deduplicatedLeads.length };
     } else {
       // Map duration to calculateLeads format (7d, 30d, 90d, 1y)
-      const leadDataResult = await calculateLeads({ 
-        dateRange: duration, 
+      const leadDataResult = await calculateLeads({
+        dateRange: duration,
         quizType: quizType || undefined,
         affiliateCode: affiliateCode || undefined
       });
@@ -312,14 +313,14 @@ export async function GET(request: NextRequest) {
 
     // Get affiliate information for leads that have affiliate codes
     let affiliateMap: Record<string, string> = {};
-    
+
     if (allLeads.length > 0) {
       // Get affiliate codes from both quiz sessions and appointments
       const leadsAffiliateCodes = allLeads
         .filter(lead => lead.affiliateCode)
         .map(lead => lead.affiliateCode!)
         .filter((code): code is string => code !== null);
-      
+
       // 🚀 PERFORMANCE: Parallelize affiliate queries
       const [appointmentAffiliateCodes, allAffiliates] = await Promise.all([
         prisma.appointment.findMany({
@@ -340,27 +341,18 @@ export async function GET(request: NextRequest) {
           }
         })
       ]);
-      
+
       const allAffiliateCodes = [
         ...leadsAffiliateCodes,
         ...appointmentAffiliateCodes.map(a => a.affiliateCode).filter((code): code is string => code !== null)
       ];
-      
+
       const affiliateCodes = [...new Set(allAffiliateCodes)]; // Remove duplicates
-      
-      console.log('🔍 Affiliate codes found in leads and appointments:', affiliateCodes);
-      
+
       if (affiliateCodes.length > 0) {
-
-        console.log('👥 All affiliates:', allAffiliates.map((a: any) => ({ 
-          name: a.name, 
-          referralCode: a.referralCode, 
-          customLink: a.customLink 
-        })));
-
         // 🚀 PERFORMANCE: Build lookup maps instead of repeated finds (O(n) instead of O(n²))
         affiliateMap = {};
-        
+
         // Create maps for O(1) lookups
         const referralCodeMap = new Map(
           allAffiliates.map(a => [a.referralCode, a.name])
@@ -368,42 +360,37 @@ export async function GET(request: NextRequest) {
         const customLinkMap = new Map(
           allAffiliates.map(a => [a.customLink?.replace(/^\//, ''), a.name])
         );
-        
+
         // Map affiliate codes to names using maps (O(n) instead of O(n²))
         affiliateCodes.forEach(code => {
           // Try exact referral code match
           if (referralCodeMap.has(code)) {
             affiliateMap[code] = referralCodeMap.get(code)!;
-            console.log(`✅ Found exact match: ${code} -> ${affiliateMap[code]}`);
             return;
           }
-          
+
           // Try custom tracking link match (with and without leading slash)
           const cleanCode = code.replace(/^\//, '');
           if (customLinkMap.has(cleanCode)) {
             affiliateMap[code] = customLinkMap.get(cleanCode)!;
-            console.log(`✅ Found custom link match: ${code} -> ${affiliateMap[code]}`);
             return;
           }
-          
+
           if (customLinkMap.has(`/${code}`)) {
             affiliateMap[code] = customLinkMap.get(`/${code}`)!;
-            console.log(`✅ Found custom link match: ${code} -> ${affiliateMap[code]}`);
             return;
           }
-          
-          console.log(`❌ No match found for affiliate code: ${code}`);
         });
       }
     }
 
     // Get accurate lead statuses (completed vs booked) using contact info from CRM
     const leadIds = allLeads.map(lead => lead.id);
-    
+
     // Extract emails from the leads data (which comes from CRM contact info)
     const leadEmails: Record<string, string> = {};
     allLeads.forEach(lead => {
-      const emailAnswer = lead.answers.find((a: any) => 
+      const emailAnswer = lead.answers.find((a: any) =>
         a.question?.prompt?.toLowerCase().includes('email') ||
         a.question?.type === 'email'
       );
@@ -415,7 +402,7 @@ export async function GET(request: NextRequest) {
     // Get all appointments for these emails (with closer info)
     const emails = Object.values(leadEmails);
     const appointments = await prisma.appointment.findMany({
-      where: { 
+      where: {
         customerEmail: { in: emails }
       },
       include: {
@@ -438,10 +425,10 @@ export async function GET(request: NextRequest) {
     const leadsWithSource = allLeads.map(lead => {
       const email = leadEmails[lead.id];
       const appointment = email ? appointmentsByEmail[email] : null;
-      
+
       // Determine status based on appointment outcome
       let status = 'Completed'; // Default for completed quiz sessions
-      
+
       if (appointment) {
         if (appointment.outcome) {
           // Show actual call outcome
@@ -475,36 +462,30 @@ export async function GET(request: NextRequest) {
           status = 'Booked';
         }
       }
-      
-      // Determine source with debugging
+
+      // Determine source with affiliate code checking
       // Check both quiz session affiliate code AND appointment affiliate code
       let source = 'Website'; // Default
       const affiliateCodeToCheck = lead.affiliateCode || appointment?.affiliateCode;
-      
+
       if (affiliateCodeToCheck) {
         const mappedName = affiliateMap[affiliateCodeToCheck];
         if (mappedName) {
           source = mappedName;
-          const sourceType = lead.affiliateCode ? 'quiz session' : 'appointment';
-          console.log(`✅ Lead ${lead.id} (${email}): affiliateCode=${affiliateCodeToCheck} (from ${sourceType}) -> source=${source}`);
-        } else {
-          console.log(`❌ Lead ${lead.id} (${email}): affiliateCode=${affiliateCodeToCheck} not found in map, defaulting to Website`);
         }
-      } else {
-        console.log(`ℹ️ Lead ${lead.id} (${email}): no affiliateCode in quiz session or appointment, defaulting to Website`);
       }
-      
+
       // For deal close date, use appointment updatedAt when outcome is converted
       // This approximates when the deal was closed (when outcome was set)
-      const dealClosedAt = appointment?.outcome === 'converted' && appointment?.updatedAt 
-        ? appointment.updatedAt.toISOString() 
+      const dealClosedAt = appointment?.outcome === 'converted' && appointment?.updatedAt
+        ? appointment.updatedAt.toISOString()
         : null;
-      
+
       // Transform answers to show labels instead of values for multiple choice questions
       const transformedAnswers = lead.answers.map((answer: any) => {
         const answerValue = answer.value;
         let displayAnswer = answerValue;
-        
+
         // Try to find the label from question options if question type is single/multiple choice
         if (answer.question && (answer.question.type === 'single' || answer.question.type === 'multiple')) {
           try {
@@ -519,7 +500,7 @@ export async function GET(request: NextRequest) {
                 // Also try JSON string comparison
                 return JSON.stringify(opt.value) === JSON.stringify(answerValue);
               });
-              
+
               if (matchingOption && matchingOption.label) {
                 displayAnswer = matchingOption.label;
               }
@@ -529,7 +510,7 @@ export async function GET(request: NextRequest) {
             console.error('Error parsing question options:', error);
           }
         }
-        
+
         // For text/email inputs, use the value directly (it's already the user's input)
         return {
           ...answer,
@@ -537,7 +518,7 @@ export async function GET(request: NextRequest) {
           originalValue: answerValue, // Keep original value for reference if needed
         };
       });
-      
+
       return {
         ...lead,
         answers: transformedAnswers, // Use transformed answers with labels
@@ -553,9 +534,9 @@ export async function GET(request: NextRequest) {
           createdAt: appointment?.createdAt ? appointment.createdAt.toISOString() : null,
           scheduledAt: appointment?.scheduledAt ? appointment.scheduledAt.toISOString() : null,
           updatedAt: appointment?.updatedAt ? appointment.updatedAt.toISOString() : null,
-          closer: appointment?.closer ? { 
-            id: appointment.closer.id, 
-            name: appointment.closer.name 
+          closer: appointment?.closer ? {
+            id: appointment.closer.id,
+            name: appointment.closer.name
           } : null
         } // Include necessary appointment data including closer
       };
@@ -571,10 +552,10 @@ export async function GET(request: NextRequest) {
         ...(affiliateCode ? { affiliateCode } : {})
       }
     });
-    
+
     // Leads are completed sessions WITH name and email
     const leadsCollected = allLeads.length;
-    
+
     // Completion rate is based on ALL completed sessions, not just leads
     const completionRate = totalSessions > 0 ? (completedSessionsCount / totalSessions) * 100 : 0;
 
@@ -597,14 +578,14 @@ export async function GET(request: NextRequest) {
     // Get archetype distribution for filtered sessions only
     const archetypeStatsData = filteredSessionIdsForArchetypes.length > 0
       ? await prisma.result.groupBy({
-          by: ["archetype"],
-          _count: { archetype: true },
-          where: {
-            sessionId: {
-              in: filteredSessionIdsForArchetypes
-            }
+        by: ["archetype"],
+        _count: { archetype: true },
+        where: {
+          sessionId: {
+            in: filteredSessionIdsForArchetypes
           }
-        })
+        }
+      })
       : [];
 
     // Get filtered sessions first to determine which questions to include
@@ -628,7 +609,7 @@ export async function GET(request: NextRequest) {
     if (quizType) {
       // Specific quiz type: get questions for that type only
       allQuestions = await prisma.quizQuestion.findMany({
-        where: { 
+        where: {
           active: true,
           quizType: quizType
         },
@@ -639,7 +620,7 @@ export async function GET(request: NextRequest) {
       const uniqueQuizTypes = [...new Set(filteredSessions.map(s => s.quizType))];
       if (uniqueQuizTypes.length > 0) {
         allQuestions = await prisma.quizQuestion.findMany({
-          where: { 
+          where: {
             active: true,
             quizType: { in: uniqueQuizTypes }
           },
@@ -648,7 +629,7 @@ export async function GET(request: NextRequest) {
       } else {
         // No sessions found, but we still want to show questions for default type
         allQuestions = await prisma.quizQuestion.findMany({
-          where: { 
+          where: {
             active: true,
             quizType: 'financial-profile'
           },
@@ -660,7 +641,7 @@ export async function GET(request: NextRequest) {
     const [totalQuestions] = await Promise.all([
       // Get behavior analytics - drop-off rates per question
       prisma.quizQuestion.count({
-        where: { 
+        where: {
           active: true
         }
       })
@@ -672,21 +653,21 @@ export async function GET(request: NextRequest) {
 
     // Get question analytics for ONLY the filtered sessions
     // If no sessions match filters, skip the query and use empty results
-    const questionAnalyticsData = filteredSessionIds.length > 0 
+    const questionAnalyticsData = filteredSessionIds.length > 0
       ? await prisma.quizAnswer.groupBy({
-          by: ['questionId'],
-          _count: {
-            sessionId: true
+        by: ['questionId'],
+        _count: {
+          sessionId: true
+        },
+        where: {
+          questionId: {
+            in: allQuestions.map(q => q.id)
           },
-          where: {
-            questionId: {
-              in: allQuestions.map(q => q.id)
-            },
-            sessionId: {
-              in: filteredSessionIds // ✅ Filter by session IDs (applies date + affiliate filters)
-            }
+          sessionId: {
+            in: filteredSessionIds // ✅ Filter by session IDs (applies date + affiliate filters)
           }
-        })
+        }
+      })
       : []; // Empty array if no sessions match filters
 
     // Create a map for quick lookup
@@ -708,7 +689,7 @@ export async function GET(request: NextRequest) {
     // Create a sequential question number across all quiz types
     const questionAnalytics = allQuestions.map((question, index) => {
       const answeredCount = questionCountMap.get(question.id) || 0;
-      
+
       // Calculate retention rate: when showing "all", use sessions of the same quiz type as the question
       // When showing a specific type, use totalSessions
       let retentionRate = 0;
@@ -744,7 +725,7 @@ export async function GET(request: NextRequest) {
     const getActivityData = async () => {
       const now = new Date();
       let startDate = new Date();
-      
+
       if (duration === 'all') {
         startDate = new Date(0); // All time
       } else {
@@ -768,7 +749,7 @@ export async function GET(request: NextRequest) {
             startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); // Default to 30 days
         }
       }
-      
+
       // Get all sessions in the timeframe
       const sessions = await prisma.quizSession.findMany({
         where: {
@@ -788,14 +769,14 @@ export async function GET(request: NextRequest) {
 
       // Group sessions by hour (for 24h) or by day (for other periods)
       const groupedData: { [key: string]: number } = {};
-      
+
       if (duration === '24h') {
         // For 24h view, group by hour
         sessions.forEach(session => {
           const date = new Date(session.createdAt);
           // Group by hour: YYYY-MM-DD HH:00
-          const key = date.toISOString().slice(0, 13) + ':00:00.000Z'; 
-          
+          const key = date.toISOString().slice(0, 13) + ':00:00.000Z';
+
           groupedData[key] = (groupedData[key] || 0) + 1;
         });
 
@@ -817,14 +798,14 @@ export async function GET(request: NextRequest) {
         sessions.forEach(session => {
           const date = new Date(session.createdAt);
           const key = date.toISOString().slice(0, 10); // YYYY-MM-DD
-          
+
           groupedData[key] = (groupedData[key] || 0) + 1;
         });
 
         // Fill in missing days with 0 to show complete timeline
         const daysData: { [key: string]: number } = {};
         const totalDays = duration === '7d' ? 7 : duration === '30d' ? 30 : duration === '90d' ? 90 : duration === '1y' ? 365 : 30;
-        
+
         for (let i = 0; i < totalDays; i++) {
           const dayDate = new Date(now.getTime() - (totalDays - 1 - i) * 24 * 60 * 60 * 1000);
           const dayKey = dayDate.toISOString().slice(0, 10); // YYYY-MM-DD
@@ -834,7 +815,7 @@ export async function GET(request: NextRequest) {
         // Convert to array format with properly formatted dates
         return Object.entries(daysData).map(([key, count]) => {
           const formattedDate = new Date(key + 'T00:00:00.000Z').toISOString();
-          
+
           return {
             createdAt: formattedDate,
             _count: { id: count }
@@ -849,7 +830,7 @@ export async function GET(request: NextRequest) {
     const getClicksActivityData = async () => {
       const now = new Date();
       let startDate = new Date();
-      
+
       if (duration === 'all') {
         startDate = new Date(0); // All time
       } else {
@@ -873,7 +854,7 @@ export async function GET(request: NextRequest) {
             startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         }
       }
-      
+
       // Get affiliate ID if filtering by affiliate
       let affiliateIdForFilter: string | undefined;
       if (affiliateCode) {
@@ -892,7 +873,7 @@ export async function GET(request: NextRequest) {
       // Clicks are NOT filtered by quiz type because clicks happen BEFORE quiz type is chosen.
       // However, when a quiz type filter is applied, other metrics (Quiz Started, Completed) ARE filtered.
       // This allows us to see the full funnel: All Clicks → Quiz Started (of type) → Completed (of type)
-      
+
       // Get ALL clicks within the date range and affiliate filter (no quiz session matching required)
       const affiliateClicks = await prisma.affiliateClick.findMany({
         where: {
@@ -932,7 +913,7 @@ export async function GET(request: NextRequest) {
 
       // Group clicks by hour (for 24h) or by day (for other periods)
       const groupedData: { [key: string]: number } = {};
-      
+
       if (duration === '24h') {
         // For 24h view, group by hour
         allClicks.forEach(click => {
@@ -981,7 +962,7 @@ export async function GET(request: NextRequest) {
         // Fill in missing days with 0
         const daysData: { [key: string]: number } = {};
         const totalDays = duration === '7d' ? 7 : duration === '30d' ? 30 : duration === '90d' ? 90 : duration === '1y' ? 365 : 30;
-        
+
         for (let i = 0; i < totalDays; i++) {
           const dayDate = new Date(now.getTime() - (totalDays - 1 - i) * 24 * 60 * 60 * 1000);
           const dayKey = dayDate.toISOString().slice(0, 10);
@@ -1004,14 +985,14 @@ export async function GET(request: NextRequest) {
     // Clicks are NOT filtered by quiz type - they represent all page visits
     // This is funnel step 1, before quiz type is chosen
     let totalClicks = 0;
-    
+
     if (affiliateCode) {
       // If filtering by affiliate, get the affiliate ID and count their clicks
       const affiliate = await prisma.affiliate.findUnique({
         where: { referralCode: affiliateCode },
         select: { id: true }
       });
-      
+
       if (affiliate) {
         totalClicks = await prisma.affiliateClick.count({
           where: {
@@ -1027,17 +1008,17 @@ export async function GET(request: NextRequest) {
           createdAt: dateFilter
         }
       });
-      
+
       // Count normal website clicks (these don't have affiliate association)
       const normalWebsiteClicksCount = await prisma.normalWebsiteClick.count({
         where: {
           createdAt: dateFilter
         }
       });
-      
+
       totalClicks = affiliateClicksCount + normalWebsiteClicksCount;
     }
-    
+
     const clicks = totalClicks; // Total clicks (affiliate clicks + normal website clicks)
     const partialSubmissions = totalSessions - completedSessionsCount; // Started but didn't complete
     const averageTimeMs = avgDurationResult._avg.durationMs || 0; // Average time in milliseconds
@@ -1045,17 +1026,17 @@ export async function GET(request: NextRequest) {
     // Get top 3 questions responsible for biggest drop-offs (questions that CAUSE the drop)
     // Only calculate if there are actual user sessions (not just empty quiz structure)
     console.log(`\n🎯 CALCULATING DROP-OFFS (${totalSessions} total sessions)...`);
-    
+
     // Calculate drop-offs by looking at each question and seeing how many people dropped off before reaching it
     const questionsWithDrops = totalSessions > 0 ? questionAnalytics
       .filter((q): q is NonNullable<typeof q> => q !== null)
       .map((q, index) => {
         // For each question, calculate how many people dropped off before reaching it
         const previousQuestion = index > 0 ? questionAnalytics[index - 1] : null;
-        
+
         let dropOffCount = 0;
         let previousRetentionRate = 100; // Default to 100% for first question
-        
+
         if (previousQuestion) {
           // People who answered the previous question but didn't reach this question
           previousRetentionRate = previousQuestion.retentionRate;
@@ -1064,14 +1045,14 @@ export async function GET(request: NextRequest) {
           // For the first question, people who started but didn't answer it
           dropOffCount = 100 - q.retentionRate;
         }
-        
+
         const dropOffPercentage = Math.round(dropOffCount * 100) / 100;
-        
+
         console.log(`  Q${q.questionNumber}: ${q.retentionRate}% reached this question`);
         console.log(`    Previous: ${previousRetentionRate}% → Current: ${q.retentionRate}%`);
         console.log(`    Drop-off: ${dropOffPercentage}% (${dropOffCount} people dropped off before reaching Q${q.questionNumber})`);
         console.log(`    Question: ${q.questionText}`);
-        
+
         // Only include questions where there's actually a drop-off
         if (dropOffPercentage > 0) {
           return {
@@ -1089,7 +1070,7 @@ export async function GET(request: NextRequest) {
       .sort((a, b) => b.dropFromPrevious - a.dropFromPrevious)
       .slice(0, 3) // Top 3 questions responsible for drops
       : []; // Return empty array if no user sessions exist
-    
+
     console.log(`\n🎯 TOP DROP-OFFS FOUND: ${questionsWithDrops.length}`);
     questionsWithDrops.forEach((q, index) => {
       console.log(`  #${index + 1}: Q${q.questionNumber} - ${q.dropFromPrevious}% drop-off`);
@@ -1152,7 +1133,7 @@ export async function GET(request: NextRequest) {
       topDropOffQuestions: questionsWithDrops,
       quizTypes: formattedQuizTypes,
     };
-    
+
     // 🚀 PERFORMANCE: Cache result for 5 minutes (300 seconds)
     if (redis) {
       try {
@@ -1163,7 +1144,7 @@ export async function GET(request: NextRequest) {
         // Continue even if caching fails
       }
     }
-    
+
     return NextResponse.json(stats, {
       headers: {
         'X-Cache': 'MISS',

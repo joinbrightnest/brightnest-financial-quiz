@@ -148,7 +148,6 @@ export default function AdminDashboard() {
     try {
       const response = await fetch('/api/admin/settings');
       const data = await response.json();
-      console.log('Settings API response:', data); // Debug log
       if (data.success && data.settings) {
         setQualificationThreshold(data.settings.qualificationThreshold || 17);
         setCommissionHoldDays(data.settings.commissionHoldDays || 30);
@@ -156,7 +155,6 @@ export default function AdminDashboard() {
         setPayoutSchedule(data.settings.payoutSchedule || "monthly-1st");
         setNewDealAmountPotential(data.settings.newDealAmountPotential || 5000);
         setTerminalOutcomes(data.settings.terminalOutcomes || ['not_interested', 'converted']);
-        console.log('Settings loaded:', data.settings); // Debug log
       }
     } catch (error) {
       console.error('Error fetching settings:', error);
@@ -1244,75 +1242,6 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Lead Profile Modal */}
-        {showLeadModal && selectedLead && (
-          <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
-              <div className="p-6">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Lead Profile</h3>
-                  <button
-                    onClick={closeLeadModal}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-
-                {/* Content */}
-                <div className="space-y-3">
-                  <div>
-                    <span className="font-medium text-gray-700">Name:</span>
-                    <p className="text-gray-900">{selectedLead.customerName}</p>
-                  </div>
-
-                  <div>
-                    <span className="font-medium text-gray-700">Email:</span>
-                    <p className="text-gray-900">{selectedLead.customerEmail}</p>
-                  </div>
-
-                  <div>
-                    <span className="font-medium text-gray-700">Phone:</span>
-                    <p className="text-gray-900">{selectedLead.customerPhone || 'Not provided'}</p>
-                  </div>
-
-                  <div>
-                    <span className="font-medium text-gray-700">Status:</span>
-                    <p className="text-gray-900">{selectedLead.outcome || 'Pending'}</p>
-                  </div>
-
-                  <div>
-                    <span className="font-medium text-gray-700">Sale Value:</span>
-                    <p className="text-gray-900">{selectedLead.saleValue ? `$${Number(selectedLead.saleValue || 0).toFixed(2)}` : 'N/A'}</p>
-                  </div>
-
-                  <div>
-                    <span className="font-medium text-gray-700">Date:</span>
-                    <p className="text-gray-900">{formatDate(selectedLead.appointmentDate)}</p>
-                  </div>
-
-                  <div>
-                    <span className="font-medium text-gray-700">Notes:</span>
-                    <p className="text-gray-900">{selectedLead.notes || 'No notes'}</p>
-                  </div>
-                </div>
-
-                {/* Close Button */}
-                <div className="mt-6 flex justify-end">
-                  <button
-                    onClick={closeLeadModal}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </DashboardLayout>
   );
