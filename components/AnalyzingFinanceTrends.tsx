@@ -29,36 +29,36 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
     if (isActive && isVisible) {
       // Create realistic variable speed animation within each bar
       const startTime = Date.now();
-      
+
       // Add random duration variation to simulate different processing complexity
       const baseDuration = 3000; // Base 3 seconds
       const complexityVariation = (Math.random() - 0.5) * 1000; // ±500ms variation
       const duration = baseDuration + complexityVariation;
-      
+
       // Use smooth incremental progress with variable speed (like LoadingScreenDisplay)
       let lastProgress = 0;
       let currentSpeed = 1;
       let nextSpeedChange = Math.random() * 500 + 300; // Change speed every 300-800ms
-      
+
       const interval = setInterval(() => {
         const elapsed = Date.now() - startTime;
-        
+
         // Randomly change speed at intervals
         if (elapsed > nextSpeedChange) {
           // More dramatic speed changes: 0.5x to 1.8x
           currentSpeed = 0.5 + Math.random() * 1.3;
           nextSpeedChange = elapsed + (Math.random() * 600 + 400); // Next change in 400-1000ms
         }
-        
+
         // Calculate progress increment with current speed
         const baseIncrement = (100 / duration) * 50; // Base progress per 50ms
         const increment = baseIncrement * currentSpeed;
         lastProgress += increment;
-        
+
         // Make sure we don't overshoot
         const maxProgress = (elapsed / duration) * 100;
         lastProgress = Math.min(lastProgress, maxProgress);
-        
+
         // Ensure we reach 100% at the end
         if (elapsed >= duration) {
           setPercentage(100);
@@ -82,29 +82,29 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-2.5 sm:mb-3">
-        <motion.span 
+        <motion.span
           className={`text-xs sm:text-sm font-semibold tracking-wide ${isActive ? 'font-bold' : 'font-medium'}`}
           style={{
-            color: color === 'bg-red-500' ? '#ef4444' : 
-                   color === 'bg-green-500' ? '#22c55e' : 
-                   color === 'bg-teal-500' ? '#14b8a6' : 
-                   color === 'bg-pink-500' ? '#ec4899' : 
-                   color === 'bg-yellow-500' ? '#eab308' : 
-                   color === 'bg-blue-500' ? '#3b82f6' : 
-                   color === 'bg-orange-500' ? '#f97316' : '#64748b'
+            color: color === 'bg-red-500' ? '#ef4444' :
+              color === 'bg-green-500' ? '#22c55e' :
+                color === 'bg-teal-500' ? '#14b8a6' :
+                  color === 'bg-pink-500' ? '#ec4899' :
+                    color === 'bg-yellow-500' ? '#eab308' :
+                      color === 'bg-blue-500' ? '#3b82f6' :
+                        color === 'bg-orange-500' ? '#f97316' : '#64748b'
           }}
-          animate={{ 
+          animate={{
             fontWeight: isActive ? 'bold' : 'semibold',
             opacity: isActive || isCompleted ? 1 : 0.6
           }}
-          transition={{ 
+          transition={{
             duration: 0.3,
             ease: "easeInOut"
           }}
         >
           {label}
         </motion.span>
-        <motion.span 
+        <motion.span
           className={`text-xs sm:text-sm font-semibold ${isCompleted ? 'text-slate-700' : isActive ? 'text-slate-600' : 'text-slate-400'}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: isVisible ? 1 : (isCompleted ? 1 : 0.5) }}
@@ -113,19 +113,22 @@ const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBar
           {percentage}%
         </motion.span>
       </div>
-      <motion.div 
+      <motion.div
         className="w-full bg-slate-100 rounded-full overflow-hidden shadow-inner"
-        animate={{ 
+        animate={{
           height: isActive ? "10px" : "8px" // Slightly thicker when active
         }}
-        transition={{ 
+        transition={{
           duration: 0.3,
           ease: "easeInOut"
         }}
       >
         <motion.div
-          className={`h-full rounded-full ${color} transition-all duration-50 ease-out shadow-sm`}
-          style={{ width: `${visualWidth}%` }}
+          className={`h-full rounded-full ${color} shadow-sm`}
+          style={{
+            width: `${visualWidth}%`,
+            transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)' // Smooth 300ms transition
+          }}
           animate={isActive ? {
             boxShadow: ['0 0 0px rgba(0,0,0,0)', '0 0 8px rgba(0,0,0,0.1)', '0 0 0px rgba(0,0,0,0)']
           } : {}}
@@ -179,7 +182,7 @@ const AnalyzingFinanceTrends = () => {
         localStorage.removeItem('userName');
         return;
       }
-      
+
       // Check if sessionId exists in database
       if (sessionId) {
         try {
@@ -188,7 +191,7 @@ const AnalyzingFinanceTrends = () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ sessionId }),
           });
-          
+
           if (!response.ok || !(await response.json()).exists) {
             console.log('Cleaning up stale sessionId from localStorage');
             localStorage.removeItem('quizSessionId');
@@ -201,9 +204,9 @@ const AnalyzingFinanceTrends = () => {
         }
       }
     };
-    
+
     cleanupLocalStorage();
-    
+
     // Start AI copy generation early (during progress bars) - non-blocking
     const startAICopyGeneration = async () => {
       const sessionId = localStorage.getItem('quizSessionId');
@@ -215,7 +218,7 @@ const AnalyzingFinanceTrends = () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ sessionId }),
           });
-          
+
           if (copyResponse.ok) {
             const copyData = await copyResponse.json();
             console.log('AI copy generated successfully during progress bars:', copyData);
@@ -229,37 +232,37 @@ const AnalyzingFinanceTrends = () => {
         }
       }
     };
-    
+
     // Start AI copy generation after a short delay (let progress bars start first)
     const aiCopyTimer = setTimeout(startAICopyGeneration, 2000);
-    
+
     // Sequential text changes - each text appears once in order
     const textTotalDuration = progressBars.length * 2500; // Total time for all bars
     const textInterval = textTotalDuration / loadingTexts.length; // Equal spacing
-    
+
     const textTimer = setTimeout(() => {
       setCurrentTextIndex(1);
     }, textInterval);
-    
+
     const textTimer2 = setTimeout(() => {
       setCurrentTextIndex(2);
     }, textInterval * 2);
-    
+
     const textTimer3 = setTimeout(() => {
       setCurrentTextIndex(3);
     }, textInterval * 3);
-    
+
     const textTimer4 = setTimeout(() => {
       setCurrentTextIndex(4);
     }, textInterval * 4);
 
     // Sequential progress bar animation - one at a time with variable timing
     let totalElapsedTime = 0;
-    
+
     // Schedule each bar with cumulative timing
     progressBars.forEach((bar, index) => {
       const barDuration = 3000 + Math.random() * 1000; // Variable timing: 3-4 seconds per bar
-      
+
       // Start the bar
       setTimeout(() => {
         setActiveBarIndex(index);
@@ -267,14 +270,14 @@ const AnalyzingFinanceTrends = () => {
           setCompletedBars(completed => [...completed, index - 1]);
         }
       }, totalElapsedTime);
-      
+
       totalElapsedTime += barDuration;
-      
+
       // If this is the last bar, mark it complete and show intro sequence
       if (index === progressBars.length - 1) {
         setTimeout(() => {
           setCompletedBars(completed => [...completed, index]);
-          
+
           // Show intro sequence 2 seconds after last bar completes
           setTimeout(() => {
             setShowIntroSequence(true);
@@ -302,7 +305,7 @@ const AnalyzingFinanceTrends = () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ sessionId }),
           });
-          
+
           if (response.ok) {
             const data = await response.json();
             if (data.name) {
@@ -336,7 +339,7 @@ const AnalyzingFinanceTrends = () => {
       const sessionId = localStorage.getItem('quizSessionId');
       console.log('Session ID from localStorage:', sessionId);
       console.log('All localStorage keys:', Object.keys(localStorage));
-      
+
       // Validate sessionId format (should be a cuid)
       if (sessionId && !sessionId.match(/^c[a-z0-9]{24}$/)) {
         console.log('Invalid sessionId format, clearing localStorage');
@@ -345,7 +348,7 @@ const AnalyzingFinanceTrends = () => {
         router.push('/quiz/financial-profile');
         return;
       }
-      
+
       if (sessionId) {
         console.log('Generating result for session:', sessionId);
         // Generate the result
@@ -360,7 +363,7 @@ const AnalyzingFinanceTrends = () => {
         if (resultResponse.ok) {
           const resultData = await resultResponse.json();
           console.log('Generated result data:', resultData);
-          
+
           // AI copy should already be generated during progress bars
           const existingCopy = localStorage.getItem('personalizedCopy');
           if (existingCopy) {
@@ -368,10 +371,10 @@ const AnalyzingFinanceTrends = () => {
           } else {
             console.log('AI copy not found, results page will use fallback');
           }
-          
+
           // Add a small delay to ensure database consistency
           await new Promise(resolve => setTimeout(resolve, 1000));
-          
+
           // Check qualification and redirect accordingly
           if (resultData.qualifiesForCall) {
             console.log('User qualifies for call, redirecting to results page');
@@ -385,7 +388,7 @@ const AnalyzingFinanceTrends = () => {
         } else {
           const errorData = await resultResponse.json();
           console.error('Result generation failed:', errorData);
-          
+
           // If session not found, redirect to quiz to start fresh
           if (resultResponse.status === 404 && errorData.error === 'Session not found') {
             console.log('Session not found, redirecting to quiz');
@@ -394,7 +397,7 @@ const AnalyzingFinanceTrends = () => {
             router.push('/quiz/financial-profile');
             return;
           }
-          
+
           // Fallback to existing result for other errors
           router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
         }
@@ -413,8 +416,8 @@ const AnalyzingFinanceTrends = () => {
   // Show intro sequence if ready
   if (showIntroSequence) {
     return (
-      <ResultIntroSequence 
-        name={userName || 'there'} 
+      <ResultIntroSequence
+        name={userName || 'there'}
         onComplete={handleIntroComplete}
       />
     );
@@ -440,160 +443,160 @@ const AnalyzingFinanceTrends = () => {
       {/* Main Content - flexible container that fills remaining space */}
       <div className="flex-1 flex flex-col justify-center px-4 py-6 sm:py-8 overflow-y-auto">
         <div className="relative z-10 w-full max-w-2xl mx-auto">
-        {/* Header */}
-        <motion.div
-          className="text-center mb-8 sm:mb-10"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-        >
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-slate-900 mb-2 text-center leading-tight">
-            {loadingTexts[currentTextIndex]}
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ 
-                opacity: [0, 1, 1, 1, 0, 0, 0, 0]
-              }}
-              transition={{ 
-                duration: 2.4, 
-                repeat: Infinity,
-                ease: "easeInOut",
-                times: [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 1]
-              }}
-            >
-              .
-            </motion.span>
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ 
-                opacity: [0, 0, 1, 1, 1, 0, 0, 0]
-              }}
-              transition={{ 
-                duration: 2.4, 
-                repeat: Infinity,
-                ease: "easeInOut",
-                times: [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 1]
-              }}
-            >
-              .
-            </motion.span>
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ 
-                opacity: [0, 0, 0, 1, 1, 1, 0, 0]
-              }}
-              transition={{ 
-                duration: 2.4, 
-                repeat: Infinity,
-                ease: "easeInOut",
-                times: [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 1]
-              }}
-            >
-              .
-            </motion.span>
-          </h1>
-        </motion.div>
+          {/* Header */}
+          <motion.div
+            className="text-center mb-8 sm:mb-10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-slate-900 mb-2 text-center leading-tight">
+              {loadingTexts[currentTextIndex]}
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: [0, 1, 1, 1, 0, 0, 0, 0]
+                }}
+                transition={{
+                  duration: 2.4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  times: [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 1]
+                }}
+              >
+                .
+              </motion.span>
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: [0, 0, 1, 1, 1, 0, 0, 0]
+                }}
+                transition={{
+                  duration: 2.4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  times: [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 1]
+                }}
+              >
+                .
+              </motion.span>
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: [0, 0, 0, 1, 1, 1, 0, 0]
+                }}
+                transition={{
+                  duration: 2.4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  times: [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 1]
+                }}
+              >
+                .
+              </motion.span>
+            </h1>
+          </motion.div>
 
-        {/* Progress Bars Card - Enhanced with depth and professional styling */}
-        <div className="relative mb-8 sm:mb-10">
-          {/* Background card with depth */}
-          <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 shadow-xl border border-slate-200/60 relative overflow-hidden">
-            {/* Decorative gradient accents */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 via-amber-400 to-teal-400"></div>
-            <div className="absolute top-0 right-0 w-64 h-64 bg-teal-100/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-100/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
-            
-            {/* Progress bars container */}
-            <div className="relative z-10 space-y-5 sm:space-y-6">
-              {progressBars.map((bar, index) => (
-                <ProgressBar
-                  key={index}
-                  label={bar.label}
-                  color={bar.color}
-                  isActive={index === activeBarIndex}
-                  isCompleted={index < activeBarIndex}
-                  index={index}
-                />
-              ))}
+          {/* Progress Bars Card - Enhanced with depth and professional styling */}
+          <div className="relative mb-8 sm:mb-10">
+            {/* Background card with depth */}
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 shadow-xl border border-slate-200/60 relative overflow-hidden">
+              {/* Decorative gradient accents */}
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 via-amber-400 to-teal-400"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-teal-100/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-100/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+
+              {/* Progress bars container */}
+              <div className="relative z-10 space-y-5 sm:space-y-6">
+                {progressBars.map((bar, index) => (
+                  <ProgressBar
+                    key={index}
+                    label={bar.label}
+                    color={bar.color}
+                    isActive={index === activeBarIndex}
+                    isCompleted={index < activeBarIndex}
+                    index={index}
+                  />
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Progress Dots with Checkmarks - Enhanced styling */}
-        <motion.div
-          className="flex justify-center space-x-2 sm:space-x-3 mb-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4 }}
-        >
-          {progressBars.map((bar, index) => (
-            <motion.div
-              key={index}
-              className="flex items-center justify-center"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ 
-                opacity: 1,
-                scale: 1
-              }}
-              transition={{
-                duration: 0.5,
-                delay: index * 0.1
-              }}
-            >
-              {completedBars.includes(index) ? (
-                // Show checkmark with bar color when bar is completed - enhanced with shadow
-                <motion.div 
-                  className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center ${bar.color} shadow-md`}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ 
-                    duration: 0.3,
-                    delay: 0 // Show checkmark immediately for completed bars
-                  }}
-                >
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                  </svg>
-                </motion.div>
-              ) : (
-                // Show empty slate dot for current and future bars
-                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-slate-200 rounded-full border-2 border-slate-300"></div>
-              )}
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Trust Text - Enhanced styling */}
-        <motion.div
-          className="text-center px-4 sm:px-6 mb-6"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-        >
-          <div className="inline-block bg-white/80 backdrop-blur-sm rounded-xl px-4 sm:px-6 py-3 sm:py-4 border border-slate-200/60 shadow-sm">
-            <p className="text-xs sm:text-sm text-slate-600 text-center leading-relaxed">
-              Sit tight! We're building your perfect plan based on millions of data points from successful BrightNest users.
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Loading indicator - Enhanced with gradient */}
-        <motion.div
-          className="flex justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-        >
+          {/* Progress Dots with Checkmarks - Enhanced styling */}
           <motion.div
-            className="w-8 h-8 sm:w-10 sm:h-10 border-[3px] border-teal-500 border-t-transparent rounded-full shadow-lg"
-            animate={{ rotate: 360 }}
-            transition={{
-              duration: 1,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-          />
-        </motion.div>
+            className="flex justify-center space-x-2 sm:space-x-3 mb-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            {progressBars.map((bar, index) => (
+              <motion.div
+                key={index}
+                className="flex items-center justify-center"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{
+                  opacity: 1,
+                  scale: 1
+                }}
+                transition={{
+                  duration: 0.5,
+                  delay: index * 0.1
+                }}
+              >
+                {completedBars.includes(index) ? (
+                  // Show checkmark with bar color when bar is completed - enhanced with shadow
+                  <motion.div
+                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center ${bar.color} shadow-md`}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{
+                      duration: 0.3,
+                      delay: 0 // Show checkmark immediately for completed bars
+                    }}
+                  >
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                    </svg>
+                  </motion.div>
+                ) : (
+                  // Show empty slate dot for current and future bars
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-slate-200 rounded-full border-2 border-slate-300"></div>
+                )}
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Trust Text - Enhanced styling */}
+          <motion.div
+            className="text-center px-4 sm:px-6 mb-6"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            <div className="inline-block bg-white/80 backdrop-blur-sm rounded-xl px-4 sm:px-6 py-3 sm:py-4 border border-slate-200/60 shadow-sm">
+              <p className="text-xs sm:text-sm text-slate-600 text-center leading-relaxed">
+                Sit tight! We're building your perfect plan based on millions of data points from successful BrightNest users.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Loading indicator - Enhanced with gradient */}
+          <motion.div
+            className="flex justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+          >
+            <motion.div
+              className="w-8 h-8 sm:w-10 sm:h-10 border-[3px] border-teal-500 border-t-transparent rounded-full shadow-lg"
+              animate={{ rotate: 360 }}
+              transition={{
+                duration: 1,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+          </motion.div>
         </div>
       </div>
     </div>
