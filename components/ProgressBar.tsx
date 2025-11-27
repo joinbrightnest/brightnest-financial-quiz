@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 interface ProgressBarProps {
   current: number;
   total: number;
@@ -5,7 +7,7 @@ interface ProgressBarProps {
   canGoBack?: boolean;
 }
 
-export default function ProgressBar({ current, total, onBack, canGoBack = false }: ProgressBarProps) {
+const ProgressBar = memo(function ProgressBar({ current, total, onBack, canGoBack = false }: ProgressBarProps) {
   return (
     <div className="mb-4">
       {canGoBack && onBack ? (
@@ -32,27 +34,26 @@ export default function ProgressBar({ current, total, onBack, canGoBack = false 
               />
             </svg>
           </button>
-          
+
           {/* Centered Progress Bar and Dots */}
           <div className="flex flex-col px-12">
             {/* Progress Bar Container */}
             <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-              <div 
+              <div
                 className="h-full bg-teal-600 rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${(current / total) * 100}%` }}
               />
             </div>
-            
+
             {/* Progress Indicators below the progress bar */}
             <div className="flex justify-between items-center mt-2">
               {Array.from({ length: total }, (_, index) => (
                 <div
                   key={index}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    index < current
-                      ? "bg-teal-600"
-                      : "bg-gray-300"
-                  }`}
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${index < current
+                    ? "bg-teal-600"
+                    : "bg-gray-300"
+                    }`}
                 />
               ))}
             </div>
@@ -63,22 +64,21 @@ export default function ProgressBar({ current, total, onBack, canGoBack = false 
         <div className="flex flex-col items-center lg:items-start">
           {/* Progress Bar Container - shorter on mobile, full on desktop */}
           <div className="w-3/4 lg:w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-            <div 
+            <div
               className="h-full bg-teal-600 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${(current / total) * 100}%` }}
             />
           </div>
-          
+
           {/* Progress Indicators below the progress bar */}
           <div className="flex justify-between items-center mt-2 w-3/4 lg:w-full">
             {Array.from({ length: total }, (_, index) => (
               <div
                 key={index}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index < current
-                    ? "bg-teal-600"
-                    : "bg-gray-300"
-                }`}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${index < current
+                  ? "bg-teal-600"
+                  : "bg-gray-300"
+                  }`}
               />
             ))}
           </div>
@@ -86,4 +86,6 @@ export default function ProgressBar({ current, total, onBack, canGoBack = false 
       )}
     </div>
   );
-}
+});
+
+export default ProgressBar;

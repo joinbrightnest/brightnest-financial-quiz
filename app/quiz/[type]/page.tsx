@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import QuestionCard from "@/components/QuestionCard";
 import TextInput from "@/components/TextInput";
 import ArticleDisplayWrapper from "@/components/ArticleDisplayWrapper";
 import LoadingScreenDisplay from "@/components/LoadingScreenDisplay";
+import SkeletonLoader from "@/components/SkeletonLoader";
 
 interface Question {
   id: string;
@@ -54,33 +55,33 @@ type QuizState = 'loading' | 'question' | 'article' | 'loading-screen' | 'error'
 
 export default function QuizPage({ params }: QuizPageProps) {
   const router = useRouter();
-  
+
   // Core quiz state
   const [quizType, setQuizType] = useState<string>('');
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [totalQuestions, setTotalQuestions] = useState(10); // Default fallback
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  
+
   // User input state
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
   const [textValue, setTextValue] = useState<string>("");
-  const [userVariables, setUserVariables] = useState<{name?: string; email?: string}>({});
-  
+  const [userVariables, setUserVariables] = useState<{ name?: string; email?: string }>({});
+
   // UI state
   const [quizState, setQuizState] = useState<QuizState>('question'); // Start with question state
   const [error, setError] = useState<string | null>(null);
   const [canGoBack, setCanGoBack] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Article state
   const [articleData, setArticleData] = useState<any>(null);
-  const [lastAnswer, setLastAnswer] = useState<{questionId: string, answerValue: string, answerLabel: string} | null>(null);
-  
+  const [lastAnswer, setLastAnswer] = useState<{ questionId: string, answerValue: string, answerLabel: string } | null>(null);
+
   // Loading screen state
   const [currentLoadingScreen, setCurrentLoadingScreen] = useState<LoadingScreen | null>(null);
   const [pendingNextQuestion, setPendingNextQuestion] = useState<Question | null>(null);
-  
+
   // Preload state (optimization: preload next question while user is on current)
   const [preloadedNextQuestion, setPreloadedNextQuestion] = useState<Question | null>(null);
 
@@ -97,7 +98,7 @@ export default function QuizPage({ params }: QuizPageProps) {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const affiliateCode = urlParams.get('affiliate');
-    
+
     if (affiliateCode) {
       console.log("🎯 Quiz started with affiliate code from URL:", affiliateCode);
       // Set the affiliate cookie for the quiz system
@@ -108,30 +109,30 @@ export default function QuizPage({ params }: QuizPageProps) {
   // Initialize quiz
   useEffect(() => {
     if (!quizType) return;
-    
+
     const initializeQuiz = async () => {
       try {
         // Only use affiliate code if explicitly provided in URL
         // Don't use cookie-based affiliate codes for direct website visits
         const urlParams = new URLSearchParams(window.location.search);
         const affiliateCode = urlParams.get('affiliate');
-        
+
         // Optimized: single API call now returns session, question, and count
         const sessionResponse = await fetch("/api/quiz/start", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             quizType,
             affiliateCode: affiliateCode || undefined
           }),
         });
-        
+
         if (!sessionResponse.ok) {
           throw new Error("Failed to start quiz");
         }
-        
+
         const sessionData = await sessionResponse.json();
-        
+
         setSessionId(sessionData.sessionId);
         // Store session ID in localStorage for the analyzing page
         localStorage.setItem('quizSessionId', sessionData.sessionId);
@@ -187,7 +188,7 @@ export default function QuizPage({ params }: QuizPageProps) {
   }, [sessionId, currentQuestion?.id]);
 
 
-  const processAnswer = async (value: string, answerLabel: string) => {
+  const processAnswer = useCallback(async (value: string, answerLabel: string) => {
     if (!sessionId || !currentQuestion) return;
 
     try {
@@ -233,11 +234,11 @@ export default function QuizPage({ params }: QuizPageProps) {
           setQuizState('loading-screen');
         } else {
           // Use preloaded question if available (optimization: instant transition)
-          const nextQ = preloadedNextQuestion && 
-            preloadedNextQuestion.id === answerData.nextQuestion?.id 
-            ? preloadedNextQuestion 
+          const nextQ = preloadedNextQuestion &&
+            preloadedNextQuestion.id === answerData.nextQuestion?.id
+            ? preloadedNextQuestion
             : answerData.nextQuestion;
-          
+
           // Move to next question immediately
           setCurrentQuestion(nextQ);
           setCurrentQuestionIndex(prev => prev + 1);
@@ -252,12 +253,12 @@ export default function QuizPage({ params }: QuizPageProps) {
       setError("Failed to save answer. Please try again.");
       setQuizState('error');
     }
-  };
+  }, [sessionId, currentQuestion, preloadedNextQuestion, router]);
 
 
-  const handleAnswer = async (value: string) => {
+  const handleAnswer = useCallback(async (value: string) => {
     if (!currentQuestion) return;
-    
+
     // Store user variables
     if (currentQuestion.type === "text" && currentQuestion.prompt.toLowerCase().includes("name")) {
       setUserVariables(prev => ({ ...prev, name: value }));
@@ -269,23 +270,23 @@ export default function QuizPage({ params }: QuizPageProps) {
       // Store email in localStorage for Calendly pre-fill
       localStorage.setItem('userEmail', value);
     }
-    
+
     const answerLabel = currentQuestion.options.find(opt => opt.value === value)?.label || value;
-    
+
     // Immediate visual feedback - set selected value before processing
     setSelectedValue(value);
-    
+
     // If continue button is enabled, don't process answer immediately
     if (currentQuestion.continueButton) {
       return; // Wait for continue button click
     }
-    
-    await processAnswer(value, answerLabel);
-  };
 
-  const handleTextSubmit = async () => {
+    await processAnswer(value, answerLabel);
+  }, [currentQuestion, processAnswer]);
+
+  const handleTextSubmit = useCallback(async () => {
     if (!textValue.trim() || !currentQuestion) return;
-    
+
     // Store user variables
     if (currentQuestion.type === "text" && currentQuestion.prompt.toLowerCase().includes("name")) {
       setUserVariables(prev => ({ ...prev, name: textValue }));
@@ -295,31 +296,31 @@ export default function QuizPage({ params }: QuizPageProps) {
     if (currentQuestion.type === "email") {
       setUserVariables(prev => ({ ...prev, email: textValue }));
     }
-    
+
     // Optimistic UI update - clear inputs immediately for better UX
     clearInputs();
-    
-    await processAnswer(textValue, textValue);
-  };
 
-  const handleSkip = async () => {
+    await processAnswer(textValue, textValue);
+  }, [textValue, currentQuestion, processAnswer]);
+
+  const handleSkip = useCallback(async () => {
     if (!currentQuestion) return;
-    
+
     // Mark as skipped by sending a special value
     await processAnswer("__SKIPPED__", "Skipped");
-  };
+  }, [currentQuestion, processAnswer]);
 
-  const handleContinue = async () => {
+  const handleContinue = useCallback(async () => {
     if (!currentQuestion || !selectedValue) return;
-    
+
     const answerLabel = currentQuestion.options.find(opt => opt.value === selectedValue)?.label || selectedValue;
-    
+
     // Clear inputs and process the selected answer
     clearInputs();
     await processAnswer(selectedValue, answerLabel);
-  };
+  }, [currentQuestion, selectedValue, processAnswer]);
 
-  const handleBack = async () => {
+  const handleBack = useCallback(async () => {
     if (!sessionId || !currentQuestion || currentQuestion.order <= 1) return;
 
     try {
@@ -340,10 +341,10 @@ export default function QuizPage({ params }: QuizPageProps) {
       setCurrentQuestion(data.question);
       setCurrentQuestionIndex(prev => Math.max(0, prev - 1));
       setCanGoBack(data.question.order > 1);
-      
+
       // Clear states
       clearAllStates();
-      
+
       // Restore existing answer
       if (data.existingAnswer) {
         if (data.question.type === "text" || data.question.type === "email") {
@@ -356,17 +357,17 @@ export default function QuizPage({ params }: QuizPageProps) {
       } else {
         clearInputs();
       }
-      
+
       setQuizState('question');
     } catch (err) {
       setError("Failed to go back to previous question. Please try again.");
       setQuizState('error');
     }
-  };
+  }, [sessionId, currentQuestion]);
 
-  const handleArticleClose = async () => {
+  const handleArticleClose = useCallback(async () => {
     if (!lastAnswer || !sessionId) return;
-    
+
     try {
       // Save answer and get next question
       // Note: We don't check for articles here because we're saving an answer that already triggered an article
@@ -399,11 +400,11 @@ export default function QuizPage({ params }: QuizPageProps) {
           setQuizState('loading-screen');
         } else {
           // Use preloaded question if available (optimization: instant transition)
-          const nextQ = preloadedNextQuestion && 
-            preloadedNextQuestion.id === answerData.nextQuestion?.id 
-            ? preloadedNextQuestion 
+          const nextQ = preloadedNextQuestion &&
+            preloadedNextQuestion.id === answerData.nextQuestion?.id
+            ? preloadedNextQuestion
             : answerData.nextQuestion;
-          
+
           // Move to next question immediately
           setCurrentQuestion(nextQ);
           setCurrentQuestionIndex(prev => prev + 1);
@@ -418,18 +419,18 @@ export default function QuizPage({ params }: QuizPageProps) {
       setError("Failed to save answer. Please try again.");
       setQuizState('error');
     }
-  };
+  }, [lastAnswer, sessionId, preloadedNextQuestion, router]);
 
-  const handleLoadingScreenComplete = () => {
+  const handleLoadingScreenComplete = useCallback(() => {
     if (pendingNextQuestion) {
       setCurrentQuestion(pendingNextQuestion);
       setCurrentQuestionIndex(prev => prev + 1);
       setCanGoBack(true);
-      
+
       clearAllStates();
       setQuizState('question');
     }
-  };
+  }, [pendingNextQuestion]);
 
   const clearInputs = () => {
     setSelectedValue(null);
@@ -446,14 +447,7 @@ export default function QuizPage({ params }: QuizPageProps) {
 
   // Render based on quiz state
   if (quizState === 'loading') {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading quiz...</p>
-        </div>
-      </div>
-    );
+    return <SkeletonLoader />;
   }
 
   if (quizState === 'error') {
@@ -502,23 +496,7 @@ export default function QuizPage({ params }: QuizPageProps) {
   if (quizState === 'question') {
     // Show loading state only if we're still loading and don't have a question yet
     if (isLoading && !currentQuestion) {
-      return (
-        <div className="min-h-screen bg-white">
-          <div className="bg-gray-800 w-full py-4">
-            <div className="max-w-lg mx-auto px-6">
-              <h1 className="text-white text-xl font-bold text-center tracking-wide">
-                BrightNest
-              </h1>
-            </div>
-          </div>
-          <div className="max-w-lg mx-auto px-6 py-12">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Loading...</p>
-            </div>
-          </div>
-        </div>
-      );
+      return <SkeletonLoader />;
     }
 
     return (
@@ -555,7 +533,7 @@ export default function QuizPage({ params }: QuizPageProps) {
             )}
           </>
         )}
-        
+
         {/* Loading overlay while initializing */}
         {isLoading && (
           <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">

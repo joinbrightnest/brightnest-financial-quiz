@@ -1,3 +1,4 @@
+import { memo, useMemo } from "react";
 import OptionButton from "./OptionButton";
 import ProgressBar from "./ProgressBar";
 
@@ -33,7 +34,7 @@ interface QuestionCardProps {
   };
 }
 
-export default function QuestionCard({
+const QuestionCard = memo(function QuestionCard({
   question,
   currentQuestion,
   totalQuestions,
@@ -45,17 +46,19 @@ export default function QuestionCard({
   canGoBack = false,
   userVariables = {},
 }: QuestionCardProps) {
-  // Replace variables in the question prompt
-  const replaceVariables = (text: string) => {
-    let replacedText = text;
-    if (userVariables.name) {
-      replacedText = replacedText.replace(/\{\{name\}\}/g, userVariables.name);
-    }
-    if (userVariables.email) {
-      replacedText = replacedText.replace(/\{\{email\}\}/g, userVariables.email);
-    }
-    return replacedText;
-  };
+  // Replace variables in the question prompt - memoized for performance
+  const replaceVariables = useMemo(() => {
+    return (text: string) => {
+      let replacedText = text;
+      if (userVariables.name) {
+        replacedText = replacedText.replace(/\{\{name\}\}/g, userVariables.name);
+      }
+      if (userVariables.email) {
+        replacedText = replacedText.replace(/\{\{email\}\}/g, userVariables.email);
+      }
+      return replacedText;
+    };
+  }, [userVariables.name, userVariables.email]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -67,23 +70,23 @@ export default function QuestionCard({
           </h1>
         </div>
       </div>
-      
+
       {/* Main Content */}
       <div className="max-w-md mx-auto px-6 py-6 md:py-8">
         <div className="mb-8">
-          <ProgressBar 
-            current={currentQuestion} 
-            total={totalQuestions} 
+          <ProgressBar
+            current={currentQuestion}
+            total={totalQuestions}
             onBack={onBack}
             canGoBack={canGoBack}
           />
         </div>
-        
+
         <div>
           <h2 className="text-xl font-medium text-gray-900 mb-6 md:mb-8 leading-relaxed text-left">
             {replaceVariables(question.prompt)}
           </h2>
-          
+
           <div className="space-y-4">
             {question.options.map((option) => (
               <OptionButton
@@ -122,20 +125,19 @@ export default function QuestionCard({
               <button
                 onClick={selectedValue ? onContinue : undefined}
                 disabled={!selectedValue}
-                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 touch-friendly touch-feedback no-select mobile-transition ${
-                  selectedValue 
-                    ? "text-white hover:opacity-90" 
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
+                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 touch-friendly touch-feedback no-select mobile-transition ${selectedValue
+                  ? "text-white hover:opacity-90"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
                 style={{
-                  backgroundColor: selectedValue 
-                    ? (question.continueButtonColor || "#09727c") 
-                    : undefined 
+                  backgroundColor: selectedValue
+                    ? (question.continueButtonColor || "#09727c")
+                    : undefined
                 }}
               >
                 {question.continueButtonText || "Continue"}
               </button>
-              
+
               {/* Text Under Button */}
               {question.textUnderButton && (
                 <div className="mt-3 text-center">
@@ -150,4 +152,6 @@ export default function QuestionCard({
       </div>
     </div>
   );
-}
+});
+
+export default QuestionCard;

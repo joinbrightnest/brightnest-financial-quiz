@@ -67,6 +67,8 @@ model QuizQuestion {
   triggers       ArticleTrigger[]
   loadingScreens LoadingScreen[]
 
+  @@index([quizType, active, order])
+  @@index([quizType, order])
   @@map("quiz_questions")
 }
 
@@ -81,6 +83,8 @@ model QuizAnswer {
   session    QuizSession  @relation(fields: [sessionId], references: [id])
 
   @@unique([sessionId, questionId])
+  @@index([sessionId])
+  @@index([questionId])
   @@map("quiz_answers")
 }
 
@@ -145,6 +149,7 @@ model Article {
   triggers  ArticleTrigger[]
   views     ArticleView[]
 
+  @@index([isActive])
   @@map("articles")
 }
 
@@ -221,6 +226,8 @@ model LoadingScreen {
   updatedAt DateTime      @updatedAt
   question  QuizQuestion? @relation(fields: [triggerQuestionId], references: [id])
 
+  @@index([quizType, triggerQuestionId, isActive])
+  @@index([isActive])
   @@map("loading_screens")
 }
 
