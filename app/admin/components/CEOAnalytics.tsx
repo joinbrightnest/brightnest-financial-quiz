@@ -446,7 +446,7 @@ export default function CEOAnalytics({ initialData }: CEOAnalyticsProps) {
                     </div>
                     <div className="ml-4">
                       <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Top Affiliate</p>
-                      <p className="text-2xl font-bold text-slate-900 mt-1 truncate">
+                      <p className="text-3xl font-bold text-slate-900 mt-1 truncate">
                         {data.topAffiliates[0]?.name || "N/A"}
                       </p>
                     </div>
