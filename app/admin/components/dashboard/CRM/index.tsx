@@ -734,40 +734,86 @@ export default function CRM({
                 </div>
 
                 {/* Pagination */}
-                <div className="mt-8 flex items-center justify-between">
-                    <div className="text-sm text-black">
-                        Showing {(crmCurrentPage - 1) * crmItemsPerPage + 1} to {Math.min(crmCurrentPage * crmItemsPerPage, filteredCrmLeads.length)} of {filteredCrmLeads.length} results
+                {/* Pagination */}
+                <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="text-sm text-gray-600">
+                        Showing <span className="font-medium">{(crmCurrentPage - 1) * crmItemsPerPage + 1}</span> to <span className="font-medium">{Math.min(crmCurrentPage * crmItemsPerPage, filteredCrmLeads.length)}</span> of <span className="font-medium">{filteredCrmLeads.length}</span> results
                     </div>
                     <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-2">
-                            <span className="text-sm text-black">Items per page:</span>
+                            <span className="text-sm text-gray-600">Rows per page:</span>
                             <select
                                 value={crmItemsPerPage}
                                 onChange={(e) => handleCrmItemsPerPageChange(Number(e.target.value))}
-                                className="border border-gray-300 rounded px-2 py-1 text-sm text-black"
+                                className="border border-gray-300 rounded-lg px-2 py-1.5 text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
                             >
+                                <option value={10}>10</option>
                                 <option value={25}>25</option>
                                 <option value={50}>50</option>
                                 <option value={100}>100</option>
                             </select>
                         </div>
-                        <div className="flex items-center space-x-2">
+
+                        <div className="flex items-center space-x-1">
                             <button
                                 onClick={() => handleCrmPageChange(crmCurrentPage - 1)}
                                 disabled={crmCurrentPage === 1}
-                                className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="p-2 rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                aria-label="Previous page"
                             >
-                                &lt; Prev
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                </svg>
                             </button>
-                            <button className="px-3 py-1 text-sm bg-blue-600 text-white rounded">
-                                {crmCurrentPage}
-                            </button>
+
+                            {/* Page Numbers */}
+                            <div className="flex items-center space-x-1">
+                                {(() => {
+                                    const pages = [];
+                                    const maxVisiblePages = 5;
+
+                                    if (totalCrmPages <= maxVisiblePages) {
+                                        for (let i = 1; i <= totalCrmPages; i++) {
+                                            pages.push(i);
+                                        }
+                                    } else {
+                                        if (crmCurrentPage <= 3) {
+                                            pages.push(1, 2, 3, 4, '...', totalCrmPages);
+                                        } else if (crmCurrentPage >= totalCrmPages - 2) {
+                                            pages.push(1, '...', totalCrmPages - 3, totalCrmPages - 2, totalCrmPages - 1, totalCrmPages);
+                                        } else {
+                                            pages.push(1, '...', crmCurrentPage - 1, crmCurrentPage, crmCurrentPage + 1, '...', totalCrmPages);
+                                        }
+                                    }
+
+                                    return pages.map((page, index) => (
+                                        typeof page === 'number' ? (
+                                            <button
+                                                key={index}
+                                                onClick={() => handleCrmPageChange(page)}
+                                                className={`min-w-[32px] h-8 px-2 rounded-lg text-sm font-medium transition-colors ${crmCurrentPage === page
+                                                        ? 'bg-blue-600 text-white shadow-sm'
+                                                        : 'text-gray-600 hover:bg-gray-100'
+                                                    }`}
+                                            >
+                                                {page}
+                                            </button>
+                                        ) : (
+                                            <span key={index} className="px-1 text-gray-400">...</span>
+                                        )
+                                    ));
+                                })()}
+                            </div>
+
                             <button
                                 onClick={() => handleCrmPageChange(crmCurrentPage + 1)}
                                 disabled={crmCurrentPage === totalCrmPages}
-                                className="px-3 py-1 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="p-2 rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                aria-label="Next page"
                             >
-                                Next &gt;
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
                             </button>
                         </div>
                     </div>
