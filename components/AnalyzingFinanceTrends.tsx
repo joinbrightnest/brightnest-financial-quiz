@@ -610,15 +610,21 @@ const AnalyzingFinanceTrends = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 1 }}
           >
-            <motion.div
-              className="w-8 h-8 sm:w-10 sm:h-10 border-[3px] border-teal-500 border-t-transparent rounded-full shadow-lg"
-              animate={{ rotate: 360 }}
-              transition={{
-                duration: 1,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-            />
+            <div className="relative w-8 h-8 sm:w-10 sm:h-10">
+              {/* Static track (background circle) - provides depth without rotating shadow */}
+              <div className="absolute inset-0 border-[3px] border-slate-200 rounded-full shadow-sm" />
+
+              {/* Spinning indicator - rotates on top of the track */}
+              <motion.div
+                className="absolute inset-0 border-[3px] border-teal-500 border-t-transparent rounded-full"
+                animate={{ rotate: 360 }}
+                transition={{
+                  duration: 1,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+              />
+            </div>
           </motion.div>
         </div>
       </div>
