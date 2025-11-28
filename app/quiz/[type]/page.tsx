@@ -73,6 +73,7 @@ export default function QuizPage({ params }: QuizPageProps) {
   const [error, setError] = useState<string | null>(null);
   const [canGoBack, setCanGoBack] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false); // ✅ Prevent double-submissions
 
   // Article state
   const [articleData, setArticleData] = useState<any>(null);
@@ -182,8 +183,8 @@ export default function QuizPage({ params }: QuizPageProps) {
       }
     };
 
-    // Small delay to avoid interfering with current question load
-    const timeoutId = setTimeout(preloadNext, 500);
+    // ✅ OPTIMIZED: Reduced delay for faster prefetch (500ms → 200ms)
+    const timeoutId = setTimeout(preloadNext, 200);
     return () => clearTimeout(timeoutId);
   }, [sessionId, currentQuestion?.id]);
 
@@ -285,23 +286,28 @@ export default function QuizPage({ params }: QuizPageProps) {
   }, [currentQuestion, processAnswer]);
 
   const handleTextSubmit = useCallback(async () => {
-    if (!textValue.trim() || !currentQuestion) return;
+    if (!textValue.trim() || !currentQuestion || isSubmitting) return;
 
-    // Store user variables
-    if (currentQuestion.type === "text" && currentQuestion.prompt.toLowerCase().includes("name")) {
-      setUserVariables(prev => ({ ...prev, name: textValue }));
-      // Store name in localStorage for analyzing page
-      localStorage.setItem('userName', textValue);
+    setIsSubmitting(true); // ✅ Prevent double-submit
+
+    try {
+      // Store user variables
+      if (currentQuestion.type === "text" && currentQuestion.prompt.toLowerCase().includes("name")) {
+        setUserVariables(prev => ({ ...prev, name: textValue }));
+        // Store name in localStorage for analyzing page
+        localStorage.setItem('userName', textValue);
+      }
+      if (currentQuestion.type === "email") {
+        setUserVariables(prev => ({ ...prev, email: textValue }));
+      }
+
+      // ✅ FIX: Don't clear inputs - next question will replace component naturally
+      // This prevents the flicker bug where empty field shows during API call
+      await processAnswer(textValue, textValue);
+    } finally {
+      setIsSubmitting(false); // ✅ Re-enable after completion
     }
-    if (currentQuestion.type === "email") {
-      setUserVariables(prev => ({ ...prev, email: textValue }));
-    }
-
-    // Optimistic UI update - clear inputs immediately for better UX
-    clearInputs();
-
-    await processAnswer(textValue, textValue);
-  }, [textValue, currentQuestion, processAnswer]);
+  }, [textValue, currentQuestion, processAnswer, isSubmitting]);
 
   const handleSkip = useCallback(async () => {
     if (!currentQuestion) return;
@@ -516,6 +522,7 @@ export default function QuizPage({ params }: QuizPageProps) {
                 currentQuestion={currentQuestionIndex + 1}
                 totalQuestions={totalQuestions}
                 userVariables={userVariables}
+                isSubmitting={isSubmitting}
               />
             ) : (
               <QuestionCard

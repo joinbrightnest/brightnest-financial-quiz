@@ -24,20 +24,22 @@ interface TextInputProps {
     name?: string;
     email?: string;
   };
+  isSubmitting?: boolean; // ✅ Loading state
 }
 
-export default function TextInput({ 
-  question, 
-  value, 
-  onChange, 
-  onSubmit, 
+export default function TextInput({
+  question,
+  value,
+  onChange,
+  onSubmit,
   onSkip,
   onContinue,
-  onBack, 
-  canGoBack = false, 
-  currentQuestion, 
+  onBack,
+  canGoBack = false,
+  currentQuestion,
   totalQuestions,
   userVariables = {},
+  isSubmitting = false, // ✅ Default to false
 }: TextInputProps) {
   // Replace variables in the question prompt
   const replaceVariables = (text: string) => {
@@ -68,25 +70,25 @@ export default function TextInput({
           </h1>
         </div>
       </div>
-      
+
       {/* Main Content */}
       <div className="max-w-md mx-auto px-6 py-6 md:py-8">
         <div className="mb-8">
           {currentQuestion && totalQuestions && (
-            <ProgressBar 
-              current={currentQuestion} 
-              total={totalQuestions} 
+            <ProgressBar
+              current={currentQuestion}
+              total={totalQuestions}
               onBack={onBack}
               canGoBack={canGoBack}
             />
           )}
         </div>
-        
+
         <div>
           <h2 className="text-xl font-medium text-gray-900 mb-6 md:mb-8 leading-relaxed text-left">
             {replaceVariables(question.prompt)}
           </h2>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <input
               type={question.type === "email" ? "email" : "text"}
@@ -97,7 +99,7 @@ export default function TextInput({
               style={{ backgroundColor: '#f6f4ed' }}
               required
             />
-            
+
             {/* Text Under Input */}
             {question.textUnderAnswers && (
               <div className="text-center">
@@ -106,17 +108,16 @@ export default function TextInput({
                 </p>
               </div>
             )}
-            
+
             {question.continueButton ? (
               <button
                 type="button"
                 onClick={value.trim() ? onContinue : undefined}
                 disabled={!value.trim()}
-                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 touch-friendly touch-feedback no-select mobile-transition ${
-                  value.trim()
-                    ? "text-white hover:opacity-90"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
+                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 touch-friendly touch-feedback no-select mobile-transition ${value.trim()
+                  ? "text-white hover:opacity-90"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
                 style={{
                   backgroundColor: value.trim() ? (question.continueButtonColor || '#09727c') : undefined
                 }}
@@ -126,20 +127,29 @@ export default function TextInput({
             ) : (
               <button
                 type="submit"
-                disabled={!value.trim()}
-                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 touch-friendly touch-feedback no-select mobile-transition ${
-                  !value.trim()
+                disabled={!value.trim() || isSubmitting}
+                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 touch-friendly touch-feedback no-select mobile-transition ${!value.trim() || isSubmitting
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                     : "text-white hover:bg-teal-700"
-                }`}
+                  }`}
                 style={{
-                  backgroundColor: !value.trim() ? undefined : '#09727c'
+                  backgroundColor: !value.trim() || isSubmitting ? undefined : '#09727c'
                 }}
               >
-                {question.continueButtonText || "Continue"}
+                {isSubmitting ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Processing...
+                  </span>
+                ) : (
+                  question.continueButtonText || "Continue"
+                )}
               </button>
             )}
-            
+
             {/* Text Under Button */}
             {question.textUnderButton && (
               <div className="text-center">
