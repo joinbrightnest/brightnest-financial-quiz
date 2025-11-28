@@ -20,7 +20,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{backgroundColor: '#faf8f0'}}>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#faf8f0' }}>
       {/* Navigation - Professional with Depth */}
       <nav className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-[60] shadow-sm relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,7 +34,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                 </div>
               </Link>
             </div>
-            
+
             {/* Desktop Menu Items */}
             <div className="flex items-center space-x-8">
               <Link href="/about" className="px-4 py-2.5 text-slate-700 font-medium text-sm hover:text-teal-700 hover:bg-teal-50/50 transition-all duration-200 rounded-lg">
@@ -46,33 +46,32 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
               <Link href="/faq" className="px-4 py-2.5 text-slate-700 font-medium text-sm hover:text-teal-700 hover:bg-teal-50/50 transition-all duration-200 rounded-lg">
                 FAQ
               </Link>
-              
+
               {/* Free Tools Dropdown */}
-              <div 
+              <div
                 className="relative"
                 onMouseEnter={() => setIsFreeToolsOpen(true)}
                 onMouseLeave={() => setIsFreeToolsOpen(false)}
               >
                 <button
-                  className={`px-4 py-2.5 font-medium text-sm transition-all duration-200 group ${
-                    isFreeToolsOpen 
-                      ? "rounded-t-lg rounded-b-none text-teal-700 bg-teal-50/80 shadow-sm" 
+                  className={`px-4 py-2.5 font-medium text-sm transition-all duration-200 group ${isFreeToolsOpen
+                      ? "rounded-t-lg rounded-b-none text-teal-700 bg-teal-50/80 shadow-sm"
                       : "rounded-lg text-slate-700 hover:text-teal-700 hover:bg-teal-50/50"
-                  }`}
+                    }`}
                   onClick={() => setIsFreeToolsOpen(!isFreeToolsOpen)}
                 >
                   Free Tools
-                  <svg 
+                  <svg
                     className={`inline-block ml-1.5 w-4 h-4 transition-transform duration-200 ${isFreeToolsOpen ? 'rotate-180' : ''}`}
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor" 
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                     strokeWidth={2.5}
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
-                
+
                 {/* Dropdown Menu */}
                 {isFreeToolsOpen && (
                   <div className="absolute left-0 top-full w-[300px] bg-white rounded-b-xl shadow-xl border border-slate-200/60 border-t-0 py-6 z-50 backdrop-blur-sm">
@@ -91,7 +90,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                           </Link>
                         </li>
                       </ul>
-                      
+
                       <div className="mt-6 pt-6 border-t border-slate-200">
                         <h3 className="font-bold text-slate-900 mb-4 text-sm">Debt</h3>
                         <ul className="space-y-2 text-sm">
@@ -113,11 +112,11 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                 )}
               </div>
             </div>
-            
+
             {/* Right Side Items */}
             <div className="flex items-center">
-              <Link 
-                href={getLink("/quiz/financial-profile")} 
+              <Link
+                href={getLink("/quiz/financial-profile")}
                 className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-[1.03] active:scale-[0.98] relative overflow-hidden group"
               >
                 <span className="relative z-10">Get Started</span>
@@ -151,8 +150,8 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
             </div>
 
             {/* Button - Right */}
-            <Link 
-              href={getLink("/quiz/financial-profile")} 
+            <Link
+              href={getLink("/quiz/financial-profile")}
               className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-2 rounded-full font-semibold text-xs hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 whitespace-nowrap"
             >
               APPLY NOW
@@ -163,7 +162,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
           {isMobileMenuOpen && (
             <>
               {/* Backdrop - starts below header */}
-              <div 
+              <div
                 className="fixed top-16 left-0 right-0 bottom-0 bg-black/50 z-50 lg:hidden"
                 onClick={() => setIsMobileMenuOpen(false)}
               />
@@ -173,28 +172,28 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                   <Link href="/about" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
                   <Link href="/blog" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
                   <Link href="/faq" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>FAQ</Link>
-                  
+
                   {/* Free Tools in Mobile */}
                   <div className="pt-2 border-t border-gray-200">
                     <div className="px-4 py-2">
                       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Free Tools</p>
                     </div>
-                    <Link 
-                      href="/tools/budget-calculator" 
+                    <Link
+                      href="/tools/budget-calculator"
                       className="block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 text-slate-600 hover:bg-gray-50 hover:text-teal-600"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Budget Calculator
                     </Link>
-                    <Link 
-                      href="/tools/debt-snowball-calculator" 
+                    <Link
+                      href="/tools/debt-snowball-calculator"
                       className="block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 text-slate-600 hover:bg-gray-50 hover:text-teal-600"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Debt Snowball Calculator
                     </Link>
                   </div>
-                  
+
                   <div className="pt-2">
                     <Link href={getLink("/quiz/financial-profile")} className="block w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-3 rounded-lg font-semibold text-sm text-center shadow-md hover:from-teal-700 hover:to-teal-800 transition-all duration-300" onClick={() => setIsMobileMenuOpen(false)}>
                       Start Your Quiz
@@ -207,25 +206,25 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <div className="flex flex-col px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 lg:pt-4 pb-4 sm:pb-10 lg:pb-12 sm:min-h-[calc(100vh-80px)] justify-start sm:justify-center" style={{backgroundColor: '#FAF8F4'}}>
+      {/* Hero Section - Full viewport on mobile, footer hidden on first glance */}
+      <div className="flex flex-col px-4 sm:px-6 lg:px-8 pt-6 sm:pt-6 lg:pt-4 pb-8 sm:pb-10 lg:pb-12 min-h-[100svh] sm:min-h-[calc(100vh-80px)] justify-center" style={{ backgroundColor: '#FAF8F4' }}>
         <div className="max-w-4xl mx-auto text-center mt-2 sm:mt-0">
           {/* 1️⃣ Microline */}
           <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-2 font-medium">
             The behavior-based system for lasting financial peace.
           </p>
-          
+
           {/* 2️⃣ Headline */}
           <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-serif text-gray-900 mb-3 sm:mb-5 lg:mb-6 leading-tight">
             <div>Real results.</div>
             <div>Built one habit at a time.</div>
           </h1>
-          
+
           {/* 3️⃣ Subheadline */}
           <p className="text-base sm:text-lg lg:text-xl text-gray-700 mb-4 sm:mb-8 lg:mb-10 max-w-2xl mx-auto leading-relaxed">
             Because wealth isn&apos;t about math — it&apos;s about behavior.
           </p>
-          
+
           {/* 4️⃣ Visual Element - Family-Friendly Illustration */}
           <div className="mb-4 sm:mb-8 lg:mb-10">
             <div className="relative inline-block w-full max-w-sm sm:max-w-lg mx-auto">
@@ -233,48 +232,48 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                 {/* Decorative Elements */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-teal-200/20 rounded-full blur-2xl"></div>
                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-amber-200/20 rounded-full blur-2xl"></div>
-                
+
                 {/* Illustration Content */}
                 <div className="relative z-10">
                   {/* Centered Illustration */}
                   <div className="flex justify-center items-center mb-4 sm:mb-5">
                     <svg className="w-full max-w-[240px] sm:max-w-[280px] lg:max-w-[320px] h-auto" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg">
                       {/* House Base */}
-                      <rect x="80" y="100" width="160" height="120" rx="8" fill="#14b8a6" opacity="0.15" stroke="#14b8a6" strokeWidth="2"/>
-                      <rect x="100" y="140" width="120" height="80" rx="4" fill="#14b8a6" opacity="0.2"/>
-                      
+                      <rect x="80" y="100" width="160" height="120" rx="8" fill="#14b8a6" opacity="0.15" stroke="#14b8a6" strokeWidth="2" />
+                      <rect x="100" y="140" width="120" height="80" rx="4" fill="#14b8a6" opacity="0.2" />
+
                       {/* Roof */}
-                      <path d="M60 100 L160 40 L260 100 Z" fill="#0f766e" opacity="0.2" stroke="#0f766e" strokeWidth="2"/>
-                      
+                      <path d="M60 100 L160 40 L260 100 Z" fill="#0f766e" opacity="0.2" stroke="#0f766e" strokeWidth="2" />
+
                       {/* Door */}
-                      <rect x="130" y="160" width="40" height="60" rx="4" fill="#f59e0b" opacity="0.3" stroke="#f59e0b" strokeWidth="1.5"/>
-                      <circle cx="155" cy="190" r="3" fill="#0f766e"/>
-                      
+                      <rect x="130" y="160" width="40" height="60" rx="4" fill="#f59e0b" opacity="0.3" stroke="#f59e0b" strokeWidth="1.5" />
+                      <circle cx="155" cy="190" r="3" fill="#0f766e" />
+
                       {/* Windows */}
-                      <rect x="110" y="120" width="30" height="30" rx="4" fill="#fef3c7" opacity="0.4" stroke="#f59e0b" strokeWidth="1.5"/>
-                      <rect x="180" y="120" width="30" height="30" rx="4" fill="#fef3c7" opacity="0.4" stroke="#f59e0b" strokeWidth="1.5"/>
-                      
+                      <rect x="110" y="120" width="30" height="30" rx="4" fill="#fef3c7" opacity="0.4" stroke="#f59e0b" strokeWidth="1.5" />
+                      <rect x="180" y="120" width="30" height="30" rx="4" fill="#fef3c7" opacity="0.4" stroke="#f59e0b" strokeWidth="1.5" />
+
                       {/* Window Cross */}
-                      <line x1="125" y1="120" x2="125" y2="150" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6"/>
-                      <line x1="110" y1="135" x2="140" y2="135" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6"/>
-                      <line x1="195" y1="120" x2="195" y2="150" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6"/>
-                      <line x1="180" y1="135" x2="210" y2="135" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6"/>
-                      
+                      <line x1="125" y1="120" x2="125" y2="150" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6" />
+                      <line x1="110" y1="135" x2="140" y2="135" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6" />
+                      <line x1="195" y1="120" x2="195" y2="150" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6" />
+                      <line x1="180" y1="135" x2="210" y2="135" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6" />
+
                       {/* Sun */}
-                      <circle cx="260" cy="60" r="25" fill="#fef3c7" opacity="0.4"/>
-                      <circle cx="260" cy="60" r="20" fill="#fef3c7" opacity="0.3"/>
-                      
+                      <circle cx="260" cy="60" r="25" fill="#fef3c7" opacity="0.4" />
+                      <circle cx="260" cy="60" r="20" fill="#fef3c7" opacity="0.3" />
+
                       {/* Trees/Greenery */}
-                      <ellipse cx="50" cy="200" rx="15" ry="25" fill="#10b981" opacity="0.3"/>
-                      <ellipse cx="50" cy="200" rx="20" ry="15" fill="#10b981" opacity="0.25"/>
-                      <ellipse cx="270" cy="200" rx="15" ry="25" fill="#10b981" opacity="0.3"/>
-                      <ellipse cx="270" cy="200" rx="20" ry="15" fill="#10b981" opacity="0.25"/>
-                      
+                      <ellipse cx="50" cy="200" rx="15" ry="25" fill="#10b981" opacity="0.3" />
+                      <ellipse cx="50" cy="200" rx="20" ry="15" fill="#10b981" opacity="0.25" />
+                      <ellipse cx="270" cy="200" rx="15" ry="25" fill="#10b981" opacity="0.3" />
+                      <ellipse cx="270" cy="200" rx="20" ry="15" fill="#10b981" opacity="0.25" />
+
                       {/* Ground */}
-                      <ellipse cx="160" cy="220" rx="140" ry="15" fill="#10b981" opacity="0.15"/>
+                      <ellipse cx="160" cy="220" rx="140" ry="15" fill="#10b981" opacity="0.15" />
                     </svg>
                   </div>
-                  
+
                   {/* Inspirational Message */}
                   <div className="text-center space-y-1.5 sm:space-y-2">
                     <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-800 leading-tight">
@@ -285,17 +284,17 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
                     </p>
                   </div>
                 </div>
-                
+
                 {/* Accent Gradient Bar */}
                 <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-400 via-amber-400 to-teal-400"></div>
               </div>
-              
+
               {/* Subtle Glow Effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-teal-400/10 to-amber-400/10 rounded-2xl sm:rounded-3xl blur-xl -z-10"></div>
             </div>
           </div>
-              
-          
+
+
           {/* 6️⃣ Primary CTA */}
           <div className="mb-4 sm:mb-6">
             <Link
@@ -307,11 +306,11 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
             <p className="text-xs text-gray-500 mt-3 sm:mt-4 px-4 sm:px-0">
               Based on results from real BrightNest members. Your data stays 100% private and secure.
             </p>
-                </div>
-          
-                </div>
-              </div>
-              
+          </div>
+
+        </div>
+      </div>
+
       {/* Footer */}
       <SiteFooter />
     </div>
