@@ -175,9 +175,9 @@ const AnalyzingFinanceTrends = () => {
 
   const loadingTexts = [
     "Analyzing Financial Background",
-    "Cross-checking with User Database",
-    "Mapping Your Financial Behavior Trends",
-    "Building Your Personalized Growth Plan",
+    "Cross-checking User Database",
+    "Mapping Financial Behavior",
+    "Building Personalized Plan",
     "Predicting Future Results"
   ];
 
@@ -471,8 +471,8 @@ const AnalyzingFinanceTrends = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-sans font-semibold text-slate-800 mb-2 text-center leading-tight tracking-tight">
-              {loadingTexts[currentTextIndex]}
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-sans font-semibold text-slate-800 mb-2 text-center leading-tight tracking-tight whitespace-nowrap">
+              <span className="inline-block">{loadingTexts[currentTextIndex]}</span>
               {/* Smooth pulsing dots */}
               <span className="inline-flex ml-1 space-x-1">
                 <motion.span
