@@ -471,50 +471,52 @@ const AnalyzingFinanceTrends = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-bold text-slate-900 mb-2 text-center leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-sans font-semibold text-slate-800 mb-2 text-center leading-tight tracking-tight">
               {loadingTexts[currentTextIndex]}
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: [0, 1, 1, 1, 0, 0, 0, 0]
-                }}
-                transition={{
-                  duration: 2.4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  times: [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 1]
-                }}
-              >
-                .
-              </motion.span>
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: [0, 0, 1, 1, 1, 0, 0, 0]
-                }}
-                transition={{
-                  duration: 2.4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  times: [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 1]
-                }}
-              >
-                .
-              </motion.span>
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: [0, 0, 0, 1, 1, 1, 0, 0]
-                }}
-                transition={{
-                  duration: 2.4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  times: [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 1]
-                }}
-              >
-                .
-              </motion.span>
+              {/* Smooth pulsing dots */}
+              <span className="inline-flex ml-1 space-x-1">
+                <motion.span
+                  className="inline-block w-1.5 h-1.5 rounded-full bg-teal-500"
+                  animate={{
+                    opacity: [0.3, 1, 0.3],
+                    scale: [0.8, 1, 0.8]
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    times: [0, 0.5, 1]
+                  }}
+                />
+                <motion.span
+                  className="inline-block w-1.5 h-1.5 rounded-full bg-teal-500"
+                  animate={{
+                    opacity: [0.3, 1, 0.3],
+                    scale: [0.8, 1, 0.8]
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 0.2,
+                    times: [0, 0.5, 1]
+                  }}
+                />
+                <motion.span
+                  className="inline-block w-1.5 h-1.5 rounded-full bg-teal-500"
+                  animate={{
+                    opacity: [0.3, 1, 0.3],
+                    scale: [0.8, 1, 0.8]
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 0.4,
+                    times: [0, 0.5, 1]
+                  }}
+                />
+              </span>
             </h1>
           </motion.div>
 
