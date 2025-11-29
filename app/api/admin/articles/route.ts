@@ -12,120 +12,27 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    console.log('🔍 Articles API - Starting optimized request');
+    // Get articles with their triggers in a single optimized query
+    const articles = await prisma.article.findMany({
+      where: {
+        isActive: true
+      },
+      include: {
+        triggers: {
+          where: { isActive: true },
+          include: {
+            question: {
+              select: { prompt: true, quizType: true }
+            }
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
 
-    // 🚀 OPTIMIZED: Use raw SQL with JOINs to fetch all data in a single query
-    // This eliminates the N+1 query problem where Prisma makes separate queries for each relation
-    const articlesWithTriggers = await prisma.$queryRaw<Array<{
-      id: string;
-      title: string;
-      content: string;
-      type: string;
-      category: string;
-      tags: string[];
-      subtitle: string | null;
-      personalizedText: string | null;
-      backgroundColor: string;
-      textColor: string;
-      iconColor: string;
-      accentColor: string;
-      iconType: string;
-      showIcon: boolean;
-      showStatistic: boolean;
-      statisticText: string | null;
-      statisticValue: string | null;
-      ctaText: string;
-      showCta: boolean;
-      textAlignment: string;
-      contentPosition: string;
-      backgroundStyle: string;
-      backgroundGradient: string | null;
-      contentPadding: string;
-      showTopBar: boolean;
-      topBarColor: string;
-      titleFontSize: string;
-      titleFontWeight: string;
-      contentFontSize: string;
-      contentFontWeight: string;
-      lineHeight: string;
-      imageUrl: string | null;
-      imageAlt: string | null;
-      showImage: boolean;
-      createdAt: Date;
-      updatedAt: Date;
-      triggers: any;
-    }>>`
-      SELECT 
-        a.id,
-        a.title,
-        a.content,
-        a.type,
-        a.category,
-        a.tags,
-        a.subtitle,
-        a."personalizedText",
-        a."backgroundColor",
-        a."textColor",
-        a."iconColor",
-        a."accentColor",
-        a."iconType",
-        a."showIcon",
-        a."showStatistic",
-        a."statisticText",
-        a."statisticValue",
-        a."ctaText",
-        a."showCta",
-        a."textAlignment",
-        a."contentPosition",
-        a."backgroundStyle",
-        a."backgroundGradient",
-        a."contentPadding",
-        a."showTopBar",
-        a."topBarColor",
-        a."titleFontSize",
-        a."titleFontWeight",
-        a."contentFontSize",
-        a."contentFontWeight",
-        a."lineHeight",
-        a."imageUrl",
-        a."imageAlt",
-        a."showImage",
-        a."createdAt",
-        a."updatedAt",
-        COALESCE(
-          json_agg(
-            json_build_object(
-              'id', t.id,
-              'questionId', t."questionId",
-              'optionValue', t."optionValue",
-              'condition', t.condition,
-              'priority', t.priority,
-              'isActive', t."isActive",
-              'question', CASE 
-                WHEN q.id IS NOT NULL THEN json_build_object(
-                  'prompt', q.prompt,
-                  'quizType', q."quizType"
-                )
-                ELSE NULL
-              END
-            )
-          ) FILTER (WHERE t.id IS NOT NULL),
-          '[]'::json
-        ) as triggers
-      FROM "Article" a
-      LEFT JOIN "ArticleTrigger" t ON t."articleId" = a.id AND t."isActive" = true
-      LEFT JOIN "QuizQuestion" q ON q.id = t."questionId"
-      WHERE a."isActive" = true
-      GROUP BY a.id
-      ORDER BY a."createdAt" DESC
-    `;
-
-    console.log('🔍 Articles API - Found articles:', articlesWithTriggers.length);
-    console.log('✅ Articles API - Optimized query completed in single database call');
-
-    return NextResponse.json({ articles: articlesWithTriggers });
+    return NextResponse.json({ articles });
   } catch (error) {
-    console.error('💥 Articles API - Error:', error);
+    console.error('Failed to load articles:', error);
     return NextResponse.json(
       { error: 'Failed to fetch articles' },
       { status: 500 }
