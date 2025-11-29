@@ -178,20 +178,13 @@ export default function QuizEditor({ params }: QuizEditorProps) {
 
   const fetchArticles = async () => {
     try {
-      console.log('🔄 Loading articles from database for quiz type:', quizType);
-
       // Load articles from database
       const response = await fetch(`/api/admin/articles?quizType=${quizType}`, {
         credentials: 'include'
       });
 
-      console.log('📡 Articles API response status:', response.status);
-
       if (response.ok) {
         const data = await response.json();
-        console.log('📄 Raw articles data from API:', data);
-        console.log('📊 Articles array:', data.articles);
-        console.log('🔢 Number of articles found:', data.articles?.length || 0);
 
         if (data.articles && data.articles.length > 0) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -233,15 +226,12 @@ export default function QuizEditor({ params }: QuizEditorProps) {
             lineHeight: article.lineHeight
           }));
 
-          console.log('✅ Processed articles list:', articlesList);
           setArticles(articlesList);
         } else {
-          console.log('⚠️ No articles found in response');
           setArticles([]);
         }
       } else {
-        const errorData = await response.text();
-        console.log('❌ Failed to load articles from database:', response.status, errorData);
+        console.error('Failed to load articles:', response.status);
         setArticles([]);
       }
     } catch (error) {
@@ -1166,8 +1156,6 @@ export default function QuizEditor({ params }: QuizEditorProps) {
                       // Check if any of this question's options match the article's trigger
                       return question.options?.some(option => option.value === a.triggerAnswerValue) || false;
                     });
-
-                    console.log('Articles for question:', question.id, 'found:', articlesForQuestion);
 
                     // Only show if there's at least one article for this question
                     if (articlesForQuestion.length === 0) return null;
