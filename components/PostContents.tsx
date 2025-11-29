@@ -56,7 +56,7 @@ export default function PostContents({ sections }: PostContentsProps) {
               onClick={() => handleClick(s.id)}
               className="block text-left w-full text-sm text-slate-700 hover:text-teal-600 transition-colors group"
             >
-              <span className="font-medium mr-2 text-teal-600 group-hover:text-teal-700">{i + 1}.</span> 
+              <span className="font-medium mr-2 text-teal-600 group-hover:text-teal-700">{i + 1}.</span>
               <span className="group-hover:underline">{stripLeadingNumbers(s.title)}</span>
             </button>
           ))}

@@ -69,7 +69,7 @@ export default function AffiliateCRMView() {
   const params = useParams();
   const router = useRouter();
   const affiliateId = params.id as string;
-  
+
   const [affiliateData, setAffiliateData] = useState<AffiliateData | null>(null);
   const [leads, setLeads] = useState<LeadData[]>([]);
   const [stats, setStats] = useState<CRMStats | null>(null);
@@ -118,14 +118,14 @@ export default function AffiliateCRMView() {
   };
 
   const filteredLeads = leads.filter(lead => {
-    const matchesSearch = !searchTerm || 
+    const matchesSearch = !searchTerm ||
       lead.user?.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.quizType.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.result?.archetype?.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesArchetype = filterArchetype === "all" || lead.result?.archetype === filterArchetype;
     const matchesQuizType = filterQuizType === "all" || lead.quizType === filterQuizType;
-    
+
     return matchesSearch && matchesArchetype && matchesQuizType;
   });
 
@@ -465,8 +465,8 @@ export default function AffiliateCRMView() {
                   </thead>
                   <tbody className="bg-white divide-y divide-slate-200">
                     {currentLeads.map((lead) => (
-                      <motion.tr 
-                        key={lead.id} 
+                      <motion.tr
+                        key={lead.id}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         className="hover:bg-gradient-to-r hover:from-slate-50 hover:to-white transition-all duration-200"
@@ -487,11 +487,10 @@ export default function AffiliateCRMView() {
                           {lead.answers?.length || 0}
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${
-                            lead.status === "Completed" || lead.status === "completed"
-                              ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg" 
-                              : "bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-lg"
-                          }`}>
+                          <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${lead.status === "Completed" || lead.status === "completed"
+                            ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg"
+                            : "bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-lg"
+                            }`}>
                             {lead.status === "Completed" || lead.status === "completed" ? "Completed" : "In Progress"}
                           </span>
                         </td>
