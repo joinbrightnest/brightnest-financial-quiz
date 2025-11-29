@@ -63,7 +63,7 @@ export default function AffiliatePerformancePage() {
   const params = useParams();
   const router = useRouter();
   const affiliateId = params.id as string;
-  
+
   const [affiliateData, setAffiliateData] = useState<AffiliateData | null>(null);
   const [stats, setStats] = useState<AffiliateStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -74,7 +74,7 @@ export default function AffiliatePerformancePage() {
   const [passwordResetLoading, setPasswordResetLoading] = useState(false);
   const [passwordResetSuccess, setPasswordResetSuccess] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  
+
 
   useEffect(() => {
     if (affiliateId) {
@@ -106,7 +106,7 @@ export default function AffiliatePerformancePage() {
         throw new Error("Failed to fetch affiliate stats");
       }
       const statsData = await statsResponse.json();
-      
+
       // Extract stats from the response (same structure as affiliate dashboard)
       if (statsData.stats) {
         setStats(statsData.stats);
@@ -152,7 +152,7 @@ export default function AffiliatePerformancePage() {
       setPasswordResetSuccess(true);
       setShowPasswordReset(false);
       setNewPassword("");
-      
+
       // Hide success message after 3 seconds
       setTimeout(() => {
         setPasswordResetSuccess(false);
@@ -548,7 +548,7 @@ export default function AffiliatePerformancePage() {
             {/* Premium Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Performance Chart */}
-              <AdminAffiliatePerformanceChart 
+              <AdminAffiliatePerformanceChart
                 dailyStats={stats.dailyStats}
                 loading={loading}
               />

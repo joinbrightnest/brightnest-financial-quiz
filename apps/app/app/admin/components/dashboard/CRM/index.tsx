@@ -792,8 +792,8 @@ export default function CRM({
                                                 key={index}
                                                 onClick={() => handleCrmPageChange(page)}
                                                 className={`min-w-[32px] h-8 px-2 rounded-lg text-sm font-medium transition-colors ${crmCurrentPage === page
-                                                        ? 'bg-blue-600 text-white shadow-sm'
-                                                        : 'text-gray-600 hover:bg-gray-100'
+                                                    ? 'bg-blue-600 text-white shadow-sm'
+                                                    : 'text-gray-600 hover:bg-gray-100'
                                                     }`}
                                             >
                                                 {page}
