@@ -1,0 +1,318 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import SiteFooter from "@/components/SiteFooter";
+
+interface SharedHomePageProps {
+  affiliateCode?: string;
+}
+
+export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isFreeToolsOpen, setIsFreeToolsOpen] = useState(false);
+  // Helper function to generate affiliate-aware links
+  const getLink = (path: string) => {
+    if (affiliateCode) {
+      return `/${affiliateCode}${path}`;
+    }
+    return path;
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#faf8f0' }}>
+      {/* Navigation - Professional with Depth */}
+      <nav className="bg-white/95 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-[60] shadow-sm relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Desktop Layout */}
+          <div className="hidden lg:flex justify-between items-center h-20">
+            {/* Logo - Left Side */}
+            <div className="flex items-center">
+              <Link href={getLink("/")} className="group flex items-center space-x-2">
+                <div className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all duration-300">
+                  BrightNest
+                </div>
+              </Link>
+            </div>
+
+            {/* Desktop Menu Items */}
+            <div className="flex items-center space-x-8">
+              <Link href="/about" className="px-4 py-2.5 text-slate-700 font-medium text-sm hover:text-teal-700 hover:bg-teal-50/50 transition-all duration-200 rounded-lg">
+                About Us
+              </Link>
+              <Link href="/blog" className="px-4 py-2.5 text-slate-700 font-medium text-sm hover:text-teal-700 hover:bg-teal-50/50 transition-all duration-200 rounded-lg">
+                Blog
+              </Link>
+              <Link href="/faq" className="px-4 py-2.5 text-slate-700 font-medium text-sm hover:text-teal-700 hover:bg-teal-50/50 transition-all duration-200 rounded-lg">
+                FAQ
+              </Link>
+
+              {/* Free Tools Dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => setIsFreeToolsOpen(true)}
+                onMouseLeave={() => setIsFreeToolsOpen(false)}
+              >
+                <button
+                  className={`px-4 py-2.5 font-medium text-sm transition-all duration-200 group ${isFreeToolsOpen
+                    ? "rounded-t-lg rounded-b-none text-teal-700 bg-teal-50/80 shadow-sm"
+                    : "rounded-lg text-slate-700 hover:text-teal-700 hover:bg-teal-50/50"
+                    }`}
+                  onClick={() => setIsFreeToolsOpen(!isFreeToolsOpen)}
+                >
+                  Free Tools
+                  <svg
+                    className={`inline-block ml-1.5 w-4 h-4 transition-transform duration-200 ${isFreeToolsOpen ? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Dropdown Menu */}
+                {isFreeToolsOpen && (
+                  <div className="absolute left-0 top-full w-[300px] bg-white rounded-b-xl shadow-xl border border-slate-200/60 border-t-0 py-6 z-50 backdrop-blur-sm">
+                    <div className="px-6">
+                      <h3 className="font-bold text-slate-900 mb-4 text-sm">Budgeting</h3>
+                      <ul className="space-y-2 text-sm">
+                        <li>
+                          <Link href="/tools/budget-calculator" className="text-teal-600 hover:text-teal-700 font-medium flex items-center gap-2 group">
+                            <svg className="w-4 h-4 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                            Budget Calculator
+                            <svg className="w-3 h-3 ml-auto text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                          </Link>
+                        </li>
+                      </ul>
+
+                      <div className="mt-6 pt-6 border-t border-slate-200">
+                        <h3 className="font-bold text-slate-900 mb-4 text-sm">Debt</h3>
+                        <ul className="space-y-2 text-sm">
+                          <li>
+                            <Link href="/tools/debt-snowball-calculator" className="text-teal-600 hover:text-teal-700 font-medium flex items-center gap-2 group">
+                              <svg className="w-4 h-4 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                              </svg>
+                              Debt Snowball Calculator
+                              <svg className="w-3 h-3 ml-auto text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                              </svg>
+                            </Link>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right Side Items */}
+            <div className="flex items-center">
+              <Link
+                href={getLink("/quiz/financial-profile")}
+                className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-[1.03] active:scale-[0.98] relative overflow-hidden group"
+              >
+                <span className="relative z-10">Get Started</span>
+                <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Mobile Layout: Menu Icon + Logo (Left) | Button (Right) */}
+          <div className="lg:hidden flex items-center justify-between h-16">
+            {/* Menu Icon + Logo - Left */}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 text-slate-700 hover:text-slate-900 focus:outline-none transition-all duration-200"
+                aria-label="Toggle mobile menu"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {isMobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+              <Link href={getLink("/")} className="group">
+                <div className="text-xl font-bold bg-gradient-to-r from-slate-900 to-teal-700 bg-clip-text text-transparent group-hover:from-teal-600 group-hover:to-slate-700 transition-all duration-300 whitespace-nowrap">
+                  BrightNest
+                </div>
+              </Link>
+            </div>
+
+            {/* Button - Right */}
+            <Link
+              href={getLink("/quiz/financial-profile")}
+              className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-5 py-2.5 rounded-full font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 whitespace-nowrap min-h-[44px] flex items-center"
+            >
+              Get Started
+            </Link>
+          </div>
+
+          {/* Mobile Menu Overlay */}
+          {isMobileMenuOpen && (
+            <>
+              {/* Backdrop - starts below header */}
+              <div
+                className="fixed top-16 left-0 right-0 bottom-0 bg-black/50 z-50 lg:hidden"
+                onClick={() => setIsMobileMenuOpen(false)}
+              />
+              {/* Menu Dropdown */}
+              <div className="lg:hidden absolute left-0 right-0 top-full bg-white border-b border-gray-200 shadow-lg z-[60]" style={{ animation: 'slideDown 0.3s ease-out' }}>
+                <div className="px-4 py-4 space-y-1">
+                  <Link href="/about" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>About Us</Link>
+                  <Link href="/blog" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>Blog</Link>
+                  <Link href="/faq" className="block px-4 py-3 text-slate-600 font-medium text-sm hover:bg-gray-50 hover:text-teal-600 rounded-md transition-all duration-200" onClick={() => setIsMobileMenuOpen(false)}>FAQ</Link>
+
+                  {/* Free Tools in Mobile */}
+                  <div className="pt-2 border-t border-gray-200">
+                    <div className="px-4 py-2">
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Free Tools</p>
+                    </div>
+                    <Link
+                      href="/tools/budget-calculator"
+                      className="block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 text-slate-600 hover:bg-gray-50 hover:text-teal-600"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Budget Calculator
+                    </Link>
+                    <Link
+                      href="/tools/debt-snowball-calculator"
+                      className="block px-4 py-3 font-medium text-sm rounded-md transition-all duration-200 text-slate-600 hover:bg-gray-50 hover:text-teal-600"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      Debt Snowball Calculator
+                    </Link>
+                  </div>
+
+                  <div className="pt-2">
+                    <Link href={getLink("/quiz/financial-profile")} className="block w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-3 rounded-lg font-semibold text-sm text-center shadow-md hover:from-teal-700 hover:to-teal-800 transition-all duration-300" onClick={() => setIsMobileMenuOpen(false)}>
+                      Start Your Quiz
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </nav>
+
+      {/* Hero Section - Responsive height to ensure button visibility */}
+      <div className="flex flex-col px-4 sm:px-6 lg:px-8 py-8 sm:py-12" style={{ backgroundColor: '#FAF8F4' }}>
+        <div className="max-w-4xl mx-auto text-center mt-2 sm:mt-0">
+          {/* 1️⃣ Microline */}
+          <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-2 font-medium">
+            The behavior-based system for lasting financial peace.
+          </p>
+
+          {/* 2️⃣ Headline */}
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-serif text-gray-900 mb-3 sm:mb-5 lg:mb-6 leading-tight">
+            <div>Real results.</div>
+            <div>Built one habit at a time.</div>
+          </h1>
+
+          {/* 3️⃣ Subheadline */}
+          <p className="text-base sm:text-lg lg:text-xl text-gray-700 mb-4 sm:mb-8 lg:mb-10 max-w-2xl mx-auto leading-relaxed">
+            Because wealth isn&apos;t about math — it&apos;s about behavior.
+          </p>
+
+          {/* 4️⃣ Visual Element - Family-Friendly Illustration */}
+          <div className="mb-4 sm:mb-8 lg:mb-10">
+            <div className="relative inline-block w-full max-w-sm sm:max-w-lg mx-auto">
+              <div className="bg-gradient-to-br from-teal-50 via-white to-amber-50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-xl border border-slate-200/60 w-full overflow-hidden relative">
+                {/* Decorative Elements */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-teal-200/20 rounded-full blur-2xl"></div>
+                <div className="absolute bottom-0 left-0 w-40 h-40 bg-amber-200/20 rounded-full blur-2xl"></div>
+
+                {/* Illustration Content */}
+                <div className="relative z-10">
+                  {/* Centered Illustration */}
+                  <div className="flex justify-center items-center mb-4 sm:mb-5">
+                    <svg className="w-full max-w-[240px] sm:max-w-[280px] lg:max-w-[320px] h-auto" viewBox="0 0 320 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      {/* House Base */}
+                      <rect x="80" y="100" width="160" height="120" rx="8" fill="#14b8a6" opacity="0.15" stroke="#14b8a6" strokeWidth="2" />
+                      <rect x="100" y="140" width="120" height="80" rx="4" fill="#14b8a6" opacity="0.2" />
+
+                      {/* Roof */}
+                      <path d="M60 100 L160 40 L260 100 Z" fill="#0f766e" opacity="0.2" stroke="#0f766e" strokeWidth="2" />
+
+                      {/* Door */}
+                      <rect x="130" y="160" width="40" height="60" rx="4" fill="#f59e0b" opacity="0.3" stroke="#f59e0b" strokeWidth="1.5" />
+                      <circle cx="155" cy="190" r="3" fill="#0f766e" />
+
+                      {/* Windows */}
+                      <rect x="110" y="120" width="30" height="30" rx="4" fill="#fef3c7" opacity="0.4" stroke="#f59e0b" strokeWidth="1.5" />
+                      <rect x="180" y="120" width="30" height="30" rx="4" fill="#fef3c7" opacity="0.4" stroke="#f59e0b" strokeWidth="1.5" />
+
+                      {/* Window Cross */}
+                      <line x1="125" y1="120" x2="125" y2="150" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6" />
+                      <line x1="110" y1="135" x2="140" y2="135" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6" />
+                      <line x1="195" y1="120" x2="195" y2="150" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6" />
+                      <line x1="180" y1="135" x2="210" y2="135" stroke="#f59e0b" strokeWidth="1.5" opacity="0.6" />
+
+                      {/* Sun */}
+                      <circle cx="260" cy="60" r="25" fill="#fef3c7" opacity="0.4" />
+                      <circle cx="260" cy="60" r="20" fill="#fef3c7" opacity="0.3" />
+
+                      {/* Trees/Greenery */}
+                      <ellipse cx="50" cy="200" rx="15" ry="25" fill="#10b981" opacity="0.3" />
+                      <ellipse cx="50" cy="200" rx="20" ry="15" fill="#10b981" opacity="0.25" />
+                      <ellipse cx="270" cy="200" rx="15" ry="25" fill="#10b981" opacity="0.3" />
+                      <ellipse cx="270" cy="200" rx="20" ry="15" fill="#10b981" opacity="0.25" />
+
+                      {/* Ground */}
+                      <ellipse cx="160" cy="220" rx="140" ry="15" fill="#10b981" opacity="0.15" />
+                    </svg>
+                  </div>
+
+                  {/* Inspirational Message */}
+                  <div className="text-center space-y-1.5 sm:space-y-2">
+                    <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-800 leading-tight">
+                      Financial Peace for Your Family
+                    </h3>
+                    <p className="text-xs sm:text-sm lg:text-base text-slate-600 leading-relaxed max-w-xs mx-auto">
+                      Build lasting habits that protect what matters most
+                    </p>
+                  </div>
+                </div>
+
+                {/* Accent Gradient Bar */}
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-400 via-amber-400 to-teal-400"></div>
+              </div>
+
+              {/* Subtle Glow Effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-teal-400/10 to-amber-400/10 rounded-2xl sm:rounded-3xl blur-xl -z-10"></div>
+            </div>
+          </div>
+
+
+          {/* 6️⃣ Primary CTA */}
+          <div className="mb-4 sm:mb-6">
+            <Link
+              href={getLink("/quiz/financial-profile")}
+              className="inline-block bg-[#FF5C41] text-white px-8 py-4 sm:px-12 sm:py-5 lg:px-16 lg:py-6 text-base sm:text-lg font-semibold hover:bg-[#e54a2f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 rounded-lg w-full sm:w-auto text-center max-w-full min-h-[56px] flex items-center justify-center"
+            >
+              Start My Money Reset
+            </Link>
+            <p className="text-xs text-gray-500 mt-3 sm:mt-4 px-4 sm:px-0">
+              Based on results from real BrightNest members. Your data stays 100% private and secure.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      {/* Footer */}
+      <SiteFooter />
+    </div>
+  );
+}

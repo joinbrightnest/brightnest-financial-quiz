@@ -1,0 +1,635 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import ResultIntroSequence from "./ResultIntroSequence";
+
+interface ProgressBarProps {
+  label: string;
+  color: string;
+  isActive: boolean;
+  isCompleted: boolean;
+  index: number; // Add index for unique behavior
+}
+
+
+const ProgressBar = ({ label, color, isActive, isCompleted, index }: ProgressBarProps) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [percentage, setPercentage] = useState(0);
+  const [visualWidth, setVisualWidth] = useState(0);
+
+  useEffect(() => {
+    if (isActive) {
+      setIsVisible(true);
+    }
+  }, [isActive]);
+
+  useEffect(() => {
+    if (isActive && isVisible) {
+      // Use requestAnimationFrame for buttery smooth 60fps animation
+      const startTime = performance.now();
+
+      // Generate TRULY random values at mount time (different every time)
+      const randomDuration = 2000 + Math.random() * 2500; // 2-4.5 seconds, unique per bar
+      const randomStartSpeed = 0.3 + Math.random() * 2.0; // 0.3x - 2.3x start speed
+
+      // Create array of random speed changes for this specific bar
+      const speedChanges: Array<{ time: number; speed: number }> = [];
+      let timeAccumulator = Math.random() * 400 + 100; // First change at 100-500ms
+
+      // Generate 8-15 random speed changes throughout the duration
+      const numChanges = Math.floor(Math.random() * 8) + 8;
+      for (let i = 0; i < numChanges; i++) {
+        speedChanges.push({
+          time: timeAccumulator,
+          speed: 0.2 + Math.random() * 2.5 // 0.2x - 2.7x speed
+        });
+        timeAccumulator += Math.random() * 400 + 100; // Next change in 100-500ms
+      }
+
+      let currentSpeed = randomStartSpeed;
+      let lastProgress = 0;
+      let speedChangeIndex = 0;
+      let animationFrameId: number;
+
+      const animate = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+
+        // Check if we should change speed
+        if (speedChangeIndex < speedChanges.length && elapsed >= speedChanges[speedChangeIndex].time) {
+          currentSpeed = speedChanges[speedChangeIndex].speed;
+          speedChangeIndex++;
+        }
+
+        // Calculate progress increment (60fps = ~16.67ms per frame)
+        const frameTime = 16.67;
+        const baseIncrement = (100 / randomDuration) * frameTime;
+        const increment = baseIncrement * currentSpeed;
+        lastProgress += increment;
+
+        // Ensure we don't exceed time-based maximum
+        const maxProgress = (elapsed / randomDuration) * 100;
+        lastProgress = Math.min(lastProgress, maxProgress);
+
+        // Update state
+        if (elapsed >= randomDuration) {
+          setPercentage(100);
+          setVisualWidth(100);
+        } else {
+          const currentPercentage = Math.min(lastProgress, 99);
+          setPercentage(Math.floor(currentPercentage));
+          setVisualWidth(currentPercentage);
+          animationFrameId = requestAnimationFrame(animate);
+        }
+      };
+
+      animationFrameId = requestAnimationFrame(animate);
+
+      return () => {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+        }
+      };
+    } else if (isCompleted) {
+      setPercentage(100);
+      setVisualWidth(100);
+    } else {
+      setPercentage(0);
+      setVisualWidth(0);
+    }
+  }, [isActive, isVisible, isCompleted]);
+
+  return (
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-2.5 sm:mb-3">
+        <motion.span
+          className={`text-xs sm:text-sm font-semibold tracking-wide ${isActive ? 'font-bold' : 'font-medium'}`}
+          style={{
+            color: color === 'bg-red-500' ? '#ef4444' :
+              color === 'bg-green-500' ? '#22c55e' :
+                color === 'bg-teal-500' ? '#14b8a6' :
+                  color === 'bg-pink-500' ? '#ec4899' :
+                    color === 'bg-yellow-500' ? '#eab308' :
+                      color === 'bg-blue-500' ? '#3b82f6' :
+                        color === 'bg-orange-500' ? '#f97316' : '#64748b'
+          }}
+          animate={{
+            fontWeight: isActive ? 'bold' : 'semibold',
+            opacity: isActive || isCompleted ? 1 : 0.6
+          }}
+          transition={{
+            duration: 0.3,
+            ease: "easeInOut"
+          }}
+        >
+          {label}
+        </motion.span>
+        <motion.span
+          className={`text-xs sm:text-sm font-semibold ${isCompleted ? 'text-slate-700' : isActive ? 'text-slate-600' : 'text-slate-400'}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isVisible ? 1 : (isCompleted ? 1 : 0.5) }}
+          transition={{ delay: 0.5 }}
+        >
+          {percentage}%
+        </motion.span>
+      </div>
+      <motion.div
+        className="w-full bg-slate-100 rounded-full overflow-hidden shadow-inner"
+        animate={{
+          height: isActive ? "10px" : "8px" // Slightly thicker when active
+        }}
+        transition={{
+          duration: 0.3,
+          ease: "easeInOut"
+        }}
+      >
+        <motion.div
+          className={`h-full rounded-full ${color} shadow-sm`}
+          style={{
+            width: `${visualWidth}%`
+            // No CSS transition - using requestAnimationFrame for smooth updates
+          }}
+          animate={isActive ? {
+            boxShadow: ['0 0 0px rgba(0,0,0,0)', '0 0 8px rgba(0,0,0,0.1)', '0 0 0px rgba(0,0,0,0)']
+          } : {}}
+          transition={{
+            duration: 1.5,
+            repeat: isActive ? Infinity : 0,
+            ease: "easeInOut"
+          }}
+        />
+      </motion.div>
+    </div>
+  );
+};
+
+const AnalyzingFinanceTrends = () => {
+  const router = useRouter();
+  const [activeBarIndex, setActiveBarIndex] = useState(0);
+  const [completedBars, setCompletedBars] = useState<number[]>([]);
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+  const [userNameInitial, setUserNameInitial] = useState('U'); // Default to 'U'
+  const [userName, setUserName] = useState(''); // Full user name
+  const [showIntroSequence, setShowIntroSequence] = useState(false); // Control intro sequence
+
+  const loadingTexts = [
+    "Analyzing Financial Background",
+    "Cross-checking User Database",
+    "Mapping Financial Behavior",
+    "Building Personalized Plan",
+    "Predicting Future Results"
+  ];
+
+
+  // Progress bars configuration - 7 bars like Noom
+  const progressBars = [
+    { label: "DEMOGRAPHIC PROFILE", color: "bg-red-500", dotColor: "text-red-500" },
+    { label: "FINANCIAL GOALS", color: "bg-green-500", dotColor: "text-green-500" },
+    { label: "SPENDING HISTORY", color: "bg-teal-500", dotColor: "text-teal-500" },
+    { label: "SAVINGS & INVESTMENTS", color: "bg-pink-500", dotColor: "text-pink-500" },
+    { label: "DEBT MANAGEMENT", color: "bg-yellow-500", dotColor: "text-yellow-500" },
+    { label: "FINANCIAL CONFIDENCE", color: "bg-blue-500", dotColor: "text-blue-500" },
+    { label: "DECISION-MAKING STYLE", color: "bg-orange-500", dotColor: "text-orange-500" },
+  ];
+
+  useEffect(() => {
+    // Clean up localStorage on page load to prevent stale session issues
+    const cleanupLocalStorage = async () => {
+      const sessionId = localStorage.getItem('quizSessionId');
+      if (sessionId && !sessionId.match(/^c[a-z0-9]{24}$/)) {
+        console.log('Cleaning up invalid sessionId from localStorage');
+        localStorage.removeItem('quizSessionId');
+        localStorage.removeItem('userName');
+        return;
+      }
+
+      // Check if sessionId exists in database
+      if (sessionId) {
+        try {
+          const response = await fetch('/api/quiz/session-exists', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId }),
+          });
+
+          if (!response.ok || !(await response.json()).exists) {
+            console.log('Cleaning up stale sessionId from localStorage');
+            localStorage.removeItem('quizSessionId');
+            localStorage.removeItem('userName');
+          }
+        } catch (error) {
+          console.log('Error checking session, cleaning up localStorage');
+          localStorage.removeItem('quizSessionId');
+          localStorage.removeItem('userName');
+        }
+      }
+    };
+
+    cleanupLocalStorage();
+
+    // Start AI copy generation early (during progress bars) - non-blocking
+    const startAICopyGeneration = async () => {
+      const sessionId = localStorage.getItem('quizSessionId');
+      if (sessionId && sessionId.match(/^c[a-z0-9]{24}$/)) {
+        try {
+          console.log('Starting AI copy generation during progress bars...');
+          const copyResponse = await fetch("/api/quiz/archetype-copy", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sessionId }),
+          });
+
+          if (copyResponse.ok) {
+            const copyData = await copyResponse.json();
+            console.log('AI copy generated successfully during progress bars:', copyData);
+            // Store AI copy in localStorage for results page
+            localStorage.setItem('personalizedCopy', JSON.stringify(copyData.copy));
+          } else {
+            console.log('AI copy generation failed during progress bars');
+          }
+        } catch (copyError) {
+          console.log('AI copy generation error during progress bars:', copyError);
+        }
+      }
+    };
+
+    // Start AI copy generation after a short delay (let progress bars start first)
+    const aiCopyTimer = setTimeout(startAICopyGeneration, 2000);
+
+    // Sequential text changes - each text appears once in order
+    const textTotalDuration = progressBars.length * 2500; // Total time for all bars
+    const textInterval = textTotalDuration / loadingTexts.length; // Equal spacing
+
+    const textTimer = setTimeout(() => {
+      setCurrentTextIndex(1);
+    }, textInterval);
+
+    const textTimer2 = setTimeout(() => {
+      setCurrentTextIndex(2);
+    }, textInterval * 2);
+
+    const textTimer3 = setTimeout(() => {
+      setCurrentTextIndex(3);
+    }, textInterval * 3);
+
+    const textTimer4 = setTimeout(() => {
+      setCurrentTextIndex(4);
+    }, textInterval * 4);
+
+    // Sequential progress bar animation - one at a time with variable timing
+    let totalElapsedTime = 0;
+
+    // Schedule each bar with cumulative timing
+    progressBars.forEach((bar, index) => {
+      const barDuration = 3000 + Math.random() * 1000; // Variable timing: 3-4 seconds per bar
+
+      // Start the bar
+      setTimeout(() => {
+        setActiveBarIndex(index);
+        if (index > 0) {
+          setCompletedBars(completed => [...completed, index - 1]);
+        }
+      }, totalElapsedTime);
+
+      totalElapsedTime += barDuration;
+
+      // If this is the last bar, mark it complete and show intro sequence
+      if (index === progressBars.length - 1) {
+        setTimeout(() => {
+          setCompletedBars(completed => [...completed, index]);
+
+          // Show intro sequence 2 seconds after last bar completes
+          setTimeout(() => {
+            setShowIntroSequence(true);
+          }, 2000);
+        }, totalElapsedTime);
+      }
+    });
+
+    // Try to get user's name from localStorage first, then API as fallback
+    const fetchUserName = async () => {
+      // First try to get name from localStorage (stored during quiz)
+      const storedName = localStorage.getItem('userName');
+      if (storedName) {
+        setUserName(storedName);
+        setUserNameInitial(storedName.charAt(0).toUpperCase());
+        return;
+      }
+
+      // Fallback to API if not in localStorage
+      const sessionId = localStorage.getItem('quizSessionId');
+      if (sessionId) {
+        try {
+          const response = await fetch('/api/quiz/user-name', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data.name) {
+              setUserName(data.name);
+              setUserNameInitial(data.name.charAt(0).toUpperCase());
+              // Store in localStorage for future use
+              localStorage.setItem('userName', data.name);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching user name:', error);
+        }
+      }
+    };
+
+    fetchUserName();
+
+    return () => {
+      clearTimeout(textTimer);
+      clearTimeout(textTimer2);
+      clearTimeout(textTimer3);
+      clearTimeout(textTimer4);
+      clearTimeout(aiCopyTimer);
+    };
+  }, [router, progressBars.length]);
+
+  // Handle intro sequence completion
+  const handleIntroComplete = async () => {
+    try {
+      // Get the session ID from localStorage (set during quiz)
+      const sessionId = localStorage.getItem('quizSessionId');
+      console.log('Session ID from localStorage:', sessionId);
+      console.log('All localStorage keys:', Object.keys(localStorage));
+
+      // Validate sessionId format (should be a cuid)
+      if (sessionId && !sessionId.match(/^c[a-z0-9]{24}$/)) {
+        console.log('Invalid sessionId format, clearing localStorage');
+        localStorage.removeItem('quizSessionId');
+        localStorage.removeItem('userName');
+        router.push('/quiz/financial-profile');
+        return;
+      }
+
+      if (sessionId) {
+        console.log('Generating result for session:', sessionId);
+        // Generate the result
+        const resultResponse = await fetch("/api/quiz/result", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId }),
+        });
+
+        console.log('Result generation response status:', resultResponse.status);
+
+        if (resultResponse.ok) {
+          const resultData = await resultResponse.json();
+          console.log('Generated result data:', resultData);
+
+          // AI copy should already be generated during progress bars
+          const existingCopy = localStorage.getItem('personalizedCopy');
+          if (existingCopy) {
+            console.log('AI copy already generated during progress bars');
+          } else {
+            console.log('AI copy not found, results page will use fallback');
+          }
+
+          // Add a small delay to ensure database consistency
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          // Check qualification and redirect accordingly
+          if (resultData.qualifiesForCall) {
+            console.log('User qualifies for call, redirecting to results page');
+            router.push(`/results/${resultData.resultId}`);
+          } else {
+            console.log('User does not qualify for call, redirecting to checkout');
+            // Store result data for checkout page
+            localStorage.setItem('quizResult', JSON.stringify(resultData));
+            router.push('/checkout');
+          }
+        } else {
+          const errorData = await resultResponse.json();
+          console.error('Result generation failed:', errorData);
+
+          // If session not found, redirect to quiz to start fresh
+          if (resultResponse.status === 404 && errorData.error === 'Session not found') {
+            console.log('Session not found, redirecting to quiz');
+            localStorage.removeItem('quizSessionId');
+            localStorage.removeItem('userName');
+            router.push('/quiz/financial-profile');
+            return;
+          }
+
+          // Fallback to existing result for other errors
+          router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
+        }
+      } else {
+        console.log('No session ID found, using fallback');
+        // Fallback to existing result
+        router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
+      }
+    } catch (error) {
+      console.error('Error generating result:', error);
+      // Fallback navigation to existing result
+      router.push('/results/cmgo3qxdt00364dgc9k8i1olv');
+    }
+  };
+
+  // Show intro sequence if ready
+  if (showIntroSequence) {
+    return (
+      <ResultIntroSequence
+        name={userName || 'there'}
+        onComplete={handleIntroComplete}
+      />
+    );
+  }
+
+  return (
+    <div className="h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 flex flex-col overflow-hidden">
+      {/* Top Bar with BrightNest Logo and User Info */}
+      <div className="w-full bg-slate-900 px-4 py-5 sm:py-6 relative z-10 flex-shrink-0 shadow-md">
+        {/* BrightNest text - centered horizontally within the full width */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
+          <span className="text-base font-bold text-white font-serif">BrightNest</span>
+        </div>
+        {/* User Info - positioned closer to center, hidden on small mobile */}
+        <div className="absolute right-16 top-1/2 -translate-y-1/2 flex items-center space-x-2 sm:space-x-3">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg">
+            <span className="text-white font-bold text-xs sm:text-sm">{userNameInitial}</span>
+          </div>
+          <span className="text-white font-medium text-xs sm:text-sm max-w-[80px] sm:max-w-none truncate">{userName}</span>
+        </div>
+      </div>
+
+      {/* Main Content - flexible container that fills remaining space */}
+      <div className="flex-1 flex flex-col justify-center px-4 py-6 sm:py-8 overflow-y-auto">
+        <div className="relative z-10 w-full max-w-2xl mx-auto">
+          {/* Header */}
+          <motion.div
+            className="text-center mb-8 sm:mb-10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-sans font-semibold text-slate-800 mb-2 text-center leading-tight tracking-tight whitespace-nowrap">
+              <span className="inline-block">{loadingTexts[currentTextIndex]}</span>
+              {/* Smooth pulsing dots */}
+              <span className="inline-flex ml-1 space-x-1">
+                <motion.span
+                  className="inline-block w-1.5 h-1.5 rounded-full bg-teal-500"
+                  animate={{
+                    opacity: [0.3, 1, 0.3],
+                    scale: [0.8, 1, 0.8]
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    times: [0, 0.5, 1]
+                  }}
+                />
+                <motion.span
+                  className="inline-block w-1.5 h-1.5 rounded-full bg-teal-500"
+                  animate={{
+                    opacity: [0.3, 1, 0.3],
+                    scale: [0.8, 1, 0.8]
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 0.2,
+                    times: [0, 0.5, 1]
+                  }}
+                />
+                <motion.span
+                  className="inline-block w-1.5 h-1.5 rounded-full bg-teal-500"
+                  animate={{
+                    opacity: [0.3, 1, 0.3],
+                    scale: [0.8, 1, 0.8]
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 0.4,
+                    times: [0, 0.5, 1]
+                  }}
+                />
+              </span>
+            </h1>
+          </motion.div>
+
+          {/* Progress Bars Card - Enhanced with depth and professional styling */}
+          <div className="relative mb-8 sm:mb-10">
+            {/* Background card with depth */}
+            <div className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-10 shadow-xl border border-slate-200/60 relative overflow-hidden">
+              {/* Decorative gradient accents */}
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-teal-400 via-amber-400 to-teal-400"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-teal-100/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+              <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-100/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+
+              {/* Progress bars container */}
+              <div className="relative z-10 space-y-5 sm:space-y-6">
+                {progressBars.map((bar, index) => (
+                  <ProgressBar
+                    key={index}
+                    label={bar.label}
+                    color={bar.color}
+                    isActive={index === activeBarIndex}
+                    isCompleted={index < activeBarIndex}
+                    index={index}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Progress Dots with Checkmarks - Enhanced styling */}
+          <motion.div
+            className="flex justify-center space-x-2 sm:space-x-3 mb-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            {progressBars.map((bar, index) => (
+              <motion.div
+                key={index}
+                className="flex items-center justify-center"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{
+                  opacity: 1,
+                  scale: 1
+                }}
+                transition={{
+                  duration: 0.5,
+                  delay: index * 0.1
+                }}
+              >
+                {completedBars.includes(index) ? (
+                  // Show checkmark with bar color when bar is completed - enhanced with shadow
+                  <motion.div
+                    className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center ${bar.color} shadow-md`}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{
+                      duration: 0.3,
+                      delay: 0 // Show checkmark immediately for completed bars
+                    }}
+                  >
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                    </svg>
+                  </motion.div>
+                ) : (
+                  // Show empty slate dot for current and future bars
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-slate-200 rounded-full border-2 border-slate-300"></div>
+                )}
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Trust Text - Enhanced styling */}
+          <motion.div
+            className="text-center px-4 sm:px-6 mb-6"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            <div className="inline-block bg-white/80 backdrop-blur-sm rounded-xl px-4 sm:px-6 py-3 sm:py-4 border border-slate-200/60 shadow-sm">
+              <p className="text-xs sm:text-sm text-slate-600 text-center leading-relaxed">
+                Sit tight! We're building your perfect plan based on millions of data points from successful BrightNest users.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Loading indicator - Enhanced with gradient */}
+          <motion.div
+            className="flex justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+          >
+            <div className="relative w-8 h-8 sm:w-10 sm:h-10">
+              {/* Static track (background circle) - provides depth without rotating shadow */}
+              <div className="absolute inset-0 border-[3px] border-slate-200 rounded-full shadow-sm" />
+
+              {/* Spinning indicator - rotates on top of the track */}
+              <motion.div
+                className="absolute inset-0 border-[3px] border-teal-500 border-t-transparent rounded-full"
+                animate={{ rotate: 360 }}
+                transition={{
+                  duration: 1,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+              />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AnalyzingFinanceTrends;

@@ -1,0 +1,157 @@
+import { memo, useMemo } from "react";
+import OptionButton from "./OptionButton";
+import ProgressBar from "./ProgressBar";
+
+interface QuestionCardProps {
+  question: {
+    id: string;
+    prompt: string;
+    type: string;
+    options: Array<{
+      label: string;
+      value: string;
+      weightCategory: string;
+      weightValue: number;
+    }>;
+    skipButton?: boolean;
+    continueButton?: boolean;
+    continueButtonColor?: string;
+    continueButtonText?: string;
+    textUnderAnswers?: string;
+    textUnderButton?: string;
+  };
+  currentQuestion: number;
+  totalQuestions: number;
+  selectedValue: string | null;
+  onAnswer: (value: string) => void;
+  onSkip?: () => void;
+  onContinue?: () => void;
+  onBack?: () => void;
+  canGoBack?: boolean;
+  userVariables?: {
+    name?: string;
+    email?: string;
+  };
+}
+
+const QuestionCard = memo(function QuestionCard({
+  question,
+  currentQuestion,
+  totalQuestions,
+  selectedValue,
+  onAnswer,
+  onSkip,
+  onContinue,
+  onBack,
+  canGoBack = false,
+  userVariables = {},
+}: QuestionCardProps) {
+  // Replace variables in the question prompt - memoized for performance
+  const replaceVariables = useMemo(() => {
+    return (text: string) => {
+      let replacedText = text;
+      if (userVariables.name) {
+        replacedText = replacedText.replace(/\{\{name\}\}/g, userVariables.name);
+      }
+      if (userVariables.email) {
+        replacedText = replacedText.replace(/\{\{email\}\}/g, userVariables.email);
+      }
+      return replacedText;
+    };
+  }, [userVariables.name, userVariables.email]);
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Top Header Bar */}
+      <div className="bg-gray-800 w-full py-4">
+        <div className="max-w-md mx-auto px-6">
+          <h1 className="text-white text-xl font-bold text-center tracking-wide">
+            BrightNest
+          </h1>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-md mx-auto px-6 py-6 md:py-8">
+        <div className="mb-8">
+          <ProgressBar
+            current={currentQuestion}
+            total={totalQuestions}
+            onBack={onBack}
+            canGoBack={canGoBack}
+          />
+        </div>
+
+        <div>
+          <h2 className="text-xl font-medium text-gray-900 mb-6 md:mb-8 leading-relaxed text-left">
+            {replaceVariables(question.prompt)}
+          </h2>
+
+          <div className="space-y-4">
+            {question.options.map((option) => (
+              <OptionButton
+                key={option.value}
+                option={option}
+                isSelected={selectedValue === option.value}
+                onClick={() => onAnswer(option.value)}
+              />
+            ))}
+          </div>
+
+          {/* Text Under Answers */}
+          {question.textUnderAnswers && (
+            <div className="mt-4 text-center">
+              <p className="text-xs text-gray-500 leading-relaxed">
+                {question.textUnderAnswers}
+              </p>
+            </div>
+          )}
+
+          {/* Skip Option */}
+          {question.skipButton && (
+            <div className="mt-6 text-center">
+              <button
+                onClick={onSkip}
+                className="text-gray-500 hover:text-gray-700 text-sm underline transition-colors touch-friendly touch-feedback no-select"
+              >
+                Skip
+              </button>
+            </div>
+          )}
+
+          {/* Continue Button */}
+          {question.continueButton && (
+            <div className="mt-6">
+              <button
+                onClick={selectedValue ? onContinue : undefined}
+                disabled={!selectedValue}
+                className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors duration-150 touch-friendly touch-feedback no-select mobile-transition ${selectedValue
+                  ? "text-white hover:opacity-90"
+                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
+                style={{
+                  backgroundColor: selectedValue
+                    ? (question.continueButtonColor || "#09727c")
+                    : undefined
+                }}
+              >
+                {question.continueButtonText || "Continue"}
+              </button>
+
+              {/* Text Under Button */}
+              {question.textUnderButton && (
+                <div className="mt-3 text-center">
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    {question.textUnderButton}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+export default QuestionCard;
