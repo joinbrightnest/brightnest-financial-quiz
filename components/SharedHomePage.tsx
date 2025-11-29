@@ -207,7 +207,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
       </nav>
 
       {/* Hero Section - Responsive height to ensure button visibility */}
-      <div className="flex flex-col px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16" style={{ backgroundColor: '#FAF8F4' }}>
+      <div className="flex flex-col px-4 sm:px-6 lg:px-8 py-8 sm:py-12" style={{ backgroundColor: '#FAF8F4' }}>
         <div className="max-w-4xl mx-auto text-center mt-2 sm:mt-0">
           {/* 1️⃣ Microline */}
           <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-2 font-medium">
