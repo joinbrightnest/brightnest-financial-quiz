@@ -55,8 +55,8 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
               >
                 <button
                   className={`px-4 py-2.5 font-medium text-sm transition-all duration-200 group ${isFreeToolsOpen
-                      ? "rounded-t-lg rounded-b-none text-teal-700 bg-teal-50/80 shadow-sm"
-                      : "rounded-lg text-slate-700 hover:text-teal-700 hover:bg-teal-50/50"
+                    ? "rounded-t-lg rounded-b-none text-teal-700 bg-teal-50/80 shadow-sm"
+                    : "rounded-lg text-slate-700 hover:text-teal-700 hover:bg-teal-50/50"
                     }`}
                   onClick={() => setIsFreeToolsOpen(!isFreeToolsOpen)}
                 >
@@ -152,9 +152,9 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
             {/* Button - Right */}
             <Link
               href={getLink("/quiz/financial-profile")}
-              className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-2 rounded-full font-semibold text-xs hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 whitespace-nowrap"
+              className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-5 py-2.5 rounded-full font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-lg active:scale-95 whitespace-nowrap min-h-[44px] flex items-center"
             >
-              APPLY NOW
+              Get Started
             </Link>
           </div>
 
@@ -299,7 +299,7 @@ export default function SharedHomePage({ affiliateCode }: SharedHomePageProps) {
           <div className="mb-4 sm:mb-6">
             <Link
               href={getLink("/quiz/financial-profile")}
-              className="inline-block bg-[#FF5C41] text-white px-8 py-4 sm:px-12 sm:py-5 lg:px-16 lg:py-6 text-base sm:text-lg font-semibold hover:bg-[#e54a2f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 rounded-lg w-full sm:w-auto"
+              className="inline-block bg-[#FF5C41] text-white px-8 py-4 sm:px-12 sm:py-5 lg:px-16 lg:py-6 text-base sm:text-lg font-semibold hover:bg-[#e54a2f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 rounded-lg w-full sm:w-auto text-center max-w-full min-h-[56px] flex items-center justify-center"
             >
               Start My Money Reset
             </Link>

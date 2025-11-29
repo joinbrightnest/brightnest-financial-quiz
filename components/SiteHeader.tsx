@@ -29,13 +29,12 @@ export default function SiteHeader() {
   const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
     const active = isActive(href);
     return (
-      <Link 
-        href={href} 
-        className={`px-4 py-2.5 font-medium text-sm transition-all duration-200 relative rounded-lg group ${
-          active 
-            ? "text-teal-700 bg-teal-50/80 shadow-sm" 
+      <Link
+        href={href}
+        className={`px-4 py-2.5 font-medium text-sm transition-all duration-200 relative rounded-lg group ${active
+            ? "text-teal-700 bg-teal-50/80 shadow-sm"
             : "text-slate-700 hover:text-teal-700 hover:bg-teal-50/50"
-        }`}
+          }`}
       >
         {children}
       </Link>
@@ -59,9 +58,9 @@ export default function SiteHeader() {
             <NavLink href="/about">About Us</NavLink>
             <NavLink href="/blog">Blog</NavLink>
             <NavLink href="/faq">FAQ</NavLink>
-            
+
             {/* Free Tools Dropdown */}
-            <div 
+            <div
               className="relative"
               onMouseEnter={() => {
                 if (timeoutRef.current) {
@@ -77,32 +76,30 @@ export default function SiteHeader() {
               }}
             >
               <button
-                className={`px-4 py-2.5 font-medium text-sm transition-all duration-200 group ${
-                  isFreeToolsOpen 
-                    ? "rounded-t-lg rounded-b-none" 
+                className={`px-4 py-2.5 font-medium text-sm transition-all duration-200 group ${isFreeToolsOpen
+                    ? "rounded-t-lg rounded-b-none"
                     : "rounded-lg"
-                } ${
-                  pathname?.startsWith("/tools") || isFreeToolsOpen
-                    ? "text-teal-700 bg-teal-50/80 shadow-sm" 
+                  } ${pathname?.startsWith("/tools") || isFreeToolsOpen
+                    ? "text-teal-700 bg-teal-50/80 shadow-sm"
                     : "text-slate-700 hover:text-teal-700 hover:bg-teal-50/50"
-                }`}
+                  }`}
                 onClick={() => setIsFreeToolsOpen(!isFreeToolsOpen)}
               >
                 Free Tools
-                <svg 
+                <svg
                   className={`inline-block ml-1.5 w-4 h-4 transition-transform duration-200 ${isFreeToolsOpen ? 'rotate-180' : ''}`}
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor" 
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                   strokeWidth={2.5}
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              
+
               {/* Dropdown Menu */}
               {isFreeToolsOpen && (
-                <div 
+                <div
                   className="absolute left-0 top-full w-[300px] bg-white rounded-b-xl shadow-xl border border-slate-200/60 border-t-0 py-6 z-50 backdrop-blur-sm"
                   onMouseEnter={() => {
                     if (timeoutRef.current) {
@@ -132,7 +129,7 @@ export default function SiteHeader() {
                         </Link>
                       </li>
                     </ul>
-                    
+
                     <div className="mt-6 pt-6 border-t border-slate-200">
                       <h3 className="font-bold text-slate-900 mb-4 text-sm">Debt</h3>
                       <ul className="space-y-2 text-sm">
@@ -156,8 +153,8 @@ export default function SiteHeader() {
           </div>
 
           <div className="flex items-center">
-            <Link 
-              href="/quiz/financial-profile" 
+            <Link
+              href="/quiz/financial-profile"
               className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-xl hover:scale-[1.03] active:scale-[0.98] relative overflow-hidden group"
             >
               <span className="relative z-10">Get Started</span>
@@ -191,11 +188,11 @@ export default function SiteHeader() {
           </div>
 
           {/* Button - Right */}
-          <Link 
-            href="/quiz/financial-profile" 
-            className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-2 rounded-xl font-semibold text-xs hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-xl active:scale-95 whitespace-nowrap relative overflow-hidden group"
+          <Link
+            href="/quiz/financial-profile"
+            className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:from-teal-700 hover:to-teal-800 transition-all duration-300 shadow-md hover:shadow-xl active:scale-95 whitespace-nowrap min-h-[44px] flex items-center relative overflow-hidden group"
           >
-            <span className="relative z-10">APPLY NOW</span>
+            <span className="relative z-10">Get Started</span>
             <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></span>
           </Link>
         </div>
@@ -204,79 +201,74 @@ export default function SiteHeader() {
         {isMobileMenuOpen && (
           <>
             {/* Backdrop - starts below header */}
-            <div 
+            <div
               className="fixed top-16 left-0 right-0 bottom-0 bg-black/50 z-50 lg:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
             />
             {/* Menu Dropdown */}
             <div className="lg:hidden absolute left-0 right-0 top-full bg-white border-b border-gray-200 shadow-lg z-[60]" style={{ animation: 'slideDown 0.3s ease-out' }}>
               <div className="px-4 py-4 space-y-1">
-                <Link 
-                  href="/about" 
-                  className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${
-                    isActive("/about") 
-                      ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm" 
+                <Link
+                  href="/about"
+                  className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${isActive("/about")
+                      ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm"
                       : "text-slate-700 hover:bg-teal-50/50 hover:text-teal-700"
-                  }`}
+                    }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   About Us
                 </Link>
-                <Link 
-                  href="/blog" 
-                  className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${
-                    isActive("/blog") 
-                      ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm" 
+                <Link
+                  href="/blog"
+                  className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${isActive("/blog")
+                      ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm"
                       : "text-slate-700 hover:bg-teal-50/50 hover:text-teal-700"
-                  }`}
+                    }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Blog
                 </Link>
-                <Link 
-                  href="/faq" 
-                  className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${
-                    isActive("/faq") 
-                      ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm" 
+                <Link
+                  href="/faq"
+                  className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${isActive("/faq")
+                      ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm"
                       : "text-slate-700 hover:bg-teal-50/50 hover:text-teal-700"
-                  }`}
+                    }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   FAQ
                 </Link>
-                
+
                 {/* Free Tools in Mobile */}
                 <div className="pt-2 border-t border-gray-200">
                   <div className="px-4 py-2">
                     <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Free Tools</p>
                   </div>
-                  <Link 
-                    href="/tools/budget-calculator" 
-                    className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${
-                      pathname === "/tools/budget-calculator" 
-                        ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm" 
+                  <Link
+                    href="/tools/budget-calculator"
+                    className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${pathname === "/tools/budget-calculator"
+                        ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm"
                         : "text-slate-700 hover:bg-teal-50/50 hover:text-teal-700"
-                    }`}
+                      }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Budget Calculator
                   </Link>
-                  <Link 
-                    href="/tools/debt-snowball-calculator" 
-                    className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${
-                      pathname === "/tools/debt-snowball-calculator" 
-                        ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm" 
+                  <Link
+                    href="/tools/debt-snowball-calculator"
+                    className={`block px-4 py-3 font-medium text-sm rounded-lg transition-all duration-200 ${pathname === "/tools/debt-snowball-calculator"
+                        ? "text-teal-700 font-semibold bg-teal-50/80 shadow-sm"
                         : "text-slate-700 hover:bg-teal-50/50 hover:text-teal-700"
-                    }`}
+                      }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Debt Snowball Calculator
                   </Link>
                 </div>
                 <div className="pt-2">
-                  <Link 
-                    href="/quiz/financial-profile" 
-                    className="block w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-3 rounded-xl font-semibold text-sm text-center shadow-md hover:from-teal-700 hover:to-teal-800 transition-all duration-300 hover:shadow-xl active:scale-[0.98] relative overflow-hidden group" 
+                  <Link
+                    href="/quiz/financial-profile"
+                    className="block w-full bg-gradient-to-r from-teal-600 to-teal-700 text-white px-4 py-3 rounded-xl font-semibold text-sm text-center shadow-md hover:from-teal-700 hover:to-teal-800 transition-all duration-300 hover:shadow-xl active:scale-[0.98] relative overflow-hidden group"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <span className="relative z-10">Get Started</span>

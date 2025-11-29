@@ -30,12 +30,48 @@ html {
   overscroll-behavior: none;
 }
 
+/* Responsive scrollbar styling */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 4px;
+}
+
+.scrollbar-track-gray-100::-webkit-scrollbar-track {
+  background-color: #f3f4f6;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+/* Ensure minimum font size on mobile to prevent zoom */
+@media (max-width: 768px) {
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="search"],
+  input[type="url"],
+  input[type="password"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
 /* Fade-in animation for unified results page */
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(16px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -51,6 +87,7 @@ html {
   from {
     transform: translateX(100%);
   }
+
   to {
     transform: translateX(0);
   }
@@ -62,6 +99,7 @@ html {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -78,6 +116,7 @@ html {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -88,6 +127,7 @@ html {
     opacity: 0;
     transform: translateY(20px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -99,6 +139,7 @@ html {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -118,14 +159,29 @@ html {
 }
 
 /* Staggered animation delays */
-.animate-fade-in:nth-child(1) { animation-delay: 0.1s; }
-.animate-fade-in:nth-child(2) { animation-delay: 0.2s; }
-.animate-fade-in:nth-child(3) { animation-delay: 0.3s; }
-.animate-fade-in:nth-child(4) { animation-delay: 0.4s; }
-.animate-fade-in:nth-child(5) { animation-delay: 0.5s; }
+.animate-fade-in:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.animate-fade-in:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.animate-fade-in:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.animate-fade-in:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.animate-fade-in:nth-child(5) {
+  animation-delay: 0.5s;
+}
 
 /* Mobile optimizations for smooth scrolling - Noom-inspired */
 @media (max-width: 768px) {
+
   /* Smooth scrolling with momentum - prevent blank spaces */
   .mobile-scroll {
     -webkit-overflow-scrolling: touch;
@@ -134,26 +190,26 @@ html {
     height: 100vh;
     overflow-y: auto;
   }
-  
-  /* Touch-friendly button sizing */
+
+  /* Touch-friendly button sizing - minimum 44x44px */
   .touch-friendly {
-    min-height: 48px;
-    min-width: 48px;
+    min-height: 44px;
+    min-width: 44px;
     touch-action: manipulation;
   }
-  
+
   /* Prevent zoom on input focus */
   input[type="text"],
   input[type="email"],
   textarea {
     font-size: 16px;
   }
-  
+
   /* Smooth transitions for mobile */
   .mobile-transition {
     transition: all 0.2s ease-out;
   }
-  
+
   /* Prevent text selection on buttons */
   .no-select {
     -webkit-user-select: none;
@@ -161,13 +217,13 @@ html {
     -ms-user-select: none;
     user-select: none;
   }
-  
+
   /* Better touch feedback */
   .touch-feedback:active {
     transform: scale(0.98);
     transition: transform 0.1s ease-out;
   }
-  
+
 }
 
 /* Smooth chart animations for Budget Calculator - Loading style fade */
@@ -176,6 +232,7 @@ html {
     opacity: 0;
     filter: brightness(0.8);
   }
+
   100% {
     opacity: 1;
     filter: brightness(1);
@@ -199,6 +256,7 @@ html {
     opacity: 0;
     transform: scale(0.9);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -215,6 +273,7 @@ html {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -226,6 +285,7 @@ html {
     opacity: 1;
     transform: translateY(0);
   }
+
   to {
     opacity: 0;
     transform: translateY(-10px);
@@ -245,6 +305,7 @@ html {
   0% {
     background-position: -1000px 0;
   }
+
   100% {
     background-position: 1000px 0;
   }
@@ -252,21 +313,22 @@ html {
 
 .skeleton-shimmer {
   animation: shimmer 2s infinite linear;
-  background: linear-gradient(
-    to right,
-    #f6f4ed 0%,
-    #e8e4d8 20%,
-    #f6f4ed 40%,
-    #f6f4ed 100%
-  );
+  background: linear-gradient(to right,
+      #f6f4ed 0%,
+      #e8e4d8 20%,
+      #f6f4ed 40%,
+      #f6f4ed 100%);
   background-size: 1000px 100%;
 }
 
 /* Progress bar celebration animation */
 @keyframes celebrate {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.05);
   }
@@ -282,6 +344,7 @@ html {
     transform: scale(0);
     opacity: 0.6;
   }
+
   100% {
     transform: scale(4);
     opacity: 0;
@@ -309,4 +372,3 @@ html {
 .button-ripple:active::after {
   animation: ripple 0.6s ease-out;
 }
-
