@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Convert array to object for easier access
-    const settingsObj = settings.reduce((acc: any, setting) => {
+    const settingsObj = settings.reduce((acc: Record<string, string>, setting) => {
       acc[setting.key] = setting.value;
       return acc;
     }, {});

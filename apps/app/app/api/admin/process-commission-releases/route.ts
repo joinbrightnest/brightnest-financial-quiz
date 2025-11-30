@@ -11,11 +11,11 @@ export async function POST(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
     // Get current date/time - commissions where holdUntil has passed are ready for release
     const now = new Date();
-    
+
     // Find all conversions that should be released from hold
     // Use holdUntil field (set when commission was created) instead of calculating from createdAt
     // This ensures commissions are released based on their actual hold period, not a calculated date
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
         affiliate: true
       }
     });
-    
+
     if (conversionsToRelease.length === 0) {
       return NextResponse.json({
         success: true,
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
         releasedAmount: 0
       });
     }
-    
+
     // Update conversions to available status
     const updateResult = await prisma.affiliateConversion.updateMany({
       where: {
@@ -56,12 +56,12 @@ export async function POST(request: NextRequest) {
         releasedAt: new Date()
       }
     });
-    
+
     // Calculate total released amount
     const totalReleasedAmount = conversionsToRelease.reduce((sum, conversion) => {
       return sum + parseFloat(conversion.commissionAmount.toString());
     }, 0);
-    
+
     // ⚠️ COMMISSION FIX: Do NOT increment totalCommission here!
     // The totalCommission field is already incremented when the sale is marked as "converted"
     // in /app/api/closer/appointments/[id]/outcome/route.ts (line 119-124)
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     // Note: Existing totalCommission values in the database may be DOUBLED due to this bug.
     // They were incremented both when created AND when released.
     // Historical data may need correction via a one-time database migration.
-    
+
     return NextResponse.json({
       success: true,
       message: `Successfully released ${updateResult.count} commissions`,
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
       releasedAmount: totalReleasedAmount,
       currentDate: now.toISOString()
     });
-    
+
   } catch (error) {
     console.error('Error processing commission releases:', error);
     return NextResponse.json({
@@ -96,21 +96,21 @@ export async function GET() {
     // Get commission hold period from settings (for display purposes)
     const settingsResult = await prisma.$queryRaw`
       SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
-    ` as any[];
-    
+    ` as { value: string }[];
+
     const holdDays = settingsResult.length > 0 ? parseInt(settingsResult[0].value) : 30;
-    
+
     // Get current date/time - commissions where holdUntil has passed are ready for release
     const now = new Date();
-    
+
     // Check if commission_status column exists
     const columnCheck = await prisma.$queryRaw`
       SELECT column_name 
       FROM information_schema.columns 
       WHERE table_name = 'affiliate_conversions' 
       AND column_name = 'commission_status'
-    ` as any[];
-    
+    ` as { column_name: string }[];
+
     if (columnCheck.length === 0) {
       return NextResponse.json({
         success: true,
@@ -126,7 +126,7 @@ export async function GET() {
         }
       });
     }
-    
+
     // Count commissions ready for release
     // Use holdUntil field instead of calculating from createdAt
     // ONLY include conversions with actual commission amounts > 0
@@ -141,7 +141,7 @@ export async function GET() {
         }
       }
     });
-    
+
     // Count total held commissions
     // ONLY include conversions with actual commission amounts > 0
     const totalHeld = await prisma.affiliateConversion.count({
@@ -152,7 +152,7 @@ export async function GET() {
         }
       }
     });
-    
+
     // Count total available commissions
     // ONLY include conversions with actual commission amounts > 0
     const totalAvailable = await prisma.affiliateConversion.count({
@@ -163,7 +163,7 @@ export async function GET() {
         }
       }
     });
-    
+
     // Calculate total amounts
     // ONLY include conversions with actual commission amounts > 0
     const heldAmount = await prisma.affiliateConversion.aggregate({
@@ -177,7 +177,7 @@ export async function GET() {
         commissionAmount: true
       }
     });
-    
+
     const availableAmount = await prisma.affiliateConversion.aggregate({
       where: {
         commissionStatus: 'available',
@@ -189,7 +189,7 @@ export async function GET() {
         commissionAmount: true
       }
     });
-    
+
     return NextResponse.json({
       success: true,
       data: {
@@ -202,7 +202,7 @@ export async function GET() {
         availableAmount: parseFloat(availableAmount._sum.commissionAmount?.toString() || '0')
       }
     });
-    
+
   } catch (error) {
     console.error('Error fetching commission release status:', error);
     return NextResponse.json({

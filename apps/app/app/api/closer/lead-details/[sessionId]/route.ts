@@ -201,7 +201,7 @@ export async function GET(
       result: quizSession.result ? {
         archetype: quizSession.result.archetype,
         score: typeof quizSession.result.scores === 'object' && quizSession.result.scores !== null
-          ? (quizSession.result.scores as any).total || 0
+          ? (quizSession.result.scores as Record<string, number>).total || 0
           : 0,
         insights: [],
       } : null,
@@ -213,10 +213,10 @@ export async function GET(
         // Try to find the label from question options if question type is single/multiple choice
         if (answer.question && (answer.question.type === 'single' || answer.question.type === 'multiple')) {
           try {
-            const options = answer.question.options as any;
+            const options = answer.question.options as Array<{ value: string | number; label: string }>;
             if (Array.isArray(options)) {
               // Find matching option by value
-              const matchingOption = options.find((opt: any) => {
+              const matchingOption = options.find((opt) => {
                 // Handle both string and JSON values
                 if (typeof opt.value === 'string' && typeof answerValue === 'string') {
                   return opt.value === answerValue;

@@ -1,4 +1,5 @@
 import { prisma } from './prisma';
+import { Appointment } from '@prisma/client';
 
 export interface LeadStatusInfo {
   status: 'completed' | 'booked';
@@ -106,7 +107,7 @@ export async function getLeadStatuses(sessionIds: string[]): Promise<Record<stri
         acc[appointment.quizSessionId] = appointment;
       }
       return acc;
-    }, {} as Record<string, any>);
+    }, {} as Record<string, Appointment>);
 
     // FALLBACK: Get emails for sessions without direct appointments
     const sessionsNeedingEmailFallback = sessionIds.filter(id => !appointmentsBySessionId[id]);
@@ -136,7 +137,7 @@ export async function getLeadStatuses(sessionIds: string[]): Promise<Record<stri
     const appointmentsByEmail = emailAppointments.reduce((acc, appointment) => {
       acc[appointment.customerEmail.toLowerCase()] = appointment;
       return acc;
-    }, {} as Record<string, any>);
+    }, {} as Record<string, Appointment>);
 
     // Determine status for each session
     const statuses: Record<string, LeadStatusInfo> = {};

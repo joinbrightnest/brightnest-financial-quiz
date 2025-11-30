@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { calculateLeadsByCode, calculateLeadsWithDateRange } from "@/lib/lead-calculation";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
 import { prisma } from "@/lib/prisma";
+import { AffiliateClick, AffiliateConversion, Appointment, QuizSession, Prisma } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   // 🔒 SECURITY: Require admin authentication
@@ -11,7 +12,7 @@ export async function GET(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   const { searchParams } = new URL(request.url);
   const affiliateCode = searchParams.get('affiliateCode');
   const dateRange = searchParams.get('dateRange') || 'month';
@@ -33,22 +34,22 @@ export async function GET(request: NextRequest) {
         WHERE "custom_tracking_link" = ${`/${affiliateCode}`}
         LIMIT 1
       `;
-      
-      affiliate = Array.isArray(affiliateResult) && affiliateResult.length > 0 
-        ? affiliateResult[0] 
+
+      affiliate = Array.isArray(affiliateResult) && affiliateResult.length > 0
+        ? affiliateResult[0]
         : null;
     }
 
     if (!affiliate) {
       return NextResponse.json({ error: "Affiliate not found" }, { status: 404 });
     }
-    
+
     console.log("🚀 ADMIN AFFILIATE-STATS API CALLED - affiliateCode:", affiliateCode, "dateRange:", dateRange);
-    
+
     // Calculate date filter for consistency with individual affiliate API
     const now = new Date();
     let startDate: Date;
-    
+
     switch (dateRange) {
       case "24h":
         startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -74,12 +75,12 @@ export async function GET(request: NextRequest) {
 
     // Set upper bound for date filtering (current time)
     const endDate = new Date();
-    
+
     const [clicks, conversions, quizSessions] = await Promise.all([
       prisma.affiliateClick.findMany({
-        where: { 
+        where: {
           affiliateId: affiliate.id,
-          createdAt: { 
+          createdAt: {
             gte: startDate,
             lte: endDate
           }
@@ -87,9 +88,9 @@ export async function GET(request: NextRequest) {
         orderBy: { createdAt: "desc" }
       }),
       prisma.affiliateConversion.findMany({
-        where: { 
+        where: {
           affiliateId: affiliate.id,
-          createdAt: { 
+          createdAt: {
             gte: startDate,
             lte: endDate
           }
@@ -97,9 +98,9 @@ export async function GET(request: NextRequest) {
         orderBy: { createdAt: "desc" }
       }),
       prisma.quizSession.findMany({
-        where: { 
+        where: {
           affiliateCode: affiliateCode,
-          createdAt: { 
+          createdAt: {
             gte: startDate,
             lte: endDate
           }
@@ -110,38 +111,38 @@ export async function GET(request: NextRequest) {
 
     // Calculate stats using the SAME logic as individual affiliate API for consistency
     const totalClicks = clicks.length;
-    
+
     // Calculate Total Leads using centralized lead calculation (same as graph)
     const leadData = await calculateLeadsByCode(affiliateCode, dateRange);
     const totalLeads = leadData.totalLeads;
     const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
     const totalSales = conversions.filter(c => c.conversionType === "sale").length;
-    
+
     // Fetch ALL appointments for this affiliate once
     const allAffiliateAppointments = await prisma.appointment.findMany({
       where: {
         affiliateCode: affiliate.referralCode,
       },
     }).catch(() => []);
-    
+
     // Filter for converted appointments in JavaScript
-    const dateFilteredAppointments = allAffiliateAppointments.filter(apt => 
+    const dateFilteredAppointments = allAffiliateAppointments.filter(apt =>
       apt.outcome === 'converted'
     );
-    
+
     // Get all converted appointments (same as dateFiltered since we removed date filtering)
     const allConvertedAppointments = dateFilteredAppointments;
-    
+
     // Generate daily stats from real data using centralized lead calculation
     // Pass the same appointment data and lead data to ensure consistency between card and graph
     const dailyStats = await generateDailyStatsFromRealData(clicks, conversions, dateRange, affiliateCode, dateFilteredAppointments, leadData);
-    
+
     // Calculate commission from daily stats - this respects the selected date range
     const totalCommission = dailyStats.reduce((sum, day) => sum + day.commission, 0);
-    
+
     const totalQuizStarts = quizSessions.length; // Use actual quiz sessions count
     const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
-    
+
     // Generate conversion funnel data using the same logic as individual affiliate dashboard
     const conversionFunnel = generateConversionFunnelFromRealData(clicks, conversions, quizSessions, totalLeads);
 
@@ -155,7 +156,7 @@ export async function GET(request: NextRequest) {
       amount: number;
       commission: number;
     }> = [];
-    
+
     // Add recent conversions
     conversions.slice(0, 5).forEach(conv => {
       recentActivity.push({
@@ -248,9 +249,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
-async function generateDailyStatsFromRealData(clicks: any[], conversions: any[], dateRange: string, affiliateCode: string, cardAppointments?: any[], preCalculatedLeadData?: any) {
+async function generateDailyStatsFromRealData(clicks: AffiliateClick[], conversions: AffiliateConversion[], dateRange: string, affiliateCode: string, cardAppointments?: Appointment[], preCalculatedLeadData?: { leads: Array<{ createdAt: string | Date }> }) {
   const stats = [];
-  
+
   // Get affiliate info for commission rate
   const affiliate = await prisma.affiliate.findUnique({
     where: { referralCode: affiliateCode },
@@ -259,7 +260,7 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
   if (!affiliate) {
     return [];
   }
-  
+
   // Calculate date ranges for optimization
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -270,10 +271,10 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
   const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   startOfWeek.setDate(now.getDate() - daysToMonday);
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  
+
   // Use appointments passed from card calculation, or fetch if not provided
   let allAppointments, convertedAppointments;
-  
+
   if (cardAppointments) {
     // Use the same appointments data as the card for consistency
     allAppointments = cardAppointments;
@@ -285,11 +286,11 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
       where: {
         affiliateCode: affiliateCode,
         createdAt: {
-          gte: dateRange === "today" ? today : 
-               dateRange === "yesterday" ? yesterday :
-               dateRange === "week" ? startOfWeek :
-               dateRange === "month" ? startOfMonth :
-               new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000), // all time
+          gte: dateRange === "today" ? today :
+            dateRange === "yesterday" ? yesterday :
+              dateRange === "week" ? startOfWeek :
+                dateRange === "month" ? startOfMonth :
+                  new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000), // all time
           lte: now,
         },
       },
@@ -308,26 +309,26 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
   if (dateRange === "24h") {
     // For 24 hours, show hourly data for the last 24 hours
     const now = new Date();
-    
+
     for (let i = 23; i >= 0; i--) {
       const hourTimestamp = new Date(now.getTime() - i * 60 * 60 * 1000);
       const hourStart = new Date(hourTimestamp);
       hourStart.setMinutes(0, 0, 0);
       const hourEnd = new Date(hourTimestamp);
       hourEnd.setMinutes(59, 59, 999);
-      
+
       const hourLabel = `${hourTimestamp.getHours().toString().padStart(2, '0')}:00`;
-      
+
       const hourClicks = clicks.filter(c => {
         const clickDate = new Date(c.createdAt);
         return clickDate >= hourStart && clickDate <= hourEnd;
       });
-      
+
       const hourConversions = conversions.filter(c => {
         const convDate = new Date(c.createdAt);
         return convDate >= hourStart && convDate <= hourEnd;
       });
-      
+
       // Filter sale conversions for this specific hour (SOURCE OF TRUTH for commission)
       // CRITICAL: Use AffiliateConversion.createdAt (when conversion record was created = when deal CLOSED)
       // NOT Appointment.updatedAt (changes on ANY field update) or Appointment.createdAt (when call was booked)
@@ -341,13 +342,13 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         const commissionAmount = Number(conv.commissionAmount || 0);
         return sum + commissionAmount;
       }, 0);
-      
+
       // Filter leads data for this specific hour
-      const hourLeads = allLeadsData.leads.filter((lead: any) => {
-        const leadDate = new Date(lead.createdAt);
+      const hourLeads = allLeadsData.leads.filter((lead: Record<string, unknown>) => {
+        const leadDate = new Date(lead.createdAt as string);
         return leadDate >= hourStart && leadDate <= hourEnd;
       });
-      
+
       stats.push({
         date: hourLabel,
         clicks: hourClicks.length,
@@ -360,7 +361,7 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
     // For all other date ranges - show daily data
     const now = new Date();
     let days: number;
-    
+
     switch (dateRange) {
       case "7d":
         days = 7;
@@ -388,30 +389,30 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
     for (let i = 0; i < days; i++) {
       const daysAgo = days - 1 - i; // Count backwards from most recent day
       const date = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
-      
+
       const dayStart = new Date(date);
       dayStart.setHours(0, 0, 0, 0);
       const dayEnd = new Date(date);
       dayEnd.setHours(23, 59, 59, 999);
-      
+
       // Don't go beyond the current time
       if (dayEnd > now) {
         dayEnd.setTime(now.getTime());
       }
-      
+
       const dateStr = date.toISOString().split('T')[0];
-      
+
       // Filter data for this specific day using time ranges
       const dayClicks = clicks.filter(c => {
         const clickDate = new Date(c.createdAt);
         return clickDate >= dayStart && clickDate <= dayEnd;
       });
-      
+
       const dayConversions = conversions.filter(c => {
         const convDate = new Date(c.createdAt);
         return convDate >= dayStart && convDate <= dayEnd;
       });
-      
+
       // Filter sale conversions for this specific day (SOURCE OF TRUTH for commission)
       // CRITICAL: Use AffiliateConversion.createdAt (when conversion record was created = when deal CLOSED)
       // NOT Appointment.updatedAt (changes on ANY field update) or Appointment.createdAt (when call was booked)
@@ -425,19 +426,19 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         const commissionAmount = Number(conv.commissionAmount || 0);
         return sum + commissionAmount;
       }, 0);
-      
+
       // Filter leads data for this specific day
-      const dayLeads = allLeadsData.leads.filter((lead: any) => {
-        const leadDate = new Date(lead.createdAt);
+      const dayLeads = allLeadsData.leads.filter((lead: Record<string, unknown>) => {
+        const leadDate = new Date(lead.createdAt as string);
         return leadDate >= dayStart && leadDate <= dayEnd;
       });
-      
+
       const dayBookings = dayConversions.filter(c => c.conversionType === "booking");
-      
+
       if (dayBookings.length > 0) {
         console.log(`📊 Day ${dateStr}: ${dayBookings.length} bookings`);
       }
-      
+
       stats.push({
         date: dateStr,
         clicks: dayClicks.length,
@@ -446,20 +447,20 @@ async function generateDailyStatsFromRealData(clicks: any[], conversions: any[],
         commission: dayCommission,
       });
     }
-    
+
     console.log(`📈 Generated ${stats.length} data points, bookings in ${stats.filter(s => s.bookedCalls > 0).length} days`);
   }
-  
+
   // Ensure graph commission matches card commission for consistency
   const totalCommissionFromAppointments = stats.reduce((sum, stat) => sum + stat.commission, 0);
-  
+
   // The card now uses appointmentBasedCommission, so graph should match it
   // No need to adjust since both use the same calculation method
-  
+
   return stats;
 }
 
-function generateTrafficSourcesFromRealData(clicks: any[]) {
+function generateTrafficSourcesFromRealData(clicks: AffiliateClick[]) {
   const sourceCounts: { [key: string]: number } = {};
   const totalClicks = clicks.length;
 
@@ -475,12 +476,12 @@ function generateTrafficSourcesFromRealData(clicks: any[]) {
   }));
 }
 
-function generateConversionFunnelFromRealData(clicks: any[], conversions: any[], quizSessions: any[], totalLeads: number) {
+function generateConversionFunnelFromRealData(clicks: AffiliateClick[], conversions: AffiliateConversion[], quizSessions: QuizSession[], totalLeads: number) {
   const totalClicks = clicks.length;
   const quizStarts = quizSessions.length; // All quiz sessions represent quiz starts
   const quizCompletions = totalLeads; // Use the calculated total leads
   const bookings = conversions.filter(c => c.conversionType === "booking").length;
-  
+
   return [
     { stage: "Clicks", count: totalClicks, percentage: 100 },
     { stage: "Quiz Starts", count: quizStarts, percentage: totalClicks > 0 ? (quizStarts / totalClicks) * 100 : 0 },

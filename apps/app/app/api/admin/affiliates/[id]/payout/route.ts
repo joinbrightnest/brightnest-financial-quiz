@@ -15,7 +15,7 @@ export async function POST(
       { status: 401 }
     );
   }
-  
+
   try {
     const { id } = await params;
     const body = await request.json();
@@ -34,7 +34,7 @@ export async function POST(
     try {
       const settingsResult = await prisma.$queryRaw`
         SELECT value FROM "Settings" WHERE key = 'minimum_payout'
-      ` as any[];
+      ` as { value: string }[];
       if (settingsResult.length > 0) {
         minimumPayout = parseFloat(settingsResult[0].value);
       }
@@ -131,7 +131,7 @@ export async function POST(
   } catch (error) {
     console.error("Error creating payout:", error);
     return NextResponse.json(
-      { 
+      {
         error: "Failed to create payout",
         details: error instanceof Error ? error.message : "Unknown error"
       },

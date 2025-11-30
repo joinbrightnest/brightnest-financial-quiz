@@ -7,13 +7,13 @@
 
 interface StructuredDataProps {
   type?: 'organization' | 'website' | 'article' | 'faqPage'
-  data?: Record<string, any>
+  data?: Record<string, unknown>
 }
 
 export function StructuredData({ type = 'organization', data = {} }: StructuredDataProps) {
   const getStructuredData = () => {
     const baseUrl = 'https://joinbrightnest.com'
-    
+
     switch (type) {
       case 'organization':
         return {
@@ -37,7 +37,7 @@ export function StructuredData({ type = 'organization', data = {} }: StructuredD
           },
           ...data,
         }
-      
+
       case 'website':
         return {
           '@context': 'https://schema.org',
@@ -54,7 +54,7 @@ export function StructuredData({ type = 'organization', data = {} }: StructuredD
           },
           ...data,
         }
-      
+
       case 'article':
         return {
           '@context': 'https://schema.org',
@@ -69,14 +69,14 @@ export function StructuredData({ type = 'organization', data = {} }: StructuredD
           },
           ...data,
         }
-      
+
       case 'faqPage':
         return {
           '@context': 'https://schema.org',
           '@type': 'FAQPage',
           ...data,
         }
-      
+
       default:
         return data
     }

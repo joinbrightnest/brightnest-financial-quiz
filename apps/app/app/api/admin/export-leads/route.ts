@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminAuth } from '@/lib/admin-auth-server';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
 export async function POST(request: NextRequest) {
   // 🔒 SECURITY: Require admin authentication
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
     const { filters, exportOptions } = await request.json();
 
     // Build the where clause based on filters
-    const whereClause: any = {};
+    const whereClause: Prisma.QuizSessionWhereInput = {};
 
     if (filters.quizType !== 'all') {
       whereClause.quizType = filters.quizType;
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     // Date filtering
     if (filters.dateRange !== 'all' || filters.startDate || filters.endDate) {
-      const dateFilter: any = {};
+      const dateFilter: Prisma.DateTimeFilter = {};
 
       if (filters.dateRange === '7days') {
         const weekAgo = new Date();

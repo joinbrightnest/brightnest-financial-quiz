@@ -175,7 +175,7 @@ export async function GET(request: NextRequest) {
       .filter(s => s.status === "completed")
       .map(s => s.id);
 
-    let completedSessionEmails = new Map<string, string>(); // sessionId -> email
+    const completedSessionEmails = new Map<string, string>(); // sessionId -> email
 
     if (completedSessionIds.length > 0) {
       const emailAnswers = await prisma.quizAnswer.findMany({

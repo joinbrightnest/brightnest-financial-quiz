@@ -230,7 +230,9 @@ export default function ActivityTab({ activities, loading, leadData }: ActivityT
                                                     <p className="text-xs font-semibold text-slate-900 mb-1">
                                                         {answer.questionText || answer.question?.prompt || `Question ${idx + 1}`}
                                                     </p>
-                                                    <p className="text-sm text-slate-700">{answer.answer || answer.value || 'No answer'}</p>
+                                                    <p className="text-sm text-slate-700">
+                                                        {answer.answer || (typeof answer.value === 'object' ? JSON.stringify(answer.value) : answer.value) || 'No answer'}
+                                                    </p>
                                                 </div>
                                             ))}
                                         </div>

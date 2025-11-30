@@ -6,9 +6,36 @@ import { AdminStats } from "../../../types";
 import LeadDetailView from "../../../../components/shared/LeadDetailView";
 import { ADMIN_CONSTANTS } from "../../../constants";
 
+interface Answer {
+    question?: {
+        prompt?: string;
+    };
+    value?: string | number | object;
+}
+
+interface Lead {
+    id: string;
+    answers: Answer[];
+    createdAt: string;
+    status: string;
+    completedAt?: string | null;
+    affiliateCode?: string;
+    appointment?: {
+        outcome?: string | null;
+        saleValue?: number | string | null;
+        createdAt?: string | null;
+        closer?: {
+            name?: string;
+        } | null;
+    } | null;
+    saleValue?: number | string | null;
+    closerName?: string | null;
+    source?: string;
+}
+
 interface CRMProps {
     stats: AdminStats | null;
-    affiliates: any[];
+    affiliates: Array<{ id: string; name: string; referralCode: string }>;
     newDealAmountPotential: number;
     terminalOutcomes: string[];
     onRefresh: () => void;
@@ -54,7 +81,7 @@ export default function CRM({
     const [crmItemsPerPage, setCrmItemsPerPage] = useState(ADMIN_CONSTANTS.PAGINATION.DEFAULT_PAGE_SIZE);
     const [crmShowMetrics, setCrmShowMetrics] = useState(true);
     const [crmShowLeadModal, setCrmShowLeadModal] = useState(false);
-    const [crmSelectedLead, setCrmSelectedLead] = useState<any>(null);
+    const [crmSelectedLead, setCrmSelectedLead] = useState<Lead | null>(null);
     const [crmShowColumnModal, setCrmShowColumnModal] = useState(false);
     const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -73,7 +100,7 @@ export default function CRM({
     };
 
     // Helper: Calculate Revenue Metrics
-    const calculateRevenueMetrics = (leads: any[], terminalOutcomesList: string[], potentialValuePerCall: number) => {
+    const calculateRevenueMetrics = (leads: Lead[], terminalOutcomesList: string[], potentialValuePerCall: number) => {
         if (!leads || !Array.isArray(leads)) {
             return { totalRevenue: 0, openDealAmount: 0, newDealAmount: 0, closedDealAmount: 0 };
         }
@@ -124,10 +151,10 @@ export default function CRM({
 
         return stats.allLeads.filter(lead => {
             if (crmSearch) {
-                const nameAnswer = lead.answers.find((a: any) =>
+                const nameAnswer = lead.answers.find((a: Answer) =>
                     a.question?.prompt?.toLowerCase().includes('name')
                 );
-                const emailAnswer = lead.answers.find((a: any) =>
+                const emailAnswer = lead.answers.find((a: Answer) =>
                     a.question?.prompt?.toLowerCase().includes('email')
                 );
                 const searchText = `${nameAnswer?.value || ''} ${emailAnswer?.value || ''}`.toLowerCase();
@@ -136,13 +163,13 @@ export default function CRM({
                 }
             }
             return true;
-        }).sort((a: any, b: any) => {
+        }).sort((a: Lead, b: Lead) => {
             let aValue, bValue;
 
             switch (crmSortField) {
                 case 'name':
-                    const aNameAnswer = a.answers.find((ans: any) => ans.question?.prompt?.toLowerCase().includes('name'));
-                    const bNameAnswer = b.answers.find((ans: any) => ans.question?.prompt?.toLowerCase().includes('name'));
+                    const aNameAnswer = a.answers.find((ans: Answer) => ans.question?.prompt?.toLowerCase().includes('name'));
+                    const bNameAnswer = b.answers.find((ans: Answer) => ans.question?.prompt?.toLowerCase().includes('name'));
                     aValue = aNameAnswer?.value || '';
                     bValue = bNameAnswer?.value || '';
                     break;
@@ -235,7 +262,7 @@ export default function CRM({
         setCrmSelectedLeads(newSelected);
     };
 
-    const handleCrmViewDetails = (lead: any) => {
+    const handleCrmViewDetails = (lead: Lead) => {
         setCrmSelectedLead(lead);
         setCrmShowLeadModal(true);
     };
@@ -251,10 +278,10 @@ export default function CRM({
         const csvContent = [
             ['Name', 'Email', 'Stage', 'Date', 'Deal Owner', 'Amount', 'Source'].join(','),
             ...filteredCrmLeads.map(lead => {
-                const nameAnswer = lead.answers.find((a: any) =>
+                const nameAnswer = lead.answers.find((a: Answer) =>
                     a.question?.prompt?.toLowerCase().includes('name')
                 );
-                const emailAnswer = lead.answers.find((a: any) =>
+                const emailAnswer = lead.answers.find((a: Answer) =>
                     a.question?.prompt?.toLowerCase().includes('email')
                 );
                 return [
@@ -624,7 +651,7 @@ export default function CRM({
                         </thead>
                         <tbody className="bg-white">
                             {paginatedCrmLeads.map((lead) => {
-                                const nameAnswer = lead.answers.find((a: any) =>
+                                const nameAnswer = lead.answers.find((a: Answer) =>
                                     a.question?.prompt?.toLowerCase().includes('name')
                                 );
 

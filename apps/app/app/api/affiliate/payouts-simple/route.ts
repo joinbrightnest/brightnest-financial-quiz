@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    
+
     // Verify JWT token
     const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
     if (!JWT_SECRET) {
@@ -25,9 +25,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let decoded: any;
+    let decoded: { affiliateId: string } | jwt.JwtPayload;
     try {
-      decoded = jwt.verify(token, JWT_SECRET);
+      decoded = jwt.verify(token, JWT_SECRET) as { affiliateId: string } | jwt.JwtPayload;
     } catch (error) {
       return NextResponse.json(
         { error: "Invalid or expired token" },
@@ -65,18 +65,18 @@ export async function GET(request: NextRequest) {
     // Get commission hold period from settings
     const settingsResult = await prisma.$queryRaw`
       SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
-    ` as any[];
-    
+    ` as { value: string }[];
+
     const holdDays = settingsResult.length > 0 ? parseInt(settingsResult[0].value) : 30;
 
     // Calculate held and available commissions based on conversion status
-    const heldCommissions = affiliate.conversions.filter(c => 
+    const heldCommissions = affiliate.conversions.filter(c =>
       c.commissionStatus === 'held' && Number(c.commissionAmount) > 0
     );
-    const availableConversions = affiliate.conversions.filter(c => 
+    const availableConversions = affiliate.conversions.filter(c =>
       c.commissionStatus === 'available' && Number(c.commissionAmount) > 0
     );
-    
+
     const heldAmount = heldCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
     const availableAmount = availableConversions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
 
@@ -132,7 +132,7 @@ export async function GET(request: NextRequest) {
             const now = new Date();
             const daysLeft = holdUntilDate ? Math.ceil((holdUntilDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)) : 0;
             const isReadyForRelease = holdUntilDate ? holdUntilDate <= now : false;
-            
+
             return {
               id: c.id,
               amount: Number(c.commissionAmount),
@@ -159,7 +159,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching affiliate payouts:", error);
     return NextResponse.json(
-      { 
+      {
         success: false,
         error: "Failed to fetch affiliate payouts",
         details: error instanceof Error ? error.message : "Unknown error"

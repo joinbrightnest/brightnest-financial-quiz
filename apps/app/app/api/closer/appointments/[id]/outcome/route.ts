@@ -9,7 +9,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const authHeader = request.headers.get('authorization');
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json(
         { error: 'Authorization token required' },
@@ -28,7 +28,7 @@ export async function PUT(
     }
 
     const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, JWT_SECRET) as { role: string; closerId: string };
 
     if (decoded.role !== 'closer') {
       return NextResponse.json(
@@ -67,7 +67,7 @@ export async function PUT(
       const closer = await prisma.closer.findUnique({
         where: { id: decoded.closerId }
       });
-      
+
       if (closer) {
         commissionAmount = parseFloat(saleValue) * Number(closer.commissionRate);
       }
@@ -80,16 +80,16 @@ export async function PUT(
       const affiliate = await prisma.affiliate.findUnique({
         where: { referralCode: appointment.affiliateCode }
       });
-      
+
       if (affiliate) {
         affiliateCommissionAmount = parseFloat(saleValue) * Number(affiliate.commissionRate);
-        
+
         // Get commission hold days from settings
         let commissionHoldDays = 30; // Default fallback
         try {
           const holdDaysResult = await prisma.$queryRaw`
             SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
-          ` as any[];
+          ` as { value: string }[];
           if (holdDaysResult.length > 0) {
             commissionHoldDays = parseInt(holdDaysResult[0].value);
           }
@@ -100,7 +100,7 @@ export async function PUT(
         // Calculate hold until date
         const holdUntil = new Date();
         holdUntil.setDate(holdUntil.getDate() + commissionHoldDays);
-        
+
         // Check if conversion already exists for this affiliate/saleValue in last 1 minute (prevent duplicates)
         const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
         const existingConversion = await prisma.affiliateConversion.findFirst({
@@ -113,7 +113,7 @@ export async function PUT(
             }
           }
         });
-        
+
         if (existingConversion) {
           console.log('⚠️ Duplicate conversion detected (same affiliate, sale value within 1 min), skipping:', {
             appointmentId: id,
@@ -137,7 +137,7 @@ export async function PUT(
             }
           });
         }
-        
+
         // Update affiliate's total commission and total sales (only if not a duplicate)
         if (affiliateCommissionAmount !== null) {
           await prisma.affiliate.update({
@@ -148,7 +148,7 @@ export async function PUT(
             }
           });
         }
-        
+
         console.log('💰 Affiliate commission calculated and held:', {
           appointmentId: id,
           affiliateCode: appointment.affiliateCode,
@@ -178,7 +178,7 @@ export async function PUT(
     }
 
     // Prepare recording link data based on outcome
-    const recordingLinkData: any = {};
+    const recordingLinkData: Record<string, string> = {};
     if (recordingLink) {
       switch (outcome) {
         case 'converted':
@@ -225,10 +225,10 @@ export async function PUT(
     const previousOutcome = appointment.outcome;
     const previousSaleValue = appointment.saleValue ? parseFloat(appointment.saleValue.toString()) : 0;
     const previousWasConversion = previousOutcome === 'converted' && previousSaleValue > 0;
-    
+
     const newIsConversion = outcome === 'converted' && saleValue && parseFloat(saleValue) > 0;
     const newSaleValue = saleValue ? parseFloat(saleValue) : 0;
-    
+
     // If changing from conversion to non-conversion, decrement conversions and revenue
     if (previousWasConversion && !newIsConversion) {
       await prisma.closer.update({
@@ -312,13 +312,13 @@ export async function PUT(
           notes: notes || null, // Always store, even if null (preserves "no notes" state)
           previousOutcome: appointment.outcome, // Store previous outcome for tracking changes
         },
-        ipAddress: request.headers.get('x-forwarded-for') || 
-                   request.headers.get('x-real-ip') || 
-                   'unknown',
+        ipAddress: request.headers.get('x-forwarded-for') ||
+          request.headers.get('x-real-ip') ||
+          'unknown',
         userAgent: request.headers.get('user-agent') || 'unknown',
       }
     });
-    
+
     console.log('📝 Audit log created with details:', {
       appointmentId: id,
       outcome,

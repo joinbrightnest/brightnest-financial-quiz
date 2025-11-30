@@ -22,14 +22,14 @@ export default function CloserScripts() {
   const [activeTab, setActiveTab] = useState<'call' | 'email'>('call');
   const [activeEmailCategory, setActiveEmailCategory] = useState<string>('initial');
   const [activeCallCategory, setActiveCallCategory] = useState<'script' | 'program'>('script');
-  const [script, setScript] = useState<any>(null);
+  const [script, setScript] = useState<{ callScript?: string; programDetails?: Record<string, string>; emailTemplates?: Record<string, { title: string; subject: string; content: string }> } | null>(null);
   const [scriptLoading, setScriptLoading] = useState(true);
   const [activeTaskCount, setActiveTaskCount] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem('closerToken');
-    
+
     if (!token) {
       router.push('/closers/login');
       return;
@@ -99,7 +99,7 @@ export default function CloserScripts() {
         // Handle both response formats: array directly or { tasks: [...] }
         const tasksArray = Array.isArray(tasks) ? tasks : (tasks.tasks || []);
         // Count all non-completed tasks (exclude cancelled)
-        const activeCount = tasksArray.filter((t: any) => 
+        const activeCount = tasksArray.filter((t: { status: string }) =>
           (t.status === 'pending' || t.status === 'in_progress')
         ).length;
         setActiveTaskCount(activeCount);
@@ -485,221 +485,216 @@ BrightNest Financial Advisor`
         <ContentLoader />
       ) : (
         <>
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top Header Bar */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Scripts & Templates</h2>
-            <p className="text-sm text-gray-600 mt-1">Call scripts and email templates organized by stage</p>
-          </div>
-        </div>
-
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
-
-        {/* Tabs */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
-          <div className="border-b border-gray-200">
-            <nav className="flex -mb-px">
-              <button
-                onClick={() => setActiveTab('call')}
-                className={`flex-1 py-4 px-6 text-center text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'call'
-                    ? 'border-purple-500 text-purple-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-center justify-center">
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                  </svg>
-                  Call Scripts
-                </div>
-              </button>
-              <button
-                onClick={() => setActiveTab('email')}
-                className={`flex-1 py-4 px-6 text-center text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === 'email'
-                    ? 'border-purple-500 text-purple-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-center justify-center">
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  Email Templates
-                </div>
-              </button>
-            </nav>
-          </div>
-
-          {/* Call Scripts Content */}
-          {activeTab === 'call' && (
-            <div className="p-6">
-              {/* Sub-navigation for Call Scripts */}
-              <div className="mb-6 flex space-x-4 border-b border-gray-200 pb-4">
-                <button
-                  onClick={() => setActiveCallCategory('script')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    activeCallCategory === 'script'
-                      ? 'bg-purple-100 text-purple-700 border border-purple-200'
-                      : 'text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  Call Script
-                </button>
-                <button
-                  onClick={() => setActiveCallCategory('program')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    activeCallCategory === 'program'
-                      ? 'bg-purple-100 text-purple-700 border border-purple-200'
-                      : 'text-gray-700 hover:bg-gray-50'
-                  }`}
-                >
-                  Program Details
-                </button>
+          {/* Main Content Area */}
+          <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+            {/* Top Header Bar */}
+            <div className="bg-white border-b border-gray-200 px-6 py-4">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Scripts & Templates</h2>
+                <p className="text-sm text-gray-600 mt-1">Call scripts and email templates organized by stage</p>
               </div>
+            </div>
 
-              {/* Call Script View */}
-              {activeCallCategory === 'script' && (
-                <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                  <div className="flex items-start justify-between mb-4">
-                    <h3 className="text-xl font-bold text-gray-900">Complete Call Script</h3>
-                    <button
-                      onClick={() => copyToClipboard(callScript)}
-                      className="flex items-center space-x-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                      <span>Copy Script</span>
-                    </button>
-                  </div>
-                  <div className="prose max-w-none">
-                    <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-6 rounded border border-gray-200 leading-relaxed">
-                      {callScript}
-                    </pre>
-                  </div>
-                </div>
-              )}
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto">
+              <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
 
-              {/* Program Details View */}
-              {activeCallCategory === 'program' && (
-                <div className="space-y-6">
-                  {Object.entries(programDetails).map(([key, content]) => {
-                    const titles: { [key: string]: string } = {
-                      companyOverview: 'Company Overview',
-                      programBenefits: 'Program Benefits & Features',
-                      pricing: 'Pricing Information',
-                      commonQuestions: 'Common Questions & Answers',
-                      process: 'The Process'
-                    };
-                    const contentStr = typeof content === 'string' ? content : String(content);
-                    
-                    return (
-                      <div key={key} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                        <div className="flex items-start justify-between mb-4">
-                          <h3 className="text-xl font-bold text-gray-900">{titles[key]}</h3>
-                          <button
-                            onClick={() => copyToClipboard(contentStr)}
-                            className="flex items-center space-x-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                            <span>Copy Section</span>
-                          </button>
+                {/* Tabs */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+                  <div className="border-b border-gray-200">
+                    <nav className="flex -mb-px">
+                      <button
+                        onClick={() => setActiveTab('call')}
+                        className={`flex-1 py-4 px-6 text-center text-sm font-medium border-b-2 transition-colors ${activeTab === 'call'
+                          ? 'border-purple-500 text-purple-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                          }`}
+                      >
+                        <div className="flex items-center justify-center">
+                          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          </svg>
+                          Call Scripts
                         </div>
-                        <div className="prose max-w-none">
-                          <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-6 rounded border border-gray-200 leading-relaxed">
-                            {contentStr}
-                          </pre>
+                      </button>
+                      <button
+                        onClick={() => setActiveTab('email')}
+                        className={`flex-1 py-4 px-6 text-center text-sm font-medium border-b-2 transition-colors ${activeTab === 'email'
+                          ? 'border-purple-500 text-purple-600'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                          }`}
+                      >
+                        <div className="flex items-center justify-center">
+                          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                          Email Templates
+                        </div>
+                      </button>
+                    </nav>
+                  </div>
+
+                  {/* Call Scripts Content */}
+                  {activeTab === 'call' && (
+                    <div className="p-6">
+                      {/* Sub-navigation for Call Scripts */}
+                      <div className="mb-6 flex space-x-4 border-b border-gray-200 pb-4">
+                        <button
+                          onClick={() => setActiveCallCategory('script')}
+                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeCallCategory === 'script'
+                            ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                            : 'text-gray-700 hover:bg-gray-50'
+                            }`}
+                        >
+                          Call Script
+                        </button>
+                        <button
+                          onClick={() => setActiveCallCategory('program')}
+                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeCallCategory === 'program'
+                            ? 'bg-purple-100 text-purple-700 border border-purple-200'
+                            : 'text-gray-700 hover:bg-gray-50'
+                            }`}
+                        >
+                          Program Details
+                        </button>
+                      </div>
+
+                      {/* Call Script View */}
+                      {activeCallCategory === 'script' && (
+                        <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                          <div className="flex items-start justify-between mb-4">
+                            <h3 className="text-xl font-bold text-gray-900">Complete Call Script</h3>
+                            <button
+                              onClick={() => copyToClipboard(callScript)}
+                              className="flex items-center space-x-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                              </svg>
+                              <span>Copy Script</span>
+                            </button>
+                          </div>
+                          <div className="prose max-w-none">
+                            <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-6 rounded border border-gray-200 leading-relaxed">
+                              {callScript}
+                            </pre>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Program Details View */}
+                      {activeCallCategory === 'program' && (
+                        <div className="space-y-6">
+                          {Object.entries(programDetails).map(([key, content]) => {
+                            const titles: { [key: string]: string } = {
+                              companyOverview: 'Company Overview',
+                              programBenefits: 'Program Benefits & Features',
+                              pricing: 'Pricing Information',
+                              commonQuestions: 'Common Questions & Answers',
+                              process: 'The Process'
+                            };
+                            const contentStr = typeof content === 'string' ? content : String(content);
+
+                            return (
+                              <div key={key} className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                                <div className="flex items-start justify-between mb-4">
+                                  <h3 className="text-xl font-bold text-gray-900">{titles[key]}</h3>
+                                  <button
+                                    onClick={() => copyToClipboard(contentStr)}
+                                    className="flex items-center space-x-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                    </svg>
+                                    <span>Copy Section</span>
+                                  </button>
+                                </div>
+                                <div className="prose max-w-none">
+                                  <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-6 rounded border border-gray-200 leading-relaxed">
+                                    {contentStr}
+                                  </pre>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Email Templates Content */}
+                  {activeTab === 'email' && (
+                    <div className="p-6">
+                      {/* Email Category Selector */}
+                      <div className="mb-6">
+                        <label className="block text-sm font-semibold text-gray-700 mb-3">Email Template by Stage:</label>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          {Object.entries(emailTemplates).map(([key, template]) => {
+                            const templateObj = template as { title: string; subject: string; content: string };
+                            return (
+                              <button
+                                key={key}
+                                onClick={() => setActiveEmailCategory(key)}
+                                className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left ${activeEmailCategory === key
+                                  ? 'bg-purple-100 text-purple-700 border-2 border-purple-500'
+                                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent'
+                                  }`}
+                              >
+                                {templateObj.title}
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
 
-          {/* Email Templates Content */}
-          {activeTab === 'email' && (
-            <div className="p-6">
-              {/* Email Category Selector */}
-              <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-700 mb-3">Email Template by Stage:</label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {Object.entries(emailTemplates).map(([key, template]) => {
-                    const templateObj = template as { title: string; subject: string; content: string };
-                    return (
-                      <button
-                        key={key}
-                        onClick={() => setActiveEmailCategory(key)}
-                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors text-left ${
-                          activeEmailCategory === key
-                            ? 'bg-purple-100 text-purple-700 border-2 border-purple-500'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-transparent'
-                        }`}
-                      >
-                        {templateObj.title}
-                      </button>
-                    );
-                  })}
+                      {/* Selected Email Template */}
+                      {emailTemplates[activeEmailCategory as keyof typeof emailTemplates] && (() => {
+                        const template = emailTemplates[activeEmailCategory as keyof typeof emailTemplates] as { title: string; subject: string; content: string };
+                        return (
+                          <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                            <div className="flex items-start justify-between mb-4">
+                              <div>
+                                <h3 className="text-xl font-bold text-gray-900 mb-2">{template.title}</h3>
+                                <div className="bg-white px-4 py-2 rounded-lg border border-gray-200 inline-block">
+                                  <span className="text-sm text-gray-600">Subject: </span>
+                                  <span className="text-sm font-semibold text-gray-900">{template.subject}</span>
+                                </div>
+                              </div>
+                              <button
+                                onClick={() => copyToClipboard(template.content)}
+                                className="flex items-center space-x-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                                <span>Copy Email</span>
+                              </button>
+                            </div>
+                            <div className="prose max-w-none">
+                              <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-4 rounded border border-gray-200">
+                                {template.content}
+                              </pre>
+                            </div>
+                            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                              <p className="text-sm text-blue-800">
+                                <strong>When to use:</strong> {template.title === 'Initial Contact / Confirmation' ? 'Send this before the scheduled call' :
+                                  template.title === 'Purchase Confirmation / Thank You' ? 'Send after a successful conversion (outcome: converted)' :
+                                    template.title === 'Not Interested - Follow Up' ? 'Send after marking lead as "Not Interested" (outcome: not_interested)' :
+                                      template.title === 'Needs Follow Up' ? 'Send after marking lead as "Needs Follow Up" (outcome: needs_follow_up)' :
+                                        template.title === 'Callback Requested' ? 'Send when lead requests a callback (outcome: callback_requested)' :
+                                          template.title === 'Rescheduled Appointment' ? 'Send after rescheduling an appointment (outcome: rescheduled)' :
+                                            template.title === 'No Answer - Follow Up' ? 'Send after marking lead as "No Answer" (outcome: no_answer)' : 'Use as appropriate for the situation'}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  )}
                 </div>
               </div>
-
-              {/* Selected Email Template */}
-              {emailTemplates[activeEmailCategory as keyof typeof emailTemplates] && (() => {
-                const template = emailTemplates[activeEmailCategory as keyof typeof emailTemplates] as { title: string; subject: string; content: string };
-                return (
-                  <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">{template.title}</h3>
-                        <div className="bg-white px-4 py-2 rounded-lg border border-gray-200 inline-block">
-                          <span className="text-sm text-gray-600">Subject: </span>
-                          <span className="text-sm font-semibold text-gray-900">{template.subject}</span>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => copyToClipboard(template.content)}
-                        className="flex items-center space-x-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                        </svg>
-                        <span>Copy Email</span>
-                      </button>
-                    </div>
-                    <div className="prose max-w-none">
-                      <pre className="whitespace-pre-wrap text-sm text-gray-700 font-sans bg-white p-4 rounded border border-gray-200">
-                        {template.content}
-                      </pre>
-                    </div>
-                    <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                      <p className="text-sm text-blue-800">
-                        <strong>When to use:</strong> {template.title === 'Initial Contact / Confirmation' ? 'Send this before the scheduled call' :
-                        template.title === 'Purchase Confirmation / Thank You' ? 'Send after a successful conversion (outcome: converted)' :
-                        template.title === 'Not Interested - Follow Up' ? 'Send after marking lead as "Not Interested" (outcome: not_interested)' :
-                        template.title === 'Needs Follow Up' ? 'Send after marking lead as "Needs Follow Up" (outcome: needs_follow_up)' :
-                        template.title === 'Callback Requested' ? 'Send when lead requests a callback (outcome: callback_requested)' :
-                        template.title === 'Rescheduled Appointment' ? 'Send after rescheduling an appointment (outcome: rescheduled)' :
-                        template.title === 'No Answer - Follow Up' ? 'Send after marking lead as "No Answer" (outcome: no_answer)' : 'Use as appropriate for the situation'}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })()}
             </div>
-          )}
-        </div>
           </div>
-        </div>
-      </div>
         </>
       )}
     </div>

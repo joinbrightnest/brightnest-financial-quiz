@@ -35,9 +35,9 @@ interface QuizAnalyticsProps {
     error: string | null;
     onRetry: () => void;
     affiliates: Array<{ id: string; name: string; referralCode: string }>;
-    retentionChartData: any;
-    dailyActivityData: any;
-    clicksActivityData: any;
+    retentionChartData: import('chart.js').ChartData<'line'> | null;
+    dailyActivityData: import('chart.js').ChartData<'line'> | null;
+    clicksActivityData: import('chart.js').ChartData<'line'> | null;
     hasInitiallyLoaded: boolean;
     onRefreshData?: () => void; // Optional refresh function to bypass cache
 }

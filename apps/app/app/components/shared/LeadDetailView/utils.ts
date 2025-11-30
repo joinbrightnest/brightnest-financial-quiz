@@ -73,7 +73,9 @@ export const getLeadName = (leadData: LeadData | null): string => {
             a.question?.prompt?.toLowerCase().includes('name')
     );
 
-    return nameAnswer?.answer || nameAnswer?.value || 'Lead Profile';
+    const value = nameAnswer?.answer || nameAnswer?.value;
+    if (typeof value === 'object') return JSON.stringify(value);
+    return String(value || 'Lead Profile');
 };
 
 /**
@@ -88,10 +90,12 @@ export const getLeadEmail = (leadData: LeadData | null): string => {
             a.questionText?.toLowerCase().includes('email') ||
             a.question?.prompt?.toLowerCase().includes('email') ||
             a.answer?.includes('@') ||
-            a.value?.includes('@')
+            String(a.value || '').includes('@')
     );
 
-    return emailAnswer?.answer || emailAnswer?.value || 'N/A';
+    const value = emailAnswer?.answer || emailAnswer?.value;
+    if (typeof value === 'object') return JSON.stringify(value);
+    return String(value || 'N/A');
 };
 
 /**

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { PayoutStatus } from "@prisma/client";
+import { PayoutStatus, Prisma } from "@prisma/client";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
 
 export async function GET(request: NextRequest) {
@@ -11,17 +11,17 @@ export async function GET(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status") || "approved";
     const tier = searchParams.get("tier") || "all";
     const dateRange = searchParams.get("dateRange") || "all";
-    
+
     // Calculate date filter
     const now = new Date();
     let startDate: Date;
-    
+
     switch (dateRange) {
       case "24h":
         startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -43,16 +43,16 @@ export async function GET(request: NextRequest) {
     }
 
     // Build where clause
-    const whereClause: any = {};
-    
+    const whereClause: Prisma.AffiliateWhereInput = {};
+
     if (status === "approved") {
       whereClause.isApproved = true;
     } else if (status === "pending") {
       whereClause.isApproved = false;
     }
-    
+
     if (tier !== "all") {
-      whereClause.tier = tier;
+      whereClause.tier = tier as import("@prisma/client").AffiliateTier;
     }
 
     // Get affiliates with payout data and conversions
@@ -80,21 +80,21 @@ export async function GET(request: NextRequest) {
       const totalPaid = affiliate.payouts
         ?.filter(payout => payout.status === 'completed')
         .reduce((sum, payout) => sum + Number(payout.amountDue), 0) || 0;
-      
+
       // Calculate pending commissions (held commissions)
       const pendingCommissions = affiliate.conversions
         .filter(conv => conv.commissionStatus === 'held')
         .reduce((sum, conv) => sum + Number(conv.commissionAmount), 0);
-      
+
       // Calculate sum of available conversions (before subtracting paid amounts)
       const availableConversionsSum = affiliate.conversions
         .filter(conv => conv.commissionStatus === 'available')
         .reduce((sum, conv) => sum + Number(conv.commissionAmount), 0);
-      
+
       // Calculate actual available commission (available conversions - already paid out)
       // This handles partial payments correctly
       const availableCommissions = Math.max(0, availableConversionsSum - totalPaid);
-      
+
       // Calculate pending payouts (payouts with pending status)
       const pendingPayouts = affiliate.payouts
         ?.filter(payout => payout.status === 'pending')
@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching affiliates:", error);
     return NextResponse.json(
-      { 
+      {
         success: false,
         error: "Failed to fetch affiliates",
         details: error instanceof Error ? error.message : "Unknown error"

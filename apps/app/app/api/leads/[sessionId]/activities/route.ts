@@ -110,7 +110,7 @@ export async function GET(
             timestamp: string;
             leadName: string;
             actor?: string;
-            details?: any;
+            details?: Record<string, unknown>;
         }> = [];
 
         // 1. Quiz completed activity
@@ -220,13 +220,13 @@ export async function GET(
 
                 // Filter logs for this specific appointment
                 const appointmentOutcomeLogs = outcomeAuditLogs.filter(log => {
-                    const details = log.details as any;
+                    const details = log.details as Record<string, unknown>;
                     return details?.appointmentId === appointment.id;
                 });
 
                 // Add each outcome change as an activity with call details
                 appointmentOutcomeLogs.forEach((log, index) => {
-                    const details = log.details as any;
+                    const details = log.details as Record<string, unknown>;
                     const outcome = details?.outcome;
 
                     // Skip converted outcomes (they'll be shown as "deal_closed" instead)
@@ -235,7 +235,7 @@ export async function GET(
                     // Get recording link and notes from the audit log details first
                     const recordingLink = details?.hasOwnProperty('recordingLink')
                         ? details.recordingLink
-                        : getLegacyRecordingLink(outcome);
+                        : getLegacyRecordingLink(outcome as string | null);
 
                     const notes = details?.hasOwnProperty('notes')
                         ? details.notes
@@ -246,7 +246,7 @@ export async function GET(
 
                     activities.push({
                         id: `outcome_${log.id}`,
-                        type: isFirstOutcome ? 'outcome_marked' : 'outcome_updated' as any,
+                        type: isFirstOutcome ? 'outcome_marked' : 'outcome_updated',
                         timestamp: (log.createdAt || new Date()).toISOString(),
                         leadName,
                         actor: log.closer?.name || 'Unknown',
@@ -278,12 +278,12 @@ export async function GET(
 
                     // Find the audit log entry for the "converted" outcome
                     const convertedOutcomeLog = appointmentOutcomeLogs.find((log) => {
-                        const details = log.details as any;
+                        const details = log.details as Record<string, unknown>;
                         return details?.outcome === 'converted';
                     });
 
                     // Get recording link and notes from audit log if available
-                    const convertedDetails = convertedOutcomeLog?.details as any;
+                    const convertedDetails = convertedOutcomeLog?.details as Record<string, unknown>;
                     const recordingLink = convertedDetails?.hasOwnProperty('recordingLink')
                         ? convertedDetails.recordingLink
                         : getLegacyRecordingLink('converted') || appointment.recordingLink || null;

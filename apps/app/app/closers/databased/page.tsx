@@ -157,7 +157,7 @@ export default function CloserDatabase() {
       if (response.ok) {
         const tasks = await response.json();
         const tasksArray = Array.isArray(tasks) ? tasks : (tasks.tasks || []);
-        const activeCount = tasksArray.filter((t: any) =>
+        const activeCount = tasksArray.filter((t: { status: string }) =>
           (t.status === 'pending' || t.status === 'in_progress')
         ).length;
         setActiveTaskCount(activeCount);

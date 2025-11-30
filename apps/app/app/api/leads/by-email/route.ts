@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, JWT_SECRET) as { role: string; closerId?: string };
 
     // Allow both closer and admin to access this endpoint
     if (decoded.role !== 'closer' && decoded.role !== 'admin') {
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
 
     // Find the lead by email in quiz answers - use simpler search
     const emailLower = email.toLowerCase();
-    
+
     const quizSessions = await prisma.quizSession.findMany({
       include: {
         answers: {
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
           name: true
         }
       });
-      
+
       if (affiliate) {
         source = affiliate.name;
       }
@@ -108,8 +108,8 @@ export async function GET(request: NextRequest) {
 
     // For deal close date, use appointment updatedAt when outcome is converted
     // This approximates when the deal was closed (when outcome was set)
-    const dealClosedAt = appointment?.outcome === 'converted' && appointment?.updatedAt 
-      ? appointment.updatedAt.toISOString() 
+    const dealClosedAt = appointment?.outcome === 'converted' && appointment?.updatedAt
+      ? appointment.updatedAt.toISOString()
       : null;
 
     return NextResponse.json({

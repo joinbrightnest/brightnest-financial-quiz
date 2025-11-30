@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export async function POST(request: NextRequest) {
   // 🔒 SECURITY: Require admin authentication
@@ -10,7 +11,7 @@ export async function POST(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
     const { affiliateId, approved, customTrackingLink } = await request.json();
 
@@ -35,10 +36,10 @@ export async function POST(request: NextRequest) {
 
     if (approved) {
       // APPROVE: Update affiliate with custom tracking link or keep auto-generated
-      let updateData: any = {
+      let updateData: Prisma.AffiliateUpdateInput = {
         isApproved: true,  // Mark as approved so they can log in
       };
-      
+
       if (customTrackingLink && customTrackingLink.trim()) {
         // Use custom tracking link
         const cleanTrackingLink = customTrackingLink.trim().replace(/^\/+/, '');
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
     } else {
       // REJECT: Mark affiliate as inactive instead of deleting
       console.log(`Rejecting affiliate: ${currentAffiliate.name} (${currentAffiliate.email})`);
-      
+
       // Mark as inactive and unapproved instead of deleting
       await prisma.affiliate.update({
         where: { id: affiliateId },

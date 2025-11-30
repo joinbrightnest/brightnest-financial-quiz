@@ -132,7 +132,7 @@ export default function CloserDashboard() {
         // Handle both response formats: array directly or { tasks: [...] }
         const tasksArray = Array.isArray(tasks) ? tasks : (tasks.tasks || []);
         // Count all non-completed tasks (exclude cancelled)
-        const activeCount = tasksArray.filter((t: any) =>
+        const activeCount = tasksArray.filter((t: { status: string }) =>
           (t.status === 'pending' || t.status === 'in_progress')
         ).length;
         setActiveTaskCount(activeCount);
@@ -425,7 +425,7 @@ export default function CloserDashboard() {
                           </svg>
                         </div>
                         <h3 className="text-lg font-medium text-gray-900 mb-2">No appointments</h3>
-                        <p className="text-gray-500">You don't have any appointments yet.</p>
+                        <p className="text-gray-400">You haven&apos;t completed any tasks yet.</p>
                       </div>
                     ) : (
                       <table className="min-w-full divide-y divide-gray-200">

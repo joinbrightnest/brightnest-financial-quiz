@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { verifyAdminAuth } from '@/lib/admin-auth-server';
 import { getCloserIdFromToken } from '@/lib/closer-auth';
 
@@ -51,7 +52,7 @@ export async function PUT(
             }
         }
 
-        const updateData: any = {};
+        const updateData: Prisma.TaskUpdateInput = {};
         if (title !== undefined) updateData.title = title;
         if (description !== undefined) updateData.description = description;
         if (priority !== undefined) updateData.priority = priority;

@@ -14,14 +14,14 @@ interface QuizSession {
   answers: QuizAnswer[];
   result?: {
     archetype: string;
-    scores: any;
+    scores: Record<string, number>;
   };
 }
 
 interface QuizAnswer {
   id: string;
   questionId: string;
-  value: any;
+  value: string | number | boolean | string[] | Record<string, unknown>;
   question: {
     id: string;
     prompt: string;
@@ -89,13 +89,13 @@ export default function LeadsPage() {
       if (filters.quizType !== 'all') {
         params.append('quizType', filters.quizType);
       }
-      
+
       const queryString = params.toString();
       const url = queryString ? `/api/admin/basic-stats?${queryString}` : '/api/admin/basic-stats';
-      
+
       const response = await fetch(url);
       const data = await response.json();
-      console.log('🔍 API Response - First 3 leads:', data.allLeads?.slice(0, 3).map((lead: any) => ({ id: lead.id, status: lead.status })));
+      console.log('🔍 API Response - First 3 leads:', data.allLeads?.slice(0, 3).map((lead: QuizSession) => ({ id: lead.id, status: lead.status })));
       setLeads(data.allLeads || []);
     } catch (error) {
       console.error('Error fetching leads:', error);
@@ -121,12 +121,12 @@ export default function LeadsPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           filters,
-          exportOptions 
+          exportOptions
         }),
       });
-      
+
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -148,7 +148,7 @@ export default function LeadsPage() {
     const now = new Date();
     let startDate = '';
     let endDate = '';
-    
+
     if (range === '7days') {
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       startDate = weekAgo.toISOString().split('T')[0];
@@ -162,7 +162,7 @@ export default function LeadsPage() {
       startDate = quarterAgo.toISOString().split('T')[0];
       endDate = now.toISOString().split('T')[0];
     }
-    
+
     setFilters(prev => ({
       ...prev,
       dateRange: range,
@@ -199,15 +199,15 @@ export default function LeadsPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           filters: {
             ...filters,
             selectedLeadIds: Array.from(selectedLeads)
           },
-          exportOptions 
+          exportOptions
         }),
       });
-      
+
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -231,12 +231,12 @@ export default function LeadsPage() {
       if (filters.quizType !== 'all' && lead.quizType !== filters.quizType) return false;
       if (filters.status !== 'all' && lead.status !== filters.status) return false;
       if (filters.archetype !== 'all' && lead.result?.archetype !== filters.archetype) return false;
-      
+
       // Date filtering
       if (filters.dateRange !== 'all' || filters.startDate || filters.endDate) {
         const leadDate = new Date(lead.createdAt);
         const now = new Date();
-        
+
         if (filters.dateRange === '7days') {
           const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
           if (leadDate < weekAgo) return false;
@@ -247,19 +247,19 @@ export default function LeadsPage() {
           const quarterAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
           if (leadDate < quarterAgo) return false;
         }
-        
+
         if (filters.startDate) {
           const startDate = new Date(filters.startDate);
           if (leadDate < startDate) return false;
         }
-        
+
         if (filters.endDate) {
           const endDate = new Date(filters.endDate);
           endDate.setHours(23, 59, 59, 999); // End of day
           if (leadDate > endDate) return false;
         }
       }
-      
+
       return true;
     });
   };
@@ -375,8 +375,8 @@ export default function LeadsPage() {
                       </div>
                     </div>
                     <div className="w-full bg-gray-100 rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300" 
+                      <div
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${percentage}%` }}
                       ></div>
                     </div>
@@ -408,8 +408,8 @@ export default function LeadsPage() {
                       </div>
                     </div>
                     <div className="w-full bg-gray-100 rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-300" 
+                      <div
+                        className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${percentage}%` }}
                       ></div>
                     </div>
@@ -462,7 +462,7 @@ export default function LeadsPage() {
       }
       return acc;
     }, {} as { [key: string]: number });
-    
+
     return (
       <div className="space-y-6">
         {/* Header Section */}
@@ -502,8 +502,8 @@ export default function LeadsPage() {
                       </div>
                     </div>
                     <div className="w-full bg-gray-100 rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-300" 
+                      <div
+                        className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${percentage}%` }}
                       ></div>
                     </div>
@@ -513,7 +513,7 @@ export default function LeadsPage() {
             </div>
           </div>
         )}
-        
+
         {/* Leads Table */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
@@ -533,66 +533,64 @@ export default function LeadsPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-              {filteredLeads.map((lead) => {
-                const nameAnswer = lead.answers.find(a => 
-                  a.question?.prompt?.toLowerCase().includes('name') ||
-                  a.question?.prompt?.toLowerCase().includes('name')
-                );
-                const emailAnswer = lead.answers.find(a => 
-                  a.question?.prompt?.toLowerCase().includes('email') ||
-                  a.question?.prompt?.toLowerCase().includes('email')
-                );
-                
-                return (
-                  <tr key={lead.id} className="hover:bg-gray-50 transition-colors duration-150">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-mono text-gray-900">{lead.id.slice(0, 8)}...</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{nameAnswer?.value || "N/A"}</div>
-                      <div className="text-xs text-gray-500">{emailAnswer?.value || "No email"}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{new Date(lead.createdAt).toLocaleDateString()}</div>
-                      <div className="text-xs text-gray-500">{new Date(lead.createdAt).toLocaleTimeString()}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
-                        lead.status === "Completed" 
-                          ? "bg-green-100 text-green-800 border border-green-200" 
+                {filteredLeads.map((lead) => {
+                  const nameAnswer = lead.answers.find(a =>
+                    a.question?.prompt?.toLowerCase().includes('name') ||
+                    a.question?.prompt?.toLowerCase().includes('name')
+                  );
+                  const emailAnswer = lead.answers.find(a =>
+                    a.question?.prompt?.toLowerCase().includes('email') ||
+                    a.question?.prompt?.toLowerCase().includes('email')
+                  );
+
+                  return (
+                    <tr key={lead.id} className="hover:bg-gray-50 transition-colors duration-150">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-mono text-gray-900">{lead.id.slice(0, 8)}...</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{typeof nameAnswer?.value === 'object' ? JSON.stringify(nameAnswer.value) : (nameAnswer?.value || "N/A")}</div>
+                        <div className="text-xs text-gray-500">{typeof emailAnswer?.value === 'object' ? JSON.stringify(emailAnswer.value) : (emailAnswer?.value || "No email")}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">{new Date(lead.createdAt).toLocaleDateString()}</div>
+                        <div className="text-xs text-gray-500">{new Date(lead.createdAt).toLocaleTimeString()}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${lead.status === "Completed"
+                          ? "bg-green-100 text-green-800 border border-green-200"
                           : lead.status === "Booked"
-                          ? "bg-blue-100 text-blue-800 border border-blue-200"
-                          : "bg-orange-100 text-orange-800 border border-orange-200"
-                      }`}>
-                        {lead.status} {/* DEBUG: {lead.id.slice(0,8)} */}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        lead.source?.includes('Affiliate') 
-                          ? "bg-blue-100 text-blue-800" 
+                            ? "bg-blue-100 text-blue-800 border border-blue-200"
+                            : "bg-orange-100 text-orange-800 border border-orange-200"
+                          }`}>
+                          {lead.status} {/* DEBUG: {lead.id.slice(0,8)} */}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${lead.source?.includes('Affiliate')
+                          ? "bg-blue-100 text-blue-800"
                           : "bg-gray-100 text-gray-800"
-                      }`}>
-                        {lead.source || 'Website'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <button
-                        onClick={() => router.push(`/admin/leads/${lead.id}`)}
-                        className="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150"
-                      >
-                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        View Details
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                          }`}>
+                          {lead.source || 'Website'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <button
+                          onClick={() => router.push(`/admin/leads/${lead.id}`)}
+                          className="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-150"
+                        >
+                          <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          View Details
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -614,7 +612,7 @@ export default function LeadsPage() {
           <div className="flex space-x-2">
             <select
               value={filters.quizType}
-              onChange={(e) => setFilters({...filters, quizType: e.target.value})}
+              onChange={(e) => setFilters({ ...filters, quizType: e.target.value })}
               className="text-sm border border-gray-300 rounded px-2 py-1 text-black"
             >
               <option value="all">All Quiz Types</option>
@@ -624,7 +622,7 @@ export default function LeadsPage() {
             </select>
             <select
               value={filters.status}
-              onChange={(e) => setFilters({...filters, status: e.target.value})}
+              onChange={(e) => setFilters({ ...filters, status: e.target.value })}
               className="text-sm border border-gray-300 rounded px-2 py-1 text-black"
             >
               <option value="all">All Status</option>
@@ -647,14 +645,14 @@ export default function LeadsPage() {
                 <input
                   type="date"
                   value={filters.startDate}
-                  onChange={(e) => setFilters({...filters, startDate: e.target.value})}
+                  onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
                   className="text-sm border border-gray-300 rounded px-2 py-1 text-black"
                   placeholder="Start Date"
                 />
                 <input
                   type="date"
                   value={filters.endDate}
-                  onChange={(e) => setFilters({...filters, endDate: e.target.value})}
+                  onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
                   className="text-sm border border-gray-300 rounded px-2 py-1 text-black"
                   placeholder="End Date"
                 />
@@ -662,55 +660,54 @@ export default function LeadsPage() {
             )}
           </div>
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  {showLeadCheckboxes && (
-                    <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
-                      <input
-                        type="checkbox"
-                        checked={selectedLeads.size === getFilteredLeads().length && getFilteredLeads().length > 0}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            selectAllLeads();
-                          } else {
-                            deselectAllLeads();
-                          }
-                        }}
-                        className="w-4 h-4 text-slate-700 bg-white border-gray-300 rounded focus:ring-slate-500 focus:ring-2"
-                      />
-                    </th>
-                  )}
-                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Session ID</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Quiz Type</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Name</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Email</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Answers Count</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Stage</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
+            <thead className="bg-gray-50">
+              <tr>
+                {showLeadCheckboxes && (
+                  <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
+                    <input
+                      type="checkbox"
+                      checked={selectedLeads.size === getFilteredLeads().length && getFilteredLeads().length > 0}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          selectAllLeads();
+                        } else {
+                          deselectAllLeads();
+                        }
+                      }}
+                      className="w-4 h-4 text-slate-700 bg-white border-gray-300 rounded focus:ring-slate-500 focus:ring-2"
+                    />
+                  </th>
+                )}
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Session ID</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Quiz Type</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Name</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Email</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Answers Count</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Stage</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {getFilteredLeads().map((lead) => {
-                const nameAnswer = lead.answers.find(a => 
+                const nameAnswer = lead.answers.find(a =>
                   a.question?.prompt?.toLowerCase().includes('name') ||
                   a.question?.prompt?.toLowerCase().includes('name')
                 );
-                const emailAnswer = lead.answers.find(a => 
+                const emailAnswer = lead.answers.find(a =>
                   a.question?.prompt?.toLowerCase().includes('email') ||
                   a.question?.prompt?.toLowerCase().includes('email')
                 );
-                
+
                 return (
-                  <tr 
-                    key={lead.id} 
-                    className={`transition-all duration-200 ${
-                      showLeadCheckboxes && selectedLeads.has(lead.id)
-                        ? 'bg-slate-50 border-l-4 border-slate-700'
-                        : 'hover:bg-gray-50'
-                    }`}
+                  <tr
+                    key={lead.id}
+                    className={`transition-all duration-200 ${showLeadCheckboxes && selectedLeads.has(lead.id)
+                      ? 'bg-slate-50 border-l-4 border-slate-700'
+                      : 'hover:bg-gray-50'
+                      }`}
                   >
                     {showLeadCheckboxes && (
                       <td className="px-4 py-4 whitespace-nowrap">
@@ -729,22 +726,21 @@ export default function LeadsPage() {
                       {getQuizTypeDisplayName(lead.quizType)}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
-                      {nameAnswer?.value || "N/A"}
+                      {typeof nameAnswer?.value === 'object' ? JSON.stringify(nameAnswer.value) : (nameAnswer?.value || "N/A")}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
-                      {emailAnswer?.value || "N/A"}
+                      {typeof emailAnswer?.value === 'object' ? JSON.stringify(emailAnswer.value) : (emailAnswer?.value || "N/A")}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-black">
                       {lead.answers.length}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        lead.status === "Completed" 
-                          ? "bg-green-100 text-green-800" 
-                          : lead.status === "Booked"
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${lead.status === "Completed"
+                        ? "bg-green-100 text-green-800"
+                        : lead.status === "Booked"
                           ? "bg-blue-100 text-blue-800"
                           : "bg-orange-100 text-orange-800"
-                      }`}>
+                        }`}>
                         {lead.status}
                       </span>
                     </td>
@@ -769,7 +765,7 @@ export default function LeadsPage() {
   const renderSegmentsTab = () => {
     const archetypeStats = getArchetypeStats();
     const quizTypeStats = getQuizTypeStats();
-    
+
     return (
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -785,7 +781,7 @@ export default function LeadsPage() {
                   </div>
                   <button
                     onClick={() => {
-                      setFilters({...filters, archetype});
+                      setFilters({ ...filters, archetype });
                       setActiveTab('answers');
                     }}
                     className="text-blue-600 hover:text-blue-800 text-xs px-2 py-1 border border-blue-300 rounded"
@@ -926,11 +922,11 @@ export default function LeadsPage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-4 text-black">Loading leads...</p>
-            </div>
-          </div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-black">Loading leads...</p>
+        </div>
+      </div>
     );
   }
 
@@ -947,11 +943,10 @@ export default function LeadsPage() {
             <div className="flex space-x-3">
               <button
                 onClick={() => setShowLeadCheckboxes(!showLeadCheckboxes)}
-                className={`py-2.5 px-4 rounded-md transition-all duration-200 text-sm font-medium border ${
-                  showLeadCheckboxes 
-                    ? 'bg-slate-700 text-white border-slate-700 hover:bg-slate-800' 
-                    : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400'
-                }`}
+                className={`py-2.5 px-4 rounded-md transition-all duration-200 text-sm font-medium border ${showLeadCheckboxes
+                  ? 'bg-slate-700 text-white border-slate-700 hover:bg-slate-800'
+                  : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400'
+                  }`}
               >
                 {showLeadCheckboxes ? 'Hide Selection' : 'Select Leads'}
               </button>
@@ -972,11 +967,10 @@ export default function LeadsPage() {
                   <button
                     onClick={exportSelectedLeads}
                     disabled={selectedLeads.size === 0}
-                    className={`py-2.5 px-4 rounded-md transition-all duration-200 text-sm font-medium border ${
-                      selectedLeads.size === 0
-                        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                        : 'bg-slate-700 text-white border-slate-700 hover:bg-slate-800'
-                    }`}
+                    className={`py-2.5 px-4 rounded-md transition-all duration-200 text-sm font-medium border ${selectedLeads.size === 0
+                      ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                      : 'bg-slate-700 text-white border-slate-700 hover:bg-slate-800'
+                      }`}
                   >
                     Export Selected ({selectedLeads.size})
                   </button>
@@ -1017,11 +1011,10 @@ export default function LeadsPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as TabType)}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap flex items-center space-x-2 ${
-                    activeTab === tab.id
-                      ? 'border-slate-700 text-slate-700'
-                      : 'border-transparent text-gray-600 hover:text-slate-700 hover:border-gray-300'
-                  }`}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap flex items-center space-x-2 ${activeTab === tab.id
+                    ? 'border-slate-700 text-slate-700'
+                    : 'border-transparent text-gray-600 hover:text-slate-700 hover:border-gray-300'
+                    }`}
                 >
                   <span>{tab.icon}</span>
                   <span>{tab.label}</span>
@@ -1045,7 +1038,7 @@ export default function LeadsPage() {
               <h3 className="text-lg font-semibold text-gray-900">Export Configuration</h3>
               <p className="text-sm text-gray-600 mt-1">Choose what data to include in your export</p>
             </div>
-            
+
             <div className="p-6 space-y-6">
               {/* Export Options */}
               <div className="space-y-4">
@@ -1055,7 +1048,7 @@ export default function LeadsPage() {
                     <input
                       type="checkbox"
                       checked={exportOptions.includeContactInfo}
-                      onChange={(e) => setExportOptions({...exportOptions, includeContactInfo: e.target.checked})}
+                      onChange={(e) => setExportOptions({ ...exportOptions, includeContactInfo: e.target.checked })}
                       className="rounded border-gray-300 text-slate-700 focus:ring-slate-500"
                     />
                     <span className="text-sm text-gray-700">Contact Information (Name, Email)</span>
@@ -1064,7 +1057,7 @@ export default function LeadsPage() {
                     <input
                       type="checkbox"
                       checked={exportOptions.includeAnswers}
-                      onChange={(e) => setExportOptions({...exportOptions, includeAnswers: e.target.checked})}
+                      onChange={(e) => setExportOptions({ ...exportOptions, includeAnswers: e.target.checked })}
                       className="rounded border-gray-300 text-slate-700 focus:ring-slate-500"
                     />
                     <span className="text-sm text-gray-700">Quiz Answers</span>
@@ -1073,7 +1066,7 @@ export default function LeadsPage() {
                     <input
                       type="checkbox"
                       checked={exportOptions.includeResults}
-                      onChange={(e) => setExportOptions({...exportOptions, includeResults: e.target.checked})}
+                      onChange={(e) => setExportOptions({ ...exportOptions, includeResults: e.target.checked })}
                       className="rounded border-gray-300 text-slate-700 focus:ring-slate-500"
                     />
                     <span className="text-sm text-gray-700">Assessment Results (Archetype, Scores)</span>
@@ -1082,7 +1075,7 @@ export default function LeadsPage() {
                     <input
                       type="checkbox"
                       checked={exportOptions.includeTimestamps}
-                      onChange={(e) => setExportOptions({...exportOptions, includeTimestamps: e.target.checked})}
+                      onChange={(e) => setExportOptions({ ...exportOptions, includeTimestamps: e.target.checked })}
                       className="rounded border-gray-300 text-slate-700 focus:ring-slate-500"
                     />
                     <span className="text-sm text-gray-700">Timestamps (Created, Completed)</span>
@@ -1139,10 +1132,10 @@ export default function LeadsPage() {
                   <div>Status: {filters.status === 'all' ? 'All' : filters.status}</div>
                   <div>Date Range: {
                     filters.dateRange === 'all' ? 'All Time' :
-                    filters.dateRange === 'custom' ? `${filters.startDate} to ${filters.endDate}` :
-                    filters.dateRange === '7days' ? 'Last 7 Days' :
-                    filters.dateRange === '30days' ? 'Last 30 Days' :
-                    filters.dateRange === '90days' ? 'Last 90 Days' : 'All Time'
+                      filters.dateRange === 'custom' ? `${filters.startDate} to ${filters.endDate}` :
+                        filters.dateRange === '7days' ? 'Last 7 Days' :
+                          filters.dateRange === '30days' ? 'Last 30 Days' :
+                            filters.dateRange === '90days' ? 'Last 90 Days' : 'All Time'
                   }</div>
                 </div>
               </div>

@@ -31,7 +31,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Generated article data
   const [generatedArticle, setGeneratedArticle] = useState<{
     title: string;
@@ -56,7 +56,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
   const [statisticValue, setStatisticValue] = useState<string>('75%');
   const [ctaText, setCtaText] = useState<string>('CONTINUE');
   const [showCta, setShowCta] = useState<boolean>(true);
-  
+
   // Layout and positioning options
   const [textAlignment, setTextAlignment] = useState<string>('left');
   const [contentPosition, setContentPosition] = useState<string>('center');
@@ -65,20 +65,20 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
   const [contentPadding, setContentPadding] = useState<string>('normal');
   const [showTopBar, setShowTopBar] = useState<boolean>(true);
   const [topBarColor, setTopBarColor] = useState<string>('#1f2937');
-  
+
   // Text formatting options
   const [titleFontSize, setTitleFontSize] = useState<string>('large');
   const [titleFontWeight, setTitleFontWeight] = useState<string>('bold');
   const [contentFontSize, setContentFontSize] = useState<string>('normal');
   const [contentFontWeight, setContentFontWeight] = useState<string>('normal');
   const [lineHeight, setLineHeight] = useState<string>('normal');
-  
+
   // Image fields
   const [imageUrl, setImageUrl] = useState<string>('');
   const [imageAlt, setImageAlt] = useState<string>('');
   const [showImage, setShowImage] = useState<boolean>(false);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  
+
   // Editing state
   const [editingArticleId, setEditingArticleId] = useState<string | null>(null);
 
@@ -148,16 +148,55 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
     }
   }, [quizType]);
 
+  interface ArticleData {
+    id: string;
+    title?: string;
+    subtitle?: string;
+    content?: string;
+    backgroundColor?: string;
+    textColor?: string;
+    iconColor?: string;
+    accentColor?: string;
+    iconType?: string;
+    showIcon?: boolean;
+    showStatistic?: boolean;
+    statisticText?: string;
+    statisticValue?: string;
+    ctaText?: string;
+    showCta?: boolean;
+    textAlignment?: string;
+    contentPosition?: string;
+    backgroundStyle?: string;
+    backgroundGradient?: string;
+    contentPadding?: string;
+    showTopBar?: boolean;
+    topBarColor?: string;
+    titleFontSize?: string;
+    titleFontWeight?: string;
+    contentFontSize?: string;
+    contentFontWeight?: string;
+    lineHeight?: string;
+    imageUrl?: string;
+    imageAlt?: string;
+    showImage?: boolean;
+    triggers?: Array<{
+      questionId: string;
+      optionValue: string;
+    }>;
+    triggerQuestionId?: string;
+    triggerAnswerValue?: string;
+  }
+
   // Load editing article data from localStorage
   const loadEditingArticle = () => {
     const editingArticleData = localStorage.getItem('editingArticle');
     if (editingArticleData) {
       try {
-        const article: any = JSON.parse(editingArticleData);
-        
+        const article: ArticleData = JSON.parse(editingArticleData);
+
         // Set editing state
         setEditingArticleId(article.id);
-        
+
         // Pre-fill all form fields with article data
         setTitle(article.title || '');
         setSubtitle(article.subtitle || 'Financial Guidance');
@@ -173,7 +212,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         setStatisticValue(article.statisticValue || '75%');
         setCtaText(article.ctaText || 'CONTINUE');
         setShowCta(article.showCta !== false);
-        
+
         // Layout and positioning fields
         setTextAlignment(article.textAlignment || 'left');
         setContentPosition(article.contentPosition || 'center');
@@ -182,19 +221,19 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
         setContentPadding(article.contentPadding || 'normal');
         setShowTopBar(article.showTopBar !== false);
         setTopBarColor(article.topBarColor || '#1f2937');
-        
+
         // Text formatting fields
         setTitleFontSize(article.titleFontSize || 'large');
         setTitleFontWeight(article.titleFontWeight || 'bold');
         setContentFontSize(article.contentFontSize || 'normal');
         setContentFontWeight(article.contentFontWeight || 'normal');
         setLineHeight(article.lineHeight || 'normal');
-        
+
         // Image fields
         setImageUrl(article.imageUrl || '');
         setImageAlt(article.imageAlt || '');
         setShowImage(article.showImage || false);
-        
+
         // Find and set the question and answer
         // Check if article has triggers array (from API) or separate fields (from quiz editor)
         if (article.triggers && article.triggers.length > 0) {
@@ -206,10 +245,10 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
           setSelectedQuestion(article.triggerQuestionId);
           setSelectedOption(article.triggerAnswerValue);
         }
-        
+
         // Clear the localStorage after loading
         localStorage.removeItem('editingArticle');
-        
+
         console.log('Loaded editing article:', article);
         console.log('Article triggers:', article.triggers);
         console.log('Article triggerQuestionId:', article.triggerQuestionId);
@@ -251,7 +290,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
 
     window.addEventListener('focus', handleFocus);
     window.addEventListener('storage', handleStorageChange);
-    
+
     return () => {
       window.removeEventListener('focus', handleFocus);
       window.removeEventListener('storage', handleStorageChange);
@@ -261,7 +300,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
   const fetchQuestions = async () => {
     try {
       // Fetching questions for quiz type
-      
+
       // First, try to get questions from localStorage (current state from quiz editor)
       const cachedQuestions = localStorage.getItem(`quiz-questions-${quizType}`);
       if (cachedQuestions) {
@@ -275,7 +314,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
           // Failed to parse cached questions, falling back to API
         }
       }
-      
+
       // Fallback to API if no cached data
       const response = await fetch(`/api/admin/quiz-questions?quizType=${quizType}`, {
         credentials: 'include'
@@ -301,7 +340,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
     try {
       const question = questions.find(q => q.id === selectedQuestion);
       const option = question?.options.find(opt => opt.value === selectedOption);
-      
+
       if (!question || !option) return;
 
       const response = await fetch('/api/admin/generate-article', {
@@ -382,7 +421,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
       const isEditing = editingArticleId !== null;
       const url = isEditing ? `/api/admin/articles/${editingArticleId}` : '/api/admin/articles';
       const method = isEditing ? 'PUT' : 'POST';
-      
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -451,7 +490,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
 
   const getIconComponent = () => {
     const baseClass = "w-16 h-16";
-    
+
     switch (iconType) {
       case 'document':
         return (
@@ -520,50 +559,50 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-          {/* Compact Header */}
+      {/* Compact Header */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center space-x-3">
-              <button
-                onClick={() => router.push(`/admin/quiz-editor/${quizType}`)}
+            <button
+              onClick={() => router.push(`/admin/quiz-editor/${quizType}`)}
               className="flex items-center space-x-1 text-gray-600 hover:text-gray-900 transition-colors"
-              >
+            >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
               <span className="text-sm font-medium">Back</span>
-              </button>
+            </button>
             <div>
               <h1 className="text-lg font-bold text-gray-900">
                 Create Article - {getQuizTypeDisplayName(quizType)}
               </h1>
             </div>
           </div>
-                  <button
+          <button
             onClick={handleSaveArticle}
             disabled={isSaving || !personalizedText.trim() || !selectedQuestion || !selectedOption}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
-              >
+          >
             {isSaving ? (editingArticleId ? 'Updating...' : 'Saving...') : (editingArticleId ? 'Update Article' : 'Save Article')}
-                  </button>
-            </div>
-          </div>
+          </button>
+        </div>
+      </div>
 
       <div className="max-w-7xl mx-auto p-4">
         <div className="grid grid-cols-2 gap-8 h-[calc(100vh-120px)]">
-            {/* Left Panel - All Settings */}
+          {/* Left Panel - All Settings */}
           <div className="space-y-4 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             {/* Article Setup */}
             <div className="bg-white rounded-lg shadow-sm p-4">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-base font-semibold text-gray-900">Article Setup</h2>
-                  <button
+                <button
                   onClick={fetchQuestions}
                   className="px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition-colors"
                   title="Refresh questions from quiz editor"
                 >
                   🔄
-                  </button>
+                </button>
               </div>
 
               <div className="space-y-3">
@@ -571,9 +610,9 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Question <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={selectedQuestion}
+                    </label>
+                    <select
+                      value={selectedQuestion}
                       onChange={(e) => setSelectedQuestion(e.target.value)}
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
                     >
@@ -581,17 +620,17 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                       {questions.map((q, index) => (
                         <option key={q.id} value={q.id}>
                           Q{index + 1}: {q.prompt.substring(0, 30)}...
-                    </option>
-                  ))}
-                </select>
-              </div>
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Answer <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={selectedOption}
+                    </label>
+                    <select
+                      value={selectedOption}
                       onChange={(e) => setSelectedOption(e.target.value)}
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
                       disabled={!selectedQuestion}
@@ -600,19 +639,19 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                       {selectedQuestion && questions.find(q => q.id === selectedQuestion)?.options.map((opt) => (
                         <option key={opt.value} value={opt.value}>
                           {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
-                    <button
-                      onClick={handleGenerateArticle}
+                <button
+                  onClick={handleGenerateArticle}
                   disabled={isGenerating || (!selectedQuestion || !selectedOption)}
                   className="w-full px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
-                    >
+                >
                   {isGenerating ? 'Generating...' : 'Generate AI Article'}
-                    </button>
+                </button>
 
                 {/* Content Fields */}
                 <div className="space-y-3 pt-3 border-t border-gray-200">
@@ -620,27 +659,27 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">
                         Title
-                    </label>
-                    <input
-                      type="text"
+                      </label>
+                      <input
+                        type="text"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
                         placeholder="Article title..."
-                    />
-                  </div>
+                      />
+                    </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">
                         Subtitle
-                    </label>
-                    <input
-                      type="text"
+                      </label>
+                      <input
+                        type="text"
                         value={subtitle}
                         onChange={(e) => setSubtitle(e.target.value)}
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
                         placeholder="Financial Guidance"
-                    />
-                  </div>
+                      />
+                    </div>
                   </div>
 
                   <div>
@@ -662,9 +701,9 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
             {/* Visual Settings */}
             <div className="bg-white rounded-lg shadow-sm p-4">
               <h2 className="text-base font-semibold text-gray-900 mb-4">Visual Settings</h2>
-              
+
               <div className="space-y-3">
-                  <div>
+                <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">
                     Icon Type
                   </label>
@@ -694,7 +733,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                     <label htmlFor="showIcon" className="text-xs text-gray-700">
                       Show Icon
                     </label>
-            </div>
+                  </div>
 
                   <div className="flex items-center space-x-2">
                     <input
@@ -721,7 +760,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                   <label htmlFor="showCta" className="text-xs text-gray-700">
                     Show CTA
                   </label>
-                  </div>
+                </div>
 
                 <div className="space-y-2">
                   <div>
@@ -730,14 +769,14 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                     </label>
                     <div className="grid grid-cols-2 gap-2">
                       <div className="flex items-center space-x-1">
-                    <input
+                        <input
                           type="color"
                           value={backgroundColor}
                           onChange={(e) => setBackgroundColor(e.target.value)}
                           className="w-6 h-6 rounded cursor-pointer border border-gray-300"
                         />
                         <span className="text-xs text-gray-600">BG</span>
-                  </div>
+                      </div>
                       <div className="flex items-center space-x-1">
                         <input
                           type="color"
@@ -755,7 +794,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                           className="w-6 h-6 rounded cursor-pointer border border-gray-300"
                         />
                         <span className="text-xs text-gray-600">Icon</span>
-                    </div>
+                      </div>
                       <div className="flex items-center space-x-1">
                         <input
                           type="color"
@@ -764,10 +803,10 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                           className="w-6 h-6 rounded cursor-pointer border border-gray-300"
                         />
                         <span className="text-xs text-gray-600">Accent</span>
-                </div>
+                      </div>
                     </div>
                   </div>
-                  </div>
+                </div>
 
                 <div className="space-y-2">
                   <div>
@@ -788,30 +827,30 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                         onChange={(e) => setStatisticText(e.target.value)}
                         className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
                         placeholder="of people..."
-                    />
+                      />
+                    </div>
                   </div>
-                  </div>
-                  </div>
+                </div>
 
-                  <div>
+                <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">
                     CTA Text
-                    </label>
+                  </label>
                   <input
                     type="text"
                     value={ctaText}
                     onChange={(e) => setCtaText(e.target.value)}
                     className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
                     placeholder="CONTINUE"
-                    />
-                  </div>
-                      </div>
-                    </div>
+                  />
+                </div>
+              </div>
+            </div>
 
             {/* Layout & Positioning Settings */}
             <div className="bg-white rounded-lg shadow-sm p-4">
               <h2 className="text-base font-semibold text-gray-900 mb-4">Layout & Positioning</h2>
-              
+
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
@@ -827,7 +866,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                       <option value="center">Center</option>
                       <option value="right">Right</option>
                     </select>
-                </div>
+                  </div>
 
                   <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -842,8 +881,8 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                       <option value="center">Center</option>
                       <option value="bottom">Bottom</option>
                     </select>
-                    </div>
                   </div>
+                </div>
 
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -857,28 +896,28 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                     <option value="solid">Solid</option>
                     <option value="gradient">Gradient</option>
                   </select>
-                    </div>
+                </div>
 
                 {backgroundStyle === 'gradient' && (
-                    <div>
+                  <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Gradient CSS
-                      </label>
-                      <input
-                        type="text"
+                    </label>
+                    <input
+                      type="text"
                       value={backgroundGradient}
                       onChange={(e) => setBackgroundGradient(e.target.value)}
                       className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 text-gray-900"
                       placeholder="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
-                      />
-                    </div>
-                    )}
+                    />
+                  </div>
+                )}
 
                 <div className="grid grid-cols-2 gap-2">
-                    <div>
+                  <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Padding
-                      </label>
+                    </label>
                     <select
                       value={contentPadding}
                       onChange={(e) => setContentPadding(e.target.value)}
@@ -889,7 +928,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                       <option value="spacious">Spacious</option>
                     </select>
                   </div>
-                  
+
                   <div className="flex items-center">
                     <input
                       type="checkbox"
@@ -902,13 +941,13 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                       Top Bar
                     </label>
                   </div>
-                    </div>
+                </div>
 
                 {showTopBar && (
-                    <div>
+                  <div>
                     <label className="block text-xs font-medium text-gray-700 mb-1">
                       Top Bar Color
-                      </label>
+                    </label>
                     <div className="flex items-center space-x-2">
                       <input
                         type="color"
@@ -930,7 +969,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                 {/* Text Formatting Options */}
                 <div className="border-t pt-3 mt-3">
                   <h3 className="text-sm font-medium text-gray-800 mb-3">Text Formatting</h3>
-                  
+
                   <div className="space-y-3">
                     {/* Title Formatting */}
                     <div className="grid grid-cols-2 gap-2">
@@ -948,8 +987,8 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                           <option value="large">Large</option>
                           <option value="xlarge">Extra Large</option>
                         </select>
-                        </div>
-                      
+                      </div>
+
                       <div>
                         <label className="block text-xs font-medium text-gray-700 mb-1">
                           Title Weight
@@ -983,9 +1022,9 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                           <option value="normal">Normal</option>
                           <option value="large">Large</option>
                         </select>
-                  </div>
-                      
-                    <div>
+                      </div>
+
+                      <div>
                         <label className="block text-xs font-medium text-gray-700 mb-1">
                           Content Weight
                         </label>
@@ -1003,7 +1042,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                     </div>
 
                     {/* Line Height */}
-                      <div>
+                    <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">
                         Line Height
                       </label>
@@ -1024,7 +1063,7 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                 {/* Image Upload Section */}
                 <div className="border-t pt-3 mt-3">
                   <h3 className="text-sm font-medium text-gray-800 mb-3">Image Upload</h3>
-                  
+
                   <div className="space-y-3">
                     {/* Image Upload */}
                     <div>
@@ -1102,8 +1141,8 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
             {/* Live Preview */}
             <div className="bg-white rounded-lg shadow-sm p-4">
               <h2 className="text-base font-semibold text-gray-900 mb-4">Live Preview</h2>
-              
-              <div 
+
+              <div
                 className="rounded-lg shadow-lg min-h-[400px] flex flex-col"
                 style={backgroundStyle === 'gradient' && backgroundGradient ? { background: backgroundGradient } : { backgroundColor }}
               >
@@ -1115,33 +1154,30 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
-                    </button>
+                      </button>
                       <div className="text-lg font-bold" style={{ color: '#ffffff' }}>BRIGHTNEST</div>
                       <div className="px-3 py-1 rounded-full text-xs font-medium text-white" style={{ backgroundColor: accentColor }}>
                         FINANCIAL
                       </div>
                     </div>
-                      </div>
-                    )}
+                  </div>
+                )}
 
                 {/* Main Content */}
-                <div className={`flex-1 flex flex-col ${
-                  contentPadding === 'compact' ? 'p-4' : 
-                  contentPadding === 'spacious' ? 'p-8' : 'p-6'
-                } items-center ${
-                  contentPosition === 'top' ? 'justify-start' :
-                  contentPosition === 'bottom' ? 'justify-end' :
-                  'justify-center'
-                }`}>
+                <div className={`flex-1 flex flex-col ${contentPadding === 'compact' ? 'p-4' :
+                    contentPadding === 'spacious' ? 'p-8' : 'p-6'
+                  } items-center ${contentPosition === 'top' ? 'justify-start' :
+                    contentPosition === 'bottom' ? 'justify-end' :
+                      'justify-center'
+                  }`}>
                   {/* Content Block - All elements aligned together */}
                   <div className="w-full max-w-md">
                     {/* Uploaded Image */}
                     {showImage && imageUrl && (
-                      <div className={`mb-6 ${
-                        textAlignment === 'left' ? 'flex justify-start' :
-                        textAlignment === 'right' ? 'flex justify-end' :
-                        'flex justify-center'
-                      }`}>
+                      <div className={`mb-6 ${textAlignment === 'left' ? 'flex justify-start' :
+                          textAlignment === 'right' ? 'flex justify-end' :
+                            'flex justify-center'
+                        }`}>
                         <img
                           src={imageUrl}
                           alt={imageAlt}
@@ -1153,22 +1189,20 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
 
                     {/* Icon */}
                     {showIcon && (
-                      <div className={`mb-6 ${
-                        textAlignment === 'left' ? 'flex justify-start' :
-                        textAlignment === 'right' ? 'flex justify-end' :
-                        'flex justify-center'
-                      }`}>
+                      <div className={`mb-6 ${textAlignment === 'left' ? 'flex justify-start' :
+                          textAlignment === 'right' ? 'flex justify-end' :
+                            'flex justify-center'
+                        }`}>
                         {getIconComponent()}
                       </div>
                     )}
 
                     {/* Title */}
-                    <h1 
-                      className={`${getTitleSizeClass(titleFontSize)} ${getTitleWeightClass(titleFontWeight)} mb-3 ${getLineHeightClass(lineHeight)} w-full ${
-                        textAlignment === 'left' ? 'text-left' :
-                        textAlignment === 'right' ? 'text-right' :
-                        'text-center'
-                      }`}
+                    <h1
+                      className={`${getTitleSizeClass(titleFontSize)} ${getTitleWeightClass(titleFontWeight)} mb-3 ${getLineHeightClass(lineHeight)} w-full ${textAlignment === 'left' ? 'text-left' :
+                          textAlignment === 'right' ? 'text-right' :
+                            'text-center'
+                        }`}
                       style={{ color: textColor }}
                     >
                       {title || 'ARTICLE TITLE'}
@@ -1176,12 +1210,11 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
 
                     {/* Subtitle */}
                     {subtitle && (
-                      <p 
-                        className={`${getContentSizeClass(contentFontSize)} ${getContentWeightClass(contentFontWeight)} mb-6 opacity-80 w-full ${getLineHeightClass(lineHeight)} ${
-                          textAlignment === 'left' ? 'text-left' :
-                          textAlignment === 'right' ? 'text-right' :
-                          'text-center'
-                        }`}
+                      <p
+                        className={`${getContentSizeClass(contentFontSize)} ${getContentWeightClass(contentFontWeight)} mb-6 opacity-80 w-full ${getLineHeightClass(lineHeight)} ${textAlignment === 'left' ? 'text-left' :
+                            textAlignment === 'right' ? 'text-right' :
+                              'text-center'
+                          }`}
                         style={{ color: textColor }}
                       >
                         {subtitle}
@@ -1191,12 +1224,11 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                     {/* Content */}
                     <div className="w-full mb-6">
                       {personalizedText ? (
-                        <p 
-                          className={`${getContentSizeClass(contentFontSize)} ${getContentWeightClass(contentFontWeight)} ${getLineHeightClass(lineHeight)} mb-4 w-full ${
-                            textAlignment === 'left' ? 'text-left' :
-                            textAlignment === 'right' ? 'text-right' :
-                            'text-center'
-                          }`}
+                        <p
+                          className={`${getContentSizeClass(contentFontSize)} ${getContentWeightClass(contentFontWeight)} ${getLineHeightClass(lineHeight)} mb-4 w-full ${textAlignment === 'left' ? 'text-left' :
+                              textAlignment === 'right' ? 'text-right' :
+                                'text-center'
+                            }`}
                           style={{ color: textColor }}
                         >
                           {personalizedText
@@ -1207,11 +1239,10 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                           }
                         </p>
                       ) : (
-                        <div className={`${
-                          textAlignment === 'left' ? 'text-left' :
-                          textAlignment === 'right' ? 'text-right' :
-                          'text-center'
-                        }`}>
+                        <div className={`${textAlignment === 'left' ? 'text-left' :
+                            textAlignment === 'right' ? 'text-right' :
+                              'text-center'
+                          }`}>
                           <div className="w-16 h-16 mx-auto mb-4 opacity-50" style={{ color: iconColor }}>
                             <svg fill="currentColor" viewBox="0 0 24 24">
                               <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
@@ -1226,11 +1257,10 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
 
                     {/* Statistic */}
                     {showStatistic && (
-                      <div className={`w-full mb-6 ${
-                        textAlignment === 'left' ? 'text-left' :
-                        textAlignment === 'right' ? 'text-right' :
-                        'text-center'
-                      }`}>
+                      <div className={`w-full mb-6 ${textAlignment === 'left' ? 'text-left' :
+                          textAlignment === 'right' ? 'text-right' :
+                            'text-center'
+                        }`}>
                         <div className="text-4xl font-bold mb-2 w-full" style={{ color: accentColor }}>
                           {statisticValue}
                         </div>
@@ -1249,8 +1279,8 @@ export default function CreateArticlePage({ params }: CreateArticlePageProps) {
                         {ctaText}
                       </button>
                     )}
-                    </div>
                   </div>
+                </div>
               </div>
             </div>
           </div>

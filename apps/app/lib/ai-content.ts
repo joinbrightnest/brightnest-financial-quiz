@@ -34,7 +34,7 @@ export interface GeneratedArticle {
 
 export class AIContentService {
   private static instance: AIContentService;
-  
+
   static getInstance(): AIContentService {
     if (!AIContentService.instance) {
       AIContentService.instance = new AIContentService();
@@ -69,7 +69,7 @@ export class AIContentService {
     }
   }
 
-  async generateFromTemplate(template: string, variables: Record<string, any>): Promise<string> {
+  async generateFromTemplate(template: string, variables: Record<string, unknown>): Promise<string> {
     try {
       const completion = await getOpenAI().chat.completions.create({
         model: "gpt-3.5-turbo",
@@ -231,7 +231,7 @@ export interface ArchetypeCopy {
 
 export class ArchetypeCopyService {
   private static instance: ArchetypeCopyService;
-  
+
   static getInstance(): ArchetypeCopyService {
     if (!ArchetypeCopyService.instance) {
       ArchetypeCopyService.instance = new ArchetypeCopyService();
@@ -329,7 +329,7 @@ OUTPUT FORMAT (JSON):
   private buildUserPrompt(request: ArchetypeCopyRequest): string {
     // First generate the initial copy using the original approach
     const initialCopy = this.generateInitialCopy(request);
-    
+
     const prompt = `Name: ${request.userName || 'User'}
 Archetype: ${request.archetype}
 Original_Result_Page_Text: ${JSON.stringify(initialCopy, null, 2)}
@@ -341,11 +341,11 @@ Keep existing personalization (name, answers, insights) but amplify emotional re
     return prompt;
   }
 
-  private generateInitialCopy(request: ArchetypeCopyRequest): any {
+  private generateInitialCopy(request: ArchetypeCopyRequest): ArchetypeCopy {
     // Generate initial copy using the previous method
     const archetype = request.archetype;
     const userName = request.userName || 'User';
-    
+
     return {
       archetype: archetype,
       header: {
@@ -353,13 +353,13 @@ Keep existing personalization (name, answers, insights) but amplify emotional re
         subtitle: `Hey ${userName}, based on your answers, you're a ${archetype} — focused, determined, and ready to eliminate financial obstacles.`
       },
       validation: `You're the kind of person who tackles challenges head-on and doesn't shy away from difficult financial decisions.`,
-      personalized_insights: request.quizAnswers?.slice(0, 3).map(answer => 
+      personalized_insights: request.quizAnswers?.slice(0, 3).map(answer =>
         `You mentioned that you ${answer.answer.toLowerCase()} — that shows your dedication and commitment.`
       ) || [
-        "You prioritize eliminating debt to build financial freedom",
-        "You're motivated by clear progress and measurable results",
-        "You prefer structured approaches to financial challenges"
-      ],
+          "You prioritize eliminating debt to build financial freedom",
+          "You're motivated by clear progress and measurable results",
+          "You prefer structured approaches to financial challenges"
+        ],
       problem_realization: `Your biggest challenge isn't motivation — it's maintaining momentum when progress feels slow.`,
       hope_and_solution: `When that determination is paired with the right strategy, your debt-free timeline can accelerate dramatically. In your Free Financial Assessment Call, we'll help you identify which debts to tackle first and design a plan that maximizes your momentum.`,
       cta: {
@@ -381,8 +381,8 @@ Keep existing personalization (name, answers, insights) but amplify emotional re
           subtitle: parsed.header?.subtitle || parsed.header || 'Based on your answers, this is your financial personality type.'
         },
         validation: parsed.validation || 'You have unique financial strengths and opportunities for growth.',
-        personalized_insights: parsed.reflection ? [parsed.reflection] : 
-                             Array.isArray(parsed.personalized_insights) ? parsed.personalized_insights : [],
+        personalized_insights: parsed.reflection ? [parsed.reflection] :
+          Array.isArray(parsed.personalized_insights) ? parsed.personalized_insights : [],
         problem_realization: parsed.problem_realization || 'Your financial journey has unique challenges to overcome.',
         hope_and_solution: parsed.hope_and_solution || 'With the right guidance, you can achieve your financial goals.',
         cta: {

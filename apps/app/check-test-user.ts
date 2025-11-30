@@ -44,7 +44,7 @@ async function checkTestUser() {
   const emailAnswer = session.answers.find(a =>
     a.question?.prompt?.toLowerCase().includes('email')
   );
-  const email = emailAnswer?.value as any;
+  const email = emailAnswer?.value as string;
   console.log("\n📧 Email:", email);
 
   // Check for appointments by email

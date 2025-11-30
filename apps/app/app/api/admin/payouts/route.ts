@@ -1,6 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { AffiliatePayout, AffiliateConversion } from "@prisma/client";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
+
+interface RawPayout {
+  id: string;
+  amount_due: number;
+  status: string;
+  paid_at: Date | null;
+  notes: string | null;
+  created_at: Date;
+  affiliate_id: string;
+  affiliate_name: string;
+  affiliate_email: string;
+  affiliate_referral_code: string;
+}
 
 export async function GET(request: NextRequest) {
   // 🔒 SECURITY: Require admin authentication
@@ -10,7 +24,7 @@ export async function GET(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
@@ -24,7 +38,7 @@ export async function GET(request: NextRequest) {
     const now = new Date();
     let startDateStr = "";
     let startDate: Date | null = null;
-    
+
     if (dateRange !== "all") {
       switch (dateRange) {
         case "24h":
@@ -49,7 +63,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Build where clause
-    const whereClause: any = {};
+    const whereClause: Record<string, string> = {};
     if (status && status !== "all") {
       whereClause.status = status;
     }
@@ -80,14 +94,14 @@ export async function GET(request: NextRequest) {
       WHERE 1=1 ${statusCondition} ${affiliateCondition} ${startDateStr}
       ORDER BY p.created_at DESC
       LIMIT ${limit} OFFSET ${offset}
-    `) as any[];
+    `) as RawPayout[];
 
     // Get total count
     const totalCountResult = await prisma.$queryRawUnsafe(`
       SELECT COUNT(*) as count
       FROM affiliate_payouts p
       WHERE 1=1 ${statusCondition} ${affiliateCondition} ${startDateStr}
-    `) as any[];
+    `) as { count: bigint }[];
     const totalCount = Number(totalCountResult[0].count);
 
     // Calculate summary stats using raw SQL
@@ -97,7 +111,7 @@ export async function GET(request: NextRequest) {
         COUNT(*) as total_count
       FROM affiliate_payouts p
       WHERE 1=1 ${statusCondition} ${affiliateCondition} ${startDateStr}
-    `) as any[];
+    `) as { total_amount: number; total_count: bigint }[];
 
     const completedStats = await prisma.$queryRawUnsafe(`
       SELECT 
@@ -105,7 +119,7 @@ export async function GET(request: NextRequest) {
         COUNT(*) as total_count
       FROM affiliate_payouts p
       WHERE 1=1 ${statusCondition} ${affiliateCondition} AND p.status = 'completed' ${startDateStr}
-    `) as any[];
+    `) as { total_amount: number; total_count: bigint }[];
 
     // Get pending/held commissions from conversions table (not from payouts)
     // These are commissions that are held and waiting to become available
@@ -117,8 +131,8 @@ export async function GET(request: NextRequest) {
       FROM affiliate_conversions
       WHERE commission_status = 'held'
       ${affiliateId ? `AND affiliate_id = '${affiliateId}'` : ''} ${conversionDateFilter}
-    `) as any[];
-    
+    `) as { total_amount: number; affiliate_count: bigint }[];
+
     // Get total earned commissions within the date range
     const totalEarnedStats = await prisma.$queryRawUnsafe(`
       SELECT 
@@ -128,18 +142,18 @@ export async function GET(request: NextRequest) {
       WHERE 1=1
       ${affiliateId ? `AND affiliate_id = '${affiliateId}'` : ''} 
       ${conversionDateFilter}
-    `) as any[];
-    
+    `) as { total_earned: number; affiliate_count: bigint }[];
+
     const pendingStats = await prisma.$queryRawUnsafe(`
       SELECT 
         COALESCE(SUM(amount_due), 0) as total_amount,
         COUNT(*) as total_count
       FROM affiliate_payouts p
       WHERE 1=1 ${statusCondition} ${affiliateCondition} AND p.status = 'pending' ${startDateStr}
-    `) as any[];
+    `) as { total_amount: number; total_count: bigint }[];
 
     // Transform payouts data to match expected frontend structure
-    const transformedPayouts = payouts.map((payout: any) => ({
+    const transformedPayouts = payouts.map((payout: RawPayout) => ({
       id: payout.id,
       amountDue: Number(payout.amount_due),
       status: payout.status,
@@ -161,7 +175,7 @@ export async function GET(request: NextRequest) {
         // Get commission hold period from settings
         const holdDaysResult = await prisma.$queryRaw`
           SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
-        ` as any[];
+        ` as { value: string }[];
         const holdDays = holdDaysResult.length > 0 ? parseInt(holdDaysResult[0].value) : 30;
 
         // Get held commissions for this affiliate (only those with actual commission amounts > 0)
@@ -180,7 +194,7 @@ export async function GET(request: NextRequest) {
 
         commissionHoldInfo = {
           holdDays,
-          heldCommissions: heldCommissions.map((conv: any) => ({
+          heldCommissions: heldCommissions.map((conv: AffiliateConversion) => ({
             id: conv.id,
             amount: Number(conv.commissionAmount),
             createdAt: conv.createdAt,
@@ -221,7 +235,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching payouts:", error);
     return NextResponse.json(
-      { 
+      {
         success: false,
         error: "Failed to fetch payouts",
         details: error instanceof Error ? error.message : "Unknown error"

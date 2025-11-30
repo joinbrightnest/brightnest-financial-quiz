@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, JWT_SECRET) as { role: string; closerId: string };
 
     if (decoded.role !== 'closer') {
       return NextResponse.json(
@@ -70,14 +70,14 @@ export async function GET(request: NextRequest) {
 
     // Calculate real stats from appointments (single source of truth)
     const actualTotalCalls = appointments.length;
-    
+
     // Only count conversions where outcome is 'converted' AND saleValue exists AND is > 0 (actual closed sales)
     const actualTotalConversions = appointments.filter(apt => {
       const isConverted = apt.outcome === 'converted';
       const hasSaleValue = apt.saleValue !== null && apt.saleValue !== undefined && Number(apt.saleValue) > 0;
       return isConverted && hasSaleValue;
     }).length;
-    
+
     const actualTotalRevenue = appointments
       .filter(apt => apt.outcome === 'converted' && apt.saleValue !== null && apt.saleValue !== undefined && Number(apt.saleValue) > 0)
       .reduce((sum, apt) => sum + (Number(apt.saleValue) || 0), 0);
@@ -85,10 +85,10 @@ export async function GET(request: NextRequest) {
 
     // Sync database fields with calculated values (for round-robin assignment and consistency)
     // Only update if there's a discrepancy to avoid unnecessary writes
-    if (closer.totalCalls !== actualTotalCalls || 
-        closer.totalConversions !== actualTotalConversions || 
-        Math.abs(Number(closer.totalRevenue || 0) - actualTotalRevenue) > 0.01 ||
-        Math.abs(Number(closer.conversionRate || 0) - actualConversionRate) > 0.0001) {
+    if (closer.totalCalls !== actualTotalCalls ||
+      closer.totalConversions !== actualTotalConversions ||
+      Math.abs(Number(closer.totalRevenue || 0) - actualTotalRevenue) > 0.01 ||
+      Math.abs(Number(closer.conversionRate || 0) - actualConversionRate) > 0.0001) {
       try {
         await prisma.closer.update({
           where: { id: decoded.closerId },

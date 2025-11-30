@@ -6,11 +6,11 @@ export async function GET(request: NextRequest) {
     // 🔒 SECURITY: Verify this is called by Vercel Cron or with valid API secret
     const authHeader = request.headers.get('authorization');
     const cronSecret = process.env.CRON_SECRET;
-    
+
     // Allow requests from Vercel Cron (has specific header) or with valid API secret
     const isVercelCron = request.headers.get('user-agent')?.includes('vercel-cron');
     const hasValidSecret = cronSecret && authHeader === `Bearer ${cronSecret}`;
-    
+
     if (!isVercelCron && !hasValidSecret) {
       console.error('❌ Unauthorized commission release attempt');
       return NextResponse.json(
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       );
     }
-    
+
     console.log('🔄 Running automatic commission release...');
 
     // Get commission hold days from settings
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     try {
       const holdDaysResult = await prisma.$queryRaw`
         SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
-      ` as any[];
+      ` as { value: string }[];
       if (holdDaysResult.length > 0) {
         commissionHoldDays = parseInt(holdDaysResult[0].value);
       }
@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
           releasedAt: new Date()
         }
       });
-      
+
       releasedCount++;
       releasedAmount += Number(commission.commissionAmount);
 

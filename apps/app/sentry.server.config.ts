@@ -25,7 +25,7 @@ Sentry.init({
 
     // Remove sensitive environment variables
     if (event.contexts?.runtime?.env) {
-      const env = event.contexts.runtime.env as Record<string, any>;
+      const env = event.contexts.runtime.env as Record<string, unknown>;
       delete env.JWT_SECRET;
       delete env.ADMIN_PASSWORD;
       delete env.DATABASE_URL;

@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
         imageAlt: imageAlt || null,
         showImage: showImage !== undefined ? showImage : false,
         triggers: {
-          create: triggers?.map((trigger: any) => ({
+          create: triggers?.map((trigger: { questionId: string; optionValue: string; condition?: Record<string, unknown>; priority?: number; isActive?: boolean }) => ({
             questionId: trigger.questionId,
             optionValue: trigger.optionValue,
             condition: trigger.condition || {},

@@ -46,6 +46,45 @@ interface Appointment {
   } | null;
 }
 
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: 'pending' | 'in_progress' | 'completed';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  dueDate: string | null;
+  createdAt: string;
+  leadEmail?: string;
+  closerId?: string;
+  closer?: {
+    id: string;
+    name: string;
+  };
+  appointment?: {
+    customerName: string;
+    customerEmail: string;
+  };
+  completedAt?: string;
+}
+
+interface EmailTemplate {
+  title: string;
+  subject: string;
+  content: string;
+}
+
+interface Script {
+  id: string;
+  name: string;
+  callScript: string;
+  programDetails: Record<string, string>;
+  emailTemplates: Record<string, EmailTemplate>;
+  isDefault: boolean;
+  createdAt: string;
+  isActive?: boolean;
+  assignments?: { closerId: string; closer: { id: string; name: string } }[];
+}
+
 export default function CloserManagement() {
   const [closers, setClosers] = useState<Closer[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -53,7 +92,7 @@ export default function CloserManagement() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState<'closers' | 'assignments' | 'performance' | 'tasks' | 'scripts'>('closers');
-  const [allTasks, setAllTasks] = useState<any[]>([]);
+  const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [isLoadingTasks, setIsLoadingTasks] = useState(false);
   const [taskFilter, setTaskFilter] = useState<'all' | 'due_today' | 'overdue' | 'upcoming'>('all');
   const [taskCloserFilter, setTaskCloserFilter] = useState<string>('all'); // 'all' or closer ID
@@ -105,17 +144,17 @@ export default function CloserManagement() {
   }, []);
 
   // Scripts management state
-  const [scripts, setScripts] = useState<any[]>([]);
+  const [scripts, setScripts] = useState<Script[]>([]);
   const [isLoadingScripts, setIsLoadingScripts] = useState(false);
-  const [editingScript, setEditingScript] = useState<any | null>(null);
+  const [editingScript, setEditingScript] = useState<Script | null>(null);
   const [showScriptModal, setShowScriptModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedScriptForAssign, setSelectedScriptForAssign] = useState<string | null>(null);
   const [scriptForm, setScriptForm] = useState({
     name: '',
     callScript: '',
-    programDetails: {} as any,
-    emailTemplates: {} as any,
+    programDetails: {} as Record<string, string>,
+    emailTemplates: {} as Record<string, EmailTemplate>,
     isDefault: false
   });
   const [scriptEditTab, setScriptEditTab] = useState<'call' | 'program' | 'email'>('call');
@@ -529,7 +568,7 @@ export default function CloserManagement() {
     }
   };
 
-  const openEditScript = (script: any) => {
+  const openEditScript = (script: Script) => {
     setEditingScript(script);
     setScriptForm({
       name: script.name,
@@ -1604,7 +1643,7 @@ export default function CloserManagement() {
                       // Filter out completed tasks (like HubSpot - only show active tasks)
                       const activeTasks = allTasks.filter(t => t.status === 'pending' || t.status === 'in_progress');
 
-                      let filteredTasks: any[] = [];
+                      let filteredTasks: Task[] = [];
 
                       switch (taskFilter) {
                         case 'due_today':
@@ -1908,7 +1947,7 @@ export default function CloserManagement() {
                 // Filter out completed tasks (like HubSpot - only show active tasks)
                 const activeTasks = allTasks.filter(t => t.status === 'pending' || t.status === 'in_progress');
 
-                let filteredTasks: any[] = [];
+                let filteredTasks: Task[] = [];
 
                 switch (taskFilter) {
                   case 'due_today':
@@ -2191,7 +2230,7 @@ export default function CloserManagement() {
               <div className="border-t border-gray-200">
                 <div className="grid grid-cols-1 gap-4 p-4">
                   {scripts.map((script) => {
-                    const assignedClosers = script.assignments?.map((a: any) => a.closer) || [];
+                    const assignedClosers = script.assignments?.map((a: { closer: { id: string; name: string } }) => a.closer) || [];
                     return (
                       <div key={script.id} className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between">
@@ -2220,7 +2259,7 @@ export default function CloserManagement() {
                               <div className="mt-3">
                                 <p className="text-sm font-medium text-gray-700">Assigned to:</p>
                                 <div className="mt-1 flex flex-wrap gap-2">
-                                  {assignedClosers.map((closer: any) => (
+                                  {assignedClosers.map((closer: { id: string; name: string }) => (
                                     <span key={closer.id} className="inline-flex px-2 py-1 text-xs font-medium rounded bg-purple-100 text-purple-800">
                                       {closer.name}
                                     </span>
@@ -2399,7 +2438,7 @@ export default function CloserManagement() {
                 {/* Email Templates Tab */}
                 {scriptEditTab === 'email' && (
                   <div className="space-y-3">
-                    {Object.entries(scriptForm.emailTemplates || {}).map(([key, template]: [string, any]) => (
+                    {Object.entries(scriptForm.emailTemplates || {}).map(([key, template]: [string, EmailTemplate]) => (
                       <div key={key} className="border border-gray-200 rounded-lg">
                         <button
                           type="button"
@@ -2508,7 +2547,7 @@ export default function CloserManagement() {
                   {closers.filter(c => c.isActive && c.isApproved).map((closer) => {
                     const isAssigned = scripts
                       .find(s => s.id === selectedScriptForAssign)
-                      ?.assignments?.some((a: any) => a.closerId === closer.id);
+                      ?.assignments?.some((a: { closerId: string }) => a.closerId === closer.id);
                     return (
                       <label key={closer.id} className="flex items-center p-2 hover:bg-gray-50 rounded">
                         <input
@@ -2538,8 +2577,9 @@ export default function CloserManagement() {
                   onClick={() => {
                     const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
                     const selectedCloserIds = Array.from(checkboxes)
-                      .map((cb: any) => {
-                        const id = cb.id.replace('closer-', '');
+                      .map((cb) => {
+                        const input = cb as HTMLInputElement;
+                        const id = input.id.replace('closer-', '');
                         return closers.find(c => c.id === id)?.id;
                       })
                       .filter(Boolean) as string[];

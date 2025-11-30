@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { CallOutcome } from "@prisma/client";
+import { CallOutcome, Prisma, QuizSession, Appointment } from "@prisma/client";
 import { calculateAffiliateLeads } from "@/lib/lead-calculation";
 import { prisma } from "@/lib/prisma";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
@@ -12,19 +12,19 @@ export async function GET(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
     console.log("Affiliate overview API called");
     const { searchParams } = new URL(request.url);
     const dateRange = searchParams.get("dateRange") || "30d";
     const tier = searchParams.get("tier") || "all";
-    
+
     console.log("Parameters:", { dateRange, tier });
 
     // Calculate date filter
     const now = new Date();
     let startDate: Date;
-    
+
     switch (dateRange) {
       case "24h":
         startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -46,26 +46,26 @@ export async function GET(request: NextRequest) {
     }
 
     // Build where clause for affiliates
-    const affiliateWhereClause: any = {};
+    const affiliateWhereClause: Prisma.AffiliateWhereInput = {};
     if (tier !== "all") {
-      affiliateWhereClause.tier = tier;
+      affiliateWhereClause.tier = tier as import("@prisma/client").AffiliateTier;
     }
 
     // PERFORMANCE OPTIMIZATION: Fetch all data in bulk queries (4 queries total instead of 54+)
     console.log("Fetching affiliates from database...");
-    
+
     const affiliates = await prisma.affiliate.findMany({
       where: {
         isApproved: true, // Use isApproved instead of isActive for consistency with admin API
-        ...(tier !== "all" && tier !== undefined && { tier: tier as any }),
+        ...(tier !== "all" && tier !== undefined && { tier: tier as import("@prisma/client").AffiliateTier }),
       },
       orderBy: {
         totalCommission: "desc",
       },
     });
-    
+
     console.log(`Found ${affiliates.length} affiliates`);
-    
+
     if (affiliates.length === 0) {
       return NextResponse.json({
         totalActiveAffiliates: 0,
@@ -82,11 +82,11 @@ export async function GET(request: NextRequest) {
         pendingAffiliates: [],
       });
     }
-    
+
     // BULK FETCH: Get all data in 4 queries instead of 54+
     const affiliateIds = affiliates.map(a => a.id);
     const referralCodes = affiliates.map(a => a.referralCode);
-    
+
     const [allClicks, allConversions, allQuizSessions, allAppointments] = await Promise.all([
       prisma.affiliateClick.findMany({
         where: {
@@ -131,12 +131,12 @@ export async function GET(request: NextRequest) {
         },
       }),
     ]);
-    
+
     // Get all completed quiz session IDs for email matching
     const completedSessionIds = allQuizSessions
-      .filter((s: any) => s.status === "completed")
-      .map((s: any) => s.id);
-    
+      .filter((s: { status: string; id: string }) => s.status === "completed")
+      .map((s: { id: string }) => s.id);
+
     // Bulk fetch all email answers for completed sessions (single query)
     const completedSessionEmailsMap = new Map<string, string>(); // sessionId -> email
     if (completedSessionIds.length > 0) {
@@ -153,7 +153,7 @@ export async function GET(request: NextRequest) {
           question: true
         }
       });
-      
+
       emailAnswers.forEach(answer => {
         if (answer.value && answer.sessionId) {
           const email = String(answer.value).toLowerCase().trim();
@@ -161,20 +161,20 @@ export async function GET(request: NextRequest) {
         }
       });
     }
-    
+
     // Create a set of all completed session emails for quick lookup
     const completedSessionEmailsSet = new Set(completedSessionEmailsMap.values());
-    
+
     // Group data by affiliate (in memory - fast)
     const dataByAffiliate = new Map();
     affiliates.forEach(aff => {
-      const affiliateQuizSessions = allQuizSessions.filter((s: any) => s.affiliateCode === aff.referralCode);
-      const affiliateAppointments = allAppointments.filter((a: any) => a.affiliateCode === aff.referralCode);
-      
+      const affiliateQuizSessions = allQuizSessions.filter((s: { affiliateCode: string | null }) => s.affiliateCode === aff.referralCode);
+      const affiliateAppointments = allAppointments.filter((a: { affiliateCode: string | null }) => a.affiliateCode === aff.referralCode);
+
       // Get emails for this affiliate's completed quiz sessions
       const affiliateCompletedSessionIds = affiliateQuizSessions
-        .filter((s: any) => s.status === "completed")
-        .map((s: any) => s.id);
+        .filter((s: { status: string }) => s.status === "completed")
+        .map((s: { id: string }) => s.id);
       const affiliateCompletedEmails = new Set<string>();
       affiliateCompletedSessionIds.forEach((sessionId: string) => {
         const email = completedSessionEmailsMap.get(sessionId);
@@ -182,7 +182,7 @@ export async function GET(request: NextRequest) {
           affiliateCompletedEmails.add(email);
         }
       });
-      
+
       dataByAffiliate.set(aff.id, {
         affiliate: aff,
         clicks: allClicks.filter(c => c.affiliateId === aff.id),
@@ -192,13 +192,13 @@ export async function GET(request: NextRequest) {
         completedSessionEmails: affiliateCompletedEmails, // Pre-calculated emails for this affiliate
       });
     });
-    
+
     console.log(`Bulk fetched data for ${affiliates.length} affiliates in 4 queries`);
 
     // Calculate overview metrics
     const approvedAffiliates = affiliates.filter(aff => aff.isApproved);
     const pendingAffiliates = affiliates.filter(aff => !aff.isApproved);
-    
+
     const totalActiveAffiliates = approvedAffiliates.length;
     const totalPendingAffiliates = pendingAffiliates.length;
 
@@ -206,35 +206,35 @@ export async function GET(request: NextRequest) {
     const topAffiliates = approvedAffiliates.map((affiliate) => {
       const affiliateData = dataByAffiliate.get(affiliate.id);
       if (!affiliateData) return null;
-      
+
       const { clicks, conversions, quizSessions, appointments, completedSessionEmails } = affiliateData;
 
       // Calculate metrics using pre-fetched data
       const clickCount = clicks.length;
       const quizCount = quizSessions.length;
-      const completionCount = quizSessions.filter((s: any) => s.status === "completed").length;
-      
+      const completionCount = quizSessions.filter((s: { status: string }) => s.status === "completed").length;
+
       // Use pre-calculated emails from dataByAffiliate (already destructured above)
       // Match appointments to completed quiz sessions by email (consistent with admin API)
       // This ensures we only count bookings that came from the quiz flow
-      const validBookedAppointments = appointments.filter((apt: any) => {
+      const validBookedAppointments = appointments.filter((apt: { customerEmail: string | null }) => {
         if (!apt.customerEmail) return false;
         const appointmentEmail = apt.customerEmail.toLowerCase().trim();
         return completedSessionEmails.has(appointmentEmail);
       });
-      
+
       // Count bookings from completed quiz flow (consistent with admin API)
       const bookingCount = validBookedAppointments.length;
       // Sales: count ALL affiliate sales (matches Lead Analytics and admin API)
-      const saleCount = appointments.filter((apt: any) => apt.outcome === CallOutcome.converted).length;
-      
+      const saleCount = appointments.filter((apt: { outcome: string | null }) => apt.outcome === CallOutcome.converted).length;
+
       // Lead count = completed quiz sessions with results
-      const leadCount = quizSessions.filter((s: any) => s.status === "completed" && s.result).length;
+      const leadCount = quizSessions.filter((s: { status: string; result: unknown }) => s.status === "completed" && s.result).length;
 
       // Calculate revenue from converted appointments
       const totalRevenue = appointments
-        .filter((apt: any) => apt.outcome === CallOutcome.converted && apt.saleValue)
-        .reduce((sum: number, apt: any) => sum + (Number(apt.saleValue) || 0), 0);
+        .filter((apt: { outcome: string | null; saleValue: Prisma.Decimal | null }) => apt.outcome === CallOutcome.converted && apt.saleValue)
+        .reduce((sum: number, apt: { saleValue: Prisma.Decimal | null }) => sum + (Number(apt.saleValue) || 0), 0);
 
       // Calculate commission from actual revenue (don't use database field - it may be doubled)
       // Commission = Revenue × Commission Rate
@@ -260,19 +260,19 @@ export async function GET(request: NextRequest) {
         lastActive: affiliate.updatedAt.toISOString(),
       };
     }).filter(Boolean);
-    
+
     // Sort by revenue
     topAffiliates.sort((a, b) => (b?.revenue || 0) - (a?.revenue || 0));
-    
+
     // Calculate correct overview metrics from topAffiliates data
     const totalLeadsFromAffiliates = topAffiliates.reduce((sum, aff) => sum + (aff?.leads || 0), 0);
     const totalBookedCalls = topAffiliates.reduce((sum, aff) => sum + (aff?.bookedCalls || 0), 0);
     const totalSalesValue = topAffiliates.reduce((sum, aff) => sum + (aff?.revenue || 0), 0); // Use actual revenue, not commission
-    
+
     // Calculate total commissions earned in the selected date range
     // This is the commission calculated from revenue in the date range
     const totalCommissionsEarnedInPeriod = topAffiliates.reduce((sum, aff) => sum + Number(aff?.commission || 0), 0);
-    
+
     // Get actual paid/pending from payout records for all affiliates (all time, not date-filtered)
     // Note: For accurate pending calculation, we should use AffiliateConversion records with commissionStatus
     // But for overview display, we'll use the simpler calculation from payouts
@@ -283,22 +283,22 @@ export async function GET(request: NextRequest) {
         }
       }
     });
-    
+
     const totalCommissionsPaid = allPayouts
       .filter(p => p.status === 'completed')
       .reduce((sum, p) => sum + Number(p.amountDue), 0);
-    
+
     // Calculate pending payouts (payouts with pending status)
     const totalPendingPayouts = allPayouts
       .filter(p => p.status === 'pending')
       .reduce((sum, p) => sum + Number(p.amountDue), 0);
-    
+
     // For overview, show commissions earned in period and pending payouts
     // Note: This is a simplified calculation. For accurate pending commissions,
     // we should calculate from AffiliateConversion records with commissionStatus (like payout API)
     // But that would require additional queries and might impact performance
     const totalCommissionsPending = totalPendingPayouts; // Show pending payouts as pending commissions
-    
+
     // Debug logging for overview metrics
     console.log("Overview Metrics Debug:", {
       totalLeadsFromAffiliates,
@@ -346,7 +346,7 @@ export async function GET(request: NextRequest) {
     const conversionFunnelByTier = ['quiz', 'creator', 'agency'].map((tierName) => {
       // Get affiliates of this tier
       const tierAffiliates = approvedAffiliates.filter(aff => aff.tier === tierName);
-      
+
       if (tierAffiliates.length === 0) {
         return {
           tier: tierName,
@@ -370,19 +370,19 @@ export async function GET(request: NextRequest) {
         if (affiliateData) {
           tierClicks += affiliateData.clicks.length;
           tierQuizStarts += affiliateData.quizSessions.length;
-          tierCompleted += affiliateData.quizSessions.filter((s: any) => s.status === "completed").length;
-          
+          tierCompleted += affiliateData.quizSessions.filter((s: { status: string }) => s.status === "completed").length;
+
           // Match appointments to completed quiz sessions by email (consistent with individual affiliate metrics)
           const completedSessionEmails = affiliateData.completedSessionEmails || new Set<string>();
-          const validBookedAppointments = affiliateData.appointments.filter((apt: any) => {
+          const validBookedAppointments = affiliateData.appointments.filter((apt: { customerEmail: string | null }) => {
             if (!apt.customerEmail) return false;
             const appointmentEmail = apt.customerEmail.toLowerCase().trim();
             return completedSessionEmails.has(appointmentEmail);
           });
-          
+
           tierBooked += validBookedAppointments.length;
           // Sales: count ALL affiliate sales (matches admin API and individual metrics)
-          tierClosed += affiliateData.appointments.filter((a: any) => a.outcome === CallOutcome.converted).length;
+          tierClosed += affiliateData.appointments.filter((a: { outcome: string | null }) => a.outcome === CallOutcome.converted).length;
         }
       });
 
@@ -399,13 +399,13 @@ export async function GET(request: NextRequest) {
     const affiliateData = {
       totalActiveAffiliates,
       totalPendingAffiliates,
-        totalLeadsFromAffiliates,
-        totalBookedCalls,
-        totalSalesValue,
-        totalCommissionsPaid,
-        totalCommissionsPending,
-        totalCommissionsEarned: totalCommissionsEarnedInPeriod, // Commissions earned in selected period
-        topAffiliates,
+      totalLeadsFromAffiliates,
+      totalBookedCalls,
+      totalSalesValue,
+      totalCommissionsPaid,
+      totalCommissionsPending,
+      totalCommissionsEarned: totalCommissionsEarnedInPeriod, // Commissions earned in selected period
+      topAffiliates,
       pendingAffiliates: pendingAffiliatesData,
       trafficSourceBreakdown,
       conversionFunnelByTier,
@@ -416,7 +416,7 @@ export async function GET(request: NextRequest) {
       totalPendingAffiliates: affiliateData.totalPendingAffiliates,
       topAffiliatesCount: affiliateData.topAffiliates.length
     });
-    
+
     return NextResponse.json(affiliateData);
   } catch (error) {
     console.error("Affiliate overview API error:", error);

@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
       `;
-      
+
       await prisma.$executeRaw`
         INSERT INTO "Settings" (key, value) 
         VALUES 
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
           ('payout_schedule', 'monthly')
         ON CONFLICT (key) DO NOTHING
       `;
-      
+
       return [
         { key: 'minimum_payout', value: '50' },
         { key: 'payout_schedule', value: 'monthly' }
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Convert array to object for easier access
-    const settingsObj = (settings as Array<{ key: string; value: string }>).reduce((acc: any, setting: { key: string; value: string }) => {
+    const settingsObj = (settings as Array<{ key: string; value: string }>).reduce((acc: Record<string, string>, setting: { key: string; value: string }) => {
       acc[setting.key] = setting.value;
       return acc;
     }, {});

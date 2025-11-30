@@ -46,6 +46,48 @@ interface LeadData {
 
 type TabType = 'activity' | 'notes' | 'tasks';
 
+interface Activity {
+  id: string;
+  type: string;
+  timestamp: string;
+  leadName?: string;
+  actor?: string;
+  details?: {
+    outcome?: string;
+    previousOutcome?: string;
+    saleValue?: number | string;
+    recordingLink?: string;
+    notes?: string;
+    quizType?: string;
+    answersCount?: number;
+    scheduledAt?: string;
+    closerName?: string;
+    content?: string;
+    title?: string;
+    priority?: string;
+    description?: string;
+    dueDate?: string;
+  };
+}
+
+interface Note {
+  id: string;
+  content: string;
+  createdAt: string;
+  createdBy: string;
+}
+
+interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  priority: string;
+  dueDate?: string;
+  status: string;
+  createdAt: string;
+  assignedTo?: string;
+}
+
 export default function LeadDetailsPage() {
   const params = useParams();
   const router = useRouter();
@@ -55,22 +97,22 @@ export default function LeadDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>('activity');
-  const [activities, setActivities] = useState<any[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
   const [loadingActivities, setLoadingActivities] = useState(false);
   const [expandedActivity, setExpandedActivity] = useState<string | null>(null);
 
   // Notes state
-  const [notes, setNotes] = useState<any[]>([]);
+  const [notes, setNotes] = useState<Note[]>([]);
   const [loadingNotes, setLoadingNotes] = useState(false);
   const [showNoteForm, setShowNoteForm] = useState(false);
   const [newNoteContent, setNewNoteContent] = useState('');
   const [isSubmittingNote, setIsSubmittingNote] = useState(false);
 
   // Tasks state
-  const [tasks, setTasks] = useState<any[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [loadingTasks, setLoadingTasks] = useState(false);
   const [showTaskForm, setShowTaskForm] = useState(false);
-  const [editingTask, setEditingTask] = useState<any>(null);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [taskForm, setTaskForm] = useState({
     title: '',
     description: '',
@@ -139,11 +181,11 @@ export default function LeadDetailsPage() {
       }
       const data = await response.json();
       console.log('✅ [API] Raw activities payload received:', JSON.stringify(data.activities, null, 2));
-      const outcomeActivities = (data.activities || []).filter((a: any) =>
+      const outcomeActivities = (data.activities || []).filter((a: Activity) =>
         a.type === 'outcome_updated' || a.type === 'outcome_marked' || a.type === 'deal_closed'
       );
       console.log('🔍 DEBUG: Outcome activities found:', outcomeActivities);
-      outcomeActivities.forEach((a: any, idx: number) => {
+      outcomeActivities.forEach((a: Activity, idx: number) => {
         console.log(`🔍 DEBUG: Outcome activity ${idx}:`, {
           id: a.id,
           type: a.type,
@@ -262,7 +304,7 @@ export default function LeadDetailsPage() {
     }
   };
 
-  const handleUpdateTask = async (taskId: string, updates: any, leadEmail: string) => {
+  const handleUpdateTask = async (taskId: string, updates: Partial<Task>, leadEmail: string) => {
     try {
       const response = await fetch(`/api/tasks/${taskId}`, {
         method: 'PATCH',
@@ -294,7 +336,7 @@ export default function LeadDetailsPage() {
     }
   };
 
-  const openEditTask = (task: any) => {
+  const openEditTask = (task: Task) => {
     setEditingTask(task);
     setTaskForm({
       title: task.title,
@@ -447,16 +489,16 @@ export default function LeadDetailsPage() {
                       <label className="text-xs text-slate-500 uppercase tracking-wide">Stage</label>
                       <div className="mt-1">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${leadData.status === "Purchased (Call)"
-                            ? "bg-green-100 text-green-800"
-                            : leadData.status === "Not Interested"
-                              ? "bg-red-100 text-red-800"
-                              : leadData.status === "Needs Follow Up"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : leadData.status === "Booked"
-                                  ? "bg-blue-100 text-blue-800"
-                                  : leadData.status === "Completed"
-                                    ? "bg-gray-100 text-gray-800"
-                                    : "bg-gray-100 text-gray-800"
+                          ? "bg-green-100 text-green-800"
+                          : leadData.status === "Not Interested"
+                            ? "bg-red-100 text-red-800"
+                            : leadData.status === "Needs Follow Up"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : leadData.status === "Booked"
+                                ? "bg-blue-100 text-blue-800"
+                                : leadData.status === "Completed"
+                                  ? "bg-gray-100 text-gray-800"
+                                  : "bg-gray-100 text-gray-800"
                           }`}>
                           {leadData.status || '--'}
                         </span>
@@ -528,8 +570,8 @@ export default function LeadDetailsPage() {
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={`py-3 px-4 border-b-2 font-medium text-sm capitalize transition-colors ${activeTab === tab
-                            ? 'border-blue-600 text-blue-600'
-                            : 'border-transparent text-slate-600 hover:text-slate-900'
+                          ? 'border-blue-600 text-blue-600'
+                          : 'border-transparent text-slate-600 hover:text-slate-900'
                           }`}
                       >
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -568,13 +610,13 @@ export default function LeadDetailsPage() {
                               <div key={activity.id} className="flex items-start space-x-4">
                                 {/* Icon */}
                                 <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${activity.type === 'quiz_completed' ? 'bg-purple-100' :
-                                    activity.type === 'call_booked' ? 'bg-blue-100' :
-                                      activity.type === 'deal_closed' ? 'bg-green-100' :
-                                        (activity.type === 'outcome_updated' || activity.type === 'outcome_marked') ? 'bg-orange-100' :
-                                          activity.type === 'task_created' ? 'bg-indigo-100' :
-                                            activity.type === 'task_started' ? 'bg-cyan-100' :
-                                              activity.type === 'task_finished' ? 'bg-teal-100' :
-                                                'bg-amber-100'
+                                  activity.type === 'call_booked' ? 'bg-blue-100' :
+                                    activity.type === 'deal_closed' ? 'bg-green-100' :
+                                      (activity.type === 'outcome_updated' || activity.type === 'outcome_marked') ? 'bg-orange-100' :
+                                        activity.type === 'task_created' ? 'bg-indigo-100' :
+                                          activity.type === 'task_started' ? 'bg-cyan-100' :
+                                            activity.type === 'task_finished' ? 'bg-teal-100' :
+                                              'bg-amber-100'
                                   }`}>
                                   {activity.type === 'quiz_completed' && (
                                     <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -792,9 +834,9 @@ export default function LeadDetailsPage() {
                                                   </span>
                                                   {activity.details.priority && activity.type === 'task_created' && (
                                                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${activity.details.priority === 'urgent' ? 'bg-red-100 text-red-800' :
-                                                        activity.details.priority === 'high' ? 'bg-orange-100 text-orange-800' :
-                                                          activity.details.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                                                            'bg-green-100 text-green-800'
+                                                      activity.details.priority === 'high' ? 'bg-orange-100 text-orange-800' :
+                                                        activity.details.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                                          'bg-green-100 text-green-800'
                                                       }`}>
                                                       {activity.details.priority}
                                                     </span>
@@ -1034,7 +1076,7 @@ export default function LeadDetailsPage() {
                       ) : (
                         <div className="space-y-3">
                           {tasks.length > 0 ? (
-                            tasks.map((task: any) => (
+                            tasks.map((task: Task) => (
                               <div
                                 key={task.id}
                                 className="bg-slate-50 rounded-lg p-4 border border-slate-200 hover:border-slate-300 transition-colors"
@@ -1047,8 +1089,8 @@ export default function LeadDetailsPage() {
                                           status: task.status === 'completed' ? 'pending' : 'completed'
                                         }, getLeadEmail())}
                                         className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${task.status === 'completed'
-                                            ? 'bg-green-500 border-green-500'
-                                            : 'border-slate-400 hover:border-green-500'
+                                          ? 'bg-green-500 border-green-500'
+                                          : 'border-slate-400 hover:border-green-500'
                                           }`}
                                       >
                                         {task.status === 'completed' && (

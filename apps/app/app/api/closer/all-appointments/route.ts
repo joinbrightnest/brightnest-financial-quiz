@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    const decoded = jwt.verify(token, JWT_SECRET) as { role: string; closerId: string };
 
     if (decoded.role !== 'closer') {
       return NextResponse.json(
@@ -79,7 +79,7 @@ export async function GET(request: NextRequest) {
 
     // Create a map of affiliate codes to names
     const affiliateMap: Record<string, string> = {};
-    
+
     if (affiliateCodes.length > 0) {
       // Get all affiliates to match against (more flexible than OR with IN)
       const allAffiliates = await prisma.affiliate.findMany({
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Try custom link match (check both with and without leading slash)
-        const customMatch = allAffiliates.find(aff => 
+        const customMatch = allAffiliates.find(aff =>
           aff.customLink === `/${code}` || aff.customLink === code
         );
         if (customMatch) {
@@ -112,8 +112,8 @@ export async function GET(request: NextRequest) {
     // Add source information to each appointment
     const appointmentsWithSource = appointments.map(apt => ({
       ...apt,
-      source: apt.affiliateCode 
-        ? (affiliateMap[apt.affiliateCode] || 'Affiliate') 
+      source: apt.affiliateCode
+        ? (affiliateMap[apt.affiliateCode] || 'Affiliate')
         : 'Website'
     }));
 

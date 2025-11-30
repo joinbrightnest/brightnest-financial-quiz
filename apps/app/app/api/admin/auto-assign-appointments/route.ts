@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
     // Find all unassigned appointments
     const unassignedAppointments = await prisma.appointment.findMany({
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     console.log(`👥 Found ${availableClosers.length} available closers`);
 
-    const assignments: any[] = [];
+    const assignments: Array<{ appointmentId: string; customerName: string; closerName: string }> = [];
     let closerIndex = 0;
 
     // Round-robin assignment
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('❌ Error auto-assigning appointments:', error);
     return NextResponse.json(
-      { 
+      {
         success: false,
         error: 'Failed to auto-assign appointments',
         details: error instanceof Error ? error.message : 'Unknown error'

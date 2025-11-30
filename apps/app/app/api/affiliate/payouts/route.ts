@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { AffiliateConversion } from "@prisma/client";
 import jwt from "jsonwebtoken";
 
 export async function GET(request: NextRequest) {
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    
+
     // Verify JWT token
     const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
     if (!JWT_SECRET) {
@@ -25,9 +26,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let decoded: any;
+    let decoded: { affiliateId: string } | null = null;
     try {
-      decoded = jwt.verify(token, JWT_SECRET);
+      decoded = jwt.verify(token, JWT_SECRET) as { affiliateId: string } | null;
     } catch (error) {
       return NextResponse.json(
         { error: "Invalid or expired token" },
@@ -67,25 +68,25 @@ export async function GET(request: NextRequest) {
     // Get commission hold period from settings
     const settingsResult = await prisma.$queryRaw`
       SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
-    ` as any[];
-    
+    ` as { value: string }[];
+
     const holdDays = settingsResult.length > 0 ? parseInt(settingsResult[0].value) : 30;
 
     // Calculate commission hold information
     // Check if commissionStatus field exists, if not treat all as available
     const hasCommissionStatusField = affiliate.conversions.some(c => c.commissionStatus !== undefined);
-    
-    let heldCommissions: any[], availableCommissions: any[], heldAmount: number, availableAmount: number;
-    
+
+    let heldCommissions: AffiliateConversion[], availableCommissions: AffiliateConversion[], heldAmount: number, availableAmount: number;
+
     if (hasCommissionStatusField) {
       // New system: filter by commission status AND only include actual commissions
-      heldCommissions = affiliate.conversions.filter(c => 
+      heldCommissions = affiliate.conversions.filter(c =>
         c.commissionStatus === 'held' && Number(c.commissionAmount) > 0
       );
-      availableCommissions = affiliate.conversions.filter(c => 
-        (c.commissionStatus === 'available' || 
-         c.commissionStatus === null || 
-         c.commissionStatus === undefined) &&
+      availableCommissions = affiliate.conversions.filter(c =>
+        (c.commissionStatus === 'available' ||
+          c.commissionStatus === null ||
+          c.commissionStatus === undefined) &&
         Number(c.commissionAmount) > 0
       );
       heldAmount = heldCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
@@ -97,7 +98,7 @@ export async function GET(request: NextRequest) {
       heldAmount = 0;
       availableAmount = availableCommissions.reduce((sum, c) => sum + Number(c.commissionAmount), 0);
     }
-    
+
     // Calculate total paid and earned first
     const totalPaid = affiliate.payouts
       .filter(p => p.status === "completed")
@@ -108,20 +109,22 @@ export async function GET(request: NextRequest) {
       .reduce((sum, p) => sum + Number(p.amountDue), 0);
 
     const totalEarned = Number(affiliate.totalCommission || 0);
-    
+
     // Calculate the actual available commission using the hold system
     // Available = commission with 'available' status (after hold period) - already paid out
     const actualAvailableCommission = Math.max(0, availableAmount - totalPaid);
-    
+
     // Calculate commission hold information
-    let commissionsWithHoldInfo: any[] = [];
+    let commissionsWithHoldInfo: { id: string; amount: number; createdAt: Date; holdUntil: Date | null; isReadyForRelease: boolean }[] = [];
     try {
       commissionsWithHoldInfo = heldCommissions.map(conversion => {
+        const isReady = conversion.holdUntil ? new Date() >= conversion.holdUntil : true;
         return {
           id: conversion.id,
           amount: Number(conversion.commissionAmount),
           createdAt: conversion.createdAt,
-          holdUntil: conversion.holdUntil
+          holdUntil: conversion.holdUntil,
+          isReadyForRelease: isReady
         };
       });
     } catch (error) {
@@ -180,7 +183,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error fetching affiliate payouts:", error);
     return NextResponse.json(
-      { 
+      {
         success: false,
         error: "Failed to fetch affiliate payouts",
         details: error instanceof Error ? error.message : "Unknown error"

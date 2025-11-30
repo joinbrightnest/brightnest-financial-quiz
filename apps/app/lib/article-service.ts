@@ -1,5 +1,6 @@
 import { prisma } from './prisma';
 import { aiContentService, ArticleGenerationRequest } from './ai-content';
+import { ArticleTrigger as PrismaArticleTrigger, QuizAnswer, Prisma, QuizQuestion, QuizSession } from '@prisma/client';
 
 export interface ArticleTrigger {
   questionId?: string;
@@ -26,7 +27,7 @@ export interface ArticleMatch {
 
 export class ArticleService {
   private static instance: ArticleService;
-  
+
   static getInstance(): ArticleService {
     if (!ArticleService.instance) {
       ArticleService.instance = new ArticleService();
@@ -55,7 +56,7 @@ export class ArticleService {
 
     // Get all active article triggers with their articles
     const triggers = await prisma.articleTrigger.findMany({
-      where: { 
+      where: {
         isActive: true,
         article: {
           isActive: true
@@ -90,7 +91,7 @@ export class ArticleService {
           trigger: {
             questionId: trigger.questionId || undefined,
             optionValue: trigger.optionValue || undefined,
-            condition: trigger.condition as any,
+            condition: trigger.condition as Record<string, unknown>,
             priority: trigger.priority
           },
           confidence
@@ -113,9 +114,9 @@ export class ArticleService {
     answerValue: string,
     answerLabel: string
   ): Promise<ArticleMatch | null> {
-    let question: any = null;
-    let session: any = null;
-    let context: any = {};
+    let question: QuizQuestion | null = null;
+    let session: (QuizSession & { answers: (QuizAnswer & { question: QuizQuestion | null })[] }) | null = null;
+    let context: Record<string, unknown> = {};
 
     try {
       // Get question and session context
@@ -135,8 +136,8 @@ export class ArticleService {
       if (question && session) {
         // Build context for AI generation
         context = {
-          previousAnswers: session.answers.map((answer: any) => ({
-            question: answer.question.prompt,
+          previousAnswers: session.answers.map((answer: QuizAnswer & { question: QuizQuestion | null }) => ({
+            question: answer.question?.prompt || '',
             answer: typeof answer.value === 'string' ? answer.value : JSON.stringify(answer.value)
           })),
           currentScores: await this.calculateCurrentScores(sessionId)
@@ -148,7 +149,7 @@ export class ArticleService {
     }
 
     // Determine category from question or quiz type
-    const category = question ? this.determineCategory(question.quizType, question.prompt) : 'general';
+    const category = question ? this.determineCategory(question.quizType || 'general', question.prompt) : 'general';
 
     const request: ArticleGenerationRequest = {
       questionPrompt: question?.prompt || 'Financial question',
@@ -160,7 +161,7 @@ export class ArticleService {
 
     try {
       const generated = await aiContentService.generatePersonalizedArticle(request);
-      
+
       // Create temporary article match
       return {
         article: {
@@ -206,7 +207,7 @@ export class ArticleService {
           articleId: article.id,
           questionId: trigger.questionId,
           optionValue: trigger.optionValue,
-          condition: trigger.condition as any, // JSON type needs casting
+          condition: trigger.condition as Prisma.InputJsonValue, // JSON type needs casting
           priority: trigger.priority
         }
       });
@@ -238,7 +239,7 @@ export class ArticleService {
           articleId: templateRecord.id, // Using template ID as article ID for now
           questionId: trigger.questionId,
           optionValue: trigger.optionValue,
-          condition: trigger.condition as any, // JSON type needs casting
+          condition: trigger.condition as Prisma.InputJsonValue, // JSON type needs casting
           priority: trigger.priority
         }
       });
@@ -262,8 +263,8 @@ export class ArticleService {
   }
 
   private async calculateMatchConfidence(
-    trigger: any,
-    answers: any[],
+    trigger: PrismaArticleTrigger,
+    answers: QuizAnswer[],
     currentQuestionId?: string,
     currentAnswer?: string
   ): Promise<number> {
@@ -276,8 +277,8 @@ export class ArticleService {
       } else {
         // Check historical answers
         const matchingAnswer = answers.find(
-          answer => answer.questionId === trigger.questionId && 
-                   answer.value === trigger.optionValue
+          answer => answer.questionId === trigger.questionId &&
+            answer.value === trigger.optionValue
         );
         if (matchingAnswer) {
           confidence += 0.6;
@@ -287,8 +288,8 @@ export class ArticleService {
 
     // Check complex conditions
     if (trigger.condition) {
-      const condition = trigger.condition as any;
-      
+      const condition = trigger.condition as Record<string, unknown>;
+
       // Check score ranges
       if (condition.scoreRanges) {
         const scores = await this.calculateCurrentScores(answers[0]?.sessionId);
@@ -304,14 +305,15 @@ export class ArticleService {
       // Check required answers
       if (condition.requiredAnswers) {
         let requiredMatches = 0;
-        for (const required of condition.requiredAnswers) {
+        const requiredAnswers = condition.requiredAnswers as { questionId: string; value: string }[];
+        for (const required of requiredAnswers) {
           const hasMatch = answers.some(
-            answer => answer.questionId === required.questionId && 
-                     answer.value === required.value
+            answer => answer.questionId === required.questionId &&
+              answer.value === required.value
           );
           if (hasMatch) requiredMatches++;
         }
-        confidence += (requiredMatches / condition.requiredAnswers.length) * 0.4;
+        confidence += (requiredMatches / requiredAnswers.length) * 0.4;
       }
     }
 
@@ -320,7 +322,7 @@ export class ArticleService {
 
   private determineCategory(quizType: string, questionPrompt: string): string {
     const prompt = questionPrompt.toLowerCase();
-    
+
     if (prompt.includes('marriage') || prompt.includes('relationship') || prompt.includes('partner')) {
       return 'marriage';
     }
@@ -330,11 +332,11 @@ export class ArticleService {
     if (prompt.includes('career') || prompt.includes('job') || prompt.includes('work')) {
       return 'career';
     }
-    
+
     return 'general';
   }
 
-  private async calculateCurrentScores(sessionId: string): Promise<Record<string, number>> {
+  private async calculateCurrentScores(_sessionId: string): Promise<Record<string, number>> {
     // This would use your existing scoring logic
     // For now, return empty scores
     return {

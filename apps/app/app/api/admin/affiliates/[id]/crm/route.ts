@@ -13,7 +13,7 @@ export async function GET(
       { status: 401 }
     );
   }
-  
+
   try {
     const { id: affiliateId } = await params;
 
@@ -23,9 +23,9 @@ export async function GET(
       WHERE "id" = ${affiliateId}
       LIMIT 1
     `;
-    
-    const affiliate = Array.isArray(affiliateResult) && affiliateResult.length > 0 
-      ? affiliateResult[0] 
+
+    const affiliate = Array.isArray(affiliateResult) && affiliateResult.length > 0
+      ? affiliateResult[0]
       : null;
 
     if (!affiliate) {
@@ -37,16 +37,16 @@ export async function GET(
 
     // Get all quiz sessions attributed to this affiliate
     // Include both original referral code and custom tracking link
-    const whereClause = affiliate.custom_tracking_link 
+    const whereClause = affiliate.custom_tracking_link
       ? {
-          OR: [
-            { affiliateCode: affiliate.referral_code },
-            { affiliateCode: affiliate.custom_tracking_link.replace('/', '') }
-          ]
-        }
+        OR: [
+          { affiliateCode: affiliate.referral_code },
+          { affiliateCode: affiliate.custom_tracking_link.replace('/', '') }
+        ]
+      }
       : {
-          affiliateCode: affiliate.referral_code,
-        };
+        affiliateCode: affiliate.referral_code,
+      };
 
     const allQuizSessions = await prisma.quizSession.findMany({
       where: whereClause,
@@ -67,13 +67,13 @@ export async function GET(
     // Filter to only include sessions that have name and email (actual leads)
     // A lead is someone who completed the quiz AND provided contact information
     const quizSessionsWithContactInfo = allQuizSessions.filter(session => {
-      const nameAnswer = session.answers.find(a => 
+      const nameAnswer = session.answers.find(a =>
         a.question?.prompt?.toLowerCase().includes("name")
       );
-      const emailAnswer = session.answers.find(a => 
+      const emailAnswer = session.answers.find(a =>
         a.question?.prompt?.toLowerCase().includes("email")
       );
-      
+
       return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
     });
 
@@ -81,37 +81,37 @@ export async function GET(
     const allLeads = quizSessionsWithContactInfo.map(session => {
       // Extract name and email from quiz answers (like general admin CRM)
       // Look for questions containing "name" or "email" in the prompt
-      const nameAnswer = session.answers.find(a => 
+      const nameAnswer = session.answers.find(a =>
         a.question?.prompt?.toLowerCase().includes("name")
       );
-      const emailAnswer = session.answers.find(a => 
+      const emailAnswer = session.answers.find(a =>
         a.question?.prompt?.toLowerCase().includes("email")
       );
-      
+
       // Extract value from JSON if needed
       const getNameValue = (answer: typeof nameAnswer) => {
         if (!answer?.value) return "N/A";
-        const value = answer.value as any;
+        const value = answer.value as unknown;
         if (typeof value === 'string') return value;
         if (typeof value === 'object' && value !== null) {
-          return (value as any).value || (value as any).text || JSON.stringify(value);
+          return (value as Record<string, unknown>).value as string || (value as Record<string, unknown>).text as string || JSON.stringify(value);
         }
         return String(value);
       };
-      
+
       const getEmailValue = (answer: typeof emailAnswer) => {
         if (!answer?.value) return "N/A";
-        const value = answer.value as any;
+        const value = answer.value as unknown;
         if (typeof value === 'string') return value;
         if (typeof value === 'object' && value !== null) {
-          return (value as any).value || (value as any).text || JSON.stringify(value);
+          return (value as Record<string, unknown>).value as string || (value as Record<string, unknown>).text as string || JSON.stringify(value);
         }
         return String(value);
       };
-      
+
       const nameValue = getNameValue(nameAnswer);
       const emailValue = getEmailValue(emailAnswer);
-      
+
       return {
         id: session.id,
         sessionId: session.id,
@@ -125,7 +125,7 @@ export async function GET(
         result: session.result ? {
           archetype: session.result.archetype,
           score: typeof session.result.scores === 'object' && session.result.scores !== null
-            ? (session.result.scores as any).total || 0
+            ? (session.result.scores as Record<string, number>).total || 0
             : 0,
           insights: [],
         } : null,
@@ -158,10 +158,10 @@ export async function GET(
     const totalLeads = leads.filter(lead => lead.status === "completed").length;
     const totalCompletions = totalLeads; // Same as totalLeads since we only count actual leads
     const completionRate = leads.length > 0 ? (totalLeads / leads.length) * 100 : 0;
-    const averageCompletionTime = totalCompletions > 0 
+    const averageCompletionTime = totalCompletions > 0
       ? leads
-          .filter(lead => lead.durationMs)
-          .reduce((sum, lead) => sum + (lead.durationMs || 0), 0) / totalCompletions / 60000 // Convert to minutes
+        .filter(lead => lead.durationMs)
+        .reduce((sum, lead) => sum + (lead.durationMs || 0), 0) / totalCompletions / 60000 // Convert to minutes
       : 0;
 
     // Get distinct archetypes
@@ -206,7 +206,7 @@ export async function GET(
 
     // Only return completed quiz sessions as leads (matching general admin CRM)
     const completedLeads = leads.filter(lead => lead.status === "completed");
-    
+
     return NextResponse.json({
       leads: completedLeads,
       stats,

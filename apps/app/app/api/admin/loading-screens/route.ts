@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
     const { searchParams } = new URL(request.url);
     const quizType = searchParams.get('quizType');
@@ -30,14 +30,15 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json({ loadingScreens });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error fetching loading screens:', error);
-    
+
     // If table doesn't exist, return empty array
-    if (error?.code === 'P2021' || error?.message?.includes('does not exist')) {
+    const err = error as { code?: string; message?: string };
+    if (err?.code === 'P2021' || err?.message?.includes('does not exist')) {
       return NextResponse.json({ loadingScreens: [] });
     }
-    
+
     return NextResponse.json({ error: 'Failed to fetch loading screens' }, { status: 500 });
   }
 }
@@ -50,7 +51,7 @@ export async function POST(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
     const body = await request.json();
     const {

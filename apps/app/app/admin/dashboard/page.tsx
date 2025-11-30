@@ -25,6 +25,58 @@ import CRM from '../components/dashboard/CRM';
 import { AdminStats, QuizAnalyticsFilters } from '../types';
 import ErrorBoundary from '../components/ErrorBoundary';
 
+interface AffiliateAnalyticsData {
+  // Define structure based on usage or keep as unknown for now if complex
+  [key: string]: unknown;
+}
+
+interface CommissionReleaseStatus {
+  success: boolean;
+  message?: string;
+  releasedCount?: number;
+  releasedAmount?: number;
+  currentDate?: string;
+  holdDays?: number;
+  releasedCommissions?: Array<{
+    id: string;
+    affiliateName: string;
+    amount: number;
+    holdUntil: Date;
+  }>;
+  readyForRelease?: number;
+  currentlyHeld?: number;
+  totalHeld?: number;
+  totalAvailable?: number;
+}
+
+interface Lead {
+  id: string;
+  answers: Array<{
+    question?: {
+      prompt?: string;
+    };
+    value?: string | number | object;
+  }>;
+  createdAt: string;
+  status: string;
+  completedAt?: string;
+  affiliateCode?: string;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  outcome?: string;
+  saleValue?: number | string;
+  notes?: string;
+  appointmentDate?: string;
+  closerName?: string;
+}
+
+interface Affiliate {
+  id: string;
+  name: string;
+  referralCode: string;
+}
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -49,7 +101,7 @@ export default function AdminDashboard() {
   const currentSectionRef = useRef(activeSection);
 
   // Preload affiliate analytics data for instant section switching
-  const [affiliateAnalyticsData, setAffiliateAnalyticsData] = useState<any>(null);
+  const [affiliateAnalyticsData, setAffiliateAnalyticsData] = useState<AffiliateAnalyticsData | null>(null);
 
   // Quiz Analytics Filters
   const [quizAnalyticsFilters, setQuizAnalyticsFilters] = useState({
@@ -81,9 +133,9 @@ export default function AdminDashboard() {
   const [isUpdatingPayoutSettings, setIsUpdatingPayoutSettings] = useState(false);
   const [isUpdatingCrmSettings, setIsUpdatingCrmSettings] = useState(false);
   const [isUpdatingTerminalOutcomes, setIsUpdatingTerminalOutcomes] = useState(false);
-  const [commissionReleaseStatus, setCommissionReleaseStatus] = useState<any>(null);
+  const [commissionReleaseStatus, setCommissionReleaseStatus] = useState<CommissionReleaseStatus | null>(null);
   const [isProcessingReleases, setIsProcessingReleases] = useState(false);
-  const [selectedLead, setSelectedLead] = useState<any>(null);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [showLeadModal, setShowLeadModal] = useState(false);
 
   // Helper functions for appointments
@@ -118,7 +170,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const openLeadModal = (lead: any) => {
+  const openLeadModal = (lead: Lead) => {
     setSelectedLead(lead);
     setShowLeadModal(true);
   };
@@ -380,7 +432,7 @@ export default function AdminDashboard() {
       const response = await fetch('/api/admin/affiliates?status=approved');
       const data = await response.json();
       if (data.success) {
-        setAffiliates(data.affiliates.map((aff: any) => ({
+        setAffiliates(data.affiliates.map((aff: Affiliate) => ({
           id: aff.id,
           name: aff.name,
           referralCode: aff.referralCode
@@ -469,7 +521,7 @@ export default function AdminDashboard() {
         );
 
         // Determine source based on affiliate code
-        const source = (lead as any).affiliateCode ? `Affiliate (${(lead as any).affiliateCode})` : "Website";
+        const source = (lead as Lead).affiliateCode ? `Affiliate (${(lead as Lead).affiliateCode})` : "Website";
 
         return [
           lead.id,
@@ -710,7 +762,7 @@ export default function AdminDashboard() {
         {activeSection === 'ceo-analytics' && (
           <ErrorBoundary sectionName="CEO Analytics">
             <div className="mb-8">
-              <CEOAnalytics initialData={affiliateAnalyticsData} />
+              <CEOAnalytics initialData={null} />
             </div>
           </ErrorBoundary>
         )}
@@ -1070,7 +1122,7 @@ export default function AdminDashboard() {
                           <div className="mb-4">
                             <h3 className="text-base font-semibold text-gray-900 mb-2">Terminal Outcomes Configuration</h3>
                             <p className="text-sm text-gray-600">
-                              Configure which deal outcomes are considered "terminal" (closed deals that should NOT be counted in OPEN DEAL AMOUNT).
+                              Configure which deal outcomes are considered &quot;terminal&quot; (closed deals that should NOT be counted in OPEN DEAL AMOUNT).
                               All other deals will be counted as open deals.
                             </p>
                           </div>
@@ -1226,7 +1278,7 @@ export default function AdminDashboard() {
 
                 <div>
                   <strong style={{ color: '#374151' }}>Appointment Date:</strong>
-                  <p style={{ margin: '4px 0 0 0', color: '#6b7280' }}>{formatDate(selectedLead.appointmentDate)}</p>
+                  <p style={{ margin: '4px 0 0 0', color: '#6b7280' }}>{selectedLead.appointmentDate ? formatDate(selectedLead.appointmentDate) : 'N/A'}</p>
                 </div>
 
                 {selectedLead.closerName && (

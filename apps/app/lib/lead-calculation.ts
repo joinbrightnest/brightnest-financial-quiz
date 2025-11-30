@@ -1,4 +1,5 @@
 import { prisma } from './prisma';
+import { Prisma, QuizAnswer, QuizQuestion } from '@prisma/client';
 
 /**
  * Centralized lead calculation function - SINGLE SOURCE OF TRUTH
@@ -63,7 +64,7 @@ export async function calculateLeads(params: {
   const questionMap = new Map(allQuestions.map(q => [q.id, q]));
 
   // Build where clause for quiz sessions
-  const whereClause: any = {
+  const whereClause: Prisma.QuizSessionWhereInput = {
     createdAt: dateFilter,
     status: "completed",
     ...(quizType ? { quizType } : {}),
@@ -74,7 +75,7 @@ export async function calculateLeads(params: {
           { question: { type: 'email' } },
           { question: { prompt: { contains: 'email', mode: 'insensitive' } } }
         ],
-        value: { not: null }
+        value: { not: Prisma.DbNull }
       }
     }
   };
@@ -106,16 +107,16 @@ export async function calculateLeads(params: {
   // Attach questions to answers in memory and filter for valid leads
   const actualLeads = allCompletedSessions.filter(session => {
     // Attach questions to answers
-    session.answers.forEach((answer: any) => {
+    session.answers.forEach((answer: QuizAnswer & { question?: QuizQuestion }) => {
       if (answer.questionId) {
         answer.question = questionMap.get(answer.questionId);
       }
     });
 
-    const nameAnswer = session.answers.find((a: any) =>
+    const nameAnswer = session.answers.find((a: QuizAnswer & { question?: QuizQuestion }) =>
       a.question?.prompt?.toLowerCase().includes('name')
     );
-    const emailAnswer = session.answers.find((a: any) =>
+    const emailAnswer = session.answers.find((a: QuizAnswer & { question?: QuizQuestion }) =>
       a.question?.prompt?.toLowerCase().includes('email') ||
       a.question?.type === 'email'
     );
@@ -127,7 +128,7 @@ export async function calculateLeads(params: {
   // This prevents duplicate leads when someone completes the quiz multiple times
   const leadsByEmail = new Map();
   for (const lead of actualLeads) {
-    const emailAnswer = lead.answers.find((a: any) =>
+    const emailAnswer = lead.answers.find((a: QuizAnswer & { question?: QuizQuestion }) =>
       a.question?.prompt?.toLowerCase().includes('email') ||
       a.question?.type === 'email'
     );

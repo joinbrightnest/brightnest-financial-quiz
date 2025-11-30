@@ -443,7 +443,7 @@ export default function AffiliatePerformancePage() {
                   </div>
                 )}
                 <p className="text-xs text-orange-600">
-                  Use this to reset the affiliate's password if they forgot it
+                  Use this to reset the affiliate&apos;s password if they forgot it
                 </p>
               </div>
             </div>

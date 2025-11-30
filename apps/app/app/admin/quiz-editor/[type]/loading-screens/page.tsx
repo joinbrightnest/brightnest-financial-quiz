@@ -10,14 +10,26 @@ interface LoadingScreenEditorProps {
   }>;
 }
 
+interface Question {
+  id: string;
+  order: number;
+  prompt: string;
+  type: string;
+  options: Array<{
+    label: string;
+    value: string;
+    weightValue: number;
+  }>;
+}
+
 export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps) {
   const router = useRouter();
   const [quizType, setQuizType] = useState<string>('');
-  const [questions, setQuestions] = useState<any[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [loadingScreenId, setLoadingScreenId] = useState<string>('');
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Form fields
   const [title, setTitle] = useState("ANALYZING YOUR RESPONSES");
   const [subtitle, setSubtitle] = useState("Please wait while we analyze your answers");
@@ -42,7 +54,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
   const [testProgress, setTestProgress] = useState(0);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [dots, setDots] = useState("");
-  
+
   // Image fields
   const [imageUrl, setImageUrl] = useState<string>('');
   const [imageAlt, setImageAlt] = useState<string>('');
@@ -54,7 +66,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
     const getParams = async () => {
       const resolvedParams = await params;
       setQuizType(resolvedParams.type);
-      
+
       // Check for loading screen ID in URL parameters
       const urlParams = new URLSearchParams(window.location.search);
       const id = urlParams.get('id');
@@ -143,7 +155,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
           // Failed to parse cached questions, falling back to API
         }
       }
-      
+
       // Fallback to API if no cached data
       const response = await fetch(`/api/admin/quiz-questions?quizType=${quizType}`, {
         credentials: 'include'
@@ -166,7 +178,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
       if (response.ok) {
         const data = await response.json();
         const screen = data.loadingScreen;
-        
+
         // Pre-populate form with existing data
         setTitle(screen.title || "ANALYZING YOUR RESPONSES");
         setSubtitle(screen.subtitle || "Please wait while we analyze your answers");
@@ -186,7 +198,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
         setShowTopBar(screen.showTopBar !== false);
         setTopBarColor(screen.topBarColor || '#1f2937');
         setTriggerQuestionId(screen.triggerQuestionId || "");
-        
+
         // Image fields
         setImageUrl(screen.imageUrl || '');
         setImageAlt(screen.imageAlt || '');
@@ -204,32 +216,32 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
   const handleTest = () => {
     setIsTesting(true);
     setTestProgress(0);
-    
+
     // Create realistic variable-speed data processing
     const startTime = Date.now();
     let lastProgress = 0;
     let currentSpeed = 1;
     let nextSpeedChange = Math.random() * 500 + 300; // Change speed every 300-800ms
-    
+
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
-      
+
       // Randomly change speed at intervals
       if (elapsed > nextSpeedChange) {
         // More dramatic speed changes: 0.5x to 1.8x
         currentSpeed = 0.5 + Math.random() * 1.3;
         nextSpeedChange = elapsed + (Math.random() * 600 + 400); // Next change in 400-1000ms
       }
-      
+
       // Calculate progress increment with current speed
       const baseIncrement = (100 / duration) * 50; // Base progress per 50ms
       const increment = baseIncrement * currentSpeed;
       lastProgress += increment;
-      
+
       // Make sure we don't overshoot
       const maxProgress = (elapsed / duration) * 100;
       lastProgress = Math.min(lastProgress, maxProgress);
-      
+
       // Ensure we reach 100% at the end
       if (elapsed >= duration) {
         setTestProgress(100);
@@ -287,12 +299,12 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
 
     setIsSaving(true);
     try {
-      const url = isEditing 
+      const url = isEditing
         ? `/api/admin/loading-screens/${loadingScreenId}`
         : '/api/admin/loading-screens';
-      
+
       const method = isEditing ? 'PUT' : 'POST';
-      
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -341,7 +353,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
 
   const getIconComponent = () => {
     const baseClass = `w-20 h-20 ${animationStyle === 'spin' ? 'animate-spin' : animationStyle === 'pulse' ? 'animate-pulse' : animationStyle === 'bounce' ? 'animate-bounce' : ''}`;
-    
+
     switch (iconType) {
       case 'puzzle-4':
         return (
@@ -365,7 +377,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
       default:
         return (
           <svg className={baseClass} fill="currentColor" viewBox="0 0 24 24" style={{ color: iconColor }}>
-            <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z"/>
+            <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" />
           </svg>
         );
     }
@@ -394,7 +406,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
           100% { transform: translateX(100%); }
         }
       `}</style>
-      
+
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
@@ -441,7 +453,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
           <div className="space-y-4 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
             <div className="bg-white rounded-lg shadow-sm p-4">
               <h2 className="text-base font-semibold text-gray-900 mb-4">Content Settings</h2>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -530,7 +542,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
 
             <div className="bg-white rounded-lg shadow-sm p-4">
               <h2 className="text-base font-semibold text-gray-900 mb-4">Visual Settings</h2>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -568,7 +580,7 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                 {/* Image Upload Section */}
                 <div className="border-t pt-4 mt-4">
                   <h3 className="text-sm font-medium text-gray-800 mb-3">Image Upload</h3>
-                  
+
                   <div className="space-y-3">
                     {/* Image Upload */}
                     <div>
@@ -810,12 +822,12 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Show After Question <span className="text-red-500">*</span>
                 </label>
-              <select
-                value={triggerQuestionId}
-                onChange={(e) => setTriggerQuestionId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900"
-                required
-              >
+                <select
+                  value={triggerQuestionId}
+                  onChange={(e) => setTriggerQuestionId(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900"
+                  required
+                >
                   <option value="">Select a question...</option>
                   {questions.map((q, index) => (
                     <option key={q.id} value={q.id}>
@@ -831,11 +843,10 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
           <div className="sticky top-4 h-fit">
             <div className="bg-white rounded-lg shadow-sm p-4">
               <h2 className="text-base font-semibold text-gray-900 mb-4">Live Preview</h2>
-              
-              <div 
-                className={`rounded-2xl shadow-2xl flex flex-col min-h-[500px] transition-all ${
-                  isTesting ? 'ring-4 ring-orange-500 ring-opacity-50 scale-105' : ''
-                }`}
+
+              <div
+                className={`rounded-2xl shadow-2xl flex flex-col min-h-[500px] transition-all ${isTesting ? 'ring-4 ring-orange-500 ring-opacity-50 scale-105' : ''
+                  }`}
                 style={{ backgroundColor }}
               >
                 {showTopBar && (
@@ -843,99 +854,99 @@ export default function LoadingScreenEditor({ params }: LoadingScreenEditorProps
                     <h1 className="text-white text-xl font-bold tracking-wide">BrightNest</h1>
                   </div>
                 )}
-                
+
                 <div className="flex flex-col items-center justify-center p-8 text-center flex-1">
-                <h2 
-                  className="text-2xl font-bold mb-3"
-                  style={{ color: textColor }}
-                >
-                  {title}
-                </h2>
-                
-                {subtitle && (
-                  <p 
-                    className="text-base mb-4"
+                  <h2
+                    className="text-2xl font-bold mb-3"
                     style={{ color: textColor }}
                   >
-                    {subtitle}
-                  </p>
-                )}
-                
-                {personalizedText && (
-                  <p 
-                    className="text-sm opacity-80 mb-6"
-                    style={{ color: textColor }}
-                  >
-                    {personalizedText
-                      .replace(/\{\{name\}\}/g, 'John')
-                      .replace(/\{\{answer\}\}/g, 'financial planning')}
-                  </p>
-                )}
-                
-                {showProgressBar && (
-                  <div className="mt-8">
-                    {/* Uploaded Image */}
-                    {showImage && imageUrl && (
-                      <div className="mb-6 flex justify-center">
-                        <img
-                          src={imageUrl}
-                          alt={imageAlt}
-                          className="max-w-full h-auto rounded-lg shadow-sm"
-                          style={{ maxHeight: '200px' }}
-                        />
-                      </div>
-                    )}
-                    
-                    {/* Icon/Symbol */}
-                    <div className="mb-4 flex justify-center">{getIconComponent()}</div>
-                    
-                    {/* Loading Text */}
+                    {title}
+                  </h2>
+
+                  {subtitle && (
                     <p
-                      className="text-sm font-medium mb-2 tracking-wide text-center"
+                      className="text-base mb-4"
                       style={{ color: textColor }}
                     >
-                      <span className="transition-opacity duration-300">
-                        {loadingTexts[currentTextIndex]}
-                      </span>
-                      <span className="inline-block w-6 text-left">
-                        {dots}
-                      </span>
+                      {subtitle}
                     </p>
-                    
-                    {/* Progress Bar */}
-                    <div className="flex justify-center">
-                      <div 
-                        className="relative overflow-hidden rounded-lg" 
-                        style={{ 
-                          width: '300px', 
-                          height: '32px',
-                          backgroundColor: progressBarBgColor
-                        }}
+                  )}
+
+                  {personalizedText && (
+                    <p
+                      className="text-sm opacity-80 mb-6"
+                      style={{ color: textColor }}
+                    >
+                      {personalizedText
+                        .replace(/\{\{name\}\}/g, 'John')
+                        .replace(/\{\{answer\}\}/g, 'financial planning')}
+                    </p>
+                  )}
+
+                  {showProgressBar && (
+                    <div className="mt-8">
+                      {/* Uploaded Image */}
+                      {showImage && imageUrl && (
+                        <div className="mb-6 flex justify-center">
+                          <img
+                            src={imageUrl}
+                            alt={imageAlt}
+                            className="max-w-full h-auto rounded-lg shadow-sm"
+                            style={{ maxHeight: '200px' }}
+                          />
+                        </div>
+                      )}
+
+                      {/* Icon/Symbol */}
+                      <div className="mb-4 flex justify-center">{getIconComponent()}</div>
+
+                      {/* Loading Text */}
+                      <p
+                        className="text-sm font-medium mb-2 tracking-wide text-center"
+                        style={{ color: textColor }}
                       >
+                        <span className="transition-opacity duration-300">
+                          {loadingTexts[currentTextIndex]}
+                        </span>
+                        <span className="inline-block w-6 text-left">
+                          {dots}
+                        </span>
+                      </p>
+
+                      {/* Progress Bar */}
+                      <div className="flex justify-center">
                         <div
-                          className="h-full transition-all duration-300 ease-out rounded-lg"
+                          className="relative overflow-hidden rounded-lg"
                           style={{
-                            backgroundColor: progressBarFillColor,
-                            width: isTesting ? `${testProgress}%` : '65%',
+                            width: '300px',
+                            height: '32px',
+                            backgroundColor: progressBarBgColor
                           }}
-                        />
-                        
-                        {/* Progress Percentage */}
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span 
-                            className="text-base font-bold"
-                            style={{ 
-                              color: progressBarTextColor,
-                              fontWeight: '600'
+                        >
+                          <div
+                            className="h-full transition-all duration-300 ease-out rounded-lg"
+                            style={{
+                              backgroundColor: progressBarFillColor,
+                              width: isTesting ? `${testProgress}%` : '65%',
                             }}
-                          >
-                            {isTesting ? `${Math.round(testProgress)}%` : '65%'}
-                          </span>
+                          />
+
+                          {/* Progress Percentage */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span
+                              className="text-base font-bold"
+                              style={{
+                                color: progressBarTextColor,
+                                fontWeight: '600'
+                              }}
+                            >
+                              {isTesting ? `${Math.round(testProgress)}%` : '65%'}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
                 </div>
               </div>
             </div>

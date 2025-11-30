@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { verifyAdminAuth } from '@/lib/admin-auth-server';
 import { getCloserIdFromToken } from '@/lib/closer-auth';
 
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
         const leadEmail = searchParams.get('leadEmail');
         const filterCloserId = searchParams.get('closerId');
 
-        const where: any = {
+        const where: Prisma.TaskWhereInput = {
             status: { in: ['pending', 'in_progress', 'completed'] }
         };
 
@@ -49,7 +50,7 @@ export async function GET(request: NextRequest) {
                 }
             } else {
                 // If viewing general task list, only show their own tasks
-                where.closerId = closerId;
+                where.closerId = closerId!;
             }
         }
 
@@ -89,7 +90,7 @@ export async function GET(request: NextRequest) {
                     // For admin: find any appointment
                     // For closer: find appointment assigned to them (or any? original code used closerId filter for closer API)
 
-                    const appointmentWhere: any = { customerEmail: task.leadEmail };
+                    const appointmentWhere: Prisma.AppointmentWhereInput = { customerEmail: task.leadEmail };
                     if (!isAdmin) {
                         appointmentWhere.closerId = closerId;
                     }

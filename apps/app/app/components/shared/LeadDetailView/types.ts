@@ -5,7 +5,7 @@ export interface LeadDetailViewProps {
   sessionId: string;
   onClose: () => void;
   userRole: UserRole;
-  leadData?: any; // Optional pre-loaded data for admin
+  leadData?: LeadData; // Optional pre-loaded data for admin
 }
 
 export interface Activity {
@@ -49,27 +49,27 @@ export interface Task {
 export interface LeadData {
   id: string;
   status?: string;
-  completedAt?: string;
-  dealClosedAt?: string;
-  source?: string;
-  quizType?: string;
+  completedAt?: string | null;
+  dealClosedAt?: string | null;
+  source?: string | null;
+  quizType?: string | null;
   closer?: {
-    name: string;
-  };
-  closerName?: string;
+    name?: string;
+  } | null;
+  closerName?: string | null;
   appointment?: {
-    outcome?: string;
-    saleValue?: number;
+    outcome?: string | null;
+    saleValue?: number | string | null;
     closer?: {
-      name: string;
-    };
-  };
+      name?: string;
+    } | null;
+  } | null;
   answers: Array<{
     questionText?: string;
     answer?: string;
     question?: {
       prompt?: string;
     };
-    value?: string;
+    value?: string | number | object;
   }>;
 }

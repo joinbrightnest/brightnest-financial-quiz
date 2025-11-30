@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     }
 
     const token = authHeader.substring(7);
-    
+
     // Verify JWT token
     const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
     if (!JWT_SECRET) {
@@ -26,9 +26,9 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let decoded: any;
+    let decoded: { affiliateId: string } | null = null;
     try {
-      decoded = jwt.verify(token, JWT_SECRET);
+      decoded = jwt.verify(token, JWT_SECRET) as { affiliateId: string } | null;
     } catch (error) {
       console.log("Token verification failed:", error);
       return NextResponse.json(
@@ -38,6 +38,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Get affiliate profile
+    if (!decoded || !decoded.affiliateId) {
+      return NextResponse.json(
+        { error: "Invalid token payload" },
+        { status: 401 }
+      );
+    }
+
     console.log("Looking for affiliate with ID:", decoded.affiliateId);
     const affiliate = await prisma.affiliate.findUnique({
       where: { id: decoded.affiliateId },
@@ -53,9 +60,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Use custom tracking link if available, otherwise use default
-    const customTrackingLink = (affiliate as any).customTrackingLink;
+    const customTrackingLink = affiliate.custom_tracking_link;
     const activeTrackingLink = customTrackingLink || `https://joinbrightnest.com/${affiliate.referralCode}`;
-    
+
     console.log("Affiliate data:", {
       id: affiliate.id,
       name: affiliate.name,

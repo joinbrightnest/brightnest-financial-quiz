@@ -62,7 +62,7 @@ export default function AffiliateDashboard() {
   const checkAuth = async () => {
     const token = localStorage.getItem("affiliate_token");
     const affiliateId = localStorage.getItem("affiliate_id");
-    
+
     if (!token || !affiliateId) {
       router.push("/affiliates/login");
       return;
@@ -102,16 +102,16 @@ export default function AffiliateDashboard() {
 
     try {
       setLoading(true);
-      
+
       const token = localStorage.getItem("affiliate_token");
       if (!token) {
         router.push("/affiliates/login");
         return;
       }
-      
+
       // Fetch affiliate stats using the affiliate-specific API
       console.log("Fetching affiliate stats...");
-      
+
       // Add cache-busting parameter to ensure fresh data
       const cacheBuster = `&_t=${Date.now()}`;
       const response = await fetch(`/api/affiliate/stats?dateRange=${dateRange}${cacheBuster}`, {
@@ -147,7 +147,7 @@ export default function AffiliateDashboard() {
 
   if (loading && !affiliate) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: '#faf8f0'}}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#faf8f0' }}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading affiliate dashboard...</p>
@@ -162,7 +162,7 @@ export default function AffiliateDashboard() {
 
   if (!affiliate.isApproved) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{backgroundColor: '#faf8f0'}}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#faf8f0' }}>
         <div className="text-center">
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 max-w-md">
             <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -172,7 +172,7 @@ export default function AffiliateDashboard() {
             </div>
             <h2 className="text-lg font-semibold text-yellow-800 mb-2">Account Pending Approval</h2>
             <p className="text-yellow-600 mb-4">
-              Your affiliate account is pending approval. You'll receive an email once it's approved.
+              Your affiliate account is pending approval. You&apos;ll receive an email once it&apos;s approved.
             </p>
             <button
               onClick={handleLogout}
@@ -187,12 +187,12 @@ export default function AffiliateDashboard() {
   }
 
   return (
-    <div className="min-h-screen" style={{backgroundColor: '#faf8f0'}}>
-      <AffiliateHeader 
-        affiliate={affiliate} 
+    <div className="min-h-screen" style={{ backgroundColor: '#faf8f0' }}>
+      <AffiliateHeader
+        affiliate={affiliate}
         onLogout={handleLogout}
       />
-      
+
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
         {/* Premium Header - Mobile Optimized */}
         <motion.div
@@ -245,10 +245,10 @@ export default function AffiliateDashboard() {
               disabled={loading}
               className="inline-flex items-center justify-center px-3 sm:px-4 lg:px-5 py-2 sm:py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-semibold hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <svg 
-                className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${loading ? 'animate-spin' : ''}`} 
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                className={`w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 ${loading ? 'animate-spin' : ''}`}
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -380,7 +380,7 @@ export default function AffiliateDashboard() {
             {/* Premium Charts Section - Mobile Optimized */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
               {/* Performance Chart */}
-              <AffiliatePerformanceChart 
+              <AffiliatePerformanceChart
                 dailyStats={stats.dailyStats}
                 loading={loading}
               />
@@ -462,7 +462,7 @@ export default function AffiliateDashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               {error}
-          </div>
+            </div>
           </motion.div>
         )}
       </div>

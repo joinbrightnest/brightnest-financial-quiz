@@ -94,7 +94,7 @@ export default function AffiliateSignup() {
               Your affiliate account has been created and is pending approval.
             </p>
             <p className="text-sm text-gray-400">
-              You'll receive an email once your account is approved. Redirecting to login...
+              You&apos;ll receive an email once your account is approved. Redirecting to login...
             </p>
           </div>
         </motion.div>
