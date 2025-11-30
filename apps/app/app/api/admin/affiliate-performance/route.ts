@@ -125,8 +125,7 @@ export async function GET(request: NextRequest) {
       // 5. Get all payouts for these affiliates
       prisma.affiliatePayout.findMany({
         where: {
-          affiliateId: { in: affiliateIds },
-          status: 'completed' // Filter by status directly in query
+          affiliateId: { in: affiliateIds }
         }
       })
     ]);
