@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
     // Get all affiliates
     const affiliates = await prisma.affiliate.findMany({
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
       // Get emails from completed quiz sessions
       const completedSessionIds = completedSessions.map(s => s.id);
       const completedSessionEmails = new Set<string>();
-      
+
       if (completedSessionIds.length > 0) {
         const emailAnswers = await prisma.quizAnswer.findMany({
           where: {
@@ -109,16 +109,16 @@ export async function GET(request: NextRequest) {
             const appDomain = appointmentEmail.split('@')[1];
             const quizLocal = email.split('@')[0];
             const quizDomain = email.split('@')[1];
-            
+
             // Exact domain match with similar local part
-            if (appDomain === quizDomain && 
-                (appLocal.toLowerCase() === quizLocal.toLowerCase() || 
-                 appLocal.replace(/\+.*$/, '').toLowerCase() === quizLocal.replace(/\+.*$/, '').toLowerCase())) {
+            if (appDomain === quizDomain &&
+              (appLocal.toLowerCase() === quizLocal.toLowerCase() ||
+                appLocal.replace(/\+.*$/, '').toLowerCase() === quizLocal.replace(/\+.*$/, '').toLowerCase())) {
               return true;
             }
             return false;
           });
-          
+
           if (similarEmails.length > 0) {
             matchingQuizEmail = similarEmails[0];
           }
@@ -131,8 +131,8 @@ export async function GET(request: NextRequest) {
           normalizedCalendlyEmail: appointmentEmail, // Normalized (lowercase, trimmed)
           saleValue: sale.saleValue ? Number(sale.saleValue) : null,
           calendlyEventId: sale.calendlyEventId,
-          createdAt: sale.createdAt.toISOString(),
-          updatedAt: sale.updatedAt.toISOString(),
+          createdAt: sale.createdAt ? sale.createdAt.toISOString() : null,
+          updatedAt: sale.updatedAt ? sale.updatedAt.toISOString() : null,
           hasMatchingQuizSession,
           matchingQuizEmail: hasMatchingQuizSession ? appointmentEmail : matchingQuizEmail, // Show which quiz email matched (if any)
           affiliateCode: affiliate.referralCode,
@@ -168,7 +168,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Error in affiliate sales diagnostic:", error);
     return NextResponse.json(
-      { 
+      {
         error: "Failed to fetch diagnostic data",
         details: error instanceof Error ? error.message : 'Unknown error'
       },
