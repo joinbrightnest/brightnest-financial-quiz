@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
     // Get all appointments for admin dashboard
     const appointments = await prisma.appointment.findMany({
@@ -84,15 +84,15 @@ export async function GET(request: NextRequest) {
 
     // Use centralized lead calculation logic (same as lib/lead-calculation.ts)
     const actualLeads = quizSessions.filter(session => {
-      const nameAnswer = session.answers.find(a => 
+      const nameAnswer = session.answers.find(a =>
         a.question?.prompt?.toLowerCase().includes('name') ||
         a.question?.prompt?.toLowerCase().includes('name')
       );
-      const emailAnswer = session.answers.find(a => 
+      const emailAnswer = session.answers.find(a =>
         a.question?.prompt?.toLowerCase().includes('email') ||
         a.question?.prompt?.toLowerCase().includes('email')
       );
-      
+
       return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
     });
 
@@ -123,11 +123,11 @@ export async function GET(request: NextRequest) {
       // Quiz sessions (people who completed quiz but haven't booked calls)
       ...actualLeads.map(session => {
         // Extract name and email from answers
-        const nameAnswer = session.answers.find(a => 
+        const nameAnswer = session.answers.find(a =>
           a.question?.prompt?.toLowerCase().includes('name') ||
           a.question?.prompt?.toLowerCase().includes('name')
         );
-        const emailAnswer = session.answers.find(a => 
+        const emailAnswer = session.answers.find(a =>
           a.question?.prompt?.toLowerCase().includes('email') ||
           a.question?.prompt?.toLowerCase().includes('email')
         );
@@ -316,8 +316,8 @@ async function autoAssignToCloser(appointmentId: string): Promise<void> {
       appointmentId,
       closerId: assignedCloser.id,
       closerName: assignedCloser.name,
-      previousTotalCalls: assignedCloser.totalCalls,
-      newTotalCalls: assignedCloser.totalCalls + 1
+      previousTotalCalls: assignedCloser.totalCalls ?? 0,
+      newTotalCalls: (assignedCloser.totalCalls ?? 0) + 1
     });
 
   } catch (error) {

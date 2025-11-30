@@ -2,14 +2,14 @@ import { prisma } from './lib/prisma';
 
 async function checkTestUser() {
   console.log("🔍 Checking Test User lead...\n");
-  
+
   // Find quiz session
   const session = await prisma.quizSession.findFirst({
     where: {
       answers: {
         some: {
           value: {
-            path: '$',
+            path: ['$'],
             string_contains: 'Test User'
           }
         }
@@ -41,7 +41,7 @@ async function checkTestUser() {
   });
 
   // Get email from answers
-  const emailAnswer = session.answers.find(a => 
+  const emailAnswer = session.answers.find(a =>
     a.question?.prompt?.toLowerCase().includes('email')
   );
   const email = emailAnswer?.value as any;

@@ -13,7 +13,7 @@ export async function GET(
       { status: 401 }
     );
   }
-  
+
   try {
     const { sessionId } = await params;
 
@@ -58,7 +58,7 @@ export async function GET(
           WHERE "custom_tracking_link" = ${`/${quizSession.affiliateCode}`}
           LIMIT 1
         `;
-        
+
         if (Array.isArray(affiliateResult) && affiliateResult.length > 0) {
           affiliate = {
             name: affiliateResult[0].name,
@@ -71,32 +71,32 @@ export async function GET(
     // Extract name and email from quiz answers (like general admin CRM)
     const nameAnswer = quizSession.answers.find(a =>
       a.question?.prompt?.toLowerCase().includes("name") ||
-        a.question?.prompt?.toLowerCase().includes("name")
+      a.question?.prompt?.toLowerCase().includes("name")
     );
     const emailAnswer = quizSession.answers.find(a =>
       a.question?.prompt?.toLowerCase().includes("email") ||
-        a.question?.prompt?.toLowerCase().includes("email")
+      a.question?.prompt?.toLowerCase().includes("email")
     );
 
     // Get appointment data if it exists (to show deal close date)
     const email = emailAnswer?.value ? (typeof emailAnswer.value === 'string' ? emailAnswer.value : JSON.stringify(emailAnswer.value)) : null;
     let appointment = null;
     let affiliateConversion = null;
-    
+
     if (email && typeof email === 'string') {
       appointment = await prisma.appointment.findFirst({
         where: {
           customerEmail: email.toLowerCase()
         }
       });
-      
+
       // Get the affiliate conversion record to get the actual close date
       // Match by quiz session ID first (most accurate), fall back to matching by affiliate + time
       if (appointment && appointment.outcome === 'converted' && quizSession.affiliateCode) {
         const affiliateRecord = await prisma.affiliate.findUnique({
           where: { referralCode: quizSession.affiliateCode }
         });
-        
+
         if (affiliateRecord) {
           // Try to find conversion record linked to this specific quiz session
           affiliateConversion = await prisma.affiliateConversion.findFirst({
@@ -109,8 +109,8 @@ export async function GET(
                 // Fall back to matching by time window (within 1 day of appointment update)
                 {
                   createdAt: {
-                    gte: new Date(new Date(appointment.updatedAt).getTime() - 60 * 60 * 1000), // 1 hour before
-                    lte: new Date(new Date(appointment.updatedAt).getTime() + 60 * 60 * 1000), // 1 hour after
+                    gte: new Date(new Date(appointment.updatedAt || appointment.createdAt || new Date()).getTime() - 60 * 60 * 1000), // 1 hour before
+                    lte: new Date(new Date(appointment.updatedAt || appointment.createdAt || new Date()).getTime() + 60 * 60 * 1000), // 1 hour after
                   }
                 }
               ]
@@ -119,7 +119,7 @@ export async function GET(
               createdAt: 'desc'
             }
           });
-          
+
           console.log('🔍 Deal close date lookup for', quizSession.id);
           console.log('   Quiz completed:', quizSession.completedAt);
           console.log('   Appointment updated:', appointment?.updatedAt);
@@ -191,7 +191,7 @@ export async function GET(
         // Get the answer value (could be string, number, etc.)
         const answerValue = answer.value;
         let displayAnswer = answerValue;
-        
+
         // Try to find the label from question options if question type is single/multiple choice
         if (answer.question && (answer.question.type === 'single' || answer.question.type === 'multiple')) {
           try {
@@ -206,7 +206,7 @@ export async function GET(
                 // Also try JSON string comparison
                 return JSON.stringify(opt.value) === JSON.stringify(answerValue);
               });
-              
+
               if (matchingOption && matchingOption.label) {
                 displayAnswer = matchingOption.label;
               }
@@ -216,7 +216,7 @@ export async function GET(
             console.error('Error parsing question options:', error);
           }
         }
-        
+
         // For text/email inputs, use the value directly (it's already the user's input)
         return {
           questionId: answer.questionId,
@@ -239,8 +239,8 @@ export async function GET(
         outcome: appointment.outcome,
         saleValue: appointment.saleValue ? Number(appointment.saleValue) : null,
         scheduledAt: appointment.scheduledAt.toISOString(),
-        createdAt: appointment.createdAt.toISOString(),
-        updatedAt: appointment.updatedAt.toISOString(),
+        createdAt: (appointment.createdAt || new Date()).toISOString(),
+        updatedAt: (appointment.updatedAt || new Date()).toISOString(),
       } : null,
       dealClosedAt: affiliateConversion ? affiliateConversion.createdAt.toISOString() : null,
       source: source, // Include calculated source

@@ -14,7 +14,7 @@ export async function GET(
       { status: 401 }
     );
   }
-  
+
   try {
     const { sessionId } = await params;
 
@@ -43,7 +43,7 @@ export async function GET(
     const nameAnswer = quizSession.answers.find(
       a => a.question?.type === 'text' || a.question?.prompt.toLowerCase().includes('name')
     );
-    
+
     const emailAnswer = quizSession.answers.find(
       a => a.question?.type === 'email' || a.question?.prompt.toLowerCase().includes('email')
     );
@@ -53,27 +53,27 @@ export async function GET(
     let appointment = null;
     if (email) {
       appointment = await prisma.appointment.findFirst({
-        where: { 
+        where: {
           customerEmail: email,
-          closerId: closerId 
+          closerId: closerId
         },
         include: {
           closer: true
         }
       });
     }
-    
+
     // If no appointment found by email, try finding by closer ID and session timeframe
     if (!appointment) {
       appointment = await prisma.appointment.findFirst({
         where: {
           closerId: closerId,
           // Match by customer name if available
-          ...(nameAnswer?.value && { 
-            customerName: { 
-              contains: String(nameAnswer.value), 
+          ...(nameAnswer?.value && {
+            customerName: {
+              contains: String(nameAnswer.value),
               mode: 'insensitive' as const
-            } 
+            }
           })
         },
         include: {
@@ -90,7 +90,7 @@ export async function GET(
     // 1. An appointment for this lead, OR
     // 2. Tasks assigned for this lead
     const hasAppointment = appointment && appointment.closerId === closerId;
-    
+
     let hasTasks = false;
     if (email && !hasAppointment) {
       const tasksCount = await prisma.task.count({
@@ -155,7 +155,7 @@ export async function GET(
     let source = 'Website'; // Default
     let affiliate = null;
     const affiliateCodeToCheck = quizSession.affiliateCode || appointment?.affiliateCode;
-    
+
     if (affiliateCodeToCheck) {
       // First try to find by referral code
       affiliate = await prisma.affiliate.findUnique({
@@ -174,7 +174,7 @@ export async function GET(
           WHERE "custom_tracking_link" = ${`/${affiliateCodeToCheck}`}
           LIMIT 1
         `;
-        
+
         if (Array.isArray(affiliateResult) && affiliateResult.length > 0) {
           affiliate = {
             name: affiliateResult[0].name,
@@ -182,7 +182,7 @@ export async function GET(
           };
         }
       }
-      
+
       // Set source from affiliate name if found
       if (affiliate) {
         source = affiliate.name;
@@ -209,7 +209,7 @@ export async function GET(
         // Get the answer value (could be string, number, etc.)
         const answerValue = answer.value;
         let displayAnswer = answerValue;
-        
+
         // Try to find the label from question options if question type is single/multiple choice
         if (answer.question && (answer.question.type === 'single' || answer.question.type === 'multiple')) {
           try {
@@ -224,7 +224,7 @@ export async function GET(
                 // Also try JSON string comparison
                 return JSON.stringify(opt.value) === JSON.stringify(answerValue);
               });
-              
+
               if (matchingOption && matchingOption.label) {
                 displayAnswer = matchingOption.label;
               }
@@ -234,7 +234,7 @@ export async function GET(
             console.error('Error parsing question options:', error);
           }
         }
-        
+
         // For text/email inputs, use the value directly (it's already the user's input)
         return {
           questionId: answer.questionId,
@@ -257,10 +257,10 @@ export async function GET(
         outcome: appointment.outcome,
         saleValue: appointment.saleValue ? Number(appointment.saleValue) : null,
         scheduledAt: appointment.scheduledAt.toISOString(),
-        createdAt: appointment.createdAt.toISOString(),
-        updatedAt: appointment.updatedAt.toISOString(),
+        createdAt: (appointment.createdAt || new Date()).toISOString(),
+        updatedAt: (appointment.updatedAt || new Date()).toISOString(),
       } : null,
-      dealClosedAt: appointment?.outcome === 'converted' ? appointment.updatedAt.toISOString() : null,
+      dealClosedAt: appointment?.outcome === 'converted' ? (appointment.updatedAt || new Date()).toISOString() : null,
       source: source, // Include calculated source
       extractedEmail: email, // Include extracted email for task creation
     };

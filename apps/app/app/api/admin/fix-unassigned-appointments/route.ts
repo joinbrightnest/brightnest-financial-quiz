@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
     for (const appointment of unassignedAppointments) {
       // Get the next closer (round-robin)
       const assignedCloser = availableClosers[closerIndex];
-      
+
       // Assign the appointment to the closer
       await prisma.appointment.update({
         where: { id: appointment.id },
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
       });
 
       assignedCount++;
-      
+
       // Move to next closer (round-robin)
       closerIndex = (closerIndex + 1) % availableClosers.length;
     }
@@ -214,14 +214,14 @@ export async function GET(request: NextRequest) {
       totalUnassigned,
       availableClosersCount,
       unassignedByStatus: unassignedCounts.reduce((acc, item) => {
-        acc[item.status] = item._count.id;
+        acc[item.status || 'unknown'] = item._count.id;
         return acc;
       }, {} as Record<string, number>),
       oldestUnassigned: oldestUnassigned ? {
         id: oldestUnassigned.id,
         customerEmail: oldestUnassigned.customerEmail,
-        createdAt: oldestUnassigned.createdAt.toISOString(),
-        ageDays: Math.floor((Date.now() - oldestUnassigned.createdAt.getTime()) / (1000 * 60 * 60 * 24))
+        createdAt: (oldestUnassigned.createdAt || new Date()).toISOString(),
+        ageDays: Math.floor((Date.now() - (oldestUnassigned.createdAt || new Date()).getTime()) / (1000 * 60 * 60 * 24))
       } : null
     });
 

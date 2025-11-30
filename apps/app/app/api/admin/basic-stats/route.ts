@@ -615,7 +615,10 @@ export async function GET(request: NextRequest) {
       });
     } else {
       // 'all' or no filter: get questions from all quiz types that have sessions
-      const uniqueQuizTypes = [...new Set(filteredSessions.map(s => s.quizType))];
+      // Get unique quiz types from sessions
+      const uniqueQuizTypes = [...new Set(filteredSessions.map(s => s.quizType))].filter((type): type is string => type !== null);
+
+      // Get all questions for these quiz types
       if (uniqueQuizTypes.length > 0) {
         allQuestions = await prisma.quizQuestion.findMany({
           where: {
@@ -675,13 +678,16 @@ export async function GET(request: NextRequest) {
 
     // When showing "all" quiz types, calculate retention rate per quiz type
     // Group sessions by quiz type for accurate retention calculation
-    const sessionsByQuizType = filteredSessions.reduce((acc, session) => {
-      if (!acc[session.quizType]) {
-        acc[session.quizType] = [];
-      }
-      acc[session.quizType].push(session.id);
-      return acc;
-    }, {} as Record<string, string[]>);
+    const sessionsByQuizType = filteredSessions
+      .filter(session => session.quizType !== null)
+      .reduce((acc, session) => {
+        const quizType = session.quizType!; // Safe to use ! here because we filtered nulls
+        if (!acc[quizType]) {
+          acc[quizType] = [];
+        }
+        acc[quizType].push(session.id);
+        return acc;
+      }, {} as Record<string, string[]>);
 
     // When showing multiple quiz types, we need to ensure question numbers are unique
     // Create a sequential question number across all quiz types
@@ -696,7 +702,7 @@ export async function GET(request: NextRequest) {
         retentionRate = totalSessions > 0 ? (answeredCount / totalSessions) * 100 : 0;
       } else {
         // "All" types: use sessions of the same quiz type as this question
-        const sessionsForThisQuizType = sessionsByQuizType[question.quizType]?.length || 0;
+        const sessionsForThisQuizType = question.quizType ? (sessionsByQuizType[question.quizType]?.length || 0) : 0;
         retentionRate = sessionsForThisQuizType > 0 ? (answeredCount / sessionsForThisQuizType) * 100 : 0;
       }
 
@@ -1083,7 +1089,8 @@ export async function GET(request: NextRequest) {
     });
 
     const formattedQuizTypes = quizTypes.map(quizType => {
-      const displayName = quizType.quizType
+      const quizTypeName = quizType.quizType || 'unknown';
+      const displayName = quizTypeName
         .split('-')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
@@ -1104,7 +1111,7 @@ export async function GET(request: NextRequest) {
       return {
         name: quizType.quizType,
         displayName: displayName,
-        description: getDescription(quizType.quizType),
+        description: getDescription(quizTypeName),
         questionCount: quizType._count.id,
       };
     });

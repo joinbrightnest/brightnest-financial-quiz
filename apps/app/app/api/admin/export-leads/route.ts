@@ -10,21 +10,21 @@ export async function POST(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
     const { filters, exportOptions } = await request.json();
-    
+
     // Build the where clause based on filters
     const whereClause: any = {};
-    
+
     if (filters.quizType !== 'all') {
       whereClause.quizType = filters.quizType;
     }
-    
+
     if (filters.status !== 'all') {
       whereClause.status = filters.status;
     }
-    
+
     if (filters.archetype !== 'all') {
       whereClause.result = {
         archetype: filters.archetype
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     // Date filtering
     if (filters.dateRange !== 'all' || filters.startDate || filters.endDate) {
       const dateFilter: any = {};
-      
+
       if (filters.dateRange === '7days') {
         const weekAgo = new Date();
         weekAgo.setDate(weekAgo.getDate() - 7);
@@ -48,17 +48,17 @@ export async function POST(request: NextRequest) {
         quarterAgo.setDate(quarterAgo.getDate() - 90);
         dateFilter.gte = quarterAgo;
       }
-      
+
       if (filters.startDate) {
         dateFilter.gte = new Date(filters.startDate);
       }
-      
+
       if (filters.endDate) {
         const endDate = new Date(filters.endDate);
         endDate.setHours(23, 59, 59, 999);
         dateFilter.lte = endDate;
       }
-      
+
       whereClause.createdAt = dateFilter;
     }
 
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
     if (exportOptions.selectedFields.includes('answers') && exportOptions.includeAnswers) {
       csvHeaders.push('Answers Count');
       fieldMap.answersCount = 'Answers Count';
-      
+
       // Add individual answer columns
       const allQuestions = new Set();
       leads.forEach(lead => {
@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
           allQuestions.add(`${answer.question.order}_${answer.question.prompt.slice(0, 30)}`);
         });
       });
-      
+
       Array.from(allQuestions).forEach(questionKey => {
         csvHeaders.push(`Q${questionKey}`);
         fieldMap[`answer_${questionKey}`] = `Q${questionKey}`;
@@ -140,23 +140,23 @@ export async function POST(request: NextRequest) {
     }
 
     const csvRows = leads.map(lead => {
-      const nameAnswer = lead.answers.find(a => 
+      const nameAnswer = lead.answers.find(a =>
         a.question?.prompt?.toLowerCase().includes('name') ||
         a.question?.prompt?.toLowerCase().includes('name')
       );
-      const emailAnswer = lead.answers.find(a => 
+      const emailAnswer = lead.answers.find(a =>
         a.question?.prompt?.toLowerCase().includes('email') ||
         a.question?.prompt?.toLowerCase().includes('email')
       );
-      
+
       const row: string[] = [];
-      
+
       // Add fields based on export options
       if (exportOptions.selectedFields.includes('sessionId')) {
         row.push(lead.id);
       }
       if (exportOptions.selectedFields.includes('quizType')) {
-        row.push(lead.quizType);
+        row.push(lead.quizType || '');
       }
       if (exportOptions.selectedFields.includes('name') && exportOptions.includeContactInfo) {
         const nameValue = nameAnswer?.value;
@@ -180,7 +180,7 @@ export async function POST(request: NextRequest) {
       }
       if (exportOptions.selectedFields.includes('answers') && exportOptions.includeAnswers) {
         row.push(lead.answers.length.toString());
-        
+
         // Add individual answers
         const allQuestions = new Set();
         leads.forEach(l => {
@@ -188,9 +188,9 @@ export async function POST(request: NextRequest) {
             allQuestions.add(`${answer.question.order}_${answer.question.prompt.slice(0, 30)}`);
           });
         });
-        
+
         Array.from(allQuestions).forEach(questionKey => {
-          const answer = lead.answers.find(a => 
+          const answer = lead.answers.find(a =>
             `${a.question.order}_${a.question.prompt.slice(0, 30)}` === questionKey
           );
           const answerValue = answer?.value;

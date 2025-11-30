@@ -189,7 +189,7 @@ export async function GET(
                 activities.push({
                     id: `call_${appointment.id}`,
                     type: 'call_booked',
-                    timestamp: appointment.createdAt.toISOString(),
+                    timestamp: (appointment.createdAt || new Date()).toISOString(),
                     leadName,
                     actor: appointment.closer?.name,
                     details: {
@@ -247,7 +247,7 @@ export async function GET(
                     activities.push({
                         id: `outcome_${log.id}`,
                         type: isFirstOutcome ? 'outcome_marked' : 'outcome_updated' as any,
-                        timestamp: log.createdAt.toISOString(),
+                        timestamp: (log.createdAt || new Date()).toISOString(),
                         leadName,
                         actor: log.closer?.name || 'Unknown',
                         details: {
@@ -295,7 +295,7 @@ export async function GET(
                     activities.push({
                         id: `deal_${appointment.id}`,
                         type: 'deal_closed',
-                        timestamp: closeDate.toISOString(),
+                        timestamp: (closeDate || new Date()).toISOString(),
                         leadName,
                         actor: appointment.closer?.name || 'Unknown',
                         details: {
@@ -316,7 +316,7 @@ export async function GET(
                     activities.push({
                         id: `outcome_${appointment.id}`,
                         type: 'outcome_marked',
-                        timestamp: appointment.updatedAt.toISOString(),
+                        timestamp: (appointment.updatedAt || new Date()).toISOString(),
                         leadName,
                         actor: appointment.closer?.name || 'Unknown',
                         details: {

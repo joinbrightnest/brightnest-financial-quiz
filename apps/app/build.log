@@ -1,0 +1,45 @@
+
+> brightnest-app@0.1.0 build
+> prisma generate && next build
+
+Prisma schema loaded from prisma/schema.prisma
+
+✔ Generated Prisma Client (v6.19.0) to ./node_modules/@prisma/client in 449ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+ ⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of /Users/stefantudosescu/birghtnest/package-lock.json as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * /Users/stefantudosescu/birghtnest/apps/app/package-lock.json
+
+   ▲ Next.js 15.5.4
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · clientTraceMetadata
+
+   Creating an optimized production build ...
+[@sentry/nextjs] Could not find `onRequestError` hook in instrumentation file. This indicates outdated configuration of the Sentry SDK. Use `Sentry.captureRequestError` to instrument the `onRequestError` hook: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#errors-from-nested-react-server-components
+[@sentry/nextjs] It seems like you don't have a global error handler set up. It is recommended that you add a 'global-error.js' file with Sentry instrumentation so that React rendering errors are reported to Sentry. Read more: https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#react-render-errors-in-app-router (you can suppress this warning by setting SENTRY_SUPPRESS_GLOBAL_ERROR_HANDLER_FILE_WARNING=1 as environment variable)
+[@sentry/nextjs] DEPRECATION WARNING: It is recommended renaming your `sentry.client.config.ts` file, or moving its content to `instrumentation-client.ts`. When using Turbopack `sentry.client.config.ts` will no longer work. Read more about the `instrumentation-client.ts` file: https://nextjs.org/docs/app/api-reference/file-conventions/instrumentation-client
+ ✓ Compiled successfully in 10.2s
+   Skipping linting
+   Checking validity of types ...
+Failed to compile.
+
+./app/api/admin/all-quiz-types/route.ts:52:37
+Type error: Argument of type 'string | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+
+[0m [90m 50 |[39m         name[33m:[39m quizType[33m.[39mquizType[33m,[39m
+ [90m 51 |[39m         displayName[33m:[39m displayName[33m,[39m
+[31m[1m>[22m[39m[90m 52 |[39m         description[33m:[39m getDescription(quizType[33m.[39mquizType)[33m,[39m
+ [90m    |[39m                                     [31m[1m^[22m[39m
+ [90m 53 |[39m         questionCount[33m:[39m quizType[33m.[39m_count[33m.[39mid[33m,[39m
+ [90m 54 |[39m       }[33m;[39m
+ [90m 55 |[39m     })[33m;[39m[0m
+Next.js build worker exited with code: 1 and signal: null

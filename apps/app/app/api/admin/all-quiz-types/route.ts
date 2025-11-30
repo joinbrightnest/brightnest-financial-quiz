@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
       { status: 401 }
     );
   }
-  
+
   try {
     // Get all unique quiz types from the database
     const quizTypes = await prisma.quizQuestion.groupBy({
@@ -26,7 +26,8 @@ export async function GET(request: NextRequest) {
     // Convert to the format expected by the frontend
     const formattedQuizTypes = quizTypes.map(quizType => {
       // Convert quiz type name to display name
-      const displayName = quizType.quizType
+      const quizTypeName = quizType.quizType || 'unknown';
+      const displayName = quizTypeName
         .split('-')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
@@ -48,7 +49,7 @@ export async function GET(request: NextRequest) {
       return {
         name: quizType.quizType,
         displayName: displayName,
-        description: getDescription(quizType.quizType),
+        description: getDescription(quizTypeName),
         questionCount: quizType._count.id,
       };
     });
