@@ -43,7 +43,7 @@ export async function DELETE(
     try {
       await prisma.affiliateAuditLog.create({
         data: {
-          affiliateId: undefined, // Set to undefined to avoid foreign key constraint
+          // Omit affiliateId to avoid foreign key constraint (it will be null in DB)
           action: "deleted",
           details: {
             reason: "Admin deletion",
