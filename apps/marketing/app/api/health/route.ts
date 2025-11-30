@@ -2,36 +2,21 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 export async function GET() {
-    try {
-        // Test database connection with a simple query
-        await prisma.$queryRaw`SELECT 1`;
+    // 🧪 TESTING: Simulate unhealthy status for UptimeRobot alert test
+    // TODO: Revert this after testing!
 
-        return NextResponse.json({
-            status: 'healthy',
-            timestamp: new Date().toISOString(),
-            service: 'brightnest-marketing',
-            database: 'connected',
-            uptime: process.uptime()
-        }, {
-            status: 200,
-            headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-            }
-        });
-    } catch (error) {
-        console.error('Health check failed:', error);
+    console.log('⚠️ Health check - SIMULATING FAILURE for alert test');
 
-        return NextResponse.json({
-            status: 'unhealthy',
-            timestamp: new Date().toISOString(),
-            service: 'brightnest-marketing',
-            database: 'disconnected',
-            error: error instanceof Error ? error.message : 'Unknown error'
-        }, {
-            status: 503,
-            headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-            }
-        });
-    }
+    return NextResponse.json({
+        status: 'unhealthy',
+        timestamp: new Date().toISOString(),
+        service: 'brightnest-marketing',
+        database: 'disconnected',
+        error: 'SIMULATED FAILURE - Testing UptimeRobot alerts'
+    }, {
+        status: 503,
+        headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+        }
+    });
 }
