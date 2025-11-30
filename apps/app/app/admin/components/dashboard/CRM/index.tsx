@@ -648,11 +648,13 @@ export default function CRM({
                                         {crmVisibleColumns.stage && (
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 {(() => {
+                                                    // Determine the lead stage based on appointment status
+                                                    // Priority: outcome-based statuses > appointment existence > completed quiz
                                                     const actualStatus = lead.status && lead.status !== "Stage" ? lead.status :
                                                         (lead.appointment?.outcome === 'converted' ? 'Purchased (Call)' :
                                                             lead.appointment?.outcome === 'not_interested' ? 'Not Interested' :
                                                                 lead.appointment?.outcome === 'needs_follow_up' ? 'Needs Follow Up' :
-                                                                    lead.appointment?.outcome ? 'Booked' : 'Completed');
+                                                                    lead.appointment ? 'Booked' : 'Completed');
 
                                                     return (
                                                         <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${actualStatus === "Purchased (Call)"
