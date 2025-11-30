@@ -13,7 +13,7 @@ export async function DELETE(
       { status: 401 }
     );
   }
-  
+
   try {
     const { id: affiliateId } = await params;
 
@@ -43,7 +43,7 @@ export async function DELETE(
     try {
       await prisma.affiliateAuditLog.create({
         data: {
-          affiliateId: null, // Set to null to avoid foreign key constraint
+          affiliateId: undefined, // Set to undefined to avoid foreign key constraint
           action: "deleted",
           details: {
             reason: "Admin deletion",
@@ -96,7 +96,7 @@ export async function DELETE(
   } catch (error) {
     console.error("❌ Error deleting affiliate:", error);
     return NextResponse.json(
-      { 
+      {
         error: "Failed to delete affiliate",
         details: error instanceof Error ? error.message : String(error)
       },
