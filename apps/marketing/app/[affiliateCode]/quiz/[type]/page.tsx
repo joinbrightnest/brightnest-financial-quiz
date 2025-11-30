@@ -1,5 +1,6 @@
-import { redirect, notFound } from "next/navigation";
+import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import QuizPage from "../../../quiz/[type]/page";
 
 interface AffiliateQuizPageProps {
   params: Promise<{ affiliateCode: string; type: string }>;
@@ -55,9 +56,8 @@ async function validateAffiliate(affiliateCode: string) {
 
 export default async function AffiliateQuizPage({ params, searchParams }: AffiliateQuizPageProps) {
   const { affiliateCode, type } = await params;
-  const resolvedSearchParams = await searchParams;
 
-  // Validate affiliate server-side (no tracking - handled by main affiliate page)
+  // Validate affiliate server-side
   const isValidAffiliate = await validateAffiliate(affiliateCode);
 
   // If not a valid affiliate, show 404
@@ -65,7 +65,18 @@ export default async function AffiliateQuizPage({ params, searchParams }: Affili
     notFound();
   }
 
-  // Server-side redirect to quiz with affiliate parameter
-  // This avoids the black screen / flash of empty content
-  redirect(`/quiz/${type}?affiliate=${affiliateCode}`);
+  // Render the quiz page directly with the affiliate code override
+  // This eliminates the redirect and provides an instant experience
+  // The URL remains /affiliateCode/quiz/type
+
+  // We need to construct params object that matches what QuizPage expects
+  // Since QuizPage expects params to be a Promise, we wrap our object
+  const quizPageParams = Promise.resolve({ type });
+
+  return (
+    <QuizPage
+      params={quizPageParams}
+      affiliateCodeOverride={affiliateCode}
+    />
+  );
 }

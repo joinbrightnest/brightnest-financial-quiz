@@ -49,11 +49,12 @@ interface QuizPageProps {
   params: Promise<{
     type: string;
   }>;
+  affiliateCodeOverride?: string; // Optional prop for direct rendering
 }
 
 type QuizState = 'loading' | 'question' | 'article' | 'loading-screen' | 'error' | 'completed';
 
-export default function QuizPage({ params }: QuizPageProps) {
+export default function QuizPage({ params, affiliateCodeOverride }: QuizPageProps) {
   const router = useRouter();
 
   // Core quiz state
@@ -95,17 +96,17 @@ export default function QuizPage({ params }: QuizPageProps) {
     getParams();
   }, [params]);
 
-  // Handle affiliate parameter from URL
+  // Handle affiliate parameter from URL or Prop
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const affiliateCode = urlParams.get('affiliate');
+    const affiliateCode = affiliateCodeOverride || urlParams.get('affiliate');
 
     if (affiliateCode) {
-      console.log("🎯 Quiz started with affiliate code from URL:", affiliateCode);
+      console.log("🎯 Quiz started with affiliate code:", affiliateCode);
       // Set the affiliate cookie for the quiz system
       document.cookie = `affiliate_ref=${affiliateCode}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
     }
-  }, []);
+  }, [affiliateCodeOverride]);
 
   // Initialize quiz
   useEffect(() => {
@@ -113,10 +114,10 @@ export default function QuizPage({ params }: QuizPageProps) {
 
     const initializeQuiz = async () => {
       try {
-        // Only use affiliate code if explicitly provided in URL
+        // Only use affiliate code if explicitly provided in URL or Prop
         // Don't use cookie-based affiliate codes for direct website visits
         const urlParams = new URLSearchParams(window.location.search);
-        const affiliateCode = urlParams.get('affiliate');
+        const affiliateCode = affiliateCodeOverride || urlParams.get('affiliate');
 
         // Optimized: single API call now returns session, question, and count
         const sessionResponse = await fetch("/api/quiz/start", {
