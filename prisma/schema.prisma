@@ -34,6 +34,7 @@ model QuizSession {
   user          User?         @relation(fields: [userId], references: [id])
   result        Result?
   articleViews  ArticleView[]
+  appointments  Appointment[] // Link to appointments booked from this quiz session
 
   @@index([affiliateCode])
   @@index([completedAt])
@@ -409,6 +410,7 @@ model Closer {
 model Appointment {
   id                             String            @id @default(cuid())
   closerId                       String?           @map("closer_id")
+  quizSessionId                  String?           @map("quiz_session_id") // Link to the quiz session that led to this booking
   calendlyEventId                String            @unique @map("calendly_event_id")
   customerName                   String            @map("customer_name")
   customerEmail                  String            @map("customer_email")
@@ -435,14 +437,16 @@ model Appointment {
   createdAt                      DateTime          @default(now()) @map("created_at")
   updatedAt                      DateTime          @updatedAt @map("updated_at")
 
-  closer Closer? @relation(fields: [closerId], references: [id], onDelete: SetNull)
-  tasks  Task[]
+  closer      Closer?      @relation(fields: [closerId], references: [id], onDelete: SetNull)
+  quizSession QuizSession? @relation(fields: [quizSessionId], references: [id], onDelete: SetNull)
+  tasks       Task[]
 
   @@index([closerId, outcome])
   @@index([affiliateCode])
   @@index([scheduledAt])
   @@index([outcome])
   @@index([createdAt])
+  @@index([quizSessionId]) // Index for linking appointments to quiz sessions
   @@index([affiliateCode, scheduledAt]) // Speed up booking analytics by date
   @@index([affiliateCode, status, scheduledAt]) // Speed up filtered bookings
   @@map("appointments")

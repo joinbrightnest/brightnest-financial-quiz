@@ -36,15 +36,15 @@ export async function POST(request: NextRequest) {
 
     // Try to extract customer data from Calendly event payload
     console.log("🔍 Calendly event structure:", JSON.stringify(calendlyEvent, null, 2));
-    
+
     if (calendlyEvent) {
       // Try different possible locations for customer data
       const invitee = calendlyEvent.invitee || calendlyEvent.payload?.invitee;
       const event = calendlyEvent.event || calendlyEvent.payload?.event;
-      
+
       console.log("🔍 Invitee data:", invitee);
       console.log("🔍 Event data:", event);
-      
+
       if (invitee) {
         if (invitee.name && customerName === 'Unknown') {
           customerName = invitee.name;
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
           console.log("✅ Found customer phone in invitee:", customerPhone);
         }
       }
-      
+
       if (event) {
         if (event.start_time) {
           scheduledAt = new Date(event.start_time);
@@ -91,8 +91,8 @@ export async function POST(request: NextRequest) {
 
     if (!closer || !closer.isActive) {
       console.log("Closer not found or inactive for booking:", closerId);
-      return NextResponse.json({ 
-        success: true, 
+      return NextResponse.json({
+        success: true,
         message: "Booking tracked (closer not found)",
         closerId,
         customerName,
@@ -108,19 +108,20 @@ export async function POST(request: NextRequest) {
       appointment = await prisma.appointment.findUnique({
         where: { calendlyEventId }
       });
-      
+
       if (appointment) {
         console.log("✅ Found existing appointment:", appointment.id);
-        
-        // Update the existing appointment with closer assignment
+
+        // Update the existing appointment with closer assignment and quiz session link
         appointment = await prisma.appointment.update({
           where: { id: appointment.id },
           data: {
             closerId: closer.id,
             affiliateCode: affiliateCode || appointment.affiliateCode,
+            quizSessionId: sessionId || appointment.quizSessionId, // Link to quiz session if provided
           }
         });
-        
+
         console.log("✅ Updated existing appointment with closer assignment");
       }
     }
@@ -128,10 +129,11 @@ export async function POST(request: NextRequest) {
     // If no existing appointment found, create a new one
     if (!appointment) {
       console.log("📝 Creating new appointment (no existing appointment found)");
-      
+
       appointment = await prisma.appointment.create({
         data: {
           closerId: closer.id,
+          quizSessionId: sessionId || null, // Link to quiz session if provided
           calendlyEventId,
           customerName,
           customerEmail: customerEmail.toLowerCase(), // Normalize email for consistency
@@ -145,17 +147,20 @@ export async function POST(request: NextRequest) {
 
       console.log("✅ New appointment created:", appointment.id);
     }
-    
+
     // NOTE: Booking conversion tracking is handled by /api/track-booking
     // This route only handles appointment creation and closer assignment
     // to avoid duplicate booking conversions
     if (affiliateCode) {
       console.log("ℹ️ Affiliate code present, booking conversion handled by /api/track-booking:", affiliateCode);
     }
-    
-    // Session linking is handled by email matching in the lead status system
+
+    // Session linking via quizSessionId field
     if (sessionId) {
-      console.log("✅ Session ID provided for potential linking:", sessionId);
+      console.log("✅ Session ID linked to appointment:", {
+        appointmentId: appointment.id,
+        quizSessionId: sessionId
+      });
     }
 
     // Update closer's total calls
@@ -170,8 +175,8 @@ export async function POST(request: NextRequest) {
 
     console.log("✅ Closer total calls updated");
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: "Booking tracked successfully",
       appointment: {
         id: appointment.id,
@@ -186,7 +191,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error("❌ Error tracking closer booking:", error);
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true, // Return success to not break the booking flow
       message: "Booking tracked (error occurred)",
       error: error instanceof Error ? error.message : String(error)

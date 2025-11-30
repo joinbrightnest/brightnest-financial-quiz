@@ -391,7 +391,7 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // Get all appointments for these emails (with closer info)
+    // Get all appointments for these emails (with closer info and quiz session link)
     const emails = Object.values(leadEmails);
     const appointments = await prisma.appointment.findMany({
       where: {
@@ -402,6 +402,12 @@ export async function GET(request: NextRequest) {
           select: {
             id: true,
             name: true
+          }
+        },
+        quizSession: {
+          select: {
+            id: true,
+            affiliateCode: true
           }
         }
       }
