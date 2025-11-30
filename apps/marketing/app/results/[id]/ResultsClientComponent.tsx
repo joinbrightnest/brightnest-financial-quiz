@@ -19,15 +19,27 @@ interface Result {
 export default function ResultsClientComponent({ result }: { result: Result }) {
   const [personalizedCopy, setPersonalizedCopy] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [affiliateCode, setAffiliateCode] = useState<string | null>(null);
 
   // Calculate qualification if not already stored (for existing results)
-  const totalPoints = result.scores.totalPoints || 
+  const totalPoints = result.scores.totalPoints ||
     (result.scores.debt + result.scores.savings + result.scores.spending + result.scores.investing);
-  const qualifiesForCall = result.scores.qualifiesForCall !== undefined 
-    ? result.scores.qualifiesForCall 
+  const qualifiesForCall = result.scores.qualifiesForCall !== undefined
+    ? result.scores.qualifiesForCall
     : totalPoints >= 17;
 
   useEffect(() => {
+    // Get affiliate code from cookie
+    const affiliateRef = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('affiliate_ref='))
+      ?.split('=')[1];
+
+    if (affiliateRef) {
+      setAffiliateCode(affiliateRef);
+      console.log('🎯 Results page: Found affiliate code from cookie:', affiliateRef);
+    }
+
     // Get pre-generated AI copy from localStorage
     const storedCopy = localStorage.getItem('personalizedCopy');
     if (storedCopy) {
@@ -63,7 +75,7 @@ export default function ResultsClientComponent({ result }: { result: Result }) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{backgroundColor: '#faf8f0'}}>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#faf8f0' }}>
       {/* Header */}
       <div className="bg-[#333333] py-3 sm:py-4 px-4">
         <div className="max-w-4xl mx-auto text-center">
@@ -84,7 +96,7 @@ export default function ResultsClientComponent({ result }: { result: Result }) {
       {/* Main Content */}
       <div className="flex-1 px-4 sm:px-6 lg:px-8 py-6 sm:py-12 pb-20">
         <div className="max-w-4xl mx-auto">
-          
+
           {/* Header Section */}
           <div className="text-center mb-8 sm:mb-16">
             <p className="text-gray-500 text-xs sm:text-sm mb-2">Your Financial Archetype</p>
@@ -98,7 +110,7 @@ export default function ResultsClientComponent({ result }: { result: Result }) {
 
           {/* Main Content Container */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-12 space-y-8 sm:space-y-12">
-            
+
             {/* Recognition Section */}
             <div>
               <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3 sm:mb-4">Recognition</h3>
@@ -154,8 +166,9 @@ export default function ResultsClientComponent({ result }: { result: Result }) {
               <div className="space-y-3 sm:space-y-4">
                 {qualifiesForCall ? (
                   // User qualifies for call - show book call button
+                  // Use affiliate-specific booking page if affiliate code exists
                   <Link
-                    href="/book-call"
+                    href={affiliateCode ? `/${affiliateCode}/book-call` : "/book-call"}
                     className="inline-block w-full md:w-auto bg-blue-600 text-white px-6 sm:px-10 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                   >
                     {copy.cta.button}
