@@ -56,11 +56,27 @@ export async function calculateLeads(params: {
 
   const dateFilter = buildDateFilter();
 
+  // Get all active questions first to avoid N+1 queries
+  const allQuestions = await prisma.quizQuestion.findMany({
+    where: { active: true }
+  });
+  const questionMap = new Map(allQuestions.map(q => [q.id, q]));
+
   // Build where clause for quiz sessions
   const whereClause: any = {
     createdAt: dateFilter,
     status: "completed",
-    ...(quizType ? { quizType } : {})
+    ...(quizType ? { quizType } : {}),
+    // Optimization: Only fetch sessions that likely have an email (leads)
+    answers: {
+      some: {
+        OR: [
+          { question: { type: 'email' } },
+          { question: { prompt: { contains: 'email', mode: 'insensitive' } } }
+        ],
+        value: { not: null }
+      }
+    }
   };
 
   // Add affiliate filter if provided
@@ -77,28 +93,33 @@ export async function calculateLeads(params: {
     whereClause.affiliateCode = affiliateCode;
   }
 
-  // Get all completed sessions
+  // Get all completed sessions (leads)
+  // We don't include question in the query to avoid N+1
   const allCompletedSessions = await prisma.quizSession.findMany({
     where: whereClause,
     include: {
-      answers: {
-        include: {
-          question: true,
-        },
-      },
+      answers: true, // Fetch answers but NOT nested questions
     },
     orderBy: { createdAt: "desc" },
   });
 
-  // Filter to only include sessions that have name and email (actual leads)
+  // Attach questions to answers in memory and filter for valid leads
   const actualLeads = allCompletedSessions.filter(session => {
-    const nameAnswer = session.answers.find(a => 
+    // Attach questions to answers
+    session.answers.forEach((answer: any) => {
+      if (answer.questionId) {
+        answer.question = questionMap.get(answer.questionId);
+      }
+    });
+
+    const nameAnswer = session.answers.find((a: any) =>
       a.question?.prompt?.toLowerCase().includes('name')
     );
-    const emailAnswer = session.answers.find(a => 
-      a.question?.prompt?.toLowerCase().includes('email')
+    const emailAnswer = session.answers.find((a: any) =>
+      a.question?.prompt?.toLowerCase().includes('email') ||
+      a.question?.type === 'email'
     );
-    
+
     return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
   });
 
@@ -106,11 +127,12 @@ export async function calculateLeads(params: {
   // This prevents duplicate leads when someone completes the quiz multiple times
   const leadsByEmail = new Map();
   for (const lead of actualLeads) {
-    const emailAnswer = lead.answers.find(a => 
-      a.question?.prompt?.toLowerCase().includes('email')
+    const emailAnswer = lead.answers.find((a: any) =>
+      a.question?.prompt?.toLowerCase().includes('email') ||
+      a.question?.type === 'email'
     );
     const email = emailAnswer?.value ? String(emailAnswer.value) : null;
-    
+
     if (email) {
       const existingLead = leadsByEmail.get(email);
       if (!existingLead || new Date(lead.completedAt || lead.createdAt) > new Date(existingLead.completedAt || existingLead.createdAt)) {

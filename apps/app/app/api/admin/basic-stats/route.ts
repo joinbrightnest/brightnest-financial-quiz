@@ -194,7 +194,7 @@ export async function GET(request: NextRequest) {
     const dateFilter = buildDateFilter();
 
     // 🚀 PERFORMANCE: Parallelize initial queries for better speed
-    const [totalSessions, avgDurationResult, allCompletedSessions] = await Promise.all([
+    const [totalSessions, avgDurationResult] = await Promise.all([
       // Get total sessions (all quiz attempts)
       prisma.quizSession.count({
         where: {
@@ -213,25 +213,6 @@ export async function GET(request: NextRequest) {
           ...(quizType ? { quizType } : {}),
           ...(affiliateCode ? { affiliateCode } : {})
         },
-      }),
-      // Get all completed sessions first
-      prisma.quizSession.findMany({
-        where: {
-          createdAt: dateFilter,
-          status: "completed",
-          ...(quizType ? { quizType } : {}),
-          ...(affiliateCode ? { affiliateCode } : {})
-        },
-        include: {
-          result: true,
-          answers: {
-            include: {
-              question: true,
-            },
-          },
-        },
-        orderBy: { createdAt: "desc" },
-        take: duration === 'all' ? ADMIN_CONSTANTS.PAGINATION.MAX_LEADS_EXPORT : undefined,
       })
     ]);
 
@@ -253,6 +234,12 @@ export async function GET(request: NextRequest) {
       // Get all leads without date restriction (with smart limit to prevent memory issues)
       const MAX_LEADS_LIMIT = 500; // Lean & smart: prevent loading thousands of records
 
+      // Optimization: Fetch questions first to avoid N+1
+      const allQuestions = await prisma.quizQuestion.findMany({
+        where: { active: true }
+      });
+      const questionMap = new Map(allQuestions.map(q => [q.id, q]));
+
       const allCompletedSessionsAllTime = await prisma.quizSession.findMany({
         where: {
           status: "completed",
@@ -260,11 +247,7 @@ export async function GET(request: NextRequest) {
           ...(affiliateCode ? { affiliateCode } : {})
         },
         include: {
-          answers: {
-            include: {
-              question: true,
-            },
-          },
+          answers: true, // Fetch answers but NOT nested questions
         },
         orderBy: { createdAt: "desc" },
         take: MAX_LEADS_LIMIT, // Smart pagination: limit to most recent 500 leads
@@ -272,10 +255,17 @@ export async function GET(request: NextRequest) {
 
       // Filter to only include sessions that have name and email (actual leads)
       const actualLeadsAllTime = allCompletedSessionsAllTime.filter(session => {
-        const nameAnswer = session.answers.find(a =>
+        // Attach questions to answers in memory
+        session.answers.forEach((answer: any) => {
+          if (answer.questionId) {
+            answer.question = questionMap.get(answer.questionId);
+          }
+        });
+
+        const nameAnswer = session.answers.find((a: any) =>
           a.question?.prompt?.toLowerCase().includes('name')
         );
-        const emailAnswer = session.answers.find(a =>
+        const emailAnswer = session.answers.find((a: any) =>
           a.question?.prompt?.toLowerCase().includes('email')
         );
 
@@ -708,9 +698,6 @@ export async function GET(request: NextRequest) {
       const questionText = !quizType && allQuestions.length > 0
         ? `[${question.quizType}] ${question.prompt}`
         : question.prompt;
-
-      console.log(`📊 Question ${question.order} (${question.quizType}, DB order: ${question.order}): ${questionText}`);
-      console.log(`   Answers: ${answeredCount}/${totalSessions} (${retentionRate.toFixed(1)}% retention)`);
 
       return {
         questionNumber: index + 1, // Sequential number across all questions (Q1, Q2, Q3...)
