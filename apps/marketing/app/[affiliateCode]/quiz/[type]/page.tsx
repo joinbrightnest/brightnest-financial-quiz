@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
 interface AffiliateQuizPageProps {
@@ -60,30 +60,12 @@ export default async function AffiliateQuizPage({ params, searchParams }: Affili
   // Validate affiliate server-side (no tracking - handled by main affiliate page)
   const isValidAffiliate = await validateAffiliate(affiliateCode);
 
-  // If not a valid affiliate, redirect to 404
+  // If not a valid affiliate, show 404
   if (!isValidAffiliate) {
-    return (
-      <html>
-        <head>
-          <script dangerouslySetInnerHTML={{
-            __html: `window.location.replace('/404');`
-          }} />
-        </head>
-        <body></body>
-      </html>
-    );
+    notFound();
   }
 
-  // IMMEDIATE JavaScript redirect to quiz with affiliate parameter
-  // This is the fastest possible redirect method
-  return (
-    <html>
-      <head>
-        <script dangerouslySetInnerHTML={{
-          __html: `window.location.replace('/quiz/${type}?affiliate=${affiliateCode}');`
-        }} />
-      </head>
-      <body></body>
-    </html>
-  );
+  // Server-side redirect to quiz with affiliate parameter
+  // This avoids the black screen / flash of empty content
+  redirect(`/quiz/${type}?affiliate=${affiliateCode}`);
 }
