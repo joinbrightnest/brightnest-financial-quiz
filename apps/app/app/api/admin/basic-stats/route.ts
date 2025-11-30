@@ -525,18 +525,18 @@ export async function GET(request: NextRequest) {
         saleValue: appointment?.saleValue ? appointment.saleValue.toString() : null, // Include sale value from appointment
         dealClosedAt, // When the deal was actually closed (for converted deals)
         closerName: appointment?.closer?.name || null, // Include closer name for Deal Owner column
-        appointment: {
-          outcome: appointment?.outcome || null,
-          saleValue: appointment?.saleValue ? appointment.saleValue.toString() : null,
-          id: appointment?.id || null,
-          createdAt: appointment?.createdAt ? appointment.createdAt.toISOString() : null,
-          scheduledAt: appointment?.scheduledAt ? appointment.scheduledAt.toISOString() : null,
-          updatedAt: appointment?.updatedAt ? appointment.updatedAt.toISOString() : null,
-          closer: appointment?.closer ? {
+        appointment: appointment ? {
+          outcome: appointment.outcome || null,
+          saleValue: appointment.saleValue ? appointment.saleValue.toString() : null,
+          id: appointment.id,
+          createdAt: appointment.createdAt.toISOString(),
+          scheduledAt: appointment.scheduledAt.toISOString(),
+          updatedAt: appointment.updatedAt.toISOString(),
+          closer: appointment.closer ? {
             id: appointment.closer.id,
             name: appointment.closer.name
           } : null
-        } // Include necessary appointment data including closer
+        } : null // Return null if no appointment exists, not an empty object
       };
     });
 
