@@ -3,11 +3,12 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
   try {
-    const { affiliateCode, bookingDetails } = await request.json();
+    const { affiliateCode, bookingDetails, sessionId } = await request.json();
 
     console.log("🎯 Booking tracked:", {
       affiliateCode,
-      bookingDetails
+      bookingDetails,
+      sessionId
     });
 
     if (!affiliateCode) {
@@ -59,10 +60,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, message: "Booking already tracked (duplicate)" });
     }
 
-    // Record the booking conversion
+    // Record the booking conversion with quiz session link
     await prisma.affiliateConversion.create({
       data: {
         affiliateId: affiliate.id,
+        quizSessionId: sessionId || null, // Link to quiz session if available
         referralCode: affiliateCode,
         conversionType: "booking",
         status: "confirmed",
@@ -85,8 +87,8 @@ export async function POST(request: NextRequest) {
 
     console.log("✅ Booking conversion tracked for affiliate:", affiliateCode);
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: "Booking tracked successfully",
       affiliate: {
         name: affiliate.name,
@@ -97,8 +99,8 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("❌ Error tracking booking:", error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: "Failed to track booking",
         details: error instanceof Error ? error.message : String(error)
       },

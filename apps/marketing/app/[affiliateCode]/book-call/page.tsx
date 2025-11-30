@@ -8,14 +8,14 @@ import { useParams } from "next/navigation";
 export default function AffiliateBookCallPage() {
   const params = useParams();
   const affiliateCode = params.affiliateCode as string;
-  
+
   const [timeLeft, setTimeLeft] = useState({
     hours: 0,
     minutes: 0,
     seconds: 0
   });
   const [calendlyUrl, setCalendlyUrl] = useState("https://calendly.com/privatepublish/30min?hide_event_type_details=1&hide_gdpr_banner=1&hide_landing_page_details=1&embed_domain=joinbrightnest.com&embed_type=Inline");
-  const [activeCloser, setActiveCloser] = useState<{id: string, name: string, calendlyLink: string} | null>(null);
+  const [activeCloser, setActiveCloser] = useState<{ id: string, name: string, calendlyLink: string } | null>(null);
 
   // Fetch active closer's Calendly link and quiz session data
   useEffect(() => {
@@ -24,11 +24,11 @@ export default function AffiliateBookCallPage() {
         // First, try to get name and email from localStorage (fastest)
         let quizName = localStorage.getItem('userName');
         let quizEmail = localStorage.getItem('userEmail');
-        
+
         // If not in localStorage, fetch from quiz session API
         if (!quizName || !quizEmail) {
           const sessionId = localStorage.getItem('quizSessionId');
-          
+
           if (sessionId) {
             try {
               const sessionResponse = await fetch(`/api/quiz/session?sessionId=${sessionId}`);
@@ -36,11 +36,11 @@ export default function AffiliateBookCallPage() {
                 const sessionData = await sessionResponse.json();
                 quizName = quizName || sessionData.name || null;
                 quizEmail = quizEmail || sessionData.email || null;
-                
+
                 // Store in localStorage for future use
                 if (sessionData.name) localStorage.setItem('userName', sessionData.name);
                 if (sessionData.email) localStorage.setItem('userEmail', sessionData.email);
-                
+
                 console.log("✅ Found quiz data from API for pre-fill:", { quizName, quizEmail });
               }
             } catch (error) {
@@ -50,20 +50,20 @@ export default function AffiliateBookCallPage() {
         } else {
           console.log("✅ Found quiz data from localStorage for pre-fill:", { quizName, quizEmail });
         }
-        
+
         // Fetch active closer's Calendly link
         const response = await fetch('/api/closer/active-calendly');
         const data = await response.json();
-        
+
         // Build Calendly URL with pre-filled data
         let baseCalendlyUrl = "https://calendly.com/privatepublish/30min";
-        
+
         if (data.success && data.closer) {
           console.log("🎯 Found active closer:", data.closer);
           setActiveCloser(data.closer);
           baseCalendlyUrl = data.closer.calendlyLink;
         }
-        
+
         // Add URL parameters for pre-filling
         const urlParams = new URLSearchParams({
           'hide_event_type_details': '1',
@@ -72,7 +72,7 @@ export default function AffiliateBookCallPage() {
           'embed_domain': 'joinbrightnest.com',
           'embed_type': 'Inline'
         });
-        
+
         // Add name and email if available (Calendly supports these URL params for pre-filling)
         if (quizName) {
           urlParams.append('name', quizName); // Pre-fills the name field
@@ -80,7 +80,7 @@ export default function AffiliateBookCallPage() {
         if (quizEmail) {
           urlParams.append('email', quizEmail); // Pre-fills the email field
         }
-        
+
         const finalCalendlyUrl = `${baseCalendlyUrl}?${urlParams.toString()}`;
         setCalendlyUrl(finalCalendlyUrl);
         console.log("🔄 Using Calendly URL with pre-filled data:", finalCalendlyUrl);
@@ -97,10 +97,10 @@ export default function AffiliateBookCallPage() {
     if (affiliateCode) {
       console.log("🎯 Affiliate book-call page visit detected:", affiliateCode);
       console.log("🍪 Setting affiliate cookie...");
-      
+
       // Set the affiliate cookie for the quiz system
       document.cookie = `affiliate_ref=${affiliateCode}; path=/; max-age=${30 * 24 * 60 * 60}; SameSite=Lax`;
-      
+
       console.log("✅ Affiliate cookie set successfully");
     }
   }, [affiliateCode]);
@@ -110,45 +110,45 @@ export default function AffiliateBookCallPage() {
     const handleCalendlyEvent = async (e: any) => {
       if (e.data.event === 'calendly.event_scheduled') {
         console.log("🎯 Calendly booking completed:", e.data);
-        
+
         // Get customer data from quiz session instead of Calendly
         let customerName = 'Unknown';
         let customerEmail = 'unknown@example.com';
-        
+
         // Get session ID from localStorage (set when quiz was completed)
         const sessionId = localStorage.getItem('quizSessionId');
         console.log("🔍 Session ID from localStorage:", sessionId);
-        
-          if (sessionId) {
-            try {
-              // Fetch customer data from the public session API
-              const response = await fetch(`/api/quiz/session?sessionId=${sessionId}`);
-              
-              if (response.ok) {
-                const session = await response.json();
-                
-                if (session.name) {
-                  customerName = session.name;
-                  console.log("✅ Found customer name from session:", customerName);
-                }
-                if (session.email) {
-                  customerEmail = session.email;
-                  console.log("✅ Found customer email from session:", customerEmail);
-                }
+
+        if (sessionId) {
+          try {
+            // Fetch customer data from the public session API
+            const response = await fetch(`/api/quiz/session?sessionId=${sessionId}`);
+
+            if (response.ok) {
+              const session = await response.json();
+
+              if (session.name) {
+                customerName = session.name;
+                console.log("✅ Found customer name from session:", customerName);
               }
-            } catch (error) {
-              console.error("❌ Error fetching customer data from admin API:", error);
+              if (session.email) {
+                customerEmail = session.email;
+                console.log("✅ Found customer email from session:", customerEmail);
+              }
             }
-          } else {
-            console.log("⚠️ No session ID found in localStorage");
+          } catch (error) {
+            console.error("❌ Error fetching customer data from admin API:", error);
           }
-        
+        } else {
+          console.log("⚠️ No session ID found in localStorage");
+        }
+
         console.log("📝 Final customer data from quiz:", {
           customerName,
           customerEmail,
           sessionId
         });
-        
+
         // Track the booking for this affiliate
         if (affiliateCode) {
           try {
@@ -158,6 +158,7 @@ export default function AffiliateBookCallPage() {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 affiliateCode,
+                sessionId: sessionId || null, // Link booking to quiz session
                 bookingDetails: {
                   eventType: e.data.event,
                   scheduledAt: new Date().toISOString(),
@@ -176,20 +177,20 @@ export default function AffiliateBookCallPage() {
         if (activeCloser) {
           try {
             console.log("🎯 Auto-assigning booking to closer:", activeCloser.name);
-              await fetch('/api/track-closer-booking', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  closerId: activeCloser.id,
-                  calendlyEvent: e.data.payload || null,
-                  affiliateCode: affiliateCode || null,
-                  customerData: {
-                    name: customerName,
-                    email: customerEmail,
-                  },
-                  sessionId: sessionId || null, // Pass the session ID to link the appointment
-                }),
-              });
+            await fetch('/api/track-closer-booking', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                closerId: activeCloser.id,
+                calendlyEvent: e.data.payload || null,
+                affiliateCode: affiliateCode || null,
+                customerData: {
+                  name: customerName,
+                  email: customerEmail,
+                },
+                sessionId: sessionId || null, // Pass the session ID to link the appointment
+              }),
+            });
             console.log("✅ Booking auto-assigned to closer successfully");
           } catch (error) {
             console.error("❌ Error auto-assigning booking to closer:", error);
@@ -211,7 +212,7 @@ export default function AffiliateBookCallPage() {
           </div>
         `;
         document.body.appendChild(loadingDiv);
-        
+
         // Redirect after 2 seconds
         setTimeout(() => {
           window.location.href = '/book-call/confirmation';
@@ -220,7 +221,7 @@ export default function AffiliateBookCallPage() {
     };
 
     window.addEventListener('message', handleCalendlyEvent);
-    
+
     return () => {
       window.removeEventListener('message', handleCalendlyEvent);
     };
@@ -280,7 +281,7 @@ export default function AffiliateBookCallPage() {
           <p className="text-xl text-gray-600 mb-8">
             Get personalized financial advice from our experts
           </p>
-          
+
         </div>
 
         {/* Calendly Widget */}
@@ -293,10 +294,10 @@ export default function AffiliateBookCallPage() {
               Choose a time that works best for you
             </p>
           </div>
-          
-          <div className="calendly-inline-widget" 
-               data-url={calendlyUrl}
-               style={{ minWidth: '320px', height: '700px' }}>
+
+          <div className="calendly-inline-widget"
+            data-url={calendlyUrl}
+            style={{ minWidth: '320px', height: '700px' }}>
           </div>
         </div>
 
@@ -311,7 +312,7 @@ export default function AffiliateBookCallPage() {
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Free Consultation</h3>
             <p className="text-gray-600">No cost, no obligation. Just valuable insights into your financial situation.</p>
           </div>
-          
+
           <div className="text-center">
             <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -321,7 +322,7 @@ export default function AffiliateBookCallPage() {
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Personalized Plan</h3>
             <p className="text-gray-600">Get a customized financial strategy based on your unique goals and situation.</p>
           </div>
-          
+
           <div className="text-center">
             <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
