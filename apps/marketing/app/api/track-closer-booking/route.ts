@@ -12,9 +12,28 @@ export async function POST(request: NextRequest) {
       sessionId
     });
 
-    if (!closerId) {
-      console.log("No closer ID provided for booking");
-      return NextResponse.json({ success: true, message: "Booking tracked (no closer)" });
+    let targetCloserId = closerId;
+
+    if (!targetCloserId) {
+      console.log("⚠️ No closer ID provided, attempting auto-assignment...");
+      // Find the first active approved closer with a Calendly link
+      const activeCloser = await prisma.closer.findFirst({
+        where: {
+          isActive: true,
+          isApproved: true,
+          calendlyLink: { not: null }
+        },
+        orderBy: { createdAt: 'asc' }
+      });
+
+      if (activeCloser) {
+        console.log("✅ Auto-assigned closer:", activeCloser.name);
+        targetCloserId = activeCloser.id;
+      } else {
+        console.log("❌ No active closer found for auto-assignment");
+        // Still return success to not break the flow, but log the error
+        return NextResponse.json({ success: true, message: "Booking tracked (no closer available)" });
+      }
     }
 
     // Extract customer details
@@ -81,7 +100,7 @@ export async function POST(request: NextRequest) {
 
     // Find the closer
     const closer = await prisma.closer.findUnique({
-      where: { id: closerId },
+      where: { id: targetCloserId },
       select: {
         id: true,
         name: true,
@@ -90,11 +109,11 @@ export async function POST(request: NextRequest) {
     });
 
     if (!closer || !closer.isActive) {
-      console.log("Closer not found or inactive for booking:", closerId);
+      console.log("Closer not found or inactive for booking:", targetCloserId);
       return NextResponse.json({
         success: true,
         message: "Booking tracked (closer not found)",
-        closerId,
+        closerId: targetCloserId,
         customerName,
         scheduledAt: scheduledAt.toISOString()
       });
