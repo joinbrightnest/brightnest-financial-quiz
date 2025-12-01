@@ -105,7 +105,7 @@ export default function Sidebar({
                 </div>
 
                 {/* Navigation */}
-                <div className={`flex-1 overflow-y-auto overflow-x-visible ${collapsed ? 'p-2' : 'p-3'}`}>
+                <div className={`flex-1 overflow-y-auto overflow-x-hidden ${collapsed ? 'p-2' : 'p-3'}`}>
                     <nav className="space-y-2">
                         {/* Analytics Section */}
                         {!collapsed && (
@@ -252,7 +252,7 @@ export default function Sidebar({
                                                 </button>
 
                                                 {showResetDropdown && (
-                                                    <div className="absolute left-full top-0 ml-2 w-64 bg-slate-700 border border-slate-600 rounded-lg shadow-lg z-50">
+                                                    <div className="absolute left-0 top-full mt-2 w-full bg-slate-700 border border-slate-600 rounded-lg shadow-lg z-50">
                                                         <div className="py-2">
                                                             <button
                                                                 onClick={() => {
