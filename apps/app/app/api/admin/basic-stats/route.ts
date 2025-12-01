@@ -416,7 +416,7 @@ export async function GET(request: NextRequest) {
 
     // Group appointments by email
     const appointmentsByEmail = appointments.reduce((acc, appointment) => {
-      acc[appointment.customerEmail] = appointment;
+      acc[appointment.customerEmail.toLowerCase()] = appointment;
       return acc;
     }, {} as Record<string, any>);
 
