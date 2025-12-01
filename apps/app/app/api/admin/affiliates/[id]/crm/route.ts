@@ -222,10 +222,13 @@ export async function GET(
     }
     const leads = Array.from(leadsByEmail.values());
 
-    // Calculate CRM stats - only count actual leads (completed sessions with contact info)
-    const totalLeads = leads.filter(lead => lead.status === "completed").length;
-    const totalCompletions = totalLeads; // Same as totalLeads since we only count actual leads
-    const completionRate = leads.length > 0 ? (totalLeads / leads.length) * 100 : 0;
+    // Calculate CRM stats - count all leads (we already filtered for contact info)
+    const totalLeads = leads.length;
+    const completedLeads = leads.filter(lead =>
+      lead.status.toLowerCase() === "completed" || lead.status === "Completed"
+    ).length;
+    const totalCompletions = completedLeads;
+    const completionRate = leads.length > 0 ? (completedLeads / leads.length) * 100 : 0;
     const averageCompletionTime = totalCompletions > 0
       ? leads
         .filter(lead => lead.durationMs)
@@ -238,9 +241,9 @@ export async function GET(
       .map(lead => lead.result!.archetype);
     const distinctArchetypes = [...new Set(archetypes)];
 
-    // Quiz type distribution (only for completed leads)
+    // Quiz type distribution (all leads)
     const quizTypeCounts: { [key: string]: number } = {};
-    leads.filter(lead => lead.status === "completed").forEach(lead => {
+    leads.forEach(lead => {
       quizTypeCounts[lead.quizType] = (quizTypeCounts[lead.quizType] || 0) + 1;
     });
 
@@ -272,11 +275,9 @@ export async function GET(
       archetypeDistribution,
     };
 
-    // Only return completed quiz sessions as leads (matching general admin CRM)
-    const completedLeads = leads.filter(lead => lead.status === "completed");
-
+    // Return all leads (status is now determined by appointment)
     return NextResponse.json({
-      leads: completedLeads,
+      leads,
       stats,
     });
   } catch (error) {
