@@ -131,16 +131,42 @@ export async function POST(request: NextRequest) {
       if (appointment) {
         console.log("✅ Found existing appointment:", appointment.id);
 
-        // Update the existing appointment with closer assignment
+        // Update the existing appointment with closer assignment and quiz session link
         appointment = await prisma.appointment.update({
           where: { id: appointment.id },
           data: {
             closerId: closer.id,
             affiliateCode: affiliateCode || appointment.affiliateCode,
+            quizSessionId: sessionId || appointment.quizSessionId, // Link to quiz session if provided
           }
         });
 
         console.log("✅ Updated existing appointment with closer assignment");
+      }
+    }
+
+    // If no existing appointment found by Calendly ID, but we have a Session ID, check by session
+    // This prevents duplicates when the confirmation page triggers the API multiple times (e.g. on refresh)
+    if (!appointment && sessionId) {
+      const existingBySession = await prisma.appointment.findFirst({
+        where: { quizSessionId: sessionId }
+      });
+
+      if (existingBySession) {
+        console.log("✅ Found existing appointment by session ID:", existingBySession.id);
+        appointment = existingBySession;
+
+        // Update if necessary (e.g. if closer wasn't assigned yet)
+        if (!appointment.closerId || (affiliateCode && !appointment.affiliateCode)) {
+          appointment = await prisma.appointment.update({
+            where: { id: appointment.id },
+            data: {
+              closerId: closer.id || appointment.closerId,
+              affiliateCode: affiliateCode || appointment.affiliateCode,
+            }
+          });
+          console.log("✅ Updated existing appointment (found by session) with missing details");
+        }
       }
     }
 
@@ -151,6 +177,7 @@ export async function POST(request: NextRequest) {
       appointment = await prisma.appointment.create({
         data: {
           closerId: closer.id,
+          quizSessionId: sessionId || null, // Link to quiz session if provided
           calendlyEventId,
           customerName,
           customerEmail: customerEmail.toLowerCase(), // Normalize email for consistency
