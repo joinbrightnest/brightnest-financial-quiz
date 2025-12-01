@@ -419,136 +419,115 @@ export default function AffiliateCRMView() {
               </div>
             </div>
 
-            {/* Premium Leads Table */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-lg transition-all duration-300">
-              <div className="px-8 py-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold text-slate-900">
-                    Lead Details ({filteredLeads.length} leads)
-                  </h3>
-                </div>
+            {/* Standard Leads Table */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-200 bg-white flex justify-between items-center">
+                <h3 className="text-lg font-medium text-gray-900">
+                  Lead Details ({filteredLeads.length})
+                </h3>
               </div>
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-slate-200">
-                  <thead className="bg-gradient-to-r from-slate-50 to-white">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-8 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                        Lead Name ↑↓
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        LEAD NAME
                       </th>
-                      <th className="px-8 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                        Stage ↑↓
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        STAGE
                       </th>
-                      <th className="px-8 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                        Lead Added ↑↓
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        LEAD ADDED
                       </th>
-                      <th className="px-8 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                        Deal Owner ↑↓
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        DEAL OWNER
                       </th>
-                      <th className="px-8 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                        Amount ↑↓
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        AMOUNT
                       </th>
-                      <th className="px-8 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                        Source ↑↓
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        SOURCE
                       </th>
-                      <th className="px-8 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                        Actions
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        ACTIONS
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-slate-200">
+                  <tbody className="bg-white divide-y divide-gray-200">
                     {currentLeads.map((lead) => (
-                      <motion.tr
-                        key={lead.id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="hover:bg-gradient-to-r hover:from-slate-50 hover:to-white transition-all duration-200"
-                      >
-                        <td className="px-8 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
+                      <tr key={lead.id} className="hover:bg-gray-50 transition-colors duration-150">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                           {lead.name || "N/A"}
                         </td>
-                        <td className="px-8 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${lead.status === "Booked"
-                              ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg"
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${lead.status === "Booked"
+                              ? "bg-blue-100 text-blue-800"
                               : lead.status === "Completed" || lead.status === "completed"
-                                ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg"
+                                ? "bg-gray-100 text-gray-800"
                                 : lead.status === "Purchased (Call)"
-                                  ? "bg-gradient-to-r from-green-600 to-emerald-700 text-white shadow-lg"
+                                  ? "bg-green-100 text-green-800"
                                   : lead.status === "Not Interested"
-                                    ? "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg"
-                                    : "bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-lg"
+                                    ? "bg-red-100 text-red-800"
+                                    : lead.status === "Needs Follow Up"
+                                      ? "bg-yellow-100 text-yellow-800"
+                                      : "bg-gray-100 text-gray-800"
                             }`}>
                             {lead.status}
                           </span>
                         </td>
-                        <td className="px-8 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
-                          {new Date(lead.completedAt || lead.startedAt).toLocaleDateString()}
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                          {new Date(lead.completedAt || lead.startedAt).toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                          })}
                         </td>
-                        <td className="px-8 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-700 cursor-pointer">
                           {affiliateData.name}
                         </td>
-                        <td className="px-8 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           —
                         </td>
-                        <td className="px-8 py-4 whitespace-nowrap">
-                          <span className="inline-flex px-3 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="inline-flex px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
                             {affiliateData.name}
                           </span>
                         </td>
-                        <td className="px-8 py-4 whitespace-nowrap text-sm font-semibold">
-                          <a
-                            href={`/admin/leads/${lead.sessionId}`}
-                            className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-semibold hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200"
-                          >
-                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-700 cursor-pointer font-medium">
+                          <a href={`/admin/leads/${lead.sessionId}`}>
                             View Details
                           </a>
                         </td>
-                      </motion.tr>
+                      </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
 
-              {/* Premium Pagination */}
+              {/* Pagination */}
               {totalPages > 1 && (
-                <div className="px-8 py-6 border-t border-slate-200 bg-gradient-to-r from-slate-50 to-white">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm font-medium text-slate-600">
-                      Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredLeads.length)} of {filteredLeads.length} results
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <button
-                        onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                        disabled={currentPage === 1}
-                        className="inline-flex items-center px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-semibold hover:bg-slate-50 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-slate-200"
-                      >
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                        Previous
-                      </button>
-                      <span className="text-sm font-semibold text-slate-900 bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm">
-                        Page {currentPage} of {totalPages}
-                      </span>
-                      <button
-                        onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                        disabled={currentPage === totalPages}
-                        className="inline-flex items-center px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-semibold hover:bg-slate-50 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:border-slate-200"
-                      >
-                        Next
-                        <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </button>
-                    </div>
+                <div className="px-6 py-4 border-t border-gray-200 bg-white flex items-center justify-between">
+                  <div className="text-sm text-gray-600">
+                    Showing <span className="font-medium">{startIndex + 1}</span> to <span className="font-medium">{Math.min(startIndex + itemsPerPage, filteredLeads.length)}</span> of <span className="font-medium">{filteredLeads.length}</span> results
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Previous
+                    </button>
+                    <span className="text-sm text-gray-700">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next
+                    </button>
                   </div>
                 </div>
               )}
