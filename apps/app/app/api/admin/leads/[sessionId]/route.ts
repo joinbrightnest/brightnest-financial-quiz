@@ -248,6 +248,9 @@ export async function GET(
         scheduledAt: appointment.scheduledAt.toISOString(),
         createdAt: (appointment.createdAt || new Date()).toISOString(),
         updatedAt: (appointment.updatedAt || new Date()).toISOString(),
+        closer: appointment.closer ? {
+          name: appointment.closer.name
+        } : null
       } : null,
       dealClosedAt: affiliateConversion ? affiliateConversion.createdAt.toISOString() : null,
       source: source, // Include calculated source
