@@ -175,7 +175,7 @@ export default function LeadDetailsPage() {
   const fetchActivities = async () => {
     try {
       setLoadingActivities(true);
-      const response = await fetch(`/api/admin/leads/${sessionId}/activities`);
+      const response = await fetch(`/api/leads/${sessionId}/activities`);
       if (!response.ok) {
         throw new Error("Failed to fetch activities");
       }
