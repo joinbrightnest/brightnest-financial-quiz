@@ -134,11 +134,23 @@ export async function POST(request: NextRequest) {
         const { leadEmail, title, description, priority, dueDate } = body;
         let assignedCloserId = body.closerId;
 
+        console.log('Task Creation Debug:', {
+            leadEmail,
+            title,
+            priority,
+            dueDate,
+            assignedCloserId,
+            isAdmin,
+            closerIdFromToken: closerId
+        });
+
         // Validation
         if (!title || !title.trim()) {
+            console.log('Task Creation Failed: Missing title');
             return NextResponse.json({ error: 'Task title is required' }, { status: 400 });
         }
         if (!priority) {
+            console.log('Task Creation Failed: Missing priority');
             return NextResponse.json({ error: 'Priority is required' }, { status: 400 });
         }
 
@@ -159,13 +171,17 @@ export async function POST(request: NextRequest) {
 
                 // If still no closer ID, return error
                 if (!assignedCloserId) {
+                    console.log('Task Creation Failed: No closer ID and fallback failed');
                     return NextResponse.json({ error: 'Closer assignment is required. This lead may not have an assigned closer.' }, { status: 400 });
+                } else {
+                    console.log('Task Creation: Fallback successful, found closerId:', assignedCloserId);
                 }
             }
 
             // Verify closer exists/active
             const closer = await prisma.closer.findUnique({ where: { id: assignedCloserId } });
             if (!closer || !closer.isActive || !closer.isApproved) {
+                console.log('Task Creation Failed: Invalid or inactive closer', { closer });
                 return NextResponse.json({ error: 'Invalid or inactive closer' }, { status: 400 });
             }
         } else {
