@@ -275,9 +275,14 @@ export default function CRM({
     };
 
     const handleCrmExport = () => {
+        // Determine which leads to export: if any are selected, export only those; otherwise export all filtered leads
+        const leadsToExport = crmSelectedLeads.size > 0
+            ? filteredCrmLeads.filter(lead => crmSelectedLeads.has(lead.id))
+            : filteredCrmLeads;
+
         const csvContent = [
             ['Name', 'Email', 'Stage', 'Date', 'Deal Owner', 'Amount', 'Source'].join(','),
-            ...filteredCrmLeads.map(lead => {
+            ...leadsToExport.map(lead => {
                 const nameAnswer = lead.answers.find((a: Answer) =>
                     a.question?.prompt?.toLowerCase().includes('name')
                 );
@@ -305,6 +310,11 @@ export default function CRM({
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
+
+        // Clear selection after export if items were selected
+        if (crmSelectedLeads.size > 0) {
+            setCrmSelectedLeads(new Set());
+        }
     };
 
     return (
