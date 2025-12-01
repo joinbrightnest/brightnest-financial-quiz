@@ -91,7 +91,8 @@ export async function GET(
         include: {
           closer: {
             select: {
-              name: true
+              name: true,
+              id: true
             }
           }
         }
@@ -249,7 +250,8 @@ export async function GET(
         createdAt: (appointment.createdAt || new Date()).toISOString(),
         updatedAt: (appointment.updatedAt || new Date()).toISOString(),
         closer: appointment.closer ? {
-          name: appointment.closer.name
+          name: appointment.closer.name,
+          id: appointment.closer.id
         } : null
       } : null,
       dealClosedAt: affiliateConversion ? affiliateConversion.createdAt.toISOString() : null,

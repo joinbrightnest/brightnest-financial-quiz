@@ -248,8 +248,8 @@ export default function LeadDetailView({ sessionId, onClose, userRole, leadData:
                                                 key={tab}
                                                 onClick={() => setActiveTab(tab)}
                                                 className={`py-3 px-4 border-b-2 font-medium text-sm capitalize transition-colors ${activeTab === tab
-                                                        ? 'border-blue-600 text-blue-600'
-                                                        : 'border-transparent text-slate-600 hover:text-slate-900'
+                                                    ? 'border-blue-600 text-blue-600'
+                                                    : 'border-transparent text-slate-600 hover:text-slate-900'
                                                     }`}
                                             >
                                                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -285,6 +285,7 @@ export default function LeadDetailView({ sessionId, onClose, userRole, leadData:
                                             leadEmail={leadEmail}
                                             userRole={userRole}
                                             onRefresh={refreshTasks}
+                                            closerId={leadData.appointment?.closer?.id}
                                         />
                                     )}
                                 </div>

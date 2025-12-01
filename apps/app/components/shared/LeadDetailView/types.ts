@@ -62,6 +62,7 @@ export interface LeadData {
     saleValue?: number;
     closer?: {
       name: string;
+      id?: string;
     };
   };
   answers: Array<{

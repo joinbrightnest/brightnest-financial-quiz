@@ -10,9 +10,10 @@ interface TasksTabProps {
     leadEmail: string;
     userRole: UserRole;
     onRefresh: () => void;
+    closerId?: string;
 }
 
-export default function TasksTab({ tasks, loading, leadEmail, userRole, onRefresh }: TasksTabProps) {
+export default function TasksTab({ tasks, loading, leadEmail, userRole, onRefresh, closerId }: TasksTabProps) {
     const [showTaskForm, setShowTaskForm] = useState(false);
     const [editingTask, setEditingTask] = useState<Task | null>(null);
     const [taskForm, setTaskForm] = useState<{
@@ -53,6 +54,7 @@ export default function TasksTab({ tasks, loading, leadEmail, userRole, onRefres
                 body: JSON.stringify({
                     ...taskForm,
                     leadEmail,
+                    closerId, // Include closerId if available (required for admin)
                 }),
             });
 
