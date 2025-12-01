@@ -20,8 +20,11 @@ export default function AffiliateBookCallPage() {
       console.log("✅ Affiliate cookie set successfully");
       console.log("🔄 Redirecting to standard booking page...");
 
-      // Redirect to standard booking page (which preserves the cookie)
-      router.replace("/book-call");
+      // Preserve query parameters during redirect for tracking
+      const queryString = window.location.search;
+      const targetUrl = queryString ? `/book-call${queryString}` : "/book-call";
+
+      router.replace(targetUrl);
     }
   }, [affiliateCode, router]);
 

@@ -213,15 +213,19 @@ const AnalyzingFinanceTrends = () => {
             body: JSON.stringify({ sessionId }),
           });
 
-          if (!response.ok || !(await response.json()).exists) {
-            console.log('Cleaning up stale sessionId from localStorage');
-            localStorage.removeItem('quizSessionId');
-            localStorage.removeItem('userName');
+          if (response.ok) {
+            const data = await response.json();
+            if (!data.exists) {
+              console.log('Cleaning up stale sessionId from localStorage (session not found in DB)');
+              localStorage.removeItem('quizSessionId');
+              localStorage.removeItem('userName');
+            }
+          } else {
+            console.warn('Session check returned non-200 status, keeping localStorage for safety');
           }
         } catch (error) {
-          console.log('Error checking session, cleaning up localStorage');
-          localStorage.removeItem('quizSessionId');
-          localStorage.removeItem('userName');
+          console.warn('Error checking session, keeping localStorage for safety:', error);
+          // Do NOT wipe localStorage on error - network issues shouldn't log user out
         }
       }
     };
