@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import CloserSidebar from '../components/CloserSidebar';
-import LeadDetailView from '../../components/shared/LeadDetailView';
+import LeadDetailView from '@/components/shared/LeadDetailView';
 import ContentLoader from '../components/ContentLoader';
 import { getPriorityColor, getStatusColor } from '@/lib/utils/ui';
 

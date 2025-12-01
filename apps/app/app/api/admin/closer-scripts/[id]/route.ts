@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminAuth } from '@/lib/admin-auth-server';
-import { prisma } from '@brightnest/shared';
+import { prisma } from '@/lib/prisma';
 
 // PUT - Update a script
 export async function PUT(

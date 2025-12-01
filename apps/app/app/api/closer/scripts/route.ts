@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@brightnest/shared';
+import { prisma } from '@/lib/prisma';
 import { getCloserIdFromToken } from '@/lib/closer-auth';
 
 export async function GET(request: NextRequest) {

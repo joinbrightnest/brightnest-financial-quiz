@@ -18,7 +18,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import LeadDetailView from '../../components/shared/LeadDetailView';
+import LeadDetailView from '@/components/shared/LeadDetailView';
 import DashboardLayout from '../components/dashboard/DashboardLayout';
 import QuizAnalytics from '../components/dashboard/QuizAnalytics';
 import CRM from '../components/dashboard/CRM';

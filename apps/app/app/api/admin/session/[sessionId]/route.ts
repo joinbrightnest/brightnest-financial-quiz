@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@brightnest/shared';
+import { prisma } from '@/lib/prisma';
 import { verifyAdminAuth } from '@/lib/admin-auth-server';
 
 export async function GET(
