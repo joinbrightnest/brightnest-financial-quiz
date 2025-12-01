@@ -206,6 +206,7 @@ const AnalyzingFinanceTrends = () => {
 
       // Check if sessionId exists in database
       if (sessionId) {
+        console.log('🔍 Checking if session exists in DB:', sessionId);
         try {
           const response = await fetch('/api/quiz/session-exists', {
             method: 'POST',
@@ -213,18 +214,23 @@ const AnalyzingFinanceTrends = () => {
             body: JSON.stringify({ sessionId }),
           });
 
+          console.log('📡 Session check response:', response.status, response.statusText);
+
           if (response.ok) {
             const data = await response.json();
+            console.log('📊 Session check data:', data);
             if (!data.exists) {
-              console.log('Cleaning up stale sessionId from localStorage (session not found in DB)');
+              console.log('❌ Session not found in DB, cleaning up localStorage (session not found in DB)');
               localStorage.removeItem('quizSessionId');
               localStorage.removeItem('userName');
+            } else {
+              console.log('✅ Session exists in DB, keeping localStorage');
             }
           } else {
-            console.warn('Session check returned non-200 status, keeping localStorage for safety');
+            console.warn('⚠️ Session check returned non-200 status, keeping localStorage for safety');
           }
         } catch (error) {
-          console.warn('Error checking session, keeping localStorage for safety:', error);
+          console.warn('⚠️ Error checking session, keeping localStorage for safety:', error);
           // Do NOT wipe localStorage on error - network issues shouldn't log user out
         }
       }
