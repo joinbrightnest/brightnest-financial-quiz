@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@brightnest/shared';
 import { getCloserIdFromToken } from '@/lib/closer-auth';
 
 // DELETE a note

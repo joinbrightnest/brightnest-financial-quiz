@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminAuth } from '@/lib/admin-auth-server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@brightnest/shared';
 import { ADMIN_CONSTANTS } from '@/app/admin/constants';
 
 // GET settings

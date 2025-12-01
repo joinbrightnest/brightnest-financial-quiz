@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { calculateLeadsByCode } from '@/lib/lead-calculation';
 import { verifyAdminAuth } from '@/lib/admin-auth-server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@brightnest/shared';
 
 export async function GET(request: NextRequest) {
   // 🔒 SECURITY: Require admin authentication

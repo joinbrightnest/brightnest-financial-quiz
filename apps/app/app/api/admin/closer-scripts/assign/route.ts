@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminAuth } from '@/lib/admin-auth-server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@brightnest/shared';
 
 // POST - Assign script to closer(s)
 export async function POST(request: NextRequest) {

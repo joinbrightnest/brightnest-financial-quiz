@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { verifyAdminAuth } from '@/lib/admin-auth-server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@brightnest/shared';
 
 export async function POST(
   request: NextRequest,

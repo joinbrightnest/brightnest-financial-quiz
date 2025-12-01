@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@brightnest/shared';
 import jwt from 'jsonwebtoken';
 
 export async function PUT(

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@brightnest/shared';
 import { verifyAdminAuth } from '@/lib/admin-auth-server';
 import { getCloserIdFromToken } from '@/lib/closer-auth';
 
