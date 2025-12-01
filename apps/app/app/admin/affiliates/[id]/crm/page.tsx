@@ -100,13 +100,14 @@ export default function AffiliateCRMView() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterArchetype, setFilterArchetype] = useState("all");
   const [filterQuizType, setFilterQuizType] = useState("all");
+  const [dateRange, setDateRange] = useState("all");
 
   useEffect(() => {
     if (affiliateId) {
       fetchAffiliateCRMData();
       fetchAffiliateStats();
     }
-  }, [affiliateId]);
+  }, [affiliateId, dateRange]);
 
   const fetchAffiliateCRMData = async () => {
     try {
@@ -141,7 +142,7 @@ export default function AffiliateCRMView() {
   const fetchAffiliateStats = async () => {
     try {
       setLoadingStats(true);
-      const statsResponse = await fetch(`/api/admin/affiliates/${affiliateId}/stats?dateRange=30d`);
+      const statsResponse = await fetch(`/api/admin/affiliates/${affiliateId}/stats?dateRange=${dateRange}`);
       if (!statsResponse.ok) {
         throw new Error("Failed to fetch affiliate stats");
       }
@@ -272,6 +273,40 @@ export default function AffiliateCRMView() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              <div className="relative">
+                <select
+                  value={dateRange}
+                  onChange={(e) => setDateRange(e.target.value)}
+                  className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm hover:shadow-md transition-all duration-200"
+                >
+                  <option value="all">All Time</option>
+                  <option value="24h">Last 24 hours</option>
+                  <option value="7d">Last 7 days</option>
+                  <option value="30d">Last 30 days</option>
+                  <option value="90d">Last 90 days</option>
+                  <option value="1y">Last year</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+              <button
+                onClick={() => fetchAffiliateStats()}
+                disabled={loadingStats}
+                className="inline-flex items-center px-5 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl text-sm font-semibold hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg
+                  className={`w-4 h-4 mr-2 ${loadingStats ? 'animate-spin' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                {loadingStats ? 'Refreshing...' : 'Refresh Data'}
+              </button>
               <button
                 onClick={exportLeads}
                 className="inline-flex items-center px-5 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl text-sm font-semibold hover:from-emerald-700 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200"
@@ -440,53 +475,6 @@ export default function AffiliateCRMView() {
             transition={{ delay: 0.1 }}
             className="space-y-6"
           >
-            {/* Premium Key Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
-                <div className="flex items-center">
-                  <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-3xl font-bold text-slate-900 mt-1">{stats.totalLeads.toLocaleString()}</p>
-                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Total Qualified Leads</p>
-                    <p className="text-xs text-slate-500 font-medium">Quiz completions</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
-                <div className="flex items-center">
-                  <div className="p-3 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-3xl font-bold text-slate-900 mt-1">{stats.distinctArchetypes.toLocaleString()}</p>
-                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Unique Archetypes</p>
-                    <p className="text-xs text-slate-500 font-medium">Personality types</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
-                <div className="flex items-center">
-                  <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-3xl font-bold text-slate-900 mt-1">{stats.quizTypeDistribution.length.toLocaleString()}</p>
-                    <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Active Quiz Types</p>
-                    <p className="text-xs text-slate-500 font-medium">Assessment categories</p>
-                  </div>
-                </div>
-              </div>
-            </div>
 
             {/* Premium Distribution Panels */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

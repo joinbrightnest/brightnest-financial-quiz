@@ -63,6 +63,9 @@ export async function GET(
       );
     }
 
+    // Set upper bound for date filtering (current time) - SAME as affiliate API
+    const endDate = new Date();
+
     // Get related data with error handling
     let clicks: AffiliateClick[] = [];
     let conversions: AffiliateConversion[] = [];
@@ -76,6 +79,7 @@ export async function GET(
             affiliateId: affiliate.id,
             createdAt: {
               gte: startDate,
+              lte: endDate,
             },
           },
         }),
@@ -84,6 +88,7 @@ export async function GET(
             affiliateId: affiliate.id,
             createdAt: {
               gte: startDate,
+              lte: endDate,
             },
           },
         }),
@@ -92,6 +97,7 @@ export async function GET(
             affiliateCode: affiliate.referralCode,
             createdAt: {
               gte: startDate,
+              lte: endDate,
             },
           },
         }),
@@ -100,6 +106,7 @@ export async function GET(
             affiliateCode: affiliate.referralCode,
             createdAt: {
               gte: startDate,
+              lte: endDate,
             },
           },
         }),
