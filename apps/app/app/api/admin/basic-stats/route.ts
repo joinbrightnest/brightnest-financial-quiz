@@ -387,7 +387,8 @@ export async function GET(request: NextRequest) {
         a.question?.type === 'email'
       );
       if (emailAnswer?.value) {
-        leadEmails[lead.id] = emailAnswer.value as string;
+        // Normalize email for consistent matching
+        leadEmails[lead.id] = String(emailAnswer.value).toLowerCase().trim();
       }
     });
 
@@ -460,6 +461,11 @@ export async function GET(request: NextRequest) {
           status = 'Booked';
         }
       }
+
+      // Log status determination for debugging
+      // if (status === 'Completed' && appointment) {
+      //   console.log('⚠️ Lead has appointment but status is Completed:', { leadId: lead.id, appointmentId: appointment.id });
+      // }
 
       // Determine source with affiliate code checking
       // Check both quiz session affiliate code AND appointment affiliate code

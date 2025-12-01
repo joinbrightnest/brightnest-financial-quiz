@@ -1,8 +1,41 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 
 export default function ConfirmationPage() {
+  useEffect(() => {
+    const ensureBookingTracked = async () => {
+      const sessionId = localStorage.getItem('quizSessionId');
+      const name = localStorage.getItem('userName');
+      const email = localStorage.getItem('userEmail');
+
+      if (sessionId && email) {
+        console.log("🔄 Confirmation Page: Ensuring booking is tracked for session:", sessionId);
+        try {
+          await fetch('/api/track-closer-booking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              customerData: { name, email },
+              sessionId,
+              source: 'confirmation_page', // Flag for debugging
+              // We don't have closerId or calendlyEvent here, the API will handle finding the closer or creating a default appointment
+              // The API logic we just added will prevent duplicates if an appointment already exists for this session
+            }),
+          });
+          console.log("✅ Confirmation Page: Booking tracking request sent");
+        } catch (e) {
+          console.error('❌ Confirmation Page: Error tracking booking:', e);
+        }
+      } else {
+        console.log("ℹ️ Confirmation Page: Missing session data, skipping booking tracking");
+      }
+    };
+
+    ensureBookingTracked();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#F8F7F5]">
       {/* Section 1: Dark Charcoal Background */}
@@ -59,7 +92,7 @@ export default function ConfirmationPage() {
                 <div className="text-center text-white relative z-10">
                   <div className="w-20 h-20 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg transition-transform duration-300">
                     <svg className="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z"/>
+                      <path d="M8 5v14l11-7z" />
                     </svg>
                   </div>
                   <h4 className="text-xl font-semibold mb-2">Pre-Call Preparation Video</h4>
@@ -68,12 +101,12 @@ export default function ConfirmationPage() {
                   </p>
                 </div>
               </div>
-              
+
               {/* Play Button Overlay */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <button className="w-20 h-20 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform">
                   <svg className="w-8 h-8 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
+                    <path d="M8 5v14l11-7z" />
                   </svg>
                 </button>
               </div>
@@ -95,19 +128,19 @@ export default function ConfirmationPage() {
             </div>
 
             {/* Main Title */}
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#333333] text-center mb-4 sm:mb-6 lg:mb-8 leading-tight drop-shadow-lg px-2" style={{textShadow: '0 0 15px rgba(51,51,51,0.3), 0 0 30px rgba(51,51,51,0.1)'}}>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#333333] text-center mb-4 sm:mb-6 lg:mb-8 leading-tight drop-shadow-lg px-2" style={{ textShadow: '0 0 15px rgba(51,51,51,0.3), 0 0 30px rgba(51,51,51,0.1)' }}>
               Complete This Quick 3 Step<br />
               <span className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] bg-clip-text text-transparent">Pre-Call Checklist:</span>
             </h2>
 
             {/* Step 1 */}
             <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
-              <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-[#333333] mb-4 sm:mb-6 drop-shadow-md" style={{textShadow: '0 0 10px rgba(51,51,51,0.2)'}}>Step 1:</h3>
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-[#333333] mb-4 sm:mb-6 drop-shadow-md" style={{ textShadow: '0 0 10px rgba(51,51,51,0.2)' }}>Step 1:</h3>
               <div className="space-y-2 sm:space-y-3">
                 <div className="flex items-start space-x-2 sm:space-x-3">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                     <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                      <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
                     </svg>
                   </div>
                   <span className="text-sm sm:text-base text-[#333333]">We are going to call you soon to confirm your call (during work hours)</span>
@@ -115,7 +148,7 @@ export default function ConfirmationPage() {
                 <div className="flex items-start space-x-2 sm:space-x-3">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                     <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                      <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" />
                     </svg>
                   </div>
                   <span className="text-sm sm:text-base text-[#333333]">Your Financial Transformation Call is via Video on Zoom.</span>
@@ -123,7 +156,7 @@ export default function ConfirmationPage() {
                 <div className="flex items-start space-x-2 sm:space-x-3">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                     <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/>
+                      <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
                     </svg>
                   </div>
                   <span className="text-sm sm:text-base text-[#333333]">You'll receive Zoom details via email and text.</span>
@@ -131,7 +164,7 @@ export default function ConfirmationPage() {
                 <div className="flex items-start space-x-2 sm:space-x-3">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                     <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                      <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                     </svg>
                   </div>
                   <span className="text-sm sm:text-base text-[#333333]">Click the Zoom link on your smart phone or computer 5 minutes before your call time!</span>
@@ -141,8 +174,8 @@ export default function ConfirmationPage() {
 
             {/* Step 2 */}
             <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
-              <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-[#333333] mb-2 drop-shadow-md" style={{textShadow: '0 0 10px rgba(51,51,51,0.2)'}}>Step 2:</h3>
-              <h4 className="text-xl sm:text-2xl lg:text-3xl font-black text-[#333333] mb-4 sm:mb-6 drop-shadow-md" style={{textShadow: '0 0 10px rgba(51,51,51,0.2)'}}>Communication</h4>
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-[#333333] mb-2 drop-shadow-md" style={{ textShadow: '0 0 10px rgba(51,51,51,0.2)' }}>Step 2:</h3>
+              <h4 className="text-xl sm:text-2xl lg:text-3xl font-black text-[#333333] mb-4 sm:mb-6 drop-shadow-md" style={{ textShadow: '0 0 10px rgba(51,51,51,0.2)' }}>Communication</h4>
               <p className="text-sm sm:text-base text-[#333333] mb-4 sm:mb-6">
                 Please check your email. We sent you an email confirming the date/time. Please mark this in your calendar now. Please ensure you confirm "I Know The Sender" from the email we sent you for your 1-1 session.
               </p>
@@ -166,7 +199,7 @@ export default function ConfirmationPage() {
               <div className="bg-yellow-300 border-2 border-yellow-400 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4 relative">
                 <div className="flex items-center space-x-2 sm:space-x-3">
                   <svg className="w-5 h-5 sm:w-6 sm:h-6 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                   </svg>
                   <span className="text-xs sm:text-sm text-[#333333] font-semibold">
                     Press this "I know the sender" button in your calendar invite email you just received from us
@@ -184,12 +217,12 @@ export default function ConfirmationPage() {
 
             {/* Combined Step 3 and Information Section */}
             <div className="mt-6 sm:mt-8 p-4 sm:p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
-              <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-[#333333] mb-4 sm:mb-6 drop-shadow-md" style={{textShadow: '0 0 10px rgba(51,51,51,0.2)'}}>Step 3: Punctuality</h3>
+              <h3 className="text-xl sm:text-2xl lg:text-3xl font-black text-[#333333] mb-4 sm:mb-6 drop-shadow-md" style={{ textShadow: '0 0 10px rgba(51,51,51,0.2)' }}>Step 3: Punctuality</h3>
               <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
                 <div className="flex items-start space-x-2 sm:space-x-3">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                     <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                     </svg>
                   </div>
                   <span className="text-sm sm:text-base text-[#333333]">Please be ready 5 minutes before your scheduled call time</span>
@@ -197,7 +230,7 @@ export default function ConfirmationPage() {
                 <div className="flex items-start space-x-2 sm:space-x-3">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                     <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                     </svg>
                   </div>
                   <span className="text-sm sm:text-base text-[#333333]">Test your internet connection and camera beforehand</span>
@@ -205,7 +238,7 @@ export default function ConfirmationPage() {
                 <div className="flex items-start space-x-2 sm:space-x-3">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                     <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                     </svg>
                   </div>
                   <span className="text-sm sm:text-base text-[#333333]">Have a quiet, well-lit space for the call</span>
@@ -213,173 +246,173 @@ export default function ConfirmationPage() {
                 <div className="flex items-start space-x-2 sm:space-x-3">
                   <div className="w-5 h-5 sm:w-6 sm:h-6 bg-[#4CAF50] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                     <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                     </svg>
                   </div>
                   <span className="text-sm sm:text-base text-[#333333]">Keep your financial documents ready for reference</span>
                 </div>
               </div>
-              
+
               <div className="border-t border-gray-200 pt-4 sm:pt-6">
-                <h4 className="text-xl sm:text-2xl font-black text-[#333333] mb-3 sm:mb-4 drop-shadow-md" style={{textShadow: '0 0 10px rgba(51,51,51,0.2)'}}>Information:</h4>
+                <h4 className="text-xl sm:text-2xl font-black text-[#333333] mb-3 sm:mb-4 drop-shadow-md" style={{ textShadow: '0 0 10px rgba(51,51,51,0.2)' }}>Information:</h4>
                 <p className="text-sm sm:text-base text-[#333333] leading-relaxed">
                   Come with whatever questions you have. We want you to be able to make an informed decision, regardless if you choose us or not.
                 </p>
               </div>
-              
+
               <div className="border-t border-gray-200 pt-6 sm:pt-8 mt-6 sm:mt-8">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#333333] text-center mb-4 sm:mb-6 lg:mb-8 leading-tight drop-shadow-lg px-2" style={{textShadow: '0 0 15px rgba(51,51,51,0.3), 0 0 30px rgba(51,51,51,0.1)'}}>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#333333] text-center mb-4 sm:mb-6 lg:mb-8 leading-tight drop-shadow-lg px-2" style={{ textShadow: '0 0 15px rgba(51,51,51,0.3), 0 0 30px rgba(51,51,51,0.1)' }}>
                   Step 3: Review Our Most Frequently Asked Questions
                 </h2>
 
                 {/* Video Modules Grid */}
                 <div className="grid md:grid-cols-3 gap-6">
-              {/* Video Module 1 */}
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
-                {/* Header */}
-                <div className="bg-gradient-to-r from-[#333333] to-[#2a2a2a] py-4 px-4">
-                  <h3 className="text-white font-bold text-lg text-center">
-                    What's Included In The Program?
-                  </h3>
-                </div>
-                
-                {/* Video Thumbnail */}
-                <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 aspect-video">
-                  {/* Video Content Placeholder */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center text-white">
-                      <div className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center mx-auto mb-3">
-                        <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z"/>
-                        </svg>
-                      </div>
-                      <p className="text-sm opacity-80">and tap into our exclusive</p>
+                  {/* Video Module 1 */}
+                  <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
+                    {/* Header */}
+                    <div className="bg-gradient-to-r from-[#333333] to-[#2a2a2a] py-4 px-4">
+                      <h3 className="text-white font-bold text-lg text-center">
+                        What's Included In The Program?
+                      </h3>
                     </div>
-                  </div>
-                  
-                  {/* Play Button Overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <button className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 transform">
-                      <svg className="w-6 h-6 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                
-                {/* Progress Bar */}
-                <div className="bg-gray-100 p-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-[#333333] font-medium">0:38</span>
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-[#4CAF50] rounded-full"></div>
-                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                    </div>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
-                    <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] h-1 rounded-full w-1/3"></div>
-                  </div>
-                </div>
-              </div>
 
-              {/* Video Module 2 */}
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
-                {/* Header */}
-                <div className="bg-gradient-to-r from-[#333333] to-[#2a2a2a] py-4 px-4">
-                  <h3 className="text-white font-bold text-lg text-center">
-                    How Is This Program Different?
-                  </h3>
-                </div>
-                
-                {/* Video Thumbnail */}
-                <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 aspect-video">
-                  {/* Video Content Placeholder */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center text-white">
-                      <div className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center mx-auto mb-3">
-                        <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z"/>
-                        </svg>
+                    {/* Video Thumbnail */}
+                    <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 aspect-video">
+                      {/* Video Content Placeholder */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center text-white">
+                          <div className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
+                          <p className="text-sm opacity-80">and tap into our exclusive</p>
+                        </div>
                       </div>
-                      <p className="text-sm opacity-80">get a random diet</p>
-                    </div>
-                  </div>
-                  
-                  {/* Play Button Overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <button className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 transform">
-                      <svg className="w-6 h-6 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                
-                {/* Progress Bar */}
-                <div className="bg-gray-100 p-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-[#333333] font-medium">0:40</span>
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-[#4CAF50] rounded-full"></div>
-                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                    </div>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
-                    <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] h-1 rounded-full w-1/3"></div>
-                  </div>
-                </div>
-              </div>
 
-              {/* Video Module 3 */}
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
-                {/* Header */}
-                <div className="bg-gradient-to-r from-[#333333] to-[#2a2a2a] py-4 px-4">
-                  <h3 className="text-white font-bold text-lg text-center">
-                    How Soon Can I See Results?
-                  </h3>
-                </div>
-                
-                {/* Video Thumbnail */}
-                <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 aspect-video">
-                  {/* Video Content Placeholder */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-center text-white">
-                      <div className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center mx-auto mb-3">
-                        <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z"/>
-                        </svg>
+                      {/* Play Button Overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <button className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 transform">
+                          <svg className="w-6 h-6 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </button>
                       </div>
-                      <p className="text-sm opacity-80">you'll witness a real transformation in the mirror</p>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="bg-gray-100 p-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-[#333333] font-medium">0:38</span>
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-[#4CAF50] rounded-full"></div>
+                          <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                          <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                        </div>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
+                        <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] h-1 rounded-full w-1/3"></div>
+                      </div>
                     </div>
                   </div>
-                  
-                  {/* Play Button Overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <button className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 transform">
-                      <svg className="w-6 h-6 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                
-                {/* Progress Bar */}
-                <div className="bg-gray-100 p-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-[#333333] font-medium">0:33</span>
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-[#4CAF50] rounded-full"></div>
-                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+
+                  {/* Video Module 2 */}
+                  <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
+                    {/* Header */}
+                    <div className="bg-gradient-to-r from-[#333333] to-[#2a2a2a] py-4 px-4">
+                      <h3 className="text-white font-bold text-lg text-center">
+                        How Is This Program Different?
+                      </h3>
+                    </div>
+
+                    {/* Video Thumbnail */}
+                    <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 aspect-video">
+                      {/* Video Content Placeholder */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center text-white">
+                          <div className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
+                          <p className="text-sm opacity-80">get a random diet</p>
+                        </div>
+                      </div>
+
+                      {/* Play Button Overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <button className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 transform">
+                          <svg className="w-6 h-6 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="bg-gray-100 p-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-[#333333] font-medium">0:40</span>
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-[#4CAF50] rounded-full"></div>
+                          <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                          <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                        </div>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
+                        <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] h-1 rounded-full w-1/3"></div>
+                      </div>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
-                    <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] h-1 rounded-full w-1/3"></div>
+
+                  {/* Video Module 3 */}
+                  <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
+                    {/* Header */}
+                    <div className="bg-gradient-to-r from-[#333333] to-[#2a2a2a] py-4 px-4">
+                      <h3 className="text-white font-bold text-lg text-center">
+                        How Soon Can I See Results?
+                      </h3>
+                    </div>
+
+                    {/* Video Thumbnail */}
+                    <div className="relative bg-gradient-to-br from-gray-800 to-gray-900 aspect-video">
+                      {/* Video Content Placeholder */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center text-white">
+                          <div className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center mx-auto mb-3">
+                            <svg className="w-6 h-6 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
+                          <p className="text-sm opacity-80">you'll witness a real transformation in the mirror</p>
+                        </div>
+                      </div>
+
+                      {/* Play Button Overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <button className="w-16 h-16 bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 transform">
+                          <svg className="w-6 h-6 ml-1 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="bg-gray-100 p-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-[#333333] font-medium">0:33</span>
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-[#4CAF50] rounded-full"></div>
+                          <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                          <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
+                        </div>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-1 mt-2">
+                        <div className="bg-gradient-to-r from-[#4CAF50] to-[#66BB6A] h-1 rounded-full w-1/3"></div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
                 </div>
               </div>
             </div>
