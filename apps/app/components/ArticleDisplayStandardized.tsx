@@ -46,15 +46,15 @@ interface ArticleDisplayStandardizedProps {
   userVariables?: {
     name?: string;
     email?: string;
-    [key: string]: string | undefined;
+    [key: string]: any;
   };
   onContinue?: () => void;
 }
 
-export default function ArticleDisplayStandardized({
-  article,
-  userVariables = {},
-  onContinue
+export default function ArticleDisplayStandardized({ 
+  article, 
+  userVariables = {}, 
+  onContinue 
 }: ArticleDisplayStandardizedProps) {
   const [isVisible, setIsVisible] = useState(true);
 
@@ -63,7 +63,7 @@ export default function ArticleDisplayStandardized({
   const getIconComponent = () => {
     const baseClass = "w-16 h-16";
     const iconColor = article.iconColor || '#3b82f6';
-
+    
     switch (article.iconType) {
       case 'document':
         return (
@@ -177,14 +177,14 @@ export default function ArticleDisplayStandardized({
   const showCta = article.showCta !== false;
   const showTopBar = article.showTopBar !== false;
   const topBarColor = article.topBarColor || '#1f2937';
-
+  
   // Layout options with better defaults
   const textAlignment = article.textAlignment || 'left';
   const contentPosition = article.contentPosition || 'center';
   const backgroundStyle = article.backgroundStyle || 'solid';
   const backgroundGradient = article.backgroundGradient;
   const contentPadding = article.contentPadding || 'normal';
-
+  
   // Get background style
   const getBackgroundStyle = () => {
     if (backgroundStyle === 'gradient' && backgroundGradient) {
@@ -192,14 +192,14 @@ export default function ArticleDisplayStandardized({
     }
     return { backgroundColor };
   };
-
+  
   // Get content positioning classes
   const getContentPositionClasses = () => {
     const baseClasses = "flex-1 flex flex-col p-6";
     // Always center the content block, but text alignment is handled by individual elements
     const alignmentClasses = {
       left: 'items-center',
-      center: 'items-center',
+      center: 'items-center', 
       right: 'items-center'
     };
     const positionClasses = {
@@ -212,12 +212,12 @@ export default function ArticleDisplayStandardized({
       normal: 'p-6',
       spacious: 'p-8'
     };
-
+    
     return `${baseClasses} ${alignmentClasses[textAlignment as keyof typeof alignmentClasses] || alignmentClasses.center} ${positionClasses[contentPosition as keyof typeof positionClasses] || positionClasses.center} ${paddingClasses[contentPadding as keyof typeof paddingClasses] || paddingClasses.normal}`;
   };
 
   return (
-    <div
+    <div 
       className="min-h-screen flex flex-col"
       style={getBackgroundStyle()}
     >
@@ -225,7 +225,7 @@ export default function ArticleDisplayStandardized({
       {showTopBar && (
         <div className="flex items-center justify-center p-4" style={{ backgroundColor: topBarColor }}>
           <div className="flex items-center space-x-3">
-            <button
+            <button 
               onClick={onContinue}
               className="flex items-center space-x-2"
               style={{ color: '#ffffff' }}
@@ -237,7 +237,7 @@ export default function ArticleDisplayStandardized({
             <div className="text-lg font-bold" style={{ color: '#ffffff' }}>
               BRIGHTNEST
             </div>
-            <div
+            <div 
               className="px-3 py-1 rounded-full text-xs font-medium text-white"
               style={{ backgroundColor: accentColor }}
             >
@@ -253,10 +253,11 @@ export default function ArticleDisplayStandardized({
         <div className="w-full max-w-md">
           {/* Uploaded Image */}
           {article.showImage && article.imageUrl && (
-            <div className={`mb-6 ${textAlignment === 'left' ? 'flex justify-start' :
-                textAlignment === 'right' ? 'flex justify-end' :
-                  'flex justify-center'
-              }`}>
+            <div className={`mb-6 ${
+              textAlignment === 'left' ? 'flex justify-start' :
+              textAlignment === 'right' ? 'flex justify-end' :
+              'flex justify-center'
+            }`}>
               <img
                 src={article.imageUrl}
                 alt={article.imageAlt || ''}
@@ -268,20 +269,22 @@ export default function ArticleDisplayStandardized({
 
           {/* Icon */}
           {showIcon && (
-            <div className={`mb-6 ${textAlignment === 'left' ? 'flex justify-start' :
-                textAlignment === 'right' ? 'flex justify-end' :
-                  'flex justify-center'
-              }`}>
+            <div className={`mb-6 ${
+              textAlignment === 'left' ? 'flex justify-start' :
+              textAlignment === 'right' ? 'flex justify-end' :
+              'flex justify-center'
+            }`}>
               {getIconComponent()}
             </div>
           )}
 
           {/* Title */}
-          <h1
-            className={`${getTitleSizeClass(article.titleFontSize || 'large')} ${getTitleWeightClass(article.titleFontWeight || 'bold')} mb-3 ${getLineHeightClass(article.lineHeight || 'normal')} w-full ${textAlignment === 'left' ? 'text-left' :
-                textAlignment === 'right' ? 'text-right' :
-                  'text-center'
-              }`}
+          <h1 
+            className={`${getTitleSizeClass(article.titleFontSize || 'large')} ${getTitleWeightClass(article.titleFontWeight || 'bold')} mb-3 ${getLineHeightClass(article.lineHeight || 'normal')} w-full ${
+              textAlignment === 'left' ? 'text-left' :
+              textAlignment === 'right' ? 'text-right' :
+              'text-center'
+            }`}
             style={{ color: textColor }}
           >
             {article.title}
@@ -289,11 +292,12 @@ export default function ArticleDisplayStandardized({
 
           {/* Subtitle */}
           {article.subtitle && (
-            <p
-              className={`${getContentSizeClass(article.contentFontSize || 'normal')} ${getContentWeightClass(article.contentFontWeight || 'normal')} mb-6 opacity-80 w-full ${getLineHeightClass(article.lineHeight || 'normal')} ${textAlignment === 'left' ? 'text-left' :
-                  textAlignment === 'right' ? 'text-right' :
-                    'text-center'
-                }`}
+            <p 
+              className={`${getContentSizeClass(article.contentFontSize || 'normal')} ${getContentWeightClass(article.contentFontWeight || 'normal')} mb-6 opacity-80 w-full ${getLineHeightClass(article.lineHeight || 'normal')} ${
+                textAlignment === 'left' ? 'text-left' :
+                textAlignment === 'right' ? 'text-right' :
+                'text-center'
+              }`}
               style={{ color: textColor }}
             >
               {article.subtitle}
@@ -302,22 +306,24 @@ export default function ArticleDisplayStandardized({
 
           {/* Content */}
           <div className="w-full mb-6">
-            <p
-              className={`${getContentSizeClass(article.contentFontSize || 'normal')} ${getContentWeightClass(article.contentFontWeight || 'normal')} ${getLineHeightClass(article.lineHeight || 'normal')} mb-4 w-full ${textAlignment === 'left' ? 'text-left' :
-                  textAlignment === 'right' ? 'text-right' :
-                    'text-center'
-                }`}
+            <p 
+              className={`${getContentSizeClass(article.contentFontSize || 'normal')} ${getContentWeightClass(article.contentFontWeight || 'normal')} ${getLineHeightClass(article.lineHeight || 'normal')} mb-4 w-full ${
+                textAlignment === 'left' ? 'text-left' :
+                textAlignment === 'right' ? 'text-right' :
+                'text-center'
+              }`}
               style={{ color: textColor }}
             >
               {article.content}
             </p>
-
+            
             {article.personalizedText && (
-              <p
-                className={`${getContentSizeClass(article.contentFontSize || 'normal')} ${getContentWeightClass(article.contentFontWeight || 'normal')} opacity-80 w-full ${getLineHeightClass(article.lineHeight || 'normal')} ${textAlignment === 'left' ? 'text-left' :
-                    textAlignment === 'right' ? 'text-right' :
-                      'text-center'
-                  }`}
+              <p 
+                className={`${getContentSizeClass(article.contentFontSize || 'normal')} ${getContentWeightClass(article.contentFontWeight || 'normal')} opacity-80 w-full ${getLineHeightClass(article.lineHeight || 'normal')} ${
+                  textAlignment === 'left' ? 'text-left' :
+                  textAlignment === 'right' ? 'text-right' :
+                  'text-center'
+                }`}
                 style={{ color: textColor }}
               >
                 {replaceVariables(article.personalizedText)}
@@ -327,18 +333,19 @@ export default function ArticleDisplayStandardized({
 
           {/* Statistic */}
           {showStatistic && article.statisticValue && (
-            <div className={`w-full mb-6 ${textAlignment === 'left' ? 'text-left' :
-                textAlignment === 'right' ? 'text-right' :
-                  'text-center'
-              }`}>
-              <div
+            <div className={`w-full mb-6 ${
+              textAlignment === 'left' ? 'text-left' :
+              textAlignment === 'right' ? 'text-right' :
+              'text-center'
+            }`}>
+              <div 
                 className="text-4xl font-bold mb-2 w-full"
                 style={{ color: accentColor }}
               >
                 {article.statisticValue}
               </div>
               {article.statisticText && (
-                <div
+                <div 
                   className="text-sm w-full"
                   style={{ color: textColor }}
                 >
@@ -350,7 +357,7 @@ export default function ArticleDisplayStandardized({
 
           {/* CTA Button */}
           {showCta && (
-            <button
+            <button 
               onClick={onContinue}
               className="w-full py-4 rounded-lg font-bold text-white transition-colors hover:opacity-90"
               style={{ backgroundColor: accentColor }}
