@@ -149,48 +149,14 @@ export async function GET(
     // Count bookings from conversions (matches affiliate dashboard logic)
     const totalBookings = conversions.filter(c => c.conversionType === "booking").length;
 
-    // Use stored commission for main display (all-time total, consistent with database)
-    // This ensures commission shows immediately when deals are closed
-    const totalCommission = Number(affiliate.totalCommission || 0);
-
-    // Calculate date-filtered commission for analysis (only converted appointments)
-    const convertedAppointments = await prisma.appointment.findMany({
-      where: {
-        affiliateCode: affiliate.referralCode,
-        outcome: 'converted',
-        updatedAt: {
-          gte: startDate,
-        },
-      },
-    }).catch(() => []);
-
-    const dateFilteredCommission = convertedAppointments.reduce((sum, apt) => {
-      const saleValue = Number(apt.saleValue || 0);
-      return sum + (saleValue * Number(affiliate.commissionRate));
-    }, 0);
-
-    console.log("Admin Individual API Commission Debug:", {
-      affiliateId,
-      affiliateCode: affiliate.referralCode,
-      dateRange,
-      startDate: startDate.toISOString(),
-      storedCommission: Number(affiliate.totalCommission || 0),
-      dateFilteredCommission,
-      convertedAppointmentsFound: convertedAppointments.length,
-      convertedAppointments: convertedAppointments.map(apt => ({
-        id: apt.id,
-        outcome: apt.outcome,
-        saleValue: apt.saleValue,
-        updatedAt: apt.updatedAt,
-        commissionRate: affiliate.commissionRate
-      })),
-      totalCommission
-    });
-
     const conversionRate = totalClicks > 0 ? (totalBookings / totalClicks) * 100 : 0;
 
     // Generate daily stats from real data using centralized lead calculation
     const dailyStats = await generateDailyStatsWithCentralizedLeads(affiliateId, clicks, conversions, dateRange);
+
+    // Calculate date-filtered commission from daily stats (respects selected time period)
+    // This matches affiliate API logic exactly (line 181 in affiliate stats API)
+    const totalCommission = dailyStats.reduce((sum, day) => sum + day.commission, 0);
 
     // Generate traffic sources from real data
     const trafficSources = generateTrafficSourcesFromRealData(clicks);
