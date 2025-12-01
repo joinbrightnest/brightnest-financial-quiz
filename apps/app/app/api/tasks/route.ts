@@ -145,8 +145,24 @@ export async function POST(request: NextRequest) {
         // Role-specific validation and assignment
         if (isAdmin) {
             if (!assignedCloserId) {
-                return NextResponse.json({ error: 'Closer assignment is required' }, { status: 400 });
+                // Fallback: Try to find closer from lead's appointment
+                if (leadEmail) {
+                    const appointment = await prisma.appointment.findFirst({
+                        where: { customerEmail: leadEmail },
+                        select: { closerId: true }
+                    });
+
+                    if (appointment?.closerId) {
+                        assignedCloserId = appointment.closerId;
+                    }
+                }
+
+                // If still no closer ID, return error
+                if (!assignedCloserId) {
+                    return NextResponse.json({ error: 'Closer assignment is required. This lead may not have an assigned closer.' }, { status: 400 });
+                }
             }
+
             // Verify closer exists/active
             const closer = await prisma.closer.findUnique({ where: { id: assignedCloserId } });
             if (!closer || !closer.isActive || !closer.isApproved) {
