@@ -98,6 +98,14 @@ export async function GET(
         customerEmail: {
           in: leadEmails
         }
+      },
+      include: {
+        closer: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
       }
     });
 
@@ -190,6 +198,7 @@ export async function GET(
         completedAt: session.completedAt?.toISOString() || null,
         status, // Use updated status instead of session.status
         durationMs: session.durationMs,
+        closerName: appointment?.closer?.name || null, // Add closer name from appointment
         result: session.result ? {
           archetype: session.result.archetype,
           score: typeof session.result.scores === 'object' && session.result.scores !== null

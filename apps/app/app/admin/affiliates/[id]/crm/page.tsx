@@ -29,6 +29,7 @@ interface LeadData {
   completedAt: string | null;
   status: string;
   durationMs: number | null;
+  closerName?: string | null;
   result?: {
     archetype: string;
     score: number;
@@ -461,16 +462,16 @@ export default function AffiliateCRMView() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${lead.status === "Booked"
-                              ? "bg-blue-100 text-blue-800"
-                              : lead.status === "Completed" || lead.status === "completed"
-                                ? "bg-gray-100 text-gray-800"
-                                : lead.status === "Purchased (Call)"
-                                  ? "bg-green-100 text-green-800"
-                                  : lead.status === "Not Interested"
-                                    ? "bg-red-100 text-red-800"
-                                    : lead.status === "Needs Follow Up"
-                                      ? "bg-yellow-100 text-yellow-800"
-                                      : "bg-gray-100 text-gray-800"
+                            ? "bg-blue-100 text-blue-800"
+                            : lead.status === "Completed" || lead.status === "completed"
+                              ? "bg-gray-100 text-gray-800"
+                              : lead.status === "Purchased (Call)"
+                                ? "bg-green-100 text-green-800"
+                                : lead.status === "Not Interested"
+                                  ? "bg-red-100 text-red-800"
+                                  : lead.status === "Needs Follow Up"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : "bg-gray-100 text-gray-800"
                             }`}>
                             {lead.status}
                           </span>
@@ -483,7 +484,7 @@ export default function AffiliateCRMView() {
                           })}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-700 cursor-pointer">
-                          {affiliateData.name}
+                          {lead.closerName || 'Unassigned'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           —
