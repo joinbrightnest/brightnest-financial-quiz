@@ -87,6 +87,13 @@ export async function GET(
       appointment = await prisma.appointment.findFirst({
         where: {
           customerEmail: email.toLowerCase()
+        },
+        include: {
+          closer: {
+            select: {
+              name: true
+            }
+          }
         }
       });
 
