@@ -438,25 +438,22 @@ export default function AffiliateCRMView() {
                   <thead className="bg-gradient-to-r from-slate-50 to-white">
                     <tr>
                       <th className="px-8 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                        Session ID
+                        Lead Name ↑↓
                       </th>
                       <th className="px-8 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                        Quiz Type
+                        Stage ↑↓
                       </th>
                       <th className="px-8 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                        Name
+                        Lead Added ↑↓
                       </th>
                       <th className="px-8 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                        Email
+                        Deal Owner ↑↓
                       </th>
                       <th className="px-8 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                        Answers Count
+                        Amount ↑↓
                       </th>
                       <th className="px-8 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-8 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
-                        Duration
+                        Source ↑↓
                       </th>
                       <th className="px-8 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">
                         Actions
@@ -471,31 +468,36 @@ export default function AffiliateCRMView() {
                         animate={{ opacity: 1 }}
                         className="hover:bg-gradient-to-r hover:from-slate-50 hover:to-white transition-all duration-200"
                       >
-                        <td className="px-8 py-4 whitespace-nowrap text-sm font-mono text-slate-900 font-semibold">
-                          {lead.sessionId.slice(-8)}
-                        </td>
-                        <td className="px-8 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
-                          {lead.quizType}
-                        </td>
                         <td className="px-8 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
                           {lead.name || "N/A"}
                         </td>
-                        <td className="px-8 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
-                          {lead.email || "N/A"}
-                        </td>
-                        <td className="px-8 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
-                          {lead.answers?.length || 0}
-                        </td>
                         <td className="px-8 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${lead.status === "Completed" || lead.status === "completed"
-                            ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg"
-                            : "bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-lg"
+                          <span className={`inline-flex px-3 py-1 text-xs font-bold rounded-full ${lead.status === "Booked"
+                              ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg"
+                              : lead.status === "Completed" || lead.status === "completed"
+                                ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg"
+                                : lead.status === "Purchased (Call)"
+                                  ? "bg-gradient-to-r from-green-600 to-emerald-700 text-white shadow-lg"
+                                  : lead.status === "Not Interested"
+                                    ? "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg"
+                                    : "bg-gradient-to-r from-orange-500 to-amber-600 text-white shadow-lg"
                             }`}>
-                            {lead.status === "Completed" || lead.status === "completed" ? "Completed" : "In Progress"}
+                            {lead.status}
                           </span>
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
-                          {lead.durationMs ? `${Math.round(lead.durationMs / 60000)}min` : "N/A"}
+                          {new Date(lead.completedAt || lead.startedAt).toLocaleDateString()}
+                        </td>
+                        <td className="px-8 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
+                          {affiliateData.name}
+                        </td>
+                        <td className="px-8 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">
+                          —
+                        </td>
+                        <td className="px-8 py-4 whitespace-nowrap">
+                          <span className="inline-flex px-3 py-1 text-xs font-bold rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg">
+                            {affiliateData.name}
+                          </span>
                         </td>
                         <td className="px-8 py-4 whitespace-nowrap text-sm font-semibold">
                           <a

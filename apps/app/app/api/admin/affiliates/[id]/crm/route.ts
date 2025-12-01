@@ -77,6 +77,36 @@ export async function GET(
       return nameAnswer && emailAnswer && nameAnswer.value && emailAnswer.value;
     });
 
+    // Fetch all appointments for these leads to determine accurate status
+    // Extract emails from quiz sessions
+    const leadEmails = quizSessionsWithContactInfo.map(session => {
+      const emailAnswer = session.answers.find(a =>
+        a.question?.prompt?.toLowerCase().includes("email")
+      );
+      const emailValue = emailAnswer?.value;
+      if (typeof emailValue === 'string') return emailValue.toLowerCase();
+      if (typeof emailValue === 'object' && emailValue !== null) {
+        const email = (emailValue as Record<string, unknown>).value || (emailValue as Record<string, unknown>).text;
+        return email ? String(email).toLowerCase() : '';
+      }
+      return '';
+    }).filter(email => email);
+
+    // Fetch appointments for these emails
+    const appointments = await prisma.appointment.findMany({
+      where: {
+        customerEmail: {
+          in: leadEmails
+        }
+      }
+    });
+
+    // Create email -> appointment map for quick lookup
+    const appointmentsByEmail = appointments.reduce((acc, apt) => {
+      acc[apt.customerEmail.toLowerCase()] = apt;
+      return acc;
+    }, {} as Record<string, any>);
+
     // Transform the data for the CRM view
     const allLeads = quizSessionsWithContactInfo.map(session => {
       // Extract name and email from quiz answers (like general admin CRM)
@@ -112,6 +142,44 @@ export async function GET(
       const nameValue = getNameValue(nameAnswer);
       const emailValue = getEmailValue(emailAnswer);
 
+      // Determine status based on appointment (same logic as basic-stats)
+      let status = session.status; // Default from DB
+      const appointment = emailValue ? appointmentsByEmail[emailValue.toLowerCase()] : null;
+
+      if (appointment) {
+        if (appointment.outcome) {
+          // Show actual call outcome
+          switch (appointment.outcome) {
+            case 'converted':
+              status = 'Purchased (Call)';
+              break;
+            case 'not_interested':
+              status = 'Not Interested';
+              break;
+            case 'needs_follow_up':
+              status = 'Needs Follow Up';
+              break;
+            case 'wrong_number':
+              status = 'Wrong Number';
+              break;
+            case 'no_answer':
+              status = 'No Answer';
+              break;
+            case 'callback_requested':
+              status = 'Callback Requested';
+              break;
+            case 'rescheduled':
+              status = 'Rescheduled';
+              break;
+            default:
+              status = 'Booked';
+          }
+        } else {
+          // Appointment exists but no outcome yet
+          status = 'Booked';
+        }
+      }
+
       return {
         id: session.id,
         sessionId: session.id,
@@ -120,7 +188,7 @@ export async function GET(
         email: emailValue,
         startedAt: session.startedAt.toISOString(),
         completedAt: session.completedAt?.toISOString() || null,
-        status: session.status,
+        status, // Use updated status instead of session.status
         durationMs: session.durationMs,
         result: session.result ? {
           archetype: session.result.archetype,
