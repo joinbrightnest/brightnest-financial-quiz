@@ -63,12 +63,12 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
           <Link
             href="/closers/dashboard"
             className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-2.5'} ${isCollapsed ? 'px-2 py-2' : 'px-2.5 py-2 rounded-lg'} transition-colors group relative ${isActive('/closers/dashboard')
-                ? isCollapsed
-                  ? 'bg-slate-700 text-white'
-                  : 'bg-slate-700 text-white border-l-4 border-indigo-500'
-                : isCollapsed
-                  ? 'text-slate-300 hover:bg-slate-700'
-                  : 'text-slate-300 hover:bg-slate-700'
+              ? isCollapsed
+                ? 'bg-slate-700 text-white'
+                : 'bg-slate-700 text-white border-l-4 border-indigo-500'
+              : isCollapsed
+                ? 'text-slate-300 hover:bg-slate-700'
+                : 'text-slate-300 hover:bg-slate-700'
               }`}
           >
             <svg className={`w-4 h-4 ${isActive('/closers/dashboard') ? 'text-white' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,12 +84,12 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
           <Link
             href="/closers/databased"
             className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-2.5'} ${isCollapsed ? 'px-2 py-2' : 'px-2.5 py-2 rounded-lg'} transition-colors group relative ${isActive('/closers/databased')
-                ? isCollapsed
-                  ? 'bg-slate-700 text-white'
-                  : 'bg-slate-700 text-white border-l-4 border-indigo-500'
-                : isCollapsed
-                  ? 'text-slate-300 hover:bg-slate-700'
-                  : 'text-slate-300 hover:bg-slate-700'
+              ? isCollapsed
+                ? 'bg-slate-700 text-white'
+                : 'bg-slate-700 text-white border-l-4 border-indigo-500'
+              : isCollapsed
+                ? 'text-slate-300 hover:bg-slate-700'
+                : 'text-slate-300 hover:bg-slate-700'
               }`}
           >
             <svg className={`w-4 h-4 ${isActive('/closers/databased') ? 'text-white' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,12 +105,12 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
           <Link
             href="/closers/scripts"
             className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-2.5'} ${isCollapsed ? 'px-2 py-2' : 'px-2.5 py-2 rounded-lg'} transition-colors group relative ${isActive('/closers/scripts')
-                ? isCollapsed
-                  ? 'bg-slate-700 text-white'
-                  : 'bg-slate-700 text-white border-l-4 border-indigo-500'
-                : isCollapsed
-                  ? 'text-slate-300 hover:bg-slate-700'
-                  : 'text-slate-300 hover:bg-slate-700'
+              ? isCollapsed
+                ? 'bg-slate-700 text-white'
+                : 'bg-slate-700 text-white border-l-4 border-indigo-500'
+              : isCollapsed
+                ? 'text-slate-300 hover:bg-slate-700'
+                : 'text-slate-300 hover:bg-slate-700'
               }`}
           >
             <svg className={`w-4 h-4 ${isActive('/closers/scripts') ? 'text-white' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,12 +126,12 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
           <Link
             href="/closers/rules"
             className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-2.5'} ${isCollapsed ? 'px-2 py-2' : 'px-2.5 py-2 rounded-lg'} transition-colors group relative ${isActive('/closers/rules')
-                ? isCollapsed
-                  ? 'bg-slate-700 text-white'
-                  : 'bg-slate-700 text-white border-l-4 border-indigo-500'
-                : isCollapsed
-                  ? 'text-slate-300 hover:bg-slate-700'
-                  : 'text-slate-300 hover:bg-slate-700'
+              ? isCollapsed
+                ? 'bg-slate-700 text-white'
+                : 'bg-slate-700 text-white border-l-4 border-indigo-500'
+              : isCollapsed
+                ? 'text-slate-300 hover:bg-slate-700'
+                : 'text-slate-300 hover:bg-slate-700'
               }`}
           >
             <svg className={`w-4 h-4 ${isActive('/closers/rules') ? 'text-white' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -147,12 +147,12 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
           <Link
             href="/closers/tasks"
             className={`flex items-center ${isCollapsed ? 'justify-center' : 'space-x-2.5'} ${isCollapsed ? 'px-2 py-2' : 'px-2.5 py-2 rounded-lg'} transition-colors group relative ${isActive('/closers/tasks')
-                ? isCollapsed
-                  ? 'bg-slate-700 text-white'
-                  : 'bg-slate-700 text-white border-l-4 border-indigo-500'
-                : isCollapsed
-                  ? 'text-slate-300 hover:bg-slate-700'
-                  : 'text-slate-300 hover:bg-slate-700'
+              ? isCollapsed
+                ? 'bg-slate-700 text-white'
+                : 'bg-slate-700 text-white border-l-4 border-indigo-500'
+              : isCollapsed
+                ? 'text-slate-300 hover:bg-slate-700'
+                : 'text-slate-300 hover:bg-slate-700'
               }`}
           >
             <svg className={`w-4 h-4 ${isActive('/closers/tasks') ? 'text-white' : 'text-slate-300'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,8 +169,8 @@ export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }:
               </>
             )}
             {isCollapsed && activeTaskCount > 0 && (
-              <span className="absolute top-1 right-1 px-1.5 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full min-w-[18px] text-center">
-                {activeTaskCount}
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 flex items-center justify-center text-[10px] font-bold text-white bg-red-500 rounded-full border border-slate-900">
+                {activeTaskCount > 9 ? '9+' : activeTaskCount}
               </span>
             )}
             {isCollapsed && (
