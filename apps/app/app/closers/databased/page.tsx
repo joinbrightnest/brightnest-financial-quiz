@@ -305,7 +305,7 @@ export default function CloserDatabase() {
   };
 
   return (
-    <div className="h-screen bg-gray-50 flex overflow-hidden">
+    <div className="h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex overflow-hidden">
       {selectedLeadId && (
         <LeadDetailView
           sessionId={selectedLeadId}
@@ -343,7 +343,7 @@ export default function CloserDatabase() {
                 )}
 
                 {/* Filters Section */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
                   <div className="grid grid-cols-1 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Search</label>
@@ -379,7 +379,7 @@ export default function CloserDatabase() {
                 </div>
 
                 {/* Appointments Table */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                   <div className="px-6 py-5 border-b border-gray-100">
                     <h3 className="text-xl font-bold text-gray-900">Contacted Leads</h3>
                   </div>

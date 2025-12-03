@@ -422,7 +422,7 @@ export default function CloserTasks() {
   const upcomingCount = activeTasks.filter(t => isDueDateUpcoming(t.dueDate)).length;
 
   return (
-    <div className="h-screen bg-gray-50 flex overflow-hidden">
+    <div className="h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex overflow-hidden">
       {/* Left Sidebar - Always visible */}
       <CloserSidebar closer={closer} onLogout={handleLogout} activeTaskCount={activeTaskCount} />
 

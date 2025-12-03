@@ -476,7 +476,7 @@ BrightNest Financial Advisor`
   };
 
   return (
-    <div className="h-screen bg-gray-50 flex overflow-hidden">
+    <div className="h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex overflow-hidden">
       {/* Left Sidebar - Always visible */}
       <CloserSidebar closer={closer} onLogout={handleLogout} activeTaskCount={activeTaskCount} />
 
@@ -500,7 +500,7 @@ BrightNest Financial Advisor`
               <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
 
                 {/* Tabs */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
                   <div className="border-b border-gray-200">
                     <nav className="flex -mb-px">
                       <button

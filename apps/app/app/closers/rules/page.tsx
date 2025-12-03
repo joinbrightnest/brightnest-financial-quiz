@@ -867,7 +867,7 @@ export default function CloserRules() {
   const currentItem = current?.item;
 
   return (
-    <div className="h-screen bg-gray-50 flex overflow-hidden">
+    <div className="h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex overflow-hidden">
       {/* Left Sidebar - Always visible */}
       <CloserSidebar closer={closer} onLogout={handleLogout} activeTaskCount={activeTaskCount} />
 
@@ -912,8 +912,8 @@ export default function CloserRules() {
                                   key={item.id}
                                   onClick={() => setActiveSection(item.id)}
                                   className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-all duration-200 flex items-center ${activeSection === item.id
-                                      ? 'bg-slate-100 text-gray-900 border-l-4 border-slate-600 font-medium'
-                                      : 'text-gray-700 hover:bg-gray-50'
+                                    ? 'bg-slate-100 text-gray-900 border-l-4 border-slate-600 font-medium'
+                                    : 'text-gray-700 hover:bg-gray-50'
                                     }`}
                                 >
                                   <Icon name={item.icon} className={`w-4 h-4 mr-2 ${activeSection === item.id ? 'text-slate-700' : 'text-gray-500'}`} />
