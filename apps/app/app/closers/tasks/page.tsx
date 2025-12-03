@@ -6,6 +6,7 @@ import CloserSidebar from '../components/CloserSidebar';
 import LeadDetailView from '@/components/shared/LeadDetailView';
 import ContentLoader from '../components/ContentLoader';
 import { getPriorityColor, getStatusColor } from '@/lib/utils/ui';
+import { PaginationControls } from '@/components/ui/PaginationControls';
 
 interface Closer {
   id: string;
@@ -57,6 +58,10 @@ export default function CloserTasks() {
     priority: 'medium' as 'low' | 'medium' | 'high' | 'urgent',
     dueDate: '',
   });
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
 
   useEffect(() => {
     checkAuth();
@@ -412,6 +417,19 @@ export default function CloserTasks() {
 
 
   const filteredTasks = getFilteredTasks();
+
+  // Pagination Logic
+  const paginatedTasks = filteredTasks.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
+
+  // Reset page when filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter]);
   const activeTaskCount = tasks.filter(t => (t.status === 'pending' || t.status === 'in_progress')).length;
 
   // Calculate counts for each filter view
@@ -453,9 +471,9 @@ export default function CloserTasks() {
               </div>
             </div>
 
-            {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
+            {/* Scrollable Content - Changed to flex column for fixed layout */}
+            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="flex-1 flex flex-col min-h-0 w-full px-4 sm:px-6 lg:px-8 py-8">
 
                 {error && (
                   <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">
@@ -463,8 +481,8 @@ export default function CloserTasks() {
                   </div>
                 )}
 
-                {/* Filter Tabs */}
-                <div className="bg-white rounded-lg border border-gray-200 p-4 mb-8">
+                {/* Filter Tabs - Fixed height */}
+                <div className="flex-shrink-0 bg-white rounded-lg border border-gray-200 p-4 mb-8">
                   <div className="flex gap-2 overflow-x-auto pb-2 -mb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                     <button
                       onClick={() => setFilter('all')}
@@ -505,8 +523,8 @@ export default function CloserTasks() {
                   </div>
                 </div>
 
-                {/* Tasks Table */}
-                <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                {/* Tasks Table - Takes remaining space */}
+                <div className="flex-1 flex flex-col min-h-0 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                   {filteredTasks.length === 0 ? (
                     <div className="text-center py-12">
                       <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -516,9 +534,9 @@ export default function CloserTasks() {
                       <p className="text-gray-500 text-sm">Create tasks from lead details to see them here</p>
                     </div>
                   ) : (
-                    <div className="overflow-x-auto">
+                    <div className="flex-1 overflow-auto">
                       <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-gray-50 sticky top-0 z-10">
                           <tr>
                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                               Status
@@ -541,7 +559,7 @@ export default function CloserTasks() {
                           </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                          {filteredTasks.map((task) => {
+                          {paginatedTasks.map((task) => {
                             const isEditing = editingTask?.id === task.id;
                             const isExpanded = expandedTasks.has(task.id);
                             // Associated contact: Type 1 tasks (with leadEmail) show contact via appointment, Type 2 (general tasks, no leadEmail) show --
@@ -791,136 +809,152 @@ export default function CloserTasks() {
                       </table>
                     </div>
                   )}
+
+                  <div className="flex-shrink-0 border-t border-gray-100 bg-white">
+                    <PaginationControls
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={setCurrentPage}
+                      itemsPerPage={itemsPerPage}
+                      onItemsPerPageChange={(newSize) => {
+                        setItemsPerPage(newSize);
+                        setCurrentPage(1);
+                      }}
+                      totalItems={filteredTasks.length}
+                      showingFrom={(currentPage - 1) * itemsPerPage + 1}
+                      showingTo={Math.min(currentPage * itemsPerPage, filteredTasks.length)}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Lead Detail View Overlay */}
-          {selectedLeadId && (
-            <LeadDetailView
-              sessionId={selectedLeadId}
-              onClose={() => setSelectedLeadId(null)}
-              userRole="closer"
-            />
-          )}
+            {/* Lead Detail View Overlay */}
+            {selectedLeadId && (
+              <LeadDetailView
+                sessionId={selectedLeadId}
+                onClose={() => setSelectedLeadId(null)}
+                userRole="closer"
+              />
+            )}
 
-          {/* Create Task Modal */}
-          {showCreateTaskModal && (
-            <div
-              className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-end z-50 transition-opacity duration-200"
-              onClick={(e) => {
-                if (e.target === e.currentTarget) {
-                  closeCreateTaskModal();
-                }
-              }}
-            >
+            {/* Create Task Modal */}
+            {showCreateTaskModal && (
               <div
-                className="bg-white h-full w-full max-w-2xl shadow-xl overflow-y-auto"
-                style={{
-                  animation: 'slideInFromRight 0.3s ease-out',
+                className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-end z-50 transition-opacity duration-200"
+                onClick={(e) => {
+                  if (e.target === e.currentTarget) {
+                    closeCreateTaskModal();
+                  }
                 }}
               >
-                {/* Modal Header */}
-                <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
-                  <h3 className="text-lg font-semibold text-white">Create task</h3>
-                  <button
-                    onClick={closeCreateTaskModal}
-                    className="text-white hover:text-gray-200 transition-colors"
-                  >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-
-                {/* Modal Content */}
-                <div className="p-6 space-y-6">
-                  {/* Task Title */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Task Title <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={taskForm.title}
-                      onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
-                      placeholder="Enter task title"
-                    />
-                  </div>
-
-                  {/* Priority */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Priority <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      value={taskForm.priority}
-                      onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value as 'low' | 'medium' | 'high' | 'urgent' })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
-                    >
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                      <option value="urgent">Urgent</option>
-                    </select>
-                  </div>
-
-                  {/* Due Date */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Due Date <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="date"
-                      value={taskForm.dueDate}
-                      onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
-                    />
-                  </div>
-
-                  {/* Description/Notes */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Notes
-                    </label>
-                    <textarea
-                      value={taskForm.description}
-                      onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
-                      rows={4}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 resize-none"
-                      placeholder="Add any additional details..."
-                    />
-                  </div>
-
-                  {/* Error Message */}
-                  {error && (
-                    <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
-                      {error}
-                    </div>
-                  )}
-
-                  {/* Action Buttons */}
-                  <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
+                <div
+                  className="bg-white h-full w-full max-w-2xl shadow-xl overflow-y-auto"
+                  style={{
+                    animation: 'slideInFromRight 0.3s ease-out',
+                  }}
+                >
+                  {/* Modal Header */}
+                  <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 px-6 py-4 flex items-center justify-between sticky top-0 z-10">
+                    <h3 className="text-lg font-semibold text-white">Create task</h3>
                     <button
                       onClick={closeCreateTaskModal}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      className="text-white hover:text-gray-200 transition-colors"
                     >
-                      Cancel
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
                     </button>
-                    <button
-                      onClick={handleCreateTask}
-                      disabled={!taskForm.title.trim() || !taskForm.priority || !taskForm.dueDate}
-                      className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Create
-                    </button>
+                  </div>
+
+                  {/* Modal Content */}
+                  <div className="p-6 space-y-6">
+                    {/* Task Title */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Task Title <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={taskForm.title}
+                        onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                        placeholder="Enter task title"
+                      />
+                    </div>
+
+                    {/* Priority */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Priority <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        value={taskForm.priority}
+                        onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value as 'low' | 'medium' | 'high' | 'urgent' })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                      >
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="urgent">Urgent</option>
+                      </select>
+                    </div>
+
+                    {/* Due Date */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Due Date <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="date"
+                        value={taskForm.dueDate}
+                        onChange={(e) => setTaskForm({ ...taskForm, dueDate: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                      />
+                    </div>
+
+                    {/* Description/Notes */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Notes
+                      </label>
+                      <textarea
+                        value={taskForm.description}
+                        onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
+                        rows={4}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 resize-none"
+                        placeholder="Add any additional details..."
+                      />
+                    </div>
+
+                    {/* Error Message */}
+                    {error && (
+                      <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-sm">
+                        {error}
+                      </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
+                      <button
+                        onClick={closeCreateTaskModal}
+                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleCreateTask}
+                        disabled={!taskForm.title.trim() || !taskForm.priority || !taskForm.dueDate}
+                        className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Create
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </>
       )}
     </div>

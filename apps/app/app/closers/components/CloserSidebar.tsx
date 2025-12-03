@@ -18,20 +18,20 @@ interface CloserSidebarProps {
 
 export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }: CloserSidebarProps) {
   const pathname = usePathname();
-  // Initialize state from localStorage immediately to prevent flash
-  const [isCollapsed, setIsCollapsed] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('sidebarCollapsed');
-      return saved === 'true';
-    }
-    return false;
-  });
+  // Initialize state to false to match server-side rendering
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [mounted, setMounted] = useState(false);
   const isActive = (path: string) => pathname === path;
 
   useEffect(() => {
     // Mark as mounted for localStorage writes
     setMounted(true);
+
+    // Read saved state from localStorage
+    const saved = localStorage.getItem('sidebarCollapsed');
+    if (saved === 'true') {
+      setIsCollapsed(true);
+    }
   }, []);
 
   useEffect(() => {

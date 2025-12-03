@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import CloserSidebar from '../components/CloserSidebar';
 import LeadDetailView from '@/components/shared/LeadDetailView';
 import ContentLoader from '../components/ContentLoader';
+import { PaginationControls } from '@/components/ui/PaginationControls';
 
 interface Closer {
   id: string;
@@ -48,7 +49,6 @@ export default function CloserDashboard() {
   const [activeTaskCount, setActiveTaskCount] = useState(0);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [showOutcomeModal, setShowOutcomeModal] = useState(false);
-  const [showAllAppointments, setShowAllAppointments] = useState(false);
   const [outcomeData, setOutcomeData] = useState({
     outcome: '',
     notes: '',
@@ -56,6 +56,11 @@ export default function CloserDashboard() {
     recordingLink: ''
   });
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null); // State to control the overlay
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -227,9 +232,12 @@ export default function CloserDashboard() {
       new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime()
     );
 
-    // Return latest 6 if not showing all, otherwise return all
-    return showAllAppointments ? sortedAppointments : sortedAppointments.slice(0, 6);
+    // Always use pagination
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return sortedAppointments.slice(startIndex, startIndex + itemsPerPage);
   };
+
+  const totalPages = Math.ceil(appointments.length / itemsPerPage);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -319,9 +327,9 @@ export default function CloserDashboard() {
               </div>
             </div>
 
-            {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
+            {/* Scrollable Content - Changed to flex column for fixed layout */}
+            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="flex-1 flex flex-col min-h-0 w-full px-4 sm:px-6 lg:px-8 py-8">
 
                 {error && (
                   <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">
@@ -329,8 +337,8 @@ export default function CloserDashboard() {
                   </div>
                 )}
 
-                {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                {/* Stats Cards - Fixed height */}
+                <div className="flex-shrink-0 grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                   <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 p-5">
                     <div className="flex items-center">
                       <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
@@ -388,35 +396,16 @@ export default function CloserDashboard() {
                   </div>
                 </div>
 
-                {/* Appointments Table */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="px-6 py-5 border-b border-gray-100">
+                {/* Appointments Table - Takes remaining space */}
+                <div className="flex-1 flex flex-col min-h-0 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                  <div className="flex-shrink-0 px-6 py-5 border-b border-gray-100">
                     <div className="flex items-center justify-between">
                       <div>
                         <h3 className="text-xl font-bold text-gray-900">Your Appointments</h3>
-                        <p className="text-gray-600 mt-1">
-                          {showAllAppointments ? `Showing all ${appointments.length} appointments` : `Showing latest 6 of ${appointments.length} appointments`}
-                        </p>
                       </div>
-                      {appointments.length > 6 && (
-                        <button
-                          onClick={() => setShowAllAppointments(!showAllAppointments)}
-                          className="flex items-center space-x-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-lg text-sm font-medium transition-colors"
-                        >
-                          <span>{showAllAppointments ? 'Show Less' : 'Show All'}</span>
-                          <svg
-                            className={`w-4 h-4 transition-transform ${showAllAppointments ? 'rotate-180' : ''}`}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-                      )}
                     </div>
                   </div>
-                  <div className="overflow-x-auto">
+                  <div className="flex-1 overflow-auto">
                     {appointments.length === 0 ? (
                       <div className="text-center py-12">
                         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -429,7 +418,7 @@ export default function CloserDashboard() {
                       </div>
                     ) : (
                       <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-gray-50 sticky top-0 z-10">
                           <tr>
                             <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                               Customer
@@ -515,96 +504,114 @@ export default function CloserDashboard() {
                       </table>
                     )}
                   </div>
+
+                  <div className="flex-shrink-0 border-t border-gray-100 bg-white">
+                    <PaginationControls
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={setCurrentPage}
+                      itemsPerPage={itemsPerPage}
+                      onItemsPerPageChange={(newSize) => {
+                        setItemsPerPage(newSize);
+                        setCurrentPage(1);
+                      }}
+                      totalItems={appointments.length}
+                      showingFrom={(currentPage - 1) * itemsPerPage + 1}
+                      showingTo={Math.min(currentPage * itemsPerPage, appointments.length)}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Outcome Modal */}
-          {showOutcomeModal && selectedAppointment && (
-            <div className="fixed inset-0 bg-black/10 backdrop-blur-md overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4 animate-fadeIn">
-              <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md border border-white/20 animate-slideUp">
-                <div className="px-6 py-5 border-b border-gray-100">
-                  <h3 className="text-xl font-bold text-gray-900">
-                    Update Call Status
-                  </h3>
-                  <p className="text-gray-600 mt-1">{selectedAppointment.customerName}</p>
-                </div>
+            {/* Outcome Modal */}
+            {showOutcomeModal && selectedAppointment && (
+              <div className="fixed inset-0 bg-black/10 backdrop-blur-md overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4 animate-fadeIn">
+                <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md border border-white/20 animate-slideUp">
+                  <div className="px-6 py-5 border-b border-gray-100">
+                    <h3 className="text-xl font-bold text-gray-900">
+                      Update Call Status
+                    </h3>
+                    <p className="text-gray-600 mt-1">{selectedAppointment.customerName}</p>
+                  </div>
 
-                <div className="px-6 py-6 space-y-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Status *</label>
-                    <select
-                      value={outcomeData.outcome}
-                      onChange={(e) => setOutcomeData({ ...outcomeData, outcome: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-900"
-                      required
+                  <div className="px-6 py-6 space-y-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Status *</label>
+                      <select
+                        value={outcomeData.outcome}
+                        onChange={(e) => setOutcomeData({ ...outcomeData, outcome: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-900"
+                        required
+                      >
+                        <option value="">Select outcome</option>
+                        <option value="converted">Converted</option>
+                        <option value="not_interested">Not Interested</option>
+                        <option value="needs_follow_up">Needs Follow Up</option>
+                        <option value="wrong_number">Wrong Number</option>
+                        <option value="no_answer">No Answer</option>
+                        <option value="callback_requested">Callback Requested</option>
+                        <option value="rescheduled">Rescheduled</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Sale Value ($)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={outcomeData.saleValue}
+                        onChange={(e) => setOutcomeData({ ...outcomeData, saleValue: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-900 placeholder-gray-400"
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
+                      <textarea
+                        value={outcomeData.notes}
+                        onChange={(e) => setOutcomeData({ ...outcomeData, notes: e.target.value })}
+                        rows={3}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none text-gray-900 placeholder-gray-400"
+                        placeholder="Add any notes about the call..."
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Recording Link</label>
+                      <input
+                        type="url"
+                        value={outcomeData.recordingLink}
+                        onChange={(e) => setOutcomeData({ ...outcomeData, recordingLink: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-900 placeholder-gray-400"
+                        placeholder="https://example.com/recording-link"
+                      />
+                      <p className="mt-2 text-xs text-gray-500">Optional: Add a link to the call recording for review</p>
+                    </div>
+                  </div>
+
+                  <div className="px-6 py-5 border-t border-gray-100 flex justify-end space-x-3">
+                    <button
+                      onClick={() => setShowOutcomeModal(false)}
+                      className="px-6 py-3 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
                     >
-                      <option value="">Select outcome</option>
-                      <option value="converted">Converted</option>
-                      <option value="not_interested">Not Interested</option>
-                      <option value="needs_follow_up">Needs Follow Up</option>
-                      <option value="wrong_number">Wrong Number</option>
-                      <option value="no_answer">No Answer</option>
-                      <option value="callback_requested">Callback Requested</option>
-                      <option value="rescheduled">Rescheduled</option>
-                    </select>
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleUpdateOutcome}
+                      disabled={!outcomeData.outcome}
+                      className="px-6 py-3 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Update Status
+                    </button>
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Sale Value ($)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={outcomeData.saleValue}
-                      onChange={(e) => setOutcomeData({ ...outcomeData, saleValue: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-900 placeholder-gray-400"
-                      placeholder="0.00"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
-                    <textarea
-                      value={outcomeData.notes}
-                      onChange={(e) => setOutcomeData({ ...outcomeData, notes: e.target.value })}
-                      rows={3}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none text-gray-900 placeholder-gray-400"
-                      placeholder="Add any notes about the call..."
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Recording Link</label>
-                    <input
-                      type="url"
-                      value={outcomeData.recordingLink}
-                      onChange={(e) => setOutcomeData({ ...outcomeData, recordingLink: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-900 placeholder-gray-400"
-                      placeholder="https://example.com/recording-link"
-                    />
-                    <p className="mt-2 text-xs text-gray-500">Optional: Add a link to the call recording for review</p>
-                  </div>
-                </div>
-
-                <div className="px-6 py-5 border-t border-gray-100 flex justify-end space-x-3">
-                  <button
-                    onClick={() => setShowOutcomeModal(false)}
-                    className="px-6 py-3 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleUpdateOutcome}
-                    disabled={!outcomeData.outcome}
-                    className="px-6 py-3 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    Update Status
-                  </button>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+
+
+          </div>
         </>
       )}
     </div>

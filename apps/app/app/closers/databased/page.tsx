@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import CloserSidebar from '../components/CloserSidebar';
 import LeadDetailView from '@/components/shared/LeadDetailView';
 import ContentLoader from '../components/ContentLoader';
+import { PaginationControls } from '@/components/ui/PaginationControls';
 
 interface Closer {
   id: string;
@@ -58,6 +59,11 @@ export default function CloserDatabase() {
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [outcomeFilter, setOutcomeFilter] = useState<string>('all');
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -101,7 +107,16 @@ export default function CloserDatabase() {
     }
 
     setFilteredAppointments(filtered);
+    setCurrentPage(1); // Reset to first page on filter change
   }, [appointments, searchQuery, outcomeFilter]);
+
+  // Pagination Logic
+  const paginatedAppointments = filteredAppointments.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const totalPages = Math.ceil(filteredAppointments.length / itemsPerPage);
 
   const fetchCloserStats = async (token: string) => {
     try {
@@ -332,9 +347,9 @@ export default function CloserDatabase() {
               </div>
             </div>
 
-            {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
+            {/* Scrollable Content - Changed to flex column for fixed layout */}
+            <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+              <div className="flex-1 flex flex-col min-h-0 w-full px-4 sm:px-6 lg:px-8 py-8">
 
                 {error && (
                   <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">
@@ -342,8 +357,8 @@ export default function CloserDatabase() {
                   </div>
                 )}
 
-                {/* Filters Section */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                {/* Filters Section - Fixed height */}
+                <div className="flex-shrink-0 bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
                   <div className="grid grid-cols-1 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Search</label>
@@ -373,17 +388,16 @@ export default function CloserDatabase() {
                       </select>
                     </div>
                   </div>
-                  <div className="mt-4 text-sm text-gray-600">
-                    Showing {filteredAppointments.length} of {appointments.length} leads
-                  </div>
                 </div>
 
-                {/* Appointments Table */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="px-6 py-5 border-b border-gray-100">
+
+
+                {/* Appointments Table - Takes remaining space */}
+                <div className="flex-1 flex flex-col min-h-0 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                  <div className="flex-shrink-0 px-6 py-5 border-b border-gray-100">
                     <h3 className="text-xl font-bold text-gray-900">Contacted Leads</h3>
                   </div>
-                  <div className="overflow-x-auto">
+                  <div className="flex-1 overflow-auto">
                     {filteredAppointments.length === 0 ? (
                       <div className="text-center py-12">
                         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -396,7 +410,7 @@ export default function CloserDatabase() {
                       </div>
                     ) : (
                       <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-gray-50 sticky top-0 z-10">
                           <tr>
                             <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                               Customer
@@ -422,7 +436,7 @@ export default function CloserDatabase() {
                           </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-100">
-                          {filteredAppointments.map((appointment) => (
+                          {paginatedAppointments.map((appointment) => (
                             <tr key={appointment.id} className="hover:bg-gray-50 transition-colors">
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <div>
@@ -474,96 +488,112 @@ export default function CloserDatabase() {
                       </table>
                     )}
                   </div>
+
+                  <div className="flex-shrink-0 border-t border-gray-100 bg-white">
+                    <PaginationControls
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={setCurrentPage}
+                      itemsPerPage={itemsPerPage}
+                      onItemsPerPageChange={(newSize) => {
+                        setItemsPerPage(newSize);
+                        setCurrentPage(1);
+                      }}
+                      totalItems={filteredAppointments.length}
+                      showingFrom={(currentPage - 1) * itemsPerPage + 1}
+                      showingTo={Math.min(currentPage * itemsPerPage, filteredAppointments.length)}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Outcome Modal */}
-          {showOutcomeModal && selectedAppointment && (
-            <div className="fixed inset-0 bg-black/10 backdrop-blur-md overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4 animate-fadeIn">
-              <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md border border-white/20 animate-slideUp">
-                <div className="px-6 py-5 border-b border-gray-100">
-                  <h3 className="text-xl font-bold text-gray-900">
-                    Update Call Status
-                  </h3>
-                  <p className="text-gray-600 mt-1">{selectedAppointment.customerName}</p>
-                </div>
+            {/* Outcome Modal */}
+            {showOutcomeModal && selectedAppointment && (
+              <div className="fixed inset-0 bg-black/10 backdrop-blur-md overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4 animate-fadeIn">
+                <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md border border-white/20 animate-slideUp">
+                  <div className="px-6 py-5 border-b border-gray-100">
+                    <h3 className="text-xl font-bold text-gray-900">
+                      Update Call Status
+                    </h3>
+                    <p className="text-gray-600 mt-1">{selectedAppointment.customerName}</p>
+                  </div>
 
-                <div className="px-6 py-6 space-y-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Status *</label>
-                    <select
-                      value={outcomeData.outcome}
-                      onChange={(e) => setOutcomeData({ ...outcomeData, outcome: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-900"
-                      required
+                  <div className="px-6 py-6 space-y-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Status *</label>
+                      <select
+                        value={outcomeData.outcome}
+                        onChange={(e) => setOutcomeData({ ...outcomeData, outcome: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-900"
+                        required
+                      >
+                        <option value="">Select outcome</option>
+                        <option value="converted">Converted</option>
+                        <option value="not_interested">Not Interested</option>
+                        <option value="needs_follow_up">Needs Follow Up</option>
+                        <option value="wrong_number">Wrong Number</option>
+                        <option value="no_answer">No Answer</option>
+                        <option value="callback_requested">Callback Requested</option>
+                        <option value="rescheduled">Rescheduled</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Sale Value ($)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={outcomeData.saleValue}
+                        onChange={(e) => setOutcomeData({ ...outcomeData, saleValue: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-900 placeholder-gray-400"
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
+                      <textarea
+                        value={outcomeData.notes}
+                        onChange={(e) => setOutcomeData({ ...outcomeData, notes: e.target.value })}
+                        rows={3}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none text-gray-900 placeholder-gray-400"
+                        placeholder="Add any notes about the call..."
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Recording Link</label>
+                      <input
+                        type="url"
+                        value={outcomeData.recordingLink}
+                        onChange={(e) => setOutcomeData({ ...outcomeData, recordingLink: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-900 placeholder-gray-400"
+                        placeholder="https://example.com/recording-link"
+                      />
+                      <p className="mt-2 text-xs text-gray-500">Optional: Add a link to the call recording for review</p>
+                    </div>
+                  </div>
+
+                  <div className="px-6 py-5 border-t border-gray-100 flex justify-end space-x-3">
+                    <button
+                      onClick={() => setShowOutcomeModal(false)}
+                      className="px-6 py-3 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
                     >
-                      <option value="">Select outcome</option>
-                      <option value="converted">Converted</option>
-                      <option value="not_interested">Not Interested</option>
-                      <option value="needs_follow_up">Needs Follow Up</option>
-                      <option value="wrong_number">Wrong Number</option>
-                      <option value="no_answer">No Answer</option>
-                      <option value="callback_requested">Callback Requested</option>
-                      <option value="rescheduled">Rescheduled</option>
-                    </select>
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleUpdateOutcome}
+                      disabled={!outcomeData.outcome}
+                      className="px-6 py-3 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Update Status
+                    </button>
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Sale Value ($)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={outcomeData.saleValue}
-                      onChange={(e) => setOutcomeData({ ...outcomeData, saleValue: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-900 placeholder-gray-400"
-                      placeholder="0.00"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Notes</label>
-                    <textarea
-                      value={outcomeData.notes}
-                      onChange={(e) => setOutcomeData({ ...outcomeData, notes: e.target.value })}
-                      rows={3}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors resize-none text-gray-900 placeholder-gray-400"
-                      placeholder="Add any notes about the call..."
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Recording Link</label>
-                    <input
-                      type="url"
-                      value={outcomeData.recordingLink}
-                      onChange={(e) => setOutcomeData({ ...outcomeData, recordingLink: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors text-gray-900 placeholder-gray-400"
-                      placeholder="https://example.com/recording-link"
-                    />
-                    <p className="mt-2 text-xs text-gray-500">Optional: Add a link to the call recording for review</p>
-                  </div>
-                </div>
-
-                <div className="px-6 py-5 border-t border-gray-100 flex justify-end space-x-3">
-                  <button
-                    onClick={() => setShowOutcomeModal(false)}
-                    className="px-6 py-3 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleUpdateOutcome}
-                    disabled={!outcomeData.outcome}
-                    className="px-6 py-3 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    Update Status
-                  </button>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </>
       )}
     </div>
