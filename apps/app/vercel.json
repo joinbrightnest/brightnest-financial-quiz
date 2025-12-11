@@ -2,6 +2,7 @@
     "github": {
         "silent": true
     },
+    "installCommand": "rm -rf node_modules package-lock.json && npm install",
     "crons": [
         {
             "path": "/api/auto-release-commissions",
