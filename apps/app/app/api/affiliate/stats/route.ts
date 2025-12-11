@@ -3,6 +3,13 @@ import { CallOutcome, AffiliateClick, AffiliateConversion, AffiliatePayout, Appo
 import { calculateLeadsByCode, calculateLeadsWithDateRange } from "@/lib/lead-calculation";
 import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
+import { dateRangeSchema, parseQueryParams } from "@/lib/validation";
+import { z } from 'zod';
+
+// Schema for affiliate stats query params
+const affiliateOwnStatsSchema = z.object({
+  dateRange: dateRangeSchema.optional(),
+});
 
 export async function GET(request: NextRequest) {
   try {
@@ -44,7 +51,17 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const dateRange = searchParams.get("dateRange") || "30d";
+
+    // 🛡️ Validate query parameters
+    const validation = parseQueryParams(affiliateOwnStatsSchema, searchParams);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      );
+    }
+
+    const { dateRange = '30d' } = validation.data;
 
     // Calculate date filter
     const now = new Date();

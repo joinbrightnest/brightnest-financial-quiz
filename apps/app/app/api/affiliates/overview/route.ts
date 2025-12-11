@@ -3,6 +3,7 @@ import { CallOutcome, Prisma, QuizSession, Appointment } from "@prisma/client";
 import { calculateAffiliateLeads } from "@/lib/lead-calculation";
 import { prisma } from "@/lib/prisma";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
+import { affiliateListQuerySchema, parseQueryParams } from "@/lib/validation";
 
 export async function GET(request: NextRequest) {
   // 🔒 SECURITY: Require admin authentication
@@ -14,12 +15,21 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    console.log("Affiliate overview API called");
-    const { searchParams } = new URL(request.url);
-    const dateRange = searchParams.get("dateRange") || "30d";
-    const tier = searchParams.get("tier") || "all";
 
-    console.log("Parameters:", { dateRange, tier });
+    const { searchParams } = new URL(request.url);
+
+    // 🛡️ Validate query parameters
+    const validation = parseQueryParams(affiliateListQuerySchema, searchParams);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      );
+    }
+
+    const { dateRange = '30d', tier = 'all' } = validation.data;
+
+
 
     // Calculate date filter
     const now = new Date();
@@ -52,7 +62,7 @@ export async function GET(request: NextRequest) {
     }
 
     // PERFORMANCE OPTIMIZATION: Fetch all data in bulk queries (4 queries total instead of 54+)
-    console.log("Fetching affiliates from database...");
+
 
     const affiliates = await prisma.affiliate.findMany({
       where: {
@@ -64,7 +74,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    console.log(`Found ${affiliates.length} affiliates`);
+
 
     if (affiliates.length === 0) {
       return NextResponse.json({
@@ -193,7 +203,7 @@ export async function GET(request: NextRequest) {
       });
     });
 
-    console.log(`Bulk fetched data for ${affiliates.length} affiliates in 4 queries`);
+
 
     // Calculate overview metrics
     const approvedAffiliates = affiliates.filter(aff => aff.isApproved);
@@ -300,19 +310,7 @@ export async function GET(request: NextRequest) {
     const totalCommissionsPending = totalPendingPayouts; // Show pending payouts as pending commissions
 
     // Debug logging for overview metrics
-    console.log("Overview Metrics Debug:", {
-      totalLeadsFromAffiliates,
-      totalBookedCalls,
-      totalSalesValue,
-      totalCommissionsPaid,
-      totalCommissionsPending,
-      topAffiliatesSummary: topAffiliates.map(aff => ({
-        name: aff?.name || '',
-        leads: aff?.leads || 0,
-        revenue: aff?.revenue || 0,
-        commission: aff?.commission || 0
-      }))
-    });
+
 
     // Generate pending affiliates data
     const pendingAffiliatesData = pendingAffiliates.map(affiliate => ({
@@ -411,11 +409,7 @@ export async function GET(request: NextRequest) {
       conversionFunnelByTier,
     };
 
-    console.log("Returning affiliate data:", {
-      totalActiveAffiliates: affiliateData.totalActiveAffiliates,
-      totalPendingAffiliates: affiliateData.totalPendingAffiliates,
-      topAffiliatesCount: affiliateData.topAffiliates.length
-    });
+
 
     return NextResponse.json(affiliateData);
   } catch (error) {

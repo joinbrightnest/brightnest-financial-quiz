@@ -100,6 +100,101 @@ export const appointmentOutcomeSchema = z.object({
 });
 
 // ====================
+// Query Parameter Schemas
+// ====================
+
+/**
+ * Common dateRange parameter used across stats endpoints
+ */
+export const dateRangeSchema = z.enum(['24h', '7d', '30d', '90d', '1y', 'all']).default('30d');
+
+/**
+ * Affiliate status filter (for admin dashboard)
+ */
+export const affiliateStatusSchema = z.enum(['approved', 'pending', 'all']).default('approved');
+
+/**
+ * Affiliate tier filter
+ */
+export const affiliateTierSchema = z.enum(['quiz', 'creator', 'agency', 'all']).default('all');
+
+/**
+ * Payout status filter
+ */
+export const payoutStatusSchema = z.enum(['pending', 'completed', 'cancelled', 'all']).default('all');
+
+/**
+ * Pagination parameters
+ */
+export const paginationSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(200).default(50),
+});
+
+/**
+ * Common query params for affiliate admin routes
+ */
+export const affiliateListQuerySchema = z.object({
+  status: affiliateStatusSchema.optional(),
+  tier: affiliateTierSchema.optional(),
+  dateRange: dateRangeSchema.optional(),
+});
+
+/**
+ * Query params for payouts admin route
+ */
+export const payoutsQuerySchema = z.object({
+  status: payoutStatusSchema.optional(),
+  affiliateId: z.string().cuid().optional(),
+  dateRange: dateRangeSchema.optional(),
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(200).default(50),
+});
+
+/**
+ * Query params for affiliate stats routes
+ */
+export const affiliateStatsQuerySchema = z.object({
+  affiliateCode: z.string().min(1).max(100),
+  dateRange: dateRangeSchema.optional(),
+});
+
+/**
+ * Email query parameter (used in notes, leads, tasks)
+ */
+export const emailQuerySchema = z.object({
+  email: z.string().email(),
+});
+
+/**
+ * Lead email query parameter
+ */
+export const leadEmailQuerySchema = z.object({
+  leadEmail: z.string().email(),
+});
+
+/**
+ * Quiz type query parameter
+ */
+export const quizTypeQuerySchema = z.object({
+  quizType: z.string().min(1).max(100).optional(),
+});
+
+/**
+ * Helper to parse query params from URL searchParams
+ */
+export function parseQueryParams<T>(
+  schema: z.Schema<T>,
+  searchParams: URLSearchParams
+): { success: true; data: T } | { success: false; error: string } {
+  const params: Record<string, string | undefined> = {};
+  searchParams.forEach((value, key) => {
+    params[key] = value;
+  });
+  return validateRequest(schema, params);
+}
+
+// ====================
 // Helper Functions
 // ====================
 
@@ -137,19 +232,19 @@ export function validateRequestOrError<T>(
   data: unknown
 ): { data: T } | { error: Response } {
   const validation = validateRequest(schema, data);
-  
+
   if (!validation.success) {
     return {
       error: new Response(
         JSON.stringify({ error: validation.error }),
-        { 
+        {
           status: 400,
           headers: { 'Content-Type': 'application/json' }
         }
       ),
     };
   }
-  
+
   return { data: validation.data };
 }
 

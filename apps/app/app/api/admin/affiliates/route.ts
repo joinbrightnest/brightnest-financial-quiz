@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { PayoutStatus, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
+import { affiliateListQuerySchema, parseQueryParams } from "@/lib/validation";
 
 export async function GET(request: NextRequest) {
   // 🔒 SECURITY: Require admin authentication
@@ -14,9 +15,17 @@ export async function GET(request: NextRequest) {
 
   try {
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get("status") || "approved";
-    const tier = searchParams.get("tier") || "all";
-    const dateRange = searchParams.get("dateRange") || "all";
+
+    // 🛡️ Validate query parameters
+    const validation = parseQueryParams(affiliateListQuerySchema, searchParams);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      );
+    }
+
+    const { status = 'approved', tier = 'all', dateRange = 'all' } = validation.data;
 
     // Calculate date filter
     const now = new Date();

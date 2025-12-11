@@ -29,7 +29,7 @@ async function validateAndTrackAffiliate(affiliateCode: string, searchParams: { 
 
     // Generate a unique request ID for debugging
     const requestId = Math.random().toString(36).substring(2, 15);
-    
+
     console.log("🎯 Server-side affiliate validation:", {
       requestId,
       affiliateCode,
@@ -71,18 +71,18 @@ async function validateAndTrackAffiliate(affiliateCode: string, searchParams: { 
       });
 
       // Get client IP and user agent for tracking
-      const ipAddress = request.headers.get("x-forwarded-for") || 
-                       request.headers.get("x-real-ip") || 
-                       "unknown";
+      const ipAddress = request.headers.get("x-forwarded-for") ||
+        request.headers.get("x-real-ip") ||
+        "unknown";
       const userAgent = request.headers.get("user-agent") || "unknown";
-      
+
       // Ignore bots, crawlers, and deployment checks
       const botPatterns = /bot|crawler|spider|prerender|vercel|headless|lighthouse/i;
       if (botPatterns.test(userAgent)) {
         console.log("🤖 Bot/crawler detected, skipping affiliate click tracking");
         return true; // Valid affiliate, but skip tracking
       }
-      
+
       // Create a more robust fingerprint for duplicate detection
       const fingerprint = `${affiliate.id}-${ipAddress}-${userAgent}`;
       console.log("🔍 Request fingerprint:", {
@@ -144,48 +144,38 @@ async function validateAndTrackAffiliate(affiliateCode: string, searchParams: { 
             }
           });
 
-            if (!duplicateCheck) {
-              // Record the click
-              await tx.affiliateClick.create({
-                data: {
-                  affiliateId: affiliate.id,
-                  referralCode: affiliate.referralCode,
-                  ipAddress,
-                  userAgent,
-                  utmSource: utm_source,
-                  utmMedium: utm_medium,
-                  utmCampaign: utm_campaign,
-                },
-              });
+          if (!duplicateCheck) {
+            // Record the click
+            await tx.affiliateClick.create({
+              data: {
+                affiliateId: affiliate.id,
+                referralCode: affiliate.referralCode,
+                ipAddress,
+                userAgent,
+                utmSource: utm_source,
+                utmMedium: utm_medium,
+                utmCampaign: utm_campaign,
+              },
+            });
 
-              // Update affiliate's total clicks
-              await tx.affiliate.update({
-                where: { id: affiliate.id },
-                data: {
-                  totalClicks: {
-                    increment: 1,
-                  },
-                },
-              });
+            // Update cache to prevent future duplicates
+            requestCache.set(fingerprint, now);
 
-              // Update cache to prevent future duplicates
-              requestCache.set(fingerprint, now);
-              
-              console.log("✅ Affiliate click recorded and total updated successfully for:", {
-                requestId,
-                affiliate: affiliate.referralCode
-              });
-            } else {
-              console.log("🔄 Duplicate click detected within transaction, skipping:", {
-                requestId,
-                affiliate: affiliate.referralCode
-              });
-            }
-          });
-        } catch (transactionError) {
-          console.error("Error in affiliate click transaction:", transactionError);
-          // Continue anyway - still set cookie
-        }
+            console.log("✅ Affiliate click recorded and total updated successfully for:", {
+              requestId,
+              affiliate: affiliate.referralCode
+            });
+          } else {
+            console.log("🔄 Duplicate click detected within transaction, skipping:", {
+              requestId,
+              affiliate: affiliate.referralCode
+            });
+          }
+        });
+      } catch (transactionError) {
+        console.error("Error in affiliate click transaction:", transactionError);
+        // Continue anyway - still set cookie
+      }
 
       return true;
     } else {
@@ -206,7 +196,7 @@ export default async function AffiliatePage({ params, searchParams }: AffiliateP
   // In Next.js App Router, we can use headers() from next/headers
   const { headers } = await import('next/headers');
   const headersList = await headers();
-  
+
   // Create a mock request object with the headers we need
   const mockRequest = {
     headers: {

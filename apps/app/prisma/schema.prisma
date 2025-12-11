@@ -230,10 +230,15 @@ model Affiliate {
   payoutMethod         PayoutMethod?         @map("payout_method")
   payoutDetails        Json?                 @map("payout_details")
   commissionRate       Decimal               @default(0.1000) @map("commission_rate") @db.Decimal(5, 4)
+  /// @deprecated Use live counting from AffiliateClick table instead
   totalClicks          Int                   @default(0) @map("total_clicks")
+  /// @deprecated Use live counting from QuizSession table instead
   totalLeads           Int                   @default(0) @map("total_leads")
+  /// @deprecated Use live counting from Appointment table instead
   totalBookings        Int                   @default(0) @map("total_bookings")
+  /// @deprecated Use live counting from AffiliateConversion table instead
   totalSales           Int                   @default(0) @map("total_sales")
+  /// @deprecated Use live counting from AffiliateConversion table instead
   totalCommission      Decimal               @default(0.00) @map("total_commission") @db.Decimal(10, 2)
   isActive             Boolean               @default(true) @map("is_active")
   isApproved           Boolean               @default(false) @map("is_approved")
@@ -532,13 +537,6 @@ enum CommissionStatus {
   held
   available
   paid
-}
-
-enum PayoutStatus {
-  pending
-  processing
-  completed
-  failed
 }
 
 enum AppointmentStatus {

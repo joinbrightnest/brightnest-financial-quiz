@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminAuth } from '@/lib/admin-auth-server';
 import { prisma } from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
+import { rateLimit, rateLimitExceededResponse } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   // 🔒 SECURITY: Require admin authentication
@@ -10,6 +11,12 @@ export async function POST(request: NextRequest) {
       { error: 'Unauthorized - Admin authentication required' },
       { status: 401 }
     );
+  }
+
+  // 🛡️ SECURITY: Rate limit export endpoint (strict - 10 per minute)
+  const rateLimitResult = await rateLimit(request, 'strict');
+  if (!rateLimitResult.success) {
+    return rateLimitExceededResponse(rateLimitResult);
   }
 
   try {

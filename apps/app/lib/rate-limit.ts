@@ -49,7 +49,7 @@ class InMemoryRateLimiter {
   constructor(maxRequests: number, windowMs: number) {
     this.maxRequests = maxRequests;
     this.windowMs = windowMs;
-    
+
     // Cleanup old entries every minute
     setInterval(() => this.cleanup(), 60000);
   }
@@ -97,52 +97,72 @@ export const rateLimiters = {
   // Strict limits for auth (prevent brute force)
   auth: upstashConfigured && redis
     ? new Ratelimit({
-        redis,
-        limiter: Ratelimit.slidingWindow(5, "15 m"), // 5 login attempts per 15min
-        analytics: true,
-        prefix: "@brightnest/auth",
-      })
+      redis,
+      limiter: Ratelimit.slidingWindow(5, "15 m"), // 5 login attempts per 15min
+      analytics: true,
+      prefix: "@brightnest/auth",
+    })
     : new InMemoryRateLimiter(5, 15 * 60 * 1000),
 
   // Moderate limits for API endpoints
   api: upstashConfigured && redis
     ? new Ratelimit({
-        redis,
-        limiter: Ratelimit.slidingWindow(60, "1 m"), // ⬆️ Increased from 30 to 60
-        analytics: true,
-        prefix: "@brightnest/api",
-      })
+      redis,
+      limiter: Ratelimit.slidingWindow(60, "1 m"), // ⬆️ Increased from 30 to 60
+      analytics: true,
+      prefix: "@brightnest/api",
+    })
     : new InMemoryRateLimiter(60, 60 * 1000),
-  
+
   // Higher limit for admin (authenticated users)
   admin: upstashConfigured && redis
     ? new Ratelimit({
-        redis,
-        limiter: Ratelimit.slidingWindow(120, "1 m"), // ✨ New limit for admins
-        analytics: true,
-        prefix: "@brightnest/admin",
-      })
+      redis,
+      limiter: Ratelimit.slidingWindow(120, "1 m"), // ✨ New limit for admins
+      analytics: true,
+      prefix: "@brightnest/admin",
+    })
     : new InMemoryRateLimiter(120, 60 * 1000),
 
   // Lenient limits for page requests
   page: upstashConfigured && redis
     ? new Ratelimit({
-        redis,
-        limiter: Ratelimit.slidingWindow(100, "1 m"), // ⬆️ Increased from 60 to 100
-        analytics: true,
-        prefix: "@brightnest/page",
-      })
+      redis,
+      limiter: Ratelimit.slidingWindow(100, "1 m"), // ⬆️ Increased from 60 to 100
+      analytics: true,
+      prefix: "@brightnest/page",
+    })
     : new InMemoryRateLimiter(100, 60 * 1000),
 
   // Moderate limit for expensive operations
   expensive: upstashConfigured && redis
     ? new Ratelimit({
-        redis,
-        limiter: Ratelimit.slidingWindow(5, "1 h"), // ⬆️ Increased from 2 to 5
-        analytics: true,
-        prefix: "@brightnest/expensive",
-      })
+      redis,
+      limiter: Ratelimit.slidingWindow(5, "1 h"), // ⬆️ Increased from 2 to 5
+      analytics: true,
+      prefix: "@brightnest/expensive",
+    })
     : new InMemoryRateLimiter(5, 60 * 60 * 1000),
+
+  // Standard operational endpoints (leads, appointments, notes)
+  operational: upstashConfigured && redis
+    ? new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(60, "1 m"), // 60 requests per minute
+      analytics: true,
+      prefix: "@brightnest/operational",
+    })
+    : new InMemoryRateLimiter(60, 60 * 1000),
+
+  // Strict limits for sensitive bulk operations (export, mass updates)
+  strict: upstashConfigured && redis
+    ? new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(10, "1 m"), // 10 requests per minute
+      analytics: true,
+      prefix: "@brightnest/strict",
+    })
+    : new InMemoryRateLimiter(10, 60 * 1000),
 };
 
 /**
@@ -154,12 +174,12 @@ function getClientIdentifier(request: Request): string {
   const forwardedFor = headers.get('x-forwarded-for');
   const realIp = headers.get('x-real-ip');
   const cfConnectingIp = headers.get('cf-connecting-ip'); // Cloudflare
-  
-  const ip = forwardedFor?.split(',')[0].trim() || 
-             realIp ||
-             cfConnectingIp ||
-             'unknown';
-  
+
+  const ip = forwardedFor?.split(',')[0].trim() ||
+    realIp ||
+    cfConnectingIp ||
+    'unknown';
+
   return ip;
 }
 
@@ -181,7 +201,7 @@ export async function rateLimit(
 
   try {
     const result = await limiter.limit(identifier);
-    
+
     if (!result.success) {
       console.warn(`🚫 Rate limit exceeded for ${identifier} (${type})`);
     }
@@ -213,7 +233,7 @@ export function addRateLimitHeaders(
   rateLimitResult: { limit: number; remaining: number; reset: Date }
 ): Response {
   const headers = new Headers(response.headers);
-  
+
   headers.set('X-RateLimit-Limit', rateLimitResult.limit.toString());
   headers.set('X-RateLimit-Remaining', rateLimitResult.remaining.toString());
   headers.set('X-RateLimit-Reset', rateLimitResult.reset.toISOString());

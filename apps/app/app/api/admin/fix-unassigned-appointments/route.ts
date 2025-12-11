@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    console.log(`📋 Found ${unassignedAppointments.length} unassigned appointments`);
+    // console.log(`📋 Found ${unassignedAppointments.length} unassigned appointments`);
 
     if (unassignedAppointments.length === 0) {
       return NextResponse.json({
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
-    console.log(`👥 Found ${availableClosers.length} available closers`);
+    // console.log(`👥 Found ${availableClosers.length} available closers`);
 
     // Track assignments for logging
     const assignments: Array<{
@@ -122,12 +122,12 @@ export async function POST(request: NextRequest) {
       closerIndex = (closerIndex + 1) % availableClosers.length;
     }
 
-    console.log(`✅ Assigned ${assignedCount} appointments to closers`);
+    // console.log(`✅ Assigned ${assignedCount} appointments to closers`);
 
     // Log assignments for audit
-    assignments.forEach(assignment => {
-      console.log(`  ✅ ${assignment.customerEmail} → ${assignment.closerName}`);
-    });
+    // assignments.forEach(assignment => {
+    //   console.log(`  ✅ ${assignment.customerEmail} → ${assignment.closerName}`);
+    // });
 
     return NextResponse.json({
       success: true,

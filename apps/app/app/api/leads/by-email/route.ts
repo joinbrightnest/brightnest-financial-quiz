@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import jwt from 'jsonwebtoken';
+import { emailQuerySchema, parseQueryParams } from '@/lib/validation';
 
 export async function GET(request: NextRequest) {
   try {
@@ -34,14 +35,17 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const email = searchParams.get('email');
 
-    if (!email) {
+    // 🛡️ Validate query parameters
+    const validation = parseQueryParams(emailQuerySchema, searchParams);
+    if (!validation.success) {
       return NextResponse.json(
-        { error: 'Email parameter is required' },
+        { error: validation.error },
         { status: 400 }
       );
     }
+
+    const { email } = validation.data;
 
     // Find the lead by email in quiz answers - use simpler search
     const emailLower = email.toLowerCase();

@@ -3,6 +3,13 @@ import { CallOutcome, AffiliateClick, AffiliateConversion, QuizSession, Appointm
 import { calculateAffiliateLeads, calculateLeadsWithDateRange } from "@/lib/lead-calculation";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
 import { prisma } from "@/lib/prisma";
+import { dateRangeSchema, parseQueryParams } from "@/lib/validation";
+import { z } from 'zod';
+
+// Extended dateRange schema to include '1d' as alias for '24h'
+const affiliateStatsDateSchema = z.object({
+  dateRange: z.enum(['24h', '1d', '7d', '30d', '90d', '1y', 'all']).default('30d'),
+});
 
 export async function GET(
   request: NextRequest,
@@ -19,7 +26,17 @@ export async function GET(
   try {
     const { id: affiliateId } = await params;
     const { searchParams } = new URL(request.url);
-    const dateRange = searchParams.get("dateRange") || "30d";
+
+    // 🛡️ Validate query parameters
+    const validation = parseQueryParams(affiliateStatsDateSchema, searchParams);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      );
+    }
+
+    const { dateRange } = validation.data;
 
     console.log("🚀 ADMIN STATS API CALLED - affiliateId:", affiliateId, "dateRange:", dateRange);
 

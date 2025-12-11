@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { PayoutStatus } from "@prisma/client";
+// PayoutStatus enum removed - using string literals for payout status checks
 import { Decimal } from "@prisma/client/runtime/library";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
 

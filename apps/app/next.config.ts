@@ -2,12 +2,7 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
-  // TypeScript errors have been fixed - build will now fail on type errors
-  // ESLint errors can be fixed in a future sprint
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  // Instrumentation is automatically enabled in Next.js 15+
+  // ESLint config moved to .eslintrc.js (no longer supported in next.config in v16+)
 };
 
 // Sentry configuration options

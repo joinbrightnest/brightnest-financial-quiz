@@ -7,6 +7,7 @@ import { Redis } from '@upstash/redis';
 import { ADMIN_CONSTANTS } from '@/app/admin/constants';
 
 // Initialize Redis client for caching (optional)
+// Initialize Redis client for caching (optional)
 let redis: Redis | null = null;
 try {
   if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
@@ -18,6 +19,19 @@ try {
 } catch (error) {
   console.warn('⚠️ Failed to initialize Redis for caching:', error);
 }
+
+// 🚀 PERFORMANCE: Local In-Memory Cache for Development
+// This mimics Redis behavior locally to prevent re-calculating stats on every request when Redis is not configured
+// Using globalThis to persist cache across hot reloads in development
+const globalForCache = globalThis as unknown as {
+  _adminStatsCache: Map<string, { data: any, timestamp: number }>
+};
+
+if (!globalForCache._adminStatsCache) {
+  globalForCache._adminStatsCache = new Map();
+}
+
+const localCache = globalForCache._adminStatsCache;
 
 export async function DELETE(request: NextRequest) {
   // 🔒 SECURITY: Require admin authentication
@@ -143,6 +157,12 @@ export async function GET(request: NextRequest) {
   // 🚀 PERFORMANCE: Check cache first (5 minute TTL) - unless nocache is requested
   const cacheKey = `admin:stats:${quizType || 'all'}:${duration}:${affiliateCode || 'all'}`;
 
+  // If nocache request, clear local cache entry too
+  if (nocache) {
+    localCache.delete(cacheKey);
+  }
+
+  // 1. Try Redis Cache first (Production / Configured Env)
   if (redis && !nocache) {
     try {
       const cached = await redis.get(cacheKey);
@@ -150,12 +170,32 @@ export async function GET(request: NextRequest) {
         return NextResponse.json(cached, {
           headers: {
             'X-Cache': 'HIT',
-            'Cache-Control': `public, s-maxage=${ADMIN_CONSTANTS.CACHE.DASHBOARD_STATS_TTL}, stale-while-revalidate=${ADMIN_CONSTANTS.CACHE.DASHBOARD_STATS_TTL}`
+            'X-Cache-TTL': `${ADMIN_CONSTANTS.CACHE.DASHBOARD_STATS_TTL}s`,
+            'Cache-Control': `public, s-maxage=60, stale-while-revalidate=30`
           }
         });
       }
     } catch (error) {
       // Continue with normal flow if cache fails
+    }
+  }
+
+  // 2. Try Local In-Memory Cache (Development / No Redis)
+  // Only use if Redis is NOT active
+  if (!redis && !nocache) {
+    const cachedItem = localCache.get(cacheKey);
+    const isValid = cachedItem && (Date.now() - cachedItem.timestamp < 60 * 1000); // 1 minute TTL
+
+    if (isValid) {
+      console.log('⚡ Using local in-memory cache for:', cacheKey);
+      return NextResponse.json(cachedItem.data, {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Cache': 'HIT-LOCAL',
+          'X-Cache-Age': `${Math.round((Date.now() - cachedItem.timestamp) / 1000)}s`,
+          'Cache-Control': 'private, max-age=60'
+        }
+      });
     }
   }
 
@@ -1143,6 +1183,7 @@ export async function GET(request: NextRequest) {
     };
 
     // 🚀 PERFORMANCE: Cache result for 5 minutes (300 seconds)
+    // 🚀 PERFORMANCE: Cache result for 5 minutes (300 seconds)
     if (redis) {
       try {
         await redis.set(cacheKey, JSON.stringify(stats), { ex: ADMIN_CONSTANTS.CACHE.DASHBOARD_STATS_TTL });
@@ -1151,12 +1192,19 @@ export async function GET(request: NextRequest) {
         console.warn('Cache write failed (non-critical):', error);
         // Continue even if caching fails
       }
+    } else {
+      // Save to local in-memory cache if Redis is not available
+      localCache.set(cacheKey, {
+        data: stats,
+        timestamp: Date.now()
+      });
+      console.log('💾 Stats saved to local in-memory cache for:', cacheKey);
     }
 
     return NextResponse.json(stats, {
       headers: {
         'X-Cache': 'MISS',
-        'Cache-Control': 'private, max-age=300', // 5 minutes
+        'Cache-Control': 'private, max-age=60', // 1 minute
       }
     });
   } catch (error) {

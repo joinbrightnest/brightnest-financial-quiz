@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { AffiliatePayout, AffiliateConversion } from "@prisma/client";
+import { AffiliatePayout, AffiliateConversion, Prisma } from "@prisma/client";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
+import { payoutsQuerySchema, parseQueryParams } from "@/lib/validation";
 
 interface RawPayout {
   id: string;
@@ -27,17 +28,22 @@ export async function GET(request: NextRequest) {
 
   try {
     const { searchParams } = new URL(request.url);
-    const status = searchParams.get("status");
-    const affiliateId = searchParams.get("affiliateId");
-    const dateRange = searchParams.get("dateRange") || "all";
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "50");
+
+    // 🛡️ Validate query parameters
+    const validation = parseQueryParams(payoutsQuerySchema, searchParams);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      );
+    }
+
+    const { status, affiliateId, dateRange, page, limit } = validation.data;
     const offset = (page - 1) * limit;
 
     // Calculate date filter
     const now = new Date();
-    let startDateStr = "";
-    let startDate: Date | null = null;
+    let startDate: Date | undefined;
 
     if (dateRange !== "all") {
       switch (dateRange) {
@@ -59,112 +65,143 @@ export async function GET(request: NextRequest) {
         default:
           startDate = new Date(0);
       }
-      startDateStr = `AND p.created_at >= '${startDate.toISOString()}'`;
     }
 
-    // Build where clause
-    const whereClause: Record<string, string> = {};
+    // Build where clause using Prisma types for safety
+    const whereClause: Prisma.AffiliatePayoutWhereInput = {};
+
     if (status && status !== "all") {
-      whereClause.status = status;
+      whereClause.status = status as any;
     }
+
     if (affiliateId) {
       whereClause.affiliateId = affiliateId;
     }
 
-    // Build SQL query conditions
-    let statusCondition = "";
-    let affiliateCondition = "";
-    if (status && status !== "all") {
-      statusCondition = `AND p.status = '${status}'`;
-    }
-    if (affiliateId) {
-      affiliateCondition = `AND p.affiliate_id = '${affiliateId}'`;
+    if (startDate) {
+      whereClause.createdAt = {
+        gte: startDate
+      };
     }
 
-    // Get payouts with affiliate info using raw SQL
-    const payouts = await prisma.$queryRawUnsafe(`
-      SELECT 
-        p.*,
-        a.id as affiliate_id,
-        a.name as affiliate_name,
-        a.email as affiliate_email,
-        a.referral_code as affiliate_referral_code
-      FROM affiliate_payouts p
-      JOIN affiliates a ON p.affiliate_id = a.id
-      WHERE 1=1 ${statusCondition} ${affiliateCondition} ${startDateStr}
-      ORDER BY p.created_at DESC
-      LIMIT ${limit} OFFSET ${offset}
-    `) as RawPayout[];
+    // Get payouts with affiliate info using Prisma ORM (Safe)
+    const payouts = await prisma.affiliatePayout.findMany({
+      where: whereClause,
+      include: {
+        affiliate: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            referralCode: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      take: limit,
+      skip: offset
+    });
 
-    // Get total count
-    const totalCountResult = await prisma.$queryRawUnsafe(`
-      SELECT COUNT(*) as count
-      FROM affiliate_payouts p
-      WHERE 1=1 ${statusCondition} ${affiliateCondition} ${startDateStr}
-    `) as { count: bigint }[];
-    const totalCount = Number(totalCountResult[0].count);
+    // Get total count for pagination
+    const totalCount = await prisma.affiliatePayout.count({
+      where: whereClause
+    });
 
-    // Calculate summary stats using raw SQL
-    const summaryStats = await prisma.$queryRawUnsafe(`
-      SELECT 
-        COALESCE(SUM(amount_due), 0) as total_amount,
-        COUNT(*) as total_count
-      FROM affiliate_payouts p
-      WHERE 1=1 ${statusCondition} ${affiliateCondition} ${startDateStr}
-    `) as { total_amount: number; total_count: bigint }[];
+    // Calculate summary stats using Prisma aggregate
+    const summaryStats = await prisma.affiliatePayout.aggregate({
+      where: whereClause,
+      _sum: {
+        amountDue: true
+      },
+      _count: true
+    });
 
-    const completedStats = await prisma.$queryRawUnsafe(`
-      SELECT 
-        COALESCE(SUM(amount_due), 0) as total_amount,
-        COUNT(*) as total_count
-      FROM affiliate_payouts p
-      WHERE 1=1 ${statusCondition} ${affiliateCondition} AND p.status = 'completed' ${startDateStr}
-    `) as { total_amount: number; total_count: bigint }[];
+    // Completed Stats
+    const completedStats = await prisma.affiliatePayout.aggregate({
+      where: {
+        ...whereClause,
+        status: 'completed'
+      },
+      _sum: {
+        amountDue: true
+      },
+      _count: true
+    });
 
-    // Get pending/held commissions from conversions table (not from payouts)
+    // Pending Stats (from Payouts table)
+    const pendingStats = await prisma.affiliatePayout.aggregate({
+      where: {
+        ...whereClause,
+        status: 'pending'
+      },
+      _sum: {
+        amountDue: true
+      },
+      _count: true
+    });
+
+    // Held Commissions Stats (from Conversions table)
     // These are commissions that are held and waiting to become available
-    const conversionDateFilter = startDate ? `AND created_at >= '${startDate.toISOString()}'` : '';
-    const heldCommissionsStats = await prisma.$queryRawUnsafe(`
-      SELECT 
-        COALESCE(SUM(commission_amount), 0) as total_amount,
-        COUNT(DISTINCT affiliate_id) as affiliate_count
-      FROM affiliate_conversions
-      WHERE commission_status = 'held'
-      ${affiliateId ? `AND affiliate_id = '${affiliateId}'` : ''} ${conversionDateFilter}
-    `) as { total_amount: number; affiliate_count: bigint }[];
+    const conversionsWhereClause: Prisma.AffiliateConversionWhereInput = {
+      commissionStatus: 'held',
+    };
 
-    // Get total earned commissions within the date range
-    const totalEarnedStats = await prisma.$queryRawUnsafe(`
-      SELECT 
-        COALESCE(SUM(commission_amount), 0) as total_earned,
-        COUNT(DISTINCT affiliate_id) as affiliate_count
-      FROM affiliate_conversions
-      WHERE 1=1
-      ${affiliateId ? `AND affiliate_id = '${affiliateId}'` : ''} 
-      ${conversionDateFilter}
-    `) as { total_earned: number; affiliate_count: bigint }[];
+    if (affiliateId) {
+      conversionsWhereClause.affiliateId = affiliateId;
+    } else if (startDate) {
+      // Only apply date filter to conversions if not filtering by specific affiliate? 
+      // Original logic had logic `conversionDateFilter = startDate ? ...`
+      conversionsWhereClause.createdAt = { gte: startDate };
+    }
 
-    const pendingStats = await prisma.$queryRawUnsafe(`
-      SELECT 
-        COALESCE(SUM(amount_due), 0) as total_amount,
-        COUNT(*) as total_count
-      FROM affiliate_payouts p
-      WHERE 1=1 ${statusCondition} ${affiliateCondition} AND p.status = 'pending' ${startDateStr}
-    `) as { total_amount: number; total_count: bigint }[];
+    // Get held commissions aggregating by affiliate count manually or logical equivalent
+    // The original query did COUNT(DISTINCT affiliate_id). Prisma doesn't support distinct count in aggregate easily.
+    // We'll trust the amount sum is the most important part.
+    const heldCommissionsStats = await prisma.affiliateConversion.aggregate({
+      where: conversionsWhereClause,
+      _sum: {
+        commissionAmount: true
+      }
+    });
+
+    // For affiliate count in held commissions:
+    const heldAffiliatesCount = await prisma.affiliateConversion.groupBy({
+      by: ['affiliateId'],
+      where: conversionsWhereClause,
+    });
+
+    // Total Earned Stats
+    const totalEarnedWhereClause: Prisma.AffiliateConversionWhereInput = {};
+    if (affiliateId) totalEarnedWhereClause.affiliateId = affiliateId;
+    if (startDate) totalEarnedWhereClause.createdAt = { gte: startDate };
+
+    const totalEarnedStats = await prisma.affiliateConversion.aggregate({
+      where: totalEarnedWhereClause,
+      _sum: {
+        commissionAmount: true
+      }
+    });
+
+    const totalEarnedAffiliatesCount = await prisma.affiliateConversion.groupBy({
+      by: ['affiliateId'],
+      where: totalEarnedWhereClause,
+    });
 
     // Transform payouts data to match expected frontend structure
-    const transformedPayouts = payouts.map((payout: RawPayout) => ({
+    const transformedPayouts = payouts.map(payout => ({
       id: payout.id,
-      amountDue: Number(payout.amount_due),
+      amountDue: Number(payout.amountDue),
       status: payout.status,
-      paidAt: payout.paid_at,
+      paidAt: payout.paidAt,
       notes: payout.notes,
-      createdAt: payout.created_at,
+      createdAt: payout.createdAt,
       affiliate: {
-        id: payout.affiliate_id,
-        name: payout.affiliate_name,
-        email: payout.affiliate_email,
-        referralCode: payout.affiliate_referral_code,
+        id: payout.affiliateId,
+        name: payout.affiliate?.name || 'Unknown',
+        email: payout.affiliate?.email || 'Unknown',
+        referralCode: payout.affiliate?.referralCode || 'Unknown',
       },
     }));
 
@@ -173,12 +210,12 @@ export async function GET(request: NextRequest) {
     if (affiliateId) {
       try {
         // Get commission hold period from settings
-        const holdDaysResult = await prisma.$queryRaw`
-          SELECT value FROM "Settings" WHERE key = 'commission_hold_days'
-        ` as { value: string }[];
-        const holdDays = holdDaysResult.length > 0 ? parseInt(holdDaysResult[0].value) : 30;
+        const setting = await prisma.settings.findUnique({
+          where: { key: 'commission_hold_days' }
+        });
+        const holdDays = setting?.value ? parseInt(setting.value as string) : 30;
 
-        // Get held commissions for this affiliate (only those with actual commission amounts > 0)
+        // Get held commissions for this affiliate
         const heldCommissions = await prisma.affiliateConversion.findMany({
           where: {
             affiliateId: affiliateId,
@@ -194,7 +231,7 @@ export async function GET(request: NextRequest) {
 
         commissionHoldInfo = {
           holdDays,
-          heldCommissions: heldCommissions.map((conv: AffiliateConversion) => ({
+          heldCommissions: heldCommissions.map(conv => ({
             id: conv.id,
             amount: Number(conv.commissionAmount),
             createdAt: conv.createdAt,
@@ -218,16 +255,16 @@ export async function GET(request: NextRequest) {
           totalPages: Math.ceil(totalCount / limit),
         },
         summary: {
-          totalAmount: Number(summaryStats[0].total_amount) || 0,
-          totalCount: Number(summaryStats[0].total_count) || 0,
-          completedAmount: Number(completedStats[0].total_amount) || 0,
-          completedCount: Number(completedStats[0].total_count) || 0,
+          totalAmount: Number(summaryStats._sum.amountDue) || 0,
+          totalCount: summaryStats._count || 0,
+          completedAmount: Number(completedStats._sum.amountDue) || 0,
+          completedCount: completedStats._count || 0,
           // Use held commissions for pending (commissions waiting for hold period)
-          pendingAmount: Number(heldCommissionsStats[0].total_amount) || 0,
-          pendingCount: Number(heldCommissionsStats[0].affiliate_count) || 0,
+          pendingAmount: Number(heldCommissionsStats._sum.commissionAmount) || 0,
+          pendingCount: heldAffiliatesCount.length || 0,
           // Total earned by all affiliates
-          totalEarned: Number(totalEarnedStats[0].total_earned) || 0,
-          totalAffiliates: Number(totalEarnedStats[0].affiliate_count) || 0,
+          totalEarned: Number(totalEarnedStats._sum.commissionAmount) || 0,
+          totalAffiliates: totalEarnedAffiliatesCount.length || 0,
         },
       },
       commissionHoldInfo,

@@ -65,11 +65,12 @@ export async function DELETE(request: NextRequest) {
 
   try {
     const { searchParams } = new URL(request.url);
-    const closerId = searchParams.get('closerId');
 
-    if (!closerId) {
+    // 🛡️ Validate query parameters
+    const closerId = searchParams.get('closerId');
+    if (!closerId || closerId.length < 1 || closerId.length > 100) {
       return NextResponse.json(
-        { error: 'Closer ID is required' },
+        { error: 'Validation failed: closerId is required and must be 1-100 characters' },
         { status: 400 }
       );
     }

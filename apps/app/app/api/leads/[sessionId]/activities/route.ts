@@ -69,7 +69,7 @@ export async function GET(
             }
         }
 
-        console.log('[Activities API] Session:', sessionId, 'Email found:', leadEmail, 'Role:', isAdmin ? 'admin' : 'closer');
+        // console.log('[Activities API] Session:', sessionId, 'Email found:', leadEmail, 'Role:', isAdmin ? 'admin' : 'closer');
 
         // Find name from answers
         const nameAnswer = quizSession.answers.find(

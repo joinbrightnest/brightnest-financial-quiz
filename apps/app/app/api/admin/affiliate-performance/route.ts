@@ -3,6 +3,14 @@ import { prisma } from "@/lib/prisma";
 import { verifyAdminAuth } from "@/lib/admin-auth-server";
 import { Redis } from '@upstash/redis';
 import { ADMIN_CONSTANTS } from '@/app/admin/constants';
+import { dateRangeSchema, parseQueryParams } from "@/lib/validation";
+import { z } from 'zod';
+
+// Schema for performance query params
+const performanceQuerySchema = z.object({
+  dateRange: dateRangeSchema.optional(),
+  nocache: z.enum(['true', 'false']).optional(),
+});
 
 // Initialize Redis client for caching (optional)
 let redis: Redis | null = null;
@@ -25,13 +33,23 @@ export async function GET(request: NextRequest) {
   try {
     // Get date range filter from query params
     const { searchParams } = new URL(request.url);
-    const dateRange = searchParams.get("dateRange") || "all";
-    const nocache = searchParams.get('nocache') === 'true'; // Bypass cache for refresh button
+
+    // 🛡️ Validate query parameters
+    const validation = parseQueryParams(performanceQuerySchema, searchParams);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      );
+    }
+
+    const { dateRange = 'all', nocache } = validation.data;
+    const bypassCache = nocache === 'true';
 
     // 🚀 PERFORMANCE: Check cache first (5 minute TTL) - unless nocache is requested
     const cacheKey = `admin:affiliate-performance:${dateRange}`;
 
-    if (redis && !nocache) {
+    if (redis && !bypassCache) {
       try {
         const cached = await redis.get(cacheKey);
         if (cached) {

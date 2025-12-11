@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
       referralCode: affiliate.referralCode,
       customLink: activeTrackingLink,
       commissionRate: affiliate.commissionRate,
-      totalClicks: affiliate.totalClicks,
+      totalClicks: await prisma.affiliateClick.count({ where: { affiliateId: affiliate.id } }),
       totalLeads: affiliate.totalLeads,
       totalBookings: affiliate.totalBookings,
       totalSales: affiliate.totalSales,
