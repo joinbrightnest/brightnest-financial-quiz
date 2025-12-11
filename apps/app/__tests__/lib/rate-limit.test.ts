@@ -3,7 +3,7 @@
  */
 
 import { rateLimit, rateLimiters } from '@/lib/rate-limit';
-import { createMockRequest } from '../setup/test-utils';
+import { createMockRequest } from '../setup/testUtils';
 
 describe('Rate Limiting', () => {
   beforeEach(() => {

@@ -3,9 +3,9 @@
  */
 
 import { GET } from '@/app/api/admin/basic-stats/route';
-import { createAuthenticatedAdminRequest } from '../../setup/test-utils';
+import { createAuthenticatedAdminRequest } from '../../setup/testUtils';
 import { prisma } from '@/lib/prisma';
-import { cleanupTestData, createTestQuizSession, createTestQuizQuestion } from '../../setup/test-utils';
+import { cleanupTestData, createTestQuizSession, createTestQuizQuestion } from '../../setup/testUtils';
 
 // Mock admin auth
 jest.mock('@/lib/admin-auth-server', () => ({

@@ -3,7 +3,7 @@
  */
 
 import { POST } from '@/app/api/closer/login/route';
-import { createMockRequest } from '../../setup/test-utils';
+import { createMockRequest } from '../../setup/testUtils';
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 

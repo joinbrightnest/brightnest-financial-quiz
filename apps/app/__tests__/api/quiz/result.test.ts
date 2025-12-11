@@ -20,9 +20,9 @@
 jest.unmock('@/lib/prisma');
 
 import { POST } from '@/app/api/quiz/result/route';
-import { createMockRequest } from '../../setup/test-utils';
+import { createMockRequest } from '../../setup/testUtils';
 import { prisma } from '@/lib/prisma';
-import { cleanupTestData, createTestQuizSession, createTestQuizQuestion } from '../../setup/test-utils';
+import { cleanupTestData, createTestQuizSession, createTestQuizQuestion } from '../../setup/testUtils';
 
 describe('POST /api/quiz/result', () => {
   let session: any;
