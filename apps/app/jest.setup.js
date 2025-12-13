@@ -74,6 +74,11 @@ jest.mock('@/lib/prisma', () => ({
             update: jest.fn(),
             deleteMany: jest.fn(),
         },
+        affiliateAuditLog: {
+            create: jest.fn(),
+            findFirst: jest.fn(),
+            deleteMany: jest.fn(),
+        },
         appointment: {
             create: jest.fn(),
             findFirst: jest.fn(),

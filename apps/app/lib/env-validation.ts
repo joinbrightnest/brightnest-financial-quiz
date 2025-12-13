@@ -26,7 +26,7 @@ const ENV_VARIABLES: EnvConfig[] = [
     required: false, // Only needed for migrations, not runtime
     description: 'PostgreSQL direct connection (for migrations)'
   },
-  
+
   // Authentication
   {
     name: 'JWT_SECRET',
@@ -38,14 +38,14 @@ const ENV_VARIABLES: EnvConfig[] = [
     required: true,
     description: 'Admin authentication password'
   },
-  
+
   // External Services
   {
     name: 'OPENAI_API_KEY',
     required: false, // Optional for AI features
     description: 'OpenAI API key for content generation'
   },
-  
+
   // Optional
   {
     name: 'NEXTAUTH_SECRET',
@@ -71,7 +71,7 @@ export function validateEnvironmentVariables(): void {
 
   for (const config of ENV_VARIABLES) {
     const value = process.env[config.name];
-    
+
     if (!value || value.trim() === '') {
       if (config.required) {
         missingRequired.push(`${config.name} - ${config.description}`);

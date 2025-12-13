@@ -184,7 +184,9 @@ export async function GET(request: NextRequest) {
   // Only use if Redis is NOT active
   if (!redis && !nocache) {
     const cachedItem = localCache.get(cacheKey);
-    const isValid = cachedItem && (Date.now() - cachedItem.timestamp < 60 * 1000); // 1 minute TTL
+    // 🚀 PERF: Increased TTL from 1 min to 5 min (aligned with DASHBOARD_STATS_TTL)
+    const LOCAL_CACHE_TTL_MS = ADMIN_CONSTANTS.CACHE.DASHBOARD_STATS_TTL * 1000; // 5 minutes
+    const isValid = cachedItem && (Date.now() - cachedItem.timestamp < LOCAL_CACHE_TTL_MS);
 
     if (isValid) {
       console.log('⚡ Using local in-memory cache for:', cacheKey);
@@ -193,11 +195,13 @@ export async function GET(request: NextRequest) {
           'Content-Type': 'application/json',
           'X-Cache': 'HIT-LOCAL',
           'X-Cache-Age': `${Math.round((Date.now() - cachedItem.timestamp) / 1000)}s`,
-          'Cache-Control': 'private, max-age=60'
+          'X-Cache-TTL': `${ADMIN_CONSTANTS.CACHE.DASHBOARD_STATS_TTL}s`,
+          'Cache-Control': `private, max-age=${ADMIN_CONSTANTS.CACHE.DASHBOARD_STATS_TTL}`
         }
       });
     }
   }
+
 
   try {
     // Build date filter based on duration parameter

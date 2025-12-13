@@ -39,6 +39,8 @@ model QuizSession {
 
   @@index([affiliateCode, createdAt])
   @@index([affiliateCode, status, createdAt])
+  @@index([status, createdAt])  // 🚀 PERF: Fast filtering by status + date (leads page)
+  @@index([quizType, status, createdAt])  // 🚀 PERF: Fast filtering by quiz type
   @@map("quiz_sessions")
 }
 
@@ -78,6 +80,9 @@ model QuizAnswer {
   question   QuizQuestion @relation(fields: [questionId], references: [id])
   session    QuizSession  @relation(fields: [sessionId], references: [id])
 
+  @@index([sessionId])  // 🚀 PERF: Fast lookup of answers by session
+  @@index([questionId])  // 🚀 PERF: Fast lookup of answers by question
+  @@index([sessionId, questionId])  // 🚀 PERF: Composite for joins
   @@map("quiz_answers")
 }
 
@@ -360,7 +365,7 @@ model Closer {
   totalCalls        Int?                     @default(0) @map("total_calls")
   totalConversions  Int?                     @default(0) @map("total_conversions")
   totalRevenue      Decimal?                 @default(0.00) @map("total_revenue") @db.Decimal(10, 2)
-  conversionRate    Decimal?                 @default(0.00) @map("conversion_rate") @db.Decimal(5, 4)
+  conversionRate    Decimal?                 @default(0.00) @map("conversion_rate") @db.Decimal(7, 4)  // Allows 0.0000 to 100.0000%
   createdAt         DateTime?                @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt         DateTime?                @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
   calendlyLink      String?                  @map("calendly_link")

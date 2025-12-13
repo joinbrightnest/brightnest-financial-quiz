@@ -6,6 +6,7 @@ import { AdminStats } from "../../../types";
 import LeadDetailView from "../../../../components/shared/LeadDetailView";
 import { ADMIN_CONSTANTS } from "../../../constants";
 import { PaginationControls } from "@/components/ui/PaginationControls";
+import AnalyticsPageHeader from "../../shared/AnalyticsPageHeader";
 
 interface Answer {
     question?: {
@@ -319,141 +320,123 @@ export default function CRM({
     };
 
     return (
-        <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
-            {/* CRM Header with Icon and Filters */}
-            <div className="flex-shrink-0 bg-white px-6 py-6 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                    <div className="space-y-2">
-                        <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-                                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h2 className="text-2xl font-bold text-gray-900">Lead Analytics</h2>
-                                <p className="text-gray-600 font-medium">Customer relationship management and lead tracking</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center space-x-4">
-                        {/* Refresh Button */}
-                        <button
-                            onClick={handleRefresh}
-                            disabled={isRefreshing}
-                            className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            <svg className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                            <span>{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
-                        </button>
-
-                        {/* Quiz Type Filter */}
-                        <div className="flex items-center space-x-2">
-                            <label className="text-sm font-medium text-gray-700">Quiz Type:</label>
-                            <select
-                                value={crmFilters.quizType}
-                                onChange={(e) => setCrmFilters(prev => ({ ...prev, quizType: e.target.value }))}
-                                className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            >
-                                <option value="all">All Types</option>
-                                {stats?.quizTypes && stats.quizTypes.length > 0 ? (
-                                    stats.quizTypes.map((quizType) => (
-                                        <option key={quizType.name} value={quizType.name}>
-                                            {quizType.displayName}
-                                        </option>
-                                    ))
-                                ) : (
-                                    <>
-                                        <option value="financial-profile">Financial Profile</option>
-                                        <option value="health-finance">Health Finance</option>
-                                        <option value="marriage-finance">Marriage Finance</option>
-                                    </>
-                                )}
-                            </select>
-                        </div>
-
-                        {/* Date Range Filter */}
-                        <div className="flex items-center space-x-2">
-                            <label className="text-sm font-medium text-gray-700">Date Range:</label>
-                            <select
-                                value={crmFilters.dateRange}
-                                onChange={(e) => setCrmFilters(prev => ({ ...prev, dateRange: e.target.value }))}
-                                className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            >
-                                <option value="all">All Time</option>
-                                <option value="24h">Last 24 hours</option>
-                                <option value="7d">Last 7 days</option>
-                                <option value="30d">Last 30 days</option>
-                                <option value="90d">Last 90 days</option>
-                                <option value="1y">Last year</option>
-                            </select>
-                        </div>
-
-                        {/* Affiliate Filter */}
-                        <div className="flex items-center space-x-2">
-                            <label className="text-sm font-medium text-gray-700">Affiliate:</label>
-                            <select
-                                value={crmFilters.affiliateCode}
-                                onChange={(e) => setCrmFilters(prev => ({ ...prev, affiliateCode: e.target.value }))}
-                                className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            >
-                                <option value="all">All Affiliates</option>
-                                {affiliates.map(affiliate => (
-                                    <option key={affiliate.id} value={affiliate.referralCode}>
-                                        {affiliate.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
+        <>
+            {/* CRM Header */}
+            <AnalyticsPageHeader
+                icon={
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                }
+                iconGradient="from-green-600 to-emerald-600"
+                title="Lead Analytics"
+                subtitle="Customer relationship management and lead tracking"
+                onRefresh={handleRefresh}
+                isRefreshing={isRefreshing}
+            >
+                {/* Quiz Type Filter */}
+                <div className="flex items-center space-x-2">
+                    <label className="text-sm font-medium text-gray-700">Quiz Type:</label>
+                    <select
+                        value={crmFilters.quizType}
+                        onChange={(e) => setCrmFilters(prev => ({ ...prev, quizType: e.target.value }))}
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="all">All Types</option>
+                        {stats?.quizTypes && stats.quizTypes.length > 0 ? (
+                            stats.quizTypes.map((quizType) => (
+                                <option key={quizType.name} value={quizType.name}>
+                                    {quizType.displayName}
+                                </option>
+                            ))
+                        ) : (
+                            <>
+                                <option value="financial-profile">Financial Profile</option>
+                                <option value="health-finance">Health Finance</option>
+                                <option value="marriage-finance">Marriage Finance</option>
+                            </>
+                        )}
+                    </select>
                 </div>
-            </div>
 
-            {/* Metrics - Single Horizontal Card Layout */}
-            {crmShowMetrics && (
-                <div className="flex-shrink-0 bg-gradient-to-b from-gray-50 to-white px-6 py-6">
-                    <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-                        <div className="flex flex-col lg:flex-row">
+                {/* Date Range Filter */}
+                <div className="flex items-center space-x-2">
+                    <label className="text-sm font-medium text-gray-700">Date Range:</label>
+                    <select
+                        value={crmFilters.dateRange}
+                        onChange={(e) => setCrmFilters(prev => ({ ...prev, dateRange: e.target.value }))}
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="all">All Time</option>
+                        <option value="24h">Last 24 hours</option>
+                        <option value="7d">Last 7 days</option>
+                        <option value="30d">Last 30 days</option>
+                        <option value="90d">Last 90 days</option>
+                        <option value="1y">Last year</option>
+                    </select>
+                </div>
+
+                {/* Affiliate Filter */}
+                <div className="flex items-center space-x-2">
+                    <label className="text-sm font-medium text-gray-700">Affiliate:</label>
+                    <select
+                        value={crmFilters.affiliateCode}
+                        onChange={(e) => setCrmFilters(prev => ({ ...prev, affiliateCode: e.target.value }))}
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="all">All Affiliates</option>
+                        {affiliates.map(affiliate => (
+                            <option key={affiliate.id} value={affiliate.referralCode}>
+                                {affiliate.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            </AnalyticsPageHeader>
+
+            {/* Unified Content Container - Metrics, Search, and Table */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col" style={{ maxHeight: 'calc(100vh - 140px)', minHeight: '500px' }}>
+                {/* Metrics Section */}
+                {crmShowMetrics && (
+                    <div className="flex-shrink-0 border-b border-gray-100">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 divide-x divide-gray-100">
                             {/* Total Deal Amount */}
-                            <div className="flex-1 p-6 text-center">
+                            <div className="p-6 text-center">
                                 <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">TOTAL DEAL AMOUNT</div>
                                 <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.totalRevenue)}</div>
                                 <div className="text-xs text-gray-400">Open + Closed deals</div>
                             </div>
 
                             {/* Weighted Deal Amount */}
-                            <div className="flex-1 p-6 text-center">
+                            <div className="p-6 text-center">
                                 <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">WEIGHTED DEAL AMOUNT</div>
                                 <div className="text-2xl font-bold text-gray-900 mb-1">$0.00</div>
                                 <div className="text-xs text-gray-400">To be determined</div>
                             </div>
 
                             {/* Open Deal Amount */}
-                            <div className="flex-1 p-6 text-center">
+                            <div className="p-6 text-center">
                                 <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">OPEN DEAL AMOUNT</div>
                                 <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.openDealAmount)}</div>
                                 <div className="text-xs text-gray-400">Potential + actual open deals</div>
                             </div>
 
                             {/* Closed Deal Amount */}
-                            <div className="flex-1 p-6 text-center">
+                            <div className="p-6 text-center">
                                 <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">CLOSED DEAL AMOUNT</div>
                                 <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.closedDealAmount)}</div>
                                 <div className="text-xs text-gray-400">Closed deals with sale values</div>
                             </div>
 
                             {/* New Deal Amount */}
-                            <div className="flex-1 p-6 text-center">
+                            <div className="p-6 text-center">
                                 <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">NEW DEAL AMOUNT</div>
                                 <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.newDealAmount)}</div>
                                 <div className="text-xs text-gray-400">Deals with no outcome yet</div>
                             </div>
 
                             {/* Average Deal Age */}
-                            <div className="flex-1 p-6 text-center">
+                            <div className="p-6 text-center">
                                 <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">AVERAGE DEAL AGE</div>
                                 <div className="text-2xl font-bold text-gray-900 mb-1">
                                     {(() => {
@@ -474,63 +457,58 @@ export default function CRM({
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )}
 
-            {/* Search and Actions */}
-            <div className="flex-shrink-0 bg-white px-6 py-4">
-                <div className="flex justify-between items-center">
-                    <div className="flex items-center space-x-4">
-                        <div className="relative">
-                            <svg className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                            <input
-                                type="text"
-                                placeholder="Search name or description"
-                                value={crmSearch}
-                                onChange={(e) => handleCrmSearch(e.target.value)}
-                                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80 text-black placeholder-black"
-                            />
+                {/* Search and Actions */}
+                <div className="flex-shrink-0 p-4 border-b border-gray-100">
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center space-x-4">
+                            <div className="relative">
+                                <svg className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                                <input
+                                    type="text"
+                                    placeholder="Search name or description"
+                                    value={crmSearch}
+                                    onChange={(e) => handleCrmSearch(e.target.value)}
+                                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-80 text-black placeholder-black"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                            <button
+                                onClick={() => setCrmShowMetrics(!crmShowMetrics)}
+                                className="text-gray-600 text-sm font-medium hover:text-gray-700 flex items-center"
+                            >
+                                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {crmShowMetrics ? 'Hide Metrics' : 'Show Metrics'}
+                            </button>
+                            <button
+                                onClick={handleCrmExport}
+                                className="bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200 transition-colors text-sm"
+                            >
+                                Export
+                            </button>
+                            <button
+                                onClick={() => setCrmShowColumnModal(true)}
+                                className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-50 transition-colors text-sm"
+                            >
+                                Edit columns
+                            </button>
+                            <button
+                                onClick={() => router.push('/admin/leads')}
+                                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors text-sm"
+                            >
+                                Lead Analytics
+                            </button>
                         </div>
                     </div>
-                    <div className="flex items-center space-x-3">
-                        <button
-                            onClick={() => setCrmShowMetrics(!crmShowMetrics)}
-                            className="text-gray-600 text-sm font-medium hover:text-gray-700 flex items-center"
-                        >
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            {crmShowMetrics ? 'Hide Metrics' : 'Show Metrics'}
-                        </button>
-                        <button
-                            onClick={handleCrmExport}
-                            className="bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200 transition-colors text-sm"
-                        >
-                            Export
-                        </button>
-                        <button
-                            onClick={() => setCrmShowColumnModal(true)}
-                            className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-50 transition-colors text-sm"
-                        >
-                            Edit columns
-                        </button>
-                        <button
-                            onClick={() => router.push('/admin/leads')}
-                            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors text-sm"
-                        >
-                            Lead Analytics
-                        </button>
-                    </div>
                 </div>
-            </div>
 
-            {/* Lead Table - Takes remaining space */}
-            <div className="flex-1 flex flex-col min-h-0 bg-white overflow-hidden">
-                <div className="flex-shrink-0 px-6 py-4">
-                    {/* Table header content can go here if needed */}
-                </div>
+                {/* Table Section */}
                 <div className="flex-1 overflow-auto">
                     <table className="min-w-full">
                         <thead className="bg-gray-50 sticky top-0 z-10">
@@ -730,6 +708,7 @@ export default function CRM({
                     </table>
                 </div>
 
+                {/* Pagination - Always visible at bottom */}
                 <div className="flex-shrink-0 border-t border-gray-100 bg-white">
                     <PaginationControls
                         currentPage={crmCurrentPage}
@@ -856,6 +835,7 @@ export default function CRM({
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 }
+

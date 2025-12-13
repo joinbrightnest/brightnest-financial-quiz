@@ -69,7 +69,7 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [expandedAffiliates, setExpandedAffiliates] = useState<Set<string>>(new Set());
   const [holdDetails, setHoldDetails] = useState<Record<string, { heldCommissions: HeldCommission[], holdDays: number }>>({});
-  
+
   // Commission release states
   const [isReleasing, setIsReleasing] = useState(false);
   const [releaseStatus, setReleaseStatus] = useState<{
@@ -78,6 +78,12 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
     message: string;
     details?: { releasedCount: number; releasedAmount: number };
   }>({ show: false, success: false, message: "" });
+  const [forceReleasingId, setForceReleasingId] = useState<string | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{
+    show: boolean;
+    commissionId: string | null;
+    affiliateId: string | null;
+  }>({ show: false, commissionId: null, affiliateId: null });
 
   useEffect(() => {
     fetchData();
@@ -195,12 +201,12 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
       if (response.ok) {
         const result = await response.json();
         console.log("Payout created:", result);
-        
+
         // Reset form and close modal
         setPayoutForm({ amount: "", notes: "", status: "completed" });
         setShowPayoutModal(false);
         setSelectedAffiliate(null);
-        
+
         // Refresh data
         await fetchData();
       } else {
@@ -258,6 +264,78 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
     setExpandedAffiliates(newExpanded);
   };
 
+  // Opens the confirmation modal
+  const openForceReleaseModal = (commissionId: string, affiliateId: string) => {
+    setConfirmModal({ show: true, commissionId, affiliateId });
+  };
+
+  // Executes the force release after confirmation
+  const handleForceReleaseCommission = async () => {
+    if (!confirmModal.commissionId || !confirmModal.affiliateId) return;
+
+    const commissionId = confirmModal.commissionId;
+    const affiliateId = confirmModal.affiliateId;
+
+    setConfirmModal({ show: false, commissionId: null, affiliateId: null });
+    setForceReleasingId(commissionId);
+
+    try {
+      // Auth is handled via cookies, not localStorage
+      const response = await fetch(`/api/admin/commissions/${commissionId}/force-release`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // Include cookies for auth
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Remove this commission from the holdDetails
+        setHoldDetails(prev => {
+          const updated = { ...prev };
+          if (updated[affiliateId]) {
+            updated[affiliateId] = {
+              ...updated[affiliateId],
+              heldCommissions: updated[affiliateId].heldCommissions.filter(c => c.id !== commissionId)
+            };
+          }
+          return updated;
+        });
+
+        // Refresh all data to show updated statuses
+        await fetchData();
+
+        setReleaseStatus({
+          show: true,
+          success: true,
+          message: "Commission force-released successfully!",
+        });
+
+        setTimeout(() => {
+          setReleaseStatus({ show: false, success: false, message: "" });
+        }, 3000);
+      } else {
+        setReleaseStatus({
+          show: true,
+          success: false,
+          message: data.error || "Failed to force release commission"
+        });
+      }
+    } catch (error) {
+      console.error("Error force-releasing commission:", error);
+      setReleaseStatus({
+        show: true,
+        success: false,
+        message: "An error occurred while force-releasing the commission"
+      });
+    } finally {
+      setForceReleasingId(null);
+    }
+  };
+
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -282,30 +360,6 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
           <h1 className="text-3xl font-bold text-slate-900">Commission Payout Management</h1>
           <p className="text-slate-600 mt-2">Professional affiliate commission payout system</p>
         </div>
-        
-        {/* Release Commissions Button */}
-        <button
-          onClick={handleReleaseCommissions}
-          disabled={isReleasing}
-          className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl text-sm font-semibold hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isReleasing ? (
-            <>
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Releasing...
-            </>
-          ) : (
-            <>
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-              Release Commissions Now
-            </>
-          )}
-        </button>
       </div>
 
       {/* Release Status Alert */}
@@ -314,11 +368,10 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
-          className={`p-4 rounded-xl shadow-lg ${
-            releaseStatus.success
-              ? "bg-green-50 border-l-4 border-green-500"
-              : "bg-red-50 border-l-4 border-red-500"
-          }`}
+          className={`p-4 rounded-xl shadow-lg ${releaseStatus.success
+            ? "bg-green-50 border-l-4 border-green-500"
+            : "bg-red-50 border-l-4 border-red-500"
+            }`}
         >
           <div className="flex items-start">
             <div className="flex-shrink-0">
@@ -471,21 +524,19 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
         <div className="flex space-x-1 mb-6">
           <button
             onClick={() => setActiveTab("affiliates")}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeTab === "affiliates"
-                ? "bg-blue-100 text-blue-700"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "affiliates"
+              ? "bg-blue-100 text-blue-700"
+              : "text-slate-600 hover:text-slate-900"
+              }`}
           >
             Affiliates ({affiliates.length})
           </button>
           <button
             onClick={() => setActiveTab("payouts")}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              activeTab === "payouts"
-                ? "bg-blue-100 text-blue-700"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
+            className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === "payouts"
+              ? "bg-blue-100 text-blue-700"
+              : "text-slate-600 hover:text-slate-900"
+              }`}
           >
             Payout History ({payouts.length})
           </button>
@@ -530,12 +581,12 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
                   {affiliates.map((affiliate) => {
                     const isExpanded = expandedAffiliates.has(affiliate.id);
                     const affiliateHoldInfo = holdDetails[affiliate.id];
-                    
+
                     return (
                       <div key={affiliate.id}>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
                           className="grid grid-cols-12 gap-4 p-4 bg-gradient-to-r from-slate-50 to-white hover:from-slate-100 hover:to-slate-50 transition-all duration-300"
                         >
                           {/* Affiliate Info */}
@@ -557,53 +608,52 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
                               </button>
                             )}
                             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
-                      <span className="text-white font-bold text-lg">
-                        {affiliate.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
+                              <span className="text-white font-bold text-lg">
+                                {affiliate.name.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
                             <div className="min-w-0">
                               <h3 className="font-bold text-slate-900 text-base truncate">{affiliate.name}</h3>
                               <p className="text-sm text-slate-600 truncate">{affiliate.email}</p>
-                      <p className="text-xs text-slate-500">Code: {affiliate.referralCode}</p>
-                    </div>
-                  </div>
-                  
+                              <p className="text-xs text-slate-500">Code: {affiliate.referralCode}</p>
+                            </div>
+                          </div>
+
                           {/* Available Commission */}
                           <div className="col-span-2 flex items-center justify-center">
-                      <p className="text-xl font-bold text-slate-900">
-                        ${affiliate.availableCommission.toLocaleString()}
-                      </p>
-                    </div>
+                            <p className="text-xl font-bold text-slate-900">
+                              ${affiliate.availableCommission.toLocaleString()}
+                            </p>
+                          </div>
 
                           {/* Total Paid */}
                           <div className="col-span-2 flex items-center justify-center">
                             <p className="text-xl font-bold text-emerald-600">
-                        ${affiliate.totalPaid.toLocaleString()}
-                      </p>
-                    </div>
+                              ${affiliate.totalPaid.toLocaleString()}
+                            </p>
+                          </div>
 
                           {/* Pending */}
                           <div className="col-span-2 flex items-center justify-center">
                             <p className="text-xl font-bold text-orange-600">
-                        ${affiliate.pendingCommissions.toLocaleString()}
-                      </p>
-                    </div>
+                              ${affiliate.pendingCommissions.toLocaleString()}
+                            </p>
+                          </div>
 
                           {/* Action */}
                           <div className="col-span-2 flex items-center justify-center">
-                    <button
-                      onClick={() => openPayoutModal(affiliate)}
-                      disabled={affiliate.availableCommission <= 0}
-                              className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                        affiliate.availableCommission > 0
-                          ? "bg-blue-600 text-white hover:bg-blue-700"
-                          : "bg-slate-300 text-slate-500 cursor-not-allowed"
-                      }`}
-                    >
-                      {affiliate.availableCommission > 0 ? "Pay Out" : "No Balance"}
-                    </button>
-                  </div>
-                </motion.div>
+                            <button
+                              onClick={() => openPayoutModal(affiliate)}
+                              disabled={affiliate.availableCommission <= 0}
+                              className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${affiliate.availableCommission > 0
+                                ? "bg-blue-600 text-white hover:bg-blue-700"
+                                : "bg-slate-300 text-slate-500 cursor-not-allowed"
+                                }`}
+                            >
+                              {affiliate.availableCommission > 0 ? "Pay Out" : "No Balance"}
+                            </button>
+                          </div>
+                        </motion.div>
 
                         {/* Expanded Commission Hold Details */}
                         {isExpanded && (
@@ -638,7 +688,7 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
                                             })}
                                           </div>
                                         </div>
-                                        <div className="text-right">
+                                        <div className="flex items-center space-x-3">
                                           <span className="text-xs text-slate-600">
                                             Available: {new Date(commission.holdUntil).toLocaleDateString('en-US', {
                                               month: 'short',
@@ -646,6 +696,13 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
                                               year: 'numeric'
                                             })}
                                           </span>
+                                          <button
+                                            onClick={() => openForceReleaseModal(commission.id, affiliate.id)}
+                                            disabled={forceReleasingId === commission.id}
+                                            className="px-2 py-1 text-xs font-medium bg-amber-100 text-amber-700 rounded hover:bg-amber-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                          >
+                                            {forceReleasingId === commission.id ? "..." : "Force Release"}
+                                          </button>
                                         </div>
                                       </div>
                                     ))}
@@ -680,31 +737,28 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
               <div className="flex space-x-2">
                 <button
                   onClick={() => handleFilterChange("all")}
-                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                    filterStatus === "all"
-                      ? "bg-blue-100 text-blue-700"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
+                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${filterStatus === "all"
+                    ? "bg-blue-100 text-blue-700"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
                 >
                   All
                 </button>
                 <button
                   onClick={() => handleFilterChange("completed")}
-                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                    filterStatus === "completed"
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
+                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${filterStatus === "completed"
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
                 >
                   Completed
                 </button>
                 <button
                   onClick={() => handleFilterChange("pending")}
-                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                    filterStatus === "pending"
-                      ? "bg-orange-100 text-orange-700"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
+                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${filterStatus === "pending"
+                    ? "bg-orange-100 text-orange-700"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
                 >
                   Pending
                 </button>
@@ -732,11 +786,10 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
                   <div className="grid grid-cols-12 gap-4 items-center">
                     {/* Affiliate Info */}
                     <div className="col-span-4 flex items-center space-x-3">
-                      <div className={`w-3 h-3 rounded-full ${
-                        payout.status === "completed" ? "bg-emerald-500" : 
-                        payout.status === "pending" ? "bg-orange-500" : 
-                        "bg-slate-500"
-                      }`} />
+                      <div className={`w-3 h-3 rounded-full ${payout.status === "completed" ? "bg-emerald-500" :
+                        payout.status === "pending" ? "bg-orange-500" :
+                          "bg-slate-500"
+                        }`} />
                       <div>
                         <h3 className="font-bold text-slate-900">{payout.affiliate?.name || 'Unknown Affiliate'}</h3>
                         <p className="text-sm text-slate-600">{payout.affiliate?.email || 'No email'}</p>
@@ -745,7 +798,7 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
                         </p>
                       </div>
                     </div>
-                    
+
                     {/* Amount */}
                     <div className="col-span-2 text-center">
                       <p className="text-sm font-semibold text-slate-600 mb-1">Amount</p>
@@ -753,21 +806,20 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
                         ${payout.amountDue.toLocaleString()}
                       </p>
                     </div>
-                    
+
                     {/* Status */}
                     <div className="col-span-2 text-center">
                       <p className="text-sm font-semibold text-slate-600 mb-1">Status</p>
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                        payout.status === "completed" 
-                          ? "bg-emerald-100 text-emerald-700"
-                          : payout.status === "pending"
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${payout.status === "completed"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : payout.status === "pending"
                           ? "bg-orange-100 text-orange-700"
                           : "bg-slate-100 text-slate-700"
-                      }`}>
+                        }`}>
                         {payout.status.toUpperCase()}
                       </span>
                     </div>
-                    
+
                     {/* Notes */}
                     <div className="col-span-4">
                       <p className="text-sm font-semibold text-slate-600 mb-1">Notes</p>
@@ -792,7 +844,7 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
             <h2 className="text-2xl font-bold text-slate-900 mb-4">
               Pay Out Commission
             </h2>
-            
+
             <div className="mb-4 p-4 bg-slate-50 rounded-lg">
               <p className="text-sm text-slate-600">Affiliate</p>
               <p className="font-semibold text-slate-900">{selectedAffiliate.name}</p>
@@ -847,6 +899,48 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
                 </button>
               </div>
             </form>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Force Release Confirmation Modal */}
+      {confirmModal.show && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4"
+          >
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Force Release Commission</h3>
+                <p className="text-sm text-slate-500">BrightNest Admin</p>
+              </div>
+            </div>
+
+            <p className="text-slate-700 mb-6">
+              Are you sure you want to force release this commission immediately? This will make it available for payout before the hold period ends.
+            </p>
+
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setConfirmModal({ show: false, commissionId: null, affiliateId: null })}
+                className="flex-1 px-4 py-3 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleForceReleaseCommission}
+                className="flex-1 px-4 py-3 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors font-medium"
+              >
+                Force Release
+              </button>
+            </div>
           </motion.div>
         </div>
       )}

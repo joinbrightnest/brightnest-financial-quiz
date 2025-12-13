@@ -3,6 +3,7 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import { AdminStats, QuizAnalyticsFilters } from '../../types';
+import AnalyticsPageHeader from '../shared/AnalyticsPageHeader';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -68,100 +69,78 @@ export default function QuizAnalytics({
 
     return (
         <>
-            {/* Quiz Analytics Header with Icon and Filters */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-                <div className="flex items-center justify-between">
-                    <div className="space-y-2">
-                        <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h2 className="text-2xl font-bold text-gray-900">Quiz Analytics</h2>
-                                <p className="text-gray-600 font-medium">Comprehensive quiz performance and engagement metrics</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center space-x-4">
-                        {/* Quiz Type Filter */}
-                        <div className="flex items-center space-x-2">
-                            <label className="text-sm font-medium text-gray-700">Quiz Type:</label>
-                            <select
-                                value={filters.quizType}
-                                onChange={(e) => onFilterChange({ ...filters, quizType: e.target.value })}
-                                className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            >
-                                <option value="all">All Types</option>
-                                {stats?.quizTypes && stats.quizTypes.length > 0 ? (
-                                    stats.quizTypes.map((quizType) => (
-                                        <option key={quizType.name} value={quizType.name}>
-                                            {quizType.displayName}
-                                        </option>
-                                    ))
-                                ) : (
-                                    <>
-                                        <option value="financial-profile">Financial Profile</option>
-                                        <option value="health-finance">Health Finance</option>
-                                        <option value="marriage-finance">Marriage Finance</option>
-                                    </>
-                                )}
-                            </select>
-                        </div>
-
-                        {/* Duration Filter */}
-                        <div className="flex items-center space-x-2">
-                            <label className="text-sm font-medium text-gray-700">Duration:</label>
-                            <select
-                                value={filters.duration}
-                                onChange={(e) => onFilterChange({ ...filters, duration: e.target.value })}
-                                className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            >
-                                <option value="all">All Time</option>
-                                <option value="24h">Last 24 hours</option>
-                                <option value="7d">Last 7 days</option>
-                                <option value="30d">Last 30 days</option>
-                                <option value="90d">Last 90 days</option>
-                                <option value="1y">Last year</option>
-                            </select>
-                        </div>
-
-                        {/* Affiliate Filter */}
-                        <div className="flex items-center space-x-2">
-                            <label className="text-sm font-medium text-gray-700">Affiliate:</label>
-                            <select
-                                value={filters.affiliateCode}
-                                onChange={(e) => onFilterChange({ ...filters, affiliateCode: e.target.value })}
-                                className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            >
-                                <option value="all">All Affiliates</option>
-                                {affiliates.map(affiliate => (
-                                    <option key={affiliate.id} value={affiliate.referralCode}>
-                                        {affiliate.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        {/* Refresh Button - Bypass Cache */}
-                        {onRefreshData && (
-                            <button
-                                onClick={onRefreshData}
-                                disabled={loading}
-                                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                                title="Refresh data (bypasses cache for real-time stats)"
-                            >
-                                <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                </svg>
-                                <span className="text-sm font-medium">Refresh</span>
-                            </button>
+            {/* Quiz Analytics Header */}
+            <AnalyticsPageHeader
+                icon={
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                }
+                iconGradient="from-blue-600 to-indigo-600"
+                title="Quiz Analytics"
+                subtitle="Comprehensive quiz performance and engagement metrics"
+                onRefresh={onRefreshData}
+                isRefreshing={loading}
+            >
+                {/* Quiz Type Filter */}
+                <div className="flex items-center space-x-2">
+                    <label className="text-sm font-medium text-gray-700">Quiz Type:</label>
+                    <select
+                        value={filters.quizType}
+                        onChange={(e) => onFilterChange({ ...filters, quizType: e.target.value })}
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="all">All Types</option>
+                        {stats?.quizTypes && stats.quizTypes.length > 0 ? (
+                            stats.quizTypes.map((quizType) => (
+                                <option key={quizType.name} value={quizType.name}>
+                                    {quizType.displayName}
+                                </option>
+                            ))
+                        ) : (
+                            <>
+                                <option value="financial-profile">Financial Profile</option>
+                                <option value="health-finance">Health Finance</option>
+                                <option value="marriage-finance">Marriage Finance</option>
+                            </>
                         )}
-                    </div>
+                    </select>
                 </div>
-            </div>
+
+                {/* Duration Filter */}
+                <div className="flex items-center space-x-2">
+                    <label className="text-sm font-medium text-gray-700">Duration:</label>
+                    <select
+                        value={filters.duration}
+                        onChange={(e) => onFilterChange({ ...filters, duration: e.target.value })}
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="all">All Time</option>
+                        <option value="24h">Last 24 hours</option>
+                        <option value="7d">Last 7 days</option>
+                        <option value="30d">Last 30 days</option>
+                        <option value="90d">Last 90 days</option>
+                        <option value="1y">Last year</option>
+                    </select>
+                </div>
+
+                {/* Affiliate Filter */}
+                <div className="flex items-center space-x-2">
+                    <label className="text-sm font-medium text-gray-700">Affiliate:</label>
+                    <select
+                        value={filters.affiliateCode}
+                        onChange={(e) => onFilterChange({ ...filters, affiliateCode: e.target.value })}
+                        className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="all">All Affiliates</option>
+                        {affiliates.map(affiliate => (
+                            <option key={affiliate.id} value={affiliate.referralCode}>
+                                {affiliate.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            </AnalyticsPageHeader>
 
             {/* Stats Cards */}
             {loading && !hasInitiallyLoaded ? (
@@ -183,105 +162,46 @@ export default function QuizAnalytics({
             ) : stats ? (
                 <>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-                        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-6 border border-gray-100">
-                            <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                    <div className="flex items-center space-x-2 mb-3">
-                                        <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                            </svg>
-                                        </div>
-                                        <h3 className="text-sm font-semibold text-gray-700">Clicks</h3>
-                                    </div>
-                                    <p className="text-3xl font-bold text-gray-900 mb-1">
-                                        {stats.clicks}
-                                    </p>
-                                    <p className="text-xs text-gray-500">Total clicks</p>
-                                </div>
-                            </div>
+                        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-4 border border-gray-100 text-center">
+                            <h3 className="text-sm font-semibold text-gray-700 mb-2">Clicks</h3>
+                            <p className="text-3xl font-bold text-gray-900 mb-1">
+                                {stats.clicks}
+                            </p>
+                            <p className="text-xs text-gray-500">Total clicks</p>
                         </div>
 
-                        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-6 border border-gray-100">
-                            <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                    <div className="flex items-center space-x-2 mb-3">
-                                        <div className="w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                                            </svg>
-                                        </div>
-                                        <h3 className="text-sm font-semibold text-gray-700">Partial Submissions</h3>
-                                    </div>
-                                    <p className="text-3xl font-bold text-gray-900 mb-1">
-                                        {stats.partialSubmissions}
-                                    </p>
-                                    <p className="text-xs text-gray-500">Started but didn&apos;t complete</p>
-                                </div>
-                            </div>
+                        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-4 border border-gray-100 text-center">
+                            <h3 className="text-sm font-semibold text-gray-700 mb-2">Partial Submissions</h3>
+                            <p className="text-3xl font-bold text-gray-900 mb-1">
+                                {stats.partialSubmissions}
+                            </p>
+                            <p className="text-xs text-gray-500">Started but didn&apos;t complete</p>
                         </div>
 
-                        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-6 border border-gray-100">
-                            <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                    <div className="flex items-center space-x-2 mb-3">
-                                        <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                        </div>
-                                        <h3 className="text-sm font-semibold text-gray-700">Average Time</h3>
-                                    </div>
-                                    <p className="text-3xl font-bold text-gray-900 mb-1">
-                                        {stats.averageTimeMs > 0 ? formatDuration(stats.averageTimeMs) : '0s'}
-                                    </p>
-                                    <p className="text-xs text-gray-500">Time to complete quiz</p>
-                                </div>
-                            </div>
+                        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-4 border border-gray-100 text-center">
+                            <h3 className="text-sm font-semibold text-gray-700 mb-2">Average Time</h3>
+                            <p className="text-3xl font-bold text-gray-900 mb-1">
+                                {stats.averageTimeMs > 0 ? formatDuration(stats.averageTimeMs) : '0s'}
+                            </p>
+                            <p className="text-xs text-gray-500">Time to complete quiz</p>
                         </div>
 
-                        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-6 border border-gray-100">
-                            <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                    <div className="flex items-center space-x-2 mb-3">
-                                        <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                            </svg>
-                                        </div>
-                                        <h3 className="text-sm font-semibold text-gray-700">Leads Collected</h3>
-                                    </div>
-                                    <p className="text-3xl font-bold text-gray-900 mb-1">
-                                        {stats.leadsCollected}
-                                    </p>
-                                    <p className="text-xs text-gray-500">Completed the full quiz</p>
-                                </div>
-                            </div>
+                        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-4 border border-gray-100 text-center">
+                            <h3 className="text-sm font-semibold text-gray-700 mb-2">Leads Collected</h3>
+                            <p className="text-3xl font-bold text-gray-900 mb-1">
+                                {stats.leadsCollected}
+                            </p>
+                            <p className="text-xs text-gray-500">Completed the full quiz</p>
                         </div>
 
-                        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-6 border border-gray-100">
-                            <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                    <div className="flex items-center space-x-2 mb-3">
-                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${stats.completionRate >= 70 ? 'bg-green-50' :
-                                            stats.completionRate >= 40 ? 'bg-yellow-50' : 'bg-red-50'
-                                            }`}>
-                                            <svg className={`w-5 h-5 ${stats.completionRate >= 70 ? 'text-green-600' :
-                                                stats.completionRate >= 40 ? 'text-yellow-600' : 'text-red-600'
-                                                }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                            </svg>
-                                        </div>
-                                        <h3 className="text-sm font-semibold text-gray-700">Completion Rate</h3>
-                                    </div>
-                                    <p className={`text-3xl font-bold mb-1 ${stats.completionRate >= 70 ? 'text-green-600' :
-                                        stats.completionRate >= 40 ? 'text-yellow-600' : 'text-red-600'
-                                        }`}>
-                                        {stats.completionRate}%
-                                    </p>
-                                    <p className="text-xs text-gray-500">Quiz completion rate</p>
-                                </div>
-                            </div>
+                        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-4 border border-gray-100 text-center">
+                            <h3 className="text-sm font-semibold text-gray-700 mb-2">Completion Rate</h3>
+                            <p className={`text-3xl font-bold mb-1 ${stats.completionRate >= 70 ? 'text-green-600' :
+                                stats.completionRate >= 40 ? 'text-yellow-600' : 'text-red-600'
+                                }`}>
+                                {stats.completionRate}%
+                            </p>
+                            <p className="text-xs text-gray-500">Quiz completion rate</p>
                         </div>
                     </div>
 
@@ -738,18 +658,34 @@ export default function QuizAnalytics({
                             </svg>
                             Archetype Distribution
                         </h3>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            {stats.archetypeStats.map((stat) => (
-                                <div key={stat.archetype} className="text-center p-4 bg-gray-50 rounded-lg">
-                                    <div className="text-2xl font-bold text-blue-600 mb-1">
-                                        {stat._count.archetype}
+
+                        {stats.archetypeStats.length > 0 ? (
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                {stats.archetypeStats.map((stat) => (
+                                    <div key={stat.archetype} className="text-center p-4 bg-gray-50 rounded-lg">
+                                        <div className="text-2xl font-bold text-blue-600 mb-1">
+                                            {stat._count.archetype}
+                                        </div>
+                                        <div className="text-sm text-gray-600">
+                                            {stat.archetype}
+                                        </div>
                                     </div>
-                                    <div className="text-sm text-gray-600">
-                                        {stat.archetype}
-                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="py-12 flex items-center justify-center text-gray-500 bg-gray-50 rounded-lg border border-gray-100 border-dashed">
+                                <div className="text-center">
+                                    <svg className="w-12 h-12 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    <p className="text-sm font-medium">No archetype data available</p>
+                                    <p className="text-xs text-gray-400 mt-1">
+                                        Archetype clusters will appear here once users complete the quiz
+                                    </p>
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        )}
+
                     </div>
                 </>
             ) : null}
