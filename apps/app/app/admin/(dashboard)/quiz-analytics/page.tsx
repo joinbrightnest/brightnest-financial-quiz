@@ -35,7 +35,7 @@ interface Affiliate {
 
 export default function QuizAnalyticsPage() {
     const [stats, setStats] = useState<AdminStats | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true); // Start with true for consistency
     const [error, setError] = useState<string | null>(null);
     const hasInitiallyLoaded = useRef(false);
     const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
@@ -47,78 +47,71 @@ export default function QuizAnalyticsPage() {
         affiliateCode: 'all'
     });
 
-    const fetchStats = useCallback(async (isTimeframeChange = false, bypassCache = false) => {
-        if (!isTimeframeChange && !hasInitiallyLoaded.current) {
-            setIsLoading(true);
-        }
+    const fetchStatsOnly = useCallback(async (bypassCache = false) => {
         setError(null);
-
         try {
             const params = new URLSearchParams();
-            if (quizAnalyticsFilters.quizType !== 'all') {
-                params.append('quizType', quizAnalyticsFilters.quizType);
-            }
-            if (quizAnalyticsFilters.duration !== 'all') {
-                params.append('duration', quizAnalyticsFilters.duration);
-            }
-            if (quizAnalyticsFilters.affiliateCode !== 'all') {
-                params.append('affiliateCode', quizAnalyticsFilters.affiliateCode);
-            }
-            if (bypassCache) {
-                params.append('nocache', 'true');
-            }
+            if (quizAnalyticsFilters.quizType !== 'all') params.append('quizType', quizAnalyticsFilters.quizType);
+            if (quizAnalyticsFilters.duration !== 'all') params.append('duration', quizAnalyticsFilters.duration);
+            if (quizAnalyticsFilters.affiliateCode !== 'all') params.append('affiliateCode', quizAnalyticsFilters.affiliateCode);
+            if (bypassCache) params.append('nocache', 'true');
 
             const queryString = params.toString();
             const url = queryString ? `/api/admin/basic-stats?${queryString}` : '/api/admin/basic-stats';
 
-            const response = await fetch(url, {
-                headers: { "Content-Type": "application/json" }
-            });
-
-            if (!response.ok) {
-                throw new Error("Failed to fetch stats");
-            }
-
+            const response = await fetch(url, { headers: { "Content-Type": "application/json" } });
+            if (!response.ok) throw new Error("Failed to fetch stats");
             const data = await response.json();
             setStats(data);
-            hasInitiallyLoaded.current = true;
         } catch {
             setError("Failed to load admin stats");
-        } finally {
-            if (!isTimeframeChange && !hasInitiallyLoaded.current) {
-                setIsLoading(false);
-            }
         }
     }, [quizAnalyticsFilters]);
 
-    const fetchAffiliates = async () => {
+    const fetchAllData = useCallback(async () => {
+        setIsLoading(true);
         try {
-            const response = await fetch('/api/admin/affiliates?status=approved');
-            const data = await response.json();
-            if (data.success) {
-                setAffiliates(data.affiliates.map((aff: Affiliate) => ({
-                    id: aff.id,
-                    name: aff.name,
-                    referralCode: aff.referralCode
-                })));
-            }
-        } catch (error) {
-            console.error('Error fetching affiliates:', error);
+            await Promise.all([
+                fetchStatsOnly(),
+                (async () => {
+                    try {
+                        const res = await fetch('/api/admin/affiliates?status=approved');
+                        const data = await res.json();
+                        if (data.success) {
+                            setAffiliates(data.affiliates.map((aff: Affiliate) => ({
+                                id: aff.id,
+                                name: aff.name,
+                                referralCode: aff.referralCode
+                            })));
+                        }
+                    } catch (e) { console.error('Error fetching affiliates:', e); }
+                })()
+            ]);
+            hasInitiallyLoaded.current = true;
+        } finally {
+            setIsLoading(false);
         }
-    };
+    }, [fetchStatsOnly]);
 
+    // Initial Load
     useEffect(() => {
         if (!hasInitiallyLoaded.current) {
-            fetchStats(true);
-            fetchAffiliates();
+            fetchAllData();
         }
-    }, [fetchStats]);
+    }, [fetchAllData]);
 
+    // Subsequent Filter Changes
     useEffect(() => {
         if (hasInitiallyLoaded.current) {
-            fetchStats(true);
+            // For filter changes, we might want to show a spinner or skeleton too, 
+            // but keeping it simple for now or using local loading state if component supports it
+            // To match lead analytics pattern perfectly:
+            // setIsLoading(true); fetchStatsOnly().finally(() => setIsLoading(false));
+
+            // However, for consistency with current code, let's just fetch
+            fetchStatsOnly();
         }
-    }, [quizAnalyticsFilters, fetchStats]);
+    }, [quizAnalyticsFilters, fetchStatsOnly]);
 
     // Chart data for retention rates
     const retentionChartData = stats && stats.questionAnalytics.length > 0 ? {
@@ -211,13 +204,13 @@ export default function QuizAnalyticsPage() {
                 stats={stats}
                 loading={isLoading}
                 error={error}
-                onRetry={fetchStats}
+                onRetry={() => fetchStatsOnly(true)}
                 affiliates={affiliates}
                 retentionChartData={retentionChartData}
                 dailyActivityData={getActivityChartData()}
                 clicksActivityData={getClicksChartData()}
                 hasInitiallyLoaded={hasInitiallyLoaded.current}
-                onRefreshData={() => fetchStats(false, true)}
+                onRefreshData={() => fetchStatsOnly(true)}
             />
         </ErrorBoundary>
     );
