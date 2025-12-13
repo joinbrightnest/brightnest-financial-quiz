@@ -14,9 +14,9 @@ interface Affiliate {
 export default function LeadAnalyticsPage() {
     const [stats, setStats] = useState<AdminStats | null>(null);
     const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
-    const [isLoading, setIsLoading] = useState(true); // Start with loading true to prevent stale data flash
+    const [isLoading, setIsLoading] = useState(true);
     const hasInitiallyLoaded = useRef(false);
-    const [newDealAmountPotential, setNewDealAmountPotential] = useState(5000);
+    const [newDealAmountPotential, setNewDealAmountPotential] = useState(0); // Safest default to avoid huge numbers flash
     const [terminalOutcomes, setTerminalOutcomes] = useState<string[]>(['not_interested', 'converted']);
 
     // CRM Filters
@@ -26,90 +26,76 @@ export default function LeadAnalyticsPage() {
         affiliateCode: 'all'
     });
 
-    const fetchStats = useCallback(async (bypassCache = false) => {
+    const fetchStatsOnly = useCallback(async (bypassCache = false) => {
         try {
-            // Show loading on initial load to prevent stale data flash
-            if (!hasInitiallyLoaded.current) {
-                setIsLoading(true);
-            }
-
             const params = new URLSearchParams();
-            if (crmFilters.quizType !== 'all') {
-                params.append('quizType', crmFilters.quizType);
-            }
-            if (crmFilters.dateRange !== 'all') {
-                params.append('duration', crmFilters.dateRange);
-            }
-            if (crmFilters.affiliateCode !== 'all') {
-                params.append('affiliateCode', crmFilters.affiliateCode);
-            }
-            if (bypassCache) {
-                params.append('nocache', 'true');
-            }
+            if (crmFilters.quizType !== 'all') params.append('quizType', crmFilters.quizType);
+            if (crmFilters.dateRange !== 'all') params.append('duration', crmFilters.dateRange);
+            if (crmFilters.affiliateCode !== 'all') params.append('affiliateCode', crmFilters.affiliateCode);
+            if (bypassCache) params.append('nocache', 'true');
 
             const queryString = params.toString();
             const url = queryString ? `/api/admin/basic-stats?${queryString}` : '/api/admin/basic-stats';
 
-            const response = await fetch(url, {
-                headers: { "Content-Type": "application/json" }
-            });
-
-            if (!response.ok) {
-                throw new Error("Failed to fetch stats");
-            }
-
+            const response = await fetch(url, { headers: { "Content-Type": "application/json" } });
+            if (!response.ok) throw new Error("Failed to fetch stats");
             const data = await response.json();
             setStats(data);
-            hasInitiallyLoaded.current = true;
         } catch (error) {
             console.error("Error fetching stats:", error);
-        } finally {
-            setIsLoading(false);
         }
     }, [crmFilters]);
 
-    const fetchAffiliates = async () => {
+    const fetchAllData = useCallback(async () => {
+        setIsLoading(true);
         try {
-            const response = await fetch('/api/admin/affiliates?status=approved');
-            const data = await response.json();
-            if (data.success) {
-                setAffiliates(data.affiliates.map((aff: Affiliate) => ({
-                    id: aff.id,
-                    name: aff.name,
-                    referralCode: aff.referralCode
-                })));
-            }
-        } catch (error) {
-            console.error('Error fetching affiliates:', error);
+            await Promise.all([
+                fetchStatsOnly(),
+                (async () => {
+                    try {
+                        const res = await fetch('/api/admin/affiliates?status=approved');
+                        const data = await res.json();
+                        if (data.success) {
+                            setAffiliates(data.affiliates.map((aff: Affiliate) => ({
+                                id: aff.id,
+                                name: aff.name,
+                                referralCode: aff.referralCode
+                            })));
+                        }
+                    } catch (e) { console.error('Error fetching affiliates:', e); }
+                })(),
+                (async () => {
+                    try {
+                        const res = await fetch('/api/admin/settings');
+                        const data = await res.json();
+                        if (data.success && data.settings) {
+                            setNewDealAmountPotential(data.settings.newDealAmountPotential || 0);
+                            setTerminalOutcomes(data.settings.terminalOutcomes || ['not_interested', 'converted']);
+                        }
+                    } catch (e) { console.error('Error fetching settings:', e); }
+                })()
+            ]);
+            hasInitiallyLoaded.current = true;
+        } finally {
+            setIsLoading(false);
         }
-    };
+    }, [fetchStatsOnly]);
 
-    const fetchSettings = async () => {
-        try {
-            const response = await fetch('/api/admin/settings');
-            const data = await response.json();
-            if (data.success && data.settings) {
-                setNewDealAmountPotential(data.settings.newDealAmountPotential || 5000);
-                setTerminalOutcomes(data.settings.terminalOutcomes || ['not_interested', 'converted']);
-            }
-        } catch (error) {
-            console.error('Error fetching settings:', error);
-        }
-    };
-
+    // Initial Load
     useEffect(() => {
         if (!hasInitiallyLoaded.current) {
-            fetchStats();
-            fetchAffiliates();
-            fetchSettings();
+            fetchAllData();
         }
-    }, [fetchStats]);
+    }, [fetchAllData]);
 
+    // Subsequent Filter Changes
     useEffect(() => {
         if (hasInitiallyLoaded.current) {
-            fetchStats();
+            // Slight delay to prevent flickering on quick filter changes if needed, 
+            // but for now direct call is fine, just managing local loading state if separate from global
+            fetchStatsOnly();
         }
-    }, [crmFilters, fetchStats]);
+    }, [crmFilters, fetchStatsOnly]);
 
     return (
         <ErrorBoundary sectionName="Lead Analytics">
@@ -118,7 +104,7 @@ export default function LeadAnalyticsPage() {
                 affiliates={affiliates}
                 newDealAmountPotential={newDealAmountPotential}
                 terminalOutcomes={terminalOutcomes}
-                onRefresh={() => fetchStats(true)}
+                onRefresh={() => fetchStatsOnly(true)}
                 crmFilters={crmFilters}
                 setCrmFilters={setCrmFilters}
                 isLoading={isLoading}
