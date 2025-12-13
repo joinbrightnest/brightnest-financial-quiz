@@ -180,46 +180,56 @@ export default function QuizAnalytics({
             ) : stats ? (
                 <>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-                        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-4 border border-gray-100 text-center">
-                            <h3 className="text-sm font-semibold text-gray-700 mb-2">Clicks</h3>
-                            <p className="text-3xl font-bold text-gray-900 mb-1">
-                                {stats.clicks}
-                            </p>
-                            <p className="text-xs text-gray-500">Total clicks</p>
+                        {/* Clicks */}
+                        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                            <div className="flex flex-col items-center justify-center text-center h-full">
+                                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Clicks</p>
+                                <p className="text-3xl font-bold text-slate-900">
+                                    {stats.clicks}
+                                </p>
+                            </div>
                         </div>
 
-                        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-4 border border-gray-100 text-center">
-                            <h3 className="text-sm font-semibold text-gray-700 mb-2">Partial Submissions</h3>
-                            <p className="text-3xl font-bold text-gray-900 mb-1">
-                                {stats.partialSubmissions}
-                            </p>
-                            <p className="text-xs text-gray-500">Started but didn&apos;t complete</p>
+                        {/* Partial Submissions */}
+                        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                            <div className="flex flex-col items-center justify-center text-center h-full">
+                                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Partials</p>
+                                <p className="text-3xl font-bold text-slate-900">
+                                    {stats.partialSubmissions}
+                                </p>
+                            </div>
                         </div>
 
-                        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-4 border border-gray-100 text-center">
-                            <h3 className="text-sm font-semibold text-gray-700 mb-2">Average Time</h3>
-                            <p className="text-3xl font-bold text-gray-900 mb-1">
-                                {stats.averageTimeMs > 0 ? formatDuration(stats.averageTimeMs) : '0s'}
-                            </p>
-                            <p className="text-xs text-gray-500">Time to complete quiz</p>
+                        {/* Average Time */}
+                        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                            <div className="flex flex-col items-center justify-center text-center h-full">
+                                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Avg Time</p>
+                                <p className="text-3xl font-bold text-slate-900">
+                                    {stats.averageTimeMs > 0 ? formatDuration(stats.averageTimeMs) : '0s'}
+                                </p>
+                            </div>
                         </div>
 
-                        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-4 border border-gray-100 text-center">
-                            <h3 className="text-sm font-semibold text-gray-700 mb-2">Leads Collected</h3>
-                            <p className="text-3xl font-bold text-gray-900 mb-1">
-                                {stats.leadsCollected}
-                            </p>
-                            <p className="text-xs text-gray-500">Completed the full quiz</p>
+                        {/* Leads Collected */}
+                        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                            <div className="flex flex-col items-center justify-center text-center h-full">
+                                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Leads</p>
+                                <p className="text-3xl font-bold text-slate-900">
+                                    {stats.leadsCollected}
+                                </p>
+                            </div>
                         </div>
 
-                        <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-4 border border-gray-100 text-center">
-                            <h3 className="text-sm font-semibold text-gray-700 mb-2">Completion Rate</h3>
-                            <p className={`text-3xl font-bold mb-1 ${stats.completionRate >= 70 ? 'text-green-600' :
-                                stats.completionRate >= 40 ? 'text-yellow-600' : 'text-red-600'
-                                }`}>
-                                {stats.completionRate}%
-                            </p>
-                            <p className="text-xs text-gray-500">Quiz completion rate</p>
+                        {/* Completion Rate */}
+                        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                            <div className="flex flex-col items-center justify-center text-center h-full">
+                                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Completion</p>
+                                <p className={`text-3xl font-bold ${stats.completionRate >= 70 ? 'text-green-600' :
+                                    stats.completionRate >= 40 ? 'text-yellow-600' : 'text-red-600'
+                                    }`}>
+                                    {stats.completionRate}%
+                                </p>
+                            </div>
                         </div>
                     </div>
 

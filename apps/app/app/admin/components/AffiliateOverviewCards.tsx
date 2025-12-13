@@ -17,7 +17,7 @@ export default function AffiliateOverviewCards({ data }: AffiliateOverviewCardsP
   if (!data) {
     return null;
   }
-  
+
   const cards = [
     {
       title: "Total Active Affiliates",
@@ -73,23 +73,15 @@ export default function AffiliateOverviewCards({ data }: AffiliateOverviewCardsP
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: index * 0.1 }}
-          className="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300"
+          className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300"
         >
-          <div className="flex flex-col h-full">
-            {/* Icon at top */}
-            <div className={`w-12 h-12 bg-gradient-to-br ${card.gradient} rounded-xl shadow-lg flex items-center justify-center mb-4`}>
-              {card.icon}
-            </div>
-            
-            {/* Content stacked vertically */}
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide mb-2">
-                {card.title}
-              </p>
-              <p className="text-3xl font-bold text-slate-900">
-                {card.value}
-              </p>
-            </div>
+          <div className="flex flex-col items-center justify-center text-center h-full">
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+              {card.title}
+            </p>
+            <p className="text-3xl font-bold text-slate-900">
+              {card.value}
+            </p>
           </div>
         </motion.div>
       ))}

@@ -292,94 +292,48 @@ export default function CEOAnalytics({ initialData }: CEOAnalyticsProps) {
             >
               {/* Premium KPI Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-                <div className="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
-                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                      </div>
-                      <div className="ml-4">
-                        <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Active Affiliates</p>
-                        <p className="text-3xl font-bold text-slate-900 mt-1">
-                          {data.totalAffiliates}
-                        </p>
-                      </div>
-                    </div>
+                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                  <div className="flex flex-col items-center justify-center text-center h-full">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Active Affiliates</p>
+                    <p className="text-3xl font-bold text-slate-900">
+                      {data.totalAffiliates}
+                    </p>
                   </div>
                 </div>
 
-                <div className="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="p-3 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg">
-                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                      </div>
-                      <div className="ml-4">
-                        <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Total Visitors</p>
-                        <p className="text-3xl font-bold text-slate-900 mt-1">
-                          {data.totalVisitors.toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
+                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                  <div className="flex flex-col items-center justify-center text-center h-full">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Total Visitors</p>
+                    <p className="text-3xl font-bold text-slate-900">
+                      {data.totalVisitors.toLocaleString()}
+                    </p>
                   </div>
                 </div>
 
-                <div className="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg">
-                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                        </svg>
-                      </div>
-                      <div className="ml-4">
-                        <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Total Revenue</p>
-                        <p className="text-3xl font-bold text-slate-900 mt-1">
-                          ${data.totalRevenue.toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
+                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                  <div className="flex flex-col items-center justify-center text-center h-full">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Total Revenue</p>
+                    <p className="text-3xl font-bold text-slate-900">
+                      ${data.totalRevenue.toLocaleString()}
+                    </p>
                   </div>
                 </div>
 
-                <div className="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-lg">
-                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                        </svg>
-                      </div>
-                      <div className="ml-4">
-                        <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Conversion Rate</p>
-                        <p className="text-3xl font-bold text-slate-900 mt-1">
-                          {data.overallClickToCompletionRate.toFixed(1)}%
-                        </p>
-                      </div>
-                    </div>
+                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                  <div className="flex flex-col items-center justify-center text-center h-full">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Conversion Rate</p>
+                    <p className="text-3xl font-bold text-slate-900">
+                      {data.overallClickToCompletionRate.toFixed(1)}%
+                    </p>
                   </div>
                 </div>
 
-                <div className="group bg-white rounded-2xl shadow-sm border border-slate-200 p-6 hover:shadow-lg hover:border-slate-300 transition-all duration-300">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="p-3 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl shadow-lg">
-                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                        </svg>
-                      </div>
-                      <div className="ml-4">
-                        <p className="text-sm font-semibold text-slate-600 uppercase tracking-wide">Top Affiliate</p>
-                        <p className="text-3xl font-bold text-slate-900 mt-1 truncate">
-                          {data.topAffiliates[0]?.name || "N/A"}
-                        </p>
-                      </div>
-                    </div>
+                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                  <div className="flex flex-col items-center justify-center text-center h-full">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Top Affiliate</p>
+                    <p className="text-3xl font-bold text-slate-900 truncate max-w-full">
+                      {data.topAffiliates[0]?.name || "N/A"}
+                    </p>
                   </div>
                 </div>
               </div>

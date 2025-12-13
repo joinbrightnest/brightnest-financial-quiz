@@ -43,7 +43,7 @@ export default function QuizAnalyticsPage() {
     // Quiz Analytics Filters
     const [quizAnalyticsFilters, setQuizAnalyticsFilters] = useState({
         quizType: 'all',
-        duration: '7d',
+        duration: 'all',
         affiliateCode: 'all'
     });
 

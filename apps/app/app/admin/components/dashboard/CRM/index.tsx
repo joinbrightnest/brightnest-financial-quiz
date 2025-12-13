@@ -396,86 +396,111 @@ export default function CRM({
                 </div>
             </AnalyticsPageHeader>
 
-            {/* Unified Content Container - Metrics, Search, and Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col" style={{ maxHeight: 'calc(100vh - 140px)', minHeight: '500px' }}>
-                {/* Metrics Section */}
-                {crmShowMetrics && (
-                    <div className="flex-shrink-0 border-b border-gray-100">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 divide-x divide-gray-100">
-                            {/* Total Deal Amount */}
-                            <div className="p-6 text-center">
-                                <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">TOTAL DEAL AMOUNT</div>
-                                {isLoading ? (
-                                    <div className="h-8 w-24 mx-auto bg-gray-200 rounded animate-pulse mb-1"></div>
-                                ) : (
-                                    <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.totalRevenue)}</div>
-                                )}
-                                <div className="text-xs text-gray-400">Open + Closed deals</div>
-                            </div>
-
-                            {/* Weighted Deal Amount */}
-                            <div className="p-6 text-center">
-                                <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">WEIGHTED DEAL AMOUNT</div>
-                                <div className="text-2xl font-bold text-gray-900 mb-1">$0.00</div>
-                                <div className="text-xs text-gray-400">To be determined</div>
-                            </div>
-
-                            {/* Open Deal Amount */}
-                            <div className="p-6 text-center">
-                                <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">OPEN DEAL AMOUNT</div>
-                                {isLoading ? (
-                                    <div className="h-8 w-24 mx-auto bg-gray-200 rounded animate-pulse mb-1"></div>
-                                ) : (
-                                    <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.openDealAmount)}</div>
-                                )}
-                                <div className="text-xs text-gray-400">Potential + actual open deals</div>
-                            </div>
-
-                            {/* Closed Deal Amount */}
-                            <div className="p-6 text-center">
-                                <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">CLOSED DEAL AMOUNT</div>
-                                {isLoading ? (
-                                    <div className="h-8 w-24 mx-auto bg-gray-200 rounded animate-pulse mb-1"></div>
-                                ) : (
-                                    <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.closedDealAmount)}</div>
-                                )}
-                                <div className="text-xs text-gray-400">Closed deals with sale values</div>
-                            </div>
-
-                            {/* New Deal Amount */}
-                            <div className="p-6 text-center">
-                                <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">NEW DEAL AMOUNT</div>
-                                {isLoading ? (
-                                    <div className="h-8 w-24 mx-auto bg-gray-200 rounded animate-pulse mb-1"></div>
-                                ) : (
-                                    <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.newDealAmount)}</div>
-                                )}
-                                <div className="text-xs text-gray-400">Deals with no outcome yet</div>
-                            </div>
-
-                            {/* Average Deal Age */}
-                            <div className="p-6 text-center">
-                                <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">AVERAGE DEAL AGE</div>
-                                <div className="text-2xl font-bold text-gray-900 mb-1">
-                                    {(() => {
-                                        const appointmentsWithDates = filteredCrmLeads
-                                            .filter(lead => lead.appointment?.createdAt && lead.appointment.createdAt !== null)
-                                            .map(lead => {
-                                                const appointmentDate = new Date(lead.appointment!.createdAt!);
-                                                const now = new Date();
-                                                return (now.getTime() - appointmentDate.getTime()) / (1000 * 60 * 60 * 24); // Days
-                                            });
-
-                                        if (appointmentsWithDates.length === 0) return '0.0';
-                                        const avgAge = appointmentsWithDates.reduce((sum: number, age: number) => sum + age, 0) / appointmentsWithDates.length;
-                                        return avgAge.toFixed(1);
-                                    })()} days
-                                </div>
-                                <div className="text-xs text-gray-400">Time since appointment created</div>
-                            </div>
+            {/* Metrics Grid */}
+            {crmShowMetrics && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+                    {/* Total Deal Amount */}
+                    {/* Total Deal Amount */}
+                    <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                        <div className="flex flex-col items-center justify-center text-center h-full">
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Total Deal Amount</p>
+                            {isLoading ? (
+                                <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+                            ) : (
+                                <p className="text-2xl font-bold text-slate-900">
+                                    {formatCurrency(revenueMetrics.totalRevenue)}
+                                </p>
+                            )}
+                            <p className="text-[10px] text-slate-400 font-medium mt-1">Open + Closed deals</p>
                         </div>
                     </div>
-                )}
+
+                    {/* Weighted Deal Amount */}
+                    {/* Weighted Deal Amount */}
+                    <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                        <div className="flex flex-col items-center justify-center text-center h-full">
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Weighted Amount</p>
+                            <p className="text-2xl font-bold text-slate-900">$0.00</p>
+                            <p className="text-[10px] text-slate-400 font-medium mt-1">To be determined</p>
+                        </div>
+                    </div>
+
+                    {/* Open Deal Amount */}
+                    {/* Open Deal Amount */}
+                    <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                        <div className="flex flex-col items-center justify-center text-center h-full">
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Open Deal Amount</p>
+                            {isLoading ? (
+                                <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+                            ) : (
+                                <p className="text-2xl font-bold text-slate-900">
+                                    {formatCurrency(revenueMetrics.openDealAmount)}
+                                </p>
+                            )}
+                            <p className="text-[10px] text-slate-400 font-medium mt-1">Potential + actual open</p>
+                        </div>
+                    </div>
+
+                    {/* Closed Deal Amount */}
+                    {/* Closed Deal Amount */}
+                    <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                        <div className="flex flex-col items-center justify-center text-center h-full">
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Closed Deal Amount</p>
+                            {isLoading ? (
+                                <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+                            ) : (
+                                <p className="text-2xl font-bold text-slate-900">
+                                    {formatCurrency(revenueMetrics.closedDealAmount)}
+                                </p>
+                            )}
+                            <p className="text-[10px] text-slate-400 font-medium mt-1">Closed deals with value</p>
+                        </div>
+                    </div>
+
+                    {/* New Deal Amount */}
+                    {/* New Deal Amount */}
+                    <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                        <div className="flex flex-col items-center justify-center text-center h-full">
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">New Deal Amount</p>
+                            {isLoading ? (
+                                <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
+                            ) : (
+                                <p className="text-2xl font-bold text-slate-900">
+                                    {formatCurrency(revenueMetrics.newDealAmount)}
+                                </p>
+                            )}
+                            <p className="text-[10px] text-slate-400 font-medium mt-1">Deals with no outcome</p>
+                        </div>
+                    </div>
+
+                    {/* Average Deal Age */}
+                    {/* Average Deal Age */}
+                    <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all duration-300">
+                        <div className="flex flex-col items-center justify-center text-center h-full">
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Average Deal Age</p>
+                            <p className="text-2xl font-bold text-slate-900">
+                                {(() => {
+                                    const appointmentsWithDates = filteredCrmLeads
+                                        .filter(lead => lead.appointment?.createdAt && lead.appointment.createdAt !== null)
+                                        .map(lead => {
+                                            const appointmentDate = new Date(lead.appointment!.createdAt!);
+                                            const now = new Date();
+                                            return (now.getTime() - appointmentDate.getTime()) / (1000 * 60 * 60 * 24); // Days
+                                        });
+
+                                    if (appointmentsWithDates.length === 0) return '0.0';
+                                    const avgAge = appointmentsWithDates.reduce((sum: number, age: number) => sum + age, 0) / appointmentsWithDates.length;
+                                    return avgAge.toFixed(1);
+                                })()} days
+                            </p>
+                            <p className="text-[10px] text-slate-400 font-medium mt-1">Time since appt created</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Table Container - Search and Table */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col" style={{ maxHeight: 'calc(100vh - 400px)', minHeight: '500px' }}>
 
                 {/* Search and Actions */}
                 <div className="flex-shrink-0 p-4 border-b border-gray-100">
