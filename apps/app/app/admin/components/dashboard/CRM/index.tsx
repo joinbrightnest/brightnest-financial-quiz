@@ -51,6 +51,7 @@ interface CRMProps {
         dateRange: string;
         affiliateCode: string;
     }>>;
+    isLoading?: boolean; // Optional loading state
 }
 
 export default function CRM({
@@ -60,7 +61,8 @@ export default function CRM({
     terminalOutcomes,
     onRefresh,
     crmFilters,
-    setCrmFilters
+    setCrmFilters,
+    isLoading = false
 }: CRMProps) {
     const router = useRouter();
 
@@ -403,7 +405,11 @@ export default function CRM({
                             {/* Total Deal Amount */}
                             <div className="p-6 text-center">
                                 <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">TOTAL DEAL AMOUNT</div>
-                                <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.totalRevenue)}</div>
+                                {isLoading ? (
+                                    <div className="h-8 w-24 mx-auto bg-gray-200 rounded animate-pulse mb-1"></div>
+                                ) : (
+                                    <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.totalRevenue)}</div>
+                                )}
                                 <div className="text-xs text-gray-400">Open + Closed deals</div>
                             </div>
 
@@ -417,21 +423,33 @@ export default function CRM({
                             {/* Open Deal Amount */}
                             <div className="p-6 text-center">
                                 <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">OPEN DEAL AMOUNT</div>
-                                <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.openDealAmount)}</div>
+                                {isLoading ? (
+                                    <div className="h-8 w-24 mx-auto bg-gray-200 rounded animate-pulse mb-1"></div>
+                                ) : (
+                                    <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.openDealAmount)}</div>
+                                )}
                                 <div className="text-xs text-gray-400">Potential + actual open deals</div>
                             </div>
 
                             {/* Closed Deal Amount */}
                             <div className="p-6 text-center">
                                 <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">CLOSED DEAL AMOUNT</div>
-                                <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.closedDealAmount)}</div>
+                                {isLoading ? (
+                                    <div className="h-8 w-24 mx-auto bg-gray-200 rounded animate-pulse mb-1"></div>
+                                ) : (
+                                    <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.closedDealAmount)}</div>
+                                )}
                                 <div className="text-xs text-gray-400">Closed deals with sale values</div>
                             </div>
 
                             {/* New Deal Amount */}
                             <div className="p-6 text-center">
                                 <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">NEW DEAL AMOUNT</div>
-                                <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.newDealAmount)}</div>
+                                {isLoading ? (
+                                    <div className="h-8 w-24 mx-auto bg-gray-200 rounded animate-pulse mb-1"></div>
+                                ) : (
+                                    <div className="text-2xl font-bold text-gray-900 mb-1">{formatCurrency(revenueMetrics.newDealAmount)}</div>
+                                )}
                                 <div className="text-xs text-gray-400">Deals with no outcome yet</div>
                             </div>
 

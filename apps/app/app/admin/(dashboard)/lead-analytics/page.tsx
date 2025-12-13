@@ -14,6 +14,7 @@ interface Affiliate {
 export default function LeadAnalyticsPage() {
     const [stats, setStats] = useState<AdminStats | null>(null);
     const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
+    const [isLoading, setIsLoading] = useState(true); // Start with loading true to prevent stale data flash
     const hasInitiallyLoaded = useRef(false);
     const [newDealAmountPotential, setNewDealAmountPotential] = useState(5000);
     const [terminalOutcomes, setTerminalOutcomes] = useState<string[]>(['not_interested', 'converted']);
@@ -27,6 +28,11 @@ export default function LeadAnalyticsPage() {
 
     const fetchStats = useCallback(async (bypassCache = false) => {
         try {
+            // Show loading on initial load to prevent stale data flash
+            if (!hasInitiallyLoaded.current) {
+                setIsLoading(true);
+            }
+
             const params = new URLSearchParams();
             if (crmFilters.quizType !== 'all') {
                 params.append('quizType', crmFilters.quizType);
@@ -57,6 +63,8 @@ export default function LeadAnalyticsPage() {
             hasInitiallyLoaded.current = true;
         } catch (error) {
             console.error("Error fetching stats:", error);
+        } finally {
+            setIsLoading(false);
         }
     }, [crmFilters]);
 
@@ -113,6 +121,7 @@ export default function LeadAnalyticsPage() {
                 onRefresh={() => fetchStats(true)}
                 crmFilters={crmFilters}
                 setCrmFilters={setCrmFilters}
+                isLoading={isLoading}
             />
         </ErrorBoundary>
     );
