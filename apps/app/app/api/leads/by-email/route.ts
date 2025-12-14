@@ -47,30 +47,71 @@ export async function GET(request: NextRequest) {
 
     const { email } = validation.data;
 
-    // Find the lead by email in quiz answers - use simpler search
+    // Find the lead by email in quiz answers - optimized query
     const emailLower = email.toLowerCase();
 
-    const quizSessions = await prisma.quizSession.findMany({
-      include: {
-        answers: {
-          include: {
-            question: true
-          }
+    // First, try to find quiz session by searching answers table with email in value
+    // This is much more efficient than loading all sessions
+    const matchingAnswers = await prisma.quizAnswer.findMany({
+      where: {
+        value: {
+          string_contains: emailLower,
+          mode: 'insensitive'
         }
       },
-      orderBy: {
-        createdAt: 'desc'
-      }
+      select: {
+        sessionId: true
+      },
+      take: 1 // We only need one match
     });
 
-    // Filter sessions that have the email in their answers
-    const matchingSession = quizSessions.find(session => {
-      return session.answers.some(answer => {
-        if (!answer.value) return false;
-        const valueStr = typeof answer.value === 'string' ? answer.value : JSON.stringify(answer.value);
-        return valueStr.toLowerCase().includes(emailLower);
+    let matchingSession = null;
+
+    if (matchingAnswers.length > 0) {
+      // Found via direct query - fetch the full session
+      matchingSession = await prisma.quizSession.findUnique({
+        where: { id: matchingAnswers[0].sessionId },
+        include: {
+          answers: {
+            include: {
+              question: true
+            }
+          }
+        }
       });
-    });
+    } else {
+      // Fallback: Try to find by appointment's customerEmail (in case quiz answer structure differs)
+      const appointmentMatch = await prisma.appointment.findFirst({
+        where: { customerEmail: emailLower },
+        select: { customerEmail: true }
+      });
+
+      if (appointmentMatch) {
+        // Search for session with this email in any JSON format
+        // Use raw query for JSON search as a fallback
+        const rawResults = await prisma.$queryRaw<{ id: string }[]>`
+          SELECT DISTINCT qs.id
+          FROM "QuizSession" qs
+          JOIN "QuizAnswer" qa ON qa."sessionId" = qs.id
+          WHERE LOWER(CAST(qa.value AS TEXT)) LIKE ${`%${emailLower}%`}
+          ORDER BY qs."createdAt" DESC
+          LIMIT 1
+        `;
+
+        if (rawResults.length > 0) {
+          matchingSession = await prisma.quizSession.findUnique({
+            where: { id: rawResults[0].id },
+            include: {
+              answers: {
+                include: {
+                  question: true
+                }
+              }
+            }
+          });
+        }
+      }
+    }
 
     if (!matchingSession) {
       return NextResponse.json(

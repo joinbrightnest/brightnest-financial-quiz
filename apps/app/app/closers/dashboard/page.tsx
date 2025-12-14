@@ -6,223 +6,57 @@ import CloserSidebar from '../components/CloserSidebar';
 import LeadDetailView from '@/components/shared/LeadDetailView';
 import ContentLoader from '../components/ContentLoader';
 import { PaginationControls } from '@/components/ui/PaginationControls';
-
-interface Closer {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  totalCalls: number;
-  totalConversions: number;
-  totalRevenue: number;
-  conversionRate: number;
-}
-
-interface Appointment {
-  id: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  scheduledAt: string;
-  duration: number;
-  status: string;
-  outcome: string | null;
-  notes: string | null;
-  saleValue: number | null;
-  commissionAmount: number | null;
-  affiliateCode: string | null;
-  source?: string; // Lead source (affiliate name or "Website")
-  recordingLinkConverted?: string | null;
-  recordingLinkNotInterested?: string | null;
-  recordingLinkNeedsFollowUp?: string | null;
-  recordingLinkWrongNumber?: string | null;
-  recordingLinkNoAnswer?: string | null;
-  recordingLinkCallbackRequested?: string | null;
-  recordingLinkRescheduled?: string | null;
-}
+import { Appointment } from '../types';
+import { useCloserAuth, useActiveTaskCount, useCloserAppointments } from '../hooks';
+import {
+  getOutcomeColor,
+  getOutcomeDisplayName,
+  formatDate,
+  OUTCOME_OPTIONS
+} from '../utils';
 
 export default function CloserDashboard() {
-  const [closer, setCloser] = useState<Closer | null>(null);
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [activeTaskCount, setActiveTaskCount] = useState(0);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
-  const [showOutcomeModal, setShowOutcomeModal] = useState(false);
-  const [outcomeData, setOutcomeData] = useState({
-    outcome: '',
-    notes: '',
-    saleValue: '',
-    recordingLink: ''
-  });
-  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null); // State to control the overlay
+  const { closer, isLoading: isAuthLoading, error: authError, isAuthenticated, handleLogout, refetchStats } = useCloserAuth();
+  const { activeTaskCount, refetch: refetchTaskCount } = useActiveTaskCount();
+
+  const {
+    appointments,
+    isLoading: isAppointmentsLoading,
+    error: appointmentsError,
+    fetchAppointments,
+    selectedAppointment,
+    showOutcomeModal,
+    setShowOutcomeModal,
+    outcomeData,
+    setOutcomeData,
+    openOutcomeModal,
+    handleUpdateOutcome,
+    selectedLeadId,
+    setSelectedLeadId,
+    viewLeadDetails
+  } = useCloserAppointments('/api/closer/appointments');
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(50);
 
-  const router = useRouter();
-
   useEffect(() => {
-    const token = localStorage.getItem('closerToken');
-
-    if (!token) {
-      router.push('/closers/login');
-      return;
+    if (isAuthenticated) {
+      fetchAppointments();
     }
+  }, [isAuthenticated, fetchAppointments]);
 
-    // Fetch all data in parallel for faster loading
-    Promise.all([
-      fetchCloserStats(token),
-      fetchAppointments(token),
-      fetchActiveTaskCount(token)
-    ]);
-  }, [router]);
+  // Combine error states
+  const displayError = authError || appointmentsError;
+  const isLoading = isAuthLoading || isAppointmentsLoading;
 
-  const fetchCloserStats = async (token: string) => {
-    try {
-      const response = await fetch('/api/closer/stats', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setCloser(data.closer);
-        console.log('📊 Fresh closer stats loaded:', data.closer);
-      } else {
-        setError('Failed to load closer stats');
-      }
-    } catch (error) {
-      console.error('Error fetching closer stats:', error);
-      setError('Network error loading closer stats');
-    }
-  };
-
-  const fetchAppointments = async (token: string) => {
-    try {
-      const response = await fetch('/api/closer/appointments', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setAppointments(data.appointments || []);
-      } else {
-        setError('Failed to load appointments');
-      }
-    } catch (error) {
-      setError('Network error loading appointments');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fetchActiveTaskCount = async (token: string) => {
-    try {
-      const response = await fetch('/api/tasks', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const tasks = await response.json();
-        // Handle both response formats: array directly or { tasks: [...] }
-        const tasksArray = Array.isArray(tasks) ? tasks : (tasks.tasks || []);
-        // Count all non-completed tasks (exclude cancelled)
-        const activeCount = tasksArray.filter((t: { status: string }) =>
-          (t.status === 'pending' || t.status === 'in_progress')
-        ).length;
-        setActiveTaskCount(activeCount);
-      }
-    } catch (error) {
-      console.error('Error fetching task count:', error);
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('closerToken');
-    localStorage.removeItem('closerData');
-    router.push('/closers/login');
-  };
-
-  const handleUpdateOutcome = async () => {
-    if (!selectedAppointment || !outcomeData.outcome) return;
-
-    const token = localStorage.getItem('closerToken');
-    if (!token) return;
-
-    try {
-      const response = await fetch(`/api/closer/appointments/${selectedAppointment.id}/outcome`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          outcome: outcomeData.outcome,
-          notes: outcomeData.notes,
-          saleValue: outcomeData.saleValue ? parseFloat(outcomeData.saleValue) : null,
-          recordingLink: outcomeData.recordingLink || null,
-        }),
-      });
-
-      if (response.ok) {
-        // Refresh both appointments and closer stats
-        fetchAppointments(token);
-        fetchCloserStats(token);
-        setShowOutcomeModal(false);
-        setSelectedAppointment(null);
-        setOutcomeData({ outcome: '', notes: '', saleValue: '', recordingLink: '' });
-      } else {
-        setError('Failed to update appointment outcome');
-      }
-    } catch (error) {
-      setError('Network error updating outcome');
-    }
-  };
-
-  const openOutcomeModal = (appointment: Appointment) => {
-    setSelectedAppointment(appointment);
-
-    // Get the existing recording link based on the outcome
-    const existingRecordingLink = getRecordingLink(appointment);
-
-    setOutcomeData({
-      outcome: appointment.outcome || '',
-      notes: appointment.notes || '',
-      saleValue: appointment.saleValue?.toString() || '',
-      recordingLink: existingRecordingLink || ''
-    });
-    setShowOutcomeModal(true);
-  };
-
-  const viewLeadDetails = async (appointment: Appointment) => {
-    // This function now just needs to find the lead ID and set it in state
-    try {
-      const token = localStorage.getItem('closerToken');
-      const response = await fetch(`/api/leads/by-email?email=${encodeURIComponent(appointment.customerEmail)}`, {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        if (data.lead && data.lead.id) {
-          setSelectedLeadId(data.lead.id); // Set the lead ID to show the overlay
-        } else {
-          setError('Could not find a valid session for this lead.');
-        }
-      } else {
-        setError('Failed to retrieve lead session details.');
-      }
-    } catch (e) {
-      setError('Error preparing to view lead details.');
+  // Wrapper to handle stats refresh after outcome update
+  const handleSaveOutcome = async () => {
+    const success = await handleUpdateOutcome();
+    if (success) {
+      fetchAppointments();
+      refetchStats();
+      refetchTaskCount();
     }
   };
 
@@ -238,63 +72,6 @@ export default function CloserDashboard() {
   };
 
   const totalPages = Math.ceil(appointments.length / itemsPerPage);
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const getRecordingLink = (appointment: Appointment) => {
-    if (!appointment.outcome) return null;
-
-    switch (appointment.outcome) {
-      case 'converted':
-        return appointment.recordingLinkConverted;
-      case 'not_interested':
-        return appointment.recordingLinkNotInterested;
-      case 'needs_follow_up':
-        return appointment.recordingLinkNeedsFollowUp;
-      case 'wrong_number':
-        return appointment.recordingLinkWrongNumber;
-      case 'no_answer':
-        return appointment.recordingLinkNoAnswer;
-      case 'callback_requested':
-        return appointment.recordingLinkCallbackRequested;
-      case 'rescheduled':
-        return appointment.recordingLinkRescheduled;
-      default:
-        return null;
-    }
-  };
-
-  const getOutcomeColor = (outcome: string | null) => {
-    switch (outcome) {
-      case 'converted': return 'bg-green-100 text-green-800';
-      case 'not_interested': return 'bg-red-100 text-red-800';
-      case 'needs_follow_up': return 'bg-yellow-100 text-yellow-800';
-      case 'callback_requested': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getOutcomeDisplayName = (outcome: string | null) => {
-    if (!outcome) return 'Booked';
-    switch (outcome) {
-      case 'converted': return 'Purchased (Call)';
-      case 'not_interested': return 'Not Interested';
-      case 'needs_follow_up': return 'Needs Follow Up';
-      case 'wrong_number': return 'Wrong Number';
-      case 'no_answer': return 'No Answer';
-      case 'callback_requested': return 'Callback Requested';
-      case 'rescheduled': return 'Rescheduled';
-      default: return outcome.replace('_', ' ');
-    }
-  };
 
   return (
     <div className="h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex overflow-hidden">
@@ -331,9 +108,9 @@ export default function CloserDashboard() {
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <div className="flex-1 flex flex-col min-h-0 w-full px-4 sm:px-6 lg:px-8 py-8">
 
-                {error && (
+                {displayError && (
                   <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">
-                    {error}
+                    {displayError}
                   </div>
                 )}
 
@@ -545,13 +322,11 @@ export default function CloserDashboard() {
                         required
                       >
                         <option value="">Select outcome</option>
-                        <option value="converted">Converted</option>
-                        <option value="not_interested">Not Interested</option>
-                        <option value="needs_follow_up">Needs Follow Up</option>
-                        <option value="wrong_number">Wrong Number</option>
-                        <option value="no_answer">No Answer</option>
-                        <option value="callback_requested">Callback Requested</option>
-                        <option value="rescheduled">Rescheduled</option>
+                        {OUTCOME_OPTIONS.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
                       </select>
                     </div>
 

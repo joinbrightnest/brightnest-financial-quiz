@@ -32,6 +32,8 @@ function CloserLoginForm() {
     try {
       const response = await fetch('/api/closer/login', {
         method: 'POST',
+        // 🔒 SECURITY: Include credentials for httpOnly cookie to be set
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -41,9 +43,9 @@ function CloserLoginForm() {
       const data = await response.json();
 
       if (response.ok) {
-        // Store the closer token and redirect to dashboard
-        localStorage.setItem('closerToken', data.token);
-        localStorage.setItem('closerData', JSON.stringify(data.closer));
+        // 🔒 SECURITY: Token is now stored in httpOnly cookie (set by the API)
+        // No need to store in localStorage - this is more secure!
+        // The cookie will be automatically included in subsequent requests
         router.push('/closers/dashboard');
       } else {
         setError(data.error || 'Login failed');

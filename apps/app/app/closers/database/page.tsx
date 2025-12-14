@@ -6,86 +6,52 @@ import CloserSidebar from '../components/CloserSidebar';
 import LeadDetailView from '@/components/shared/LeadDetailView';
 import ContentLoader from '../components/ContentLoader';
 import { PaginationControls } from '@/components/ui/PaginationControls';
-
-interface Closer {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  totalCalls: number;
-  totalConversions: number;
-  totalRevenue: number;
-  conversionRate: number;
-}
-
-interface Appointment {
-  id: string;
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  scheduledAt: string;
-  duration: number;
-  status: string;
-  outcome: string | null;
-  notes: string | null;
-  saleValue: number | null;
-  commissionAmount: number | null;
-  affiliateCode: string | null;
-  source?: string; // Lead source (affiliate name or "Website")
-  recordingLinkConverted?: string | null;
-  recordingLinkNotInterested?: string | null;
-  recordingLinkNeedsFollowUp?: string | null;
-  recordingLinkWrongNumber?: string | null;
-  recordingLinkNoAnswer?: string | null;
-  recordingLinkCallbackRequested?: string | null;
-  recordingLinkRescheduled?: string | null;
-}
+import { Appointment } from '../types';
+import { useCloserAuth, useActiveTaskCount, useCloserAppointments } from '../hooks';
+import {
+  getOutcomeColor,
+  getOutcomeDisplayName,
+  formatDate,
+  FILTER_OPTIONS,
+  OUTCOME_OPTIONS
+} from '../utils';
 
 export default function CloserDatabase() {
-  const [closer, setCloser] = useState<Closer | null>(null);
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const { closer, isLoading: isAuthLoading, error: authError, isAuthenticated, handleLogout, refetchStats } = useCloserAuth();
+  const { activeTaskCount, refetch: refetchTaskCount } = useActiveTaskCount();
+
+  const {
+    appointments,
+    isLoading: isAppointmentsLoading,
+    error: appointmentsError,
+    fetchAppointments,
+    selectedAppointment,
+    showOutcomeModal,
+    setShowOutcomeModal,
+    outcomeData,
+    setOutcomeData,
+    openOutcomeModal,
+    handleUpdateOutcome,
+    selectedLeadId,
+    setSelectedLeadId,
+    viewLeadDetails
+  } = useCloserAppointments('/api/closer/all-appointments');
+
   const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [activeTaskCount, setActiveTaskCount] = useState(0);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
-  const [showOutcomeModal, setShowOutcomeModal] = useState(false);
-  const [outcomeData, setOutcomeData] = useState({
-    outcome: '',
-    notes: '',
-    saleValue: '',
-    recordingLink: ''
-  });
-  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [outcomeFilter, setOutcomeFilter] = useState<string>('all');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(50);
 
-  const router = useRouter();
-
+  // Fetch appointments when authenticated
   useEffect(() => {
-    const token = localStorage.getItem('closerToken');
-
-    if (!token) {
-      router.push('/closers/login');
-      return;
+    if (isAuthenticated) {
+      fetchAppointments();
     }
-
-    // Fetch in parallel for faster loading
-    Promise.all([
-      fetchCloserStats(token),
-      fetchAllAppointments(token),
-      fetchActiveTaskCount(token)
-    ]).then(() => {
-      setIsLoading(false);
-    }).catch((error) => {
-      console.error('Error fetching data:', error);
-      setIsLoading(false);
-    });
-  }, [router]);
+  }, [isAuthenticated, fetchAppointments]);
 
   useEffect(() => {
     // Filter appointments based on search and outcome filter
@@ -110,6 +76,11 @@ export default function CloserDatabase() {
     setCurrentPage(1); // Reset to first page on filter change
   }, [appointments, searchQuery, outcomeFilter]);
 
+  // Combine loading and error states
+  const isLoading = isAuthLoading || isAppointmentsLoading;
+  const displayError = authError || appointmentsError;
+
+  // Pagination Logic
   // Pagination Logic
   const paginatedAppointments = filteredAppointments.slice(
     (currentPage - 1) * itemsPerPage,
@@ -118,204 +89,13 @@ export default function CloserDatabase() {
 
   const totalPages = Math.ceil(filteredAppointments.length / itemsPerPage);
 
-  const fetchCloserStats = async (token: string) => {
-    try {
-      const response = await fetch('/api/closer/stats', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setCloser(data.closer);
-      } else {
-        setError('Failed to load closer stats');
-      }
-    } catch (error) {
-      console.error('Error fetching closer stats:', error);
-      setError('Network error loading closer stats');
-    }
-  };
-
-  const fetchAllAppointments = async (token: string) => {
-    try {
-      const response = await fetch('/api/closer/all-appointments', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setAppointments(data.appointments || []);
-      } else {
-        setError('Failed to load appointments');
-      }
-    } catch (error) {
-      console.error('Error fetching appointments:', error);
-      setError('Network error loading appointments');
-    }
-  };
-
-  const fetchActiveTaskCount = async (token: string) => {
-    try {
-      const response = await fetch('/api/tasks', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const tasks = await response.json();
-        const tasksArray = Array.isArray(tasks) ? tasks : (tasks.tasks || []);
-        const activeCount = tasksArray.filter((t: { status: string }) =>
-          (t.status === 'pending' || t.status === 'in_progress')
-        ).length;
-        setActiveTaskCount(activeCount);
-      }
-    } catch (error) {
-      console.error('Error fetching task count:', error);
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('closerToken');
-    localStorage.removeItem('closerData');
-    router.push('/closers/login');
-  };
-
-  const handleUpdateOutcome = async () => {
-    if (!selectedAppointment || !outcomeData.outcome) return;
-
-    const token = localStorage.getItem('closerToken');
-    if (!token) return;
-
-    try {
-      const response = await fetch(`/api/closer/appointments/${selectedAppointment.id}/outcome`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          outcome: outcomeData.outcome,
-          notes: outcomeData.notes,
-          saleValue: outcomeData.saleValue ? parseFloat(outcomeData.saleValue) : null,
-          recordingLink: outcomeData.recordingLink || null,
-        }),
-      });
-
-      if (response.ok) {
-        fetchAllAppointments(token);
-        fetchCloserStats(token);
-        setShowOutcomeModal(false);
-        setSelectedAppointment(null);
-        setOutcomeData({ outcome: '', notes: '', saleValue: '', recordingLink: '' });
-      } else {
-        setError('Failed to update appointment outcome');
-      }
-    } catch (error) {
-      setError('Network error updating outcome');
-    }
-  };
-
-  const openOutcomeModal = (appointment: Appointment) => {
-    setSelectedAppointment(appointment);
-
-    const existingRecordingLink = getRecordingLink(appointment);
-
-    setOutcomeData({
-      outcome: appointment.outcome || '',
-      notes: appointment.notes || '',
-      saleValue: appointment.saleValue?.toString() || '',
-      recordingLink: existingRecordingLink || ''
-    });
-    setShowOutcomeModal(true);
-  };
-
-  const viewLeadDetails = async (appointment: Appointment) => {
-    try {
-      const token = localStorage.getItem('closerToken');
-      const response = await fetch(`/api/leads/by-email?email=${encodeURIComponent(appointment.customerEmail)}`, {
-        headers: { 'Authorization': `Bearer ${token}` },
-      });
-      if (response.ok) {
-        const data = await response.json();
-        if (data.lead && data.lead.id) {
-          setSelectedLeadId(data.lead.id);
-        } else {
-          setError('Could not find a valid session for this lead.');
-        }
-      } else {
-        setError('Failed to retrieve lead session details.');
-      }
-    } catch (e) {
-      setError('Error preparing to view lead details.');
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
-  const getRecordingLink = (appointment: Appointment) => {
-    if (!appointment.outcome) return null;
-
-    switch (appointment.outcome) {
-      case 'converted':
-        return appointment.recordingLinkConverted;
-      case 'not_interested':
-        return appointment.recordingLinkNotInterested;
-      case 'needs_follow_up':
-        return appointment.recordingLinkNeedsFollowUp;
-      case 'wrong_number':
-        return appointment.recordingLinkWrongNumber;
-      case 'no_answer':
-        return appointment.recordingLinkNoAnswer;
-      case 'callback_requested':
-        return appointment.recordingLinkCallbackRequested;
-      case 'rescheduled':
-        return appointment.recordingLinkRescheduled;
-      default:
-        return null;
-    }
-  };
-
-  const getOutcomeColor = (outcome: string | null) => {
-    switch (outcome) {
-      case 'converted': return 'bg-green-100 text-green-800';
-      case 'not_interested': return 'bg-red-100 text-red-800';
-      case 'needs_follow_up': return 'bg-yellow-100 text-yellow-800';
-      case 'callback_requested': return 'bg-blue-100 text-blue-800';
-      case 'wrong_number': return 'bg-gray-100 text-gray-800';
-      case 'no_answer': return 'bg-gray-100 text-gray-800';
-      case 'rescheduled': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-blue-100 text-blue-800';
-    }
-  };
-
-  const getOutcomeDisplayName = (outcome: string | null) => {
-    // This should never be null in the database view, but handle it just in case
-    if (!outcome) return 'Unknown';
-    switch (outcome) {
-      case 'converted': return 'Purchased (Call)';
-      case 'not_interested': return 'Not Interested';
-      case 'needs_follow_up': return 'Needs Follow Up';
-      case 'wrong_number': return 'Wrong Number';
-      case 'no_answer': return 'No Answer';
-      case 'callback_requested': return 'Callback Requested';
-      case 'rescheduled': return 'Rescheduled';
-      default: return outcome.replace('_', ' ');
+  // Wrapper to handle stats refresh after outcome update
+  const handleSaveOutcome = async () => {
+    const success = await handleUpdateOutcome();
+    if (success) {
+      fetchAppointments();
+      refetchStats();
+      refetchTaskCount();
     }
   };
 
@@ -351,51 +131,76 @@ export default function CloserDatabase() {
             <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
               <div className="flex-1 flex flex-col min-h-0 w-full px-4 sm:px-6 lg:px-8 py-8">
 
-                {error && (
+                {displayError && (
                   <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">
-                    {error}
+                    {displayError}
                   </div>
                 )}
 
-                {/* Filters Section - Fixed height */}
-                <div className="flex-shrink-0 bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-                  <div className="grid grid-cols-1 gap-4">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">Search</label>
-                      <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search by name, email, or phone..."
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 placeholder-gray-400"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">Filter by Status</label>
-                      <select
-                        value={outcomeFilter}
-                        onChange={(e) => setOutcomeFilter(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900"
-                      >
-                        <option value="all">All Contacted Leads</option>
-                        <option value="converted">Purchased</option>
-                        <option value="not_interested">Not Interested</option>
-                        <option value="needs_follow_up">Needs Follow Up</option>
-                        <option value="callback_requested">Callback Requested</option>
-                        <option value="no_answer">No Answer</option>
-                        <option value="wrong_number">Wrong Number</option>
-                        <option value="rescheduled">Rescheduled</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
+
 
 
 
                 {/* Appointments Table - Takes remaining space */}
                 <div className="flex-1 flex flex-col min-h-0 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                  <div className="flex-shrink-0 px-6 py-5 border-b border-gray-100">
-                    <h3 className="text-xl font-bold text-gray-900">Contacted Leads</h3>
+                  <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-4 border-b border-gray-100 gap-4">
+                    <div className="relative w-full sm:w-80">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search name or description"
+                        className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg leading-5 bg-white placeholder-gray-400 focus:outline-none focus:placeholder-gray-300 focus:ring-1 focus:ring-purple-500 focus:border-purple-500 sm:text-sm transition duration-150 ease-in-out"
+                      />
+                    </div>
+                    <div className="flex items-center space-x-3 w-full sm:w-auto relative">
+                      <button
+                        onClick={() => setIsFilterOpen(!isFilterOpen)}
+                        className="flex items-center justify-between w-full sm:w-56 px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors duration-200 shadow-sm"
+                      >
+                        <span className="truncate">
+                          {FILTER_OPTIONS.find(o => o.value === outcomeFilter)?.label || 'All Contacted Leads'}
+                        </span>
+                        <svg className={`ml-2 h-5 w-5 text-gray-500 transition-transform duration-200 ${isFilterOpen ? 'transform rotate-180' : ''}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+
+                      {isFilterOpen && (
+                        <>
+                          <div
+                            className="fixed inset-0 z-10"
+                            onClick={() => setIsFilterOpen(false)}
+                          ></div>
+                          <div className="absolute left-0 top-full mt-1 w-full bg-white rounded-lg shadow-xl z-20 border border-gray-100 py-1 max-h-96 overflow-y-auto animate-fadeIn">
+                            {FILTER_OPTIONS.map((option) => (
+                              <button
+                                key={option.value}
+                                onClick={() => {
+                                  setOutcomeFilter(option.value);
+                                  setIsFilterOpen(false);
+                                }}
+                                className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-gray-50 flex items-center justify-between
+                                  ${outcomeFilter === option.value ? 'bg-purple-50 text-purple-700 font-medium' : 'text-gray-900'}
+                                `}
+                              >
+                                <span>{option.label}</span>
+                                {outcomeFilter === option.value && (
+                                  <svg className="h-4 w-4 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                )}
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="flex-1 overflow-auto">
                     {filteredAppointments.length === 0 ? (
@@ -529,13 +334,11 @@ export default function CloserDatabase() {
                         required
                       >
                         <option value="">Select outcome</option>
-                        <option value="converted">Converted</option>
-                        <option value="not_interested">Not Interested</option>
-                        <option value="needs_follow_up">Needs Follow Up</option>
-                        <option value="wrong_number">Wrong Number</option>
-                        <option value="no_answer">No Answer</option>
-                        <option value="callback_requested">Callback Requested</option>
-                        <option value="rescheduled">Rescheduled</option>
+                        {OUTCOME_OPTIONS.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
                       </select>
                     </div>
 
@@ -583,7 +386,7 @@ export default function CloserDatabase() {
                       Cancel
                     </button>
                     <button
-                      onClick={handleUpdateOutcome}
+                      onClick={handleSaveOutcome}
                       disabled={!outcomeData.outcome}
                       className="px-6 py-3 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >

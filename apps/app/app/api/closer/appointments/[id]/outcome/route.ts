@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import jwt from 'jsonwebtoken';
+import { authenticateCloser } from '../../../auth-utils';
 
 export async function PUT(
   request: NextRequest,
@@ -8,31 +8,12 @@ export async function PUT(
 ) {
   try {
     const { id } = await params;
-    const authHeader = request.headers.get('authorization');
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    // 🔒 SECURITY: Authenticate using httpOnly cookie or Authorization header
+    const auth = authenticateCloser(request);
+    if (!auth.success) {
       return NextResponse.json(
-        { error: 'Authorization token required' },
-        { status: 401 }
-      );
-    }
-
-    // 🔒 SECURITY: Require JWT_SECRET (no fallback)
-    const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
-    if (!JWT_SECRET) {
-      console.error('FATAL: JWT_SECRET or NEXTAUTH_SECRET environment variable is required');
-      return NextResponse.json(
-        { error: 'Authentication configuration error' },
-        { status: 500 }
-      );
-    }
-
-    const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, JWT_SECRET) as { role: string; closerId: string };
-
-    if (decoded.role !== 'closer') {
-      return NextResponse.json(
-        { error: 'Invalid token' },
+        { error: auth.error },
         { status: 401 }
       );
     }
@@ -50,7 +31,7 @@ export async function PUT(
     const appointment = await prisma.appointment.findFirst({
       where: {
         id: id,
-        closerId: decoded.closerId
+        closerId: auth.closerId
       }
     });
 
@@ -65,7 +46,7 @@ export async function PUT(
     let commissionAmount = null;
     if (saleValue && outcome === 'converted') {
       const closer = await prisma.closer.findUnique({
-        where: { id: decoded.closerId }
+        where: { id: auth.closerId }
       });
 
       if (closer) {
@@ -232,12 +213,12 @@ export async function PUT(
     // If changing from conversion to non-conversion, decrement conversions and revenue
     if (previousWasConversion && !newIsConversion) {
       await prisma.closer.update({
-        where: { id: decoded.closerId },
+        where: { id: auth.closerId },
         data: {
           totalConversions: { decrement: 1 },
           totalRevenue: { decrement: previousSaleValue },
           conversionRate: {
-            set: await calculateConversionRate(decoded.closerId)
+            set: await calculateConversionRate(auth.closerId)
           }
         }
       });
@@ -245,12 +226,12 @@ export async function PUT(
     // If changing from non-conversion to conversion, increment conversions and revenue
     else if (!previousWasConversion && newIsConversion) {
       await prisma.closer.update({
-        where: { id: decoded.closerId },
+        where: { id: auth.closerId },
         data: {
           totalConversions: { increment: 1 },
           totalRevenue: { increment: newSaleValue },
           conversionRate: {
-            set: await calculateConversionRate(decoded.closerId)
+            set: await calculateConversionRate(auth.closerId)
           }
         }
       });
@@ -259,11 +240,11 @@ export async function PUT(
     else if (previousWasConversion && newIsConversion && previousSaleValue !== newSaleValue) {
       const revenueDiff = newSaleValue - previousSaleValue;
       await prisma.closer.update({
-        where: { id: decoded.closerId },
+        where: { id: auth.closerId },
         data: {
           totalRevenue: { increment: revenueDiff },
           conversionRate: {
-            set: await calculateConversionRate(decoded.closerId)
+            set: await calculateConversionRate(auth.closerId)
           }
         }
       });
@@ -271,12 +252,12 @@ export async function PUT(
     // If updating conversion but sale value becomes invalid, remove conversion
     else if (previousWasConversion && outcome === 'converted' && (!saleValue || parseFloat(saleValue) <= 0)) {
       await prisma.closer.update({
-        where: { id: decoded.closerId },
+        where: { id: auth.closerId },
         data: {
           totalConversions: { decrement: 1 },
           totalRevenue: { decrement: previousSaleValue },
           conversionRate: {
-            set: await calculateConversionRate(decoded.closerId)
+            set: await calculateConversionRate(auth.closerId)
           }
         }
       });
@@ -284,10 +265,10 @@ export async function PUT(
     // Otherwise, just recalculate conversion rate (no stat changes needed)
     else {
       await prisma.closer.update({
-        where: { id: decoded.closerId },
+        where: { id: auth.closerId },
         data: {
           conversionRate: {
-            set: await calculateConversionRate(decoded.closerId)
+            set: await calculateConversionRate(auth.closerId)
           }
         }
       });
@@ -298,7 +279,7 @@ export async function PUT(
     // This ensures each outcome update has its own recording link and notes preserved
     await prisma.closerAuditLog.create({
       data: {
-        closerId: decoded.closerId,
+        closerId: auth.closerId,
         action: 'appointment_outcome_updated',
         details: {
           appointmentId: id,
@@ -329,7 +310,7 @@ export async function PUT(
 
     console.log('✅ Appointment outcome updated:', {
       appointmentId: id,
-      closerId: decoded.closerId,
+      closerId: auth.closerId,
       outcome,
       saleValue,
       affiliateCode: appointment.affiliateCode,

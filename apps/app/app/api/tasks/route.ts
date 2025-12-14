@@ -80,35 +80,68 @@ export async function GET(request: NextRequest) {
         });
 
         // Post-processing to attach appointments if missing
-        // This logic was present in both original files
-        const tasksWithAppointments = await Promise.all(
-            tasks.map(async (task) => {
-                if (task.appointment) return task;
+        // 🚀 PERFORMANCE: Optimization to existing logic - batch fetching appointments instead of N+1
+        const tasksWithAppointments = [...tasks];
 
-                if (task.leadEmail) {
-                    // Find appointment matching lead email
-                    // For admin: find any appointment
-                    // For closer: find appointment assigned to them (or any? original code used closerId filter for closer API)
+        // Identify tasks that need appointment lookup (have email but no linked appointment)
+        const tasksNeedingAppointment = tasks.filter(t => !t.appointment && t.leadEmail);
 
-                    const appointmentWhere: Prisma.AppointmentWhereInput = { customerEmail: task.leadEmail };
-                    if (!isAdmin) {
-                        appointmentWhere.closerId = closerId;
-                    }
+        if (tasksNeedingAppointment.length > 0) {
+            const leadEmails = tasksNeedingAppointment.map(t => t.leadEmail!);
 
-                    const appointment = await prisma.appointment.findFirst({
-                        where: appointmentWhere,
-                        select: {
-                            id: true,
-                            customerName: true,
-                            customerEmail: true,
-                        },
-                    });
+            // Build where clause for batch query
+            const appointmentWhere: Prisma.AppointmentWhereInput = {
+                customerEmail: { in: leadEmails }
+            };
 
-                    return { ...task, appointment: appointment || null };
+            // Apply closer restriction for non-admins
+            if (!isAdmin && closerId) {
+                appointmentWhere.closerId = closerId;
+            }
+
+            // Fetch all potentially matching appointments in one query
+            const matchingAppointments = await prisma.appointment.findMany({
+                where: appointmentWhere,
+                select: {
+                    id: true,
+                    customerName: true,
+                    customerEmail: true,
+                    // If filtering by closerId, we need to know whose appointment it is
+                    // But if we filtered in the query, we know they belong to the closer (or are visible)
                 }
-                return task;
-            })
-        );
+            });
+
+            // Create lookup map: email -> appointment
+            // Note: If multiple appointments exist for an email, this takes the last one found.
+            // This behavior matches (roughly) logic of findFirst in a loop, but is much faster.
+            const appointmentMap = new Map();
+            matchingAppointments.forEach(apt => {
+                if (apt.customerEmail) {
+                    appointmentMap.set(apt.customerEmail, apt);
+                }
+            });
+
+            // Attach appointments to tasks
+            // We modify a copy or map correctly
+            /* Since tasksWithAppointments is a reference to tasks array (objects), 
+               and we need to add the 'appointment' property to the object which might not exist on the type fully inferred by Prisma unless included
+               The tasks type from Prisma with include returns (Task & { appointment: ... | null })
+               So redundant mapping is fine.
+            */
+
+            // Rebuild the array with enriched data
+            for (let i = 0; i < tasksWithAppointments.length; i++) {
+                const task = tasksWithAppointments[i];
+                if (!task.appointment && task.leadEmail) {
+                    const foundAppt = appointmentMap.get(task.leadEmail);
+                    if (foundAppt) {
+                        // We need to cast or ensure type compatibility, but tasks array is already typed to include appointment
+                        // @ts-ignore - appending property to object
+                        tasksWithAppointments[i] = { ...task, appointment: foundAppt };
+                    }
+                }
+            }
+        }
 
         return NextResponse.json({ tasks: tasksWithAppointments });
         // Note: Admin API returned { tasks: [...] }, Closer API returned [...]

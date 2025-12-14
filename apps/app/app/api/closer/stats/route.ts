@@ -1,32 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import jwt from 'jsonwebtoken';
 import { apiErrors, handleApiError } from '@/lib/api-utils';
+import { authenticateCloser } from '../auth-utils';
 
 export async function GET(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return apiErrors.unauthorized('Authorization token required');
+    // 🔒 SECURITY: Authenticate using httpOnly cookie or Authorization header
+    const auth = authenticateCloser(request);
+    if (!auth.success) {
+      return apiErrors.unauthorized(auth.error);
     }
 
-    // 🔒 SECURITY: Require JWT_SECRET (no fallback)
-    const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
-    if (!JWT_SECRET) {
-      console.error('FATAL: JWT_SECRET or NEXTAUTH_SECRET environment variable is required');
-      return apiErrors.configError('Authentication configuration error');
-    }
-
-    const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, JWT_SECRET) as { role: string; closerId: string };
-
-    if (decoded.role !== 'closer') {
-      return apiErrors.unauthorized('Invalid token');
-    }
+    const closerId = auth.closerId;
 
     // Get fresh closer data from database
     const closer = await prisma.closer.findUnique({
-      where: { id: decoded.closerId },
+      where: { id: closerId },
       select: {
         id: true,
         name: true,
@@ -48,7 +37,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate actual stats from appointments (single source of truth)
     const appointments = await prisma.appointment.findMany({
-      where: { closerId: decoded.closerId },
+      where: { closerId: closerId },
       select: {
         status: true,
         outcome: true,
@@ -80,7 +69,7 @@ export async function GET(request: NextRequest) {
       Math.abs(Number(closer.conversionRate || 0) - actualConversionRate) > 0.0001) {
       try {
         await prisma.closer.update({
-          where: { id: decoded.closerId },
+          where: { id: closerId },
           data: {
             totalCalls: actualTotalCalls,
             totalConversions: actualTotalConversions,
@@ -89,7 +78,7 @@ export async function GET(request: NextRequest) {
           }
         });
         console.log('🔄 Synced closer stats in database:', {
-          closerId: decoded.closerId,
+          closerId: closerId,
           totalCalls: `${closer.totalCalls} → ${actualTotalCalls}`,
           totalConversions: `${closer.totalConversions} → ${actualTotalConversions}`,
           totalRevenue: `${closer.totalRevenue} → ${actualTotalRevenue}`,

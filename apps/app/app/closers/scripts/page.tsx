@@ -4,70 +4,33 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import CloserSidebar from '../components/CloserSidebar';
 import ContentLoader from '../components/ContentLoader';
-
-interface Closer {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  totalCalls: number;
-  totalConversions: number;
-  totalRevenue: number;
-  conversionRate: number;
-}
+import { useCloserAuth, useActiveTaskCount } from '../hooks';
 
 export default function CloserScripts() {
-  const [closer, setCloser] = useState<Closer | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { closer, isLoading: isAuthLoading, isAuthenticated, handleLogout } = useCloserAuth();
+  const { activeTaskCount } = useActiveTaskCount();
+
   const [activeTab, setActiveTab] = useState<'call' | 'email'>('call');
   const [activeEmailCategory, setActiveEmailCategory] = useState<string>('initial');
   const [activeCallCategory, setActiveCallCategory] = useState<'script' | 'program'>('script');
   const [script, setScript] = useState<{ callScript?: string; programDetails?: Record<string, string>; emailTemplates?: Record<string, { title: string; subject: string; content: string }> } | null>(null);
   const [scriptLoading, setScriptLoading] = useState(true);
-  const [activeTaskCount, setActiveTaskCount] = useState(0);
-  const router = useRouter();
 
+  // Fetch scripts when authenticated
   useEffect(() => {
-    const token = localStorage.getItem('closerToken');
-
-    if (!token) {
-      router.push('/closers/login');
-      return;
+    if (isAuthenticated) {
+      fetchScript();
     }
+  }, [isAuthenticated]);
 
-    Promise.all([
-      fetchCloserStats(token),
-      fetchScript(token),
-      fetchActiveTaskCount(token)
-    ]);
-  }, [router]);
+  const isLoading = isAuthLoading || scriptLoading;
 
-  const fetchCloserStats = async (token: string) => {
+  const fetchScript = async () => {
     try {
-      const response = await fetch('/api/closer/stats', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setCloser(data.closer);
-      }
-    } catch (error) {
-      console.error('Error fetching closer stats:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fetchScript = async (token: string) => {
-    try {
-      setScriptLoading(true);
       const response = await fetch('/api/closer/scripts', {
+        // 🔒 SECURITY: Use httpOnly cookie for authentication
+        credentials: 'include',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
@@ -83,36 +46,6 @@ export default function CloserScripts() {
     } finally {
       setScriptLoading(false);
     }
-  };
-
-  const fetchActiveTaskCount = async (token: string) => {
-    try {
-      const response = await fetch('/api/tasks', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const tasks = await response.json();
-        // Handle both response formats: array directly or { tasks: [...] }
-        const tasksArray = Array.isArray(tasks) ? tasks : (tasks.tasks || []);
-        // Count all non-completed tasks (exclude cancelled)
-        const activeCount = tasksArray.filter((t: { status: string }) =>
-          (t.status === 'pending' || t.status === 'in_progress')
-        ).length;
-        setActiveTaskCount(activeCount);
-      }
-    } catch (error) {
-      console.error('Error fetching active task count:', error);
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('closerToken');
-    localStorage.removeItem('closerData');
-    router.push('/closers/login');
   };
 
   // Get script data from API or use defaults

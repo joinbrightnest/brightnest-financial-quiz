@@ -4,89 +4,16 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import CloserSidebar from '../components/CloserSidebar';
 import ContentLoader from '../components/ContentLoader';
-
-interface Closer {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  totalCalls: number;
-  totalConversions: number;
-  totalRevenue: number;
-  conversionRate: number;
-}
+import { useCloserAuth, useActiveTaskCount } from '../hooks';
 
 export default function CloserRules() {
-  const [closer, setCloser] = useState<Closer | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { closer, isLoading: isAuthLoading, isAuthenticated, handleLogout } = useCloserAuth();
+  const { activeTaskCount } = useActiveTaskCount();
+
   const [activeSection, setActiveSection] = useState<string>('onboarding');
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
-  const [activeTaskCount, setActiveTaskCount] = useState(0);
-  const router = useRouter();
 
-  useEffect(() => {
-    const token = localStorage.getItem('closerToken');
-
-    if (!token) {
-      router.push('/closers/login');
-      return;
-    }
-
-    Promise.all([
-      fetchCloserStats(token),
-      fetchActiveTaskCount(token)
-    ]);
-  }, [router]);
-
-  const fetchCloserStats = async (token: string) => {
-    try {
-      const response = await fetch('/api/closer/stats', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setCloser(data.closer);
-      }
-    } catch (error) {
-      console.error('Error fetching closer stats:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const fetchActiveTaskCount = async (token: string) => {
-    try {
-      const response = await fetch('/api/tasks', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const tasks = await response.json();
-        // Handle both response formats: array directly or { tasks: [...] }
-        const tasksArray = Array.isArray(tasks) ? tasks : (tasks.tasks || []);
-        // Count all non-completed tasks (exclude cancelled)
-        const activeCount = tasksArray.filter((t: { status: string }) =>
-          (t.status === 'pending' || t.status === 'in_progress')
-        ).length;
-        setActiveTaskCount(activeCount);
-      }
-    } catch (error) {
-      console.error('Error fetching active task count:', error);
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('closerToken');
-    localStorage.removeItem('closerData');
-    router.push('/closers/login');
-  };
+  const isLoading = isAuthLoading;
 
   const toggleSection = (section: string) => {
     const newExpanded = new Set(expandedSections);

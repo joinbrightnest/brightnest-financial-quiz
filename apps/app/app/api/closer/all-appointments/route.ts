@@ -1,33 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import jwt from 'jsonwebtoken';
+import { authenticateCloser } from '../auth-utils';
 
 export async function GET(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    // 🔒 SECURITY: Authenticate using httpOnly cookie or Authorization header
+    const auth = authenticateCloser(request);
+    if (!auth.success) {
       return NextResponse.json(
-        { error: 'Authorization token required' },
-        { status: 401 }
-      );
-    }
-
-    // 🔒 SECURITY: Require JWT_SECRET (no fallback)
-    const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
-    if (!JWT_SECRET) {
-      console.error('FATAL: JWT_SECRET or NEXTAUTH_SECRET environment variable is required');
-      return NextResponse.json(
-        { error: 'Authentication configuration error' },
-        { status: 500 }
-      );
-    }
-
-    const token = authHeader.substring(7);
-    const decoded = jwt.verify(token, JWT_SECRET) as { role: string; closerId: string };
-
-    if (decoded.role !== 'closer') {
-      return NextResponse.json(
-        { error: 'Invalid token' },
+        { error: auth.error },
         { status: 401 }
       );
     }
@@ -35,7 +16,7 @@ export async function GET(request: NextRequest) {
     // Get all closer's appointments that have been contacted (have an outcome) - for database/follow-up view
     const appointments = await prisma.appointment.findMany({
       where: {
-        closerId: decoded.closerId,
+        closerId: auth.closerId,
         outcome: {
           not: null // Only show appointments that have been contacted (have an outcome)
         }
@@ -81,8 +62,15 @@ export async function GET(request: NextRequest) {
     const affiliateMap: Record<string, string> = {};
 
     if (affiliateCodes.length > 0) {
-      // Get all affiliates to match against (more flexible than OR with IN)
-      const allAffiliates = await prisma.affiliate.findMany({
+      // 🚀 PERFORMANCE: Fetch ONLY relevant affiliates using a targeted query
+      const relevantAffiliates = await prisma.affiliate.findMany({
+        where: {
+          OR: [
+            { referralCode: { in: affiliateCodes } },
+            { customLink: { in: affiliateCodes } },
+            { customLink: { in: affiliateCodes.map(c => `/${c}`) } }
+          ]
+        },
         select: {
           referralCode: true,
           name: true,
@@ -93,14 +81,14 @@ export async function GET(request: NextRequest) {
       // Map affiliate codes to names
       affiliateCodes.forEach(code => {
         // Try exact referral code match first
-        const exactMatch = allAffiliates.find(aff => aff.referralCode === code);
+        const exactMatch = relevantAffiliates.find(aff => aff.referralCode === code);
         if (exactMatch) {
           affiliateMap[code] = exactMatch.name;
           return;
         }
 
-        // Try custom link match (check both with and without leading slash)
-        const customMatch = allAffiliates.find(aff =>
+        // Try custom link match
+        const customMatch = relevantAffiliates.find(aff =>
           aff.customLink === `/${code}` || aff.customLink === code
         );
         if (customMatch) {

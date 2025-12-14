@@ -7,45 +7,15 @@ import LeadDetailView from '@/components/shared/LeadDetailView';
 import ContentLoader from '../components/ContentLoader';
 import { getPriorityColor, getStatusColor } from '@/lib/utils/ui';
 import { PaginationControls } from '@/components/ui/PaginationControls';
-
-interface Closer {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  totalCalls: number;
-  totalConversions: number;
-  totalRevenue: number;
-  conversionRate: number;
-}
-
-interface Task {
-  id: string;
-  title: string;
-  description: string | null;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  status: 'pending' | 'in_progress' | 'completed';
-  dueDate: string | null;
-  completedAt: string | null;
-  leadEmail: string;
-  createdAt: string;
-  closer?: {
-    id: string;
-    name: string;
-    email: string;
-  } | null;
-  appointment?: {
-    id: string;
-    customerName: string;
-    customerEmail: string;
-  } | null;
-}
+import { Task, Closer } from '../types';
+import { useCloserAuth } from '../hooks';
 
 export default function CloserTasks() {
   const router = useRouter();
-  const [closer, setCloser] = useState<Closer | null>(null);
+  const { closer, isLoading: isAuthLoading, isAuthenticated, handleLogout } = useCloserAuth();
+
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isTasksLoading, setIsTasksLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'due_today' | 'overdue' | 'upcoming'>('all');
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -63,59 +33,20 @@ export default function CloserTasks() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(50);
 
+  // Fetch tasks when authenticated
   useEffect(() => {
-    checkAuth();
-  }, []);
-
-  useEffect(() => {
-    if (closer) {
+    if (isAuthenticated) {
       fetchTasks();
     }
-  }, [closer]);
+  }, [isAuthenticated]);
 
-  const checkAuth = async () => {
-    const token = localStorage.getItem('closerToken');
-
-    if (!token) {
-      router.push('/closers/login');
-      return;
-    }
-
-    try {
-      const response = await fetch('/api/closer/stats', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setCloser(data.closer);
-      } else {
-        router.push('/closers/login');
-      }
-    } catch (error) {
-      console.error('Auth check failed:', error);
-      router.push('/closers/login');
-    }
-  };
+  const loading = isAuthLoading || isTasksLoading;
 
   const fetchTasks = async () => {
     try {
-      setLoading(true);
-      const token = localStorage.getItem('closerToken');
-
-      if (!token) {
-        setError('Not authenticated');
-        setLoading(false);
-        return;
-      }
-
       const response = await fetch('/api/tasks', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        // 🔒 SECURITY: Use httpOnly cookie for authentication
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -130,7 +61,7 @@ export default function CloserTasks() {
       console.error('Error fetching tasks:', error);
       setError('Failed to load tasks');
     } finally {
-      setLoading(false);
+      setIsTasksLoading(false);
     }
   };
 
@@ -208,24 +139,15 @@ export default function CloserTasks() {
     return filtered;
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('closerToken');
-    localStorage.removeItem('closerData');
-    router.push('/closers/login');
-  };
+
 
   const handleUpdateStatus = async (taskId: string, newStatus: 'pending' | 'in_progress' | 'completed') => {
     try {
-      const token = localStorage.getItem('closerToken');
-      if (!token) {
-        setError('Not authenticated');
-        return;
-      }
-
       const response = await fetch(`/api/tasks/${taskId}`, {
         method: 'PUT',
+        // 🔒 SECURITY: Use httpOnly cookie for authentication
+        credentials: 'include',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -299,16 +221,11 @@ export default function CloserTasks() {
     }
 
     try {
-      const token = localStorage.getItem('closerToken');
-      if (!token) {
-        setError('Not authenticated');
-        return;
-      }
-
       const response = await fetch('/api/tasks', {
         method: 'POST',
+        // 🔒 SECURITY: Use httpOnly cookie for authentication
+        credentials: 'include',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -316,7 +233,6 @@ export default function CloserTasks() {
           description: taskForm.description || null,
           priority: taskForm.priority,
           dueDate: taskForm.dueDate || null,
-          // Task will be automatically assigned to the closer from their account
         }),
       });
 
@@ -347,14 +263,8 @@ export default function CloserTasks() {
 
   const viewLeadDetails = async (leadEmail: string) => {
     try {
-      const token = localStorage.getItem('closerToken');
-      if (!token) {
-        setError('Not authenticated');
-        return;
-      }
-
       const response = await fetch(`/api/leads/by-email?email=${encodeURIComponent(leadEmail)}`, {
-        headers: { 'Authorization': `Bearer ${token}` },
+        credentials: 'include',
       });
 
       if (response.ok) {
@@ -380,16 +290,11 @@ export default function CloserTasks() {
     }
 
     try {
-      const token = localStorage.getItem('closerToken');
-      if (!token) {
-        setError('Not authenticated');
-        return;
-      }
-
       const response = await fetch(`/api/tasks/${editingTask.id}`, {
         method: 'PUT',
+        // 🔒 SECURITY: Use httpOnly cookie for authentication
+        credentials: 'include',
         headers: {
-          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({

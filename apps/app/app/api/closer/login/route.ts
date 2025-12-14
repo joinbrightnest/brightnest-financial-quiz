@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { rateLimit, rateLimitExceededResponse } from '@/lib/rate-limit';
+import { setCrossDomainCookie } from '@/lib/session';
 
 export async function POST(request: NextRequest) {
   // 🛡️ SECURITY: Rate limit authentication attempts (5 per 15 minutes)
@@ -71,8 +72,8 @@ export async function POST(request: NextRequest) {
 
     // Generate JWT token
     const token = jwt.sign(
-      { 
-        closerId: closer.id, 
+      {
+        closerId: closer.id,
         email: closer.email,
         role: 'closer'
       },
@@ -89,9 +90,9 @@ export async function POST(request: NextRequest) {
           email: closer.email,
           loginTime: new Date().toISOString(),
         },
-        ipAddress: request.headers.get('x-forwarded-for') || 
-                   request.headers.get('x-real-ip') || 
-                   'unknown',
+        ipAddress: request.headers.get('x-forwarded-for') ||
+          request.headers.get('x-real-ip') ||
+          'unknown',
         userAgent: request.headers.get('user-agent') || 'unknown',
       }
     });
@@ -102,8 +103,11 @@ export async function POST(request: NextRequest) {
       email: closer.email
     });
 
-    return NextResponse.json({
+    // Create response with closer data
+    const response = NextResponse.json({
       success: true,
+      // Note: Token is still returned for backward compatibility
+      // but frontend should NOT store it in localStorage
       token,
       closer: {
         id: closer.id,
@@ -119,6 +123,15 @@ export async function POST(request: NextRequest) {
         createdAt: closer.createdAt,
       }
     });
+
+    // 🔒 SECURITY: Set httpOnly cookie for secure token storage
+    // Token is automatically included in subsequent requests by the browser
+    // JavaScript cannot access this cookie (protection against XSS)
+    setCrossDomainCookie(response, 'closerToken', token, {
+      maxAge: 7 * 24 * 60 * 60, // 7 days (matches JWT expiry)
+    });
+
+    return response;
 
   } catch (error) {
     console.error('❌ Error logging in closer:', error);
