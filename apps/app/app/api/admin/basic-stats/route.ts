@@ -45,6 +45,50 @@ export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const resetType = searchParams.get('type') || 'quiz'; // 'quiz', 'affiliate', 'closer', 'all'
+    const confirmation = searchParams.get('confirm') === 'true';
+    const resetSecret = searchParams.get('secret');
+
+    // 🛡️ SECURITY: Production protection - require explicit confirmation and secret
+    const isProduction = process.env.NODE_ENV === 'production' ||
+      process.env.VERCEL_ENV === 'production';
+    const expectedSecret = process.env.RESET_DATA_SECRET;
+
+    if (isProduction) {
+      // In production: ALWAYS require both secret and confirmation
+      if (!expectedSecret) {
+        console.error('❌ RESET_DATA_SECRET not configured - data reset blocked in production');
+        return NextResponse.json(
+          { error: "Data reset is not configured for this environment" },
+          { status: 403 }
+        );
+      }
+
+      if (!resetSecret || resetSecret !== expectedSecret) {
+        console.warn('⚠️ Invalid reset secret provided');
+        return NextResponse.json(
+          { error: "Invalid reset authorization" },
+          { status: 403 }
+        );
+      }
+
+      if (!confirmation) {
+        return NextResponse.json(
+          { error: "Confirmation required. Add ?confirm=true to proceed." },
+          { status: 400 }
+        );
+      }
+
+      console.warn(`⚠️ PRODUCTION DATA RESET INITIATED: type=${resetType}`);
+    } else {
+      // In development: require explicit confirmation
+      if (!confirmation) {
+        return NextResponse.json({
+          error: "Confirmation required",
+          message: "Add ?confirm=true to proceed with data reset",
+          environment: process.env.NODE_ENV || 'development'
+        }, { status: 400 });
+      }
+    }
 
     console.log(`🔄 Starting ${resetType} data reset...`);
 
@@ -236,6 +280,23 @@ export async function GET(request: NextRequest) {
     };
 
     const dateFilter = buildDateFilter();
+
+    // 🚀 PERFORMANCE: Pre-fetch affiliate ID if filtering by affiliateCode
+    // This eliminates duplicate lookups later in getClicksActivityData() and totalClicks
+    let cachedAffiliateId: string | null = null;
+    if (affiliateCode) {
+      const affiliate = await prisma.affiliate.findFirst({
+        where: {
+          OR: [
+            { referralCode: affiliateCode },
+            { custom_tracking_link: affiliateCode },
+            { custom_tracking_link: `/${affiliateCode}` }
+          ]
+        },
+        select: { id: true }
+      });
+      cachedAffiliateId = affiliate?.id || null;
+    }
 
     // 🚀 PERFORMANCE: Parallelize initial queries for better speed
     const [totalSessions, avgDurationResult] = await Promise.all([
@@ -906,15 +967,8 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      // Get affiliate ID if filtering by affiliate
-      let affiliateIdForFilter: string | undefined;
-      if (affiliateCode) {
-        const affiliate = await prisma.affiliate.findUnique({
-          where: { referralCode: affiliateCode },
-          select: { id: true }
-        });
-        affiliateIdForFilter = affiliate?.id;
-      }
+      // 🚀 PERFORMANCE: Use cached affiliate ID instead of duplicate database query
+      const affiliateIdForFilter = cachedAffiliateId || undefined;
 
       // FUNNEL LOGIC:
       // Step 1: Clicks = ALL people who land on the page (regardless of whether they start a quiz)
@@ -1037,36 +1091,24 @@ export async function GET(request: NextRequest) {
     // This is funnel step 1, before quiz type is chosen
     let totalClicks = 0;
 
-    if (affiliateCode) {
-      // If filtering by affiliate, get the affiliate ID and count their clicks
-      const affiliate = await prisma.affiliate.findUnique({
-        where: { referralCode: affiliateCode },
-        select: { id: true }
-      });
-
-      if (affiliate) {
-        totalClicks = await prisma.affiliateClick.count({
-          where: {
-            affiliateId: affiliate.id,
-            createdAt: dateFilter
-          }
-        });
-      }
-    } else {
-      // Count all affiliate clicks
-      const affiliateClicksCount = await prisma.affiliateClick.count({
+    if (affiliateCode && cachedAffiliateId) {
+      // 🚀 PERFORMANCE: Use cached affiliate ID instead of duplicate database query
+      totalClicks = await prisma.affiliateClick.count({
         where: {
+          affiliateId: cachedAffiliateId,
           createdAt: dateFilter
         }
       });
-
-      // Count normal website clicks (these don't have affiliate association)
-      const normalWebsiteClicksCount = await prisma.normalWebsiteClick.count({
-        where: {
-          createdAt: dateFilter
-        }
-      });
-
+    } else if (!affiliateCode) {
+      // 🚀 PERFORMANCE: Parallelize click counts for better speed
+      const [affiliateClicksCount, normalWebsiteClicksCount] = await Promise.all([
+        prisma.affiliateClick.count({
+          where: { createdAt: dateFilter }
+        }),
+        prisma.normalWebsiteClick.count({
+          where: { createdAt: dateFilter }
+        })
+      ]);
       totalClicks = affiliateClicksCount + normalWebsiteClicksCount;
     }
 
