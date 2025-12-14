@@ -6,7 +6,7 @@ import ErrorBoundary from '../../components/ErrorBoundary';
 export default function CloserManagementPage() {
     return (
         <ErrorBoundary sectionName="Closer Management">
-            <div className="mb-8">
+            <div className="h-full flex flex-col">
                 <CloserManagement />
             </div>
         </ErrorBoundary>

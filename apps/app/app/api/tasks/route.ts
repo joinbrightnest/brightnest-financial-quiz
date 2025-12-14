@@ -204,8 +204,13 @@ export async function POST(request: NextRequest) {
 
                 // If still no closer ID, return error
                 if (!assignedCloserId) {
-                    console.log('Task Creation Failed: No closer ID and fallback failed');
-                    return NextResponse.json({ error: 'Closer assignment is required. This lead may not have an assigned closer.' }, { status: 400 });
+                    // Fallback 2: If user is also a closer (dual auth), assign to self
+                    if (closerId) {
+                        assignedCloserId = closerId;
+                    } else {
+                        console.log('Task Creation Failed: No closer ID and fallback failed');
+                        return NextResponse.json({ error: 'Closer assignment is required. This lead may not have an assigned closer.' }, { status: 400 });
+                    }
                 } else {
                     console.log('Task Creation: Fallback successful, found closerId:', assignedCloserId);
                 }

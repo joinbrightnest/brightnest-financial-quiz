@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PlusCircle, RefreshCw } from 'lucide-react';
 import { getPriorityColor } from '@/lib/utils/ui';
+import { PaginationControls } from '@/components/ui/PaginationControls';
 
 interface Closer {
   id: string;
@@ -125,6 +126,10 @@ export default function CloserManagement() {
   const [leadSearchQuery, setLeadSearchQuery] = useState('');
   const [showLeadDropdown, setShowLeadDropdown] = useState(false);
   const leadDropdownRef = useRef<HTMLDivElement>(null);
+  // Pagination State for Tasks
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
   const [selectedLeadSessionId, setSelectedLeadSessionId] = useState<string | null>(null);
   const [showLeadModal, setShowLeadModal] = useState(false);
@@ -772,7 +777,7 @@ export default function CloserManagement() {
 
 
   return (
-    <div className="space-y-6">
+    <div className={activeTab === 'tasks' ? "h-full flex flex-col overflow-hidden" : "space-y-6"}>
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
           {error}
@@ -1552,148 +1557,78 @@ export default function CloserManagement() {
             const upcomingCount = activeTasks.filter(t => isDueDateUpcoming(t.dueDate)).length;
 
             return (
-              <div className="space-y-6">
-                {/* Filter Tabs */}
-                <div className="bg-white rounded-lg border border-gray-200 p-4">
-                  <div className="flex flex-col space-y-4">
-                    {/* Status Filter */}
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setTaskFilter('all')}
-                        className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${taskFilter === 'all'
-                          ? 'bg-slate-900 text-white shadow-sm'
-                          : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
-                          }`}
-                      >
-                        All ({allCount})
-                      </button>
-                      <button
-                        onClick={() => setTaskFilter('due_today')}
-                        className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${taskFilter === 'due_today'
-                          ? 'bg-slate-900 text-white shadow-sm'
-                          : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
-                          }`}
-                      >
-                        Due Today ({dueTodayCount})
-                      </button>
-                      <button
-                        onClick={() => setTaskFilter('overdue')}
-                        className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${taskFilter === 'overdue'
-                          ? 'bg-slate-900 text-white shadow-sm'
-                          : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
-                          }`}
-                      >
-                        Overdue ({overdueCount})
-                      </button>
-                      <button
-                        onClick={() => setTaskFilter('upcoming')}
-                        className={`flex-1 px-5 py-2.5 rounded-md text-sm font-medium transition-all ${taskFilter === 'upcoming'
-                          ? 'bg-slate-900 text-white shadow-sm'
-                          : 'bg-white text-slate-700 border border-gray-300 hover:bg-slate-50'
-                          }`}
-                      >
-                        Upcoming ({upcomingCount})
-                      </button>
+              <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+                {/* Filter Tabs & Controls */}
+                <div className="mb-6 space-y-4">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    {/* Search/Filter Bar */}
+                    <div className="flex-1 w-full sm:max-w-md">
+                      {/* Placeholder for future search if needed */}
                     </div>
-
-                    {/* Closer Filter */}
-                    <div className="flex items-center space-x-3">
-                      <label className="text-sm font-medium text-slate-700 whitespace-nowrap">
-                        Filter by Closer:
-                      </label>
-                      <select
-                        value={taskCloserFilter}
-                        onChange={(e) => setTaskCloserFilter(e.target.value)}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-sm text-slate-900 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-w-[200px]"
-                      >
-                        <option value="all">All Closers</option>
-                        {closers
-                          .filter(c => c.isActive && c.isApproved)
-                          .map(closer => (
-                            <option key={closer.id} value={closer.id}>
-                              {closer.name}
-                            </option>
-                          ))}
-                      </select>
-                    </div>
+                    <label className="text-sm font-medium text-slate-700 whitespace-nowrap">
+                      Filter by Closer:
+                    </label>
+                    <select
+                      value={taskCloserFilter}
+                      onChange={(e) => { setTaskCloserFilter(e.target.value); setCurrentPage(1); }}
+                      className="px-3 py-1.5 border border-gray-300 rounded-md text-sm text-slate-900 bg-white focus:ring-1 focus:ring-slate-500 focus:border-slate-500 min-w-[180px]"
+                    >
+                      <option value="all">All Closers</option>
+                      {closers
+                        .filter(c => c.isActive && c.isApproved)
+                        .map(closer => (
+                          <option key={closer.id} value={closer.id}>
+                            {closer.name}
+                          </option>
+                        ))}
+                    </select>
                   </div>
                 </div>
 
-                {/* Tasks Container with Header and Create Button */}
-                <div className="bg-white rounded-xl border border-slate-200 p-6">
-                  <div className="flex justify-between items-center mb-6">
-                    <div className="flex items-center">
-                      <svg className="w-6 h-6 text-slate-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                      </svg>
-                      <h3 className="text-lg font-semibold text-slate-900">
-                        Tasks ({(() => {
-                          // Helper functions for date checking
-                          const isDueDateToday = (dueDate: string | null): boolean => {
-                            if (!dueDate) return false;
-                            const today = new Date();
-                            today.setHours(0, 0, 0, 0);
-                            const due = new Date(dueDate);
-                            due.setHours(0, 0, 0, 0);
-                            return due.getTime() === today.getTime();
-                          };
-
-                          const isDueDateOverdue = (dueDate: string | null): boolean => {
-                            if (!dueDate) return false;
-                            const today = new Date();
-                            today.setHours(0, 0, 0, 0);
-                            const due = new Date(dueDate);
-                            due.setHours(0, 0, 0, 0);
-                            return due < today;
-                          };
-
-                          const isDueDateUpcoming = (dueDate: string | null): boolean => {
-                            if (!dueDate) return false;
-                            const today = new Date();
-                            today.setHours(0, 0, 0, 0);
-                            const due = new Date(dueDate);
-                            due.setHours(0, 0, 0, 0);
-                            return due > today;
-                          };
-
-                          // Filter out completed tasks (like HubSpot - only show active tasks)
-                          const activeTasks = allTasks.filter(t => t.status === 'pending' || t.status === 'in_progress');
-
-                          let filteredTasks: Task[] = [];
-
-                          switch (taskFilter) {
-                            case 'due_today':
-                              filteredTasks = activeTasks.filter(t => isDueDateToday(t.dueDate));
-                              break;
-                            case 'overdue':
-                              filteredTasks = activeTasks.filter(t => isDueDateOverdue(t.dueDate));
-                              break;
-                            case 'upcoming':
-                              filteredTasks = activeTasks.filter(t => isDueDateUpcoming(t.dueDate));
-                              break;
-                            case 'all':
-                            default:
-                              filteredTasks = activeTasks;
-                              break;
-                          }
-
-                          // Apply closer filter
-                          const closerFilteredTasks = taskCloserFilter === 'all'
-                            ? filteredTasks
-                            : filteredTasks.filter(t => t.closer?.id === taskCloserFilter);
-
-                          return closerFilteredTasks.length;
-                        })()})
-                      </h3>
-                    </div>
+                {/* Tabs */}
+                <div className="flex-shrink-0 px-1">
+                  <div className="flex border-b border-gray-300 bg-slate-100 rounded-t-lg overflow-hidden">
                     <button
-                      onClick={() => setShowTaskForm(!showTaskForm)}
-                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-700"
+                      onClick={() => { setTaskFilter('all'); setCurrentPage(1); }}
+                      className={`flex-1 px-6 py-3 text-sm font-semibold transition-all whitespace-nowrap border-b-2 ${taskFilter === 'all'
+                        ? 'border-slate-800 text-slate-900 bg-white'
+                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-gray-50 bg-transparent'
+                        }`}
                     >
-                      <PlusCircle className="-ml-1 mr-2 h-5 w-5" />
-                      {showTaskForm ? 'Cancel' : 'Create Task'}
+                      All ({allCount})
+                    </button>
+                    <button
+                      onClick={() => { setTaskFilter('due_today'); setCurrentPage(1); }}
+                      className={`flex-1 px-6 py-3 text-sm font-semibold transition-all whitespace-nowrap border-b-2 ${taskFilter === 'due_today'
+                        ? 'border-slate-800 text-slate-900 bg-white'
+                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-gray-50 bg-transparent'
+                        }`}
+                    >
+                      Due Today ({dueTodayCount})
+                    </button>
+                    <button
+                      onClick={() => { setTaskFilter('overdue'); setCurrentPage(1); }}
+                      className={`flex-1 px-6 py-3 text-sm font-semibold transition-all whitespace-nowrap border-b-2 ${taskFilter === 'overdue'
+                        ? 'border-slate-800 text-slate-900 bg-white'
+                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-gray-50 bg-transparent'
+                        }`}
+                    >
+                      Overdue ({overdueCount})
+                    </button>
+                    <button
+                      onClick={() => { setTaskFilter('upcoming'); setCurrentPage(1); }}
+                      className={`flex-1 px-6 py-3 text-sm font-semibold transition-all whitespace-nowrap border-b-2 ${taskFilter === 'upcoming'
+                        ? 'border-slate-800 text-slate-900 bg-white'
+                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:bg-gray-50 bg-transparent'
+                        }`}
+                    >
+                      Upcoming ({upcomingCount})
                     </button>
                   </div>
+                </div>
+
+                {/* Table Container - Directly after tabs */}
+                <div className="flex-1 flex flex-col min-h-0 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
 
                   {/* Collapsible Task Form */}
                   {showTaskForm && (
@@ -2009,193 +1944,233 @@ export default function CloserManagement() {
 
 
 
-                    return filteredTasks.length === 0 ? (
-                      <div className="text-center py-12">
-                        <svg className="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <p className="text-gray-600 text-lg mb-2">No tasks found</p>
-                        <p className="text-gray-500 text-sm">Create tasks from lead details to see them here</p>
-                      </div>
-                    ) : (
-                      <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
-                          <thead className="bg-gray-50">
-                            <tr>
-                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Status
-                              </th>
-                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Title
-                              </th>
-                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Priority
-                              </th>
-                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Associated Contact
-                              </th>
-                              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Due Date
-                              </th>
-                              <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
-                                Actions
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody className="bg-white divide-y divide-gray-200">
-                            {filteredTasks.map((task) => {
-                              const isExpanded = expandedTasks.has(task.id);
-                              const associatedContact = task.appointment?.customerName || null;
-                              const leadEmail = task.appointment?.customerEmail || task.leadEmail;
 
-                              return (
-                                <React.Fragment key={task.id}>
-                                  <tr className={`hover:bg-gray-50 transition-colors ${isExpanded ? 'bg-gray-50' : ''}`}>
-                                    {/* Status Column - Clickable */}
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                      <button
-                                        onClick={() => {
-                                          if (task.status === 'completed') {
-                                            handleUpdateTaskStatus(task.id, 'pending');
-                                          } else {
-                                            handleUpdateTaskStatus(task.id, 'completed');
-                                          }
-                                        }}
-                                        className="flex items-center cursor-pointer hover:opacity-80 transition-opacity"
-                                        title={task.status === 'completed' ? 'Mark as not completed' : 'Mark as completed'}
-                                      >
-                                        {task.status === 'completed' ? (
-                                          <div className="w-6 h-6 rounded-full bg-indigo-500 flex items-center justify-center">
-                                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                                            </svg>
-                                          </div>
-                                        ) : (
-                                          <div className="w-6 h-6 rounded-full bg-amber-100 border-2 border-amber-400 hover:border-amber-500 transition-colors"></div>
-                                        )}
-                                      </button>
-                                    </td>
+                    // Pagination Logic
+                    const totalItems = filteredTasks.length;
+                    const totalPages = Math.ceil(totalItems / itemsPerPage);
+                    const paginatedTasks = filteredTasks.slice(
+                      (currentPage - 1) * itemsPerPage,
+                      currentPage * itemsPerPage
+                    );
 
-                                    {/* Title Column - Expandable */}
-                                    <td className="px-6 py-4">
-                                      <div className="flex items-center">
-                                        <button
-                                          onClick={() => toggleTaskExpand(task.id)}
-                                          className="mr-2 p-1 hover:bg-gray-200 rounded transition-colors"
-                                        >
-                                          <svg
-                                            className={`w-4 h-4 text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
+                    return (
+                      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+                        {paginatedTasks.length === 0 ? (
+                          <div className="flex-1 flex flex-col items-center justify-center py-12 text-center text-slate-500">
+                            <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-4 border border-slate-100">
+                              <svg className="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                              </svg>
+                            </div>
+                            <p className="text-base font-medium text-slate-600">No tasks found</p>
+                          </div>
+                        ) : (
+                          <div className="flex-1 overflow-auto">
+                            <table className="min-w-full divide-y divide-gray-300">
+                              <thead className="bg-gray-100 sticky top-0 z-10">
+                                <tr>
+                                  <th scope="col" className="px-4 py-2.5 text-left text-[11px] font-bold text-gray-600 uppercase tracking-wider border-b border-gray-300">
+                                    Status
+                                  </th>
+                                  <th scope="col" className="px-4 py-2.5 text-left text-[11px] font-bold text-gray-600 uppercase tracking-wider border-b border-gray-300">
+                                    Title
+                                  </th>
+                                  <th scope="col" className="px-4 py-2.5 text-left text-[11px] font-bold text-gray-600 uppercase tracking-wider border-b border-gray-300">
+                                    Priority
+                                  </th>
+                                  <th scope="col" className="px-4 py-2.5 text-left text-[11px] font-bold text-gray-600 uppercase tracking-wider border-b border-gray-300">
+                                    Associated Contact
+                                  </th>
+                                  <th scope="col" className="px-4 py-2.5 text-left text-[11px] font-bold text-gray-600 uppercase tracking-wider border-b border-gray-300">
+                                    Due Date
+                                  </th>
+                                  <th scope="col" className="px-4 py-2.5 text-right text-[11px] font-bold text-gray-600 uppercase tracking-wider w-16 border-b border-gray-300">
+                                    Actions
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody className="bg-white divide-y divide-gray-300">
+                                {paginatedTasks.map((task) => {
+                                  const isExpanded = expandedTasks.has(task.id);
+                                  const associatedContact = task.appointment?.customerName || null;
+                                  const leadEmail = task.appointment?.customerEmail || task.leadEmail;
+
+                                  return (
+                                    <React.Fragment key={task.id}>
+                                      <tr className={`hover:bg-gray-50 transition-colors ${isExpanded ? 'bg-gray-50' : ''}`}>
+                                        {/* Status Column */}
+                                        <td className="px-4 py-2.5 whitespace-nowrap">
+                                          <button
+                                            onClick={() => {
+                                              if (task.status === 'completed') {
+                                                handleUpdateTaskStatus(task.id, 'pending');
+                                              } else {
+                                                handleUpdateTaskStatus(task.id, 'completed');
+                                              }
+                                            }}
+                                            className="group flex items-center justify-center focus:outline-none"
+                                            title={task.status === 'completed' ? 'Mark as incomplete' : 'Mark as complete'}
                                           >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                          </svg>
-                                        </button>
-                                        <span className={`text-sm font-medium text-gray-900 ${task.status === 'completed' ? 'line-through text-gray-500' : ''}`}>
-                                          {task.title}
-                                        </span>
-                                      </div>
-                                    </td>
-
-                                    {/* Priority Column */}
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                      <span className={`px-2 py-1 rounded-md text-xs ${getPriorityColor(task.priority)}`}>
-                                        {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                                      </span>
-                                    </td>
-
-                                    {/* Associated Contact Column - Clickable */}
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                      <div className="flex items-center">
-                                        {associatedContact && leadEmail ? (
-                                          <>
-                                            <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center mr-2 flex-shrink-0">
-                                              <span className="text-xs font-medium text-indigo-700">
-                                                {associatedContact.charAt(0).toUpperCase()}
-                                              </span>
-                                            </div>
-                                            <button
-                                              onClick={() => viewLeadDetails(leadEmail)}
-                                              className="text-sm text-gray-900 hover:text-indigo-600 hover:underline transition-colors cursor-pointer"
-                                              title="View lead details"
-                                            >
-                                              {associatedContact}
-                                            </button>
-                                          </>
-                                        ) : (
-                                          <span className="text-sm text-gray-400">--</span>
-                                        )}
-                                      </div>
-                                    </td>
-
-                                    {/* Due Date Column */}
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                      {task.dueDate ? (
-                                        <span className={`text-sm ${(isDueDateOverdue(task.dueDate) || isDueDateToday(task.dueDate)) && task.status !== 'completed' ? 'text-red-600 font-semibold' : 'text-gray-900'}`}>
-                                          {new Date(task.dueDate).toLocaleDateString()}
-                                        </span>
-                                      ) : (
-                                        <span className="text-sm text-gray-400">--</span>
-                                      )}
-                                    </td>
-
-                                    {/* Actions Column */}
-                                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                      <button
-                                        onClick={() => toggleTaskExpand(task.id)}
-                                        className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
-                                        title={isExpanded ? "Collapse details" : "View details"}
-                                      >
-                                        {isExpanded ? (
-                                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                                          </svg>
-                                        ) : (
-                                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                          </svg>
-                                        )}
-                                      </button>
-                                    </td>
-                                  </tr>
-
-                                  {/* Expanded Details Row */}
-                                  {isExpanded && (
-                                    <tr className="bg-slate-50">
-                                      <td colSpan={6} className="px-6 py-4">
-                                        <div className="space-y-3">
-                                          {task.description && (
-                                            <div>
-                                              <span className="text-xs font-semibold text-slate-600 uppercase">Description</span>
-                                              <p className="text-sm text-slate-700 mt-1">{task.description}</p>
-                                            </div>
-                                          )}
-                                          <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                              <span className="text-xs font-semibold text-slate-600 uppercase">Assigned To</span>
-                                              <p className="text-sm text-slate-700 mt-1">{task.closer?.name || 'N/A'}</p>
-                                            </div>
-                                            <div>
-                                              <span className="text-xs font-semibold text-slate-600 uppercase">Created At</span>
-                                              <p className="text-sm text-slate-700 mt-1">{new Date(task.createdAt).toLocaleString()}</p>
-                                            </div>
-                                            {task.completedAt && (
-                                              <div>
-                                                <span className="text-xs font-semibold text-slate-600 uppercase">Completed At</span>
-                                                <p className="text-sm text-slate-700 mt-1">{new Date(task.completedAt).toLocaleString()}</p>
+                                            {task.status === 'completed' ? (
+                                              <div className="w-5 h-5 rounded-full bg-teal-500 border border-teal-600 flex items-center justify-center text-white shadow-sm transition-all hover:bg-teal-600">
+                                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                </svg>
                                               </div>
+                                            ) : (
+                                              <div className="w-5 h-5 rounded-full border-2 border-gray-300 bg-white group-hover:border-teal-500 transition-colors shadow-sm"></div>
+                                            )}
+                                          </button>
+                                        </td>
+
+                                        {/* Title Column */}
+                                        <td className="px-4 py-2.5">
+                                          <div className="flex items-center">
+                                            <button
+                                              onClick={() => toggleTaskExpand(task.id)}
+                                              className="mr-2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+                                            >
+                                              {isExpanded ? (
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                              ) : (
+                                                <svg className="w-4 h-4 transform -rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                              )}
+                                            </button>
+                                            <span className={`text-sm font-medium text-slate-800 ${task.status === 'completed' ? 'line-through text-slate-400' : ''}`}>
+                                              {task.title}
+                                            </span>
+                                          </div>
+                                        </td>
+
+                                        {/* Priority Column */}
+                                        <td className="px-4 py-2.5 whitespace-nowrap">
+                                          <span className="text-xs font-medium text-slate-600">
+                                            {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                                          </span>
+                                        </td>
+
+                                        {/* Associated Contact Column */}
+                                        <td className="px-4 py-2.5 whitespace-nowrap">
+                                          <div className="flex items-center">
+                                            {associatedContact && leadEmail ? (
+                                              <>
+                                                <div className="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center mr-2 flex-shrink-0 text-[10px] font-medium text-slate-600 uppercase">
+                                                  {associatedContact.charAt(0)}
+                                                </div>
+                                                <button
+                                                  onClick={() => viewLeadDetails(leadEmail)}
+                                                  className="text-sm font-medium text-teal-600 hover:text-teal-800 hover:underline transition-colors cursor-pointer truncate max-w-[150px]"
+                                                  title={associatedContact}
+                                                >
+                                                  {associatedContact}
+                                                </button>
+                                              </>
+                                            ) : (
+                                              <span className="text-sm text-slate-400">--</span>
                                             )}
                                           </div>
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  )}
-                                </React.Fragment>
-                              );
-                            })}
-                          </tbody>
-                        </table>
+                                        </td>
+
+                                        {/* Due Date Column */}
+                                        <td className="px-4 py-2.5 whitespace-nowrap">
+                                          {task.dueDate ? (
+                                            <span className={`text-xs font-medium ${(isDueDateOverdue(task.dueDate) || isDueDateToday(task.dueDate)) && task.status !== 'completed'
+                                              ? 'text-red-500'
+                                              : 'text-slate-500'
+                                              }`}>
+                                              {new Date(task.dueDate).toLocaleDateString()}
+                                            </span>
+                                          ) : (
+                                            <span className="text-xs text-slate-400">--</span>
+                                          )}
+                                        </td>
+
+                                        {/* Actions Column */}
+                                        <td className="px-4 py-2.5 whitespace-nowrap text-right">
+                                          <button
+                                            onClick={() => {
+                                              // Pre-fill edit form logic would go here if implemented
+                                              // For now relying on expand
+                                              toggleTaskExpand(task.id);
+                                            }}
+                                            className="text-slate-400 hover:text-blue-600 transition-colors"
+                                          >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            </svg>
+                                          </button>
+                                        </td>
+                                      </tr>
+
+                                      {/* Expanded Details Row */}
+                                      {isExpanded && (
+                                        <tr className="bg-slate-50 border-t border-slate-100">
+                                          <td colSpan={6} className="px-8 py-4">
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                                              <div className="space-y-4">
+                                                <div>
+                                                  <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Description</h4>
+                                                  <p className="text-slate-700 leading-relaxed bg-white p-3 rounded border border-slate-200 shadow-sm min-h-[60px]">
+                                                    {task.description || "No description provided."}
+                                                  </p>
+                                                </div>
+                                              </div>
+                                              <div className="space-y-4">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                  <div>
+                                                    <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Assigned Closer</h4>
+                                                    <div className="text-slate-800 font-medium">
+                                                      {task.closer?.name || 'Unassigned'}
+                                                    </div>
+                                                  </div>
+                                                  <div>
+                                                    <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Created At</h4>
+                                                    <div className="text-slate-600">
+                                                      {new Date(task.createdAt).toLocaleString()}
+                                                    </div>
+                                                  </div>
+                                                  {task.completedAt && (
+                                                    <div>
+                                                      <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Completed</h4>
+                                                      <div className="text-teal-600 font-medium">
+                                                        {new Date(task.completedAt).toLocaleString()}
+                                                      </div>
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </td>
+                                        </tr>
+                                      )}
+                                    </React.Fragment>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+
+                        {/* Pagination Footer */}
+                        <div className="bg-white border-t border-gray-200 sticky bottom-0 z-20 flex justify-center">
+                          <PaginationControls
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={setCurrentPage}
+                            itemsPerPage={itemsPerPage}
+                            onItemsPerPageChange={(val: number) => {
+                              setItemsPerPage(val);
+                              setCurrentPage(1);
+                            }}
+                            totalItems={totalItems}
+                            showingFrom={(currentPage - 1) * itemsPerPage + 1}
+                            showingTo={Math.min(currentPage * itemsPerPage, totalItems)}
+                          />
+                        </div>
                       </div>
                     );
                   })()}
@@ -2699,7 +2674,8 @@ export default function CloserManagement() {
             </div>
           )}
         </>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }
