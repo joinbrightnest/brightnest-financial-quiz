@@ -354,14 +354,6 @@ export default function CommissionPayoutManager({ dateRange = "all" }: Commissio
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">Commission Payout Management</h1>
-          <p className="text-slate-600 mt-2">Professional affiliate commission payout system</p>
-        </div>
-      </div>
-
       {/* Release Status Alert */}
       {releaseStatus.show && (
         <motion.div

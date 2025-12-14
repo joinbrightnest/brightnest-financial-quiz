@@ -268,22 +268,59 @@ function generateRecentActivityFromRealData(clicks: AffiliateClick[], conversion
     .slice(0, 10);
 }
 
-// Helper function to generate daily stats using centralized lead calculation
+// 🚀 OPTIMIZED: Fetch all leads ONCE and group by day in memory (was: N queries for N days)
 async function generateDailyStatsWithCentralizedLeads(
   affiliateId: string,
   clicks: AffiliateClick[],
   conversions: AffiliateConversion[],
   dateRange: string
 ) {
+  const now = new Date();
+  let days: number;
+  let isHourly = false;
+
+  // Determine the number of data points
+  switch (dateRange) {
+    case "24h":
+    case "1d":
+      days = 1;
+      isHourly = true;
+      break;
+    case "7d":
+      days = 7;
+      break;
+    case "30d":
+      days = 30;
+      break;
+    case "90d":
+      days = 90;
+      break;
+    case "1y":
+      days = 365;
+      break;
+    case "all":
+      days = 90; // Cap at 90 for "all time" to keep manageable
+      break;
+    default:
+      days = 30;
+  }
+
+  // Calculate start/end dates for the entire period
+  const periodStart = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+  periodStart.setHours(0, 0, 0, 0);
+  const periodEnd = now;
+
+  // 🚀 SINGLE QUERY: Get all leads for the entire period at once
+  const allLeadsData = await calculateLeadsWithDateRange(periodStart, periodEnd, affiliateId);
+  const allLeads = allLeadsData.leads || [];
+
+  console.log(`📊 Fetched ${allLeads.length} leads for ${days} days in ONE query`);
+
   const stats = [];
 
-  if (dateRange === "24h" || dateRange === "1d") {
+  if (isHourly) {
     // For 24 hours, show hourly data
-    const now = new Date();
-
-    // For "Last 24 hours", go back 24 hours from now
     for (let i = 23; i >= 0; i--) {
-      // Calculate the timestamp for each of the last 24 hours (going backwards from now)
       const hourTimestamp = new Date(now.getTime() - i * 60 * 60 * 1000);
       const hourStart = new Date(hourTimestamp);
       hourStart.setMinutes(0, 0, 0);
@@ -292,7 +329,7 @@ async function generateDailyStatsWithCentralizedLeads(
 
       const hourLabel = `${hourTimestamp.getHours().toString().padStart(2, '0')}:00`;
 
-      // Filter data for this specific hour using proper time ranges
+      // Filter pre-fetched data in memory (no DB call)
       const hourClicks = clicks.filter(c => {
         const clickDate = new Date(c.createdAt);
         return clickDate >= hourStart && clickDate <= hourEnd;
@@ -305,48 +342,24 @@ async function generateDailyStatsWithCentralizedLeads(
 
       const hourBookings = hourConversions.filter(c => c.conversionType === "booking");
 
-      // Calculate leads for this hour using centralized function
-      const hourLeadData = await calculateLeadsWithDateRange(hourStart, hourEnd, affiliateId);
+      // Filter leads in memory (no DB call!)
+      const hourLeads = allLeads.filter(lead => {
+        const leadDate = new Date(lead.completedAt || lead.createdAt);
+        return leadDate >= hourStart && leadDate <= hourEnd;
+      });
 
       stats.push({
         date: hourLabel,
         clicks: hourClicks.length,
-        leads: hourLeadData.totalLeads,
+        leads: hourLeads.length,
         bookedCalls: hourBookings.length,
         commission: hourConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0),
       });
     }
   } else {
     // For other timeframes, show daily data
-    const now = new Date();
-    let days: number;
-
-    switch (dateRange) {
-      case "7d":
-        days = 7;
-        break;
-      case "30d":
-        days = 30;
-        break;
-      case "90d":
-        days = 90;
-        break;
-      case "1y":
-        days = 365;
-        break;
-      case "all":
-        // Show last 90 days for "all time" to keep it manageable
-        days = 90;
-        break;
-      default:
-        days = 30;
-    }
-
-    console.log(`📅 Generating ${days} days of data for dateRange: ${dateRange}`);
-
-    // Iterate through days from startDate backwards (7d goes back 7 days from now)
     for (let i = 0; i < days; i++) {
-      const daysAgo = days - 1 - i; // Count backwards from most recent day
+      const daysAgo = days - 1 - i;
       const date = new Date(now.getTime() - daysAgo * 24 * 60 * 60 * 1000);
 
       const dayStart = new Date(date);
@@ -361,7 +374,7 @@ async function generateDailyStatsWithCentralizedLeads(
 
       const dateStr = date.toISOString().split('T')[0];
 
-      // Filter data for this specific day using time ranges
+      // Filter pre-fetched data in memory (no DB call)
       const dayClicks = clicks.filter(c => {
         const clickDate = new Date(c.createdAt);
         return clickDate >= dayStart && clickDate <= dayEnd;
@@ -375,27 +388,24 @@ async function generateDailyStatsWithCentralizedLeads(
       const dayBookings = dayConversions.filter(c => c.conversionType === "booking");
       const dayCommission = dayConversions.reduce((sum, c) => sum + Number(c.commissionAmount || 0), 0);
 
-      // Calculate leads for this day using centralized function
-      const dayLeadData = await calculateLeadsWithDateRange(dayStart, dayEnd, affiliateId);
+      // 🚀 Filter leads in memory (no DB call!)
+      const dayLeads = allLeads.filter(lead => {
+        const leadDate = new Date(lead.completedAt || lead.createdAt);
+        return leadDate >= dayStart && leadDate <= dayEnd;
+      });
 
-      const dayData = {
+      stats.push({
         date: dateStr,
         clicks: dayClicks.length,
-        leads: dayLeadData.totalLeads,
+        leads: dayLeads.length,
         bookedCalls: dayBookings.length,
         commission: dayCommission,
-      };
-
-      // Log days with bookings
-      if (dayBookings.length > 0) {
-        console.log(`📊 Day ${dateStr}: ${dayBookings.length} bookings`, dayBookings.map(b => b.id));
-      }
-
-      stats.push(dayData);
+      });
     }
 
-    console.log(`📈 Generated ${stats.length} data points, bookings in ${stats.filter(s => s.bookedCalls > 0).length} days`);
+    console.log(`📈 Generated ${stats.length} data points from in-memory grouping`);
   }
 
   return stats;
 }
+
