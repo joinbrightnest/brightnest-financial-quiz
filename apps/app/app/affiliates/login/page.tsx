@@ -26,10 +26,8 @@ export default function AffiliateLogin() {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        // Store affiliate session
-        localStorage.setItem("affiliate_token", data.token);
-        localStorage.setItem("affiliate_id", data.affiliate.id);
+        // 🔒 SECURITY: Cookie is automatically set by server (httpOnly)
+        // No need to store in localStorage - this is more secure!
         router.push("/affiliates/dashboard");
       } else {
         const errorData = await response.json();

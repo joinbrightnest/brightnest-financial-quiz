@@ -7,17 +7,27 @@ export default function AffiliatesPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user is already logged in
-    const token = localStorage.getItem("affiliate_token");
-    const affiliateId = localStorage.getItem("affiliate_id");
-    
-    if (token && affiliateId) {
-      // User is logged in, redirect to dashboard
-      router.push("/affiliates/dashboard");
-    } else {
-      // User is not logged in, redirect to login
-      router.push("/affiliates/login");
-    }
+    // 🔒 SECURITY: Check authentication via httpOnly cookie (server-verified)
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/affiliate/profile', {
+          credentials: 'include',
+        });
+
+        if (response.ok) {
+          // User is authenticated, redirect to dashboard
+          router.push("/affiliates/dashboard");
+        } else {
+          // Not authenticated, redirect to login
+          router.push("/affiliates/login");
+        }
+      } catch {
+        // Error checking auth, go to login
+        router.push("/affiliates/login");
+      }
+    };
+
+    checkAuth();
   }, [router]);
 
   // Show loading while redirecting
@@ -30,3 +40,4 @@ export default function AffiliatesPage() {
     </div>
   );
 }
+

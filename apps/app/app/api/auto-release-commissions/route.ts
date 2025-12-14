@@ -71,25 +71,26 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Release the commissions
-    let releasedCount = 0;
-    let releasedAmount = 0;
+    // 🚀 PERFORMANCE: Batch update all commissions at once (instead of one-by-one)
+    const commissionIds = readyCommissions.map(c => c.id);
 
+    await prisma.affiliateConversion.updateMany({
+      where: { id: { in: commissionIds } },
+      data: {
+        commissionStatus: 'available',
+        releasedAt: now
+      }
+    });
+
+    // Calculate totals for response
+    const releasedCount = readyCommissions.length;
+    const releasedAmount = readyCommissions.reduce(
+      (sum, c) => sum + Number(c.commissionAmount),
+      0
+    );
+
+    // Log each released commission for audit trail
     for (const commission of readyCommissions) {
-      // Update commission status to available
-      // Note: We don't increment totalCommission here because it was already
-      // incremented when the sale was first recorded in the outcome endpoint
-      await prisma.affiliateConversion.update({
-        where: { id: commission.id },
-        data: {
-          commissionStatus: 'available',
-          releasedAt: new Date()
-        }
-      });
-
-      releasedCount++;
-      releasedAmount += Number(commission.commissionAmount);
-
       console.log(`✅ Released commission ${commission.id}: $${commission.commissionAmount} for affiliate ${commission.affiliate.name}`);
     }
 
