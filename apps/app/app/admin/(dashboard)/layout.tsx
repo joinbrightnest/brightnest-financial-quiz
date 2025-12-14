@@ -111,7 +111,7 @@ export default function AdminDashboardLayout({
             />
 
             <main className="flex-1 flex flex-col overflow-hidden">
-                <div className="flex-1 flex flex-col w-full px-4 sm:px-6 lg:px-8 py-4 overflow-hidden">
+                <div className="flex-1 flex flex-col w-full px-4 sm:px-6 lg:px-8 py-4 overflow-y-auto">
                     {children}
                 </div>
             </main>
