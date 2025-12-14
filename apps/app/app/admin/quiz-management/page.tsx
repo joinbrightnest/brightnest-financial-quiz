@@ -201,7 +201,7 @@ export default function QuizManagement() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6">
               <button
-                onClick={() => router.push('/admin/dashboard')}
+                onClick={() => router.push('/admin/quiz-analytics')}
                 className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors group"
               >
                 <svg className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -986,7 +986,7 @@ export default function LeadsPage() {
                 <span>Export All</span>
               </button>
               <button
-                onClick={() => router.push('/admin/dashboard')}
+                onClick={() => router.push('/admin/quiz-analytics')}
                 className="bg-white text-slate-700 border border-slate-300 py-2.5 px-4 rounded-md hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 text-sm font-medium"
               >
                 Back to Dashboard

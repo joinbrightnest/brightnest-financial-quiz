@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
 
   // Redirect homepage to admin dashboard
   if (pathname === '/') {
-    return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+    return NextResponse.redirect(new URL('/admin/quiz-analytics', request.url))
   }
 
   // Allow the request to continue

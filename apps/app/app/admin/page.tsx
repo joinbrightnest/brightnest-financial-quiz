@@ -10,7 +10,7 @@ export default function AdminLogin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Admin code validation - will be handled by server
     if (code.trim()) {
       try {
@@ -20,9 +20,9 @@ export default function AdminLogin() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code })
         });
-        
+
         if (response.ok) {
-          router.push("/admin/dashboard");
+          router.push("/admin/quiz-analytics");
         } else {
           setError("Authentication failed");
         }
@@ -41,7 +41,7 @@ export default function AdminLogin() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Access</h1>
           <p className="text-gray-600">Enter the access code to continue</p>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="code" className="block text-sm font-medium text-gray-700 mb-2">
@@ -57,11 +57,11 @@ export default function AdminLogin() {
               required
             />
           </div>
-          
+
           {error && (
             <div className="text-red-600 text-sm text-center">{error}</div>
           )}
-          
+
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
