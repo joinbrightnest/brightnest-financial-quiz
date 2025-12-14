@@ -500,7 +500,7 @@ export default function CRM({
             )}
 
             {/* Table Container - Search and Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col" style={{ maxHeight: 'calc(100vh - 400px)', minHeight: '500px' }}>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col" style={{ maxHeight: 'calc(100vh - 200px)', minHeight: '500px' }}>
 
                 {/* Search and Actions */}
                 <div className="flex-shrink-0 p-4 border-b border-gray-100">
