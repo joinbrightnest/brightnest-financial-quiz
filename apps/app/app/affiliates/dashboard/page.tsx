@@ -1,57 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import AffiliateHeader from "../components/AffiliateHeader";
 import AffiliatePerformanceChart from "../components/AffiliatePerformanceChart";
-
-interface AffiliateData {
-  id: string;
-  name: string;
-  email: string;
-  tier: string;
-  referralCode: string;
-  customLink: string;
-  commissionRate: number;
-  totalClicks: number;
-  totalLeads: number;
-  totalBookings: number;
-  totalSales: number;
-  totalCommission: number;
-  isApproved: boolean;
-}
-
-interface AffiliateStats {
-  totalClicks: number;
-  totalLeads: number;
-  totalBookings: number;
-  totalSales: number;
-  totalCommission: number;
-  conversionRate: number;
-  averageSaleValue: number;
-  pendingCommission: number;
-  paidCommission: number;
-  dailyStats: Array<{
-    date: string;
-    clicks: number;
-    leads: number;
-    bookedCalls: number;
-    commission: number;
-  }>;
-}
+import { useAffiliateAuth } from "../hooks";
+import { AffiliateStats } from "../types";
 
 export default function AffiliateDashboard() {
-  const router = useRouter();
-  const [affiliate, setAffiliate] = useState<AffiliateData | null>(null);
+  // 🔒 SECURITY: Use httpOnly cookie-based authentication
+  const { affiliate, isLoading: authLoading, handleLogout } = useAffiliateAuth();
+
   const [stats, setStats] = useState<AffiliateStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [dateRange, setDateRange] = useState("30d");
-
-  useEffect(() => {
-    checkAuth();
-  }, []);
 
   useEffect(() => {
     if (affiliate) {
@@ -59,93 +22,37 @@ export default function AffiliateDashboard() {
     }
   }, [affiliate, dateRange]);
 
-  const checkAuth = async () => {
-    const token = localStorage.getItem("affiliate_token");
-    const affiliateId = localStorage.getItem("affiliate_id");
-
-    if (!token || !affiliateId) {
-      router.push("/affiliates/login");
-      return;
-    }
-
-    // For now, use the affiliate profile API to get basic affiliate data
-    try {
-      const response = await fetch(`/api/affiliate/profile?_t=${Date.now()}`, {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const affiliateData = await response.json();
-        setAffiliate(affiliateData);
-      } else {
-        // If profile API fails, redirect to login
-        console.log("Profile API failed, redirecting to login");
-        localStorage.removeItem("affiliate_token");
-        localStorage.removeItem("affiliate_id");
-        router.push("/affiliates/login");
-        return;
-      }
-    } catch (error) {
-      console.error("Auth check failed:", error);
-      // Redirect to login on auth failure
-      localStorage.removeItem("affiliate_token");
-      localStorage.removeItem("affiliate_id");
-      router.push("/affiliates/login");
-      return;
-    }
-  };
-
   const fetchStats = async (forceRefresh = false) => {
     if (!affiliate) return;
 
     try {
-      setLoading(true);
+      setStatsLoading(true);
 
-      const token = localStorage.getItem("affiliate_token");
-      if (!token) {
-        router.push("/affiliates/login");
-        return;
-      }
-
-      // Fetch affiliate stats using the affiliate-specific API
-      console.log("Fetching affiliate stats...");
-
-      // Add cache-busting parameter to ensure fresh data
+      // 🔒 SECURITY: Use credentials: include to send httpOnly cookie
       const cacheBuster = `&_t=${Date.now()}`;
       const response = await fetch(`/api/affiliate/stats?dateRange=${dateRange}${cacheBuster}`, {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Affiliate stats loaded:", data);
         setStats(data);
         setError(null);
       } else {
         console.log("API failed with status:", response.status);
-        const errorText = await response.text();
-        console.log("API error response:", errorText);
         setError("Failed to fetch affiliate data");
       }
     } catch (err) {
       console.error("Error fetching stats:", err);
       setError("Failed to load affiliate statistics");
     } finally {
-      setLoading(false);
+      setStatsLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("affiliate_token");
-    localStorage.removeItem("affiliate_id");
-    router.push("/affiliates/login");
-  };
+  const loading = authLoading || statsLoading;
 
-  if (loading && !affiliate) {
+  if (authLoading && !affiliate) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#faf8f0' }}>
         <div className="text-center">

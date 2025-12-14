@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { CallOutcome, AffiliateClick, AffiliateConversion, AffiliatePayout, Appointment } from "@prisma/client";
 import { calculateLeadsByCode, calculateLeadsWithDateRange } from "@/lib/lead-calculation";
 import { prisma } from "@/lib/prisma";
-import jwt from "jsonwebtoken";
 import { dateRangeSchema, parseQueryParams } from "@/lib/validation";
 import { z } from 'zod';
+import { getAffiliateIdFromToken } from "../auth-utils";
 
 // Schema for affiliate stats query params
 const affiliateOwnStatsSchema = z.object({
@@ -13,39 +13,11 @@ const affiliateOwnStatsSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
-    const authHeader = request.headers.get("authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    // 🔒 SECURITY: Use auth-utils for token extraction (supports cookie + header)
+    const affiliateId = getAffiliateIdFromToken(request);
+    if (!affiliateId) {
       return NextResponse.json(
-        { error: "No token provided" },
-        { status: 401 }
-      );
-    }
-
-    const token = authHeader.substring(7);
-
-    // Verify JWT token
-    const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
-    if (!JWT_SECRET) {
-      console.error("FATAL: JWT_SECRET or NEXTAUTH_SECRET environment variable is required");
-      return NextResponse.json(
-        { error: "Authentication configuration error" },
-        { status: 500 }
-      );
-    }
-
-    let decoded: { affiliateId: string } | null = null;
-    try {
-      decoded = jwt.verify(token, JWT_SECRET) as { affiliateId: string };
-    } catch (error) {
-      return NextResponse.json(
-        { error: "Invalid or expired token" },
-        { status: 401 }
-      );
-    }
-
-    if (!decoded || !decoded.affiliateId) {
-      return NextResponse.json(
-        { error: "Invalid token: missing affiliateId" },
+        { error: "Unauthorized" },
         { status: 401 }
       );
     }
@@ -92,7 +64,7 @@ export async function GET(request: NextRequest) {
 
     // Get affiliate data (without includes to avoid issues)
     const affiliate = await prisma.affiliate.findUnique({
-      where: { id: decoded.affiliateId },
+      where: { id: affiliateId },
     });
 
     if (!affiliate) {

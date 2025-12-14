@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import AffiliateHeader from "../components/AffiliateHeader";
+import { useAffiliateAuth } from "../hooks";
 
 // Prevent prerendering since this page requires authentication
 export const dynamic = 'force-dynamic';
@@ -26,56 +26,12 @@ interface AffiliateData {
 }
 
 export default function AffiliateLinksPage() {
+  // 🔒 SECURITY: Use httpOnly cookie-based authentication
+  const { affiliate, isLoading: loading, handleLogout } = useAffiliateAuth();
+
   const [utmSource, setUtmSource] = useState("");
   const [utmMedium, setUtmMedium] = useState("");
   const [utmCampaign, setUtmCampaign] = useState("");
-  const [affiliate, setAffiliate] = useState<AffiliateData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [mounted, setMounted] = useState(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    setMounted(true);
-    const checkAuth = async () => {
-      const token = localStorage.getItem("affiliate_token");
-      const affiliateId = localStorage.getItem("affiliate_id");
-      
-      if (!token || !affiliateId) {
-        router.push("/affiliates/login");
-        return;
-      }
-
-      try {
-        const response = await fetch("/api/affiliate/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const affiliateData = await response.json();
-          setAffiliate(affiliateData);
-        } else {
-          router.push("/affiliates/login");
-          return;
-        }
-      } catch (error) {
-        console.error("Auth check failed:", error);
-        router.push("/affiliates/login");
-        return;
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, [router]);
-
-  const handleLogout = () => {
-    localStorage.removeItem("affiliate_token");
-    localStorage.removeItem("affiliate_id");
-    router.push("/affiliates/login");
-  };
 
   const generateCustomLink = () => {
     if (!affiliate) return "";
@@ -84,23 +40,12 @@ export default function AffiliateLinksPage() {
     if (utmSource) params.append("utm_source", utmSource);
     if (utmMedium) params.append("utm_medium", utmMedium);
     if (utmCampaign) params.append("utm_campaign", utmCampaign);
-    
+
     return params.toString() ? `${baseLink}?${params.toString()}` : baseLink;
   };
 
-  // Don't render anything until mounted to prevent SSR issues
-  if (!mounted) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+
+
 
   if (loading) {
     return (
@@ -130,10 +75,10 @@ export default function AffiliateLinksPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
       <AffiliateHeader affiliate={affiliate} onLogout={handleLogout} />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Page Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -154,7 +99,7 @@ export default function AffiliateLinksPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           {/* Your Affiliate Link */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -175,7 +120,7 @@ export default function AffiliateLinksPage() {
                 </label>
                 <div className="text-sm text-gray-900">{affiliate?.referralCode || "Loading..."}</div>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Your Tracking Link
@@ -199,7 +144,7 @@ export default function AffiliateLinksPage() {
           </motion.div>
 
           {/* Custom UTM Parameters */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -226,7 +171,7 @@ export default function AffiliateLinksPage() {
                   placeholder="youtube"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   UTM Medium (e.g., video)
@@ -239,7 +184,7 @@ export default function AffiliateLinksPage() {
                   placeholder="video"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   UTM Campaign (e.g., jan2024)
@@ -252,13 +197,13 @@ export default function AffiliateLinksPage() {
                   placeholder="jan2024"
                 />
               </div>
-              
+
               <button className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 px-4 rounded-xl hover:from-indigo-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 shadow-md hover:shadow-lg font-medium">
                 Generate Link
               </button>
-              
+
               {generateCustomLink() && generateCustomLink() !== `https://joinbrightnest.com/${affiliate?.referralCode}` && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}

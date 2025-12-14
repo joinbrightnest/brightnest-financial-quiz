@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { rateLimit, rateLimitExceededResponse } from "@/lib/rate-limit";
+import { AFFILIATE_COOKIE_CONFIG } from "../auth-utils";
 
 export async function POST(request: NextRequest) {
   // 🛡️ SECURITY: Rate limit authentication attempts (5 per 15 minutes)
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
     }
 
     const token = jwt.sign(
-      { 
+      {
         affiliateId: affiliate.id,
         email: affiliate.email,
         tier: affiliate.tier,
@@ -89,9 +90,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({
+    // 🔒 SECURITY: Set httpOnly cookie instead of returning token in body
+    const response = NextResponse.json({
       success: true,
-      token,
       affiliate: {
         id: affiliate.id,
         name: affiliate.name,
@@ -108,6 +109,16 @@ export async function POST(request: NextRequest) {
         isApproved: affiliate.isApproved,
       },
     });
+
+    response.cookies.set(AFFILIATE_COOKIE_CONFIG.name, token, {
+      httpOnly: AFFILIATE_COOKIE_CONFIG.httpOnly,
+      secure: AFFILIATE_COOKIE_CONFIG.secure,
+      sameSite: AFFILIATE_COOKIE_CONFIG.sameSite,
+      maxAge: AFFILIATE_COOKIE_CONFIG.maxAge,
+      path: AFFILIATE_COOKIE_CONFIG.path,
+    });
+
+    return response;
   } catch (error) {
     console.error("Affiliate login error:", error);
     return NextResponse.json(
@@ -116,3 +127,4 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+

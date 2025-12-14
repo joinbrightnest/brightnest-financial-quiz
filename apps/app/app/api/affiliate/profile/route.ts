@@ -1,54 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import jwt from "jsonwebtoken";
+import { getAffiliateIdFromToken } from "../auth-utils";
 
 export async function GET(request: NextRequest) {
   try {
     console.log("Affiliate profile API called");
-    const authHeader = request.headers.get("authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      console.log("No authorization header found");
+
+    // 🔒 SECURITY: Use auth-utils for token extraction (supports cookie + header)
+    const affiliateId = getAffiliateIdFromToken(request);
+    if (!affiliateId) {
+      console.log("No valid token found");
       return NextResponse.json(
-        { error: "No token provided" },
+        { error: "Unauthorized" },
         { status: 401 }
       );
     }
 
-    const token = authHeader.substring(7);
-
-    // Verify JWT token
-    const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
-    if (!JWT_SECRET) {
-      console.error("FATAL: JWT_SECRET or NEXTAUTH_SECRET environment variable is required");
-      return NextResponse.json(
-        { error: "Authentication configuration error" },
-        { status: 500 }
-      );
-    }
-
-    let decoded: { affiliateId: string } | null = null;
-    try {
-      decoded = jwt.verify(token, JWT_SECRET) as { affiliateId: string } | null;
-    } catch (error) {
-      console.log("Token verification failed:", error);
-      return NextResponse.json(
-        { error: "Invalid or expired token" },
-        { status: 401 }
-      );
-    }
-
-    // Get affiliate profile
-    if (!decoded || !decoded.affiliateId) {
-      return NextResponse.json(
-        { error: "Invalid token payload" },
-        { status: 401 }
-      );
-    }
-
-    console.log("Looking for affiliate with ID:", decoded.affiliateId);
-    const affiliate = await prisma.affiliate.findUnique({
-      where: { id: decoded.affiliateId },
-    });
+    // Get affiliate profile with click count in a single query (fixes N+1)
+    console.log("Looking for affiliate with ID:", affiliateId);
+    const [affiliate, clickCount] = await Promise.all([
+      prisma.affiliate.findUnique({
+        where: { id: affiliateId },
+      }),
+      prisma.affiliateClick.count({
+        where: { affiliateId: affiliateId },
+      }),
+    ]);
 
     console.log("Affiliate found:", affiliate ? "Yes" : "No");
     if (!affiliate) {
@@ -63,15 +40,6 @@ export async function GET(request: NextRequest) {
     const customTrackingLink = affiliate.custom_tracking_link;
     const activeTrackingLink = customTrackingLink || `https://joinbrightnest.com/${affiliate.referralCode}`;
 
-    console.log("Affiliate data:", {
-      id: affiliate.id,
-      name: affiliate.name,
-      referralCode: affiliate.referralCode,
-      customLink: affiliate.customLink,
-      customTrackingLink: customTrackingLink,
-      activeTrackingLink: activeTrackingLink
-    });
-
     return NextResponse.json({
       id: affiliate.id,
       name: affiliate.name,
@@ -80,7 +48,7 @@ export async function GET(request: NextRequest) {
       referralCode: affiliate.referralCode,
       customLink: activeTrackingLink,
       commissionRate: affiliate.commissionRate,
-      totalClicks: await prisma.affiliateClick.count({ where: { affiliateId: affiliate.id } }),
+      totalClicks: clickCount, // Use pre-fetched count (fixes N+1)
       totalLeads: affiliate.totalLeads,
       totalBookings: affiliate.totalBookings,
       totalSales: affiliate.totalSales,

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import AffiliateHeader from "../components/AffiliateHeader";
+import { useAffiliateAuth } from "../hooks";
 
 interface AffiliateData {
   id: string;
@@ -72,16 +72,17 @@ interface PayoutSettings {
 }
 
 export default function AffiliatePayoutsPage() {
-  const [affiliate, setAffiliate] = useState<AffiliateData | null>(null);
+  // 🔒 SECURITY: Use httpOnly cookie-based authentication
+  const { affiliate, isLoading: authLoading, handleLogout } = useAffiliateAuth();
+
   const [payoutData, setPayoutData] = useState<PayoutData | null>(null);
   const [payoutSettings, setPayoutSettings] = useState<PayoutSettings | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(false);
   const [showAllPayouts, setShowAllPayouts] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
-    checkAuth();
+    fetchPayoutSettings();
   }, []);
 
   useEffect(() => {
@@ -92,7 +93,10 @@ export default function AffiliatePayoutsPage() {
 
   const fetchPayoutSettings = async () => {
     try {
-      const response = await fetch("/api/affiliate/payout-settings");
+      // 🔒 SECURITY: Use credentials: include to send httpOnly cookie
+      const response = await fetch("/api/affiliate/payout-settings", {
+        credentials: 'include',
+      });
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
@@ -104,62 +108,19 @@ export default function AffiliatePayoutsPage() {
     }
   };
 
-  const checkAuth = async () => {
-    const token = localStorage.getItem("affiliate_token");
-    const affiliateId = localStorage.getItem("affiliate_id");
-    
-    if (!token || !affiliateId) {
-      router.push("/affiliates/login");
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/affiliate/profile?_t=${Date.now()}`, {
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const affiliateData = await response.json();
-        setAffiliate(affiliateData);
-        await fetchPayoutSettings(); // Fetch payout settings
-      } else {
-        localStorage.removeItem("affiliate_token");
-        localStorage.removeItem("affiliate_id");
-        router.push("/affiliates/login");
-        return;
-      }
-    } catch (error) {
-      console.error("Auth check failed:", error);
-      localStorage.removeItem("affiliate_token");
-      localStorage.removeItem("affiliate_id");
-      router.push("/affiliates/login");
-      return;
-    }
-  };
-
   const fetchPayoutData = async () => {
-    const token = localStorage.getItem("affiliate_token");
-    
-    if (!token) {
-      router.push("/affiliates/login");
-      return;
-    }
+    if (!affiliate) return;
 
     try {
+      setDataLoading(true);
+      // 🔒 SECURITY: Use credentials: include to send httpOnly cookie
       const response = await fetch("/api/affiliate/payouts-simple", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: 'include',
       });
 
       if (response.ok) {
         const data = await response.json();
         setPayoutData(data.data);
-      } else if (response.status === 401) {
-        router.push("/affiliates/login");
-        return;
       } else {
         const errorData = await response.json();
         setError(errorData.error || "Failed to fetch payout data");
@@ -168,18 +129,14 @@ export default function AffiliatePayoutsPage() {
       console.error("Error fetching payout data:", error);
       setError("Failed to fetch payout data");
     } finally {
-      setLoading(false);
+      setDataLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("affiliate_token");
-    localStorage.removeItem("affiliate_id");
-    router.push("/affiliates/login");
-  };
+  const loading = authLoading || dataLoading;
 
-  if (loading) {
-  return (
+  if (authLoading) {
+    return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
         {affiliate && <AffiliateHeader affiliate={affiliate} onLogout={handleLogout} />}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -221,7 +178,7 @@ export default function AffiliatePayoutsPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
         {affiliate && <AffiliateHeader affiliate={affiliate} onLogout={handleLogout} />}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="bg-red-50/80 backdrop-blur-sm border border-red-200/50 rounded-2xl p-8 shadow-lg">
             <div className="text-red-800">
               <h3 className="font-semibold text-lg mb-2">Error loading payout data</h3>
@@ -236,10 +193,10 @@ export default function AffiliatePayoutsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
       {affiliate && <AffiliateHeader affiliate={affiliate} onLogout={handleLogout} />}
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Welcome Section */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -260,7 +217,7 @@ export default function AffiliatePayoutsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Earnings Summary */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -291,7 +248,7 @@ export default function AffiliatePayoutsPage() {
                   <p className="text-xs text-gray-500 mt-1">All time earnings</p>
                 </div>
               </div>
-              
+
               <div className="bg-green-50/30 border border-green-200 rounded-lg p-3 sm:p-6 hover:border-green-300 hover:bg-green-50/50 transition-all">
                 <div className="flex items-center justify-between mb-2 sm:mb-4">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-lg flex items-center justify-center">
@@ -308,7 +265,7 @@ export default function AffiliatePayoutsPage() {
                   <p className="text-xs text-gray-500 mt-1">Completed payouts</p>
                 </div>
               </div>
-              
+
               <div className="bg-purple-50/30 border border-purple-200 rounded-lg p-3 sm:p-6 hover:border-purple-300 hover:bg-purple-50/50 transition-all">
                 <div className="flex items-center justify-between mb-2 sm:mb-4">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -323,9 +280,9 @@ export default function AffiliatePayoutsPage() {
                     ${payoutData?.summary.availableCommission.toLocaleString() || "0"}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">Ready for payout</p>
-            </div>
-          </div>
-              
+                </div>
+              </div>
+
               <div className="bg-orange-50/30 border border-orange-200 rounded-lg p-3 sm:p-6 hover:border-orange-300 hover:bg-orange-50/50 transition-all">
                 <div className="flex items-center justify-between mb-2 sm:mb-4">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -348,7 +305,7 @@ export default function AffiliatePayoutsPage() {
           </motion.div>
 
           {/* Payout Settings */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -394,7 +351,7 @@ export default function AffiliatePayoutsPage() {
 
         {/* Commission Hold Details */}
         {payoutData?.commissionHoldInfo && payoutData.commissionHoldInfo.heldCommissions.length > 0 && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
@@ -405,7 +362,7 @@ export default function AffiliatePayoutsPage() {
                 <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-          </div>
+              </div>
               Commission Hold Details
             </h2>
             <div className="mb-4 p-4 bg-orange-50 rounded-xl border border-orange-200">
@@ -416,7 +373,7 @@ export default function AffiliatePayoutsPage() {
                 <span className="text-sm font-semibold text-orange-800">Hold Period Information</span>
               </div>
               <p className="text-sm text-orange-700">
-                Commissions are held for <strong>{payoutData.commissionHoldInfo.holdDays} days</strong> after earning to ensure payment stability and prevent chargebacks. 
+                Commissions are held for <strong>{payoutData.commissionHoldInfo.holdDays} days</strong> after earning to ensure payment stability and prevent chargebacks.
                 After this period, commissions become available for payout.
               </p>
             </div>
@@ -469,7 +426,7 @@ export default function AffiliatePayoutsPage() {
         )}
 
         {/* Payout History */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
@@ -486,7 +443,7 @@ export default function AffiliatePayoutsPage() {
           {payoutData?.payouts && payoutData.payouts.length > 0 ? (
             <div className="space-y-4">
               {(showAllPayouts ? payoutData.payouts : payoutData.payouts.slice(0, 3)).map((payout, index) => (
-                <motion.div 
+                <motion.div
                   key={payout.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -509,13 +466,12 @@ export default function AffiliatePayoutsPage() {
                           </p>
                         </div>
                         <div>
-                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
-                            payout.status === "completed" 
-                              ? "bg-green-100 text-green-800 border border-green-200"
-                              : payout.status === "pending"
+                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${payout.status === "completed"
+                            ? "bg-green-100 text-green-800 border border-green-200"
+                            : payout.status === "pending"
                               ? "bg-yellow-100 text-yellow-800 border border-yellow-200"
                               : "bg-gray-100 text-gray-800 border border-gray-200"
-                          }`}>
+                            }`}>
                             {payout.status.charAt(0).toUpperCase() + payout.status.slice(1)}
                           </span>
                         </div>
@@ -536,7 +492,7 @@ export default function AffiliatePayoutsPage() {
                   </div>
                 </motion.div>
               ))}
-              
+
               {/* Show More/Less Button */}
               {payoutData.payouts.length > 3 && (
                 <motion.div

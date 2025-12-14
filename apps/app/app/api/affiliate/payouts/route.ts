@@ -1,52 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { AffiliateConversion } from "@prisma/client";
-import jwt from "jsonwebtoken";
+import { getAffiliateIdFromToken } from "../auth-utils";
 
 export async function GET(request: NextRequest) {
   try {
     console.log("Affiliate payouts API called");
-    const authHeader = request.headers.get("authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return NextResponse.json(
-        { error: "No token provided" },
-        { status: 401 }
-      );
-    }
 
-    const token = authHeader.substring(7);
-
-    // Verify JWT token
-    const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
-    if (!JWT_SECRET) {
-      console.error("FATAL: JWT_SECRET or NEXTAUTH_SECRET environment variable is required");
+    // 🔒 SECURITY: Use auth-utils for token extraction (supports cookie + header)
+    const affiliateId = getAffiliateIdFromToken(request);
+    if (!affiliateId) {
       return NextResponse.json(
-        { error: "Authentication configuration error" },
-        { status: 500 }
-      );
-    }
-
-    let decoded: { affiliateId: string } | null = null;
-    try {
-      decoded = jwt.verify(token, JWT_SECRET) as { affiliateId: string } | null;
-    } catch (error) {
-      return NextResponse.json(
-        { error: "Invalid or expired token" },
-        { status: 401 }
-      );
-    }
-
-    if (!decoded || !decoded.affiliateId) {
-      return NextResponse.json(
-        { error: "Invalid token: missing affiliateId" },
+        { error: "Unauthorized" },
         { status: 401 }
       );
     }
 
     // Get affiliate with payouts and conversions
-    console.log("Fetching affiliate:", decoded.affiliateId);
+    console.log("Fetching affiliate:", affiliateId);
     const affiliate = await prisma.affiliate.findUnique({
-      where: { id: decoded.affiliateId },
+      where: { id: affiliateId },
       include: {
         payouts: {
           orderBy: { createdAt: "desc" },

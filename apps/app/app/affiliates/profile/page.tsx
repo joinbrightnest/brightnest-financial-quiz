@@ -1,120 +1,32 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import AffiliateHeader from "../components/AffiliateHeader";
+import { useAffiliateAuth } from "../hooks";
 
 // Prevent prerendering since this page requires authentication
 export const dynamic = 'force-dynamic';
 
-interface AffiliateData {
-  id: string;
-  name: string;
-  email: string;
-  referralCode: string;
-  tier: string;
-  commissionRate: number;
-  isApproved: boolean;
-  totalClicks: number;
-  totalLeads: number;
-  totalBookings: number;
-  totalSales: number;
-  totalCommission: number;
-  customLink: string;
-  createdAt: string;
-}
-
 export default function AffiliateProfilePage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    payoutMethod: "stripe",
-    payoutDetails: ""
-  });
-  const [affiliate, setAffiliate] = useState<AffiliateData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
-  const router = useRouter();
+  // 🔒 SECURITY: Use httpOnly cookie-based authentication
+  const { affiliate, isLoading, handleLogout } = useAffiliateAuth();
 
-  useEffect(() => {
-    setMounted(true);
-    const checkAuth = async () => {
-      const token = localStorage.getItem("affiliate_token");
-      const affiliateId = localStorage.getItem("affiliate_id");
-      
-      if (!token || !affiliateId) {
-        router.push("/affiliates/login");
-        return;
-      }
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
-      try {
-        const response = await fetch("/api/affiliate/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const affiliateData = await response.json();
-          setAffiliate(affiliateData);
-          setFormData({
-            name: affiliateData?.name || "",
-            email: affiliateData?.email || "",
-            payoutMethod: "stripe",
-            payoutDetails: ""
-          });
-        } else {
-          router.push("/affiliates/login");
-          return;
-        }
-      } catch (error) {
-        console.error("Auth check failed:", error);
-        router.push("/affiliates/login");
-        return;
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, [router]);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log("Profile updated:", formData);
+    // Profile update logic would go here
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("affiliate_token");
-    localStorage.removeItem("affiliate_id");
-    router.push("/affiliates/login");
-  };
-
-  // Don't render anything until mounted to prevent SSR issues
-  if (!mounted) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading profile...</p>
-          </div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#faf8f0' }}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -135,10 +47,10 @@ export default function AffiliateProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
       <AffiliateHeader affiliate={affiliate} onLogout={handleLogout} />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Page Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -159,7 +71,7 @@ export default function AffiliateProfilePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Profile Form */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -173,7 +85,7 @@ export default function AffiliateProfilePage() {
               </div>
               Account Information
             </h2>
-            
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
@@ -187,7 +99,7 @@ export default function AffiliateProfilePage() {
                     Your name cannot be changed
                   </p>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
@@ -200,7 +112,7 @@ export default function AffiliateProfilePage() {
                   </p>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -213,7 +125,7 @@ export default function AffiliateProfilePage() {
                     Your unique referral code cannot be changed
                   </p>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Commission Rate
@@ -230,7 +142,7 @@ export default function AffiliateProfilePage() {
           </motion.div>
 
           {/* Account Status & Stats */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -246,7 +158,7 @@ export default function AffiliateProfilePage() {
                 </div>
                 Account Status
               </h2>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-white rounded-xl border border-green-200/50">
                   <span className="text-sm font-medium text-gray-700">Status</span>
@@ -255,21 +167,21 @@ export default function AffiliateProfilePage() {
                     Active
                   </span>
                 </div>
-                
+
                 <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-white rounded-xl border border-blue-200/50">
                   <span className="text-sm font-medium text-gray-700">Tier</span>
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 border border-blue-200">
                     {affiliate?.tier || "Quiz Affiliate"}
                   </span>
                 </div>
-                
+
                 <div className="flex items-center justify-between p-3 bg-gradient-to-r from-green-50 to-white rounded-xl border border-green-200/50">
                   <span className="text-sm font-medium text-gray-700">Approved</span>
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200">
                     {affiliate?.isApproved ? "Yes" : "Pending"}
                   </span>
                 </div>
-                
+
                 <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-50 to-white rounded-xl border border-gray-200/50">
                   <span className="text-sm font-medium text-gray-700">Joined</span>
                   <span className="text-sm text-gray-900">
@@ -292,7 +204,7 @@ export default function AffiliateProfilePage() {
                 </div>
                 Quick Stats
               </h2>
-              
+
               <div className="grid grid-cols-2 sm:grid-cols-1 gap-3 sm:gap-4">
                 <div className="bg-gradient-to-r from-blue-50 to-white p-3 sm:p-4 rounded-xl border border-blue-200/50">
                   <div className="flex items-center justify-between">
@@ -307,7 +219,7 @@ export default function AffiliateProfilePage() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="bg-gradient-to-r from-green-50 to-white p-3 sm:p-4 rounded-xl border border-green-200/50">
                   <div className="flex items-center justify-between">
                     <div>
@@ -321,7 +233,7 @@ export default function AffiliateProfilePage() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="bg-gradient-to-r from-purple-50 to-white p-3 sm:p-4 rounded-xl border border-purple-200/50 col-span-2 sm:col-span-1">
                   <div className="flex items-center justify-between">
                     <div>
