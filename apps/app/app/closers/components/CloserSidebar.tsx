@@ -18,30 +18,33 @@ interface CloserSidebarProps {
 
 export default function CloserSidebar({ closer, onLogout, activeTaskCount = 0 }: CloserSidebarProps) {
   const pathname = usePathname();
-  // Initialize state to false to match server-side rendering
+  // Always initialize to false for consistent SSR/CSR initial render (prevents hydration mismatch)
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
   const isActive = (path: string) => pathname === path;
 
   useEffect(() => {
-    // Mark as mounted for localStorage writes
-    setMounted(true);
-
-    // Read saved state from localStorage
+    // Read saved state from localStorage after mount (client-side only)
     const saved = localStorage.getItem('sidebarCollapsed');
     if (saved === 'true') {
       setIsCollapsed(true);
     }
+    // Mark as hydrated to enable CSS transitions
+    // Small delay to allow the collapsed state to apply before enabling transitions
+    requestAnimationFrame(() => {
+      setIsHydrated(true);
+    });
   }, []);
 
   useEffect(() => {
-    if (mounted && typeof window !== 'undefined') {
+    // Persist state changes to localStorage (skip initial mount to avoid overwriting)
+    if (isHydrated) {
       localStorage.setItem('sidebarCollapsed', isCollapsed.toString());
     }
-  }, [isCollapsed, mounted]);
+  }, [isCollapsed, isHydrated]);
 
   return (
-    <div className={`${isCollapsed ? 'w-14' : 'w-56'} h-screen bg-gradient-to-b from-slate-800 to-slate-900 border-r border-slate-700 flex-shrink-0 flex flex-col transition-all duration-300 overflow-visible`}>
+    <div className={`${isCollapsed ? 'w-14' : 'w-56'} h-screen bg-gradient-to-b from-slate-800 to-slate-900 border-r border-slate-700 flex-shrink-0 flex flex-col ${isHydrated ? 'transition-all duration-300' : ''} overflow-visible`}>
       {/* Sidebar Header */}
       <div className={`${isCollapsed ? 'p-3' : 'p-4'} border-b border-slate-700 flex items-center justify-between`}>
         <Link href="/closers/dashboard" className={`flex items-center ${isCollapsed ? 'justify-center w-full' : 'space-x-2.5'}`}>

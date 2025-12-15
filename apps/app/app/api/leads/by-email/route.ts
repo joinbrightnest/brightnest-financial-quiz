@@ -5,14 +5,6 @@ import { emailQuerySchema, parseQueryParams } from '@/lib/validation';
 
 export async function GET(request: NextRequest) {
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { error: 'Authorization token required' },
-        { status: 401 }
-      );
-    }
-
     // 🔒 SECURITY: Require JWT_SECRET (no fallback)
     const JWT_SECRET = process.env.JWT_SECRET || process.env.NEXTAUTH_SECRET;
     if (!JWT_SECRET) {
@@ -23,7 +15,24 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const token = authHeader.substring(7);
+    // Try to get token from Authorization header first, then from cookie
+    let token: string | undefined;
+    const authHeader = request.headers.get('authorization');
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7);
+    } else {
+      // Fallback to cookie-based auth (for closer portal)
+      token = request.cookies.get('closerToken')?.value;
+    }
+
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Authorization token required' },
+        { status: 401 }
+      );
+    }
+
     const decoded = jwt.verify(token, JWT_SECRET) as { role: string; closerId?: string };
 
     // Allow both closer and admin to access this endpoint
@@ -47,23 +56,17 @@ export async function GET(request: NextRequest) {
 
     const { email } = validation.data;
 
-    // Find the lead by email in quiz answers - optimized query
+    // Find the lead by email in quiz answers using raw SQL
+    // (Prisma's string_contains with mode: 'insensitive' doesn't work on JSON fields)
     const emailLower = email.toLowerCase();
 
-    // First, try to find quiz session by searching answers table with email in value
-    // This is much more efficient than loading all sessions
-    const matchingAnswers = await prisma.quizAnswer.findMany({
-      where: {
-        value: {
-          string_contains: emailLower,
-          mode: 'insensitive'
-        }
-      },
-      select: {
-        sessionId: true
-      },
-      take: 1 // We only need one match
-    });
+    // Use raw SQL to cast JSON to text and search case-insensitively
+    const matchingAnswers = await prisma.$queryRaw<{ sessionId: string }[]>`
+      SELECT DISTINCT "sessionId"
+      FROM "quiz_answers"
+      WHERE LOWER(CAST(value AS TEXT)) LIKE ${`%${emailLower}%`}
+      LIMIT 1
+    `;
 
     let matchingSession = null;
 
